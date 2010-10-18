@@ -97,5 +97,4 @@ void ResidualPlot::draw()
   // m_canvas2D->SaveAs(".pdf");
   // m_canvas2D->SaveAs(".png");
   // m_canvas2D->SaveAs(".root");
-
 }

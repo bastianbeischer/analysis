@@ -28,7 +28,6 @@ private:
   TCanvas*                             m_canvas2D;
   std::map<unsigned short, TH1I*>      m_residuals1D;
   TH2I*                                m_residuals2D;
-
   
 };
 
