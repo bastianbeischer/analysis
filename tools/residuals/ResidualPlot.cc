@@ -51,7 +51,7 @@ void ResidualPlot::fill(Hit* hit, Track* track)
   if (!m_residuals1D[detId]) {
     char title[128];
     sprintf(title, "%x", detId);
-    m_residuals1D[detId] = new TH1I(title, title, 300, -10, 10);
+    m_residuals1D[detId] = new TH1I(title, title, 100, -10, 10);
   }
 
   m_residuals1D[detId]->Fill(res);
