@@ -5,6 +5,7 @@
 #include "Track.hh"
 #include "Layer.hh"
 #include "TrackFinding.hh"
+#include "ResidualPlot.hh"
 
 #include <TCanvas.h>
 #include <TH2I.h>
@@ -128,6 +129,8 @@ void DataChain::process()
     for (std::map<double, Layer*>::iterator it = m_layers.begin(); it != m_layers.end(); it++) {
       Layer* layer = it->second;
 
+      double z = layer->z();
+
       // create track for this layer
       if(!m_tracks[layer])
         m_tracks[layer] = new Track;
@@ -137,17 +140,20 @@ void DataChain::process()
       std::vector<Hit*> clustersInThisLayer;
       for (std::vector<Hit*>::iterator it = clusters.begin(); it != clusters.end(); it++) {
         Hit* hit = *it;
-        if (hit->position().z() != layer->z())
+        if (hit->position().z() != z)
           clustersForFit.push_back(hit);
         else
           clustersInThisLayer.push_back(hit);
       }
 
+      if (!m_residualPlots[z])
+        m_residualPlots[z] = new ResidualPlot(z);
+
       // fit and fill histograms
       if (m_tracks[layer]->fit(clustersForFit)) {
         for (std::vector<Hit*>::iterator it = clustersInThisLayer.begin(); it != clustersInThisLayer.end(); it++) {
-          //Hit* hit = *it;
-          //layer->fill(hit, m_tracks[layer]);
+          Hit* hit = *it;
+          m_residualPlots[z]->fill(hit, m_tracks[layer]);
         }
       }
     }
@@ -172,6 +178,6 @@ void DataChain::process()
 
 void DataChain::draw()
 {
-  for (std::map<double, Layer*>::iterator it = m_layers.begin(); it != m_layers.end(); it++);
-    //it->second->draw();
+  for (std::map<double, ResidualPlot*>::iterator it = m_residualPlots.begin(); it != m_residualPlots.end(); it++)
+    it->second->draw();
 }

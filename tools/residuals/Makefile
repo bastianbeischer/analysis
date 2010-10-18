@@ -5,8 +5,8 @@ INCLUDEDIR   := include
 TEMPDIR      := .tmp
 
 MAIN         := main.cc
-SOURCES      := DataChain.cc
-HEADERS      := DataChain.hh
+SOURCES      := DataChain.cc ResidualPlot.cc
+HEADERS      := DataChain.hh ResidualPlot.hh
 OBJECTS      := $(TEMPDIR)/$(MAIN:.cc=.o) $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=.o))
 
 # Internal
