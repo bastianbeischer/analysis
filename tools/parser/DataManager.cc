@@ -9,7 +9,7 @@
 #include <TFile.h>
 
 #include "Converter.hh"
-#include "Event.hh"
+#include "SimpleEvent.hh"
 #include "SingleFile.hh"
 
 DataManager::DataManager() :
@@ -75,7 +75,7 @@ void DataManager::initializeOutput()
 {
   m_outputFile = new TFile(qPrintable(m_outputFileName), "RECREATE");
   m_outputTree = new TTree("EventTree", "tree with simple events");
-  m_outputTree->Branch("event", "Event", &m_currentEvent); 
+  m_outputTree->Branch("SimpleEvent", "SimpleEvent", &m_currentEvent); 
 }
 
 void DataManager::saveAndCloseOutput()
@@ -91,7 +91,7 @@ void DataManager::processFiles()
   foreach(SingleFile* inputFile, m_inputFiles) {
     Converter converter(inputFile);
     for (unsigned int iEvent = 0; iEvent < inputFile->getNumberOfEvents(); iEvent++) {
-      m_currentEvent = converter.generateEvent(iEvent);
+      m_currentEvent = converter.generateSimpleEvent(iEvent);
       m_outputTree->Fill();
     }
   }

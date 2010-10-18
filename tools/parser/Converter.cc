@@ -3,7 +3,7 @@
 #include "SingleFile.hh"
 #include "RawEvent.h"
 #include "Hit.hh"
-#include "Event.hh"
+#include "SimpleEvent.hh"
 #include "DetectorID.h"
 #include "TrackerDataBlock.h"
 #include "TRDDataBlock.h"
@@ -41,14 +41,14 @@ Converter::~Converter()
   delete m_settings;
 }
 
-Event* Converter::generateEvent(unsigned int eventNo)
+SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
 {
   const RawEvent* event = m_file->getRawEvent(eventNo);
 
   // construct new simple event
   int eventId = event->GetEventID();
   int time = event->GetTime();
-  Event* simpleEvent = new Event(eventId, time);
+  SimpleEvent* simpleEvent = new SimpleEvent(eventId, time);
 
   // loop over all present detector IDs
   QList<DetectorID*> detIDs = event->GetIDs();

@@ -6,7 +6,7 @@
 
 class Hit;
 class TChain;
-class Event;
+class SimpleEvent;
 class Layer;
 class Track;
 class TrackFinding;
@@ -28,7 +28,7 @@ private:
 
 private:
   TChain*                    m_chain;
-  Event*                     m_event;
+  SimpleEvent*               m_event;
 
   std::map<double, Layer*>   m_layers;
   std::map<Layer*, Track*>   m_tracks;

@@ -3,8 +3,8 @@ TARGET     := libevent.so
 INCLUDEDIR := .
 TEMPDIR    := .tmp
 
-SOURCES = Event.cc Hit.cc Cluster.cc
-HEADERS = Event.hh Hit.hh Cluster.hh
+SOURCES = SimpleEvent.cc Hit.cc Cluster.cc
+HEADERS = SimpleEvent.hh Hit.hh Cluster.hh
 DICTS   = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=Dict.cc))
 OBJECTS = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=.o)) $(DICTS:.cc=.o)
 

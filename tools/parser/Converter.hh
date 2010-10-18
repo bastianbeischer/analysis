@@ -3,7 +3,7 @@
 
 class QSettings;
 class RawEvent;
-class Event;
+class SimpleEvent;
 class SingleFile;
 
 class Converter
@@ -14,7 +14,7 @@ public:
   ~Converter();
   
 public:
-  Event* generateEvent(unsigned int eventNo);
+  SimpleEvent* generateSimpleEvent(unsigned int eventNo);
 
 private:
   const SingleFile* m_file;

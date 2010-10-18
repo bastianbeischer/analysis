@@ -13,6 +13,7 @@ RCC_DIR     = ./.tmp
 # Forms
 FORMS =
 
+TOPLEVEL = ../..
 INCLUDEPATH += ../../event
 DEPENDPATH += $$INCLUDEPATH
 

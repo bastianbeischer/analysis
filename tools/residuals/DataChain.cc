@@ -1,7 +1,7 @@
 #include "DataChain.hh"
 
 #include "Cluster.hh"
-#include "Event.hh"
+#include "SimpleEvent.hh"
 #include "Track.hh"
 #include "Layer.hh"
 #include "TrackFinding.hh"
@@ -14,7 +14,7 @@
 #include <iostream>
 
 DataChain::DataChain() :
-  m_chain(new TChain("EventTree")),
+  m_chain(new TChain("SimpleEventTree")),
   m_event(0),
   m_trackFinding(new TrackFinding)
 {

@@ -1,18 +1,18 @@
-#ifndef Event_hh
-#define Event_hh
+#ifndef SimpleEvent_hh
+#define SimpleEvent_hh
 
 #include <TObject.h>
 
 #include "Hit.hh"
 
-class Event :
+class SimpleEvent :
   public TObject
 {
   
 public:
-  Event();
-  Event(int id, int time);
-  ~Event();
+  SimpleEvent();
+  SimpleEvent(int id, int time);
+  ~SimpleEvent();
 
 public:
   std::vector<Hit*>& hits()           {return m_hits;}
@@ -26,8 +26,8 @@ private:
   int               m_time;
   std::vector<Hit*> m_hits;
 
-  ClassDef( Event, 1 );
+  ClassDef( SimpleEvent, 1 );
   
 };
 
-#endif /* Event_hh */
+#endif /* SimpleEvent_hh */

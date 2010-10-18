@@ -5,7 +5,7 @@
 #include "PERDaixFiberModule.h"
 #include "PERDaixTRDModule.h"
 #include "PERDaixTOFModule.h"
-#include "Event.hh"
+#include "SimpleEvent.hh"
 
 #include <iostream>
 #include <QDebug>

@@ -16,7 +16,7 @@ INCLUDEFLAGS := -I$(INCLUDEDIR)
 INCLUDEFLAGS += -I$(shell root-config --incdir)
 LIBS         += $(shell root-config --libs)
 
-# SimpleEvent Lib
+# Other libraries
 TOPLEVEL     := ../..
 INCLUDEFLAGS += -I$(TOPLEVEL)/event -I$(TOPLEVEL)/tracking -I$(TOPLEVEL)/setup
 LIBS         += -L$(TOPLEVEL)/event -levent -L$(TOPLEVEL)/tracking -ltracking -L$(TOPLEVEL)/setup -lsetup
