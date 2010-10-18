@@ -19,7 +19,7 @@ LIBS         += $(shell root-config --libs)
 # Other libraries
 TOPLEVEL     := ../..
 INCLUDEFLAGS += -I$(TOPLEVEL)/event -I$(TOPLEVEL)/tracking -I$(TOPLEVEL)/setup
-LIBS         += -L$(TOPLEVEL)/event -levent -L$(TOPLEVEL)/tracking -ltracking -L$(TOPLEVEL)/setup -lsetup
+LIBS         += -L$(TOPLEVEL)/event -lSimpleEvent -L$(TOPLEVEL)/tracking -ltracking -L$(TOPLEVEL)/setup -lsetup
 
 # Compilers and flags
 CC           := gcc

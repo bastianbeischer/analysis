@@ -14,10 +14,10 @@ RCC_DIR     = ./.tmp
 FORMS =
 
 TOPLEVEL = ../..
-INCLUDEPATH += ../../event
+INCLUDEPATH += $$TOPLEVEL/event
 DEPENDPATH += $$INCLUDEPATH
 
-LIBS += -L../../event -levent
+LIBS += -L$$TOPLEVEL/event -lSimpleEvent
 
 # Headers
 HEADERS = Converter.hh \

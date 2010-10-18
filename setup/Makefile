@@ -11,7 +11,7 @@ OBJECTS = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=.o))
 CC           := gcc
 CXX          := g++
 INCLUDEFLAGS := -I$(INCLUDEDIR) -I../event -I$(shell root-config --incdir)
-LIBS         := $(shell root-config --libs)
+LIBS         := -L../event -lSimpleEvent $(shell root-config --libs)
 CCFLAGS      := -Wall -fPIC $(INCLUDEFLAGS) -MMD
 CXXFLAGS     := -Wall -fPIC $(INCLUDEFLAGS) -MMD
 

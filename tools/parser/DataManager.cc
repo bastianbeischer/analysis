@@ -74,8 +74,8 @@ void DataManager::addSingleFile(QString fileName)
 void DataManager::initializeOutput()
 {
   m_outputFile = new TFile(qPrintable(m_outputFileName), "RECREATE");
-  m_outputTree = new TTree("EventTree", "tree with simple events");
-  m_outputTree->Branch("SimpleEvent", "SimpleEvent", &m_currentEvent); 
+  m_outputTree = new TTree("SimpleEventTree", "tree with simple events");
+  m_outputTree->Branch("event", "SimpleEvent", &m_currentEvent); 
 }
 
 void DataManager::saveAndCloseOutput()
@@ -87,7 +87,7 @@ void DataManager::saveAndCloseOutput()
 
 void DataManager::processFiles()
 {
-  std::cout << "Starting conversion to Events." << std::endl;
+  std::cout << "Starting conversion to Simple Events." << std::endl;
   foreach(SingleFile* inputFile, m_inputFiles) {
     Converter converter(inputFile);
     for (unsigned int iEvent = 0; iEvent < inputFile->getNumberOfEvents(); iEvent++) {

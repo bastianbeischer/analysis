@@ -1,4 +1,4 @@
-TARGET     := libevent.so
+TARGET     := libSimpleEvent.so
 
 INCLUDEDIR := .
 TEMPDIR    := .tmp
