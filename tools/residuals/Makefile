@@ -7,8 +7,10 @@ INCLUDEDIR   := include
 TEMPDIR      := .tmp
 
 MAIN         := main.cc
-SOURCES      := DataChain.cc ResidualPlot.cc
-HEADERS      := DataChain.hh ResidualPlot.hh
+
+SOURCES      := DataChain.cc ResidualPlot.cc PlotHits.cc
+HEADERS      := DataChain.hh ResidualPlot.hh PlotHits.hh
+
 OBJECTS      := $(TEMPDIR)/$(MAIN:.cc=.o) $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=.o))
 
 # Internal
@@ -16,7 +18,7 @@ INCLUDEFLAGS := -I$(INCLUDEDIR)
 
 # ROOT
 INCLUDEFLAGS += -I$(shell root-config --incdir)
-LIBS         += $(shell root-config --libs)
+LIBS         += $(shell root-config --libs) -lHistPainter
 
 # Other libraries
 INCLUDEFLAGS += -I$(TOPLEVEL)/event -I$(TOPLEVEL)/tracking -I$(TOPLEVEL)/setup
