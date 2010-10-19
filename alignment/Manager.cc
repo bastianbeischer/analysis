@@ -8,7 +8,7 @@
 
 #include "millepede.h"
 
-//#include <QFile>
+#include <QFile>
 
 #include <iostream>
 
@@ -18,54 +18,41 @@ Manager::Manager() :
   m_matrix(0)
 {
   m_strategy = new Strategy();
-  m_parameters = m_strategy->GetParameters();
+  m_parameters = m_strategy->parameters();
 
 }
 
 Manager::~Manager()
 {
-  for (unsigned int i = 0; i < m_tracks.size(); i++)
-    delete m_tracks.at(i);
+  foreach(Track* track, m_tracks)
+    delete track;
   delete m_strategy;
   delete m_matrix;
 }
 
-Manager* Manager::GetInstance()
+Manager* Manager::instance()
 {
   if (!m_instance) m_instance = new Manager();
   return m_instance;
 }
 
-// void Manager::ChangeMethodTo(QString method)
-// {
-//   method.toLower();
-//   if (method == "straightline") {
-//     delete m_matrix;
-//     m_matrix = new MatrixStraightLine();
-//   }
-//   if (method == "twolines") {
-//     delete m_matrix;
-//     m_matrix = new MatrixTwoLines();
-//   }
-// }
+bool Manager::loadStrategyFromFile(QString fileName)
+{
+  return m_strategy->readFromFile(fileName);
+}
 
-// bool Manager::LoadStrategyFromFile(QString fileName)
-// {
-//   return m_strategy->ReadFromFile(fileName);
-// }
-
-void Manager::StartAlignment()
+void Manager::startAlignment()
 {
   if (!m_matrix) {
     std::cout << "Matrix has not been created!" << std::endl;
     return;
   }
 
-  m_strategy->DoInit();
-  m_matrix->DoInit();
+  m_strategy->init();
+  m_matrix->init();
 
-  for (unsigned int iIteration = 1; iIteration <= m_strategy->GetNumberOfGlobalIterations(); iIteration++) {
-    m_strategy->DoInit();
+  for (unsigned int iIteration = 1; iIteration <= m_strategy->numberOfGlobalIterations(); iIteration++) {
+    m_strategy->init();
 
     // Track* track = m_tracks.at(0);
     // unsigned int nHits = track->hits().size();
@@ -84,27 +71,27 @@ void Manager::StartAlignment()
     // float rhs;
     // CONSTF(rot, rhs = 0.);
 
-    for (unsigned int i = 0; i < m_tracks.size(); i++) {
-      m_matrix->FillMatrixFromTrack(m_tracks.at(i));
+    foreach(Track* track, m_tracks) {
+      m_matrix->fillMatrixFromTrack(track);
       FITLOC();
     }
 
-    FITGLO(m_parameters->GetParameterArray());
+    FITGLO(m_parameters->parameterArray());
   }
 }
 
-// bool Manager::WriteResultsToFile(QString fileName)
-// {
-//   QFile file(fileName);
-//   if (!file.open(QIODevice::WriteOnly))
-//     return false;
+bool Manager::writeResultsToFile(QString fileName)
+{
+  QFile file(fileName);
+  if (!file.open(QIODevice::WriteOnly))
+    return false;
 
-//   if (!m_strategy->WriteToFile(&file))
-//     return false;
-//   if (!m_parameters->WriteToFile(&file))
-//     return false;
+  if (!m_strategy->writeToFile(&file))
+    return false;
+  if (!m_parameters->writeToFile(&file))
+    return false;
 
-//   file.close();
+  file.close();
 
-//   return true;
-// }
+  return true;
+}

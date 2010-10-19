@@ -17,13 +17,13 @@ Matrix::~Matrix()
   delete[] m_localDerivatives;
 }
 
-void Matrix::DoInit()
+void Matrix::init()
 {
-  Manager* manager = Manager::GetInstance();
-  Strategy* strategy = manager->GetStrategy();
+  Manager* manager = Manager::instance();
+  Strategy* strategy = manager->strategy();
 
-  m_nGlobal = strategy->GetNumberOfGlobalParameters();
-  m_nLocal  = strategy->GetNumberOfLocalParameters();;
+  m_nGlobal = strategy->numberOfGlobalParameters();
+  m_nLocal  = strategy->numberOfLocalParameters();;
 
   delete[] m_globalDerivatives;
   delete[] m_localDerivatives;

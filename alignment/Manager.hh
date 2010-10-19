@@ -1,8 +1,8 @@
 #ifndef Manager_hh
 #define Manager_hh
 
-#include <vector>
-#include <string>
+#include <QVector>
+#include <QString>
 
 class Matrix;
 class Strategy;
@@ -17,18 +17,16 @@ class Manager
 public:
   ~Manager();
 
-  static Manager* GetInstance();
+  static Manager* instance();
 
-  Strategy*   GetStrategy() {return m_strategy;}
-  Parameters* GetParameters() {return m_parameters;}
+  Strategy*   strategy() {return m_strategy;}
+  Parameters* parameters() {return m_parameters;}
 
-  bool LoadStrategyFromFile(std::string fileName);
-  void StartAlignment();
-  bool WriteResultsToFile(std::string fileName = "output.txt");
+  bool loadStrategyFromFile(QString fileName);
+  void startAlignment();
+  bool writeResultsToFile(QString fileName = "output.txt");
 
-  void ChangeMethodTo(std::string method);
-
-  void AddTrack(Track* track) {m_tracks.push_back(track);}
+  void addTrack(Track* track) {m_tracks.push_back(track);}
 
 private:
   Manager();
@@ -40,7 +38,7 @@ private:
   Matrix*         m_matrix;
   Parameters*     m_parameters;
 
-  std::vector<Track*> m_tracks;
+  QVector<Track*> m_tracks;
 
 };
 

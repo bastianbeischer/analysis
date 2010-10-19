@@ -1,7 +1,7 @@
 #ifndef Strategy_hh
 #define Strategy_hh
 
-#include <vector>
+#include <QVector>
 
 class Parameters;
 class Constraint;
@@ -16,24 +16,22 @@ public:
   ~Strategy();
 
 public:
-  void                 DoInit();
+  void                 init();
 
-  Parameters*          GetParameters()               const {return m_parameters;}
-  unsigned int         GetNumberOfModules()          const {return m_nModules;}
-  unsigned int         GetNumberOfGlobalIterations() const {return m_nGlobalIterations;}
-  unsigned int         GetNumberOfGlobalParameters() const {return m_nGlobal;}
-  unsigned int         GetNumberOfLocalParameters()  const {return m_nLocal;}
-  float                GetLadderResolutionS()        const {return m_ladderResolutionS;}
-  float                GetLadderResolutionK()        const {return m_ladderResolutionK;}
-  float                GetFiberResolution()          const {return m_fiberResolution;}
+  Parameters*          parameters()               const {return m_parameters;}
+  unsigned int         numberOfModules()          const {return m_nModules;}
+  unsigned int         numberOfGlobalIterations() const {return m_nGlobalIterations;}
+  unsigned int         numberOfGlobalParameters() const {return m_nGlobal;}
+  unsigned int         numberOfLocalParameters()  const {return m_nLocal;}
+  float                fiberResolution()          const {return m_fiberResolution;}
 
-  bool                 ReadFromFile(QString fileName);
-  bool                 WriteToFile(QFile* file);
+  bool                 readFromFile(QString fileName);
+  bool                 writeToFile(QFile* file);
 
 private:
   Parameters*              m_parameters;
 
-  std::vector<Constraint*> m_constraints;
+  QVector<Constraint*>     m_constraints;
 
   unsigned int             m_nModules;
   unsigned int             m_nGlobal;

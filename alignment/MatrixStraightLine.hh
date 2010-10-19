@@ -11,7 +11,7 @@ public:
   ~MatrixStraightLine();
 
 public:
-  void FillMatrixFromTrack(Track* track);
+  void fillMatrixFromTrack(Track* track);
 
 };
 

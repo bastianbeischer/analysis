@@ -12,8 +12,8 @@ public:
   virtual ~Matrix();
 
 public:
-  virtual void FillMatrixFromTrack(Track* track) = 0;
-  void DoInit();
+  virtual void fillMatrixFromTrack(Track* track) = 0;
+  void init();
 
 protected:
   unsigned int m_nGlobal;

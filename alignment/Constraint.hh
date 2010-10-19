@@ -9,7 +9,7 @@ public:
   ~Constraint();
 
 public:
-  void Activate();
+  void activate();
 
 private:
   float* m_listOfCoefficients;

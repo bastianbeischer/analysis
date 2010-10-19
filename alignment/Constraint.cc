@@ -13,7 +13,7 @@ Constraint::~Constraint()
   delete [] m_listOfCoefficients;
 }
 
-void Constraint::Activate()
+void Constraint::activate()
 {
   CONSTF(m_listOfCoefficients, m_rhs);
 }
