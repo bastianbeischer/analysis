@@ -1,5 +1,5 @@
 .tmp
-lib*.so
+lib*.so*
 *.o
 /data
 /TAGS
