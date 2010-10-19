@@ -1,12 +1,12 @@
-#ifndef PEBS09_Constraint_h
-#define PEBS09_Constraint_h
+#ifndef Constraint_hh
+#define Constraint_hh
 
-class PEBS09_Constraint
+class Constraint
 {
 
 public:
-  PEBS09_Constraint();
-  ~PEBS09_Constraint();
+  Constraint();
+  ~Constraint();
 
 public:
   void Activate();
@@ -17,4 +17,4 @@ private:
   
 };
 
-#endif /* PEBS09_Constraint_h */
+#endif /* Constraint_hh */
