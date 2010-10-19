@@ -10,7 +10,7 @@ ClassImp(DataDescription);
 
 DataDescription::DataDescription()
 {
-  FILE* file = popen("git rev-parse HEAD", "r");
+  FILE* file = popen("git rev-parse HEAD | tr -d '\n'", "r");
   char line[128];
   std::stringstream stream;
   while (fgets(line, sizeof(line), file)) {
@@ -18,7 +18,7 @@ DataDescription::DataDescription()
   }
   pclose(file);
   m_softwareVersionHash = stream.str();
-  assert(m_softwareVersionHash.length() == 41);
+  assert(m_softwareVersionHash.length() == 40);
 }
 
 DataDescription::~DataDescription()
