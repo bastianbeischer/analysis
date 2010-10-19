@@ -10,7 +10,6 @@ class Parameters;
 class SimulationInterface;
 class TestbeamInterface;
 class Track;
-class Track;
 
 class Manager
 {
