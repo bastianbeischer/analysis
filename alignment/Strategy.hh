@@ -18,7 +18,7 @@ public:
 public:
   void                 DoInit();
 
-  Parameters* GetParameters()               const {return m_parameters;}
+  Parameters*          GetParameters()               const {return m_parameters;}
   unsigned int         GetNumberOfModules()          const {return m_nModules;}
   unsigned int         GetNumberOfGlobalIterations() const {return m_nGlobalIterations;}
   unsigned int         GetNumberOfGlobalParameters() const {return m_nGlobal;}
@@ -31,7 +31,7 @@ public:
   bool                 WriteToFile(QFile* file);
 
 private:
-  Parameters*     m_parameters;
+  Parameters*              m_parameters;
 
   std::vector<Constraint*> m_constraints;
 
