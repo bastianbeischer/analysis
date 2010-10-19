@@ -25,7 +25,7 @@ class DataDescription : public TObject
     std::string m_comment;
     std::string m_softwareVersionHash; //SHA1 hash of the latest commit
     std::vector<long> m_eventNumberOffset;
-    std::vector<std::string> m_runFilesNames;
+    std::vector<std::string> m_runFileNames;
 
   ClassDef( DataDescription, 1 );
 };
