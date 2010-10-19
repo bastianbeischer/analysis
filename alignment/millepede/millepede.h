@@ -1,7 +1,5 @@
-// $Id: millepede.h,v 1.2 2009/12/01 21:40:08 beischer Exp $
-
-#ifndef millepede1_h
-#define millepede1_h
+#ifndef millepede_h
+#define millepede_h
 
 extern "C" void initgl_( unsigned int& nagb, unsigned int& nalc, unsigned int& nstdev, int& iprlim );
 #define INITGL initgl_
@@ -33,5 +31,5 @@ extern "C" void initun_( unsigned int& nIter, float& otherVal );
 extern "C" void parglo_ ( float* par);
 #define PARGLO parglo_
 
-#endif /* millepede1_h */
+#endif /* millepede_h */
 
