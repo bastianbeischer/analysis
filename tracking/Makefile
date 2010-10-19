@@ -1,4 +1,5 @@
-TARGET     := libtracking.so
+LIBDIR     := ../lib
+TARGET     := $(LIBDIR)/libtracking.so
 
 INCLUDEDIR := .
 TEMPDIR    := .tmp
@@ -11,7 +12,7 @@ OBJECTS = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=.o))
 CC           := gcc
 CXX          := g++
 INCLUDEFLAGS := -I$(INCLUDEDIR) -I../event -I$(shell root-config --incdir)
-LIBS         := -L../event -lSimpleEvent $(shell root-config --libs)
+LIBS         := -L../lib -lSimpleEvent $(shell root-config --libs)
 CCFLAGS      := -Wall -fPIC $(INCLUDEFLAGS) -MMD
 CXXFLAGS     := -Wall -fPIC $(INCLUDEFLAGS) -MMD
 

@@ -1,4 +1,6 @@
-TARGET       := residuals
+TOPLEVEL     := ../..
+BINDIR       := $(TOPLEVEL)/bin
+TARGET       := $(BINDIR)/residuals
 
 SOURCEDIR    := src
 INCLUDEDIR   := include
@@ -17,9 +19,8 @@ INCLUDEFLAGS += -I$(shell root-config --incdir)
 LIBS         += $(shell root-config --libs)
 
 # Other libraries
-TOPLEVEL     := ../..
 INCLUDEFLAGS += -I$(TOPLEVEL)/event -I$(TOPLEVEL)/tracking -I$(TOPLEVEL)/setup
-LIBS         += -L$(TOPLEVEL)/event -lSimpleEvent -L$(TOPLEVEL)/tracking -ltracking -L$(TOPLEVEL)/setup -lsetup
+LIBS         += -L$(TOPLEVEL)/lib -lSimpleEvent -ltracking -lsetup
 
 # Compilers and flags
 CC           := gcc

@@ -3,8 +3,10 @@ TARGET = parser
 
 CONFIG += debug
 
+TOPLEVEL = ../..
+
 # Seperate source & build dirs
-DESTDIR     = ./
+DESTDIR     = $$TOPLEVEL/bin
 OBJECTS_DIR = ./.tmp
 MOC_DIR     = ./.tmp
 UI_DIR      = ./.tmp
@@ -13,11 +15,10 @@ RCC_DIR     = ./.tmp
 # Forms
 FORMS =
 
-TOPLEVEL = ../..
 INCLUDEPATH += $$TOPLEVEL/event
 DEPENDPATH += $$INCLUDEPATH
 
-LIBS += -L$$TOPLEVEL/event -lSimpleEvent
+LIBS += -L$$TOPLEVEL/lib -lSimpleEvent
 
 # Headers
 HEADERS = Converter.hh \
@@ -31,6 +32,6 @@ SOURCES = main.cc \
           SingleFile.cc
                   
 include(perdaix.pri)
-include(../../root.pri)
+include($$TOPLEVEL/root.pri)
 
 QMAKE_LFLAGS -= -Wl,--as-needed
