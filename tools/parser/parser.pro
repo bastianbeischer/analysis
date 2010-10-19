@@ -31,6 +31,6 @@ SOURCES = main.cc \
           SingleFile.cc
                   
 include(perdaix.pri)
-include(root.pri)
+include(../../root.pri)
 
 QMAKE_LFLAGS -= -Wl,--as-needed
