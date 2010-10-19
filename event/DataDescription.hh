@@ -3,17 +3,31 @@
 
 #include <TObject.h>
 
+#include <string>
+#include <vector>
+
 class DataDescription : public TObject
 {
-	public:
-		DataDescription();
-		~DataDescription();
-	private:
-		char m_softwareVersionHash[41]; // 40 chars + '\0', SHA1 hash of the latest commit
+  public:
+    DataDescription();
+    ~DataDescription();
 
+    void setSoftwareVersionHash(const std::string& version) {m_softwareVersionHash = version;}
+    const std::string& softwareVersionHash() const {return m_softwareVersionHash;}
+    
+    long numberOfRuns() const;
+    int timeOfRun(int) const;
+    
+    long eventNumberInRunFile(long eventNumber) const;
+    const std::string& runFileForEventNumber(long eventNumber) const;
+    
+  private:
+    std::string m_comment;
+    std::string m_softwareVersionHash; //SHA1 hash of the latest commit
+    std::vector<long> m_eventNumberOffset;
+    std::vector<std::string> m_runFilesNames;
 
-
-	ClassDef( DataDescription, 1 );
+  ClassDef( DataDescription, 1 );
 };
 
 #endif
