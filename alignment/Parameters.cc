@@ -6,7 +6,7 @@
 #include <cassert>
 #include <iostream>
 
-#include <QFile>
+//#include <QFile>
 
 Parameters::Parameters() :
   m_nPar(0),
@@ -78,54 +78,54 @@ void Parameters::ReInitParameterArrays(unsigned int nPar, unsigned int nAngles)
   ConstructIndexMap();
 }
 
-bool Parameters::WriteToFile(QFile* file)
-{
-  // for (int iHybrid = 0; iHybrid <= 1; iHybrid++) {
-  //   QString values[2];
-  //   for (int iSipm = 0; iSipm <= 1; iSipm++) {
-  //     values[iSipm] = QString("%1").arg(m_parameters[m_indexMap[ArrayPair(iHybrid,iSipm)]]);
-  //   }
-  //   QString hybrid = QString("%1").arg(iHybrid);
-  //   QString line = QString("%1\t%2\t%3\n").arg(hybrid, values[0], values[1]);
-  //   file->write(qPrintable(line));
-  // }
-  for (int iHybrid = 30; iHybrid <= 37; iHybrid++) {
-    QString values[4];
-    for (int iSipm = 0; iSipm <= 3; iSipm++) {
-      values[iSipm] = QString("%1").arg(m_parameters[m_indexMap[ArrayPair(iHybrid,iSipm)]], 15);
-    }
-    QString hybrid = QString("%1").arg(iHybrid);
-    QString line = QString("%1\t%2\t%3\t%4\t%5\n").arg(hybrid, values[0], values[1], values[2], values[3]);
-    file->write(qPrintable(line));
-  }
-  for (int iHybrid = 20; iHybrid <= 23; iHybrid++) {
-    QString values[4];
-    for (int iSipm = 0; iSipm <= 3; iSipm++) {
-      values[iSipm] = QString("%1").arg(m_parameters[m_indexMap[ArrayPair(iHybrid,iSipm)]], 15);
-    }
-    QString hybrid = QString("%1").arg(iHybrid);
-    QString line = QString("%1\t%2\t%3\t%4\t%5\n").arg(hybrid, values[0], values[1], values[2], values[3]);
-    file->write(qPrintable(line));
-  }
+// bool Parameters::WriteToFile(QFile* file)
+// {
+//   // for (int iHybrid = 0; iHybrid <= 1; iHybrid++) {
+//   //   QString values[2];
+//   //   for (int iSipm = 0; iSipm <= 1; iSipm++) {
+//   //     values[iSipm] = QString("%1").arg(m_parameters[m_indexMap[ArrayPair(iHybrid,iSipm)]]);
+//   //   }
+//   //   QString hybrid = QString("%1").arg(iHybrid);
+//   //   QString line = QString("%1\t%2\t%3\n").arg(hybrid, values[0], values[1]);
+//   //   file->write(qPrintable(line));
+//   // }
+//   for (int iHybrid = 30; iHybrid <= 37; iHybrid++) {
+//     QString values[4];
+//     for (int iSipm = 0; iSipm <= 3; iSipm++) {
+//       values[iSipm] = QString("%1").arg(m_parameters[m_indexMap[ArrayPair(iHybrid,iSipm)]], 15);
+//     }
+//     QString hybrid = QString("%1").arg(iHybrid);
+//     QString line = QString("%1\t%2\t%3\t%4\t%5\n").arg(hybrid, values[0], values[1], values[2], values[3]);
+//     file->write(qPrintable(line));
+//   }
+//   for (int iHybrid = 20; iHybrid <= 23; iHybrid++) {
+//     QString values[4];
+//     for (int iSipm = 0; iSipm <= 3; iSipm++) {
+//       values[iSipm] = QString("%1").arg(m_parameters[m_indexMap[ArrayPair(iHybrid,iSipm)]], 15);
+//     }
+//     QString hybrid = QString("%1").arg(iHybrid);
+//     QString line = QString("%1\t%2\t%3\t%4\t%5\n").arg(hybrid, values[0], values[1], values[2], values[3]);
+//     file->write(qPrintable(line));
+//   }
 
-  // for (unsigned int i = 0; i < m_nPar; i++) {
-  //   int index = i;
-  //   QMap<ArrayPair,int>::iterator it = qFind(m_indexMap.begin(), m_indexMap.end(), index);
-  //   int hybrid = 0, sipm = 0;
-  //   if (it != m_indexMap.end()) {
-  //     hybrid = it.key().first;
-  //     sipm = it.key().second;
-  //   }
-  //   //    std::cout << "hybrid: " << hybrid << "  sipm: " << sipm << " index: " << i << " parameter: " << m_parameters[i] << std::endl;
-  //   // QString hybridString = QString("%1").arg(hybrid);
-  //   // QString sipmString = QString("%1").arg(sipm);
-  //   //    QString parameterString = QString("%1").arg(m_parameters[i]);
+//   // for (unsigned int i = 0; i < m_nPar; i++) {
+//   //   int index = i;
+//   //   QMap<ArrayPair,int>::iterator it = qFind(m_indexMap.begin(), m_indexMap.end(), index);
+//   //   int hybrid = 0, sipm = 0;
+//   //   if (it != m_indexMap.end()) {
+//   //     hybrid = it.key().first;
+//   //     sipm = it.key().second;
+//   //   }
+//   //   //    std::cout << "hybrid: " << hybrid << "  sipm: " << sipm << " index: " << i << " parameter: " << m_parameters[i] << std::endl;
+//   //   // QString hybridString = QString("%1").arg(hybrid);
+//   //   // QString sipmString = QString("%1").arg(sipm);
+//   //   //    QString parameterString = QString("%1").arg(m_parameters[i]);
     
-  //   QString line = QString("%1\t%2\t%3\n").arg(hybridString,sipmString,parameterString);
-  //   file->write(qPrintable(line));
-  // }
-  return true;
-}
+//   //   QString line = QString("%1\t%2\t%3\n").arg(hybridString,sipmString,parameterString);
+//   //   file->write(qPrintable(line));
+//   // }
+//   return true;
+// }
 
 void Parameters::ConstructIndexMap()
 {

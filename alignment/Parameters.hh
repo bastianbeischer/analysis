@@ -2,12 +2,12 @@
 #define Parameters_hh
 
 #include <cassert>
-#include <QMap>
-#include <QPair>
+#include <map>
+#include <utility>
 
 class QFile;
 
-typedef QPair<int,int> ArrayPair;
+typedef std::pair<int,int> ArrayPair;
 
 class Parameters
 {
@@ -47,7 +47,7 @@ private:
   float*       m_parameters;
   float*       m_parameterSigma;
 
-  QMap<ArrayPair,int> m_indexMap;
+  std::map<ArrayPair,int> m_indexMap;
 
 };
 

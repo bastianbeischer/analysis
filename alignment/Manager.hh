@@ -2,7 +2,7 @@
 #define Manager_hh
 
 #include <vector>
-#include <QString>
+#include <string>
 
 class Matrix;
 class Strategy;
@@ -21,14 +21,12 @@ public:
 
   Strategy*   GetStrategy() {return m_strategy;}
   Parameters* GetParameters() {return m_parameters;}
-  SimulationInterface* GetSimulationInterface() {return m_simulationInterface;}
-  TestbeamInterface*   GetTestbeamInterface() {return m_testbeamInterface;}
 
-  bool LoadStrategyFromFile(QString fileName);
+  bool LoadStrategyFromFile(std::string fileName);
   void StartAlignment();
-  bool WriteResultsToFile(QString fileName = "output.txt");
+  bool WriteResultsToFile(std::string fileName = "output.txt");
 
-  void ChangeMethodTo(QString method);
+  void ChangeMethodTo(std::string method);
 
   void AddTrack(Track* track) {m_tracks.push_back(track);}
 
@@ -41,8 +39,6 @@ private:
   Strategy*       m_strategy;
   Matrix*         m_matrix;
   Parameters*     m_parameters;
-  SimulationInterface*     m_simulationInterface;
-  TestbeamInterface*       m_testbeamInterface;
 
   std::vector<Track*> m_tracks;
 

@@ -4,14 +4,11 @@
 #include "Strategy.hh"
 #include "Parameters.hh"
 #include "MatrixStraightLine.hh"
-#include "MatrixTwoLines.hh"
-#include "SimulationInterface.hh"
-#include "TestbeamInterface.hh"
 #include "Track.hh"
 
 #include "millepede.h"
 
-#include <QFile>
+//#include <QFile>
 
 #include <iostream>
 
@@ -21,8 +18,6 @@ Manager::Manager() :
   m_matrix(0)
 {
   m_strategy = new Strategy();
-  m_simulationInterface = new SimulationInterface();
-  m_testbeamInterface = new TestbeamInterface();
   m_parameters = m_strategy->GetParameters();
 
 }
@@ -41,23 +36,23 @@ Manager* Manager::GetInstance()
   return m_instance;
 }
 
-void Manager::ChangeMethodTo(QString method)
-{
-  method.toLower();
-  if (method == "straightline") {
-    delete m_matrix;
-    m_matrix = new MatrixStraightLine();
-  }
-  if (method == "twolines") {
-    delete m_matrix;
-    m_matrix = new MatrixTwoLines();
-  }
-}
+// void Manager::ChangeMethodTo(QString method)
+// {
+//   method.toLower();
+//   if (method == "straightline") {
+//     delete m_matrix;
+//     m_matrix = new MatrixStraightLine();
+//   }
+//   if (method == "twolines") {
+//     delete m_matrix;
+//     m_matrix = new MatrixTwoLines();
+//   }
+// }
 
-bool Manager::LoadStrategyFromFile(QString fileName)
-{
-  return m_strategy->ReadFromFile(fileName);
-}
+// bool Manager::LoadStrategyFromFile(QString fileName)
+// {
+//   return m_strategy->ReadFromFile(fileName);
+// }
 
 void Manager::StartAlignment()
 {
@@ -98,18 +93,18 @@ void Manager::StartAlignment()
   }
 }
 
-bool Manager::WriteResultsToFile(QString fileName)
-{
-  QFile file(fileName);
-  if (!file.open(QIODevice::WriteOnly))
-    return false;
+// bool Manager::WriteResultsToFile(QString fileName)
+// {
+//   QFile file(fileName);
+//   if (!file.open(QIODevice::WriteOnly))
+//     return false;
 
-  if (!m_strategy->WriteToFile(&file))
-    return false;
-  if (!m_parameters->WriteToFile(&file))
-    return false;
+//   if (!m_strategy->WriteToFile(&file))
+//     return false;
+//   if (!m_parameters->WriteToFile(&file))
+//     return false;
 
-  file.close();
+//   file.close();
 
-  return true;
-}
+//   return true;
+// }
