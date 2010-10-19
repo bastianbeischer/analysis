@@ -76,6 +76,9 @@ bool TrackFinding::isInCorridor(Hit* hit) const
   assert(m_track);
   TVector3 pos = hit->position();
   double resolution = hit->resolutionEstimate();
-  return (fabs(pos.x() - m_track->x(pos.z())) / resolution < 5);
+  int maxPull = 10;
+  if (hit->type() == Hit::trd)
+    maxPull = 5;
+  return (fabs(pos.x() - m_track->x(pos.z())) / resolution < maxPull);
 }
 
