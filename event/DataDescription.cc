@@ -26,30 +26,30 @@ DataDescription::~DataDescription()
 
 long DataDescription::numberOfRuns() const
 {
-	//TODO
-	return 0;
+  //TODO
+  return 0;
 }
 
 int DataDescription::timeOfRun(int) const
 {
-	//TODO
-	return 0;
+  //TODO
+  return 0;
 }
     
 
 long DataDescription::eventNumberInRunFile(long eventNumber) const
 {
-	//TODO
-	return 0;
+  //TODO
+  return 0;
 }
 
 const std::string& DataDescription::runFileForEventNumber(long eventNumber) const
 {
-	int i = 0;
-	for (; i < numberOfRuns(); ++i) {
-		if (m_eventNumberOffset[i] >= eventNumber)
-			break;
-	}
-	return m_runFileNames[i];
+  int i = 0;
+  for (; i < numberOfRuns(); ++i) {
+    if (m_eventNumberOffset[i] >= eventNumber)
+      break;
+  }
+  return m_runFileNames[i];
 }
 
