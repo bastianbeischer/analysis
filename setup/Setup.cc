@@ -11,6 +11,8 @@ Setup::Setup()
 
 Setup::~Setup()
 {
+  foreach(DetectorElement* element, m_elements)
+    delete element;
 }
 
 Setup* Setup::instance()

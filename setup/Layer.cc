@@ -21,8 +21,6 @@ Layer::Layer(double z) :
 
 Layer::~Layer()
 {
-  for (QMap<unsigned short, SiPMArray*>::iterator it = m_arrays.begin(); it != m_arrays.end(); it++)
-    delete it.value();
 }
 
 void Layer::addHitToArray(Hit* hit)
@@ -31,21 +29,20 @@ void Layer::addHitToArray(Hit* hit)
   Setup* setup = Setup::instance();
   SiPMArray* array = static_cast<SiPMArray*>(setup->element(detId));
   array->addHit(hit);
-  m_arrays[detId] = array;
+  m_arrays.push_back(array);
 }
 
 void Layer::clearArrays()
 {
-  for (QMap<unsigned short, SiPMArray*>::iterator it = m_arrays.begin(); it != m_arrays.end(); it++) {
-    it.value()->clearHits();
-  }
+  foreach(SiPMArray* array, m_arrays)
+    array->clearHits();
 }
 
 QVector<Cluster*> Layer::clusters()
 {
   QVector<Cluster*> allClusters;
-  for (QMap<unsigned short, SiPMArray*>::iterator it = m_arrays.begin(); it != m_arrays.end(); it++) {
-    QVector<Cluster*> localClusters = it.value()->findClusters();
+  foreach(SiPMArray* array, m_arrays) {
+    QVector<Cluster*> localClusters = array->findClusters();
     foreach(Cluster* cluster, localClusters)
       allClusters.push_back(cluster);
   }
@@ -75,9 +72,8 @@ const char* Layer::printInfo()
   std::stringstream stream;
 
   stream << nArrays() << "arrays: ";
-  for (QMap<unsigned short, SiPMArray*>::iterator it = m_arrays.begin(); it != m_arrays.end(); it++) {
-    stream << it.value()->nHits() << " ";
-  }  
+  foreach(SiPMArray* array, m_arrays)
+    stream << array->nHits() << " ";
 
   return stream.str().c_str();
 }
