@@ -4,8 +4,8 @@ TARGET     := $(LIBDIR)/libsetup.so
 INCLUDEDIR := .
 TEMPDIR    := .tmp
 
-SOURCES = Layer.cc SiPMArray.cc
-HEADERS = Layer.hh SiPMArray.hh 
+SOURCES = Setup.cc Layer.cc SiPMArray.cc
+HEADERS = Setup.hh Layer.hh SiPMArray.hh 
 OBJECTS = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=.o))
 
 # Compilers and Flags
