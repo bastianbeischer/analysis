@@ -1,13 +1,16 @@
 #ifndef SiPMArray_hh
 #define SiPMArray_hh
 
-#include <map>
+#include <QVector>
+#include <QMap>
 
+#include "DetectorElement.hh"
 #include "Hit.hh"
 
 class Cluster;
 
-class SiPMArray
+class SiPMArray :
+  public DetectorElement
 {
   
 public:
@@ -16,16 +19,17 @@ public:
   ~SiPMArray();
   
 public:
-  void addHit(Hit* hit) {m_hits[hit->channel()] = hit;}
-  void clearHits() {m_hits.clear();}
+  QVector<Cluster*> findClusters(); // these clusters have to be deleted by hand!
 
-  std::vector<Cluster*> findClusters();
-  unsigned short nHits() const {return m_hits.size();}
+public:
+  void              addHit(Hit* hit) {m_hits[hit->channel()] = hit;}
+  void              clearHits()      {m_hits.clear();}
+
+public:
+  unsigned short    nHits() const {return m_hits.size();}
 
 private:
-  unsigned short                 m_detId;
-
-  std::map<unsigned short, Hit*> m_hits;
+  QMap<unsigned short, Hit*> m_hits; // map from channel to Hit
   
 };
 
