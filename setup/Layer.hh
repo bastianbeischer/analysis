@@ -31,7 +31,7 @@ public:
   const char*       printInfo();
 
 private:
-  double                               m_z;
+  double                           m_z;
 
   QMap<unsigned short, SiPMArray*> m_arrays;
   
