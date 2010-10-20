@@ -20,8 +20,8 @@ Layer::Layer(double z) :
 
 Layer::~Layer()
 {
-  for (std::map<unsigned short, SiPMArray*>::iterator it = m_arrays.begin(); it != m_arrays.end(); it++)
-    delete it->second;
+  for (QMap<unsigned short, SiPMArray*>::iterator it = m_arrays.begin(); it != m_arrays.end(); it++)
+    delete it.value();
 }
 
 void Layer::addHitToArray(Hit* hit)
@@ -34,29 +34,29 @@ void Layer::addHitToArray(Hit* hit)
 
 void Layer::clearArrays()
 {
-  for (std::map<unsigned short, SiPMArray*>::iterator it = m_arrays.begin(); it != m_arrays.end(); it++) {
-    it->second->clearHits();
+  for (QMap<unsigned short, SiPMArray*>::iterator it = m_arrays.begin(); it != m_arrays.end(); it++) {
+    it.value()->clearHits();
   }
 }
 
-std::vector<Cluster*> Layer::clusters()
+QVector<Cluster*> Layer::clusters()
 {
-  std::vector<Cluster*> allClusters;
-  for (std::map<unsigned short, SiPMArray*>::iterator it = m_arrays.begin(); it != m_arrays.end(); it++) {
-    std::vector<Cluster*> localClusters = it->second->findClusters();
-    for (unsigned int i = 0; i < localClusters.size(); i++)
-      allClusters.push_back(localClusters.at(i));
+  QVector<Cluster*> allClusters;
+  for (QMap<unsigned short, SiPMArray*>::iterator it = m_arrays.begin(); it != m_arrays.end(); it++) {
+    QVector<Cluster*> localClusters = it.value()->findClusters();
+    foreach(Cluster* cluster, localClusters)
+      allClusters.push_back(cluster);
   }
   return allClusters;
 }
 
 Cluster* Layer::bestCluster()
 {
-  std::vector<Cluster*> allClusters = clusters();
+  QVector<Cluster*> allClusters = clusters();
 
   int maxAmplitude = 0;
   Cluster* bestCluster = 0;
-  for (std::vector<Cluster*>::iterator it = allClusters.begin(); it != allClusters.end(); it++) {
+  for (QVector<Cluster*>::iterator it = allClusters.begin(); it != allClusters.end(); it++) {
     Cluster* cluster = (*it);
     int amplitude = cluster->signalHeight();
     if (amplitude > maxAmplitude) {
@@ -73,8 +73,8 @@ const char* Layer::printInfo()
   std::stringstream stream;
 
   stream << nArrays() << "arrays: ";
-  for (std::map<unsigned short, SiPMArray*>::iterator it = m_arrays.begin(); it != m_arrays.end(); it++) {
-    stream << it->second->nHits() << " ";
+  for (QMap<unsigned short, SiPMArray*>::iterator it = m_arrays.begin(); it != m_arrays.end(); it++) {
+    stream << it.value()->nHits() << " ";
   }  
 
   return stream.str().c_str();

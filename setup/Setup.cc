@@ -1,6 +1,6 @@
 #include "Setup.hh"
 
-#include "DetectorElements.hh"
+#include "DetectorElement.hh"
 
 Setup* Setup::m_instance = 0;
 
@@ -18,6 +18,7 @@ Setup* Setup::instance()
   return m_instance;
 }
 
+// this should differentiate between types of detector elements soon
 DetectorElement* Setup::element(unsigned short id)
 {
   if (!m_elements[id]) m_elements[id] = new DetectorElement;

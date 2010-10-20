@@ -1,8 +1,8 @@
 #ifndef Layer_hh
 #define Layer_hh
 
-#include <vector>
-#include <map>
+#include <QVector>
+#include <QMap>
 
 class SiPMArray;
 class Cluster;
@@ -17,7 +17,7 @@ public:
   ~Layer();
   
 public:
-  std::vector<Cluster*> clusters();
+  QVector<Cluster*> clusters();
   Cluster*              bestCluster();
 
 public:
@@ -33,7 +33,7 @@ public:
 private:
   double                               m_z;
 
-  std::map<unsigned short, SiPMArray*> m_arrays;
+  QMap<unsigned short, SiPMArray*> m_arrays;
   
 };
 

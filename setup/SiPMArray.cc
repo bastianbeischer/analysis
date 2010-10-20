@@ -6,12 +6,12 @@
 #include <iostream>
 
 SiPMArray::SiPMArray() :
-  m_detId(0)
+  DetectorElement()
 {
 }
 
 SiPMArray::SiPMArray(unsigned short detId) :
-  m_detId(detId)
+  DetectorElement(detId)
 {
 }
 
@@ -19,12 +19,12 @@ SiPMArray::~SiPMArray()
 {
 }
 
-std::vector<Cluster*> SiPMArray::findClusters()
+QVector<Cluster*> SiPMArray::findClusters()
 {
   const int seedThreshold = 500;
   const int neighbourThreshold = 250;
 
-  std::vector<Cluster*> clusters;
+  QVector<Cluster*> clusters;
   for (unsigned short channel = 0; channel < 32; channel++) {
     if (m_hits[channel]) {
       Hit* hit = m_hits[channel];
