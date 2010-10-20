@@ -1,4 +1,5 @@
 #include "DataDescription.hh"
+#include "SimpleEvent.hh"
 
 #include <stdio.h>
 #include <assert.h>
@@ -6,9 +7,13 @@
 #include <iostream>
 #include <sstream>
 
+#include <TFile.h>
+#include <TTree.h>
+
 ClassImp(DataDescription);
 
 DataDescription::DataDescription()
+  : m_numberOfRuns(0)
 {
   FILE* file = popen("git rev-parse HEAD", "r");
   char line[128];
@@ -23,12 +28,6 @@ DataDescription::DataDescription()
 
 DataDescription::~DataDescription()
 {}
-
-long DataDescription::numberOfRuns() const
-{
-  //TODO
-  return 0;
-}
 
 int DataDescription::timeOfRun(int) const
 {
@@ -53,3 +52,27 @@ const std::string& DataDescription::runFileForEventNumber(long eventNumber) cons
   return m_runFileNames[i];
 }
 
+    
+void DataDescription::addRunFile(const std::string& fileName)
+{
+  TFile file(fileName.c_str());
+  if (!file.IsZombie()) {
+    TTree* tree = static_cast<TTree*>(file.Get("SimpleEventTree"));
+    SimpleEvent* event = 0;
+    tree->SetBranchAddress("event", &event);
+    m_runFileNames.push_back(fileName);
+    long nEvents = tree->GetEntries();
+    m_eventNumberOffset.push_back(
+        m_numberOfRuns == 0 ?
+        nEvents :
+        nEvents + m_eventNumberOffset[m_numberOfRuns-1]);
+    file.Close();
+    ++m_numberOfRuns;
+  }
+}
+    
+long DataDescription::numberOfEventsInRunFile(int i) const
+{
+  assert(i < m_numberOfRuns);
+  return i == 0 ? m_eventNumberOffset[i] : m_eventNumberOffset[i] - m_eventNumberOffset[i-1];
+}
