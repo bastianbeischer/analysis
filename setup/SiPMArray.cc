@@ -34,13 +34,13 @@ QVector<Cluster*> SiPMArray::findClusters()
         cluster->addHit(hit);
 
         // look to the right
-        unsigned short rightCursor = channel+1;
+        short rightCursor = channel+1;
         while(rightCursor < 32 && m_hits[rightCursor] && m_hits[rightCursor]->signalHeight() > neighbourThreshold) {
           cluster->addHit(m_hits[rightCursor]);
           rightCursor++;
         }
         // look to the left
-        unsigned short leftCursor = channel-1;
+        short leftCursor = channel-1;
         while(leftCursor >=0 && m_hits[leftCursor] && m_hits[leftCursor]->signalHeight() > neighbourThreshold) {
           cluster->addHit(m_hits[leftCursor]);
           leftCursor++;
