@@ -19,14 +19,17 @@ public:
   ~SiPMArray();
   
 public:
-  void addHit(Hit* hit) {m_hits[hit->channel()] = hit;}
-  void clearHits() {m_hits.clear();}
+  QVector<Cluster*> findClusters(); // these clusters have to be deleted by hand!
 
-  QVector<Cluster*> findClusters();
-  unsigned short nHits() const {return m_hits.size();}
+public:
+  void              addHit(Hit* hit) {m_hits[hit->channel()] = hit;}
+  void              clearHits()      {m_hits.clear();}
+
+public:
+  unsigned short    nHits() const {return m_hits.size();}
 
 private:
-  QMap<unsigned short, Hit*> m_hits;
+  QMap<unsigned short, Hit*> m_hits; // map from channel to Hit
   
 };
 

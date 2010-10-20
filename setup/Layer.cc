@@ -5,6 +5,7 @@
 #include <sstream>
 
 #include "Cluster.hh"
+#include "Setup.hh"
 #include "SiPMArray.hh"
 #include "Hit.hh"
 
@@ -27,9 +28,10 @@ Layer::~Layer()
 void Layer::addHitToArray(Hit* hit)
 {
   unsigned short detId = hit->detId() - hit->channel();
-  if (!m_arrays[detId])
-    m_arrays[detId] = new SiPMArray(detId);
-  m_arrays[detId]->addHit(hit);
+  Setup* setup = Setup::instance();
+  SiPMArray* array = static_cast<SiPMArray*>(setup->element(detId));
+  array->addHit(hit);
+  m_arrays[detId] = array;
 }
 
 void Layer::clearArrays()

@@ -13,6 +13,7 @@ public:
 
   static Setup* instance();
   
+public:
   DetectorElement* element(unsigned short id);
 
 private:

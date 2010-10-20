@@ -18,17 +18,17 @@ public:
   
 public:
   QVector<Cluster*> clusters();
-  Cluster*              bestCluster();
+  Cluster*          bestCluster();
 
 public:
-  void addHitToArray(Hit* hit);
-  void clearArrays();
+  void              addHitToArray(Hit* hit);
+  void              clearArrays();
 
 public:
-  double         z()       const {return m_z;}
-  unsigned short nArrays() const {return m_arrays.size();}
+  double            z()       const {return m_z;}
+  unsigned short    nArrays() const {return m_arrays.size();}
 
-  const char* printInfo();
+  const char*       printInfo();
 
 private:
   double                               m_z;
