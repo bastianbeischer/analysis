@@ -3,7 +3,7 @@
 #include "Matrix.hh"
 #include "Strategy.hh"
 #include "Parameters.hh"
-#include "MatrixStraightLine.hh"
+#include "Matrix.hh"
 #include "Track.hh"
 
 #include "millepede.h"

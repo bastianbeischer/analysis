@@ -9,10 +9,10 @@ class Matrix
 
 public:
   Matrix();
-  virtual ~Matrix();
+  ~Matrix();
 
 public:
-  virtual void fillMatrixFromTrack(Track* track) = 0;
+  void fillMatrixFromTrack(Track* track);
   void init();
 
 protected:
