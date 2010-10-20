@@ -24,6 +24,7 @@ Parameters::~Parameters()
 {
   delete[] m_parameters;
   delete[] m_parameterSigma;
+  delete[] m_angles;
 }
 
 void Parameters::setMillepedeParameters()
