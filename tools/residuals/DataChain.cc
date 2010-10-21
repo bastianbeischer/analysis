@@ -88,7 +88,7 @@ void DataChain::process()
     Setup* setup = Setup::instance();
     for (unsigned int i = 0; i < hits.size(); i++) {
       Hit* hit = hits.at(i);
-      if (hit->type() == Hit::tracker) {
+      if (hit->type() == Hit::tracker || hit->type() == Hit::trd) {
         double z = hit->position().z();
         Layer* layer = setup->layer(z);
         layer->addHitToDetector(hit);
@@ -114,14 +114,14 @@ void DataChain::process()
       layer = setup->nextLayer();
     }
 
-    // trd hits
-    hits = applyCuts(hits);
-    for (std::vector<Hit*>::iterator it = hits.begin(); it != hits.end(); it++) {
-      Hit* hit = *it;
-      if (hit->type() == Hit::trd) {
-        clusters.push_back(hit);
-      }
-    }
+    // // trd hits
+    // hits = applyCuts(hits);
+    // for (std::vector<Hit*>::iterator it = hits.begin(); it != hits.end(); it++) {
+    //   Hit* hit = *it;
+    //   if (hit->type() == Hit::trd) {
+    //     clusters.push_back(hit);
+    //   }
+    // }
 
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
