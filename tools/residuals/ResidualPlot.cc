@@ -22,7 +22,7 @@ ResidualPlot::ResidualPlot(double z) :
   m_residuals2D(0)
 {
   char title[128];
-  sprintf(title, "layer_%.2f", m_z);
+  sprintf(title, "layer_%.0f", m_z);
   m_residuals2D = new TH2I(title, title, 100, -100, 100, 300, -10, 10);
 }
 
@@ -50,7 +50,7 @@ void ResidualPlot::fill(Hit* hit, Track* track)
   detId -= hit->channel();
   if (!m_residuals1D[detId]) {
     char title[128];
-    sprintf(title, "%x", detId);
+    sprintf(title, "%.0f - %x", m_z, detId);
     m_residuals1D[detId] = new TH1I(title, title, 100, -10, 10);
   }
 
