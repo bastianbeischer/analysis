@@ -6,9 +6,8 @@
 class Layer;
 class DetectorElement;
 
-typedef QMap<double,Layer*>::iterator LayerIterator;
-typedef QMap<unsigned short,DetectorElement*>::iterator ElementIterator;
-
+// typedef QMap<double,Layer*>::iterator LayerIterator;
+// typedef QMap<unsigned short,DetectorElement*>::iterator ElementIterator;
 
 class Setup
 {
