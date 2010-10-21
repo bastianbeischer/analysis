@@ -2,7 +2,7 @@
 
 #include "Layer.hh"
 #include "DetectorElement.hh"
-#include "SiPMArray.hh"
+#include "SipmArray.hh"
 
 Setup* Setup::m_instance = 0;
 
@@ -68,6 +68,6 @@ Layer* Setup::layer(double z)
 // this should differentiate between types of detector elements soon
 DetectorElement* Setup::element(unsigned short id)
 {
-  if (!m_elements[id]) m_elements[id] = new SiPMArray;
+  if (!m_elements[id]) m_elements[id] = new SipmArray;
   return m_elements[id];
 }

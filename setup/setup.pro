@@ -13,12 +13,12 @@ RCC_DIR     = ./.tmp
 SOURCES += DetectorElement.cc \
            Layer.cc \
            Setup.cc \
-           SiPMArray.cc
+           SipmArray.cc
 
 HEADERS += DetectorElement.hh \
            Layer.hh \
            Setup.hh \
-           SiPMArray.hh
+           SipmArray.hh
 
 INCLUDEPATH += $$TOPLEVEL/event
 

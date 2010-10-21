@@ -1,5 +1,5 @@
-#ifndef SiPMArray_hh
-#define SiPMArray_hh
+#ifndef SipmArray_hh
+#define SipmArray_hh
 
 #include <QVector>
 #include <QMap>
@@ -9,14 +9,14 @@
 
 class Cluster;
 
-class SiPMArray :
+class SipmArray :
   public DetectorElement
 {
   
 public:
-  SiPMArray();
-  SiPMArray(unsigned short detId);
-  ~SiPMArray();
+  SipmArray();
+  SipmArray(unsigned short detId);
+  ~SipmArray();
   
 public:
   QVector<Cluster*> findClusters() const; // these clusters have to be deleted by hand!
@@ -33,4 +33,4 @@ private:
   
 };
 
-#endif /* SiPMArray_hh */
+#endif /* SipmArray_hh */

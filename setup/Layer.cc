@@ -6,7 +6,7 @@
 
 #include "Cluster.hh"
 #include "Setup.hh"
-#include "SiPMArray.hh"
+#include "SipmArray.hh"
 #include "Hit.hh"
 
 Layer::Layer() :
@@ -27,21 +27,21 @@ void Layer::addHitToArray(Hit* hit)
 {
   unsigned short detId = hit->detId() - hit->channel();
   Setup* setup = Setup::instance();
-  SiPMArray* array = static_cast<SiPMArray*>(setup->element(detId));
+  SipmArray* array = static_cast<SipmArray*>(setup->element(detId));
   array->addHit(hit);
   m_arrays.push_back(array);
 }
 
 void Layer::clearArrays()
 {
-  foreach(SiPMArray* array, m_arrays)
+  foreach(SipmArray* array, m_arrays)
     array->clearHits();
 }
 
 QVector<Cluster*> Layer::clusters() const
 {
   QVector<Cluster*> allClusters;
-  foreach(SiPMArray* array, m_arrays) {
+  foreach(SipmArray* array, m_arrays) {
     QVector<Cluster*> localClusters = array->findClusters();
     foreach(Cluster* cluster, localClusters)
       allClusters.push_back(cluster);
@@ -72,7 +72,7 @@ const char* Layer::printInfo()
   std::stringstream stream;
 
   stream << nArrays() << "arrays: ";
-  foreach(SiPMArray* array, m_arrays)
+  foreach(SipmArray* array, m_arrays)
     stream << array->nHits() << " ";
 
   return stream.str().c_str();

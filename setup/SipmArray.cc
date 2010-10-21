@@ -1,25 +1,25 @@
-#include "SiPMArray.hh"
+#include "SipmArray.hh"
 
 #include "Hit.hh"
 #include "Cluster.hh"
 
 #include <iostream>
 
-SiPMArray::SiPMArray() :
+SipmArray::SipmArray() :
   DetectorElement()
 {
 }
 
-SiPMArray::SiPMArray(unsigned short detId) :
+SipmArray::SipmArray(unsigned short detId) :
   DetectorElement(detId)
 {
 }
 
-SiPMArray::~SiPMArray()
+SipmArray::~SipmArray()
 {
 }
 
-QVector<Cluster*> SiPMArray::findClusters() const
+QVector<Cluster*> SipmArray::findClusters() const
 {
   const int seedThreshold = 500;
   const int neighbourThreshold = 250;

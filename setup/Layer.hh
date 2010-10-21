@@ -4,7 +4,7 @@
 #include <QVector>
 #include <QMap>
 
-class SiPMArray;
+class SipmArray;
 class Cluster;
 class Hit;
 
@@ -33,7 +33,7 @@ public:
 private:
   double              m_z;
 
-  QVector<SiPMArray*> m_arrays;
+  QVector<SipmArray*> m_arrays;
   
 };
 
