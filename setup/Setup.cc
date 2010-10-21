@@ -3,6 +3,7 @@
 #include "Layer.hh"
 #include "DetectorElement.hh"
 #include "SipmArray.hh"
+#include "TRDModule.hh"
 
 Setup* Setup::m_instance = 0;
 
@@ -65,9 +66,17 @@ Layer* Setup::layer(double z)
   return m_layers[z];
 }
 
-// this should differentiate between types of detector elements soon
 DetectorElement* Setup::element(unsigned short id)
 {
-  if (!m_elements[id]) m_elements[id] = new SipmArray;
+  // this should differentiate between types of detector elements soon
+  unsigned short usbBoard = (id >> 11) << 11;
+    
+  if (!m_elements[id]) {
+    if (usbBoard == 0x3200 || usbBoard == 0x3600 || usbBoard == 0x3400 || usbBoard == 0x3500)
+      m_elements[id] = new TRDModule;
+    else
+      m_elements[id] = new SipmArray;
+  }
+
   return m_elements[id];
 }
