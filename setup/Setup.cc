@@ -6,7 +6,9 @@
 
 Setup* Setup::m_instance = 0;
 
-Setup::Setup()
+Setup::Setup() :
+  m_layerIt(0),
+  m_elementIt(0)
 {
 }
 
@@ -22,6 +24,38 @@ Setup* Setup::instance()
 {
   if (!m_instance) m_instance = new Setup;
   return m_instance;
+}
+
+Layer* Setup::firstLayer()
+{
+  if (m_layers.size() == 0) return 0;
+  m_layerIt = m_layers.begin();
+  return m_layerIt.value();
+}
+
+DetectorElement* Setup::firstElement()
+{
+  if (m_elements.size() == 0) return 0;
+  m_elementIt = m_elements.begin();
+  return m_elementIt.value();
+}
+
+Layer* Setup::nextLayer()
+{
+  m_layerIt++;
+  if (m_layerIt == m_layers.end())
+    return 0;
+
+  return m_layerIt.value();
+}
+
+DetectorElement* Setup::nextElement()
+{
+  m_elementIt++;
+  if (m_elementIt == m_elements.end())
+    return 0;
+
+  return m_elementIt.value();
 }
 
 // this should differentiate between types of detector elements soon

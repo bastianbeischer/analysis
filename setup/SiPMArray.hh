@@ -19,7 +19,7 @@ public:
   ~SiPMArray();
   
 public:
-  QVector<Cluster*> findClusters(); // these clusters have to be deleted by hand!
+  QVector<Cluster*> findClusters() const; // these clusters have to be deleted by hand!
 
 public:
   void              addHit(Hit* hit) {m_hits[hit->channel()] = hit;}

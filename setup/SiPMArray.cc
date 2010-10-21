@@ -19,7 +19,7 @@ SiPMArray::~SiPMArray()
 {
 }
 
-QVector<Cluster*> SiPMArray::findClusters()
+QVector<Cluster*> SiPMArray::findClusters() const
 {
   const int seedThreshold = 500;
   const int neighbourThreshold = 250;

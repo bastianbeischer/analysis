@@ -38,7 +38,7 @@ void Layer::clearArrays()
     array->clearHits();
 }
 
-QVector<Cluster*> Layer::clusters()
+QVector<Cluster*> Layer::clusters() const
 {
   QVector<Cluster*> allClusters;
   foreach(SiPMArray* array, m_arrays) {
@@ -49,7 +49,7 @@ QVector<Cluster*> Layer::clusters()
   return allClusters;
 }
 
-Cluster* Layer::bestCluster()
+Cluster* Layer::bestCluster() const
 {
   QVector<Cluster*> allClusters = clusters();
 
