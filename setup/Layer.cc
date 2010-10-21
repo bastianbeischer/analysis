@@ -23,26 +23,26 @@ Layer::~Layer()
 {
 }
 
-void Layer::addHitToArray(Hit* hit)
+void Layer::addHitToDetector(Hit* hit)
 {
   unsigned short detId = hit->detId() - hit->channel();
   Setup* setup = Setup::instance();
-  SipmArray* array = static_cast<SipmArray*>(setup->element(detId));
-  array->addHit(hit);
-  m_arrays.push_back(array);
+  DetectorElement* element = setup->element(detId);
+  element->addHit(hit);
+  m_elements.push_back(element);
 }
 
-void Layer::clearArrays()
+void Layer::clearHitsInDetectors()
 {
-  foreach(SipmArray* array, m_arrays)
-    array->clearHits();
+  foreach(DetectorElement* element, m_elements)
+    element->clearHits();
 }
 
 QVector<Cluster*> Layer::clusters() const
 {
   QVector<Cluster*> allClusters;
-  foreach(SipmArray* array, m_arrays) {
-    QVector<Cluster*> localClusters = array->findClusters();
+  foreach(DetectorElement* element, m_elements) {
+    QVector<Cluster*> localClusters = element->findClusters();
     foreach(Cluster* cluster, localClusters)
       allClusters.push_back(cluster);
   }
@@ -71,9 +71,9 @@ const char* Layer::printInfo()
 {
   std::stringstream stream;
 
-  stream << nArrays() << "arrays: ";
-  foreach(SipmArray* array, m_arrays)
-    stream << array->nHits() << " ";
+  stream << nElements() << "elements: ";
+  foreach(DetectorElement* element, m_elements)
+    stream << element->nHits() << " ";
 
   return stream.str().c_str();
 }

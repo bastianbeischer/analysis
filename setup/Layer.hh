@@ -4,7 +4,7 @@
 #include <QVector>
 #include <QMap>
 
-class SipmArray;
+class DetectorElement;
 class Cluster;
 class Hit;
 
@@ -21,19 +21,19 @@ public:
   Cluster*          bestCluster() const;
 
 public:
-  void              addHitToArray(Hit* hit);
-  void              clearArrays();
+  void              addHitToDetector(Hit* hit);
+  void              clearHitsInDetectors();
 
 public:
-  double            z()       const {return m_z;}
-  unsigned short    nArrays() const {return m_arrays.size();}
+  double            z()         const {return m_z;}
+  unsigned short    nElements() const {return m_elements.size();}
 
   const char*       printInfo();
 
 private:
-  double              m_z;
+  double                    m_z;
 
-  QVector<SipmArray*> m_arrays;
+  QVector<DetectorElement*> m_elements;
   
 };
 
