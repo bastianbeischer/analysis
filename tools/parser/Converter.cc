@@ -24,12 +24,12 @@ Converter::Converter(const SingleFile* file) :
   m_settings(0)
 {
   QStringList envVariables = QProcess::systemEnvironment();
-  QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIX10_PATH=*"));
+  QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
   QString path = "";
   if (filteredVars.size() != 0) {
     QString entry = filteredVars.first();
     path = entry.split("=").at(1);
-    path += "/testing/perdaixGeometry/";
+    path += "/tools/parser/";
   }
 
   qDebug() << "Using geometry file: " + path + "perdaix_coordinates.conf";
