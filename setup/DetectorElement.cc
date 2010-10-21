@@ -1,6 +1,7 @@
 #include "DetectorElement.hh"
 
-DetectorElement::DetectorElement()
+DetectorElement::DetectorElement() :
+  m_id(0)
 {
 }
 

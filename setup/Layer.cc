@@ -29,7 +29,7 @@ void Layer::addHitToDetector(Hit* hit)
   Setup* setup = Setup::instance();
   DetectorElement* element = setup->element(detId);
   element->addHit(hit);
-  m_elements.push_back(element);
+  m_elements[detId] = element;
 }
 
 void Layer::clearHitsInDetectors()

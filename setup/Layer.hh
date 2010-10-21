@@ -31,9 +31,9 @@ public:
   const char*       printInfo();
 
 private:
-  double                    m_z;
+  double                                 m_z;
 
-  QVector<DetectorElement*> m_elements;
+  QMap<unsigned short, DetectorElement*> m_elements;
   
 };
 
