@@ -91,7 +91,7 @@ void DataChain::process()
       if (hit->type() == Hit::tracker) {
         double z = hit->position().z();
         Layer* layer = setup->layer(z);
-        layer->addHitToArray(hit);
+        layer->addHitToDetector(hit);
       }
     }
 
@@ -109,7 +109,7 @@ void DataChain::process()
       if (cluster)
         clusters.push_back(cluster);
 
-      layer->clearArrays();
+      layer->clearHitsInDetectors();
 
       layer = setup->nextLayer();
     }
