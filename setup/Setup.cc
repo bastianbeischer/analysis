@@ -62,7 +62,7 @@ DetectorElement* Setup::nextElement()
 // this should differentiate between types of detector elements soon
 Layer* Setup::layer(double z)
 {
-  if (!m_layers[z]) m_layers[z] = new Layer;
+  if (!m_layers[z]) m_layers[z] = new Layer(z);
   return m_layers[z];
 }
 
@@ -73,9 +73,9 @@ DetectorElement* Setup::element(unsigned short id)
     
   if (!m_elements[id]) {
     if (usbBoard == 0x3200 || usbBoard == 0x3600 || usbBoard == 0x3400 || usbBoard == 0x3500)
-      m_elements[id] = new TRDModule;
+      m_elements[id] = new TRDModule(id);
     else
-      m_elements[id] = new SipmArray;
+      m_elements[id] = new SipmArray(id);
   }
 
   return m_elements[id];
