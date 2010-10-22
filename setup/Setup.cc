@@ -5,9 +5,12 @@
 #include "SipmArray.hh"
 #include "TRDModule.hh"
 
+#include <QSettings>
+
 Setup* Setup::m_instance = 0;
 
 Setup::Setup() :
+  m_settings(new QSettings("setup.conf", QSettings::IniFormat)),
   m_layerIt(0),
   m_elementIt(0)
 {
@@ -15,6 +18,8 @@ Setup::Setup() :
 
 Setup::~Setup()
 {
+  delete m_settings;
+
   foreach(Layer* layer, m_layers)
     delete layer;
   foreach(DetectorElement* element, m_elements)
@@ -79,4 +84,21 @@ DetectorElement* Setup::element(unsigned short id)
   }
 
   return m_elements[id];
+}
+
+void Setup::writeSettings()
+{
+  if (m_settings) {
+    QSettings settings("a.conf", QSettings::IniFormat);
+    foreach(DetectorElement* element, m_elements) {
+      QString typeString;
+      unsigned short type = element->type();
+      if (type == DetectorElement::tracker) typeString = "tracker";
+      if (type == DetectorElement::trd)     typeString = "trd";
+      if (type == DetectorElement::tof)     typeString = "tof";
+
+      m_settings->setValue(typeString + "/0x" + QString("%1").arg(element->id(),0,16), 1);
+    }
+    m_settings->sync();
+  }
 }
