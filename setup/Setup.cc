@@ -7,6 +7,8 @@
 
 #include <QSettings>
 
+#include <iostream>
+
 Setup* Setup::m_instance = 0;
 
 Setup::Setup() :
@@ -64,7 +66,6 @@ DetectorElement* Setup::nextElement()
   return m_elementIt.value();
 }
 
-// this should differentiate between types of detector elements soon
 Layer* Setup::layer(double z)
 {
   if (!m_layers[z]) m_layers[z] = new Layer(z);
@@ -73,8 +74,8 @@ Layer* Setup::layer(double z)
 
 DetectorElement* Setup::element(unsigned short id)
 {
-  // this should differentiate between types of detector elements soon
-  unsigned short usbBoard = (id >> 11) << 11;
+  // this should differentiate between types of detector elements according to the QSettings file soon
+  unsigned short usbBoard = (id >> 8) << 8;
     
   if (!m_elements[id]) {
     if (usbBoard == 0x3200 || usbBoard == 0x3600 || usbBoard == 0x3400 || usbBoard == 0x3500)
@@ -97,7 +98,7 @@ void Setup::writeSettings()
       if (type == DetectorElement::trd)     typeString = "trd";
       if (type == DetectorElement::tof)     typeString = "tof";
 
-      m_settings->setValue(typeString + "/0x" + QString("%1").arg(element->id(),0,16), 1);
+      m_settings->setValue(typeString + "/" + QString("0x%1").arg(element->id(),0,16), 1);
     }
     m_settings->sync();
   }
