@@ -5,6 +5,7 @@
 #include "SipmArray.hh"
 #include "TRDModule.hh"
 
+#include <QStringList>
 #include <QSettings>
 
 #include <iostream>
@@ -16,6 +17,7 @@ Setup::Setup() :
   m_layerIt(0),
   m_elementIt(0)
 {
+  constructElements();
 }
 
 Setup::~Setup()
@@ -32,6 +34,16 @@ Setup* Setup::instance()
 {
   if (!m_instance) m_instance = new Setup;
   return m_instance;
+}
+
+void Setup::constructElements()
+{
+  if (m_settings) {
+    foreach(QString key, m_settings->allKeys()) {
+      DetectorElement* element = this->element(key.toUShort());
+      element->setAlignmentShift(m_settings->value(key).toDouble());
+    }
+  }
 }
 
 Layer* Setup::firstLayer()

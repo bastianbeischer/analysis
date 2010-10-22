@@ -35,6 +35,9 @@ private:
   Setup();
   
 private:
+  void             constructElements();
+
+private:
   static Setup*                          m_instance;
 
   QSettings*                             m_settings;
