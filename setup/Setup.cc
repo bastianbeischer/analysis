@@ -110,7 +110,7 @@ void Setup::writeSettings()
       if (type == DetectorElement::trd)     typeString = "trd";
       if (type == DetectorElement::tof)     typeString = "tof";
 
-      m_settings->setValue(typeString + "/" + QString("0x%1").arg(element->id(),0,16), 1);
+      m_settings->setValue(typeString + "/" + QString("0x%1").arg(element->id(),0,16), element->alignmentShift());
     }
     m_settings->sync();
   }
