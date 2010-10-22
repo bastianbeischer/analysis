@@ -80,12 +80,13 @@ void DataChain::process()
   std::cout << "|.........|.........|.........|.........|.........|.........|.........|.........|.........|..........|" << std::endl;
   std::cout << "|" << std::flush;
 
+  Setup* setup = Setup::instance();
+
   for (unsigned int entry = 0; entry < nEntries; entry++) {
     m_chain->GetEntry(entry);
 
     std::vector<Hit*> hits = m_event->hits();
 
-    Setup* setup = Setup::instance();
     for (unsigned int i = 0; i < hits.size(); i++) {
       Hit* hit = hits.at(i);
       if (hit->type() == Hit::tracker || hit->type() == Hit::trd) {
