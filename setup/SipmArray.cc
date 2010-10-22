@@ -8,11 +8,13 @@
 SipmArray::SipmArray() :
   DetectorElement()
 {
+  m_type = tracker;
 }
 
 SipmArray::SipmArray(unsigned short detId) :
   DetectorElement(detId)
 {
+  m_type = tracker;
 }
 
 SipmArray::~SipmArray()

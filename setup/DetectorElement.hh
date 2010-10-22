@@ -10,7 +10,10 @@ class Cluster;
 
 class DetectorElement
 {
-  
+
+public:
+  enum Type {none=-1, tracker, trd, tof};
+
 public:
   DetectorElement();
   DetectorElement(unsigned short id);
@@ -22,9 +25,12 @@ public:
 public:
   void              addHit(Hit* hit) {m_hits[hit->channel()] = hit;}
   void              clearHits()      {m_hits.clear();}
+  unsigned short    type() const     {return m_type;}
+  unsigned short    id() const       {return m_id;}
   unsigned short    nHits() const    {return m_hits.size();}
 
 protected:
+  Type                       m_type;
   unsigned short             m_id;
 
   QMap<unsigned short, Hit*> m_hits; // map from channel to Hit

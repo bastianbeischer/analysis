@@ -8,11 +8,13 @@
 TRDModule::TRDModule() :
   DetectorElement()
 {
+  m_type = trd;
 }
 
 TRDModule::TRDModule(unsigned short detId) :
   DetectorElement(detId)
 {
+  m_type = trd;
 }
 
 TRDModule::~TRDModule()
