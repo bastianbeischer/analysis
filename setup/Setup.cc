@@ -7,16 +7,27 @@
 
 #include <QStringList>
 #include <QSettings>
+#include <QProcess>
 
 #include <iostream>
 
 Setup* Setup::m_instance = 0;
 
 Setup::Setup() :
-  m_settings(new QSettings("setup.conf", QSettings::IniFormat)),
+  m_settings(0),
   m_layerIt(0),
   m_elementIt(0)
 {
+  QStringList envVariables = QProcess::systemEnvironment();
+  QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
+  QString path = "";
+  if (filteredVars.size() != 0) {
+    QString entry = filteredVars.first();
+    path = entry.split("=").at(1);
+    path += "/setup/";
+  }
+  m_settings = new QSettings(path+"setup.conf", QSettings::IniFormat);
+
   constructElements();
 }
 
