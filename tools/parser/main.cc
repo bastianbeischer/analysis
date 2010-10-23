@@ -25,7 +25,7 @@ int main(int argc, char** argv)
     QString path = "";
 
     QStringList envVariables = QProcess::systemEnvironment();
-    QStringList filteredVars = envVariables.filter(QRegExp("^SIMPLEEVENT_DATA=*"));
+    QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_DATA=*"));
     if (filteredVars.size() != 0) {
       QString entry = filteredVars.first();
       path = entry.split("=").at(1);
