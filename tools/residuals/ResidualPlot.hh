@@ -22,6 +22,9 @@ public:
   void draw();
 
 private:
+  static int                           m_counter;
+
+  char                                 m_titleStem[128];
   double                               m_z;
 
   TCanvas*                             m_canvas1D;
