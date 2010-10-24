@@ -65,8 +65,10 @@ void DataChain::process()
   for (unsigned int entry = 0; entry < nEntries; entry++) {
     m_chain->GetEntry(entry);
 
+    // vector of all hits in this event
     std::vector<Hit*> hits = m_event->hits();
 
+    // add hits to the detectors
     for (unsigned int i = 0; i < hits.size(); i++) {
       Hit* hit = hits.at(i);
       if (hit->type() == Hit::tracker || hit->type() == Hit::trd) {
@@ -76,7 +78,7 @@ void DataChain::process()
       }
     }
 
-    // clusters
+    // find clusters (currently TRD and Tracker)
     std::vector<Hit*> clusters;
     Layer* layer = setup->firstLayer();
     while(layer) {
@@ -89,9 +91,9 @@ void DataChain::process()
       Cluster* cluster = layer->bestCluster();
       if (cluster)
         clusters.push_back(cluster);
-
       layer->clearHitsInDetectors();
 
+      // update pointer
       layer = setup->nextLayer();
     }
 
@@ -107,7 +109,7 @@ void DataChain::process()
       if(!m_tracks[layer])
         m_tracks[layer] = new Track;
 
-      // remove this layer from clusters;
+      // remove clusters in this layer from clusters for track fit
       std::vector<Hit*> clustersForFit;
       std::vector<Hit*> clustersInThisLayer;
       for (std::vector<Hit*>::iterator it = clusters.begin(); it != clusters.end(); it++) {
@@ -132,7 +134,8 @@ void DataChain::process()
       layer = setup->nextLayer();
     }
 
-    // clusters were dynamically allocated and have to be delete by hand. only clusters though. hacky here.
+    // clusters were dynamically allocated and have to be delete by hand. only clusters though. hacky here. also: clusters not on track won't be deleted.
+    // needs a real solution soon.
     for (std::vector<Hit*>::iterator it = clusters.begin() ; it != clusters.end(); it++) {
       Cluster* cluster = dynamic_cast<Cluster*>(*it);
       if (cluster)
