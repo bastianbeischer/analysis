@@ -59,6 +59,7 @@ void DataChain::process()
   std::cout << "| 0%     10%       20%       30%       40%       50%       60%       70%       80%       90%     100%|" << std::endl;
   std::cout << "|.........|.........|.........|.........|.........|.........|.........|.........|.........|..........|" << std::endl;
   std::cout << "|" << std::flush;
+  int iFactors = 0;
 
   Setup* setup = Setup::instance();
 
@@ -142,8 +143,9 @@ void DataChain::process()
         delete cluster;
     }
 
-    if ( entry > 0 && entry < nEntries && entry % (nEntries/100) == 0  ) {
+    if ( entry > iFactors*nEntries/100. ) {
       std::cout << "#" << std::flush;
+      iFactors++;
     }
 
   } // loop over entries
