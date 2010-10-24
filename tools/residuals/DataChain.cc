@@ -49,26 +49,6 @@ void DataChain::addFiles(const char* listName)
   std::cout << "DONE: Chain contains " << m_chain->GetEntries() << " events" << std::endl;
 }
 
-std::vector<Hit*> DataChain::applyCuts(std::vector<Hit*> hits) const
-{
-  std::vector<Hit*> passedHits;
-
-  const double cutTracker = 250;
-  const double cutTrd = 10;
-  const double cutTof = 170;
-
-  for (unsigned int i = 0; i < hits.size(); i++) {
-    Hit* hit = hits.at(i);
-    if ( (hit->type() == Hit::trd     && hit->signalHeight() > cutTrd) ||
-         (hit->type() == Hit::tracker && hit->signalHeight() > cutTracker) ||
-         (hit->type() == Hit::tof     && hit->signalHeight() > cutTof)) {
-      passedHits.push_back(hit);
-    }
-  }
-  return passedHits;
-}
-
-
 void DataChain::process()
 {
   unsigned int nEntries = m_chain->GetEntries();
@@ -115,15 +95,6 @@ void DataChain::process()
       layer = setup->nextLayer();
     }
 
-    // // trd hits
-    // hits = applyCuts(hits);
-    // for (std::vector<Hit*>::iterator it = hits.begin(); it != hits.end(); it++) {
-    //   Hit* hit = *it;
-    //   if (hit->type() == Hit::trd) {
-    //     clusters.push_back(hit);
-    //   }
-    // }
-
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
 
@@ -147,14 +118,14 @@ void DataChain::process()
           clustersInThisLayer.push_back(hit);
       }
 
-      if (!m_residualPlots[z])
-        m_residualPlots[z] = new ResidualPlot(z);
+      if (!m_residualPlots[layer])
+        m_residualPlots[layer] = new ResidualPlot(z);
 
       // fit and fill histograms
       if (m_tracks[layer]->fit(clustersForFit)) {
         for (std::vector<Hit*>::iterator it = clustersInThisLayer.begin(); it != clustersInThisLayer.end(); it++) {
           Hit* hit = *it;
-          m_residualPlots[z]->fill(hit, m_tracks[layer]);
+          m_residualPlots[layer]->fill(hit, m_tracks[layer]);
         }
       }
 
@@ -181,6 +152,6 @@ void DataChain::process()
 
 void DataChain::draw()
 {
-  for (std::map<double, ResidualPlot*>::iterator it = m_residualPlots.begin(); it != m_residualPlots.end(); it++)
+  for (std::map<Layer*, ResidualPlot*>::iterator it = m_residualPlots.begin(); it != m_residualPlots.end(); it++)
     it->second->draw();
 }

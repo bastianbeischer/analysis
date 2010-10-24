@@ -25,13 +25,10 @@ public:
   void draw();
 
 private:
-  std::vector<Hit*> applyCuts(std::vector<Hit*> hits) const;
-
-private:
   TChain*                         m_chain;
   SimpleEvent*                    m_event;
 
-  std::map<double, ResidualPlot*> m_residualPlots;
+  std::map<Layer*, ResidualPlot*> m_residualPlots;
   std::map<Layer*, Track*>        m_tracks;
   TrackFinding*                   m_trackFinding;
 
