@@ -35,8 +35,8 @@ ResidualPlot::~ResidualPlot()
 {
   delete m_canvas1D;
   delete m_canvas2D;
-  for (std::map<unsigned short, TH1I*>::iterator it = m_residuals1D.begin(); it != m_residuals1D.end(); it++)
-    delete it->second;
+  foreach(TH1I* hist, m_residuals1D)
+    delete hist;
   delete m_residuals2D;
 }
 
@@ -74,9 +74,8 @@ void ResidualPlot::draw()
 
   m_canvas1D->Divide(6,4);
   int i = 1;
-  for (std::map<unsigned short, TH1I*>::iterator it = m_residuals1D.begin(); it != m_residuals1D.end(); it++) {
+  foreach(TH1I* hist, m_residuals1D) {
     m_canvas1D->cd(i);
-    TH1I* hist = it->second;
     hist->Draw();
     i++;
   }

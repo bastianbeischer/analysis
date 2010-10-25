@@ -1,8 +1,7 @@
 #ifndef DataChain_hh
 #define DataChain_hh
 
-#include <vector>
-#include <map>
+#include <QMap>
 
 class Hit;
 class TChain;
@@ -25,12 +24,12 @@ public:
   void draw();
 
 private:
-  TChain*                         m_chain;
-  SimpleEvent*                    m_event;
+  TChain*                     m_chain;
+  SimpleEvent*                m_event;
 
-  std::map<Layer*, ResidualPlot*> m_residualPlots;
-  std::map<Layer*, Track*>        m_tracks;
-  TrackFinding*                   m_trackFinding;
+  QMap<Layer*, ResidualPlot*> m_residualPlots;
+  QMap<Layer*, Track*>        m_tracks;
+  TrackFinding*               m_trackFinding;
 
 };
 

@@ -12,6 +12,8 @@
 #include <TH2I.h>
 #include <TChain.h>
 
+#include <QVector>
+
 #include <fstream>
 #include <iostream>
 
@@ -27,8 +29,8 @@ DataChain::~DataChain()
 {
   delete m_chain;
   delete m_event;
-  for (std::map<Layer*, Track*>::iterator it = m_tracks.begin(); it != m_tracks.end(); it++)
-    delete it->second;
+  foreach(Track* track, m_tracks)
+    delete track;
   delete m_trackFinding;
 }
 
@@ -67,11 +69,12 @@ void DataChain::process()
     m_chain->GetEntry(entry);
 
     // vector of all hits in this event
-    std::vector<Hit*> hits = m_event->hits();
+    QVector<Hit*> hits;
+    foreach(Hit* hit, m_event->hits())
+      hits.push_back(hit);
 
     // add hits to the detectors
-    for (unsigned int i = 0; i < hits.size(); i++) {
-      Hit* hit = hits.at(i);
+    foreach(Hit* hit, hits) {
       if (hit->type() == Hit::tracker || hit->type() == Hit::trd) {
         double z = hit->position().z();
         Layer* layer = setup->layer(z);
@@ -80,14 +83,13 @@ void DataChain::process()
     }
 
     // find clusters (currently TRD and Tracker)
-    std::vector<Hit*> clusters;
+    QVector<Hit*> clusters;
     Layer* layer = setup->firstLayer();
     while(layer) {
     
-      // std::vector<Cluster*> clustersHere = layer->clusters();
-      // for (std::vector<Cluster*>::iterator it = clustersHere.begin(); it != clustersHere.end(); it++) {
-      //   clusters.push_back(*it);
-      // }
+      // QVector<Cluster*> clustersHere = layer->clusters();
+      // foreach(Cluster* cluster, clustersHere)
+      //   clusters.push_back(cluster);
 
       Cluster* cluster = layer->bestCluster();
       if (cluster)
@@ -111,10 +113,10 @@ void DataChain::process()
         m_tracks[layer] = new Track;
 
       // remove clusters in this layer from clusters for track fit
-      std::vector<Hit*> clustersForFit;
-      std::vector<Hit*> clustersInThisLayer;
-      for (std::vector<Hit*>::iterator it = clusters.begin(); it != clusters.end(); it++) {
-        Hit* hit = *it;
+      QVector<Hit*> clustersForFit;
+      QVector<Hit*> clustersInThisLayer;
+      
+      foreach(Hit* hit, clusters) {
         if (hit->position().z() != z)
           clustersForFit.push_back(hit);
         else
@@ -125,19 +127,16 @@ void DataChain::process()
         m_residualPlots[layer] = new ResidualPlot(z);
 
       // fit and fill histograms
-      if (m_tracks[layer]->fit(clustersForFit)) {
-        for (std::vector<Hit*>::iterator it = clustersInThisLayer.begin(); it != clustersInThisLayer.end(); it++) {
-          Hit* hit = *it;
+      if (m_tracks[layer]->fit(clustersForFit))
+        foreach(Hit* hit, clustersInThisLayer)
           m_residualPlots[layer]->fill(hit, m_tracks[layer]);
-        }
-      }
 
       layer = setup->nextLayer();
     }
 
     // clusters were dynamically allocated and have to be delete by hand. only clusters though. hacky here. also: clusters not on track won't be deleted.
     // needs a real solution soon.
-    for (std::vector<Hit*>::iterator it = clusters.begin() ; it != clusters.end(); it++) {
+    for (QVector<Hit*>::iterator it = clusters.begin() ; it != clusters.end(); it++) {
       Cluster* cluster = dynamic_cast<Cluster*>(*it);
       if (cluster)
         delete cluster;
@@ -157,6 +156,6 @@ void DataChain::process()
 
 void DataChain::draw()
 {
-  for (std::map<Layer*, ResidualPlot*>::iterator it = m_residualPlots.begin(); it != m_residualPlots.end(); it++)
-    it->second->draw();
+  foreach(ResidualPlot* plot, m_residualPlots)
+    plot->draw();
 }
