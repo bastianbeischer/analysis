@@ -11,6 +11,7 @@ UI_DIR      = ./.tmp
 RCC_DIR     = ./.tmp
 
 SOURCES += Constraint.cc \
+           DataInterface.cc \
            Manager.cc \
            Matrix.cc \
            Parameters.cc \
@@ -18,6 +19,7 @@ SOURCES += Constraint.cc \
            TrackSelection.cc
 
 HEADERS += Constraint.hh \
+           DataInterface.hh \
            Manager.hh \
            Matrix.hh \
            Parameters.hh \
