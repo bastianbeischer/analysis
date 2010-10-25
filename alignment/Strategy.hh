@@ -26,7 +26,6 @@ public:
   float                fiberResolution()          const {return m_fiberResolution;}
 
   bool                 readFromFile(QString fileName);
-  bool                 writeToFile(QFile* file);
 
 private:
   Parameters*              m_parameters;

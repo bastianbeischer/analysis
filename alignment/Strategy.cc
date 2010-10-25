@@ -103,8 +103,3 @@ bool Strategy::readFromFile(QString fileName)
 
   return true;
 }
-
-bool Strategy::writeToFile(QFile* /*file*/)
-{
-  return true;
-}

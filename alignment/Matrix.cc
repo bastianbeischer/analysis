@@ -44,16 +44,6 @@ void Matrix::init()
     m_localDerivatives[i] = 0.;
 }
 
-float* Matrix::globalDerivArray() {
-  float* ret = new float[m_globalDerivatives.size()];
-  int i = 0;
-  foreach(float value, m_globalDerivatives) {
-    ret[i] = value;
-    i++;
-  }
-  return ret;
-}
-
 void Matrix::fillMatrixFromTrack(Track* track)
 {
   QVector<Hit*> hits = track->hits();
