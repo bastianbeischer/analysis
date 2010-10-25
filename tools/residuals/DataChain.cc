@@ -7,10 +7,13 @@
 #include "TrackFinding.hh"
 #include "ResidualPlot.hh"
 #include "Setup.hh"
+#include "DataDescription.hh"
 
 #include <TCanvas.h>
 #include <TH2I.h>
 #include <TChain.h>
+#include <TFile.h>
+#include <TList.h>
 
 #include <QVector>
 
@@ -44,10 +47,17 @@ void DataChain::addFiles(const char* listName)
     char filename[256];
     file >> filename;
     if (file.eof()) break;
-    std::cout << "Adding " <<  filename << std::endl;
-    m_chain->AddFile(filename);
-  }
 
+    TFile file(filename, "READ");
+    TTree* tree = (TTree*)file.Get("SimpleEventTree");
+    DataDescription* desc = (DataDescription*) tree->GetUserInfo()->First();
+    std::cout << "Adding " <<  filename << " (version: " 
+              << desc->softwareVersionHash() << ")" << std::endl;
+
+    m_chain->AddFile(filename);
+
+  }
+  
   std::cout << "DONE: Chain contains " << m_chain->GetEntries() << " events" << std::endl;
 }
 
