@@ -21,13 +21,13 @@ TrackFinding::~TrackFinding()
   delete m_trackFindingHist;
 }
 
-std::vector<Hit*> TrackFinding::findTrack(std::vector<Hit*> hits)
+QVector<Hit*> TrackFinding::findTrack(QVector<Hit*> hits)
 {
-  std::vector<Hit*> hitsOnTrack;
+  QVector<Hit*> hitsOnTrack;
   m_trackFindingHist->Reset();
 
-  for (std::vector<Hit*>::iterator firstHit = hits.begin(); firstHit != hits.end(); firstHit++) {
-    for (std::vector<Hit*>::iterator secondHit = firstHit; secondHit != hits.end(); secondHit++) {
+  for (QVector<Hit*>::iterator firstHit = hits.begin(); firstHit != hits.end(); firstHit++) {
+    for (QVector<Hit*>::iterator secondHit = firstHit; secondHit != hits.end(); secondHit++) {
       if ((*firstHit)->type() == Hit::tof || (*secondHit)->type() == Hit::tof) continue;
       double x1 = (*firstHit)->position().x();
       double x2 = (*secondHit)->position().x();
@@ -51,7 +51,7 @@ std::vector<Hit*> TrackFinding::findTrack(std::vector<Hit*> hits)
   m_track->setSlopeX(slopeMax);
   m_track->setX0(offsetMax);
 
-  for (std::vector<Hit*>::iterator it = hits.begin(); it != hits.end(); it++) {
+  for (QVector<Hit*>::iterator it = hits.begin(); it != hits.end(); it++) {
     Hit* hit = (*it);
     if (isInCorridor(hit) && hit->type() != Hit::tof) hitsOnTrack.push_back(hit);
   }
@@ -60,9 +60,9 @@ std::vector<Hit*> TrackFinding::findTrack(std::vector<Hit*> hits)
   //  m_track->fit(hitsOnTrack);
 
   // // redetermine hits on track
-  // std::vector<Hit*> temp = hitsOnTrack;
+  // QVector<Hit*> temp = hitsOnTrack;
   // hitsOnTrack.clear();
-  // for (std::vector<Hit*>::iterator it = temp.begin(); it != temp.end(); it++) {
+  // for (QVector<Hit*>::iterator it = temp.begin(); it != temp.end(); it++) {
   //   Hit* hit = (*it);
   //   if (isInCorridor(hit) && hit->type() != Hit::tof) hitsOnTrack.push_back(hit);
   // }

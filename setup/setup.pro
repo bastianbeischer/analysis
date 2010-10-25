@@ -26,6 +26,6 @@ INCLUDEPATH += $$TOPLEVEL/event
 
 DEPENDPATH += $$INCLUDEPATH
 
-LIBS += -L$$TOPLEVEL/lib -levent
+LIBS += -L$$TOPLEVEL/lib -lSimpleEvent
 
 include(../root.pri)

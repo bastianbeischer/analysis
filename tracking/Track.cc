@@ -25,7 +25,7 @@ Track::~Track()
 {
 }
 
-int Track::fit(std::vector<Hit*> hits)
+int Track::fit(QVector<Hit*> hits)
 {
   // QMap<double,int> positions;
   // for (QList<DBHit*>::iterator it = m_hitsOnTrack.begin(); it != m_hitsOnTrack.end(); it++) {
@@ -177,6 +177,7 @@ int Track::fit(std::vector<Hit*> hits)
   m_slopeY = solution(3);
   m_chi2   = chi2;
   m_ndf    = nRow-nCol;
+  m_hits   = hits;
 
   // std::cout << "--------------------------------------------------------------------------------------------------" << std::endl;
   // std::cout << " results of straight line track fit: chi2/ndf = " << m_chi2 << "/" << m_ndf << std::endl;
@@ -190,23 +191,22 @@ int Track::fit(std::vector<Hit*> hits)
 
 }
 
-int Track::fitTrd(std::vector<Hit*> hits)
+int Track::fitTrd(QVector<Hit*> hits)
 {
-  std::vector<Hit*> trdHits;
-  for (unsigned int i = 0; i < hits.size(); i++) {
-    if (hits.at(i)->type() == Hit::trd)
-      trdHits.push_back(hits.at(i));
+  QVector<Hit*> trdHits;
+  foreach(Hit* hit, hits) {
+    if (hit->type() == Hit::trd)
+      trdHits.push_back(hit);
   }
   return fit2D(trdHits);
 }
 
-int Track::fit2D(std::vector<Hit*> hits)
+int Track::fit2D(QVector<Hit*> hits)
 {
   // fill graph with points
   TGraphErrors graph;
   int i = 0;
-  for (std::vector<Hit*>::iterator it = hits.begin(); it != hits.end(); it++) {
-    Hit* hit = *it;
+  foreach(Hit* hit, hits) {
     if (hit->type() == Hit::trd) {
       graph.SetPoint(i, hit->position().z(), hit->position().x());
       graph.SetPointError(i, 0, 6./sqrt(12));
@@ -230,6 +230,7 @@ int Track::fit2D(std::vector<Hit*> hits)
   m_slopeX = fit->GetParameter(1);
   m_chi2   = fit->GetChisquare();
   m_ndf    = fit->GetNDF();
+  m_hits   = hits;
 
   return 1;
 }

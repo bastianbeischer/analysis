@@ -1,7 +1,7 @@
 #ifndef ResidualPlot_hh
 #define ResidualPlot_hh
 
-#include <map>
+#include <QMap>
 
 class Hit;
 class Track;
@@ -22,12 +22,15 @@ public:
   void draw();
 
 private:
-  double                               m_z;
+  static int                       m_counter;
 
-  TCanvas*                             m_canvas1D;
-  TCanvas*                             m_canvas2D;
-  std::map<unsigned short, TH1I*>      m_residuals1D;
-  TH2I*                                m_residuals2D;
+  char                             m_titleStem[128];
+  double                           m_z;
+
+  TCanvas*                         m_canvas1D;
+  TCanvas*                         m_canvas2D;
+  QMap<unsigned short, TH1I*>      m_residuals1D;
+  TH2I*                            m_residuals2D;
   
 };
 

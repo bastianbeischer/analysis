@@ -1,7 +1,7 @@
 #ifndef PlotHits_hh
 #define PlotHits_hh
 
-#include <vector>
+#include <QVector>
 
 class Hit;
 class TBox;
@@ -19,7 +19,7 @@ public:
   ~PlotHits();
   
 public:
-  void plot(std::vector<Hit*> hits, Track* track = 0);
+  void plot(QVector<Hit*> hits, Track* track = 0);
 
 private:
   void clear();
@@ -31,8 +31,8 @@ private:
   TCanvas*            m_canvas;
   TH2D*               m_positionHist;
 
-  std::vector<TBox*>  m_boxes;
-  std::vector<TBox*>  m_hits;
+  QVector<TBox*>      m_boxes;
+  QVector<TBox*>      m_hits;
   TLine*              m_line;
   TLatex*             m_fitInfo;
 

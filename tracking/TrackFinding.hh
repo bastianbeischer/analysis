@@ -1,7 +1,7 @@
 #ifndef TrackFinding_hh
 #define TrackFinding_hh
 
-#include <vector>
+#include <QVector>
 
 class Hit;
 class TH2I;
@@ -14,7 +14,7 @@ public:
   TrackFinding();
   ~TrackFinding();
 
-  std::vector<Hit*> findTrack(std::vector<Hit*> hits);
+  QVector<Hit*> findTrack(QVector<Hit*> hits);
 
 private:
   bool isInCorridor(Hit* hit) const;

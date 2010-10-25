@@ -90,8 +90,7 @@ PlotHits::PlotHits() :
   m_boxes.push_back(new TBox( 0.0*tofWidth, zTof[3] - 0.5*tofHeight,  1.0*tofWidth, zTof[3] + 0.5*tofHeight));
   m_boxes.push_back(new TBox( 1.0*tofWidth, zTof[3] - 0.5*tofHeight,  2.0*tofWidth, zTof[3] + 0.5*tofHeight));
   
-  for (std::vector<TBox*>::iterator it = m_boxes.begin(); it != m_boxes.end(); it++) {
-    TBox* box = *it;
+  foreach(TBox* box, m_boxes) {
     box->SetFillStyle(0);
     box->SetLineStyle(1);
     box->Draw("SAME");
@@ -102,17 +101,15 @@ PlotHits::~PlotHits()
 {
   delete m_canvas;
   delete m_positionHist;
-  for (std::vector<TBox*>::iterator it = m_boxes.begin(); it != m_boxes.end(); it++) {
-    delete *it;
-  }
+  foreach(TBox* box, m_boxes)
+    delete box;
   clear();
 }
 
 void PlotHits::clear()
 {
-  for (std::vector<TBox*>::iterator it = m_hits.begin(); it != m_hits.end(); it++) {
-    delete *it;
-  }
+  foreach(TBox* hitBox, m_hits)
+    delete hitBox;
   m_hits.clear();
   delete m_line;
   m_line = 0;
@@ -120,16 +117,14 @@ void PlotHits::clear()
   m_fitInfo = 0;
 }
 
-void PlotHits::plot(std::vector<Hit*> hits, Track* track)
+void PlotHits::plot(QVector<Hit*> hits, Track* track)
 {
   m_canvas->cd();
   clear();
 
   TPaletteAxis* palette = (TPaletteAxis*) m_positionHist->GetListOfFunctions()->FindObject("palette");
 
-  for (std::vector<Hit*>::iterator it = hits.begin(); it != hits.end(); it++) {
-    Hit* hit = *it;
-
+  foreach(Hit* hit, hits) {
     TVector3 position = hit->position();
     int amplitude = hit->signalHeight();
     Hit::ModuleType type = hit->type();
