@@ -16,6 +16,7 @@
 #include "millepede.h"
 
 Strategy::Strategy() :
+  m_parameters(new Parameters),
   m_constraints(0),
   m_nGlobal(0),
   m_nLocal(0),
@@ -26,12 +27,13 @@ Strategy::Strategy() :
   m_fiberResolution(-1.),
   m_nGlobalIterations(0)
 {
-  m_parameters = new Parameters();
 }
 
 Strategy::~Strategy()
 {
   delete m_parameters;
+  foreach(Constraint* cons, m_constraints) 
+    delete cons;
 }
 
 void Strategy::init()
