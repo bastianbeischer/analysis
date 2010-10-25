@@ -36,6 +36,7 @@ DEPENDPATH += $$INCLUDEPATH
 LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
                          -lsetup \
                          -ltracking \
-           -L./millepede -lmillepede
+           -L./millepede -lmillepede \
+                         -lgfortran
 
 include(../root.pri)
