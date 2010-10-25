@@ -17,7 +17,6 @@
 
 Strategy::Strategy() :
   m_constraints(0),
-  m_nModules(0),
   m_nGlobal(0),
   m_nLocal(0),
   m_nStdDev(0),
@@ -67,10 +66,7 @@ bool Strategy::readFromFile(QString fileName)
     QString parameterName = list[0];
     QString value = list[1];
     
-    if (parameterName == "nModules") {
-      m_nModules = value.toUInt();
-    }
-    else if (parameterName == "nGlobal") {
+    if (parameterName == "nGlobal") {
       m_nGlobal = value.toUInt();
       m_parameters->reInitParameterArrays(m_nGlobal);
     }

@@ -19,7 +19,6 @@ public:
   void                 init();
 
   Parameters*          parameters()               const {return m_parameters;}
-  unsigned int         numberOfModules()          const {return m_nModules;}
   unsigned int         numberOfGlobalIterations() const {return m_nGlobalIterations;}
   unsigned int         numberOfGlobalParameters() const {return m_nGlobal;}
   unsigned int         numberOfLocalParameters()  const {return m_nLocal;}
@@ -31,7 +30,6 @@ private:
   Parameters*              m_parameters;
   QVector<Constraint*>     m_constraints;
 
-  unsigned int             m_nModules;
   unsigned int             m_nGlobal;
   unsigned int             m_nLocal;
   unsigned int             m_nStdDev;
