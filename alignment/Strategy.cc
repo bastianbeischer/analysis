@@ -50,8 +50,8 @@ void Strategy::init()
 
 bool Strategy::readFromFile(QString fileName)
 {
-  QString directory = getenv("WORKDIR");
-  fileName = directory + "/alignment/strategies/" + fileName + ".txt";
+  // QString directory = getenv("WORKDIR");
+  // fileName = directory + "/alignment/strategies/" + fileName + ".txt";
   QFile file(fileName);
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
     std::cout << "Error opening file: " << qPrintable(fileName) << std::endl;
