@@ -7,8 +7,6 @@
 class Matrix;
 class Strategy;
 class Parameters;
-class SimulationInterface;
-class TestbeamInterface;
 class Track;
 
 class Manager
@@ -19,12 +17,11 @@ public:
 
   static Manager* instance();
 
-  Strategy*   strategy() {return m_strategy;}
+  Strategy*   strategy()   {return m_strategy;}
   Parameters* parameters() {return m_parameters;}
 
   bool loadStrategyFromFile(QString fileName);
   void startAlignment();
-  bool writeResultsToFile(QString fileName = "output.txt");
 
   void addTrack(Track* track) {m_tracks.push_back(track);}
 

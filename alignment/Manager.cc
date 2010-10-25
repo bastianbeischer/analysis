@@ -79,19 +79,3 @@ void Manager::startAlignment()
     FITGLO(m_parameters->parameterArray());
   }
 }
-
-bool Manager::writeResultsToFile(QString fileName)
-{
-  QFile file(fileName);
-  if (!file.open(QIODevice::WriteOnly))
-    return false;
-
-  if (!m_strategy->writeToFile(&file))
-    return false;
-  if (!m_parameters->writeToFile(&file))
-    return false;
-
-  file.close();
-
-  return true;
-}

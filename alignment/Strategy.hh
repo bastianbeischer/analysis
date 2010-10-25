@@ -30,7 +30,6 @@ public:
 
 private:
   Parameters*              m_parameters;
-
   QVector<Constraint*>     m_constraints;
 
   unsigned int             m_nModules;
@@ -42,8 +41,6 @@ private:
   unsigned int             m_nIter;
   float                    m_cutValue;
 
-  float                    m_ladderResolutionS;
-  float                    m_ladderResolutionK;
   float                    m_fiberResolution;
 
   unsigned int             m_nGlobalIterations;
