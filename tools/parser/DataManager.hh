@@ -4,6 +4,7 @@
 #include <QList>
 #include <QString>
 
+class DataDescription;
 class SingleFile;
 class SimpleEvent;
 class TTree;
@@ -32,6 +33,7 @@ private:
 private:
   QList<SingleFile*> m_inputFiles;
   
+  DataDescription*   m_description;
   QString            m_outputFileName;
   SimpleEvent*       m_currentEvent;
   TFile*             m_outputFile;
