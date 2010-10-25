@@ -19,7 +19,6 @@ Manager::Manager() :
 {
   m_strategy = new Strategy();
   m_parameters = m_strategy->parameters();
-
 }
 
 Manager::~Manager()

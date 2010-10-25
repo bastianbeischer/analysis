@@ -17,13 +17,13 @@ public:
 
   static Manager* instance();
 
-  Strategy*   strategy()   {return m_strategy;}
-  Parameters* parameters() {return m_parameters;}
+  Strategy*       strategy()   {return m_strategy;}
+  Parameters*     parameters() {return m_parameters;}
 
-  bool loadStrategyFromFile(QString fileName);
-  void startAlignment();
+  bool            loadStrategyFromFile(QString fileName);
+  void            startAlignment();
 
-  void addTrack(Track* track) {m_tracks.push_back(track);}
+  void            addTrack(Track* track) {m_tracks.push_back(track);}
 
 private:
   Manager();
