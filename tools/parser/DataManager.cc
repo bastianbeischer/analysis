@@ -72,7 +72,7 @@ void DataManager::addSingleFile(QString fileName)
 {
   std::cout << "Processing: " << qPrintable(fileName) << std::endl;
   m_inputFiles.push_back(new SingleFile(qPrintable(fileName)));
-  m_description->addRunFile(qPrintable(fileName));
+  //  m_description->addRunFile(qPrintable(fileName));
 }
 
 void DataManager::initializeOutput()
