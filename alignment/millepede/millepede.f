@@ -1,4 +1,4 @@
-
+ 
 *                 Millepede - Linear Least Squares
 *                 ================================
 *     A Least Squares Method for Detector Alignment - Fortran code
@@ -150,33 +150,13 @@
      +              INDGB(MGLOBL),INDLC(MLOCAL),LOCTOT,LOCREJ,
      +              NAGB,NALC,NSUM,NHIST,MHIST(51),KHIST(51),LHIST(51),
      +              NST,NFL,INDST(NSTORE),AREST(NSTORE),ITERT,LUNIT,NCS,
-     +              NLNPA(MGLOBL),NSTDEV,CFACTR,ICNPR,ICNLIM, 
-     +              INDNZ(MGLOBL),INDBK(MGLOBL),HYB(NSTORE),SPM(NSTORE)
+     +              NLNPA(MGLOBL),NSTDEV,CFACTR,ICNPR,ICNLIM,
+     +              INDNZ(MGLOBL),INDBK(MGLOBL)
 *     ------------------------------------------------------------------
       INTEGER NDR(7)
       DATA NDR/1,2,5,10,20,50,100/
-      INTEGER COUNTER
-      CHARACTER*2 STRING
-      CHARACTER*15 NAME
-      LOGICAL LEXIST
 *     ...
       ICNLIM=IPRLIM
-
-************************************************
-***** BASTI FILE CREATION
-      COUNTER=0
-      DO
-         write(UNIT=STRING, FMT='(I2.2)') COUNTER
-         NAME='iteration'//STRING//'.txt'
-         INQUIRE(FILE=NAME,EXIST=LEXIST)
-         IF(.NOT.LEXIST) THEN
-            EXIT
-         END IF
-         COUNTER=COUNTER+1
-      END DO
-      OPEN(UNIT=87,FILE=NAME)
-************************************************
-
       IF(ICNLIM.GE.0) WRITE(*,199)
  199  FORMAT(
      +'                                                       '/
@@ -201,7 +181,7 @@
       NALC=NALCAR
       IF(ICNLIM.GE.0) THEN
          WRITE(*,*) '                               '
-
+         WRITE(*,*) 'Number of global parameters       ',NAGB
          WRITE(*,*) 'Number of local parameters        ',NALC
          WRITE(*,*) '   Number of standard deviations  ',NSTDEV
          WRITE(*,*) '   Number of test printouts       ',ICNLIM
@@ -277,7 +257,7 @@
      +              NAGB,NALC,NSUM,NHIST,MHIST(51),KHIST(51),LHIST(51),
      +              NST,NFL,INDST(NSTORE),AREST(NSTORE),ITERT,LUNIT,NCS,
      +              NLNPA(MGLOBL),NSTDEV,CFACTR,ICNPR,ICNLIM,
-     +              INDNZ(MGLOBL),INDBK(MGLOBL),HYB(NSTORE),SPM(NSTORE)
+     +              INDNZ(MGLOBL),INDBK(MGLOBL)
 *     ------------------------------------------------------------------
       REAL PAR(*)
       DO I=1,NAGB
@@ -312,7 +292,7 @@
      +              NAGB,NALC,NSUM,NHIST,MHIST(51),KHIST(51),LHIST(51),
      +              NST,NFL,INDST(NSTORE),AREST(NSTORE),ITERT,LUNIT,NCS,
      +              NLNPA(MGLOBL),NSTDEV,CFACTR,ICNPR,ICNLIM,
-     +              INDNZ(MGLOBL),INDBK(MGLOBL),HYB(NSTORE),SPM(NSTORE)
+     +              INDNZ(MGLOBL),INDBK(MGLOBL)
 *     ------------------------------------------------------------------
       IF(INDEX.LT.1.OR.INDEX.GT.NAGB) RETURN
       IF(SIGMA.LT.0.0) RETURN
@@ -346,7 +326,7 @@
      +              NAGB,NALC,NSUM,NHIST,MHIST(51),KHIST(51),LHIST(51),
      +              NST,NFL,INDST(NSTORE),AREST(NSTORE),ITERT,LUNIT,NCS,
      +              NLNPA(MGLOBL),NSTDEV,CFACTR,ICNPR,ICNLIM,
-     +              INDNZ(MGLOBL),INDBK(MGLOBL),HYB(NSTORE),SPM(NSTORE)
+     +              INDNZ(MGLOBL),INDBK(MGLOBL)
 *     ------------------------------------------------------------------
       IF(INDEX.LT.1.OR.INDEX.GT.NAGB) RETURN
       NLNPA(INDEX)=1
@@ -379,7 +359,7 @@
      +              NAGB,NALC,NSUM,NHIST,MHIST(51),KHIST(51),LHIST(51),
      +              NST,NFL,INDST(NSTORE),AREST(NSTORE),ITERT,LUNIT,NCS,
      +              NLNPA(MGLOBL),NSTDEV,CFACTR,ICNPR,ICNLIM,
-     +              INDNZ(MGLOBL),INDBK(MGLOBL),HYB(NSTORE),SPM(NSTORE)
+     +              INDNZ(MGLOBL),INDBK(MGLOBL)
 *     ------------------------------------------------------------------
       LOGICAL EXS,OPN
 *     test file for existence
@@ -428,7 +408,7 @@
      +              NAGB,NALC,NSUM,NHIST,MHIST(51),KHIST(51),LHIST(51),
      +              NST,NFL,INDST(NSTORE),AREST(NSTORE),ITERT,LUNIT,NCS,
      +              NLNPA(MGLOBL),NSTDEV,CFACTR,ICNPR,ICNLIM,
-     +              INDNZ(MGLOBL),INDBK(MGLOBL),HYB(NSTORE),SPM(NSTORE)
+     +              INDNZ(MGLOBL),INDBK(MGLOBL)
 *     ------------------------------------------------------------------
       REAL DERCS(*)
       IF(NCS.GE.MCS) STOP '<INITCS> too many constraints'
@@ -440,7 +420,7 @@
       WRITE(*,*) 'Number of constraints increased to ',NCS
       END
  
-      SUBROUTINE EQULOC(DERGB,DERLC,RRMEAS,SIGMA,HYBRI,SIPM)
+      SUBROUTINE EQULOC(DERGB,DERLC,RRMEAS,SIGMA)
 *     a single equation with its derivatives
 *     DERGB(1) ... DERGB(NAGB) = derivatives w.r.t. global parameters
 *     DERLC(1) ... DERLC(NALC) = derivatives w.r.t. local parameters
@@ -472,10 +452,9 @@
      +              NAGB,NALC,NSUM,NHIST,MHIST(51),KHIST(51),LHIST(51),
      +              NST,NFL,INDST(NSTORE),AREST(NSTORE),ITERT,LUNIT,NCS,
      +              NLNPA(MGLOBL),NSTDEV,CFACTR,ICNPR,ICNLIM,
-     +              INDNZ(MGLOBL),INDBK(MGLOBL),HYB(NSTORE),SPM(NSTORE)
+     +              INDNZ(MGLOBL),INDBK(MGLOBL)
 *     ------------------------------------------------------------------
       REAL DERGB(*),DERLC(*)
-      INTEGER HYBRI,SIPM
 *     ...
       RMEAS=RRMEAS
       IF(SIGMA.LE.0.0) THEN
@@ -525,8 +504,6 @@
       NST=NST+1
       INDST(NST)=0
       AREST(NST)=WGHT
-      HYB(NST)=HYBRI
-      SPM(NST)=SIPM
       DO I=IAGB,IBGB           ! global parameters
        IF(DERGB(I).NE.0.0) THEN
           NST=NST+1
@@ -535,7 +512,6 @@
           DERGB(I)=0.0         ! reset
        END IF
       END DO
-
       END
  
       SUBROUTINE ZERLOC(DERGB,DERLC)
@@ -567,7 +543,7 @@
      +              NAGB,NALC,NSUM,NHIST,MHIST(51),KHIST(51),LHIST(51),
      +              NST,NFL,INDST(NSTORE),AREST(NSTORE),ITERT,LUNIT,NCS,
      +              NLNPA(MGLOBL),NSTDEV,CFACTR,ICNPR,ICNLIM,
-     +              INDNZ(MGLOBL),INDBK(MGLOBL),HYB(NSTORE),SPM(NSTORE)
+     +              INDNZ(MGLOBL),INDBK(MGLOBL)
 *     ------------------------------------------------------------------
       REAL DERGB(*),DERLC(*)
       DO I=1,NALC           ! local parameters
@@ -605,8 +581,7 @@
      +              NAGB,NALC,NSUM,NHIST,MHIST(51),KHIST(51),LHIST(51),
      +              NST,NFL,INDST(NSTORE),AREST(NSTORE),ITERT,LUNIT,NCS,
      +              NLNPA(MGLOBL),NSTDEV,CFACTR,ICNPR,ICNLIM,
-     +              INDNZ(MGLOBL),INDBK(MGLOBL),HYB(NSTORE),SPM(NSTORE)
-      INTEGER HYBRI,SIPM
+     +              INDNZ(MGLOBL),INDBK(MGLOBL)
 *     ------------------------------------------------------------------
       ICNPR=ICNPR+1
       INCRP=0
@@ -685,7 +660,6 @@
       NSUM=0
 *     second loop for residual calculation -----------------------------
       IST=0
-      IBASTI=0
    30 JA =0 ! new equation
       JB =0
    40 IST=IST+1
@@ -732,8 +706,6 @@
             END DO
 *           end-subtract
             WGHT =AREST(JB)          ! ... and the weight
-            HYBRI=HYB(JB)
-            SIPM=SPM(JB)
             DO J=1,JB-JA-1           ! number of derivatives
              IJ=INDST(JA+J)
              RMEAS=RMEAS-AREST(JA+J)*BLVEC(IJ)
@@ -743,14 +715,6 @@
  104           FORMAT(' Chi square contribution=',F8.2,
      +             5X,G12.4,'= residuum')
             END IF
-******************************************
-**** BASTI TEST AREA
-            WRITE(87,232) IBASTI,HYBRI,SIPM,
-     +                    RMEAS,1.0/SQRT(WGHT),AREST(JB-1)
- 232        FORMAT(I4.2,I4.2,I4.2,G12.4,G12.4,G12.4)
-            IBASTI=IBASTI+1
-**** END BASTI TEST AREA
-******************************************
 *           residual histogram
             IHBIN=1.0+5.0*(RMEAS*SQRT(WGHT)+5.0)
             IF(IHBIN.LT. 1) IHBIN=51
@@ -914,7 +878,7 @@ C             JK=IK+(IJ-1)*NALC    ! old code
      +              NAGB,NALC,NSUM,NHIST,MHIST(51),KHIST(51),LHIST(51),
      +              NST,NFL,INDST(NSTORE),AREST(NSTORE),ITERT,LUNIT,NCS,
      +              NLNPA(MGLOBL),NSTDEV,CFACTR,ICNPR,ICNLIM,
-     +              INDNZ(MGLOBL),INDBK(MGLOBL),HYB(NSTORE),SPM(NSTORE)
+     +              INDNZ(MGLOBL),INDBK(MGLOBL)
 *     ------------------------------------------------------------------
       IF(ITERT.LE.1) ITELIM=10 ! maximum number of iterations
       IF(ITERT.NE.0) THEN
@@ -995,7 +959,7 @@ C             JK=IK+(IJ-1)*NALC    ! old code
       DO I=1,NAGB
        DPARM(I)=DPARM(I)+BGVEC(I)   ! accumulate corrections
       END DO
-*     CALL PRTGLO(66)
+      CALL PRTGLO(66)
       IF(ICNLIM.GE.0) THEN
       WRITE(*,*) 'The rank defect of the symmetric',NVAR,'-by-',NVAR,
      +           ' matrix is ',NDEFEC,' (should be zero).'
@@ -1092,7 +1056,6 @@ C             JK=IK+(IJ-1)*NALC    ! old code
          CALL PXHIST(LHIST,50,-5.0,+5.0) ! histogram printout
          WRITE(*,199)
       END IF
-      CLOSE(87)
  199  FORMAT(
      +'                                                       '/
      +'              *   o   o                        o       '/
@@ -1139,7 +1102,7 @@ C             JK=IK+(IJ-1)*NALC    ! old code
      +              NAGB,NALC,NSUM,NHIST,MHIST(51),KHIST(51),LHIST(51),
      +              NST,NFL,INDST(NSTORE),AREST(NSTORE),ITERT,LUNIT,NCS,
      +              NLNPA(MGLOBL),NSTDEV,CFACTR,ICNPR,ICNLIM,
-     +              INDNZ(MGLOBL),INDBK(MGLOBL),HYB(NSTORE),SPM(NSTORE)
+     +              INDNZ(MGLOBL),INDBK(MGLOBL)
 *     ------------------------------------------------------------------
       ERRPAR=0.0
       IF(I.LE.0.OR.I.GT.NAGB) RETURN
@@ -1175,7 +1138,7 @@ C             JK=IK+(IJ-1)*NALC    ! old code
      +              NAGB,NALC,NSUM,NHIST,MHIST(51),KHIST(51),LHIST(51),
      +              NST,NFL,INDST(NSTORE),AREST(NSTORE),ITERT,LUNIT,NCS,
      +              NLNPA(MGLOBL),NSTDEV,CFACTR,ICNPR,ICNLIM,
-     +              INDNZ(MGLOBL),INDBK(MGLOBL),HYB(NSTORE),SPM(NSTORE)
+     +              INDNZ(MGLOBL),INDBK(MGLOBL)
 *     ------------------------------------------------------------------
       CORPAR=0.0
       IF(I.LE.0.OR.I.GT.NAGB) RETURN
@@ -1215,7 +1178,7 @@ C             JK=IK+(IJ-1)*NALC    ! old code
      +              NAGB,NALC,NSUM,NHIST,MHIST(51),KHIST(51),LHIST(51),
      +              NST,NFL,INDST(NSTORE),AREST(NSTORE),ITERT,LUNIT,NCS,
      +              NLNPA(MGLOBL),NSTDEV,CFACTR,ICNPR,ICNLIM,
-     +              INDNZ(MGLOBL),INDBK(MGLOBL),HYB(NSTORE),SPM(NSTORE)
+     +              INDNZ(MGLOBL),INDBK(MGLOBL)
 *     ------------------------------------------------------------------
       CHARACTER*2 PATEXT
 *     ...
@@ -1704,7 +1667,7 @@ C             JK=IK+(IJ-1)*NALC    ! old code
      +              NAGB,NALC,NSUM,NHIST,MHIST(51),KHIST(51),LHIST(51),
      +              NST,NFL,INDST(NSTORE),AREST(NSTORE),ITERT,LUNIT,NCS,
      +              NLNPA(MGLOBL),NSTDEV,CFACTR,ICNPR,ICNLIM,
-     +              INDNZ(MGLOBL),INDBK(MGLOBL),HYB(NSTORE),SPM(NSTORE)
+     +              INDNZ(MGLOBL),INDBK(MGLOBL)
 *     ------------------------------------------------------------------
       REAL VEC(*)
 *     ...

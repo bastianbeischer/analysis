@@ -7,7 +7,7 @@ extern "C" void initgl_( unsigned int& nagb, unsigned int& nalc, unsigned int& n
 extern "C" void zerloc_( float* dergb, float* derlc );
 #define ZERLOC zerloc_
 
-extern "C" void equloc_( float* dergb, float* derlc, float& rmeas, float& sigma, unsigned int& hybrid, unsigned int& sipm );
+extern "C" void equloc_( float* dergb, float* derlc, float& rmeas, float& sigma );
 #define EQULOC equloc_
 
 extern "C" void fitloc_( );
