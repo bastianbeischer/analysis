@@ -118,6 +118,7 @@ void Matrix::fillMatrixFromTrack(Track* track)
 
     float y,sigma;
     if (useTangens) {
+      // y = fy is probably wrong! we need to rotate
       y = fy;
       sigma = sqrt(V2(1,1));
 
@@ -141,6 +142,7 @@ void Matrix::fillMatrixFromTrack(Track* track)
       }
     }
     else {
+      // y = fx is probably wrong! we need to rotate
       y = fx;
       sigma = sqrt(V2(0,0));
 
