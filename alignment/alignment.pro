@@ -25,12 +25,14 @@ HEADERS += Constraint.hh \
            TrackSelection.hh
 
 INCLUDEPATH += $$TOPLEVEL/event \
+               $$TOPLEVEL/setup \
                $$TOPLEVEL/tracking \
                 ./millepede
 
 DEPENDPATH += $$INCLUDEPATH
 
 LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
+                         -lsetup \
                          -ltracking \
            -L./millepede -lmillepede
 

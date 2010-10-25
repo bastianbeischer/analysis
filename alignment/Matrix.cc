@@ -5,6 +5,8 @@
 #include "Hit.hh"
 #include "Track.hh"
 #include "Parameters.hh"
+#include "Setup.hh"
+#include "DetectorElement.hh"
 #include "millepede.h"
 
 #include <TMatrixD.h>
@@ -44,6 +46,20 @@ void Matrix::init()
     m_localDerivatives[i] = 0.;
 }
 
+// very lol.
+unsigned int Matrix::indexForDetId(unsigned short detId)
+{
+  Setup* setup = Setup::instance();
+  int index = 0;
+  DetectorElement* element = setup->firstElement();
+  while(element) {
+    if (element->id() == detId) break;
+    element = setup->nextElement();
+    index++;
+  }
+  return index;
+}
+
 void Matrix::fillMatrixFromTrack(Track* track)
 {
   QVector<Hit*> hits = track->hits();
@@ -68,6 +84,7 @@ void Matrix::fillMatrixFromTrack(Track* track)
 
     // detector ID
     unsigned short detId = hit->detId() - hit->channel();
+    unsigned int index = indexForDetId(detId);
 
     // Rot is the matrix that maps u,v, to x,y (i.e. the backward rotation)
     TMatrixD Rot(2,2); 
@@ -105,7 +122,7 @@ void Matrix::fillMatrixFromTrack(Track* track)
       sigma = sqrt(V2(1,1));
 
       // hardcoded for testbeam now, change -tangens to "1." for simulation
-      m_globalDerivatives[detId] = -tangens;
+      m_globalDerivatives[index] = -tangens;
       
       // float deltaX = parameters->GetParameter(shiftIndex);
       // float x0 = track->x0();
@@ -128,7 +145,7 @@ void Matrix::fillMatrixFromTrack(Track* track)
       sigma = sqrt(V2(0,0));
 
       // hardcoded for testbeam now, change "1." to -cotangens for simulation
-      m_globalDerivatives[detId] = 1.;
+      m_globalDerivatives[index] = 1.;
 
       // float deltaY = parameters->GetParameter(shiftIndex);
       // float y0 = track->y0();
