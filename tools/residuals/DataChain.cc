@@ -44,18 +44,26 @@ void DataChain::addFiles(const char* listName)
     std::cout << "Error opening file" << std::endl;
   }
   while (true) {
+    // read filename from list
     char filename[256];
     file >> filename;
     if (file.eof()) break;
 
+    // starting output
+    std::cout << "Adding " <<  filename;
+
+    // version string
     TFile file(filename, "READ");
     TTree* tree = (TTree*)file.Get("SimpleEventTree");
     DataDescription* desc = (DataDescription*) tree->GetUserInfo()->First();
-    std::cout << "Adding " <<  filename << " (version: " 
-              << desc->softwareVersionHash() << ")" << std::endl;
+    if (desc) 
+      std::cout << " (version: " << desc->softwareVersionHash() << ")";
+    
+    // complete output
+    std::cout << std::endl;
 
+    // actually add the file
     m_chain->AddFile(filename);
-
   }
   
   std::cout << "DONE: Chain contains " << m_chain->GetEntries() << " events" << std::endl;
