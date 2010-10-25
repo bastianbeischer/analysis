@@ -1,9 +1,8 @@
 #ifndef DataInterface_hh
 #define DataInterface_hh
 
-class TChain;
+class DataChain;
 class TrackSelection;
-class SimpleEvent;
 
 class DataInterface
 {
@@ -17,9 +16,8 @@ public:
   void addSuitableTracks();
 
 private:
-  TChain*         m_chain;
+  DataChain*      m_chain;
 
-  SimpleEvent*    m_event;
   TrackSelection* m_trackSelection;
   
 };
