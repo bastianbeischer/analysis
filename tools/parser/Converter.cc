@@ -123,15 +123,15 @@ SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
     } // tracker, trd, tofevent
 
     // process tof
-    for (int channel = 0; channel < 64; channel++) {
-      amplitude = tofEvent.timeOverThreshold(channel);
-      QList<QVariant> liste = m_settings->value("tof/"+QString::number(id->GetID16() | channel,16)).toList();
-      TVector3 pos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
-      liste = m_settings->value("tofback/"+QString::number(id->GetID16() | channel,16)).toList();
-      TVector3 counterPos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
+    // for (int channel = 0; channel < 64; channel++) {
+      // amplitude = tofEvent.timeOverThreshold(channel);
+      // QList<QVariant> liste = m_settings->value("tof/"+QString::number(id->GetID16() | channel,16)).toList();
+      // TVector3 pos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
+      // liste = m_settings->value("tofback/"+QString::number(id->GetID16() | channel,16)).toList();
+      // TVector3 counterPos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
 
-      simpleEvent->addHit(new Hit(Hit::tof, detId | channel, amplitude, pos, counterPos));
-    } // tof time over threshold
+      // simpleEvent->addHit(new Hit(Hit::tof, detId | channel, amplitude, pos, counterPos));
+    // } // tof time over threshold
 
   } // foreach(DetectorID...)
 
