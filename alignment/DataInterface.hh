@@ -3,6 +3,7 @@
 
 class DataChain;
 class TrackSelection;
+class TrackFinding;
 
 class DataInterface
 {
@@ -19,6 +20,7 @@ private:
   DataChain*      m_chain;
 
   TrackSelection* m_trackSelection;
+  TrackFinding*   m_trackFinding;
   
 };
 
