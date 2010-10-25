@@ -10,17 +10,19 @@ MOC_DIR     = ./.tmp
 UI_DIR      = ./.tmp
 RCC_DIR     = ./.tmp
 
-SOURCES += Manager.cc \
+SOURCES += Constraint.cc \
+           Manager.cc \
            Matrix.cc \
            Parameters.cc \
            Strategy.cc \
-           Constraint.cc \
+           TrackSelection.cc
 
-HEADERS += Manager.hh \
+HEADERS += Constraint.hh \
+           Manager.hh \
            Matrix.hh \
            Parameters.hh \
            Strategy.hh \
-           Constraint.hh \
+           TrackSelection.hh
 
 INCLUDEPATH += $$TOPLEVEL/event \
                $$TOPLEVEL/tracking \
