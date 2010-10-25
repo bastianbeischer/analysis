@@ -1,11 +1,11 @@
 #!/usr/bin/perl -w
 
 use strict;
-use File::Find;
+#use File::Find;
 
-my $exe = "$ENV{PERDAIX10_PATH}/parser/parser";
+my $exe = "$ENV{PERDAIXANA_PATH}/bin/parser";
 my $pwd = "$ENV{PWD}";
-my $condorDir = "$ENV{PERDAIX10_PATH}/parser/condor";
+my $condorDir = "$ENV{PERDAIXANA_PATH}/tools/parser/condor";
 
 my @files = sort(@ARGV);
 
@@ -40,7 +40,7 @@ for (my $argnum = 0; $argnum < $nJobs; $argnum += 1) {
 }
 
 # Make condor directory (and all files/dirs within) writable for group.
-find(sub {chmod 0770, $_}, ${condorDir});
+#find(sub {chmod 0770, $_}, ${condorDir});
 
 print "\n";
 print "-----------------------------------------------------------\n";

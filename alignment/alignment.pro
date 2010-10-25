@@ -10,25 +10,31 @@ MOC_DIR     = ./.tmp
 UI_DIR      = ./.tmp
 RCC_DIR     = ./.tmp
 
-SOURCES += Manager.cc \
+SOURCES += Constraint.cc \
+           DataInterface.cc \
+           Manager.cc \
            Matrix.cc \
            Parameters.cc \
            Strategy.cc \
-           Constraint.cc \
+           TrackSelection.cc
 
-HEADERS += Manager.hh \
+HEADERS += Constraint.hh \
+           DataInterface.hh \
+           Manager.hh \
            Matrix.hh \
            Parameters.hh \
            Strategy.hh \
-           Constraint.hh \
+           TrackSelection.hh
 
 INCLUDEPATH += $$TOPLEVEL/event \
+               $$TOPLEVEL/setup \
                $$TOPLEVEL/tracking \
                 ./millepede
 
 DEPENDPATH += $$INCLUDEPATH
 
 LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
+                         -lsetup \
                          -ltracking \
            -L./millepede -lmillepede
 

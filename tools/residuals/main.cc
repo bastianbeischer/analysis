@@ -1,4 +1,4 @@
-#include "DataChain.hh"
+#include "Plotter.hh"
 
 #include <TApplication.h>
 #include <TStyle.h>
@@ -20,10 +20,10 @@ int main(int argc, char* argv[])
   gStyle->SetPalette(1,0);
   gStyle->SetOptFit(111);
 
-  DataChain chain;
-  chain.addFiles(filename);
-  chain.process();
-  chain.draw();
+  Plotter plotter;
+  plotter.addFiles(filename);
+  plotter.process();
+  plotter.draw();
 
   app.Run();
 

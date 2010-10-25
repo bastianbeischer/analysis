@@ -26,13 +26,13 @@ LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
                          -lsetup
 
 # Headers
-HEADERS = DataChain.hh \
+HEADERS = Plotter.hh \
           PlotHits.hh \
           ResidualPlot.hh
 
 # Sources
 SOURCES = main.cc \
-          DataChain.cc \
+          Plotter.cc \
           PlotHits.cc \
           ResidualPlot.cc
 

@@ -16,25 +16,24 @@
 #include "millepede.h"
 
 Strategy::Strategy() :
+  m_parameters(new Parameters),
   m_constraints(0),
-  m_nModules(0),
   m_nGlobal(0),
   m_nLocal(0),
   m_nStdDev(0),
   m_verbose(0),
   m_nIter(0),
   m_cutValue(0.),
-  m_ladderResolutionS(-1.),
-  m_ladderResolutionK(-1.),
   m_fiberResolution(-1.),
   m_nGlobalIterations(0)
 {
-  m_parameters = new Parameters();
 }
 
 Strategy::~Strategy()
 {
   delete m_parameters;
+  foreach(Constraint* cons, m_constraints) 
+    delete cons;
 }
 
 void Strategy::init()
@@ -69,12 +68,9 @@ bool Strategy::readFromFile(QString fileName)
     QString parameterName = list[0];
     QString value = list[1];
     
-    if (parameterName == "nModules") {
-      m_nModules = value.toUInt();
-    }
-    else if (parameterName == "nGlobal") {
+    if (parameterName == "nGlobal") {
       m_nGlobal = value.toUInt();
-      m_parameters->reInitParameterArrays(m_nGlobal, 2*m_nModules);
+      m_parameters->reInitParameterArrays(m_nGlobal);
     }
     else if (parameterName == "nLocal") {
       m_nLocal = value.toUInt();
@@ -91,22 +87,11 @@ bool Strategy::readFromFile(QString fileName)
     else if (parameterName == "cutfactor") {
       m_cutValue = value.toFloat();
     }
-    else if (parameterName == "ladderResolutionS") {
-      m_ladderResolutionS = value.toFloat();
-    }
-    else if (parameterName == "ladderResolutionK") {
-      m_ladderResolutionK = value.toFloat();
-    }
     else if (parameterName == "fiberResolution") {
       m_fiberResolution = value.toFloat();
     }
     else if (parameterName == "nGlobalIter") {
       m_nGlobalIterations = value.toUInt();
-    }
-    else if (parameterName == "angle") {
-      unsigned int module = list[1].toUInt();
-      float        angle  = list[2].toFloat();
-      m_parameters->setAngle(module, angle);
     }
     else if (parameterName == "fixParameter") {
       unsigned int iPar = value.toUInt();
@@ -114,10 +99,5 @@ bool Strategy::readFromFile(QString fileName)
     }
   }
 
-  return true;
-}
-
-bool Strategy::writeToFile(QFile* /*file*/)
-{
   return true;
 }

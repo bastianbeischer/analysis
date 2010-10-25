@@ -11,8 +11,10 @@
 #include "Converter.hh"
 #include "SimpleEvent.hh"
 #include "SingleFile.hh"
+#include "DataDescription.hh"
 
 DataManager::DataManager() :
+  m_description(new DataDescription),
   m_outputFileName("output.root"),
   m_currentEvent(0),
   m_outputFile(0),
@@ -22,6 +24,7 @@ DataManager::DataManager() :
 
 DataManager::~DataManager()
 {
+  delete m_description;
   foreach(SingleFile* file, m_inputFiles)
     delete file;
   m_inputFiles.clear();
@@ -69,6 +72,7 @@ void DataManager::addSingleFile(QString fileName)
 {
   std::cout << "Processing: " << qPrintable(fileName) << std::endl;
   m_inputFiles.push_back(new SingleFile(qPrintable(fileName)));
+  //  m_description->addRunFile(qPrintable(fileName));
 }
 
 void DataManager::initializeOutput()
@@ -80,6 +84,7 @@ void DataManager::initializeOutput()
 
 void DataManager::saveAndCloseOutput()
 {
+  m_outputTree->GetUserInfo()->Add(m_description);
   m_outputFile->cd();
   m_outputTree->Write();
   m_outputFile->Close();

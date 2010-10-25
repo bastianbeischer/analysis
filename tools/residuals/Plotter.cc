@@ -1,5 +1,6 @@
-#include "DataChain.hh"
+#include "Plotter.hh"
 
+#include "DataChain.hh"
 #include "Cluster.hh"
 #include "SimpleEvent.hh"
 #include "Track.hh"
@@ -7,53 +8,41 @@
 #include "TrackFinding.hh"
 #include "ResidualPlot.hh"
 #include "Setup.hh"
+#include "DataDescription.hh"
 
 #include <TCanvas.h>
 #include <TH2I.h>
 #include <TChain.h>
+#include <TFile.h>
+#include <TList.h>
 
 #include <QVector>
 
 #include <fstream>
 #include <iostream>
 
-DataChain::DataChain() :
-  m_chain(new TChain("SimpleEventTree")),
-  m_event(0),
+Plotter::Plotter() :
+  m_chain(new DataChain),
   m_trackFinding(new TrackFinding)
 {
-  m_chain->SetBranchAddress("event", &m_event);
 }
 
-DataChain::~DataChain()
+Plotter::~Plotter()
 {
   delete m_chain;
-  delete m_event;
   foreach(Track* track, m_tracks)
     delete track;
   delete m_trackFinding;
 }
 
-void DataChain::addFiles(const char* listName)
+void Plotter::addFiles(const char* listName)
 {
-  ifstream file(listName);
-  if (!file.is_open()) {
-    std::cout << "Error opening file" << std::endl;
-  }
-  while (true) {
-    char filename[256];
-    file >> filename;
-    if (file.eof()) break;
-    std::cout << "Adding " <<  filename << std::endl;
-    m_chain->AddFile(filename);
-  }
-
-  std::cout << "DONE: Chain contains " << m_chain->GetEntries() << " events" << std::endl;
+  m_chain->addFiles(listName);
 }
 
-void DataChain::process()
+void Plotter::process()
 {
-  unsigned int nEntries = m_chain->GetEntries();
+  unsigned int nEntries = m_chain->nEntries();
 
   std::cout << std::endl;
   std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
@@ -65,12 +54,12 @@ void DataChain::process()
 
   Setup* setup = Setup::instance();
 
-  for (unsigned int entry = 0; entry < nEntries; entry++) {
-    m_chain->GetEntry(entry);
+  for (unsigned int i = 0; i < nEntries; i++) {
+    SimpleEvent* event = m_chain->event(i);
 
     // vector of all hits in this event
     QVector<Hit*> hits;
-    foreach(Hit* hit, m_event->hits())
+    foreach(Hit* hit, event->hits())
       hits.push_back(hit);
 
     // add hits to the detectors
@@ -142,7 +131,7 @@ void DataChain::process()
         delete cluster;
     }
 
-    if ( entry > iFactors*nEntries/100. ) {
+    if ( i > iFactors*nEntries/100. ) {
       std::cout << "#" << std::flush;
       iFactors++;
     }
@@ -154,7 +143,7 @@ void DataChain::process()
 
 }
 
-void DataChain::draw()
+void Plotter::draw()
 {
   foreach(ResidualPlot* plot, m_residualPlots)
     plot->draw();
