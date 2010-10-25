@@ -1,22 +1,20 @@
-#ifndef DataChain_hh
-#define DataChain_hh
+#ifndef Plotter_hh
+#define Plotter_hh
 
 #include <QMap>
 
-class Hit;
-class TChain;
-class SimpleEvent;
+class DataChain;
 class Layer;
 class Track;
 class TrackFinding;
 class ResidualPlot;
 
-class DataChain
+class Plotter
 {
   
 public:
-  DataChain();
-  ~DataChain();
+  Plotter();
+  ~Plotter();
   
 public:
   void addFiles(const char* listName);
@@ -24,8 +22,7 @@ public:
   void draw();
 
 private:
-  TChain*                     m_chain;
-  SimpleEvent*                m_event;
+  DataChain*                  m_chain;
 
   QMap<Layer*, ResidualPlot*> m_residualPlots;
   QMap<Layer*, Track*>        m_tracks;
@@ -33,4 +30,4 @@ private:
 
 };
 
-#endif /* DataChain_hh */
+#endif /* Plotter_hh */
