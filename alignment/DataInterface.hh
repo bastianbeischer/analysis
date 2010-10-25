@@ -3,6 +3,7 @@
 
 class TChain;
 class TrackSelection;
+class SimpleEvent;
 
 class DataInterface
 {
@@ -13,10 +14,12 @@ public:
   
 public:
   void addFiles(const char* listName);
+  void addSuitableTracks();
 
 private:
   TChain*         m_chain;
 
+  SimpleEvent*    m_event;
   TrackSelection* m_trackSelection;
   
 };

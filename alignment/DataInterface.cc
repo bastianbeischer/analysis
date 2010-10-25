@@ -2,6 +2,7 @@
 
 #include "DataDescription.hh"
 #include "TrackSelection.hh"
+#include "SimpleEvent.hh"
 
 #include <fstream>
 #include <TFile.h>
@@ -12,12 +13,17 @@
 #include <iostream>
 
 DataInterface::DataInterface() :
+  m_chain(new TChain("SimpleEventTree")),
+  m_event(0),
   m_trackSelection(new TrackSelection)
 {
+  m_chain->Branch("event", &m_event);
 }
 
 DataInterface::~DataInterface()
 {
+  delete m_chain;
+  delete m_event;
   delete m_trackSelection;
 }
 
@@ -52,4 +58,9 @@ void DataInterface::addFiles(const char* listName)
   }
   
   std::cout << "DONE: Chain contains " << m_chain->GetEntries() << " events" << std::endl;
+}
+
+void DataInterface::addSuitableTracks()
+{
+  
 }
