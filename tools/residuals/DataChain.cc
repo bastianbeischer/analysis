@@ -42,6 +42,7 @@ void DataChain::addFiles(const char* listName)
   ifstream file(listName);
   if (!file.is_open()) {
     std::cout << "Error opening file" << std::endl;
+    return;
   }
   while (true) {
     // read filename from list
@@ -50,7 +51,7 @@ void DataChain::addFiles(const char* listName)
     if (file.eof()) break;
 
     // starting output
-    std::cout << "Adding " <<  filename;
+    std::cout << "Adding " << filename;
 
     // version string
     TFile file(filename, "READ");
