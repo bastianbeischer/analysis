@@ -7,6 +7,7 @@ SUBDIRS  = event \
            tracking \
            alignment/millepede \
            alignment \
+           tools/alignment \
            tools/parser \
            tools/residuals \
            tools/preAnalysis
