@@ -28,6 +28,10 @@ public:
   bool                 readFromFile(QString fileName);
 
 private:
+  void                 fixDetector(unsigned short detId);
+  void                 fixLayer(unsigned short layer);
+
+private:
   Parameters*              m_parameters;
   QVector<Constraint*>     m_constraints;
   DataInterface*           m_dataInterface;

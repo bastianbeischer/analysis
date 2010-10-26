@@ -11,10 +11,13 @@
 #include <iostream>
 
 #include "DataInterface.hh"
+#include "Layer.hh"
+#include "DetectorElement.hh"
 #include "Constraint.hh"
 #include "Parameters.hh"
 #include "Manager.hh"
 #include "millepede.h"
+#include "Setup.hh"
 
 Strategy::Strategy() :
   m_parameters(new Parameters),
@@ -100,11 +103,11 @@ bool Strategy::readFromFile(QString fileName)
     }
     else if (parameterName == "fixDetector") {
       unsigned short detId = value.toUShort();
-      // TODO
+      fixDetector(detId);
     }
     else if (parameterName == "fixLayer") {
       unsigned short layer = value.toUShort();
-      // TODO
+      fixLayer(layer);
     }
     else if (parameterName == "readDataFrom") {
       m_dataInterface->addFiles(qPrintable(value));
@@ -113,4 +116,31 @@ bool Strategy::readFromFile(QString fileName)
   }
 
   return true;
+}
+
+void Strategy::fixDetector(unsigned short detId)
+{
+  unsigned int index = m_parameters->indexForDetId(detId);
+  m_parameters->setParameterSigma(index, 0.);
+}
+
+void Strategy::fixLayer(unsigned short layerNumber)
+{
+  Setup* setup = Setup::instance();
+  int i = 0;
+  Layer* layer = setup->firstLayer();
+  while(layer != 0 && i != layerNumber) {
+    i++;
+    layer = setup->nextLayer();
+  }
+  
+  DetectorElement* element = setup->firstElement();
+  while(layer != 0 && element != 0) {
+    unsigned short detId = element->id();
+    if (layer->contains(detId)) {
+      unsigned int index = m_parameters->indexForDetId(detId);
+      m_parameters->setParameterSigma(index, 0.);
+    }
+    element = setup->nextElement();
+  }
 }
