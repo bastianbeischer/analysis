@@ -67,6 +67,13 @@ Cluster* Layer::bestCluster() const
   return bestCluster;
 }
 
+bool Layer::contains(unsigned short detId) const
+{
+  if (m_elements[detId] != 0)
+    return true;
+  return false;
+}
+
 const char* Layer::printInfo()
 {
   std::stringstream stream;
