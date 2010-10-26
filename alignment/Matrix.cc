@@ -46,20 +46,6 @@ void Matrix::init()
     m_localDerivatives[i] = 0.;
 }
 
-// very lol.
-unsigned int Matrix::indexForDetId(unsigned short detId)
-{
-  Setup* setup = Setup::instance();
-  int index = 0;
-  DetectorElement* element = setup->firstElement();
-  while(element) {
-    if (element->id() == detId) break;
-    element = setup->nextElement();
-    index++;
-  }
-  return index;
-}
-
 void Matrix::fillMatrixFromTrack(Track* track)
 {
   QVector<Hit*> hits = track->hits();
@@ -84,7 +70,7 @@ void Matrix::fillMatrixFromTrack(Track* track)
 
     // detector ID
     unsigned short detId = hit->detId() - hit->channel();
-    unsigned int index = indexForDetId(detId);
+    unsigned int index = Manager::instance()->parameters()->indexForDetId(detId);
 
     // Rot is the matrix that maps u,v, to x,y (i.e. the backward rotation)
     TMatrixD Rot(2,2); 

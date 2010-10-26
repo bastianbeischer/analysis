@@ -15,9 +15,6 @@ public:
   void fillMatrixFromTrack(Track* track);
   void init();
 
-private:
-  unsigned int indexForDetId(unsigned short detId);
-
 protected:
   unsigned int m_nGlobal;
   unsigned int m_nLocal;

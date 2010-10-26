@@ -2,6 +2,9 @@
 
 #include "millepede.h"
 
+#include "Setup.hh"
+#include "DetectorElement.hh"
+
 Parameters::Parameters() :
   m_nPar(0),
   m_parameters(0),
@@ -43,3 +46,18 @@ void Parameters::reInitParameterArrays(unsigned int nPar)
     m_parameterSigma[i] = -1.;
   }
 }
+
+// very lol.
+unsigned int Parameters::indexForDetId(unsigned short detId) const
+{
+  Setup* setup = Setup::instance();
+  int index = 0;
+  DetectorElement* element = setup->firstElement();
+  while(element) {
+    if (element->id() == detId) break;
+    element = setup->nextElement();
+    index++;
+  }
+  return index;
+}
+
