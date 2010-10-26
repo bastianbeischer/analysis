@@ -3,6 +3,7 @@
 
 #include <QVector>
 
+class DataInterface;
 class Parameters;
 class Constraint;
 class QString;
@@ -29,6 +30,7 @@ public:
 private:
   Parameters*              m_parameters;
   QVector<Constraint*>     m_constraints;
+  DataInterface*           m_dataInterface;
 
   unsigned int             m_nGlobal;
   unsigned int             m_nLocal;

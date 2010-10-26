@@ -10,6 +10,7 @@
 #include <string>
 #include <iostream>
 
+#include "DataInterface.hh"
 #include "Constraint.hh"
 #include "Parameters.hh"
 #include "Manager.hh"
@@ -18,6 +19,7 @@
 Strategy::Strategy() :
   m_parameters(new Parameters),
   m_constraints(0),
+  m_dataInterface(new DataInterface),
   m_nGlobal(0),
   m_nLocal(0),
   m_nStdDev(0),
@@ -34,6 +36,7 @@ Strategy::~Strategy()
   delete m_parameters;
   foreach(Constraint* cons, m_constraints) 
     delete cons;
+  delete m_dataInterface;
 }
 
 void Strategy::init()
@@ -50,8 +53,6 @@ void Strategy::init()
 
 bool Strategy::readFromFile(QString fileName)
 {
-  // QString directory = getenv("WORKDIR");
-  // fileName = directory + "/alignment/strategies/" + fileName + ".txt";
   QFile file(fileName);
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
     std::cout << "Error opening file: " << qPrintable(fileName) << std::endl;
@@ -96,6 +97,18 @@ bool Strategy::readFromFile(QString fileName)
     else if (parameterName == "fixParameter") {
       unsigned int iPar = value.toUInt();
       m_parameters->setParameterSigma(iPar, 0.);
+    }
+    else if (parameterName == "fixDetector") {
+      unsigned short detId = value.toUShort();
+      // TODO
+    }
+    else if (parameterName == "fixLayer") {
+      unsigned short layer = value.toUShort();
+      // TODO
+    }
+    else if (parameterName == "readDataFrom") {
+      m_dataInterface->addFiles(qPrintable(value));
+      m_dataInterface->addSuitableTracks();
     }
   }
 
