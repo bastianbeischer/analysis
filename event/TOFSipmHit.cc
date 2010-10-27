@@ -12,6 +12,14 @@ TOFSipmHit::TOFSipmHit()
 	, m_levelChanges()
 {}
 
+TOFSipmHit::TOFSipmHit(unsigned short detId, TVector3 position, TVector3 counterPosition)
+	: Hit(Hit::tof, detId, 0, position, counterPosition)
+	, m_startTime(0)
+	, m_timeOverThreshold(0)
+	, m_levelChanges()
+{}
+
+
 TOFSipmHit::~TOFSipmHit()
 {}
 
