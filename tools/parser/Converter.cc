@@ -118,32 +118,32 @@ SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
       // process tof
       else if (id->IsTOF()) {
         const quint32 value = ((TOFDataBlock*) dataBlock)->GetRawData()[i];
-				TofHit tofHit(value);
-				TOFSipmHit* tofSipmHit = 0;
-				// probably not the most perfomant way but it only has to be done once
-				for (unsigned int simpleEventIt = 0; simpleEventIt < simpleEvent->hits().size(); ++simpleEventIt) {
-					Hit* hit = simpleEvent->hits()[simpleEventIt];
-					if (hit->type() != Hit::tof)
-						continue;
-					tofSipmHit = static_cast<TOFSipmHit*>(hit);
-					if (tofSipmHit->channel() == tofHit.channel()) {
-						break;
-					} else {
-						tofSipmHit = 0;
-					}
-				}
-				if (!tofSipmHit) {
-      		QList<QVariant> liste = m_settings->value("tof/"+QString::number(id->GetID16() | tofHit.channel(),16)).toList();
-      		TVector3 pos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
-      		liste = m_settings->value("tofback/"+QString::number(id->GetID16() | tofHit.channel(),16)).toList();
-      		TVector3 counterPos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
-					tofSipmHit = new TOFSipmHit(detId | tofHit.channel(), pos, counterPos);
-					simpleEvent->addHit(tofSipmHit);
-				}
-				tofSipmHit->addLevelChange(value);
+        TofHit tofHit(value);
+        TOFSipmHit* tofSipmHit = 0;
+        // probably not the most perfomant way but it only has to be done once
+        for (unsigned int simpleEventIt = 0; simpleEventIt < simpleEvent->hits().size(); ++simpleEventIt) {
+          Hit* hit = simpleEvent->hits()[simpleEventIt];
+          if (hit->type() != Hit::tof)
+            continue;
+          tofSipmHit = static_cast<TOFSipmHit*>(hit);
+          if (tofSipmHit->channel() == tofHit.channel()) {
+            break;
+          } else {
+            tofSipmHit = 0;
+          }
+        }
+        if (!tofSipmHit) {
+          QList<QVariant> liste = m_settings->value("tof/"+QString::number(id->GetID16() | tofHit.channel(),16)).toList();
+          TVector3 pos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
+          liste = m_settings->value("tofback/"+QString::number(id->GetID16() | tofHit.channel(),16)).toList();
+          TVector3 counterPos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
+          tofSipmHit = new TOFSipmHit(detId | tofHit.channel(), pos, counterPos);
+          simpleEvent->addHit(tofSipmHit);
+        }
+        tofSipmHit->addLevelChange(value);
       } // tof
 
-		} // tracker, trd, tofevent
+    } // tracker, trd, tofevent
 
   } // foreach(DetectorID...)
 

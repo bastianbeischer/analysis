@@ -119,7 +119,7 @@ void Matrix::fillMatrixFromTrack(Track* track)
       sigma = sqrt(V3(0,0));
 
       // derivative for Delta_x!
-      m_globalDerivatives[index] = -xi;
+      m_globalDerivatives[index] = -xi*sin(angle) + cos(angle);
       
       // float deltaX = parameters->GetParameter(shiftIndex);
       // float x0 = track->x0();
@@ -142,7 +142,7 @@ void Matrix::fillMatrixFromTrack(Track* track)
       sigma = sqrt(V3(0,0));
 
       // derivative for Delta_x!
-      m_globalDerivatives[index] = 1.;
+      m_globalDerivatives[index] = sin(angle) - xi*cos(angle);
 
       // float deltaY = parameters->GetParameter(shiftIndex);
       // float y0 = track->y0();
