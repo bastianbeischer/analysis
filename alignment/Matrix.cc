@@ -87,26 +87,24 @@ void Matrix::fillMatrixFromTrack(Track* track)
     RotTrans.Transpose(Rot);
     TMatrixD V2(2,2);
     V2 = Rot * V1 * RotTrans;
-    // TMatrixD Lin(1,2);
-    // if (useTangens) {
-    //   Lin(0,0) = -tangens;
-    //   Lin(0,1) = 1.;
-    // }
-    // else {
-    //   Lin(0,0) = 1.;
-    //   Lin(0,1) = -cotangens;
-    // }
-    // TMatrixD LinTrans(2,1);
-    // LinTrans.Transpose(Lin);
-    // TMatrixD V3 = TMatrixD(1,1);
-    // V3 = Lin * V2 * LinTrans;
-    // float sigma = sqrt(V3(0,0));
+    TMatrixD Lin(1,2);
+    if (useTangens) {
+      Lin(0,0) = -tangens;
+      Lin(0,1) = 1.;
+    }
+    else {
+      Lin(0,0) = 1.;
+      Lin(0,1) = -cotangens;
+    }
+    TMatrixD LinTrans(2,1);
+    LinTrans.Transpose(Lin);
+    TMatrixD V3 = TMatrixD(1,1);
+    V3 = Lin * V2 * LinTrans;
 
     float y,sigma;
     if (useTangens) {
-      // y = fy is probably wrong! we need to rotate
-      y = fy;
-      sigma = sqrt(V2(1,1));
+      y = -tangens*fx + fy;
+      sigma = sqrt(V3(0,0));
 
       // hardcoded for testbeam now, change -tangens to "1." for simulation
       m_globalDerivatives[index] = -tangens;
@@ -129,8 +127,8 @@ void Matrix::fillMatrixFromTrack(Track* track)
     }
     else {
       // y = fx is probably wrong! we need to rotate
-      y = fx;
-      sigma = sqrt(V2(0,0));
+      y = fx - cotangens*fy;
+      sigma = sqrt(V3(0,0));
 
       // hardcoded for testbeam now, change "1." to -cotangens for simulation
       m_globalDerivatives[index] = 1.;
