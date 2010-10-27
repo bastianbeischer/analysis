@@ -16,5 +16,8 @@ SimpleEvent::SimpleEvent(int id, int time) :
 
 SimpleEvent::~SimpleEvent()
 {
+  for (std::vector<Hit*>::iterator it = m_hits.begin(); it != m_hits.end(); it++) {
+    delete *it;
+  }
 }
 
