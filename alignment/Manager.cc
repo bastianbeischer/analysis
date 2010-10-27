@@ -5,6 +5,8 @@
 #include "Parameters.hh"
 #include "Matrix.hh"
 #include "Track.hh"
+#include "Setup.hh"
+#include "DetectorElement.hh"
 
 #include "millepede.h"
 
@@ -55,4 +57,20 @@ void Manager::startAlignment()
 
     FITGLO(m_parameters->parameterArray());
   }
+}
+
+void Manager::saveResults() const
+{
+  Setup* setup = Setup::instance();
+
+  DetectorElement* element = setup->firstElement();
+  while(element) {
+    unsigned short detId = element->id();
+    unsigned int index = m_parameters->indexForDetId(detId);
+    float shift = m_parameters->parameter(index);
+    element->setAlignmentShift(shift);
+    element = setup->nextElement();
+  }
+
+  setup->writeSettings();
 }

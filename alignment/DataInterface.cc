@@ -43,7 +43,7 @@ void DataInterface::addSuitableTracks()
       hits.push_back(hit);
 
     // add hits to the detectors
-    Setup*   setup   = Setup::instance();
+    Setup* setup = Setup::instance();
     foreach(Hit* hit, hits) {
       if (hit->type() == Hit::tracker || hit->type() == Hit::trd) {
         double z = hit->position().z();

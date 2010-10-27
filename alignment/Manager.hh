@@ -22,6 +22,7 @@ public:
 
   bool            loadStrategyFromFile(QString fileName);
   void            startAlignment();
+  void            saveResults() const;
 
   void            addTrack(Track* track) {m_tracks.push_back(track);}
 
