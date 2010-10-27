@@ -127,7 +127,7 @@ void Strategy::fixDetector(unsigned short detId)
 void Strategy::fixLayer(unsigned short layerNumber)
 {
   Setup* setup = Setup::instance();
-  int i = 0;
+  unsigned int i = 1;
   Layer* layer = setup->firstLayer();
   while(layer != 0 && i != layerNumber) {
     i++;
