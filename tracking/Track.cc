@@ -12,6 +12,7 @@
 #include <cassert>
 
 Track::Track() :
+  m_verbose(0),
   m_x0(0),
   m_slopeX(0),
   m_y0(0),
@@ -27,11 +28,6 @@ Track::~Track()
 
 int Track::fit(QVector<Hit*> hits)
 {
-  // QMap<double,int> positions;
-  // for (QList<DBHit*>::iterator it = m_hitsOnTrack.begin(); it != m_hitsOnTrack.end(); it++) {
-  //   positions[(*it)->position().z()]++;
-  // }
-  // unsigned int nHits = positions.size();
   unsigned int nHits = hits.size();
   if (nHits < 4) {
     // qDebug() << "Track::fit -- Can't fit: not enough hits!";    
@@ -44,31 +40,12 @@ int Track::fit(QVector<Hit*> hits)
   // basic dimensions of matrices
   unsigned int nRow = nHits;
   unsigned int nCol = 4;
-  //  unsigned int nModules = 16;
 
   // declare matrices for the calculation
   TMatrixD A(nRow,nCol);
   TVectorD b(nRow);
   TMatrixD U(nRow,nRow);
   TMatrixD CombineXandY(1,2);
-  //  TMatrixD SolutionToPositions(4*nModules,nCol);
-
-  // // check for singularity of matrix
-  // QMap< double,QMap<double,int> > angleOcc;
-  // for (QList<DBHit*>::iterator it = m_hitsOnTrack.begin(); it != m_hitsOnTrack.end(); it++) {
-  //   angleOcc[(*it)->angle()][(*it)->position().z()]++;
-  // }
-
-  // // we need at least two distinct angles and even then each angle has to appear at least twice
-  // if (angleOcc.size() <= 2) {
-  //   for(QMap< double, QMap<double,int> >::iterator it = angleOcc.begin(); it != angleOcc.end(); it++) {
-  //     QMap<double, int> positions = it.value();
-  //     if (positions.size() == 1) {
-  //       qDebug() << "Track::fit -- Can't fit: matrix will be singular!";
-  //       return 0;
-  //     }
-  //   }
-  // }
 
   for (unsigned int i = 0; i < nHits; i++) {
 
@@ -79,7 +56,6 @@ int Track::fit(QVector<Hit*> hits)
 
     // get information from detector...
     double angle = hit->angle();
-    //    std::cout << angle << std::endl;
 
     // HACK: because of different system of reference:
     // angle is currently the angle to the y axis and not to x. therefore:
@@ -88,25 +64,25 @@ int Track::fit(QVector<Hit*> hits)
     // fill the matrices
     float k = pos.z() - z0;
     bool useTangens = fabs(angle) < M_PI/4. ? true : false;
+    float xi = useTangens ? tan(angle) : 1./tan(angle);
+
     if (useTangens) {
-      float tangens     = sin(angle)/cos(angle);
-      CombineXandY(0,0) = -tangens;
+      CombineXandY(0,0) = -xi;
       CombineXandY(0,1) = 1.;
-      A(i,0)            = -tangens;
+      A(i,0)            = -xi;
       A(i,1)            = 1.;
-      A(i,2)            = -k*tangens;
+      A(i,2)            = -k*xi;
       A(i,3)            = k;
-      b(i)              = -tangens*pos.x() + pos.y();
+      b(i)              = -xi*pos.x() + pos.y();
     }
     else {
-      float cotangens   = cos(angle)/sin(angle);
       CombineXandY(0,0) = 1.;
-      CombineXandY(0,1) = -cotangens;
+      CombineXandY(0,1) = -xi;
       A(i,0)            = 1.;
-      A(i,1)            = -cotangens;
+      A(i,1)            = -xi;
       A(i,2)            = k;
-      A(i,3)            = -k*cotangens;
-      b(i)              = pos.x() - cotangens*pos.y();
+      A(i,3)            = -k*xi;
+      b(i)              = pos.x() - xi*pos.y();
     }
 
     // calculate covariance matrix
@@ -137,7 +113,8 @@ int Track::fit(QVector<Hit*> hits)
     V3 = CombineXandY * V2 * CombineXandYTrans;
 
     U(i,i) = V3(0,0); // this is the sigma for the i'th measurement
-  }
+
+  } // loop over hits
   
   // calculate solution
 
@@ -179,13 +156,15 @@ int Track::fit(QVector<Hit*> hits)
   m_ndf    = nRow-nCol;
   m_hits   = hits;
 
-  // std::cout << "--------------------------------------------------------------------------------------------------" << std::endl;
-  // std::cout << " results of straight line track fit: chi2/ndf = " << m_chi2 << "/" << m_ndf << std::endl;
-  // std::cout << "                                       x0     = " << m_x0/CLHEP::centimeter << " cm" <<std::endl;
-  // std::cout << "                                       y0     = " << m_y0/CLHEP::centimeter << " cm" <<std::endl;
-  // std::cout << "                                       slopeX = " << m_slopeX << std::endl;
-  // std::cout << "                                       slopeY = " << m_slopeY << std::endl;
-  // std::cout << "--------------------------------------------------------------------------------------------------" << std::endl;
+  if (m_verbose > 1) {
+    std::cout << "--------------------------------------------------------------------------------------------------" << std::endl;
+    std::cout << " results of straight line track fit: chi2/ndf = " << m_chi2   << "/" << m_ndf << std::endl;
+    std::cout << "                                       x0     = " << m_x0     << " mm" <<std::endl;
+    std::cout << "                                       y0     = " << m_y0     << " mm" <<std::endl;
+    std::cout << "                                       slopeX = " << m_slopeX << std::endl;
+    std::cout << "                                       slopeY = " << m_slopeY << std::endl;
+    std::cout << "--------------------------------------------------------------------------------------------------" << std::endl;
+  }
 
   return 1;
 
