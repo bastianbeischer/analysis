@@ -80,13 +80,13 @@ void DataManager::initializeOutput()
   m_outputFile = new TFile(qPrintable(m_outputFileName), "RECREATE");
   m_outputTree = new TTree("SimpleEventTree", "tree with simple events");
   m_description = new DataDescription;
+  m_description->calculateSoftwareVersionHash();
+  m_outputTree->GetUserInfo()->Add(m_description);
   m_outputTree->Branch("event", "SimpleEvent", &m_currentEvent); 
 }
 
 void DataManager::saveAndCloseOutput()
 {
-  m_description->calculateSoftwareVersionHash();
-  m_outputTree->GetUserInfo()->Add(m_description);
   m_outputFile->Close();
 }
 
