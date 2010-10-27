@@ -25,7 +25,6 @@ DataManager::DataManager() :
 
 DataManager::~DataManager()
 {
-  delete m_description;
   foreach(SingleFile* file, m_inputFiles)
     delete file;
   m_inputFiles.clear();
