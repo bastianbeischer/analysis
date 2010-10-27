@@ -51,8 +51,12 @@ void Setup::constructElements()
 {
   if (m_settings) {
     foreach(QString key, m_settings->allKeys()) {
-      DetectorElement* element = this->element(key.toUShort());
-      element->setAlignmentShift(m_settings->value(key).toDouble());
+      bool ok;
+      unsigned short detId = key.split("/").at(1).toUShort(&ok, 16);
+      if (ok) {
+        DetectorElement* element = this->element(detId);
+        element->setAlignmentShift(m_settings->value(key).toDouble());
+      }
     }
   }
 }
@@ -113,7 +117,6 @@ DetectorElement* Setup::element(unsigned short id)
 void Setup::writeSettings()
 {
   if (m_settings) {
-    QSettings settings("a.conf", QSettings::IniFormat);
     foreach(DetectorElement* element, m_elements) {
       QString typeString;
       unsigned short type = element->type();
