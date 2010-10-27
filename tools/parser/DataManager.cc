@@ -7,6 +7,7 @@
 
 #include <TTree.h>
 #include <TFile.h>
+#include <TROOT.h>
 
 #include "Converter.hh"
 #include "SimpleEvent.hh"
@@ -14,7 +15,7 @@
 #include "DataDescription.hh"
 
 DataManager::DataManager() :
-  m_description(new DataDescription),
+  m_description(0),
   m_outputFileName("output.root"),
   m_currentEvent(0),
   m_outputFile(0),
@@ -79,6 +80,7 @@ void DataManager::initializeOutput()
 {
   m_outputFile = new TFile(qPrintable(m_outputFileName), "RECREATE");
   m_outputTree = new TTree("SimpleEventTree", "tree with simple events");
+  m_description = new DataDescription;
   m_outputTree->Branch("event", "SimpleEvent", &m_currentEvent); 
 }
 
@@ -86,8 +88,6 @@ void DataManager::saveAndCloseOutput()
 {
   m_description->calculateSoftwareVersionHash();
   m_outputTree->GetUserInfo()->Add(m_description);
-  m_outputFile->cd();
-  m_outputTree->Write();
   m_outputFile->Close();
 }
 
