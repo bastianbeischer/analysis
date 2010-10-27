@@ -40,6 +40,11 @@ void Matrix::init()
   m_globalDerivatives = new float[m_nGlobal];
   m_localDerivatives = new float[m_nLocal];
 
+  resetArrays();
+}
+
+void Matrix::resetArrays()
+{
   for (unsigned int i = 0; i < m_nGlobal; i++)
     m_globalDerivatives[i] = 0.;
   for (unsigned int i = 0; i < m_nLocal; i++)
@@ -48,6 +53,8 @@ void Matrix::init()
 
 void Matrix::fillMatrixFromTrack(Track* track)
 {
+  resetArrays();
+
   QVector<Hit*> hits = track->hits();
   
   foreach(Hit* hit, hits) {
@@ -63,8 +70,8 @@ void Matrix::fillMatrixFromTrack(Track* track)
     // angle
     float angle = hit->angle();
     angle += M_PI/2.;
-    float cotangens = 1./tan(angle), tangens = tan(angle);
     bool  useTangens = fabs(angle) < M_PI/4. ? true : false;
+    float xi = useTangens ? tan(angle) : 1./tan(angle);
 
     // specify resolution
     double sigmaV = hit->resolutionEstimate();
@@ -90,12 +97,12 @@ void Matrix::fillMatrixFromTrack(Track* track)
     V2 = Rot * V1 * RotTrans;
     TMatrixD Lin(1,2);
     if (useTangens) {
-      Lin(0,0) = -tangens;
+      Lin(0,0) = -xi;
       Lin(0,1) = 1.;
     }
     else {
       Lin(0,0) = 1.;
-      Lin(0,1) = -cotangens;
+      Lin(0,1) = -xi;
     }
     TMatrixD LinTrans(2,1);
     LinTrans.Transpose(Lin);
@@ -104,11 +111,11 @@ void Matrix::fillMatrixFromTrack(Track* track)
 
     float y,sigma;
     if (useTangens) {
-      y = -tangens*fx + fy;
+      y = -xi*fx + fy;
       sigma = sqrt(V3(0,0));
 
-      // hardcoded for testbeam now, change -tangens to "1." for simulation
-      m_globalDerivatives[index] = -tangens;
+      // derivative for Delta_x!
+      m_globalDerivatives[index] = -xi;
       
       // float deltaX = parameters->GetParameter(shiftIndex);
       // float x0 = track->x0();
@@ -116,9 +123,9 @@ void Matrix::fillMatrixFromTrack(Track* track)
       // m_globalDerivatives[rotIndex] = -deltaX - x0 - k*lambda_x + fx;
 
       if (m_nLocal == 4) {
-        m_localDerivatives[0] = -tangens;
+        m_localDerivatives[0] = -xi;
         m_localDerivatives[1] = 1.;
-        m_localDerivatives[2] = -k*tangens;
+        m_localDerivatives[2] = -k*xi;
         m_localDerivatives[3] = k;
       }
       else if (m_nLocal == 2) {
@@ -127,11 +134,10 @@ void Matrix::fillMatrixFromTrack(Track* track)
       }
     }
     else {
-      // y = fx is probably wrong! we need to rotate
-      y = fx - cotangens*fy;
+      y = fx - xi*fy;
       sigma = sqrt(V3(0,0));
 
-      // hardcoded for testbeam now, change "1." to -cotangens for simulation
+      // derivative for Delta_x!
       m_globalDerivatives[index] = 1.;
 
       // float deltaY = parameters->GetParameter(shiftIndex);
@@ -141,9 +147,9 @@ void Matrix::fillMatrixFromTrack(Track* track)
        
       if (m_nLocal == 4) {
         m_localDerivatives[0] = 1.;
-        m_localDerivatives[1] = -cotangens;
+        m_localDerivatives[1] = -xi;
         m_localDerivatives[2] = k;
-        m_localDerivatives[3] = -k*cotangens;
+        m_localDerivatives[3] = -k*xi;
       }
       else if (m_nLocal == 2) {
         m_localDerivatives[0] = 1.;

@@ -13,6 +13,7 @@ public:
 
 public:
   void fillMatrixFromTrack(Track* track);
+  void resetArrays();
   void init();
 
 protected:
