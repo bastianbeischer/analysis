@@ -24,10 +24,6 @@ int main(int argc, char** argv)
     qFatal("Pass a run file list file!");
   
   QString listName = argv[1];
-
-  // QFile runFileListFile(listName);
-  // if (!runFileListFile.open(QIODevice::ReadOnly | QIODevice::Text))
-  //   qFatal("Could not open run file list file.");
 	
   TFile destinationTreeFile(qPrintable(listName+".root"), "RECREATE");
   TTree destinationTree("SimpleEventTree", "tree with simple events");
@@ -35,6 +31,10 @@ int main(int argc, char** argv)
   destinationTree.Branch("event", "SimpleEvent", &destinationEvent);
   DataDescription description;
   description.calculateSoftwareVersionHash();
+
+  // QFile runFileListFile(listName);
+  // if (!runFileListFile.open(QIODevice::ReadOnly | QIODevice::Text))
+  //   qFatal("Could not open run file list file.");
     // description.addRunFile(line.toStdString());
 
   DataChain chain(qPrintable(listName));
