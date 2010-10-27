@@ -84,6 +84,7 @@ void DataManager::initializeOutput()
 
 void DataManager::saveAndCloseOutput()
 {
+  m_description->calculateSoftwareVersionHash();
   m_outputTree->GetUserInfo()->Add(m_description);
   m_outputFile->cd();
   m_outputTree->Write();
