@@ -59,6 +59,9 @@ void Matrix::fillMatrixFromTrack(Track* track)
   
   foreach(Hit* hit, hits) {
 
+    if(hit->type() != Hit::tracker)
+      continue;
+
     // position
     TVector3 pos = hit->position();
     float fx = pos.x();
@@ -74,7 +77,8 @@ void Matrix::fillMatrixFromTrack(Track* track)
     float xi = useTangens ? tan(angle) : 1./tan(angle);
 
     // specify resolution
-    double sigmaV = hit->resolutionEstimate();
+    //double sigmaV = hit->resolutionEstimate();
+    double sigmaV = 0.05;
 
     // detector ID
     unsigned short detId = hit->detId() - hit->channel();
