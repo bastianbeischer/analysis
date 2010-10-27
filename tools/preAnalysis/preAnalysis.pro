@@ -12,10 +12,13 @@ MOC_DIR     = ./.tmp
 UI_DIR      = ./.tmp
 RCC_DIR     = ./.tmp
 
-INCLUDEPATH += $$TOPLEVEL/event
+INCLUDEPATH += $$TOPLEVEL/event \
+               $$TOPLEVEL/setup
+
 DEPENDPATH += $$INCLUDEPATH
 
-LIBS += -L$$TOPLEVEL/lib -lSimpleEvent
+LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
+                         -lsetup
 
 # Headers
 HEADERS = 
