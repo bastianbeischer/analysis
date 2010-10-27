@@ -4,6 +4,9 @@ verbose      1
 nStdDev      0
 nLocalIter   11
 cutfactor    100
-nGlobalIter  2
+nGlobalIter  10
 
 readDataFrom /home/beischer/institut/perdaix/analysis/tools/residuals/lists/some.txt
+
+fixLayer     16
+fixLayer     9

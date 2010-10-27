@@ -62,6 +62,7 @@ void Matrix::fillMatrixFromTrack(Track* track)
 
     // angle
     float angle = hit->angle();
+    angle += M_PI/2.;
     float cotangens = 1./tan(angle), tangens = tan(angle);
     bool  useTangens = fabs(angle) < M_PI/4. ? true : false;
 

@@ -82,8 +82,8 @@ int Track::fit(QVector<Hit*> hits)
     //    std::cout << angle << std::endl;
 
     // HACK: because of different system of reference:
-    // angle should be the angle to the y axis and not to x. therefore:
-    angle -= M_PI/2.;
+    // angle is currently the angle to the y axis and not to x. therefore:
+    angle += M_PI/2.;
     
     // fill the matrices
     float k = pos.z() - z0;
