@@ -15,6 +15,13 @@ ClassImp(DataDescription);
 DataDescription::DataDescription()
   : m_numberOfRuns(0)
 {
+}
+
+DataDescription::~DataDescription()
+{}
+
+void DataDescription::calculateSoftwareVersionHash()
+{
   FILE* file = popen("git rev-parse HEAD | tr -d '\n'", "r");
   char line[128];
   std::stringstream stream;
@@ -25,9 +32,6 @@ DataDescription::DataDescription()
   m_softwareVersionHash = stream.str();
   assert(m_softwareVersionHash.length() == 40);
 }
-
-DataDescription::~DataDescription()
-{}
 
 int DataDescription::timeOfRun(int) const
 {

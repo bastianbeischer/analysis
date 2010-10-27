@@ -13,6 +13,8 @@ class DataDescription : public TObject
     DataDescription();
     ~DataDescription();
 
+    void calculateSoftwareVersionHash();
+
     const std::string& comment() const {return m_comment;}
     void setComment(const std::string& comment) {m_comment = comment;}
     void setSoftwareVersionHash(const std::string& version) {m_softwareVersionHash = version;}
