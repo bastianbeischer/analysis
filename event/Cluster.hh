@@ -15,8 +15,12 @@ public:
   Cluster(std::vector<Hit*> hits);
   ~Cluster();
   
-  void addHit(Hit* hit) {m_hits.push_back(hit);}
-  void processHits();
+public:
+  void               processHits();
+
+public:
+  void               addHit(Hit* hit) {m_hits.push_back(hit);}
+  std::vector<Hit*>& hits() {return m_hits;}
 
 private:
   std::vector<Hit*> m_hits;
