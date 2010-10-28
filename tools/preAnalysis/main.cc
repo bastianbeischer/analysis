@@ -73,13 +73,14 @@ int main(int argc, char** argv)
     Layer* layer = setup->firstLayer();
     while(layer) {
     
-      // QVector<Cluster*> clustersHere = layer->clusters();
-      // foreach(Cluster* cluster, clustersHere)
-      //   clusters.push_back(cluster);
+      // Cluster* cluster = layer->bestCluster();
 
-      Cluster* cluster = layer->bestCluster();
-      if (cluster)
-        destinationEvent->addHit(cluster);
+      QVector<Cluster*> clustersHere = layer->clusters();
+      foreach(Cluster* cluster, clustersHere) {
+        if (cluster)
+          destinationEvent->addHit(cluster);
+      }
+
       layer->clearHitsInDetectors();
 
       // update pointer
