@@ -22,8 +22,11 @@ int main(int argc, char** argv)
 {
   if (argc != 2)
     qFatal("Pass a run file list file!");
-  
+
   QString listName = argv[1];
+  QFile runFileListFile(listName);
+  if (!runFileListFile.open(QIODevice::ReadOnly | QIODevice::Text))
+    qFatal("Could not open run file list file.");
 	
   TFile destinationTreeFile(qPrintable(listName+".root"), "RECREATE");
   TTree destinationTree("SimpleEventTree", "tree with simple events");
@@ -32,72 +35,65 @@ int main(int argc, char** argv)
   DataDescription description;
   description.calculateSoftwareVersionHash();
 
-  // QFile runFileListFile(listName);
-  // if (!runFileListFile.open(QIODevice::ReadOnly | QIODevice::Text))
-  //   qFatal("Could not open run file list file.");
-    // description.addRunFile(line.toStdString());
-
-  DataChain chain(qPrintable(listName));
-  unsigned int nEntries = chain.nEntries();
-
-  std::cout << std::endl;
-  std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
-  std::cout << "| Processing:                                                                                        |" << std::endl;
-  std::cout << "| 0%     10%       20%       30%       40%       50%       60%       70%       80%       90%     100%|" << std::endl;
-  std::cout << "|.........|.........|.........|.........|.........|.........|.........|.........|.........|..........|" << std::endl;
-  std::cout << "|" << std::flush;
-  int iFactors = 0;
-
   Setup* setup = Setup::instance();
 
-  for (unsigned int i = 0; i < nEntries; i++) {
-    SimpleEvent* sourceEvent = chain.event(i);
-    destinationEvent = new SimpleEvent();
+  // loop over all root files
+  QTextStream inStream(&runFileListFile);
+  QString line = inStream.readLine();
+  while (!line.isNull()) {
+    qDebug() << line;
+    gROOT->cd();
+    TFile sourceTreeFile(qPrintable(line));
+    if (sourceTreeFile.IsZombie()) {
+      qDebug("Could not open run file.");
+      continue;
+    }
+    TTree* sourceTree = static_cast<TTree*>(sourceTreeFile.Get("SimpleEventTree"));
+    SimpleEvent* sourceEvent = 0;
+    sourceTree->SetBranchAddress("event", &sourceEvent);
+    unsigned int nEvents = sourceTree->GetEntries();
+    description.addRunFile(line.toStdString(), nEvents);
 
-    // do the zero compression
-    // vector of all hits in this event
-    QVector<Hit*> hits;
-    foreach(Hit* hit, sourceEvent->hits())
-      hits.push_back(hit);
+    // loop over all events in this root file
+    for (unsigned long eventIt = 0; eventIt < nEvents; ++eventIt) {
+      sourceTree->GetEntry(eventIt);
+      destinationEvent = new SimpleEvent;
 
-    // add hits to the detectors
-    foreach(Hit* hit, hits) {
-      if (hit->type() == Hit::tracker || hit->type() == Hit::trd) {
-        double z = hit->position().z();
-        Layer* layer = setup->layer(z);
-        layer->addHitToDetector(hit);
+      // do the zero compression
+
+      // vector of all hits in this event
+      QVector<Hit*> hits;
+      foreach(Hit* hit, sourceEvent->hits())
+        hits.push_back(hit);
+
+      // add hits to the detectors
+      foreach(Hit* hit, hits) {
+        if (hit->type() == Hit::tracker || hit->type() == Hit::trd) {
+          double z = hit->position().z();
+          Layer* layer = setup->layer(z);
+          layer->addHitToDetector(hit);
+        }
       }
-    }
 
-    // find clusters (currently TRD and Tracker)
-    Layer* layer = setup->firstLayer();
-    while(layer) {
-    
-      // Cluster* cluster = layer->bestCluster();
+      // find clusters (currently TRD and Tracker)
+      Layer* layer = setup->firstLayer();
+      while(layer) {
+        // Cluster* cluster = layer->bestCluster();
+        QVector<Cluster*> clustersHere = layer->clusters();
+        foreach(Cluster* cluster, clustersHere)
+          if (cluster)
+            destinationEvent->addHit(cluster);
+        
+        layer->clearHitsInDetectors();
 
-      QVector<Cluster*> clustersHere = layer->clusters();
-      foreach(Cluster* cluster, clustersHere) {
-        if (cluster)
-          destinationEvent->addHit(cluster);
+        // update pointer
+        layer = setup->nextLayer();
       }
 
-      layer->clearHitsInDetectors();
+      destinationTree.Fill();
 
-      // update pointer
-      layer = setup->nextLayer();
-    }
-
-    destinationTree.Fill();
-
-    if ( i > iFactors*nEntries/100. ) {
-      std::cout << "#" << std::flush;
-      iFactors++;
-    }
-
-  } // loop over entries
-
-  std::cout << "|" << std::endl;
-  std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
+    } // events in this root file
+  } // all root files
 
   destinationTree.GetUserInfo()->Add(&description);
   destinationTreeFile.cd();
