@@ -87,6 +87,7 @@ void DataManager::initializeOutput()
 
 void DataManager::saveAndCloseOutput()
 {
+  m_outputFile->Write();
   m_outputFile->Close();
 }
 
