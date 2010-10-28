@@ -10,9 +10,10 @@ class TOFSipmHit : public Hit {
 public:
   enum EdgeType {LeadingEdge, TrailingEdge};
 
-public:
-  TOFSipmHit();
-  virtual ~TOFSipmHit();
+  public:
+    TOFSipmHit();
+    TOFSipmHit(unsigned short detId, TVector3 position, TVector3 counterPosition);
+    virtual ~TOFSipmHit();
 
   void processTDCHits();
 
@@ -28,7 +29,7 @@ public:
   void setLevelChange(int, uint32_t);
   
   void addLevelChange(uint32_t);
-	
+  
 private:
   static int channelFromData(uint32_t);
   static double timeFromData(uint32_t);
