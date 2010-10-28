@@ -24,17 +24,17 @@ public:
 
   double time(int) const;
   EdgeType edgeType(int) const;
-  int channel(int) const;
+  int channel(int) const; // obsolete??
   int spillNumber(int) const;
   void setLevelChange(int, uint32_t);
   
   void addLevelChange(uint32_t);
   
-private:
   static int channelFromData(uint32_t);
   static double timeFromData(uint32_t);
   static bool earlierThan(uint32_t, uint32_t);
     
+private:
   int m_channel;
   double m_startTime;
   double m_timeOverThreshold;

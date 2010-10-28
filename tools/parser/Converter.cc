@@ -115,8 +115,7 @@ SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
 
       else if (id->IsTOF()) {
         const quint32 value = ((TOFDataBlock*) dataBlock)->GetRawData()[i];
-        TofHit tofHit(value);
-        int channel = tofHit.channel();
+        int channel = TOFSipmHit::channelFromData(value);
 
         QList<QVariant> liste = m_settings->value("tof/"+QString::number(detId | channel,16)).toList();
         TVector3 pos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
