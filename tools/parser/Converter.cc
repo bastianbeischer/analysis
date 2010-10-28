@@ -94,9 +94,9 @@ SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
       if (id->IsTracker()) {
         int amplitude = static_cast<int>(temp[i]);
 
-        QList<QVariant> liste = m_settings->value("tracker/"+QString::number(id->GetID16() | i,16)).toList();
+        QList<QVariant> liste = m_settings->value("tracker/"+QString::number(detId | i,16)).toList();
         TVector3 pos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
-        liste = m_settings->value("trackerback/"+QString::number(id->GetID16() | i,16)).toList();
+        liste = m_settings->value("trackerback/"+QString::number(detId | i,16)).toList();
         TVector3 counterPos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
 
         simpleEvent->addHit(new Hit(Hit::tracker, detId | i, amplitude, pos, counterPos));
@@ -105,9 +105,9 @@ SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
       else if (id->IsTRD()) {
         int amplitude = static_cast<int>(temp[i]);
 
-        QList<QVariant> liste = m_settings->value("trd/"+QString::number(id->GetID16() | i,16)).toList();
+        QList<QVariant> liste = m_settings->value("trd/"+QString::number(detId | i,16)).toList();
         TVector3 pos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
-        liste = m_settings->value("trdback/"+QString::number(id->GetID16() | i,16)).toList();
+        liste = m_settings->value("trdback/"+QString::number(detId | i,16)).toList();
         TVector3 counterPos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
 
         simpleEvent->addHit(new Hit(Hit::trd, detId | i, amplitude, pos, counterPos));
