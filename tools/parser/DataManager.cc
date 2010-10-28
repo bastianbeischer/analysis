@@ -34,16 +34,16 @@ DataManager::~DataManager()
 
 void DataManager::parseListOfRuns(QString listName)
 {
-  openInputFiles(listName);
   initializeOutput();
+  openInputFiles(listName);
   processFiles();
   saveAndCloseOutput();
 }
 
 void DataManager::parseSingleRun(QString fileName)
 {
-  addSingleFile(fileName);
   initializeOutput();
+  addSingleFile(fileName);
   processFiles();
   saveAndCloseOutput();
 }
