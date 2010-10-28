@@ -78,11 +78,8 @@ int main(int argc, char** argv)
       //   clusters.push_back(cluster);
 
       Cluster* cluster = layer->bestCluster();
-      if (cluster) {
-        Hit* hit = new Hit(cluster->type(), cluster->detId(), cluster->signalHeight(), cluster->position(), cluster->counterPosition());
-        delete cluster;
-        destinationEvent->addHit(hit);
-      }
+      if (cluster)
+        destinationEvent->addHit(cluster);
       layer->clearHitsInDetectors();
 
       // update pointer
