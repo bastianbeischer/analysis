@@ -13,10 +13,10 @@ class Cluster :
 public:
   Cluster();
   Cluster(std::vector<Hit*> hits);
-  ~Cluster();
+  virtual ~Cluster();
   
 public:
-  void               processHits();
+  virtual void       processHits();
 
 public:
   void               addHit(Hit* hit) {m_hits.push_back(hit);}
