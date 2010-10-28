@@ -86,64 +86,51 @@ SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
     }
 
     // process data
-    int amplitude;
-    TVector3 position;
-
     unsigned short detId = id->GetID16();
+    std::map<unsigned short, TOFSipmHit*> tofHitMap; // maps channel to sipm hits
 
     for (int i = 0; i < nValues; i++) {
-      // process tracker and trd
-      if (id->IsTracker() || id->IsTRD()) {
-        amplitude = static_cast<int>(temp[i]);
 
-        if (id->IsTracker()) {
-          QList<QVariant> liste = m_settings->value("tracker/"+QString::number(id->GetID16() | i,16)).toList();
-          TVector3 pos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
-          liste = m_settings->value("trackerback/"+QString::number(id->GetID16() | i,16)).toList();
-          TVector3 counterPos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
+      if (id->IsTracker()) {
+        int amplitude = static_cast<int>(temp[i]);
 
-          simpleEvent->addHit(new Hit(Hit::tracker, detId | i, amplitude, pos, counterPos));
-        }
+        QList<QVariant> liste = m_settings->value("tracker/"+QString::number(id->GetID16() | i,16)).toList();
+        TVector3 pos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
+        liste = m_settings->value("trackerback/"+QString::number(id->GetID16() | i,16)).toList();
+        TVector3 counterPos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
 
-        if (id->IsTRD()) {
-          QList<QVariant> liste = m_settings->value("trd/"+QString::number(id->GetID16() | i,16)).toList();
-          TVector3 pos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
-          liste = m_settings->value("trdback/"+QString::number(id->GetID16() | i,16)).toList();
-          TVector3 counterPos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
+        simpleEvent->addHit(new Hit(Hit::tracker, detId | i, amplitude, pos, counterPos));
+      } // tracker
 
-          simpleEvent->addHit(new Hit(Hit::trd, detId | i, amplitude, pos, counterPos));
-        }
-      } // tracker, trd
+      else if (id->IsTRD()) {
+        int amplitude = static_cast<int>(temp[i]);
 
-      // process tof
+        QList<QVariant> liste = m_settings->value("trd/"+QString::number(id->GetID16() | i,16)).toList();
+        TVector3 pos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
+        liste = m_settings->value("trdback/"+QString::number(id->GetID16() | i,16)).toList();
+        TVector3 counterPos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
+
+        simpleEvent->addHit(new Hit(Hit::trd, detId | i, amplitude, pos, counterPos));
+      } // trd
+
       else if (id->IsTOF()) {
         const quint32 value = ((TOFDataBlock*) dataBlock)->GetRawData()[i];
         TofHit tofHit(value);
-        TOFSipmHit* tofSipmHit = 0;
-        // probably not the most perfomant way but it only has to be done once
-        for (unsigned int simpleEventIt = 0; simpleEventIt < simpleEvent->hits().size(); ++simpleEventIt) {
-          Hit* hit = simpleEvent->hits()[simpleEventIt];
-          if (hit->type() != Hit::tof)
-            continue;
-          tofSipmHit = static_cast<TOFSipmHit*>(hit);
-          if (tofSipmHit->channel() == tofHit.channel()) {
-            break;
-          } else {
-            tofSipmHit = 0;
-          }
+        int channel = tofHit.channel();
+
+        QList<QVariant> liste = m_settings->value("tof/"+QString::number(detId | channel,16)).toList();
+        TVector3 pos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
+        liste = m_settings->value("tofback/"+QString::number(detId | channel,16)).toList();
+        TVector3 counterPos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
+
+        if (!tofHitMap[channel]) {
+          tofHitMap[channel] = new TOFSipmHit(detId | channel, pos, counterPos);
+          simpleEvent->addHit(tofHitMap[channel]);
         }
-        if (!tofSipmHit) {
-          QList<QVariant> liste = m_settings->value("tof/"+QString::number(id->GetID16() | tofHit.channel(),16)).toList();
-          TVector3 pos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
-          liste = m_settings->value("tofback/"+QString::number(id->GetID16() | tofHit.channel(),16)).toList();
-          TVector3 counterPos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
-          tofSipmHit = new TOFSipmHit(detId | tofHit.channel(), pos, counterPos);
-          simpleEvent->addHit(tofSipmHit);
-        }
-        tofSipmHit->addLevelChange(value);
+        tofHitMap[channel]->addLevelChange(value);
       } // tof
 
-    } // tracker, trd, tofevent
+    } // all hits
 
   } // foreach(DetectorID...)
 
