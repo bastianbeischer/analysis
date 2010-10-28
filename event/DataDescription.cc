@@ -57,22 +57,12 @@ const std::string& DataDescription::runFileForEventNumber(long eventNumber) cons
 }
 
     
-void DataDescription::addRunFile(const std::string& fileName)
+void DataDescription::addRunFile(const std::string& fileName, const int nEvents)
 {
-  TFile file(fileName.c_str());
-  if (!file.IsZombie()) {
-    TTree* tree = static_cast<TTree*>(file.Get("SimpleEventTree"));
-    SimpleEvent* event = 0;
-    tree->SetBranchAddress("event", &event);
-    m_runFileNames.push_back(fileName);
-    long nEvents = tree->GetEntries();
-    m_eventNumberOffset.push_back(
-        m_numberOfRuns == 0 ?
-        nEvents :
-        nEvents + m_eventNumberOffset[m_numberOfRuns-1]);
-    file.Close();
-    ++m_numberOfRuns;
-  }
+  m_runFileNames.push_back(fileName);
+  m_eventNumberOffset.push_back(m_numberOfRuns == 0 ?
+                                nEvents :
+                                nEvents + m_eventNumberOffset[m_numberOfRuns-1]);
 }
     
 long DataDescription::numberOfEventsInRunFile(int i) const

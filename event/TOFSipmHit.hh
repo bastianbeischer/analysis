@@ -31,10 +31,11 @@ public:
   void addLevelChange(uint32_t);
   
   static int channelFromData(uint32_t);
-  static double timeFromData(uint32_t);
-  static bool earlierThan(uint32_t, uint32_t);
     
 private:
+  static double timeFromData(uint32_t);
+  static bool earlierThan(uint32_t, uint32_t);
+
   int m_channel;
   double m_startTime;
   double m_timeOverThreshold;

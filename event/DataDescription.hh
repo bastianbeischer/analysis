@@ -20,7 +20,7 @@ class DataDescription : public TObject
     void setSoftwareVersionHash(const std::string& version) {m_softwareVersionHash = version;}
     const std::string& softwareVersionHash() const {return m_softwareVersionHash;}
     long numberOfEventsInRunFile(int i) const;
-    void addRunFile(const std::string& fileName);
+    void addRunFile(const std::string& fileName, const int nEvents);
     const std::string& runFileName(int i) {assert(i < m_numberOfRuns); return m_runFileNames[i];}
     const std::vector<std::string>& runFileNames() {return m_runFileNames;}
     

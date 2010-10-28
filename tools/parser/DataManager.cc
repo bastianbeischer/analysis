@@ -71,8 +71,9 @@ void DataManager::openInputFiles(QString listName)
 void DataManager::addSingleFile(QString fileName)
 {
   std::cout << "Processing: " << qPrintable(fileName) << std::endl;
-  m_inputFiles.push_back(new SingleFile(qPrintable(fileName)));
-  //  m_description->addRunFile(qPrintable(fileName));
+  SingleFile* file = new SingleFile(qPrintable(fileName));
+  m_inputFiles.push_back(file);
+  m_description->addRunFile(qPrintable(fileName), file->getNumberOfEvents());
 }
 
 void DataManager::initializeOutput()
