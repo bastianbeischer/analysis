@@ -10,10 +10,10 @@ class TOFSipmHit : public Hit {
 public:
   enum EdgeType {LeadingEdge, TrailingEdge};
 
-  public:
-    TOFSipmHit();
-    TOFSipmHit(unsigned short detId, TVector3 position, TVector3 counterPosition);
-    virtual ~TOFSipmHit();
+public:
+  TOFSipmHit();
+  TOFSipmHit(unsigned short detId, TVector3 position, TVector3 counterPosition);
+  virtual ~TOFSipmHit();
 
   void processTDCHits();
 
