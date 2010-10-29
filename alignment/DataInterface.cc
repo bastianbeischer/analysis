@@ -33,40 +33,41 @@ void DataInterface::addFiles(const char* listName)
 void DataInterface::addSuitableTracks()
 {
   Manager* manager = Manager::instance();
+  Setup* setup = Setup::instance();
   
   for (unsigned int i = 0; i < m_chain->nEntries(); i++) {
     SimpleEvent* event = m_chain->event(i);
     
-    // vector of all hits in this event
-    QVector<Hit*> hits;
-    foreach(Hit* hit, event->hits())
-      hits.push_back(hit);
-
-    // add hits to the detectors
-    Setup* setup = Setup::instance();
-    setup->addHitsToLayers(hits);
-
-    // find clusters (currently TRD and Tracker)
-    QVector<Hit*> clusters;
-    Layer* layer = setup->firstLayer();
-    while(layer) {
-    
-      // QVector<Cluster*> clustersHere = layer->clusters();
-      // foreach(Cluster* cluster, clustersHere)
-      //   clusters.push_back(cluster);
-
-      Cluster* cluster = layer->bestCluster();
-      if (cluster)
-        clusters.push_back(cluster);
-
-      // update pointer
-      layer = setup->nextLayer();
-    }
-
-    // // get clusters from event (this assumes the zero-suppression has been done!)
-    // QVector<Hit*> clusters;
+    // // vector of all hits in this event
+    // QVector<Hit*> hits;
     // foreach(Hit* hit, event->hits())
-    //   clusters.push_back(hit);
+    //   hits.push_back(hit);
+
+    // // add hits to the detectors
+    // // add hits to the detectors
+    // setup->addHitsToLayers(hits);
+
+    // // find clusters (currently TRD and Tracker)
+    // QVector<Hit*> clusters;
+    // Layer* layer = setup->firstLayer();
+    // while(layer) {
+    
+    // // QVector<Cluster*> clustersHere = layer->clusters();
+    // // foreach(Cluster* cluster, clustersHere)
+    // //   clusters.push_back(cluster);
+
+    // Cluster* cluster = layer->bestCluster();
+    // if (cluster)
+    //   clusters.push_back(cluster);
+
+    //   // update pointer
+    //   layer = setup->nextLayer();
+    // }
+
+    // get clusters from event (this assumes the zero-suppression has been done!)
+    QVector<Hit*> clusters;
+    foreach(Hit* hit, event->hits())
+      clusters.push_back(hit);
 
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
