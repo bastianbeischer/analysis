@@ -4,8 +4,8 @@ TARGET     := $(LIBDIR)/libSimpleEvent.so
 INCLUDEDIR := .
 TEMPDIR    := .tmp
 
-SOURCES = SimpleEvent.cc Hit.cc Cluster.cc DataDescription.cc DataChain.cc TOFSipmHit.cc
-HEADERS = SimpleEvent.hh Hit.hh Cluster.hh DataDescription.hh DataChain.hh TOFSipmHit.hh
+SOURCES = SimpleEvent.cc Hit.cc Cluster.cc DataDescription.cc DataChain.cc TOFSipmHit.cc TOFCluster.cc
+HEADERS = SimpleEvent.hh Hit.hh Cluster.hh DataDescription.hh DataChain.hh TOFSipmHit.hh TOFCluser.hh
 DICTS   = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=Dict.cc))
 OBJECTS = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=.o)) $(DICTS:.cc=.o)
 
