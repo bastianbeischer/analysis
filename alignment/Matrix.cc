@@ -59,6 +59,7 @@ void Matrix::fillMatrixFromTrack(Track* track)
   
   foreach(Hit* hit, hits) {
 
+    // use only tracker hits for alignment
     if(hit->type() != Hit::tracker)
       continue;
 
@@ -121,11 +122,6 @@ void Matrix::fillMatrixFromTrack(Track* track)
       // derivative for Delta_x!
       m_globalDerivatives[index] = -xi*sin(angle) + cos(angle);
       
-      // float deltaX = parameters->GetParameter(shiftIndex);
-      // float x0 = track->x0();
-      // float lambda_x = track->slopeX();
-      // m_globalDerivatives[rotIndex] = -deltaX - x0 - k*lambda_x + fx;
-
       if (m_nLocal == 4) {
         m_localDerivatives[0] = -xi;
         m_localDerivatives[1] = 1.;
@@ -144,11 +140,6 @@ void Matrix::fillMatrixFromTrack(Track* track)
       // derivative for Delta_x!
       m_globalDerivatives[index] = sin(angle) - xi*cos(angle);
 
-      // float deltaY = parameters->GetParameter(shiftIndex);
-      // float y0 = track->y0();
-      // float lambda_y = track->slopeY();
-      // m_globalDerivatives[rotIndex] = -deltaY - y0 - k*lambda_y + fy;
-       
       if (m_nLocal == 4) {
         m_localDerivatives[0] = 1.;
         m_localDerivatives[1] = -xi;
