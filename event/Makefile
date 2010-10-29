@@ -32,8 +32,11 @@ distclean:
 	@rm -f $(TARGET)
 
 
-$(TARGET): $(TEMPDIR) $(OBJECTS)
+$(TARGET): $(LIBDIR) $(TEMPDIR) $(OBJECTS)
 	$(CXX) -o $(TARGET) $(OBJECTS) -shared $(LIBS)
+
+$(LIBDIR):
+	@if [ ! -d $(LIBDIR) ]; then mkdir $(LIBDIR); fi
 
 $(TEMPDIR):
 	@if [ ! -d $(TEMPDIR) ]; then mkdir $(TEMPDIR); fi
