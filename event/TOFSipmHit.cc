@@ -25,7 +25,7 @@ TOFSipmHit::~TOFSipmHit()
 
 void TOFSipmHit::processTDCHits()
 {
-  //TODO: Use TOT to get the wanted signal pusle.
+  //TODO: Use TOT to get the wanted signal pulse.
   m_startTime = time(0);
   //TODO: What if there is a noise pulse?
   m_timeOverThreshold = time(1) - time(0);
@@ -43,10 +43,10 @@ TOFSipmHit::EdgeType TOFSipmHit::edgeType(int i) const
   return (m_levelChanges[i] & 0x02000000) ? TrailingEdge: LeadingEdge;
 }
 
-int TOFSipmHit::channel(int i) const
+int TOFSipmHit::channel() const
 {
-  assert(0 <= i && i < numberOfLevelChanges());
-  return channelFromData(m_levelChanges[i]);
+  assert(numberOfLevelChanges() != 0);
+  return channelFromData(m_levelChanges[0]);
 }
 
 int TOFSipmHit::spillNumber(int i) const

@@ -19,12 +19,11 @@ public:
 
   double startTime() const {return m_startTime;}
   double timeOverThreshold() const {return m_timeOverThreshold;}
-  int channel() const {return m_channel;}
   int numberOfLevelChanges() const {return m_levelChanges.size();}
+  int channel() const;
 
   double time(int) const;
   EdgeType edgeType(int) const;
-  int channel(int) const; // obsolete??
   int spillNumber(int) const;
   void setLevelChange(int, uint32_t);
   
@@ -36,7 +35,7 @@ private:
   static double timeFromData(uint32_t);
   static bool earlierThan(uint32_t, uint32_t);
 
-  int m_channel;
+  int    m_channel;
   double m_startTime;
   double m_timeOverThreshold;
   std::vector<uint32_t> m_levelChanges;
