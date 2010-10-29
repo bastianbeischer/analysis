@@ -93,6 +93,8 @@ int main(int argc, char** argv)
       destinationTree.Fill();
 
     } // events in this root file
+
+    line = inStream.readLine();
   } // all root files
 
   destinationTree.GetUserInfo()->Add(&description);
