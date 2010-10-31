@@ -51,7 +51,7 @@ void Strategy::init()
   foreach(Constraint* cons, m_constraints) 
     cons->activate();
 
-  INITUN(m_nIter, m_cutValue);
+  //INITUN(m_nIter, m_cutValue);
 }
 
 bool Strategy::readFromFile(QString fileName)
