@@ -58,4 +58,3 @@ QVector<Cluster*> SipmArray::findClusters() const
 
   return clusters;
 }
-

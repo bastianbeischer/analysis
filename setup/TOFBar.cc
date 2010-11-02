@@ -8,6 +8,12 @@ TOFBar::TOFBar() :
   m_type = tof;
 }
 
+TOFBar::TOFBar(unsigned short detId) :
+  DetectorElement(detId)
+{
+  m_type = tof;
+}
+
 TOFBar::~TOFBar()
 {
 }

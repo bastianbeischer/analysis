@@ -38,6 +38,12 @@ void Layer::clearHitsInDetectors()
     element->clearHits();
 }
 
+void Layer::sortHits()
+{
+  foreach(DetectorElement* element, m_elements)
+    element->sortHits();
+}
+
 QVector<Cluster*> Layer::clusters() const
 {
   QVector<Cluster*> allClusters;

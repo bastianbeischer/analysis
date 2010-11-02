@@ -63,13 +63,7 @@ void Plotter::process()
       hits.push_back(hit);
 
     // add hits to the detectors
-    foreach(Hit* hit, hits) {
-      if (hit->type() == Hit::tracker || hit->type() == Hit::trd) {
-        double z = hit->position().z();
-        Layer* layer = setup->layer(z);
-        layer->addHitToDetector(hit);
-      }
-    }
+    setup->addHitsToLayers(hits);
 
     // find clusters (currently TRD and Tracker)
     QVector<Hit*> clusters;
@@ -83,11 +77,12 @@ void Plotter::process()
       Cluster* cluster = layer->bestCluster();
       if (cluster)
         clusters.push_back(cluster);
-      layer->clearHitsInDetectors();
 
       // update pointer
       layer = setup->nextLayer();
     }
+
+    setup->clearHits();
 
     // track finding
     clusters = m_trackFinding->findTrack(clusters);

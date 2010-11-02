@@ -23,6 +23,7 @@ public:
 public:
   void              addHitToDetector(Hit* hit);
   void              clearHitsInDetectors();
+  void              sortHits();
 
 public:
   double            z()         const {return m_z;}

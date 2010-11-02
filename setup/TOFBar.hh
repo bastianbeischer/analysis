@@ -13,6 +13,7 @@ class TOFBar :
   
 public:
   TOFBar();
+  TOFBar(unsigned short detId);
   ~TOFBar();
   
 public:

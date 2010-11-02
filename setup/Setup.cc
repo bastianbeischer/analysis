@@ -4,6 +4,7 @@
 #include "DetectorElement.hh"
 #include "SipmArray.hh"
 #include "TRDModule.hh"
+#include "TOFBar.hh"
 
 #include <QStringList>
 #include <QSettings>
@@ -107,11 +108,35 @@ DetectorElement* Setup::element(unsigned short id)
   if (!m_elements[id]) {
     if (usbBoard == 0x3200 || usbBoard == 0x3600 || usbBoard == 0x3400 || usbBoard == 0x3500)
       m_elements[id] = new TRDModule(id);
+    else if (usbBoard == 0x8000) {
+      m_elements[id] = new TOFBar(id);
+    }
     else
       m_elements[id] = new SipmArray(id);
   }
 
   return m_elements[id];
+}
+
+void Setup::addHitsToLayers(QVector<Hit*> hits)
+{
+  foreach(Hit* hit, hits) {
+    if (hit->type() == Hit::tracker || hit->type() == Hit::trd) {
+      double z = hit->position().z();
+      Layer* layer = this->layer(z);
+      layer->addHitToDetector(hit);
+    }
+  }
+  foreach(Layer* layer, m_layers) {
+    layer->sortHits();
+  }
+}
+
+void Setup::clearHits()
+{
+  foreach(Layer* layer, m_layers) {
+    layer->clearHitsInDetectors();
+  }
 }
 
 void Setup::writeSettings()

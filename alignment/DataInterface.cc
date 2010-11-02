@@ -44,13 +44,7 @@ void DataInterface::addSuitableTracks()
 
     // add hits to the detectors
     Setup* setup = Setup::instance();
-    foreach(Hit* hit, hits) {
-      if (hit->type() == Hit::tracker || hit->type() == Hit::trd) {
-        double z = hit->position().z();
-        Layer* layer = setup->layer(z);
-        layer->addHitToDetector(hit);
-      }
-    }
+    setup->addHitsToLayers(hits);
 
     // find clusters (currently TRD and Tracker)
     QVector<Hit*> clusters;
@@ -64,11 +58,12 @@ void DataInterface::addSuitableTracks()
       Cluster* cluster = layer->bestCluster();
       if (cluster)
         clusters.push_back(cluster);
-      layer->clearHitsInDetectors();
 
       // update pointer
       layer = setup->nextLayer();
     }
+    
+    setup->clearHits();
 
     // // get clusters from event (this assumes the zero-suppression has been done!)
     // QVector<Hit*> clusters;

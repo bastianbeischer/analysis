@@ -2,7 +2,9 @@
 #define Setup_hh
 
 #include <QMap>
+#include <QVector>
 
+class Hit;
 class Layer;
 class DetectorElement;
 class QSettings;
@@ -27,6 +29,10 @@ public:
   DetectorElement* firstElement();
   Layer*           nextLayer();
   DetectorElement* nextElement();
+
+public:
+  void             addHitsToLayers(QVector<Hit*> hits);
+  void             clearHits();
 
 public:
   void             writeSettings();
