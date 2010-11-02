@@ -66,14 +66,7 @@ int main(int argc, char** argv)
       foreach(Hit* hit, sourceEvent->hits())
         hits.push_back(hit);
 
-      // add hits to the detectors
-      foreach(Hit* hit, hits) {
-        if (hit->type() == Hit::tracker || hit->type() == Hit::trd) {
-          double z = hit->position().z();
-          Layer* layer = setup->layer(z);
-          layer->addHitToDetector(hit);
-        }
-      }
+      setup->addHitsToLayers(hits);
 
       // find clusters (currently TRD and Tracker)
       Layer* layer = setup->firstLayer();
@@ -84,8 +77,6 @@ int main(int argc, char** argv)
           if (cluster)
             destinationEvent->addHit(cluster);
         
-        layer->clearHitsInDetectors();
-
         // update pointer
         layer = setup->nextLayer();
       }
