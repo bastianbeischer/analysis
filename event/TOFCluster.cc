@@ -8,12 +8,12 @@ ClassImp(TOFCluster);
 
 TOFCluster::TOFCluster()
   : Cluster()
+  , m_yEstimate(0)
+  , m_yResolutionEstimate(395./sqrt(12.))
 {}
 
 TOFCluster::TOFCluster(std::vector<Hit*> hits)
   : Cluster(hits)
-  , m_yEstimate(0)
-  , m_yResolutionEstimate(395./sqrt(12.))
 {
   processHits();
 }
