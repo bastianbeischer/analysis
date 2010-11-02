@@ -14,7 +14,7 @@ class TOFCluster : public Cluster {
   private:
     double m_yEstimate;
     double m_yResolutionEstimate;
-  ClassDef(Cluster, 1);
+  ClassDef(TOFCluster, 1);
 };
 
 #endif
