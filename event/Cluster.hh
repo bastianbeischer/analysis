@@ -22,7 +22,7 @@ public:
   void               addHit(Hit* hit) {m_hits.push_back(hit);}
   std::vector<Hit*>& hits() {return m_hits;}
 
-private:
+protected:
   std::vector<Hit*> m_hits;
   
   ClassDef(Cluster, 1);
