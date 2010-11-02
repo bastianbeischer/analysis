@@ -16,6 +16,20 @@
 #include <QSettings>
 #include <QDebug>
 
+const int tdcChannelToBar[64] = {
+  5,  5,  1,  1,  4,  4,  0,  0,  7,  7,  3,  3,  6,  6,  2,  2,
+  6,  6,  2,  2,  7,  7,  3,  3,  4,  4,  0,  0,  5,  5,  1,  1,
+  15, 15, 11, 11, 14, 14, 10, 10, 13, 13, 9,  9,  12, 12, 8,  8,
+  12, 12, 8,  8,  13, 13, 9,  9,  14, 14, 10, 10, 15, 15, 11, 11
+};
+
+const int tdcChannelToSipm[64] = {
+  2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3,
+  1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0,
+  2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3, 2, 3,
+  1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0
+};
+
 Converter::Converter(const SingleFile* file) :
   m_file(file),
   m_settings(0)
@@ -122,8 +136,11 @@ SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
         liste = m_settings->value("tofback/"+QString::number(detId | channel,16)).toList();
         TVector3 counterPos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
 
+        unsigned short bar = tdcChannelToBar[channel] << 2;
+        unsigned short sipm = tdcChannelToSipm[channel];
+
         if (!tofHitMap[channel]) {
-          tofHitMap[channel] = new TOFSipmHit(detId | channel, pos, counterPos);
+          tofHitMap[channel] = new TOFSipmHit(detId | bar | sipm, pos, counterPos);
           simpleEvent->addHit(tofHitMap[channel]);
         }
         tofHitMap[channel]->addLevelChange(value);
