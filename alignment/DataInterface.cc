@@ -59,14 +59,13 @@ void DataInterface::addSuitableTracks()
 
       Layer* layer = setup->firstLayer();
       while(layer) {
-        QVector<Cluster*> clustersHere = layer->clusters();
-        foreach(Cluster* cluster, clustersHere)
-          clusters.push_back(cluster);
+        // QVector<Cluster*> clustersHere = layer->clusters();
+        // foreach(Cluster* cluster, clustersHere)
+        //   clusters.push_back(cluster);
 
         Cluster* cluster = layer->bestCluster();
         if (cluster)
           clusters.push_back(cluster);
-        layer->clearHitsInDetectors();
 
         // update pointer
         layer = setup->nextLayer();
