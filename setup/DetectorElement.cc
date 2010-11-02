@@ -27,5 +27,9 @@ DetectorElement::~DetectorElement()
 
 void DetectorElement::sortHits()
 {
-  qSort(m_hits.begin(), m_hits.end(), comparePositions);
+  QList<Hit*> hits = m_hits.values();
+  qSort(hits.begin(), hits.end(), comparePositions);
+  for (int i = 0; i < hits.size(); i++) {
+    m_hits[i] = hits.at(i);
+  }
 }
