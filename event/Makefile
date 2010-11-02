@@ -20,7 +20,7 @@ CXXFLAGS     := -Wall -fPIC $(INCLUDEFLAGS) -MMD
 .PHONY: all clean
 .SECONDARY: $(DICTS)
 
-all: $(TARGET)
+all: $(TEMPDIR) $(LIBDIR) $(TARGET)
 
 clean:
 	@echo "Cleaning up ..."
@@ -32,7 +32,7 @@ distclean:
 	@rm -f $(TARGET)
 
 
-$(TARGET): $(LIBDIR) $(TEMPDIR) $(OBJECTS)
+$(TARGET): $(OBJECTS)
 	$(CXX) -o $(TARGET) $(OBJECTS) -shared $(LIBS)
 
 $(LIBDIR):
