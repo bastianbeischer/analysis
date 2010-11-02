@@ -62,8 +62,6 @@ void DataInterface::addSuitableTracks()
       // update pointer
       layer = setup->nextLayer();
     }
-    
-    setup->clearHits();
 
     // // get clusters from event (this assumes the zero-suppression has been done!)
     // QVector<Hit*> clusters;

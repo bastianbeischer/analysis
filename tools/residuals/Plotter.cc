@@ -82,8 +82,6 @@ void Plotter::process()
       layer = setup->nextLayer();
     }
 
-    setup->clearHits();
-
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
 

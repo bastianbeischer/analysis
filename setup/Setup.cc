@@ -120,6 +120,9 @@ DetectorElement* Setup::element(unsigned short id)
 
 void Setup::addHitsToLayers(QVector<Hit*> hits)
 {
+  // remove old hits
+  clearHitsFromLayers();
+
   foreach(Hit* hit, hits) {
     if (hit->type() == Hit::tracker || hit->type() == Hit::trd) {
       double z = hit->position().z();
@@ -132,7 +135,7 @@ void Setup::addHitsToLayers(QVector<Hit*> hits)
   }
 }
 
-void Setup::clearHits()
+void Setup::clearHitsFromLayers()
 {
   foreach(Layer* layer, m_layers) {
     layer->clearHitsInDetectors();

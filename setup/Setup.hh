@@ -32,7 +32,7 @@ public:
 
 public:
   void             addHitsToLayers(QVector<Hit*> hits);
-  void             clearHits();
+  void             clearHitsFromLayers();
 
 public:
   void             writeSettings();
