@@ -1,15 +1,21 @@
 #include "TOFCluster.hh"
+#include "TOFSipmHit.hh"
+
+#include <cmath>
+#include <cassert>
 
 ClassImp(TOFCluster);
 
 TOFCluster::TOFCluster()
-	: Cluster()
+  : Cluster()
 {}
 
 TOFCluster::TOFCluster(std::vector<Hit*> hits)
-	: Cluster(hits)
+  : Cluster(hits)
+  , m_yEstimate(0)
+  , m_yResolutionEstimate(395./sqrt(12.))
 {
-	processHits();
+  processHits();
 }
 
 TOFCluster::~TOFCluster()
@@ -17,57 +23,55 @@ TOFCluster::~TOFCluster()
 
 void TOFCluster::processHits()
 {
-	m_hits.size();
-	//startTime
-  /*
-	double x  = 0., y  = 0., z  = 0.;
-  double xc = 0., yc = 0., zc = 0.;
-  unsigned short detId;
-  double weightedMean;
-  double weightedMeanC;
-  double sumOfWeights;
-
-  if (m_hits.size() == 0) {
-    return;
+  int nLeft = 0;
+  int nRight = 0;
+  double sumLeft = .0;
+  double sumRight = .0;
+  for (unsigned int i = 0; i < m_hits.size(); ++i) {
+    assert(m_hits[i]->type() == Hit::tof);
+    if (m_hits[i]->position().y() < 0) {
+      sumLeft+= static_cast<TOFSipmHit*>(m_hits[i])->startTime();
+      ++nLeft;
+    }
+    if (m_hits[i]->position().y() > 0) {
+      sumRight+= static_cast<TOFSipmHit*>(m_hits[i])->startTime();
+      ++nRight;
+    }
   }
-  
-  Hit* firstHit = m_hits.at(0);
-  detId = firstHit->detId() - firstHit->channel();
-  y  = firstHit->position().y();
-  z  = firstHit->position().z();
+  double x, y, z;
+  double xc, yc, zc;
+  if (!m_hits.size())
+    return;
+  Hit* firstHit = m_hits[0];
+  unsigned short detId = firstHit->detId() - firstHit->channel();
+  x = 50.*int(firstHit->position().x()/50.) + (firstHit->position().x() < 0 ? -25 : 25);
+  y = firstHit->position().y();
+  z = firstHit->position().z();
+  xc = x;
   yc = firstHit->counterPosition().y();
   zc = firstHit->counterPosition().z();
-
-  for (std::vector<Hit*>::iterator it = m_hits.begin(); it != m_hits.end(); it++) {
-    x = (*it)->position().x();
-    xc = (*it)->counterPosition().x();
-
-    double weight = pow((*it)->signalHeight(), 2.);
-    weightedMean += x*weight;
-    weightedMeanC += xc*weight;
-    sumOfWeights += weight;
+  if (nLeft && nRight) {
+    double dt = sumLeft/nLeft - sumRight/nRight; // ns
+    //const double barLength = 395; // mm
+    const double refractiveIndex = 1.58;
+    const double speedOfLight = 299792458; // m/s
+    m_yEstimate = 0.5e-6 * refractiveIndex * speedOfLight * dt;
+    double sigmaDt = 0.6; //TODO replace with function of m_yEstimate.
+    m_yResolutionEstimate = 0.5e-6 * refractiveIndex * speedOfLight * sigmaDt;
   }
-  weightedMean /= sumOfWeights;
-  weightedMeanC /= sumOfWeights;
-
-  x = weightedMean;
-  xc = weightedMeanC;
 
   TVector3 position = TVector3(x,y,z);
   TVector3 counterPosition = TVector3(xc,yc,zc);
 
-  int amplitude = 0.;
+  int timeOverThreshold = 0.;
   for (std::vector<Hit*>::iterator it = m_hits.begin(); it != m_hits.end(); it++) {
-    amplitude += (*it)->signalHeight();
+    timeOverThreshold+= (*it)->signalHeight();
   }  
 
-  m_type = Hit::tracker;
+  m_type = Hit::tof;
   m_detId = detId;
-  m_signalHeight = amplitude;
+  m_signalHeight = timeOverThreshold;
   m_position = position;
   m_counterPosition = counterPosition;
-
-  // m_outputHit = new Hit(Hit::tracker, detId, amplitude, position, counterPosition);
-	*/
 }
 
