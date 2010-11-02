@@ -124,11 +124,9 @@ void Setup::addHitsToLayers(QVector<Hit*> hits)
   clearHitsFromLayers();
 
   foreach(Hit* hit, hits) {
-    if (hit->type() == Hit::tracker || hit->type() == Hit::trd) {
-      double z = hit->position().z();
-      Layer* layer = this->layer(z);
-      layer->addHitToDetector(hit);
-    }
+    double z = hit->position().z();
+    Layer* layer = this->layer(z);
+    layer->addHitToDetector(hit);
   }
   foreach(Layer* layer, m_layers) {
     layer->sortHits();
