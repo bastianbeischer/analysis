@@ -2,6 +2,7 @@
 
 #include "DataChain.hh"
 #include "Cluster.hh"
+#include "TOFCluster.hh"
 #include "SimpleEvent.hh"
 #include "Track.hh"
 #include "Layer.hh"
@@ -62,31 +63,42 @@ void Plotter::process()
     foreach(Hit* hit, event->hits())
       hits.push_back(hit);
 
-    // add hits to the detectors
-    setup->addHitsToLayers(hits);
-
-    // find clusters (currently TRD and Tracker)
     QVector<Hit*> clusters;
-    Layer* layer = setup->firstLayer();
-    while(layer) {
-    
-      // QVector<Cluster*> clustersHere = layer->clusters();
-      // foreach(Cluster* cluster, clustersHere)
-      //   clusters.push_back(cluster);
 
-      Cluster* cluster = layer->bestCluster();
-      if (cluster)
-        clusters.push_back(cluster);
+    bool needToFindClusters = false;
+    foreach(Hit* hit, event->hits()) {
+      if (dynamic_cast<Cluster*>(hit)) {
+        clusters.push_back(hit);
+        setup->layer(hit->position().z());
+      }
+      else {
+        needToFindClusters = true;
+      }
+    }
 
-      // update pointer
-      layer = setup->nextLayer();
+    if (needToFindClusters) {
+      setup->addHitsToLayers(hits);
+      Layer* layer = setup->firstLayer();
+      while(layer) {
+        QVector<Cluster*> clustersHere = layer->clusters();
+        foreach(Cluster* cluster, clustersHere)
+          clusters.push_back(cluster);
+
+        Cluster* cluster = layer->bestCluster();
+        if (cluster)
+          clusters.push_back(cluster);
+        layer->clearHitsInDetectors();
+
+        // update pointer
+        layer = setup->nextLayer();
+      }
     }
 
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
 
     // fit once for each layer
-    layer = setup->firstLayer();
+    Layer* layer = setup->firstLayer();
     while(layer) {
       double z = layer->z();
 
@@ -116,14 +128,15 @@ void Plotter::process()
       layer = setup->nextLayer();
     }
 
-    // clusters were dynamically allocated and have to be delete by hand. only clusters though. hacky here. also: clusters not on track won't be deleted.
-    // needs a real solution soon.
-    for (QVector<Hit*>::iterator it = clusters.begin() ; it != clusters.end(); it++) {
-      Cluster* cluster = dynamic_cast<Cluster*>(*it);
-      if (cluster)
-        delete cluster;
+    if(needToFindClusters) {
+      // clusters were dynamically allocated and have to be delete by hand. only clusters though. hacky here. also: clusters not on track won't be deleted.
+      // needs a real solution soon.
+      for (QVector<Hit*>::iterator it = clusters.begin() ; it != clusters.end(); it++) {
+        Cluster* cluster = dynamic_cast<Cluster*>(*it);
+        if (cluster)
+          delete cluster;
+      }
     }
-
     if ( i > iFactors*nEntries/100. ) {
       std::cout << "#" << std::flush;
       iFactors++;
