@@ -38,10 +38,7 @@ void DataInterface::addSuitableTracks()
   for (unsigned int i = 0; i < m_chain->nEntries(); i++) {
     SimpleEvent* event = m_chain->event(i);
     
-    QVector<Hit*> hits;
-    foreach(Hit* hit, event->hits())
-      hits.push_back(hit);
-    
+    QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
     QVector<Hit*> clusters;
 
     bool needToFindClusters = false;
