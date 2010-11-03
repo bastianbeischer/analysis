@@ -19,7 +19,7 @@ INCLUDEPATH += $$TOPLEVEL/alignment
 
 DEPENDPATH += $$INCLUDEPATH
 
-LIBS += -L$$TOPLEVEL/lib -lalignment \
+LIBS += -L$$TOPLEVEL/lib -lalignment -lSimpleEvent -lsetup -ltracking -lmillepede
 
 # Headers
 HEADERS = 
