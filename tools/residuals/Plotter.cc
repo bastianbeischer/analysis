@@ -59,14 +59,11 @@ void Plotter::process()
     SimpleEvent* event = m_chain->event(i);
 
     // vector of all hits in this event
-    QVector<Hit*> hits;
-    foreach(Hit* hit, event->hits())
-      hits.push_back(hit);
-
+    QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
     QVector<Hit*> clusters;
 
     bool needToFindClusters = false;
-    foreach(Hit* hit, event->hits()) {
+    foreach(Hit* hit, hits) {
       if (dynamic_cast<Cluster*>(hit)) {
         clusters.push_back(hit);
         setup->layer(hit->position().z());

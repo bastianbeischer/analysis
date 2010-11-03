@@ -62,10 +62,7 @@ int main(int argc, char** argv)
       // do the zero compression
 
       // vector of all hits in this event
-      QVector<Hit*> hits;
-      foreach(Hit* hit, sourceEvent->hits())
-        hits.push_back(hit);
-
+      QVector<Hit*> hits = QVector<Hit*>::fromStdVector(sourceEvent->hits());
       setup->addHitsToLayers(hits);
 
       // find clusters (currently TRD and Tracker)
