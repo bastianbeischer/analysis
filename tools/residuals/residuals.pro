@@ -27,13 +27,11 @@ LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
 
 # Headers
 HEADERS = Plotter.hh \
-          PlotHits.hh \
           ResidualPlot.hh
 
 # Sources
 SOURCES = main.cc \
           Plotter.cc \
-          PlotHits.cc \
           ResidualPlot.cc
 
 include($$TOPLEVEL/root.pri)
