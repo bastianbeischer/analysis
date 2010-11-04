@@ -24,7 +24,5 @@ int main(int argc, char* argv[])
   plotter.addFiles(filename);
   plotter.process();
 
-  app.Run();
-
   return 0;
 }
