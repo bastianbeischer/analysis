@@ -124,8 +124,10 @@ PlotHits::~PlotHits()
 
 void PlotHits::clear()
 {
-  foreach(TBox* hitBox, m_hits)
+  foreach(TBox* hitBox, m_hits) {
     delete hitBox;
+    hitBox = 0;
+  }
   m_hits.clear();
 
   foreach(TLine* line, m_lines) {
