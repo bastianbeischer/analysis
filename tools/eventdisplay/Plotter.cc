@@ -81,10 +81,9 @@ void Plotter::process()
         foreach(Cluster* cluster, clustersHere)
           clusters.push_back(cluster);
 
-        Cluster* cluster = layer->bestCluster();
-        if (cluster)
-          clusters.push_back(cluster);
-        layer->clearHitsInDetectors();
+        // Cluster* cluster = layer->bestCluster();
+        // if (cluster)
+        //   clusters.push_back(cluster);
 
         // update pointer
         layer = setup->nextLayer();
