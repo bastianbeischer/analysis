@@ -21,11 +21,13 @@ TOFBar::~TOFBar()
 QVector<Cluster*> TOFBar::findClusters() const
 {
   QVector<Cluster*> clusters;
-  TOFCluster* tofCluster = new TOFCluster;
-  foreach(Hit* hit, m_hits) {
-    tofCluster->addHit(hit);
+  if(m_hits.size() != 0) {
+    TOFCluster* tofCluster = new TOFCluster;
+    foreach(Hit* hit, m_hits) {
+      tofCluster->addHit(hit);
+    }
+    tofCluster->processHits();
+    clusters.push_back(tofCluster);
   }
-  tofCluster->processHits();
-  clusters.push_back(tofCluster);
   return clusters;
 }
