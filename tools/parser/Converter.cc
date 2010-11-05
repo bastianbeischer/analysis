@@ -148,6 +148,9 @@ SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
 
     } // all hits
 
+    std::map<unsigned short, TOFSipmHit*>::iterator tofHitIt = tofHitMap.begin();
+    for (; tofHitIt != tofHitMap.end(); ++tofHitIt)
+      tofHitIt->second->processTDCHits();
   } // foreach(DetectorID...)
 
   return simpleEvent;

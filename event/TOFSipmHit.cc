@@ -27,10 +27,31 @@ TOFSipmHit::~TOFSipmHit()
 
 void TOFSipmHit::processTDCHits()
 {
-  //TODO: Use TOT to get the wanted signal pulse.
-  m_startTime = time(0);
-  //TODO: What if there is a noise pulse?
-  m_timeOverThreshold = time(1) - time(0);
+  std::vector<double> tot;
+  std::vector<double> start;
+  for (int i = 0; i < numberOfLevelChanges() - 1; ++i) {
+    if (edgeType(i) == LeadingEdge && edgeType(i+1) == TrailingEdge) {
+      tot.push_back(time(i+1) - time(i));
+      start.push_back(time(i));
+    }
+  }
+  if (tot.size() > 0) {
+    double maxTot = tot[0];
+    double startBelongingToMaxTot = start[0];
+    for (unsigned int i = 1; i < tot.size(); ++i) {
+      if (maxTot < tot[i] && maxTot < 70.) {
+        maxTot = tot[i];
+        startBelongingToMaxTot = start[i];
+      }
+    }
+    m_timeOverThreshold = maxTot;
+    m_signalHeight = 10 * maxTot;
+    m_startTime = startBelongingToMaxTot;
+    return;
+  }
+  m_timeOverThreshold = 0;
+  m_signalHeight = 0;
+  m_startTime = 0;
 }
 
 double TOFSipmHit::time(int i) const
@@ -64,7 +85,7 @@ int TOFSipmHit::channelFromData(uint32_t value)
 
 double TOFSipmHit::timeFromData(uint32_t value)
 {
-  return 10. * (value & 0x0007FFFF);
+  return .1 * (value & 0x0007FFFF);
 }
 
 bool TOFSipmHit::earlierThan(uint32_t data1, uint32_t data2)
