@@ -54,38 +54,11 @@ int main(int argc, char** argv)
     // vector of all hits in this event
     QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
     QVector<Hit*> clusters;
-
-    bool needToFindClusters = false;
-    foreach(Hit* hit, hits) {
-      if (dynamic_cast<Cluster*>(hit)) {
-        clusters.push_back(hit);
-        setup->layer(hit->position().z());
-      }
-      else {
-        needToFindClusters = true;
-      }
-    }
-
-    if (needToFindClusters) {
-      setup->addHitsToLayers(hits);
-      Layer* layer = setup->firstLayer();
-      while(layer) {
-        QVector<Cluster*> clustersHere = layer->clusters();
-        foreach(Cluster* cluster, clustersHere)
-          clusters.push_back(cluster);
-
-        Cluster* cluster = layer->bestCluster();
-        if (cluster)
-          clusters.push_back(cluster);
-        layer->clearHitsInDetectors();
-
-        // update pointer
-        layer = setup->nextLayer();
-      }
-    }
-
+    foreach(Cluster* cluster, setup->generateClusters(hits))
+      clusters.push_back(cluster);
+    
     // track finding
-    //clusters = tf.findTrack(clusters);
+    // clusters = tf.findTrack(clusters);
     
     QMap<int, Hit*> map;
     foreach(Hit* cluster, clusters) {
