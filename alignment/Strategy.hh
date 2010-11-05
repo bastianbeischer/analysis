@@ -3,6 +3,7 @@
 
 #include <QVector>
 
+class DataInterface;
 class Parameters;
 class Constraint;
 class QString;
@@ -27,8 +28,13 @@ public:
   bool                 readFromFile(QString fileName);
 
 private:
+  void                 fixDetector(unsigned short detId);
+  void                 fixLayer(unsigned short layer);
+
+private:
   Parameters*              m_parameters;
   QVector<Constraint*>     m_constraints;
+  DataInterface*           m_dataInterface;
 
   unsigned int             m_nGlobal;
   unsigned int             m_nLocal;

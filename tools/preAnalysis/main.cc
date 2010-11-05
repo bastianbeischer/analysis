@@ -10,47 +10,69 @@
 #include <TFile.h>
 #include <TTree.h>
 
-#include <SimpleEvent.hh>
-#include <DataDescription.hh>
-#include <Hit.hh>
+#include "DataChain.hh"
+#include "Setup.hh"
+#include "Layer.hh"
+#include "SimpleEvent.hh"
+#include "DataDescription.hh"
+#include "Hit.hh"
+#include "Cluster.hh"
 
 int main(int argc, char** argv)
 {
   if (argc != 2)
     qFatal("Pass a run file list file!");
-  QFile runFileListFile(argv[1]);
+
+  QString listName = argv[1];
+  QFile runFileListFile(listName);
   if (!runFileListFile.open(QIODevice::ReadOnly | QIODevice::Text))
     qFatal("Could not open run file list file.");
 	
-  TFile destinationTreeFile(qPrintable(QString(argv[1])+".root"), "RECREATE");
+  TFile destinationTreeFile(qPrintable(listName+".root"), "RECREATE");
   TTree destinationTree("SimpleEventTree", "tree with simple events");
   SimpleEvent* destinationEvent = 0;
   destinationTree.Branch("event", "SimpleEvent", &destinationEvent);
   DataDescription description;
-	
+  description.calculateSoftwareVersionHash();
+
+  Setup* setup = Setup::instance();
+
+  // loop over all root files
   QTextStream inStream(&runFileListFile);
   QString line = inStream.readLine();
   while (!line.isNull()) {
     qDebug() << line;
-    description.addRunFile(line.toStdString());
     gROOT->cd();
     TFile sourceTreeFile(qPrintable(line));
-    if (sourceTreeFile.IsZombie())
-      qFatal("Could not open run file.");
+    if (sourceTreeFile.IsZombie()) {
+      qDebug("Could not open run file.");
+      continue;
+    }
     TTree* sourceTree = static_cast<TTree*>(sourceTreeFile.Get("SimpleEventTree"));
     SimpleEvent* sourceEvent = 0;
     sourceTree->SetBranchAddress("event", &sourceEvent);
-    for (long eventIt = 0; eventIt < sourceTree->GetEntries(); ++eventIt) {
+    unsigned int nEvents = sourceTree->GetEntries();
+    description.addRunFile(line.toStdString(), nEvents);
+
+    // loop over all events in this root file
+    for (unsigned long eventIt = 0; eventIt < nEvents; ++eventIt) {
       sourceTree->GetEntry(eventIt);
+      destinationEvent = new SimpleEvent;
 
+      // vector of all hits in this event
+      QVector<Hit*> hits = QVector<Hit*>::fromStdVector(sourceEvent->hits());
 
-
-      destinationEvent = sourceEvent;
+      // do the zero compression
+      foreach(Cluster* cluster, setup->generateClusters(hits))
+        destinationEvent->addHit(cluster);
+      
       destinationTree.Fill();
-    }
+
+    } // events in this root file
+
     line = inStream.readLine();
-    sourceTreeFile.Close();
-  }
+  } // all root files
+
   destinationTree.GetUserInfo()->Add(&description);
   destinationTreeFile.cd();
   destinationTree.Write();

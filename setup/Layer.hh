@@ -23,11 +23,13 @@ public:
 public:
   void              addHitToDetector(Hit* hit);
   void              clearHitsInDetectors();
+  void              sortHits();
 
 public:
   double            z()         const {return m_z;}
   unsigned short    nElements() const {return m_elements.size();}
 
+  bool              contains(unsigned short detId) const;
   const char*       printInfo();
 
 private:

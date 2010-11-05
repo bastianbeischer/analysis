@@ -38,6 +38,12 @@ void Layer::clearHitsInDetectors()
     element->clearHits();
 }
 
+void Layer::sortHits()
+{
+  foreach(DetectorElement* element, m_elements)
+    element->sortHits();
+}
+
 QVector<Cluster*> Layer::clusters() const
 {
   QVector<Cluster*> allClusters;
@@ -65,6 +71,13 @@ Cluster* Layer::bestCluster() const
   }
 
   return bestCluster;
+}
+
+bool Layer::contains(unsigned short detId) const
+{
+  if (m_elements[detId] != 0)
+    return true;
+  return false;
 }
 
 const char* Layer::printInfo()

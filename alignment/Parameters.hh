@@ -25,6 +25,8 @@ public:
   float        parameterSigma(unsigned int i) const {assert(i < m_nPar); return m_parameterSigma[i];}
   unsigned int numberOfParameters()           const {return m_nPar;}
 
+  unsigned int indexForDetId(unsigned short detId) const;
+
 private:
   
   unsigned int m_nPar;

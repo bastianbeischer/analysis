@@ -14,13 +14,15 @@ SOURCES += DetectorElement.cc \
            Layer.cc \
            Setup.cc \
            SipmArray.cc \
-           TRDModule.cc
+           TRDModule.cc \
+           TOFBar.cc
 
 HEADERS += DetectorElement.hh \
            Layer.hh \
            Setup.hh \
            SipmArray.hh \
-           TRDModule.hh
+           TRDModule.hh \
+           TOFBar.hh
 
 INCLUDEPATH += $$TOPLEVEL/event
 

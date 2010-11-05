@@ -53,7 +53,7 @@ QVector<Hit*> TrackFinding::findTrack(QVector<Hit*> hits)
 
   for (QVector<Hit*>::iterator it = hits.begin(); it != hits.end(); it++) {
     Hit* hit = (*it);
-    if (isInCorridor(hit) && hit->type() != Hit::tof) hitsOnTrack.push_back(hit);
+    if (isInCorridor(hit)) hitsOnTrack.push_back(hit);
   }
 
   //  // improve

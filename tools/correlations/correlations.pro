@@ -1,7 +1,7 @@
 TEMPLATE = app
-TARGET = preAnalysis
+TARGET = correlations
 
-CONFIG += debug
+#CONFIG += debug
 
 TOPLEVEL = ../..
 
@@ -12,20 +12,25 @@ MOC_DIR     = ./.tmp
 UI_DIR      = ./.tmp
 RCC_DIR     = ./.tmp
 
+# Forms
+FORMS =
+
 INCLUDEPATH += $$TOPLEVEL/event \
-               $$TOPLEVEL/setup
+               $$TOPLEVEL/setup \
+               $$TOPLEVEL/tracking
 
 DEPENDPATH += $$INCLUDEPATH
 
 LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
-                         -lsetup
+                         -lsetup \
+                         -ltracking
 
 # Headers
 HEADERS = 
 
 # Sources
 SOURCES = main.cc
-                  
+
 include($$TOPLEVEL/root.pri)
 
 QMAKE_LFLAGS -= -Wl,--as-needed

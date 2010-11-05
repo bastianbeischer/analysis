@@ -1,7 +1,7 @@
 TEMPLATE = app
-TARGET = preAnalysis
+TARGET = alignment
 
-CONFIG += debug
+#CONFIG += debug
 
 TOPLEVEL = ../..
 
@@ -12,20 +12,21 @@ MOC_DIR     = ./.tmp
 UI_DIR      = ./.tmp
 RCC_DIR     = ./.tmp
 
-INCLUDEPATH += $$TOPLEVEL/event \
-               $$TOPLEVEL/setup
+# Forms
+FORMS =
+
+INCLUDEPATH += $$TOPLEVEL/alignment
 
 DEPENDPATH += $$INCLUDEPATH
 
-LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
-                         -lsetup
+LIBS += -L$$TOPLEVEL/lib -lalignment -lSimpleEvent -lsetup -ltracking -lmillepede
 
 # Headers
 HEADERS = 
 
 # Sources
 SOURCES = main.cc
-                  
+
 include($$TOPLEVEL/root.pri)
 
 QMAKE_LFLAGS -= -Wl,--as-needed

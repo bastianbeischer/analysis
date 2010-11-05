@@ -40,31 +40,28 @@ void Matrix::init()
   m_globalDerivatives = new float[m_nGlobal];
   m_localDerivatives = new float[m_nLocal];
 
+  resetArrays();
+}
+
+void Matrix::resetArrays()
+{
   for (unsigned int i = 0; i < m_nGlobal; i++)
     m_globalDerivatives[i] = 0.;
   for (unsigned int i = 0; i < m_nLocal; i++)
     m_localDerivatives[i] = 0.;
 }
 
-// very lol.
-unsigned int Matrix::indexForDetId(unsigned short detId)
-{
-  Setup* setup = Setup::instance();
-  int index = 0;
-  DetectorElement* element = setup->firstElement();
-  while(element) {
-    if (element->id() == detId) break;
-    element = setup->nextElement();
-    index++;
-  }
-  return index;
-}
-
 void Matrix::fillMatrixFromTrack(Track* track)
 {
+  resetArrays();
+
   QVector<Hit*> hits = track->hits();
   
   foreach(Hit* hit, hits) {
+
+    // use only tracker hits for alignment
+    if(hit->type() != Hit::tracker)
+      continue;
 
     // position
     TVector3 pos = hit->position();
@@ -76,15 +73,17 @@ void Matrix::fillMatrixFromTrack(Track* track)
 
     // angle
     float angle = hit->angle();
-    float cotangens = 1./tan(angle), tangens = tan(angle);
+    angle += M_PI/2.;
     bool  useTangens = fabs(angle) < M_PI/4. ? true : false;
+    float xi = useTangens ? tan(angle) : 1./tan(angle);
 
     // specify resolution
-    double sigmaV = hit->resolutionEstimate();
+    //double sigmaV = hit->resolutionEstimate();
+    double sigmaV = 0.05;
 
     // detector ID
     unsigned short detId = hit->detId() - hit->channel();
-    unsigned int index = indexForDetId(detId);
+    unsigned int index = Manager::instance()->parameters()->indexForDetId(detId);
 
     // Rot is the matrix that maps u,v, to x,y (i.e. the backward rotation)
     TMatrixD Rot(2,2); 
@@ -101,39 +100,32 @@ void Matrix::fillMatrixFromTrack(Track* track)
     RotTrans.Transpose(Rot);
     TMatrixD V2(2,2);
     V2 = Rot * V1 * RotTrans;
-    // TMatrixD Lin(1,2);
-    // if (useTangens) {
-    //   Lin(0,0) = -tangens;
-    //   Lin(0,1) = 1.;
-    // }
-    // else {
-    //   Lin(0,0) = 1.;
-    //   Lin(0,1) = -cotangens;
-    // }
-    // TMatrixD LinTrans(2,1);
-    // LinTrans.Transpose(Lin);
-    // TMatrixD V3 = TMatrixD(1,1);
-    // V3 = Lin * V2 * LinTrans;
-    // float sigma = sqrt(V3(0,0));
+    TMatrixD Lin(1,2);
+    if (useTangens) {
+      Lin(0,0) = -xi;
+      Lin(0,1) = 1.;
+    }
+    else {
+      Lin(0,0) = 1.;
+      Lin(0,1) = -xi;
+    }
+    TMatrixD LinTrans(2,1);
+    LinTrans.Transpose(Lin);
+    TMatrixD V3 = TMatrixD(1,1);
+    V3 = Lin * V2 * LinTrans;
 
     float y,sigma;
     if (useTangens) {
-      // y = fy is probably wrong! we need to rotate
-      y = fy;
-      sigma = sqrt(V2(1,1));
+      y = -xi*fx + fy;
+      sigma = sqrt(V3(0,0));
 
-      // hardcoded for testbeam now, change -tangens to "1." for simulation
-      m_globalDerivatives[index] = -tangens;
+      // derivative for Delta_x!
+      m_globalDerivatives[index] = -xi*sin(angle) + cos(angle);
       
-      // float deltaX = parameters->GetParameter(shiftIndex);
-      // float x0 = track->x0();
-      // float lambda_x = track->slopeX();
-      // m_globalDerivatives[rotIndex] = -deltaX - x0 - k*lambda_x + fx;
-
       if (m_nLocal == 4) {
-        m_localDerivatives[0] = -tangens;
+        m_localDerivatives[0] = -xi;
         m_localDerivatives[1] = 1.;
-        m_localDerivatives[2] = -k*tangens;
+        m_localDerivatives[2] = -k*xi;
         m_localDerivatives[3] = k;
       }
       else if (m_nLocal == 2) {
@@ -142,23 +134,17 @@ void Matrix::fillMatrixFromTrack(Track* track)
       }
     }
     else {
-      // y = fx is probably wrong! we need to rotate
-      y = fx;
-      sigma = sqrt(V2(0,0));
+      y = fx - xi*fy;
+      sigma = sqrt(V3(0,0));
 
-      // hardcoded for testbeam now, change "1." to -cotangens for simulation
-      m_globalDerivatives[index] = 1.;
+      // derivative for Delta_x!
+      m_globalDerivatives[index] = sin(angle) - xi*cos(angle);
 
-      // float deltaY = parameters->GetParameter(shiftIndex);
-      // float y0 = track->y0();
-      // float lambda_y = track->slopeY();
-      // m_globalDerivatives[rotIndex] = -deltaY - y0 - k*lambda_y + fy;
-       
       if (m_nLocal == 4) {
         m_localDerivatives[0] = 1.;
-        m_localDerivatives[1] = -cotangens;
+        m_localDerivatives[1] = -xi;
         m_localDerivatives[2] = k;
-        m_localDerivatives[3] = -k*cotangens;
+        m_localDerivatives[3] = -k*xi;
       }
       else if (m_nLocal == 2) {
         m_localDerivatives[0] = 1.;

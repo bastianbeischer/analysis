@@ -10,14 +10,19 @@
 #include <string>
 #include <iostream>
 
+#include "DataInterface.hh"
+#include "Layer.hh"
+#include "DetectorElement.hh"
 #include "Constraint.hh"
 #include "Parameters.hh"
 #include "Manager.hh"
 #include "millepede.h"
+#include "Setup.hh"
 
 Strategy::Strategy() :
   m_parameters(new Parameters),
   m_constraints(0),
+  m_dataInterface(new DataInterface),
   m_nGlobal(0),
   m_nLocal(0),
   m_nStdDev(0),
@@ -34,6 +39,7 @@ Strategy::~Strategy()
   delete m_parameters;
   foreach(Constraint* cons, m_constraints) 
     delete cons;
+  delete m_dataInterface;
 }
 
 void Strategy::init()
@@ -45,13 +51,11 @@ void Strategy::init()
   foreach(Constraint* cons, m_constraints) 
     cons->activate();
 
-  INITUN(m_nIter, m_cutValue);
+  //INITUN(m_nIter, m_cutValue);
 }
 
 bool Strategy::readFromFile(QString fileName)
 {
-  QString directory = getenv("WORKDIR");
-  fileName = directory + "/alignment/strategies/" + fileName + ".txt";
   QFile file(fileName);
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
     std::cout << "Error opening file: " << qPrintable(fileName) << std::endl;
@@ -97,7 +101,46 @@ bool Strategy::readFromFile(QString fileName)
       unsigned int iPar = value.toUInt();
       m_parameters->setParameterSigma(iPar, 0.);
     }
+    else if (parameterName == "fixDetector") {
+      unsigned short detId = value.toUShort();
+      fixDetector(detId);
+    }
+    else if (parameterName == "fixLayer") {
+      unsigned short layer = value.toUShort();
+      fixLayer(layer);
+    }
+    else if (parameterName == "readDataFrom") {
+      m_dataInterface->addFiles(qPrintable(value));
+      m_dataInterface->addSuitableTracks();
+    }
   }
 
   return true;
+}
+
+void Strategy::fixDetector(unsigned short detId)
+{
+  unsigned int index = m_parameters->indexForDetId(detId);
+  m_parameters->setParameterSigma(index, 0.);
+}
+
+void Strategy::fixLayer(unsigned short layerNumber)
+{
+  Setup* setup = Setup::instance();
+  unsigned int i = 1;
+  Layer* layer = setup->firstLayer();
+  while(layer != 0 && i != layerNumber) {
+    i++;
+    layer = setup->nextLayer();
+  }
+  
+  DetectorElement* element = setup->firstElement();
+  while(layer != 0 && element != 0) {
+    unsigned short detId = element->id();
+    if (layer->contains(detId)) {
+      unsigned int index = m_parameters->indexForDetId(detId);
+      m_parameters->setParameterSigma(index, 0.);
+    }
+    element = setup->nextElement();
+  }
 }

@@ -1,9 +1,11 @@
 #include "Setup.hh"
 
+#include "Cluster.hh"
 #include "Layer.hh"
 #include "DetectorElement.hh"
 #include "SipmArray.hh"
 #include "TRDModule.hh"
+#include "TOFBar.hh"
 
 #include <QStringList>
 #include <QSettings>
@@ -51,8 +53,12 @@ void Setup::constructElements()
 {
   if (m_settings) {
     foreach(QString key, m_settings->allKeys()) {
-      DetectorElement* element = this->element(key.toUShort());
-      element->setAlignmentShift(m_settings->value(key).toDouble());
+      bool ok;
+      unsigned short detId = key.split("/").at(1).toUShort(&ok, 16);
+      if (ok) {
+        DetectorElement* element = this->element(detId);
+        element->setAlignmentShift(m_settings->value(key).toDouble());
+      }
     }
   }
 }
@@ -103,6 +109,9 @@ DetectorElement* Setup::element(unsigned short id)
   if (!m_elements[id]) {
     if (usbBoard == 0x3200 || usbBoard == 0x3600 || usbBoard == 0x3400 || usbBoard == 0x3500)
       m_elements[id] = new TRDModule(id);
+    else if (usbBoard == 0x8000) {
+      m_elements[id] = new TOFBar(id);
+    }
     else
       m_elements[id] = new SipmArray(id);
   }
@@ -110,10 +119,79 @@ DetectorElement* Setup::element(unsigned short id)
   return m_elements[id];
 }
 
+QVector<Cluster*> Setup::generateClusters(QVector<Hit*> hits)
+{
+  QVector<Cluster*> clusters;
+
+  clearClusters();
+  bool needToFindClusters = false;
+  foreach(Hit* hit, hits) {
+    Cluster* cluster = dynamic_cast<Cluster*>(hit);
+    if (cluster) {
+      clusters.push_back(cluster);
+      layer(hit->position().z());
+    }
+    else {
+      needToFindClusters = true;
+    }
+  }
+
+  if (needToFindClusters) {
+    addHitsToLayers(hits);
+    Layer* layer = firstLayer();
+    while(layer) {
+      QVector<Cluster*> clustersHere = layer->clusters();
+      foreach(Cluster* cluster, clustersHere)
+        clusters.push_back(cluster);
+
+      // Cluster* cluster = layer->bestCluster();
+      // if (cluster)
+      //   clusters.push_back(cluster);
+
+      // update pointer
+      layer = nextLayer();
+    }
+  }
+  return clusters;
+}
+
+void Setup::deleteClusters()
+{
+  foreach(DetectorElement* element, m_elements)
+    element->deleteClusters();
+}
+
+void Setup::clearClusters()
+{
+  foreach(DetectorElement* element, m_elements)
+    element->clearClusters();
+}
+
+void Setup::addHitsToLayers(QVector<Hit*> hits)
+{
+  // remove old hits
+  clearHitsFromLayers();
+
+  foreach(Hit* hit, hits) {
+    double z = hit->position().z();
+    Layer* layer = this->layer(z);
+    layer->addHitToDetector(hit);
+  }
+  foreach(Layer* layer, m_layers) {
+    layer->sortHits();
+  }
+}
+
+void Setup::clearHitsFromLayers()
+{
+  foreach(Layer* layer, m_layers) {
+    layer->clearHitsInDetectors();
+  }
+}
+
 void Setup::writeSettings()
 {
   if (m_settings) {
-    QSettings settings("a.conf", QSettings::IniFormat);
     foreach(DetectorElement* element, m_elements) {
       QString typeString;
       unsigned short type = element->type();

@@ -3,5 +3,10 @@
 /bin
 /lib
 /data
+/lists
+/test
 /TAGS
 perdaix.log
+*.png
+*.pdf
+*.root

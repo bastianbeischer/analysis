@@ -20,7 +20,7 @@ public:
       TVector3 position,
       TVector3 counterPosition);
 
-  ~Hit();
+  virtual ~Hit();
 
 public:
   ModuleType     type()            const {return m_type;}

@@ -72,12 +72,16 @@ unsigned short Hit::block() const
   if (m_type == tracker) {
     return ((m_detId >> 5)  & 0x07);
   }
-  // trd: bits 10-11 = 4 chambers
+  // trd: bits 11-12 = 4 chambers
   else if (m_type == trd) {
     return ((m_detId >> 4)  & 0x03);
   }
+  // tof: bits 11-14 = 16 bars
+  else if (m_type == trd) {
+    return ((m_detId >> 2)  & 0x0F);
+  }
 
-  // tof and default
+  // default (shouldn't happen)
   return 0;
 }
 
@@ -91,9 +95,9 @@ unsigned short Hit::channel() const
   else if (m_type == trd) {
     return ((m_detId)       & 0x0F);
   }
-  // tof: last 6 bit = 64 channels
+  // tof: last 2 bit = 4 SiPMs on this bar
   else if (m_type == tof) {
-    return ((m_detId)       & 0x40);
+    return ((m_detId)       & 0x03);
   }
 
   //default (shouldn't happen)

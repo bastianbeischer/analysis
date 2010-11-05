@@ -2,7 +2,10 @@
 #define Setup_hh
 
 #include <QMap>
+#include <QVector>
 
+class Cluster;
+class Hit;
 class Layer;
 class DetectorElement;
 class QSettings;
@@ -16,26 +19,33 @@ class Setup
 public:
   ~Setup();
 
-  static Setup*    instance();
+  static Setup*     instance();
   
 public:
-  Layer*           layer(double z);
-  DetectorElement* element(unsigned short id);
+  Layer*            layer(double z);
+  DetectorElement*  element(unsigned short id);
 
 public:
-  Layer*           firstLayer();
-  DetectorElement* firstElement();
-  Layer*           nextLayer();
-  DetectorElement* nextElement();
+  Layer*            firstLayer();
+  DetectorElement*  firstElement();
+  Layer*            nextLayer();
+  DetectorElement*  nextElement();
 
 public:
-  void             writeSettings();
+  QVector<Cluster*> generateClusters(QVector<Hit*> hits);
+  void              deleteClusters();
+  void              clearClusters();
+  void              addHitsToLayers(QVector<Hit*> hits);
+  void              clearHitsFromLayers();
+
+public:
+  void              writeSettings();
 
 private:
   Setup();
   
 private:
-  void             constructElements();
+  void              constructElements();
 
 private:
   static Setup*                          m_instance;

@@ -13,12 +13,16 @@ class Cluster :
 public:
   Cluster();
   Cluster(std::vector<Hit*> hits);
-  ~Cluster();
+  virtual ~Cluster();
   
-  void addHit(Hit* hit) {m_hits.push_back(hit);}
-  void processHits();
+public:
+  virtual void       processHits();
 
-private:
+public:
+  void               addHit(Hit* hit) {m_hits.push_back(hit);}
+  std::vector<Hit*>& hits() {return m_hits;}
+
+protected:
   std::vector<Hit*> m_hits;
   
   ClassDef(Cluster, 1);

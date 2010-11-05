@@ -1,7 +1,7 @@
 TEMPLATE = app
-TARGET = preAnalysis
+TARGET = eventdisplay
 
-CONFIG += debug
+#CONFIG += debug
 
 TOPLEVEL = ../..
 
@@ -12,20 +12,28 @@ MOC_DIR     = ./.tmp
 UI_DIR      = ./.tmp
 RCC_DIR     = ./.tmp
 
+# Forms
+FORMS =
+
 INCLUDEPATH += $$TOPLEVEL/event \
+               $$TOPLEVEL/tracking \
                $$TOPLEVEL/setup
 
 DEPENDPATH += $$INCLUDEPATH
 
 LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
+                         -ltracking \
                          -lsetup
 
 # Headers
-HEADERS = 
+HEADERS = Plotter.hh \
+          PlotHits.hh
 
 # Sources
-SOURCES = main.cc
-                  
+SOURCES = main.cc \
+          Plotter.cc \
+          PlotHits.cc
+
 include($$TOPLEVEL/root.pri)
 
 QMAKE_LFLAGS -= -Wl,--as-needed

@@ -3,13 +3,14 @@
 #include "DataChain.hh"
 #include "Cluster.hh"
 #include "TOFCluster.hh"
+#include "TOFSipmHit.hh"
 #include "SimpleEvent.hh"
 #include "Track.hh"
 #include "Layer.hh"
 #include "TrackFinding.hh"
-#include "ResidualPlot.hh"
 #include "Setup.hh"
 #include "DataDescription.hh"
+#include "PlotHits.hh"
 
 #include <TCanvas.h>
 #include <TH2I.h>
@@ -31,8 +32,6 @@ Plotter::Plotter() :
 Plotter::~Plotter()
 {
   delete m_chain;
-  foreach(Track* track, m_tracks)
-    delete track;
   delete m_trackFinding;
 }
 
@@ -54,8 +53,9 @@ void Plotter::process()
   int iFactors = 0;
 
   Setup* setup = Setup::instance();
+  PlotHits pc;
 
-  for (unsigned int i = 0; i < nEntries; i++) {
+  for (unsigned int i = 0; i < 100; i++) {
     SimpleEvent* event = m_chain->event(i);
 
     // vector of all hits in this event
@@ -64,39 +64,30 @@ void Plotter::process()
     foreach(Cluster* cluster, setup->generateClusters(hits))
       clusters.push_back(cluster);
 
+    // // add tof
+    // foreach(Hit* hit, hits) {
+    //   if (hit->type() == Hit::tof) {
+    //     TOFSipmHit* tofhit = (TOFSipmHit*) hit;
+    //     if (tofhit->numberOfLevelChanges() == 2) {
+    //       tofhit->processTDCHits();
+    //       std::cout << tofhit->channel()<<  "   " << tofhit->timeOverThreshold() << std::endl;
+    //       if (tofhit->timeOverThreshold() > 1700) clusters.push_back(tofhit);
+    //     }
+    //   }
+    // }
+
+    // plot before trackfinding
+    pc.plot(clusters);
+
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
 
-    // fit once for each layer
-    Layer* layer = setup->firstLayer();
-    while(layer) {
-      double z = layer->z();
-
-      // create track for this layer
-      if(!m_tracks[layer])
-        m_tracks[layer] = new Track;
-
-      // remove clusters in this layer from clusters for track fit
-      QVector<Hit*> clustersForFit;
-      QVector<Hit*> clustersInThisLayer;
-      
-      foreach(Hit* hit, clusters) {
-        if (hit->position().z() != z)
-          clustersForFit.push_back(hit);
-        else
-          clustersInThisLayer.push_back(hit);
-      }
-
-      if (!m_residualPlots[layer])
-        m_residualPlots[layer] = new ResidualPlot(z);
-
-      // fit and fill histograms
-      if (m_tracks[layer]->fit(clustersForFit))
-        foreach(Hit* hit, clustersInThisLayer)
-          m_residualPlots[layer]->fill(hit, m_tracks[layer]);
-
-      layer = setup->nextLayer();
-    }
+    // plot after trackfinding including track
+    Track track;
+    if (track.fit(clusters))
+      pc.plot(clusters, &track);
+    else
+      pc.plot(clusters);
 
     // delete clusters in case they were allocated dynamically
     setup->deleteClusters();
@@ -113,8 +104,3 @@ void Plotter::process()
 
 }
 
-void Plotter::draw()
-{
-  foreach(ResidualPlot* plot, m_residualPlots)
-    plot->draw();
-}

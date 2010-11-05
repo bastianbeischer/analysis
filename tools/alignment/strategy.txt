@@ -1,0 +1,20 @@
+nGlobal      176
+nLocal       4
+verbose      1
+nStdDev      0
+nLocalIter   1
+cutfactor    100
+nGlobalIter  1
+
+readDataFrom /home/beischer/institut/perdaix/analysis/lists/flightday_reduced.txt
+
+fixLayer     16
+fixLayer     9
+fixLayer     1
+fixLayer     2
+fixLayer     3
+fixLayer     4
+fixLayer     5
+fixLayer     6
+fixLayer     7
+fixLayer     8

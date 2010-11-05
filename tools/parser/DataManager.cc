@@ -7,6 +7,7 @@
 
 #include <TTree.h>
 #include <TFile.h>
+#include <TROOT.h>
 
 #include "Converter.hh"
 #include "SimpleEvent.hh"
@@ -14,7 +15,7 @@
 #include "DataDescription.hh"
 
 DataManager::DataManager() :
-  m_description(new DataDescription),
+  m_description(0),
   m_outputFileName("output.root"),
   m_currentEvent(0),
   m_outputFile(0),
@@ -24,7 +25,6 @@ DataManager::DataManager() :
 
 DataManager::~DataManager()
 {
-  delete m_description;
   foreach(SingleFile* file, m_inputFiles)
     delete file;
   m_inputFiles.clear();
@@ -34,16 +34,16 @@ DataManager::~DataManager()
 
 void DataManager::parseListOfRuns(QString listName)
 {
-  openInputFiles(listName);
   initializeOutput();
+  openInputFiles(listName);
   processFiles();
   saveAndCloseOutput();
 }
 
 void DataManager::parseSingleRun(QString fileName)
 {
-  addSingleFile(fileName);
   initializeOutput();
+  addSingleFile(fileName);
   processFiles();
   saveAndCloseOutput();
 }
@@ -71,22 +71,24 @@ void DataManager::openInputFiles(QString listName)
 void DataManager::addSingleFile(QString fileName)
 {
   std::cout << "Processing: " << qPrintable(fileName) << std::endl;
-  m_inputFiles.push_back(new SingleFile(qPrintable(fileName)));
-  //  m_description->addRunFile(qPrintable(fileName));
+  SingleFile* file = new SingleFile(qPrintable(fileName));
+  m_inputFiles.push_back(file);
+  m_description->addRunFile(qPrintable(fileName), file->getNumberOfEvents());
 }
 
 void DataManager::initializeOutput()
 {
   m_outputFile = new TFile(qPrintable(m_outputFileName), "RECREATE");
   m_outputTree = new TTree("SimpleEventTree", "tree with simple events");
+  m_description = new DataDescription;
+  m_description->calculateSoftwareVersionHash();
+  m_outputTree->GetUserInfo()->Add(m_description);
   m_outputTree->Branch("event", "SimpleEvent", &m_currentEvent); 
 }
 
 void DataManager::saveAndCloseOutput()
 {
-  m_outputTree->GetUserInfo()->Add(m_description);
-  m_outputFile->cd();
-  m_outputTree->Write();
+  m_outputFile->Write();
   m_outputFile->Close();
 }
 

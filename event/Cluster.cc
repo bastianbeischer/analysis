@@ -34,6 +34,7 @@ void Cluster::processHits()
   }
   
   Hit* firstHit = m_hits.at(0);
+  Hit::ModuleType type = firstHit->type();
   detId = firstHit->detId() - firstHit->channel();
   y  = firstHit->position().y();
   z  = firstHit->position().z();
@@ -63,7 +64,7 @@ void Cluster::processHits()
     amplitude += (*it)->signalHeight();
   }  
 
-  m_type = Hit::tracker;
+  m_type = type;
   m_detId = detId;
   m_signalHeight = amplitude;
   m_position = position;

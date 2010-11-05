@@ -1,6 +1,7 @@
 #include "PlotHits.hh"
 
 #include "Hit.hh"
+#include "TOFSipmHit.hh"
 #include "Track.hh"
 
 #include <TCanvas.h>
@@ -11,6 +12,7 @@
 #include <TBox.h>
 #include <THistPainter.h>
 #include <TPaletteAxis.h>
+#include <TGaxis.h>
 
 #include <iostream>
 
@@ -19,7 +21,7 @@ unsigned int PlotHits::saves = 0;
 PlotHits::PlotHits() :
   m_canvas(new TCanvas("PlotHits", "PlotHits", 1300, 900)),
   m_positionHist(new TH2D("2D EventDisplay", "2D Event Display", 100, -200., 200., 100, -650, 350)),
-  m_line(0),
+  m_yaxis(0),
   m_fitInfo(0)
 {
   m_positionHist->GetXaxis()->SetTitle("x / mm");
@@ -95,12 +97,26 @@ PlotHits::PlotHits() :
     box->SetLineStyle(1);
     box->Draw("SAME");
   }
+
+  // new axis for y
+  double min = -400;
+  double max = 400;
+  m_yaxis = new TGaxis(gPad->GetUxmin(), gPad->GetUymax(), gPad->GetUxmax(), gPad->GetUymax(), min, max, 510, "+L");
+  m_yaxis->SetLineColor(kRed);
+  m_yaxis->SetTextColor(kRed);
+  m_yaxis->SetLabelColor(kRed);
+  m_yaxis->SetLabelOffset(-0.05);
+  m_yaxis->SetTitle("y / mm");
+  m_yaxis->SetTitleOffset(-1.2);
+  m_yaxis->Draw();
+  gPad->Update();
 }
 
 PlotHits::~PlotHits()
 {
   delete m_canvas;
   delete m_positionHist;
+  delete m_yaxis;
   foreach(TBox* box, m_boxes)
     delete box;
   clear();
@@ -108,11 +124,18 @@ PlotHits::~PlotHits()
 
 void PlotHits::clear()
 {
-  foreach(TBox* hitBox, m_hits)
+  foreach(TBox* hitBox, m_hits) {
     delete hitBox;
+    hitBox = 0;
+  }
   m_hits.clear();
-  delete m_line;
-  m_line = 0;
+
+  foreach(TLine* line, m_lines) {
+    delete line;
+    line = 0;
+  }
+  m_lines.clear();
+
   delete m_fitInfo;
   m_fitInfo = 0;
 }
@@ -125,8 +148,30 @@ void PlotHits::plot(QVector<Hit*> hits, Track* track)
   TPaletteAxis* palette = (TPaletteAxis*) m_positionHist->GetListOfFunctions()->FindObject("palette");
 
   foreach(Hit* hit, hits) {
+    double angle = hit->angle();
     TVector3 position = hit->position();
+    TVector3 counterPos = hit->counterPosition();
+
+    if (track) {
+      TVector3 trackPos = track->position(position.z());
+      trackPos.RotateZ(-angle);
+      double u = trackPos.y();
+
+      TVector3 direction = (position - counterPos);
+      if (direction.y() < 0)
+        direction = -direction;
+      direction *= 1./direction.Mag();
+
+      TVector3 calculatedPos = 0.5*(position+counterPos) + u*direction;
+      position = calculatedPos;
+    }
+
     int amplitude = hit->signalHeight();
+    // if (hit->type() == Hit::tof) {
+    //   std::cout << amplitude << std::endl; 
+    // }
+    // if (hit->type() == Hit::tof)
+    //   amplitude = ((TOFSipmHit*) hit)->timeOverThreshold();
     Hit::ModuleType type = hit->type();
 
     double x = position.x();
@@ -143,6 +188,10 @@ void PlotHits::plot(QVector<Hit*> hits, Track* track)
     else if (type == Hit::trd) {
       width = 6.0;
       height = 0.5*heightModule;
+    }
+    else if (type == Hit::tof) {
+      width = 6.0;
+      height = 3.0;
     }
 
     TBox* box = new TBox(x-0.5*width, z-0.5*height, x+0.5*width, z+0.5*height);
@@ -161,14 +210,30 @@ void PlotHits::plot(QVector<Hit*> hits, Track* track)
     double x_min = x0 + z_min * slopeX;
     double x_max = x0 + z_max * slopeX;
 
-    m_line = new TLine(x_min, z_min, x_max, z_max);
-    m_line->SetLineColor(kBlack);
-    m_line->SetLineWidth(2);
-    m_line->Draw("SAME");
+    TLine* x_line = new TLine(x_min, z_min, x_max, z_max);
+    x_line->SetLineColor(kBlack);
+    x_line->SetLineWidth(2);
+    x_line->Draw("SAME");
+    m_lines.push_back(x_line);
+
+    // strech because we want to show x and y in the same view (convert 40cm to 20cm)
+    double stretchfactor = (m_positionHist->GetXaxis()->GetXmax() - m_positionHist->GetXaxis()->GetXmin()) / (m_yaxis->GetWmax() - m_yaxis->GetWmin());
+    double y0 = track->y0();
+    double slopeY = track->slopeY();
+    double y_min = y0 + z_min * slopeY;
+    double y_max = y0 + z_max * slopeY;
+
+    TLine* y_line = new TLine(stretchfactor*y_min, z_min, stretchfactor*y_max, z_max);
+    y_line->SetLineColor(kRed);
+    y_line->SetLineWidth(1);
+    y_line->SetLineStyle(1);
+    y_line->Draw("SAME");
+    m_lines.push_back(y_line);
 
     char text[128];
     sprintf(text, "#chi^{2} / ndf = %.1f / %d", track->chi2(), track->ndf());
-    m_fitInfo = new TLatex(-50, z_min + 1.05*(z_max-z_min), text);
+    m_fitInfo = new TLatex(90, z_min + 0.64*(z_max-z_min), text);
+    m_fitInfo->SetTextSize(0.03);
     m_fitInfo->Draw("SAME");
   }
 

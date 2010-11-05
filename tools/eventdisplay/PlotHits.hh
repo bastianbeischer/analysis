@@ -6,6 +6,7 @@
 class Hit;
 class TBox;
 class TCanvas;
+class TGaxis;
 class TH2D;
 class Track;
 class TLine;
@@ -30,10 +31,11 @@ private:
 
   TCanvas*            m_canvas;
   TH2D*               m_positionHist;
+  TGaxis*             m_yaxis;
 
   QVector<TBox*>      m_boxes;
   QVector<TBox*>      m_hits;
-  TLine*              m_line;
+  QVector<TLine*>     m_lines;
   TLatex*             m_fitInfo;
 
 };

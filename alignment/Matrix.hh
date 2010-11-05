@@ -13,10 +13,8 @@ public:
 
 public:
   void fillMatrixFromTrack(Track* track);
+  void resetArrays();
   void init();
-
-private:
-  unsigned int indexForDetId(unsigned short detId);
 
 protected:
   unsigned int m_nGlobal;

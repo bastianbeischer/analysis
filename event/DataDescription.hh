@@ -13,12 +13,14 @@ class DataDescription : public TObject
     DataDescription();
     ~DataDescription();
 
+    void calculateSoftwareVersionHash();
+
     const std::string& comment() const {return m_comment;}
     void setComment(const std::string& comment) {m_comment = comment;}
     void setSoftwareVersionHash(const std::string& version) {m_softwareVersionHash = version;}
     const std::string& softwareVersionHash() const {return m_softwareVersionHash;}
     long numberOfEventsInRunFile(int i) const;
-    void addRunFile(const std::string& fileName);
+    void addRunFile(const std::string& fileName, const int nEvents);
     const std::string& runFileName(int i) {assert(i < m_numberOfRuns); return m_runFileNames[i];}
     const std::vector<std::string>& runFileNames() {return m_runFileNames;}
     
