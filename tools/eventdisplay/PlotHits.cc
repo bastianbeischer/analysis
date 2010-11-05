@@ -148,7 +148,24 @@ void PlotHits::plot(QVector<Hit*> hits, Track* track)
   TPaletteAxis* palette = (TPaletteAxis*) m_positionHist->GetListOfFunctions()->FindObject("palette");
 
   foreach(Hit* hit, hits) {
+    double angle = hit->angle();
     TVector3 position = hit->position();
+    TVector3 counterPos = hit->counterPosition();
+
+    if (track) {
+      TVector3 trackPos = track->position(position.z());
+      trackPos.RotateZ(-angle);
+      double u = trackPos.y();
+
+      TVector3 direction = (position - counterPos);
+      if (direction.y() < 0)
+        direction = -direction;
+      direction *= 1./direction.Mag();
+
+      TVector3 calculatedPos = 0.5*(position+counterPos) + u*direction;
+      position = calculatedPos;
+    }
+
     int amplitude = hit->signalHeight();
     // if (hit->type() == Hit::tof) {
     //   std::cout << amplitude << std::endl; 
