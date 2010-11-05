@@ -59,10 +59,10 @@ int main(int argc, char** argv)
       sourceTree->GetEntry(eventIt);
       destinationEvent = new SimpleEvent;
 
-      // do the zero compression
-
       // vector of all hits in this event
       QVector<Hit*> hits = QVector<Hit*>::fromStdVector(sourceEvent->hits());
+
+      // do the zero compression
       foreach(Cluster* cluster, setup->generateClusters(hits))
         destinationEvent->addHit(cluster);
       

@@ -122,6 +122,8 @@ DetectorElement* Setup::element(unsigned short id)
 QVector<Cluster*> Setup::generateClusters(QVector<Hit*> hits)
 {
   QVector<Cluster*> clusters;
+
+  clearClusters();
   bool needToFindClusters = false;
   foreach(Hit* hit, hits) {
     Cluster* cluster = dynamic_cast<Cluster*>(hit);
@@ -157,6 +159,12 @@ void Setup::deleteClusters()
 {
   foreach(DetectorElement* element, m_elements)
     element->deleteClusters();
+}
+
+void Setup::clearClusters()
+{
+  foreach(DetectorElement* element, m_elements)
+    element->clearClusters();
 }
 
 void Setup::addHitsToLayers(QVector<Hit*> hits)

@@ -25,6 +25,7 @@ public:
 public:
   void              addHit(Hit* hit)                {m_hits[hit->channel()] = hit;}
   void              clearHits()                     {m_hits.clear();}
+  void              clearClusters()                 {m_clusters.clear();}
   void              deleteClusters();
   void              setAlignmentShift(double shift) {m_alignmentShift = shift;}
   void              sortHits();
