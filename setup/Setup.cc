@@ -1,5 +1,6 @@
 #include "Setup.hh"
 
+#include "Cluster.hh"
 #include "Layer.hh"
 #include "DetectorElement.hh"
 #include "SipmArray.hh"
@@ -116,6 +117,46 @@ DetectorElement* Setup::element(unsigned short id)
   }
 
   return m_elements[id];
+}
+
+QVector<Cluster*> Setup::generateClusters(QVector<Hit*> hits)
+{
+  QVector<Cluster*> clusters;
+  bool needToFindClusters = false;
+  foreach(Hit* hit, hits) {
+    Cluster* cluster = dynamic_cast<Cluster*>(hit);
+    if (cluster) {
+      clusters.push_back(cluster);
+      layer(hit->position().z());
+    }
+    else {
+      needToFindClusters = true;
+    }
+  }
+
+  if (needToFindClusters) {
+    addHitsToLayers(hits);
+    Layer* layer = firstLayer();
+    while(layer) {
+      QVector<Cluster*> clustersHere = layer->clusters();
+      foreach(Cluster* cluster, clustersHere)
+        clusters.push_back(cluster);
+
+      // Cluster* cluster = layer->bestCluster();
+      // if (cluster)
+      //   clusters.push_back(cluster);
+
+      // update pointer
+      layer = nextLayer();
+    }
+  }
+  return clusters;
+}
+
+void Setup::deleteClusters()
+{
+  foreach(DetectorElement* element, m_elements)
+    element->deleteClusters();
 }
 
 void Setup::addHitsToLayers(QVector<Hit*> hits)

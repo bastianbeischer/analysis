@@ -13,7 +13,7 @@ public:
   ~TRDModule();
   
 public:
-  QVector<Cluster*> findClusters() const; // these clusters have to be deleted by hand!
+  QVector<Cluster*> findClusters(); // these clusters have to be deleted by hand!
 
 };
 

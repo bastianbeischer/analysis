@@ -20,11 +20,12 @@ public:
   virtual ~DetectorElement();
   
 public:
-  virtual QVector<Cluster*> findClusters() const = 0;
+  virtual QVector<Cluster*> findClusters() = 0;
 
 public:
   void              addHit(Hit* hit)                {m_hits[hit->channel()] = hit;}
   void              clearHits()                     {m_hits.clear();}
+  void              deleteClusters();
   void              setAlignmentShift(double shift) {m_alignmentShift = shift;}
   void              sortHits();
 
@@ -41,6 +42,7 @@ protected:
   double                     m_alignmentShift;
 
   QMap<unsigned short, Hit*> m_hits;
+  QVector<Cluster*>          m_clusters;
 
 };
 

@@ -21,12 +21,11 @@ SipmArray::~SipmArray()
 {
 }
 
-QVector<Cluster*> SipmArray::findClusters() const
+QVector<Cluster*> SipmArray::findClusters()
 {
   const int seedThreshold = 500;
   const int neighbourThreshold = 250;
 
-  QVector<Cluster*> clusters;
   for (unsigned short channel = 0; channel < 32; channel++) {
     if (m_hits[channel]) {
       Hit* hit = m_hits[channel];
@@ -49,12 +48,12 @@ QVector<Cluster*> SipmArray::findClusters() const
         }
 
         cluster->processHits();
-        clusters.push_back(cluster);
+        m_clusters.push_back(cluster);
 
         channel = rightCursor + 1;
       }
     }
   }
 
-  return clusters;
+  return m_clusters;
 }

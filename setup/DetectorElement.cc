@@ -4,6 +4,8 @@
 
 #include <cassert>
 
+#include "Cluster.hh"
+
 bool comparePositions(const Hit* hit1, const Hit* hit2)
 {
   return hit1->position().x() < hit2->position().x();
@@ -25,6 +27,13 @@ DetectorElement::DetectorElement(unsigned short id) :
 
 DetectorElement::~DetectorElement()
 {
+}
+
+void DetectorElement::deleteClusters()
+{
+  foreach(Cluster* cluster, m_clusters)
+    delete cluster;
+  m_clusters.clear();
 }
 
 void DetectorElement::sortHits()

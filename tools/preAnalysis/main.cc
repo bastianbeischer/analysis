@@ -63,21 +63,9 @@ int main(int argc, char** argv)
 
       // vector of all hits in this event
       QVector<Hit*> hits = QVector<Hit*>::fromStdVector(sourceEvent->hits());
-      setup->addHitsToLayers(hits);
-
-      // find clusters (currently TRD and Tracker)
-      Layer* layer = setup->firstLayer();
-      while(layer) {
-        // Cluster* cluster = layer->bestCluster();
-        QVector<Cluster*> clustersHere = layer->clusters();
-        foreach(Cluster* cluster, clustersHere)
-          if (cluster)
-            destinationEvent->addHit(cluster);
-        
-        // update pointer
-        layer = setup->nextLayer();
-      }
-
+      foreach(Cluster* cluster, setup->generateClusters(hits))
+        destinationEvent->addHit(cluster);
+      
       destinationTree.Fill();
 
     } // events in this root file
