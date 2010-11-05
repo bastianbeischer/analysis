@@ -6,7 +6,6 @@
 #include <TVector3.h>
 
 class Hit;
-class TH2I;
 
 class Track
 {

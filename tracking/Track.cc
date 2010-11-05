@@ -4,12 +4,10 @@
 
 #include <TGraphErrors.h>
 #include <TF1.h>
-#include <TH2I.h>
 #include <TVectorD.h>
 #include <TMatrixD.h>
 
 #include <cmath>
-#include <cassert>
 
 Track::Track() :
   m_verbose(0),
@@ -29,17 +27,15 @@ Track::~Track()
 int Track::fit(QVector<Hit*> hits)
 {
   unsigned int nHits = hits.size();
-  if (nHits < 4) {
-    // qDebug() << "Track::fit -- Can't fit: not enough hits!";    
-    return 0;
-  }
-
-  // this parameter is arbitrary. z0 = 0 should minimize correlations...
-  float z0 = 0.0;
 
   // basic dimensions of matrices
   unsigned int nRow = nHits;
   unsigned int nCol = 4;
+
+  if (nRow < nCol) {
+    // qDebug() << "Track::fit -- Can't fit: not enough hits!";    
+    return 0;
+  }
 
   // declare matrices for the calculation
   TMatrixD A(nRow,nCol);
@@ -47,7 +43,10 @@ int Track::fit(QVector<Hit*> hits)
   TMatrixD U(nRow,nRow);
   TMatrixD CombineXandY(1,2);
 
-  for (unsigned int i = 0; i < nHits; i++) {
+  // this parameter is arbitrary. z0 = 0 should minimize correlations...
+  float z0 = 0.0;
+
+  for (unsigned int i = 0; i < nRow; i++) {
 
     Hit* hit = hits.at(i);
 
@@ -123,8 +122,8 @@ int Track::fit(QVector<Hit*> hits)
     // qDebug() << "Track::fit -- Aborting - Matrix U is singular!";
     return 0;
   }
-  U.Invert();
   TMatrixD Uinv = U;
+  Uinv.Invert();
   TMatrixD ATranspose(nCol,nRow);
   ATranspose.Transpose(A);
   TMatrixD M = ATranspose * Uinv * A;
@@ -134,8 +133,8 @@ int Track::fit(QVector<Hit*> hits)
     // qDebug() << "Track::fit -- Aborting - Matrix M is singular!";
     return 0;
   }
-  M.Invert();
   TMatrixD Minv = M;
+  Minv.Invert();
   TVectorD solution(nCol);
   solution = Minv * c;
 
@@ -167,7 +166,6 @@ int Track::fit(QVector<Hit*> hits)
   }
 
   return 1;
-
 }
 
 int Track::fitTrd(QVector<Hit*> hits)
