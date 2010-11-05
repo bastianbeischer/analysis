@@ -1,8 +1,6 @@
 #include "TOFBar.hh"
 
 #include "TOFCluster.hh"
-#include "TOFSipmHit.hh"
-#include <iostream>
 
 TOFBar::TOFBar() :
   DetectorElement()
