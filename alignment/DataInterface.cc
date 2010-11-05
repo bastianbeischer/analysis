@@ -40,34 +40,8 @@ void DataInterface::addSuitableTracks()
     
     QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
     QVector<Hit*> clusters;
-
-    bool needToFindClusters = false;
-    foreach(Hit* hit, hits) {
-      if (dynamic_cast<Cluster*>(hit)) {
-        clusters.push_back(hit);
-      }
-      else {
-	needToFindClusters = true;
-      }
-    }
-
-    if (needToFindClusters) {
-      setup->addHitsToLayers(hits);
-
-      Layer* layer = setup->firstLayer();
-      while(layer) {
-        // QVector<Cluster*> clustersHere = layer->clusters();
-        // foreach(Cluster* cluster, clustersHere)
-        //   clusters.push_back(cluster);
-
-        Cluster* cluster = layer->bestCluster();
-        if (cluster)
-          clusters.push_back(cluster);
-
-        // update pointer
-        layer = setup->nextLayer();
-      }
-    }
+    foreach(Cluster* cluster, setup->generateClusters(hits))
+      clusters.push_back(cluster);
 
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
