@@ -11,6 +11,7 @@ class TOFCluster : public Cluster {
     virtual void processHits();
     double yEstimate() {return m_yEstimate;}
     double yResolutionEstimate() {return m_yResolutionEstimate;}
+    void dump();
   private:
     double m_yEstimate;
     double m_yResolutionEstimate;

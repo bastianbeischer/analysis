@@ -4,6 +4,8 @@
 #include <cmath>
 #include <cassert>
 
+#include <iostream>
+
 ClassImp(TOFCluster);
 
 TOFCluster::TOFCluster()
@@ -15,7 +17,6 @@ TOFCluster::TOFCluster()
 TOFCluster::TOFCluster(std::vector<Hit*> hits)
   : Cluster(hits)
 {
-  processHits();
 }
 
 TOFCluster::~TOFCluster()
@@ -75,3 +76,10 @@ void TOFCluster::processHits()
   m_counterPosition = counterPosition;
 }
 
+void TOFCluster::dump()
+{
+  std::cout << m_hits.size() << " hits in cluster." << std::endl << std::flush;
+  for (unsigned int i = 0; i < m_hits.size(); ++i) {
+    static_cast<TOFSipmHit*>(m_hits[i])->dump();
+  }
+}
