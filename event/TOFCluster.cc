@@ -64,14 +64,14 @@ void TOFCluster::processHits()
   TVector3 position = TVector3(x,y,z);
   TVector3 counterPosition = TVector3(xc,yc,zc);
 
-  int timeOverThreshold = 0.;
+  int signalHeight = 0;
   for (std::vector<Hit*>::iterator it = m_hits.begin(); it != m_hits.end(); it++) {
-    timeOverThreshold+= (*it)->signalHeight();
+    signalHeight+= (*it)->signalHeight();
   }  
 
   m_type = Hit::tof;
   m_detId = detId;
-  m_signalHeight = timeOverThreshold;
+  m_signalHeight = signalHeight;
   m_position = position;
   m_counterPosition = counterPosition;
 }

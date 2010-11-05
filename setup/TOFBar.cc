@@ -21,7 +21,7 @@ TOFBar::~TOFBar()
 QVector<Cluster*> TOFBar::findClusters() const
 {
   QVector<Cluster*> clusters;
-  if(m_hits.size() != 0) {
+  if(m_hits.size() >= 3) {
     TOFCluster* tofCluster = new TOFCluster;
     foreach(Hit* hit, m_hits) {
       tofCluster->addHit(hit);
