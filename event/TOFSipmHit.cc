@@ -3,6 +3,8 @@
 #include <assert.h>
 #include <algorithm>
 
+#include <iostream>
+
 ClassImp( TOFSipmHit );
 
 TOFSipmHit::TOFSipmHit()
@@ -85,4 +87,20 @@ void TOFSipmHit::addLevelChange(uint32_t value)
 {
   m_levelChanges.push_back(0);
   setLevelChange(numberOfLevelChanges() - 1, value);
+}
+
+void TOFSipmHit::dump()
+{
+  std::cout
+    << "startTime()=" << startTime()
+    << " timeOverThreshold()=" << timeOverThreshold()
+    << " numberOfLevelChanges()=" << numberOfLevelChanges()
+    << " channel()=" << channel() << std::endl;
+  for (int i = 0; i < numberOfLevelChanges(); ++i) {
+    std::cout
+      << time(i)
+      << (edgeType(i) == LeadingEdge ? 'L' : 'T')
+      << ' ';
+  }
+  std::cout << std::endl << std::flush;
 }

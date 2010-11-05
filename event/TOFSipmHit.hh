@@ -30,7 +30,8 @@ public:
   void addLevelChange(uint32_t);
   
   static int channelFromData(uint32_t);
-    
+
+  void dump();
 private:
   static double timeFromData(uint32_t);
   static bool earlierThan(uint32_t, uint32_t);
