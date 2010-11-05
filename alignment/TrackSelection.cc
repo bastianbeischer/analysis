@@ -35,8 +35,8 @@ bool TrackSelection::passes(Track* track)
     double y = track->y(z);
 
     QRectF rectangle = plane.second;
-    if (rectangle.contains(x,y))
-      passes = false;
+    // if (rectangle.contains(x,y))
+    //   passes = false;
                    
   }
   return passes;

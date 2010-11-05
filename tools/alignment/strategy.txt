@@ -2,11 +2,11 @@ nGlobal      176
 nLocal       4
 verbose      1
 nStdDev      0
-nLocalIter   11
+nLocalIter   1
 cutfactor    100
 nGlobalIter  1
 
-readDataFrom /home/beischer/institut/perdaix/analysis/tools/residuals/lists/flightday_reduced.txt
+readDataFrom /home/beischer/institut/perdaix/analysis/lists/flightday_reduced.txt
 
 fixLayer     16
 fixLayer     9
