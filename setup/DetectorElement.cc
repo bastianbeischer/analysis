@@ -39,6 +39,7 @@ void DetectorElement::sortHits()
 
   QList<Hit*> hits = m_hits.values();
   qSort(hits.begin(), hits.end(), comparePositions);
+  m_hits.clear();
   for (int i = 0; i < hits.size(); i++) {
     m_hits[i] = hits.at(i);
   }
