@@ -47,11 +47,9 @@ void Layer::sortHits()
 QVector<Cluster*> Layer::clusters() const
 {
   QVector<Cluster*> allClusters;
-  foreach(DetectorElement* element, m_elements) {
-    QVector<Cluster*> localClusters = element->findClusters();
-    foreach(Cluster* cluster, localClusters)
-      allClusters.push_back(cluster);
-  }
+  foreach(DetectorElement* element, m_elements)
+    allClusters += element->findClusters();
+
   return allClusters;
 }
 
