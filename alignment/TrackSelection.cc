@@ -1,6 +1,7 @@
 #include "TrackSelection.hh"
 
 #include "Track.hh"
+#include "Hit.hh"
 
 #include <QRectF>
 
@@ -28,6 +29,15 @@ void TrackSelection::constructPlanes()
 bool TrackSelection::passes(Track* track)
 {
   bool passes = true;
+
+  QVector<Hit*> hits = track->hits();
+  int nTrackerHits = 0;
+  foreach(Hit* hit, hits)
+    if (hit->type() == Hit::tracker)
+      nTrackerHits++;
+
+  if (nTrackerHits != 8)
+    passes = false;
 
   foreach(Plane plane, m_planes) {
     double z = plane.first;
