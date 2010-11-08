@@ -70,10 +70,11 @@ void DataManager::openInputFiles(QString listName)
 
 void DataManager::addSingleFile(QString fileName)
 {
-  std::cout << "Processing: " << qPrintable(fileName) << std::endl;
+  const std::string& hash = DataDescription::calculateSoftwareVersionHash();
+  std::cout << "Processing: " << qPrintable(fileName) <<  " with SHA1 hash " << hash << std::endl;
   SingleFile* file = new SingleFile(qPrintable(fileName));
   m_inputFiles.push_back(file);
-  m_description->addRunFile(qPrintable(fileName), file->getNumberOfEvents());
+  m_description->addRunFile(qPrintable(fileName), hash, file->getNumberOfEvents());
 }
 
 void DataManager::initializeOutput()
@@ -81,7 +82,7 @@ void DataManager::initializeOutput()
   m_outputFile = new TFile(qPrintable(m_outputFileName), "RECREATE");
   m_outputTree = new TTree("SimpleEventTree", "tree with simple events");
   m_description = new DataDescription;
-  m_description->calculateSoftwareVersionHash();
+  m_description->setSoftwareVersionHash();
   m_outputTree->GetUserInfo()->Add(m_description);
   m_outputTree->Branch("event", "SimpleEvent", &m_currentEvent); 
 }
