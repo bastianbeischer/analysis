@@ -20,7 +20,7 @@ DataDescription::DataDescription()
 DataDescription::~DataDescription()
 {}
 
-void DataDescription::calculateSoftwareVersionHash()
+const std::string DataDescription::calculateSoftwareVersionHash()
 {
   FILE* file = popen("git rev-parse HEAD | tr -d '\n'", "r");
   char line[128];
@@ -29,7 +29,12 @@ void DataDescription::calculateSoftwareVersionHash()
     stream << line;
   }
   pclose(file);
-  m_softwareVersionHash = stream.str();
+  return stream.str();
+}
+
+void DataDescription::setSoftwareVersionHash()
+{
+  m_softwareVersionHash = calculateSoftwareVersionHash();
   assert(m_softwareVersionHash.length() == 40);
 }
 
@@ -57,12 +62,11 @@ const std::string& DataDescription::runFileForEventNumber(long eventNumber) cons
 }
 
     
-void DataDescription::addRunFile(const std::string& fileName, const int nEvents)
+void DataDescription::addRunFile(const std::string& fileName, const std::string& softwareVersionHash, const int nEvents)
 {
   m_runFileNames.push_back(fileName);
-  m_eventNumberOffset.push_back(m_numberOfRuns == 0 ?
-                                nEvents :
-                                nEvents + m_eventNumberOffset[m_numberOfRuns-1]);
+  m_eventNumberOffset.push_back(m_numberOfRuns == 0 ? nEvents : nEvents + m_eventNumberOffset[m_numberOfRuns-1]);
+  m_runFileSoftwareVersionHash.push_back(softwareVersionHash);
 }
     
 long DataDescription::numberOfEventsInRunFile(int i) const

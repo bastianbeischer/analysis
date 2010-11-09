@@ -27,7 +27,7 @@ int main(int argc, char** argv)
   QFile runFileListFile(listName);
   if (!runFileListFile.open(QIODevice::ReadOnly | QIODevice::Text))
     qFatal("Could not open run file list file.");
-	
+  
   TFile destinationTreeFile(qPrintable(listName+".root"), "RECREATE");
   TTree destinationTree("SimpleEventTree", "tree with simple events");
   SimpleEvent* destinationEvent = 0;
@@ -52,7 +52,9 @@ int main(int argc, char** argv)
     SimpleEvent* sourceEvent = 0;
     sourceTree->SetBranchAddress("event", &sourceEvent);
     unsigned int nEvents = sourceTree->GetEntries();
-    description.addRunFile(line.toStdString(), nEvents);
+    const std::string& hash = static_cast<DataDescription*>(sourceTree->GetUserInfo()->At(0))->softwareVersionHash();
+    description.addRunFile(line.toStdString(), hash, nEvents);
+    std::cout << "adding file " << line.toStdString() << " with hash " << hash << std::endl;
 
     // loop over all events in this root file
     for (unsigned long eventIt = 0; eventIt < nEvents; ++eventIt) {

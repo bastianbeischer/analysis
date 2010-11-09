@@ -24,7 +24,7 @@ SipmArray::~SipmArray()
 QVector<Cluster*> SipmArray::findClusters()
 {
   const int seedThreshold = 500;
-  const int neighbourThreshold = 250;
+  const int neighbourThreshold = 100;
 
   for (unsigned short channel = 0; channel < 32; channel++) {
     if (m_hits[channel]) {
@@ -44,7 +44,7 @@ QVector<Cluster*> SipmArray::findClusters()
         short leftCursor = channel-1;
         while(leftCursor >=0 && m_hits[leftCursor] && m_hits[leftCursor]->signalHeight() > neighbourThreshold) {
           cluster->addHit(m_hits[leftCursor]);
-          leftCursor++;
+          leftCursor--;
         }
 
         cluster->processHits();
