@@ -125,9 +125,8 @@ void SingleFile::calibrate()
       module->ProcessCalibrationEvent(values);
     }
     foreach(PERDaixTRDModule* module, m_trdModules) {
-      const quint16* values;
-      values = ((TRDDataBlock*) dataBlockMap[module->GetBoardID()])->GetRawData();
-      module->ProcessCalibrationEvent(values);
+      TRDDataBlock* dataBlock = (TRDDataBlock*) dataBlockMap[module->GetBoardID()];
+      module->ProcessCalibrationEvent(dataBlock);
     }
   }
 
