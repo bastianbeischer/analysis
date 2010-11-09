@@ -76,10 +76,19 @@ void TOFCluster::processHits()
   m_counterPosition = counterPosition;
 }
 
+double TOFCluster::yEstimate(bool forceIntoBar)
+{
+  if (forceIntoBar && m_yEstimate > 395./2)
+    return 395./2;
+  else if (forceIntoBar && m_yEstimate < -395./2)
+    return -395./2;
+  return m_yEstimate;
+}
+
 void TOFCluster::dump()
 {
   std::cout << m_hits.size() << " hits in cluster." << std::endl << std::flush;
   for (unsigned int i = 0; i < m_hits.size(); ++i) {
     static_cast<TOFSipmHit*>(m_hits[i])->dump();
   }
-}
+} 

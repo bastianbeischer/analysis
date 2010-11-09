@@ -9,7 +9,7 @@ class TOFCluster : public Cluster {
     TOFCluster(std::vector<Hit*> hits);
     virtual ~TOFCluster();
     virtual void processHits();
-    double yEstimate() {return m_yEstimate;}
+    double yEstimate(bool forceIntoBar = true);
     double yResolutionEstimate() {return m_yResolutionEstimate;}
     void dump();
   private:
