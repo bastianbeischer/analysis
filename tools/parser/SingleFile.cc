@@ -119,15 +119,11 @@ void SingleFile::calibrate()
       dataBlockMap[id] = event->GetBlock(id);
 
     foreach(PERDaixFiberModule* module, m_fiberModules) {
-      const quint16* values[2];
-      values[0] = ((TrackerDataBlock*) dataBlockMap[module->GetBoardID(PERDaixFiberModule::BOARD_0)])->GetRawData();
-      values[1] = ((TrackerDataBlock*) dataBlockMap[module->GetBoardID(PERDaixFiberModule::BOARD_1)])->GetRawData();
-      module->ProcessCalibrationEvent(values);
+      module->ProcessCalibrationEvent((TrackerDataBlock*) dataBlockMap[module->GetBoardID(PERDaixFiberModule::BOARD_0)]);
+      module->ProcessCalibrationEvent((TrackerDataBlock*) dataBlockMap[module->GetBoardID(PERDaixFiberModule::BOARD_1)]);
     }
     foreach(PERDaixTRDModule* module, m_trdModules) {
-      const quint16* values;
-      values = ((TRDDataBlock*) dataBlockMap[module->GetBoardID()])->GetRawData();
-      module->ProcessCalibrationEvent(values);
+      module->ProcessCalibrationEvent((TRDDataBlock*) dataBlockMap[module->GetBoardID()]);
     }
   }
 

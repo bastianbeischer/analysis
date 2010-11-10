@@ -19,6 +19,7 @@ int main(int argc, char* argv[])
   gROOT->SetStyle("Plain");
   gStyle->SetPalette(1,0);
   gStyle->SetOptFit(111);
+  gStyle->SetLineScalePS(1);
 
   Plotter plotter;
   plotter.addFiles(filename);

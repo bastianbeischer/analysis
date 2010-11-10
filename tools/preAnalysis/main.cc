@@ -33,7 +33,7 @@ int main(int argc, char** argv)
   SimpleEvent* destinationEvent = 0;
   destinationTree.Branch("event", "SimpleEvent", &destinationEvent);
   DataDescription description;
-  description.calculateSoftwareVersionHash();
+  description.setSoftwareVersionHash();
 
   Setup* setup = Setup::instance();
 

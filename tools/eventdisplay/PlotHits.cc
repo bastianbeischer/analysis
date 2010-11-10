@@ -3,6 +3,7 @@
 #include "Hit.hh"
 #include "TOFSipmHit.hh"
 #include "Track.hh"
+#include "TOFCluster.hh"
 
 #include <TCanvas.h>
 #include <TList.h>
@@ -13,6 +14,7 @@
 #include <THistPainter.h>
 #include <TPaletteAxis.h>
 #include <TGaxis.h>
+#include <TMarker.h>
 
 #include <iostream>
 
@@ -21,7 +23,7 @@ unsigned int PlotHits::saves = 0;
 PlotHits::PlotHits() :
   m_canvas(new TCanvas("PlotHits", "PlotHits", 1300, 900)),
   m_positionHist(new TH2D("2D EventDisplay", "2D Event Display", 100, -200., 200., 100, -650, 350)),
-  m_yaxis(0),
+  m_yAxis(0),
   m_fitInfo(0)
 {
   m_positionHist->GetXaxis()->SetTitle("x / mm");
@@ -101,14 +103,14 @@ PlotHits::PlotHits() :
   // new axis for y
   double min = -400;
   double max = 400;
-  m_yaxis = new TGaxis(gPad->GetUxmin(), gPad->GetUymax(), gPad->GetUxmax(), gPad->GetUymax(), min, max, 510, "+L");
-  m_yaxis->SetLineColor(kRed);
-  m_yaxis->SetTextColor(kRed);
-  m_yaxis->SetLabelColor(kRed);
-  m_yaxis->SetLabelOffset(-0.05);
-  m_yaxis->SetTitle("y / mm");
-  m_yaxis->SetTitleOffset(-1.2);
-  m_yaxis->Draw();
+  m_yAxis = new TGaxis(gPad->GetUxmin(), gPad->GetUymax(), gPad->GetUxmax(), gPad->GetUymax(), min, max, 510, "+L");
+  m_yAxis->SetLineColor(kRed);
+  m_yAxis->SetTextColor(kRed);
+  m_yAxis->SetLabelColor(kRed);
+  m_yAxis->SetLabelOffset(-0.05);
+  m_yAxis->SetTitle("y / mm");
+  m_yAxis->SetTitleOffset(-1.2);
+  m_yAxis->Draw();
   gPad->Update();
 }
 
@@ -116,26 +118,19 @@ PlotHits::~PlotHits()
 {
   delete m_canvas;
   delete m_positionHist;
-  delete m_yaxis;
-  foreach(TBox* box, m_boxes)
-    delete box;
+  delete m_yAxis;
+  qDeleteAll(m_boxes);
   clear();
 }
 
 void PlotHits::clear()
 {
-  foreach(TBox* hitBox, m_hits) {
-    delete hitBox;
-    hitBox = 0;
-  }
+  qDeleteAll(m_hits);
   m_hits.clear();
-
-  foreach(TLine* line, m_lines) {
-    delete line;
-    line = 0;
-  }
+  qDeleteAll(m_lines);
   m_lines.clear();
-
+  qDeleteAll(m_markers);
+  m_markers.clear();
   delete m_fitInfo;
   m_fitInfo = 0;
 }
@@ -145,8 +140,9 @@ void PlotHits::plot(QVector<Hit*> hits, Track* track)
   m_canvas->cd();
   clear();
 
-  TPaletteAxis* palette = (TPaletteAxis*) m_positionHist->GetListOfFunctions()->FindObject("palette");
+  double stretchfactor = (m_positionHist->GetXaxis()->GetXmax() - m_positionHist->GetXaxis()->GetXmin()) / (m_yAxis->GetWmax() - m_yAxis->GetWmin());
 
+  TPaletteAxis* palette = (TPaletteAxis*) m_positionHist->GetListOfFunctions()->FindObject("palette");
   foreach(Hit* hit, hits) {
     double angle = hit->angle();
     TVector3 position = hit->position();
@@ -164,6 +160,29 @@ void PlotHits::plot(QVector<Hit*> hits, Track* track)
 
       TVector3 calculatedPos = 0.5*(position+counterPos) + u*direction;
       position = calculatedPos;
+
+      TOFCluster* tofCluster = dynamic_cast<TOFCluster*>(hit);
+      if (tofCluster) {
+        if (tofCluster->signalHeight() > 4*200) {
+          TMarker* marker = new TMarker(stretchfactor * tofCluster->yEstimate(), tofCluster->position().z(), 20);
+          marker->SetMarkerSize(.5);
+          marker->Draw("SAME");
+          m_markers.push_back(marker);
+        }
+
+        /*
+        TLine* y_tofErrorLine = new TLine(
+          stretchfactor * (tofCluster->yEstimate() - tofCluster->yResolutionEstimate()),
+          tofCluster->position().z(),
+          stretchfactor * (tofCluster->yEstimate() + tofCluster->yResolutionEstimate()),
+          tofCluster->position().z()
+        );
+        y_tofErrorLine->SetLineColor(kRed);
+        y_tofErrorLine->SetLineWidth(1);
+        y_tofErrorLine->SetLineStyle(1);
+        y_tofErrorLine->Draw("SAME");
+        m_lines.push_back(y_tofErrorLine); */
+      }
     }
 
     int amplitude = hit->signalHeight();
@@ -217,7 +236,6 @@ void PlotHits::plot(QVector<Hit*> hits, Track* track)
     m_lines.push_back(x_line);
 
     // strech because we want to show x and y in the same view (convert 40cm to 20cm)
-    double stretchfactor = (m_positionHist->GetXaxis()->GetXmax() - m_positionHist->GetXaxis()->GetXmin()) / (m_yaxis->GetWmax() - m_yaxis->GetWmin());
     double y0 = track->y0();
     double slopeY = track->slopeY();
     double y_min = y0 + z_min * slopeY;

@@ -140,9 +140,10 @@ QVector<Cluster*> Setup::generateClusters(QVector<Hit*> hits)
     addHitsToLayers(hits);
     Layer* layer = firstLayer();
     while(layer) {
-      QVector<Cluster*> clustersHere = layer->clusters();
-      foreach(Cluster* cluster, clustersHere)
-        clusters.push_back(cluster);
+      clusters += layer->clusters();
+      // QVector<Cluster*> clustersHere = layer->clusters();
+      // foreach(Cluster* cluster, clustersHere)
+      //   clusters.push_back(cluster);
 
       // Cluster* cluster = layer->bestCluster();
       // if (cluster)

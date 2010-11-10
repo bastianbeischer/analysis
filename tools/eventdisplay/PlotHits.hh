@@ -10,6 +10,7 @@ class TGaxis;
 class TH2D;
 class Track;
 class TLine;
+class TMarker;
 class TLatex;
 
 class PlotHits
@@ -31,11 +32,12 @@ private:
 
   TCanvas*            m_canvas;
   TH2D*               m_positionHist;
-  TGaxis*             m_yaxis;
+  TGaxis*             m_yAxis;
 
   QVector<TBox*>      m_boxes;
   QVector<TBox*>      m_hits;
   QVector<TLine*>     m_lines;
+  QVector<TMarker*>   m_markers;
   TLatex*             m_fitInfo;
 
 };
