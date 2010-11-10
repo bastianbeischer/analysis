@@ -11,12 +11,15 @@ UI_DIR      = ./.tmp
 RCC_DIR     = ./.tmp
 
 SOURCES += Track.cc \
+           TrackFinding.cc \
            StraightLine.cc \
-           TrackFinding.cc
+           BrokenLine.cc \
+
 
 HEADERS += Track.hh \     
+           TrackFinding.hh \
            StraightLine.hh \
-           TrackFinding.hh
+           BrokenLine.hh
 
 INCLUDEPATH += $$TOPLEVEL/event
 

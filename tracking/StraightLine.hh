@@ -3,8 +3,6 @@
 
 #include "Track.hh"
 
-#include <QVector>
-
 #include <TVector3.h>
 
 class Hit;

@@ -3,9 +3,8 @@
 
 #include <QVector>
 
-#include <TVector3.h>
-
 class Hit;
+class TVector3;
 
 class Track
 {
