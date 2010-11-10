@@ -3,8 +3,6 @@
 #include "Hit.hh"
 #include "Cluster.hh"
 
-#include <iostream>
-
 SipmArray::SipmArray() :
   DetectorElement()
 {

@@ -2,9 +2,10 @@
 
 #include <QtAlgorithms>
 
-#include <cassert>
-
 #include "Cluster.hh"
+
+#include <cassert>
+#include <iostream>
 
 bool comparePositions(const Hit* hit1, const Hit* hit2)
 {
@@ -51,5 +52,29 @@ void DetectorElement::sortHits()
   m_hits.clear();
   for (int i = 0; i < hits.size(); i++) {
     m_hits[i] = hits.at(i);
+  }
+}
+
+void DetectorElement::debug()
+{
+  std::cout << "------------------------" << std::endl;
+  int i = 0;
+  std::cout << "Hits:" << std::endl;
+  foreach(Hit* hit, m_hits) {
+    if (hit) {
+      std::cout << i << " " << hit->position().x() << "     "  << hit->signalHeight() << std::endl;
+    }
+    i++;
+  }
+  std::cout << "Clusters:" << std::endl;
+  int j = 0;
+  foreach(Cluster* cluster, m_clusters) {
+    i = 0;
+    std::cout << "No. " << j << ":" << std::endl;
+    foreach(Hit* hit, cluster->hits()) {
+      std::cout << i << " " << hit->signalHeight() << std::endl;
+      i++;
+    }
+    j++;
   }
 }
