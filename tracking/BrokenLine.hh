@@ -30,6 +30,7 @@ public:
   double         upperSlopeX()      const {return m_upperSlopeX;}
   double         lowerSlopeX()      const {return m_lowerSlopeX;}
   double         slopeY()           const {return m_slopeY;}
+  double         zIntersection()    const {return m_zIntersection;}
 
   double         x(double z)        const;
   double         y(double z)        const;
@@ -45,6 +46,8 @@ private:
   double            m_lowerSlopeX;
   double            m_y0;
   double            m_slopeY;
+
+  double            m_zIntersection;
 
 };
 

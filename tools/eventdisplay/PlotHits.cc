@@ -3,6 +3,8 @@
 #include "Hit.hh"
 #include "TOFSipmHit.hh"
 #include "Track.hh"
+#include "BrokenLine.hh"
+#include "StraightLine.hh"
 #include "TOFCluster.hh"
 
 #include <TCanvas.h>
@@ -222,37 +224,84 @@ void PlotHits::plot(QVector<Hit*> hits, Track* track)
   }
 
   if (track) {
-    // double x0 = track->x0();
-    // double slopeX = track->slopeX();
-    // double z_min = m_positionHist->GetYaxis()->GetXmin();
-    // double z_max = m_positionHist->GetYaxis()->GetXmax();
-    // double x_min = x0 + z_min * slopeX;
-    // double x_max = x0 + z_max * slopeX;
+    double z_min = m_positionHist->GetYaxis()->GetXmin();
+    double z_max = m_positionHist->GetYaxis()->GetXmax();
 
-    // TLine* x_line = new TLine(x_min, z_min, x_max, z_max);
-    // x_line->SetLineColor(kBlack);
-    // x_line->SetLineWidth(2);
-    // x_line->Draw("SAME");
-    // m_lines.push_back(x_line);
+    StraightLine* straightLine = dynamic_cast<StraightLine*>(track);
+    if (straightLine) {
+      double x0 = straightLine->x0();
+      double slopeX = straightLine->slopeX();
+      double x_min = x0 + z_min * slopeX;
+      double x_max = x0 + z_max * slopeX;
 
-    // // strech because we want to show x and y in the same view (convert 40cm to 20cm)
-    // double y0 = track->y0();
-    // double slopeY = track->slopeY();
-    // double y_min = y0 + z_min * slopeY;
-    // double y_max = y0 + z_max * slopeY;
+      TLine* x_line = new TLine(x_min, z_min, x_max, z_max);
+      x_line->SetLineColor(kBlack);
+      x_line->SetLineWidth(2);
+      x_line->Draw("SAME");
+      m_lines.push_back(x_line);
 
-    // TLine* y_line = new TLine(stretchfactor*y_min, z_min, stretchfactor*y_max, z_max);
-    // y_line->SetLineColor(kRed);
-    // y_line->SetLineWidth(1);
-    // y_line->SetLineStyle(1);
-    // y_line->Draw("SAME");
-    // m_lines.push_back(y_line);
+      // strech because we want to show x and y in the same view (convert 40cm to 20cm)
+      double y0 = straightLine->y0();
+      double slopeY = straightLine->slopeY();
+      double y_min = y0 + z_min * slopeY;
+      double y_max = y0 + z_max * slopeY;
 
-    // char text[128];
-    // sprintf(text, "#chi^{2} / ndf = %.1f / %d", track->chi2(), track->ndf());
-    // m_fitInfo = new TLatex(90, z_min + 0.64*(z_max-z_min), text);
-    // m_fitInfo->SetTextSize(0.03);
-    // m_fitInfo->Draw("SAME");
+      TLine* y_line = new TLine(stretchfactor*y_min, z_min, stretchfactor*y_max, z_max);
+      y_line->SetLineColor(kRed);
+      y_line->SetLineWidth(1);
+      y_line->SetLineStyle(1);
+      y_line->Draw("SAME");
+      m_lines.push_back(y_line);
+    }
+
+    BrokenLine* brokenLine = dynamic_cast<BrokenLine*>(track);
+    if (brokenLine) {
+      double zIntersection = brokenLine->zIntersection();
+
+      double x0, slopeX, x_min, x_max;
+      TLine* x_line;
+
+      // lower line
+      x0 = brokenLine->lowerX0();
+      slopeX = brokenLine->lowerSlopeX();
+      x_min = x0 + z_min * slopeX;
+      x_max = x0 + zIntersection * slopeX;
+      x_line = new TLine(x_min, z_min, x_max, zIntersection);
+      x_line->SetLineColor(kBlack);
+      x_line->SetLineWidth(2);
+      x_line->Draw("SAME");
+      m_lines.push_back(x_line);
+
+      // upper line
+      x0 = brokenLine->upperX0();
+      slopeX = brokenLine->upperSlopeX();
+      x_min = x0 + zIntersection * slopeX;
+      x_max = x0 + z_max * slopeX;
+      x_line = new TLine(x_min, zIntersection, x_max, z_max);
+      x_line->SetLineColor(kBlack);
+      x_line->SetLineWidth(2);
+      x_line->Draw("SAME");
+      m_lines.push_back(x_line);
+
+      // strech because we want to show x and y in the same view (convert 40cm to 20cm)
+      double y0 = brokenLine->y0();
+      double slopeY = brokenLine->slopeY();
+      double y_min = y0 + z_min * slopeY;
+      double y_max = y0 + z_max * slopeY;
+
+      TLine* y_line = new TLine(stretchfactor*y_min, z_min, stretchfactor*y_max, z_max);
+      y_line->SetLineColor(kRed);
+      y_line->SetLineWidth(1);
+      y_line->SetLineStyle(1);
+      y_line->Draw("SAME");
+      m_lines.push_back(y_line);
+    }
+
+    char text[128];
+    sprintf(text, "#chi^{2} / ndf = %.1f / %d", track->chi2(), track->ndf());
+    m_fitInfo = new TLatex(90, z_min + 0.64*(z_max-z_min), text);
+    m_fitInfo->SetTextSize(0.03);
+    m_fitInfo->Draw("SAME");
   }
 
   m_canvas->Modified();

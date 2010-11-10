@@ -15,7 +15,8 @@ BrokenLine::BrokenLine() :
   m_upperSlopeX(0),
   m_lowerSlopeX(0),
   m_y0(0),
-  m_slopeY(0)
+  m_slopeY(0),
+  m_zIntersection(0)
 {
 }
 
@@ -154,15 +155,16 @@ int BrokenLine::fit(QVector<Hit*> hits)
   double chi2 = (residuumTrans * Uinv * residuum)(0,0);
 
   // return information from the fit.
-  m_upperX0     = solution(0);
-  m_lowerX0     = solution(1);
-  m_y0          = solution(2);
-  m_upperSlopeX = solution(3);
-  m_lowerSlopeX = solution(4);
-  m_slopeY      = solution(5);
-  m_chi2        = chi2;
-  m_ndf         = nRow-nCol;
-  m_hits        = hits;
+  m_upperX0       = solution(0);
+  m_lowerX0       = solution(1);
+  m_y0            = solution(2);
+  m_upperSlopeX   = solution(3);
+  m_lowerSlopeX   = solution(4);
+  m_slopeY        = solution(5);
+  m_chi2          = chi2;
+  m_ndf           = nRow-nCol;
+  m_hits          = hits;
+  m_zIntersection = (m_upperX0 - m_lowerX0) / (m_lowerSlopeX - m_upperSlopeX);
 
   if (m_verbose > 1) {
     std::cout << "--------------------------------------------------------------------------------------------------" << std::endl;
@@ -181,9 +183,7 @@ int BrokenLine::fit(QVector<Hit*> hits)
 
 double BrokenLine::x(double z) const
 {
-  double z_mid = (m_upperX0 - m_lowerX0) / (m_lowerSlopeX - m_upperSlopeX);
-
-  if (z > z_mid)
+  if (z > m_zIntersection)
     return m_upperX0 + z*m_upperSlopeX;
   return m_lowerX0 + z*m_lowerSlopeX;
 }
