@@ -65,18 +65,6 @@ void Plotter::process()
     foreach(Cluster* cluster, setup->generateClusters(hits))
       clusters.push_back(cluster);
 
-    // // add tof
-    // foreach(Hit* hit, hits) {
-    //   if (hit->type() == Hit::tof) {
-    //     TOFSipmHit* tofhit = (TOFSipmHit*) hit;
-    //     if (tofhit->numberOfLevelChanges() == 2) {
-    //       tofhit->processTDCHits();
-    //       std::cout << tofhit->channel()<<  "   " << tofhit->timeOverThreshold() << std::endl;
-    //       if (tofhit->timeOverThreshold() > 1700) clusters.push_back(tofhit);
-    //     }
-    //   }
-    // }
-
     // plot before trackfinding
     pc.plot(clusters);
 

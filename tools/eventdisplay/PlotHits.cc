@@ -162,39 +162,33 @@ void PlotHits::plot(QVector<Hit*> hits, Track* track)
 
       TVector3 calculatedPos = 0.5*(position+counterPos) + u*direction;
       position = calculatedPos;
+    }
 
-      TOFCluster* tofCluster = dynamic_cast<TOFCluster*>(hit);
-      if (tofCluster) {
-        if (tofCluster->signalHeight() > 4*200) {
-          TMarker* marker = new TMarker(stretchfactor * tofCluster->yEstimate(), tofCluster->position().z(), 20);
-          marker->SetMarkerSize(.5);
-          marker->Draw("SAME");
-          m_markers.push_back(marker);
-        }
+    TOFCluster* tofCluster = dynamic_cast<TOFCluster*>(hit);
+    if (tofCluster) {
+      if (tofCluster->signalHeight() > 4*200) {
+        TMarker* marker = new TMarker(stretchfactor * tofCluster->yEstimate(), tofCluster->position().z(), 20);
+        marker->SetMarkerSize(.5);
+        marker->Draw("SAME");
+        m_markers.push_back(marker);
+      }
 
-        /*
+      /*
         TLine* y_tofErrorLine = new TLine(
-          stretchfactor * (tofCluster->yEstimate() - tofCluster->yResolutionEstimate()),
-          tofCluster->position().z(),
-          stretchfactor * (tofCluster->yEstimate() + tofCluster->yResolutionEstimate()),
-          tofCluster->position().z()
+        stretchfactor * (tofCluster->yEstimate() - tofCluster->yResolutionEstimate()),
+        tofCluster->position().z(),
+        stretchfactor * (tofCluster->yEstimate() + tofCluster->yResolutionEstimate()),
+        tofCluster->position().z()
         );
         y_tofErrorLine->SetLineColor(kRed);
         y_tofErrorLine->SetLineWidth(1);
         y_tofErrorLine->SetLineStyle(1);
         y_tofErrorLine->Draw("SAME");
         m_lines.push_back(y_tofErrorLine); */
-      }
     }
 
     int amplitude = hit->signalHeight();
-    // if (hit->type() == Hit::tof) {
-    //   std::cout << amplitude << std::endl; 
-    // }
-    // if (hit->type() == Hit::tof)
-    //   amplitude = ((TOFSipmHit*) hit)->timeOverThreshold();
     Hit::ModuleType type = hit->type();
-
     double x = position.x();
     double z = position.z();
     int color = palette->GetValueColor(amplitude);
