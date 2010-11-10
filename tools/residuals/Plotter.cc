@@ -4,6 +4,7 @@
 #include "Cluster.hh"
 #include "TOFCluster.hh"
 #include "SimpleEvent.hh"
+#include "BrokenLine.hh"
 #include "StraightLine.hh"
 #include "Layer.hh"
 #include "TrackFinding.hh"
@@ -74,7 +75,7 @@ void Plotter::process()
 
       // create track for this layer
       if(!m_tracks[layer])
-        m_tracks[layer] = new StraightLine;
+        m_tracks[layer] = new BrokenLine;
 
       // remove clusters in this layer from clusters for track fit
       QVector<Hit*> clustersForFit;
@@ -82,8 +83,7 @@ void Plotter::process()
       
       foreach(Hit* hit, clusters) {
         if (hit->position().z() != z) {
-          if(hit->position().z() < 0. && hit->type() != Hit::tof)
-            clustersForFit.push_back(hit);
+          clustersForFit.push_back(hit);
         }
         else {
           clustersInThisLayer.push_back(hit);
