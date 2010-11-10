@@ -5,7 +5,7 @@
 
 class Hit;
 class TH2I;
-class StraightLine;
+class Track;
 
 class TrackFinding
 {
@@ -17,11 +17,9 @@ public:
   QVector<Hit*> findTrack(QVector<Hit*> hits);
 
 private:
-  bool isInCorridor(Hit* hit) const;
+  bool isInCorridor(Track* track, Hit* hit, int maxPull = 5) const;
 
 private:
-  StraightLine*     m_track;
-
   double            m_maxSlope;
   double            m_maxOffset;
   TH2I*             m_trackFindingHist;

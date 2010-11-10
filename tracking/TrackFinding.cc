@@ -2,13 +2,13 @@
 
 #include "Hit.hh"
 #include "StraightLine.hh"
+#include "BrokenLine.hh"
 
 #include <TH2I.h>
 #include <cmath>
 #include <cassert>
 
 TrackFinding::TrackFinding() :
-  m_track(0),
   m_maxSlope(1.),
   m_maxOffset(100.),
   m_trackFindingHist(new TH2I("trackFindingHist", "trackFindingHist", 51, -m_maxSlope, m_maxSlope, 51, -m_maxOffset, m_maxOffset))
@@ -17,13 +17,11 @@ TrackFinding::TrackFinding() :
 
 TrackFinding::~TrackFinding()
 {
-  delete m_track;
   delete m_trackFindingHist;
 }
 
 QVector<Hit*> TrackFinding::findTrack(QVector<Hit*> hits)
 {
-  QVector<Hit*> hitsOnTrack;
   m_trackFindingHist->Reset();
 
   for (QVector<Hit*>::iterator firstHit = hits.begin(); firstHit != hits.end(); firstHit++) {
@@ -47,36 +45,49 @@ QVector<Hit*> TrackFinding::findTrack(QVector<Hit*> hits)
   double slopeMax = m_trackFindingHist->GetXaxis()->GetBinCenter(maxX);
   double offsetMax  = m_trackFindingHist->GetYaxis()->GetBinCenter(maxY);
 
-  m_track = new StraightLine;
-  m_track->setSlopeX(slopeMax);
-  m_track->setX0(offsetMax);
+  StraightLine straightLine;
+  straightLine.setSlopeX(slopeMax);
+  straightLine.setX0(offsetMax);
 
-  for (QVector<Hit*>::iterator it = hits.begin(); it != hits.end(); it++) {
-    Hit* hit = (*it);
-    if (isInCorridor(hit)) hitsOnTrack.push_back(hit);
+  QVector<Hit*> hitsOnTrack;
+  foreach(Hit* hit, hits) {
+    int maxPull = 5;
+    if (hit->type() == Hit::tracker) maxPull = 100;
+    if (hit->type() == Hit::trd)     maxPull = 3;
+    if (isInCorridor(&straightLine, hit, maxPull)) 
+      hitsOnTrack.push_back(hit);
   }
 
-  //  // improve
-  //  m_track->fit(hitsOnTrack);
+  // improve
+  BrokenLine brokenLine;
+  brokenLine.fit(hitsOnTrack);
 
-  // // redetermine hits on track
-  // QVector<Hit*> temp = hitsOnTrack;
-  // hitsOnTrack.clear();
-  // for (QVector<Hit*>::iterator it = temp.begin(); it != temp.end(); it++) {
-  //   Hit* hit = (*it);
-  //   if (isInCorridor(hit) && hit->type() != Hit::tof) hitsOnTrack.push_back(hit);
-  // }
+  // redetermine hits on track
+  QVector<Hit*> hitsOnTrackAfterFit;
+  foreach(Hit* hit, hitsOnTrack) {
+    int maxPull = 3;
+    if (isInCorridor(&brokenLine, hit, maxPull))
+      hitsOnTrackAfterFit.push_back(hit);
+  }
 
   return hitsOnTrack;
 }
 
 
-bool TrackFinding::isInCorridor(Hit* hit) const
+bool TrackFinding::isInCorridor(Track* track, Hit* hit, int maxPull) const
 {
-  assert(m_track);
-  TVector3 pos = hit->position();
+  assert(track);
+
+  TVector3 pos = 0.5* (hit->position() + hit->counterPosition());
+  TVector3 trackPos = track->position(hit->position().z());
+
+  double angle = hit->angle();
+  pos.RotateZ(-angle);
+  trackPos.RotateZ(-angle);
+
+  double res = (pos - trackPos).x();
   double resolution = hit->resolutionEstimate();
-  int maxPull = 10;
-  return (fabs(pos.x() - m_track->x(pos.z())) / resolution < maxPull);
+
+  return (fabs(res/resolution) < maxPull);
 }
 
