@@ -60,7 +60,7 @@ void ResidualPlot::fill(Hit* hit, Track* track)
   }
 
   m_residuals1D[detId]->Fill(res);
-  m_residuals2D->Fill(track->x(m_z), res);
+  m_residuals2D->Fill(trackPos.x(), res);
 
 }
 
