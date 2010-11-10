@@ -4,6 +4,7 @@
 #include "TOFSipmHit.hh"
 #include "Track.hh"
 #include "BrokenLine.hh"
+#include "CenteredBrokenLine.hh"
 #include "StraightLine.hh"
 #include "TOFCluster.hh"
 
@@ -280,6 +281,48 @@ void PlotHits::plot(QVector<Hit*> hits, Track* track)
       // strech because we want to show x and y in the same view (convert 40cm to 20cm)
       double y0 = brokenLine->y0();
       double slopeY = brokenLine->slopeY();
+      double y_min = y0 + z_min * slopeY;
+      double y_max = y0 + z_max * slopeY;
+
+      TLine* y_line = new TLine(stretchfactor*y_min, z_min, stretchfactor*y_max, z_max);
+      y_line->SetLineColor(kRed);
+      y_line->SetLineWidth(1);
+      y_line->SetLineStyle(1);
+      y_line->Draw("SAME");
+      m_lines.push_back(y_line);
+    }
+
+    CenteredBrokenLine* centeredBrokenLine = dynamic_cast<CenteredBrokenLine*>(track);
+    if (centeredBrokenLine) {
+      double zIntersection = centeredBrokenLine->zIntersection();
+
+      double x0, slopeX, x_min, x_max;
+      TLine* x_line;
+
+      // lower line
+      x0 = centeredBrokenLine->x0();
+      slopeX = centeredBrokenLine->lowerSlopeX();
+      x_min = x0 + z_min * slopeX;
+      x_max = x0 + zIntersection * slopeX;
+      x_line = new TLine(x_min, z_min, x_max, zIntersection);
+      x_line->SetLineColor(kBlack);
+      x_line->SetLineWidth(2);
+      x_line->Draw("SAME");
+      m_lines.push_back(x_line);
+
+      // upper line
+      slopeX = centeredBrokenLine->upperSlopeX();
+      x_min = x0 + zIntersection * slopeX;
+      x_max = x0 + z_max * slopeX;
+      x_line = new TLine(x_min, zIntersection, x_max, z_max);
+      x_line->SetLineColor(kBlack);
+      x_line->SetLineWidth(2);
+      x_line->Draw("SAME");
+      m_lines.push_back(x_line);
+
+      // strech because we want to show x and y in the same view (convert 40cm to 20cm)
+      double y0 = centeredBrokenLine->y0();
+      double slopeY = centeredBrokenLine->slopeY();
       double y_min = y0 + z_min * slopeY;
       double y_max = y0 + z_max * slopeY;
 

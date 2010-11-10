@@ -6,6 +6,7 @@
 #include "TOFSipmHit.hh"
 #include "SimpleEvent.hh"
 #include "BrokenLine.hh"
+#include "CenteredBrokenLine.hh"
 #include "StraightLine.hh"
 #include "Layer.hh"
 #include "TrackFinding.hh"
@@ -72,7 +73,7 @@ void Plotter::process()
     clusters = m_trackFinding->findTrack(clusters);
 
     // plot after trackfinding including track
-    BrokenLine track;
+    CenteredBrokenLine track;
     if (track.fit(clusters))
       pc.plot(clusters, &track);
     else
