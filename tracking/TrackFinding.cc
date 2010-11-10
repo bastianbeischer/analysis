@@ -1,7 +1,7 @@
 #include "TrackFinding.hh"
 
 #include "Hit.hh"
-#include "Track.hh"
+#include "StraightLine.hh"
 
 #include <TH2I.h>
 #include <cmath>
@@ -47,7 +47,7 @@ QVector<Hit*> TrackFinding::findTrack(QVector<Hit*> hits)
   double slopeMax = m_trackFindingHist->GetXaxis()->GetBinCenter(maxX);
   double offsetMax  = m_trackFindingHist->GetYaxis()->GetBinCenter(maxY);
 
-  m_track = new Track;
+  m_track = new StraightLine;
   m_track->setSlopeX(slopeMax);
   m_track->setX0(offsetMax);
 

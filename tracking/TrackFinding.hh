@@ -5,7 +5,7 @@
 
 class Hit;
 class TH2I;
-class Track;
+class StraightLine;
 
 class TrackFinding
 {
@@ -20,7 +20,7 @@ private:
   bool isInCorridor(Hit* hit) const;
 
 private:
-  Track*            m_track;
+  StraightLine*     m_track;
 
   double            m_maxSlope;
   double            m_maxOffset;

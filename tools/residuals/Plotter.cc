@@ -4,7 +4,7 @@
 #include "Cluster.hh"
 #include "TOFCluster.hh"
 #include "SimpleEvent.hh"
-#include "Track.hh"
+#include "StraightLine.hh"
 #include "Layer.hh"
 #include "TrackFinding.hh"
 #include "ResidualPlot.hh"
@@ -74,17 +74,20 @@ void Plotter::process()
 
       // create track for this layer
       if(!m_tracks[layer])
-        m_tracks[layer] = new Track;
+        m_tracks[layer] = new StraightLine;
 
       // remove clusters in this layer from clusters for track fit
       QVector<Hit*> clustersForFit;
       QVector<Hit*> clustersInThisLayer;
       
       foreach(Hit* hit, clusters) {
-        if (hit->position().z() != z)
-          clustersForFit.push_back(hit);
-        else
+        if (hit->position().z() != z) {
+          if(hit->position().z() < 0. && hit->type() != Hit::tof)
+            clustersForFit.push_back(hit);
+        }
+        else {
           clustersInThisLayer.push_back(hit);
+        }
       }
 
       if (!m_residualPlots[layer])
@@ -116,5 +119,6 @@ void Plotter::process()
 void Plotter::draw()
 {
   foreach(ResidualPlot* plot, m_residualPlots)
-    plot->draw();
+    if (plot->z() > -240 && plot->z() < 240)
+      plot->draw();
 }

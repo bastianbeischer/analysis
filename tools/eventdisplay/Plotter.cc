@@ -5,7 +5,7 @@
 #include "TOFCluster.hh"
 #include "TOFSipmHit.hh"
 #include "SimpleEvent.hh"
-#include "Track.hh"
+#include "StraightLine.hh"
 #include "Layer.hh"
 #include "TrackFinding.hh"
 #include "Setup.hh"
@@ -83,7 +83,7 @@ void Plotter::process()
     clusters = m_trackFinding->findTrack(clusters);
 
     // plot after trackfinding including track
-    Track track;
+    StraightLine track;
     if (track.fit(clusters))
       pc.plot(clusters, &track);
     else
