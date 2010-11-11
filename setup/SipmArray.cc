@@ -21,7 +21,7 @@ SipmArray::~SipmArray()
 
 QVector<Cluster*> SipmArray::findClusters()
 {
-  const int seedThreshold = 500;
+  const int seedThreshold = 300;
   const int neighbourThreshold = 100;
 
   for (unsigned short channel = 0; channel < 32; channel++) {
