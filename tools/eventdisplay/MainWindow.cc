@@ -12,6 +12,11 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.saveButton, SIGNAL(clicked()), this, SLOT(saveButtonClicked()));
   connect(m_ui.eventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(update()));
   connect(m_ui.drawTrackCheckBox, SIGNAL(stateChanged(int)), this, SLOT(update()));
+  connect(m_ui.slopeBinsSpinBox, SIGNAL(valueChanged(int)), this, SLOT(update()));
+  connect(m_ui.offsetBinsSpinBox, SIGNAL(valueChanged(int)), this, SLOT(update()));
+  connect(m_ui.trackerPullSpinBox, SIGNAL(valueChanged(double)), this, SLOT(update()));
+  connect(m_ui.trdPullSpinBox, SIGNAL(valueChanged(double)), this, SLOT(update()));
+  connect(m_ui.fitMethodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
   m_ui.plotter->setPositionLabel(m_ui.positionLabel);
   connect(m_ui.unzoomButton, SIGNAL(clicked()), m_ui.plotter, SLOT(unzoom()));
 }
@@ -55,6 +60,12 @@ void MainWindow::updateEventSpinBox()
 
 void MainWindow::update()
 {
+  int slopeBins = m_ui.slopeBinsSpinBox->value();
+  int offsetBins = m_ui.offsetBinsSpinBox->value();
+  double trackerPull = m_ui.trackerPullSpinBox->value();
+  double trdPull = m_ui.trdPullSpinBox->value();
+  m_ui.plotter->updateTrackFindingParameters(slopeBins, offsetBins, trackerPull, trdPull);
+  
   bool drawTracks = m_ui.drawTrackCheckBox->isChecked();
   m_ui.fitMethodComboBox->setEnabled(drawTracks);
   m_ui.plotter->drawEvent(m_ui.eventSpinBox->value(), drawTracks, m_ui.fitMethodComboBox->currentIndex());

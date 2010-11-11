@@ -27,6 +27,7 @@ public:
   void setPositionLabel(QLabel* label);
 public slots:
   void unzoom();
+  void updateTrackFindingParameters(int slopeBins, int offsetBins, double trackerPull, double trdPull);
 protected:
   void mousePressEvent(QMouseEvent *event);
   void mouseMoveEvent(QMouseEvent* event);
