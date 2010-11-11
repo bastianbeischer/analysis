@@ -1,4 +1,4 @@
-#include "PlotHits.hh"
+#include "HitsPlot.hh"
 
 #include "Hit.hh"
 #include "TOFSipmHit.hh"
@@ -18,16 +18,14 @@
 #include <TPaletteAxis.h>
 #include <TGaxis.h>
 #include <TMarker.h>
+#include <TStyle.h>
 
 #include <iostream>
 
-unsigned int PlotHits::saves = 0;
-
-PlotHits::PlotHits() :
-  m_canvas(new TCanvas("PlotHits", "PlotHits", 1300, 900)),
-  m_positionHist(new TH2D("2D EventDisplay", "2D Event Display", 100, -200., 200., 100, -650, 350)),
-  m_yAxis(0),
-  m_fitInfo(0)
+HitsPlot::HitsPlot()
+  : m_positionHist(new TH2D("2D EventDisplay", "", 100, -200., 200., 100, -650, 350))
+  , m_yAxis(0)
+  , m_fitInfo(0)
 {
   m_positionHist->GetXaxis()->SetTitle("x / mm");
   m_positionHist->GetYaxis()->SetTitle("z / mm");
@@ -39,10 +37,7 @@ PlotHits::PlotHits() :
   m_positionHist->Fill(1e5, 1e5);
   m_positionHist->SetStats(false);
   m_positionHist->Draw("colz");
-
-  m_canvas->SetRightMargin(0.16);
   gPad->Update();
-
   const double widthModule  = 65.;
   const double heightModule = 20.;
   const double zTracker[4] = {227., 60., -60., -227};
@@ -106,27 +101,33 @@ PlotHits::PlotHits() :
   // new axis for y
   double min = -400;
   double max = 400;
-  m_yAxis = new TGaxis(gPad->GetUxmin(), gPad->GetUymax(), gPad->GetUxmax(), gPad->GetUymax(), min, max, 510, "+L");
+  m_yAxis = new TGaxis(gPad->GetUxmin(), gPad->GetUymax(), gPad->GetUxmax(), gPad->GetUymax(), min, max, 510, "-");
   m_yAxis->SetLineColor(kRed);
   m_yAxis->SetTextColor(kRed);
   m_yAxis->SetLabelColor(kRed);
-  m_yAxis->SetLabelOffset(-0.05);
+  m_yAxis->SetLabelOffset(0);
   m_yAxis->SetTitle("y / mm");
-  m_yAxis->SetTitleOffset(-1.2);
+  m_yAxis->SetTitleOffset(1.2);
+  m_yAxis->SetLabelFont(gStyle->GetLabelFont());
+  m_yAxis->SetLabelSize(gStyle->GetLabelSize());
+  m_yAxis->SetTitleFont(gStyle->GetTitleFont());
+  m_yAxis->SetTitleSize(gStyle->GetTitleSize());
   m_yAxis->Draw();
   gPad->Update();
+  m_stretchFactor =
+    (m_positionHist->GetXaxis()->GetXmax() - m_positionHist->GetXaxis()->GetXmin())
+    / (m_yAxis->GetWmax() - m_yAxis->GetWmin());
 }
 
-PlotHits::~PlotHits()
+HitsPlot::~HitsPlot()
 {
-  delete m_canvas;
   delete m_positionHist;
   delete m_yAxis;
   qDeleteAll(m_boxes);
   clear();
 }
 
-void PlotHits::clear()
+void HitsPlot::clear()
 {
   qDeleteAll(m_hits);
   m_hits.clear();
@@ -138,85 +139,18 @@ void PlotHits::clear()
   m_fitInfo = 0;
 }
 
-void PlotHits::plot(QVector<Hit*> hits, Track* track)
+double HitsPlot::yStretchFactor()
 {
-  m_canvas->cd();
+  return m_stretchFactor;
+}
+
+void HitsPlot::draw(TCanvas* canvas, QVector<Hit*> hits, Track* track)
+{
+  canvas->cd();
   clear();
 
-  double stretchfactor = (m_positionHist->GetXaxis()->GetXmax() - m_positionHist->GetXaxis()->GetXmin()) / (m_yAxis->GetWmax() - m_yAxis->GetWmin());
-
   TPaletteAxis* palette = (TPaletteAxis*) m_positionHist->GetListOfFunctions()->FindObject("palette");
-  foreach(Hit* hit, hits) {
-    double angle = hit->angle();
-    TVector3 position = hit->position();
-    TVector3 counterPos = hit->counterPosition();
 
-    if (track) {
-      TVector3 trackPos = track->position(position.z());
-      trackPos.RotateZ(-angle);
-      double u = trackPos.y();
-
-      TVector3 direction = (position - counterPos);
-      if (direction.y() < 0)
-        direction = -direction;
-      direction *= 1./direction.Mag();
-
-      TVector3 calculatedPos = 0.5*(position+counterPos) + u*direction;
-      position = calculatedPos;
-    }
-
-    TOFCluster* tofCluster = dynamic_cast<TOFCluster*>(hit);
-    if (tofCluster) {
-      if (tofCluster->signalHeight() > 4*200) {
-        TMarker* marker = new TMarker(stretchfactor * tofCluster->yEstimate(), tofCluster->position().z(), 20);
-        marker->SetMarkerSize(.5);
-        marker->Draw("SAME");
-        m_markers.push_back(marker);
-      }
-
-      /*
-        TLine* y_tofErrorLine = new TLine(
-        stretchfactor * (tofCluster->yEstimate() - tofCluster->yResolutionEstimate()),
-        tofCluster->position().z(),
-        stretchfactor * (tofCluster->yEstimate() + tofCluster->yResolutionEstimate()),
-        tofCluster->position().z()
-        );
-        y_tofErrorLine->SetLineColor(kRed);
-        y_tofErrorLine->SetLineWidth(1);
-        y_tofErrorLine->SetLineStyle(1);
-        y_tofErrorLine->Draw("SAME");
-        m_lines.push_back(y_tofErrorLine); */
-    }
-
-    int amplitude = hit->signalHeight();
-    Hit::ModuleType type = hit->type();
-    double x = position.x();
-    double z = position.z();
-    int color = palette->GetValueColor(amplitude);
-
-    double width = 0.;
-    double height = 0.;
-    double heightModule = 20.0;
-    if (type == Hit::tracker) {
-      width = 1.0;
-      height = heightModule;
-    }
-    else if (type == Hit::trd) {
-      width = 6.0;
-      height = 0.5*heightModule;
-    }
-    else if (type == Hit::tof) {
-      width = 6.0;
-      height = 3.0;
-    }
-
-    TBox* box = new TBox(x-0.5*width, z-0.5*height, x+0.5*width, z+0.5*height);
-    //    std::cout << "adding box at " << position.z()  << std::endl;
-    box->SetFillStyle(1001);
-    box->SetFillColor(color);
-    box->Draw("SAME");
-    m_hits.push_back(box);
-  }
 
   if (track) {
     double z_min = m_positionHist->GetYaxis()->GetXmin();
@@ -231,7 +165,7 @@ void PlotHits::plot(QVector<Hit*> hits, Track* track)
 
       TLine* x_line = new TLine(x_min, z_min, x_max, z_max);
       x_line->SetLineColor(kBlack);
-      x_line->SetLineWidth(2);
+      x_line->SetLineWidth(1);
       x_line->Draw("SAME");
       m_lines.push_back(x_line);
 
@@ -241,7 +175,7 @@ void PlotHits::plot(QVector<Hit*> hits, Track* track)
       double y_min = y0 + z_min * slopeY;
       double y_max = y0 + z_max * slopeY;
 
-      TLine* y_line = new TLine(stretchfactor*y_min, z_min, stretchfactor*y_max, z_max);
+      TLine* y_line = new TLine(m_stretchFactor*y_min, z_min, m_stretchFactor*y_max, z_max);
       y_line->SetLineColor(kRed);
       y_line->SetLineWidth(1);
       y_line->SetLineStyle(1);
@@ -284,7 +218,7 @@ void PlotHits::plot(QVector<Hit*> hits, Track* track)
       double y_min = y0 + z_min * slopeY;
       double y_max = y0 + z_max * slopeY;
 
-      TLine* y_line = new TLine(stretchfactor*y_min, z_min, stretchfactor*y_max, z_max);
+      TLine* y_line = new TLine(m_stretchFactor*y_min, z_min, m_stretchFactor*y_max, z_max);
       y_line->SetLineColor(kRed);
       y_line->SetLineWidth(1);
       y_line->SetLineStyle(1);
@@ -326,7 +260,7 @@ void PlotHits::plot(QVector<Hit*> hits, Track* track)
       double y_min = y0 + z_min * slopeY;
       double y_max = y0 + z_max * slopeY;
 
-      TLine* y_line = new TLine(stretchfactor*y_min, z_min, stretchfactor*y_max, z_max);
+      TLine* y_line = new TLine(m_stretchFactor*y_min, z_min, m_stretchFactor*y_max, z_max);
       y_line->SetLineColor(kRed);
       y_line->SetLineWidth(1);
       y_line->SetLineStyle(1);
@@ -341,16 +275,78 @@ void PlotHits::plot(QVector<Hit*> hits, Track* track)
     m_fitInfo->Draw("SAME");
   }
 
-  m_canvas->Modified();
+  foreach(Hit* hit, hits) {
+    double angle = hit->angle();
+    TVector3 position = hit->position();
+    TVector3 counterPos = hit->counterPosition();
 
-  saveCanvas("png");
-}
+    if (track) {
+      TVector3 trackPos = track->position(position.z());
+      trackPos.RotateZ(-angle);
+      double u = trackPos.y();
 
-void PlotHits::saveCanvas(const char* format)
-{
-  const char* title = m_canvas->GetTitle();
-  char fileName[128];
-  sprintf(fileName, "%s_%03d.%s", title, saves, format);
-  m_canvas->SaveAs(fileName);
-  saves++;
+      TVector3 direction = (position - counterPos);
+      if (direction.y() < 0)
+        direction = -direction;
+      direction *= 1./direction.Mag();
+
+      TVector3 calculatedPos = 0.5*(position+counterPos) + u*direction;
+      position = calculatedPos;
+    }
+
+    TOFCluster* tofCluster = dynamic_cast<TOFCluster*>(hit);
+    if (tofCluster) {
+      if (tofCluster->signalHeight() > 4*200) {
+        TMarker* marker = new TMarker(m_stretchFactor * tofCluster->yEstimate(), tofCluster->position().z(), 20);
+        marker->SetMarkerSize(.5);
+        marker->Draw("SAME");
+        m_markers.push_back(marker);
+      }
+
+      /*
+        TLine* y_tofErrorLine = new TLine(
+        m_stretchFactor * (tofCluster->yEstimate() - tofCluster->yResolutionEstimate()),
+        tofCluster->position().z(),
+        m_stretchFactor * (tofCluster->yEstimate() + tofCluster->yResolutionEstimate()),
+        tofCluster->position().z()
+        );
+        y_tofErrorLine->SetLineColor(kRed);
+        y_tofErrorLine->SetLineWidth(1);
+        y_tofErrorLine->SetLineStyle(1);
+        y_tofErrorLine->Draw("SAME");
+        m_lines.push_back(y_tofErrorLine); */
+    }
+
+    int amplitude = hit->signalHeight();
+    Hit::ModuleType type = hit->type();
+    double x = position.x();
+    double z = position.z();
+    int color = palette->GetValueColor(amplitude);
+
+    double width = 0.;
+    double height = 0.;
+    double heightModule = 20.0;
+    if (type == Hit::tracker) {
+      width = 1.0;
+      height = heightModule;
+    }
+    else if (type == Hit::trd) {
+      width = 6.0;
+      height = 0.5*heightModule;
+    }
+    else if (type == Hit::tof) {
+      width = 6.0;
+      height = 3.0;
+    }
+
+    TBox* box = new TBox(x-0.5*width, z-0.5*height, x+0.5*width, z+0.5*height);
+    //    std::cout << "adding box at " << position.z()  << std::endl;
+    box->SetFillStyle(1001);
+    box->SetFillColor(color);
+    box->Draw("SAME");
+    m_hits.push_back(box);
+  }
+
+  canvas->Modified();
+  canvas->Update();
 }

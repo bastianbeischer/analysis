@@ -10,14 +10,17 @@
 #include <iostream>
 
 DataChain::DataChain()
+  : m_chain(0)
+  , m_event(0)
 {
   init();
 }
 
 DataChain::DataChain(const char* listName)
+  : m_chain(0)
+  , m_event(0)
 {
-  init();
-  addFiles(listName);
+  setFileList(listName);
 }
 
 DataChain::~DataChain()
@@ -28,13 +31,23 @@ DataChain::~DataChain()
 
 void DataChain::init()
 {
+  if (m_event)
+    delete m_event;
+  if (m_chain)
+    delete m_chain;
   m_chain = new TChain("SimpleEventTree");
   m_event = 0;
   m_currentEntry = -1;
   m_chain->SetBranchAddress("event", &m_event);
 }
 
-void DataChain::addFiles(const char* listName)
+void DataChain::setFileList(const char* listName)
+{
+  init();
+  addFileList(listName);
+}
+
+void DataChain::addFileList(const char* listName)
 {
   ifstream file(listName);
   if (!file.is_open()) {

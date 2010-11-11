@@ -39,7 +39,7 @@ Plotter::~Plotter()
 
 void Plotter::addFiles(const char* listName)
 {
-  m_chain->addFiles(listName);
+  m_chain->addFileList(listName);
 }
 
 void Plotter::process()

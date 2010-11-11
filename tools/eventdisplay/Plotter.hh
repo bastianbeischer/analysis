@@ -1,27 +1,43 @@
 #ifndef Plotter_hh
 #define Plotter_hh
 
-#include <QMap>
+#include <TQtWidget.h>
 
+#include <QString>
+#include <QVector3D>
+
+class TCanvas;
 class DataChain;
 class TrackFinding;
+class Track;
+class HitsPlot;
+class QLabel;
 
-class Plotter
-{
-  
+class Plotter : public TQtWidget {
+Q_OBJECT
 public:
-  Plotter();
-  ~Plotter();
-  
+  Plotter(QWidget* parent = 0);
+  virtual ~Plotter();
 public:
-  void addFiles(const char* listName);
-  void process();
-
+  unsigned int numberOfEvents();
+  void setFileList(const QString& listName);
+  void addFileList(const QString& listName);
+  void drawEvent(unsigned int i, bool drawTrack);
+  void saveCanvas(const QString& fileName);
+  void setPositionLabel(QLabel* label);
+public slots:
+  void unzoom();
+protected:
+  void mousePressEvent(QMouseEvent *event);
+  void mouseMoveEvent(QMouseEvent* event);
+  void mouseReleaseEvent(QMouseEvent *event);
 private:
-  DataChain*                  m_chain;
-
-  TrackFinding*               m_trackFinding;
-
+  TCanvas* m_canvas;
+  DataChain* m_chain;
+  TrackFinding* m_trackFinding;
+  Track* m_track;
+  HitsPlot* m_hitsPlot;
+  QLabel* m_positionLabel;
 };
 
 #endif /* Plotter_hh */
