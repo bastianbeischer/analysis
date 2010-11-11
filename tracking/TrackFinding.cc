@@ -14,7 +14,7 @@ TrackFinding::TrackFinding() :
   m_maxOffset(100.),
   m_slopeBins(41),
   m_offsetBins(41),
-  m_trackerPull(5.),
+  m_trackerPull(30.),
   m_trdPull(5.),
   m_tofPull(5.),
   m_trackFindingHist(new TH2I("trackFindingHist", "trackFindingHist", m_slopeBins, -m_maxSlope, m_maxSlope, m_offsetBins, -m_maxOffset, m_maxOffset))
@@ -57,7 +57,7 @@ QVector<Hit*> TrackFinding::findTrack(QVector<Hit*> hits)
 
   QVector<Hit*> hitsForFit;
   foreach(Hit* hit, hits) {
-    if ( (hit->type() == Hit::tracker && isInCorridor(&straightLine, hit, 150)) ||
+    if ( (hit->type() == Hit::tracker && isInCorridor(&straightLine, hit, 250)) ||
          (hit->type() == Hit::trd && isInCorridor(&straightLine, hit, 10)) )
       hitsForFit.push_back(hit);
   }
