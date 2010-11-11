@@ -68,6 +68,13 @@ void Plotter::process()
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
 
+    int nTrackerHits = 0;
+    foreach(Hit* hit, clusters)
+      if (hit->type() == Hit::tracker)
+        nTrackerHits++;
+    if (nTrackerHits != 8)
+      continue;
+
     // fit once for each layer
     Layer* layer = setup->firstLayer();
     while(layer) {
