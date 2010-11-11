@@ -89,7 +89,7 @@ void Plotter::mouseMoveEvent(QMouseEvent* event)
   }
 }
 
-void Plotter::drawEvent(unsigned int i, bool drawTrack)
+void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod)
 {
   if (m_track) {
     delete m_track;
@@ -107,9 +107,15 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack)
   if (drawTrack) {
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
-    m_track = new CenteredBrokenLine;
-    if (m_track->fit(clusters)) {
-      m_hitsPlot->draw(GetCanvas(), clusters, m_track);
+    Track* track = 0;
+    if (fitMethod == 0)
+      track = new StraightLine;
+    else if (fitMethod == 1)
+      track = new BrokenLine;
+    else if (fitMethod == 2)
+      track = new CenteredBrokenLine;
+    if (track->fit(clusters)) {
+      m_hitsPlot->draw(GetCanvas(), clusters, track);
       return;
     }
   }

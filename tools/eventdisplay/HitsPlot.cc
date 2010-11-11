@@ -197,7 +197,7 @@ void HitsPlot::draw(TCanvas* canvas, QVector<Hit*> hits, Track* track)
       x_max = x0 + zIntersection * slopeX;
       x_line = new TLine(x_min, z_min, x_max, zIntersection);
       x_line->SetLineColor(kBlack);
-      x_line->SetLineWidth(2);
+      x_line->SetLineWidth(1);
       x_line->Draw("SAME");
       m_lines.push_back(x_line);
 
@@ -208,7 +208,7 @@ void HitsPlot::draw(TCanvas* canvas, QVector<Hit*> hits, Track* track)
       x_max = x0 + z_max * slopeX;
       x_line = new TLine(x_min, zIntersection, x_max, z_max);
       x_line->SetLineColor(kBlack);
-      x_line->SetLineWidth(2);
+      x_line->SetLineWidth(1);
       x_line->Draw("SAME");
       m_lines.push_back(x_line);
 
@@ -240,7 +240,7 @@ void HitsPlot::draw(TCanvas* canvas, QVector<Hit*> hits, Track* track)
       x_max = x0 + zIntersection * slopeX;
       x_line = new TLine(x_min, z_min, x_max, zIntersection);
       x_line->SetLineColor(kBlack);
-      x_line->SetLineWidth(2);
+      x_line->SetLineWidth(1);
       x_line->Draw("SAME");
       m_lines.push_back(x_line);
 
@@ -250,7 +250,7 @@ void HitsPlot::draw(TCanvas* canvas, QVector<Hit*> hits, Track* track)
       x_max = x0 + z_max * slopeX;
       x_line = new TLine(x_min, zIntersection, x_max, z_max);
       x_line->SetLineColor(kBlack);
-      x_line->SetLineWidth(2);
+      x_line->SetLineWidth(1);
       x_line->Draw("SAME");
       m_lines.push_back(x_line);
 

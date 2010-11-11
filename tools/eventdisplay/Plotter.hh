@@ -22,7 +22,7 @@ public:
   unsigned int numberOfEvents();
   void setFileList(const QString& listName);
   void addFileList(const QString& listName);
-  void drawEvent(unsigned int i, bool drawTrack);
+  void drawEvent(unsigned int i, bool drawTrack, int fitMethod);
   void saveCanvas(const QString& fileName);
   void setPositionLabel(QLabel* label);
 public slots:

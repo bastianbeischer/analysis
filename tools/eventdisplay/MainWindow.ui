@@ -71,6 +71,38 @@
            </property>
           </widget>
          </item>
+         <item row="3" column="2">
+          <widget class="QComboBox" name="fitMethodComboBox">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <item>
+            <property name="text">
+             <string>Straight Line</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Broken Line</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Centered Broken Line</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Fit Method:</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -107,6 +139,7 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <zorder>leftWidget</zorder>
     </widget>
    </item>
   </layout>

@@ -55,7 +55,9 @@ void MainWindow::updateEventSpinBox()
 
 void MainWindow::update()
 {
-  m_ui.plotter->drawEvent(m_ui.eventSpinBox->value(), m_ui.drawTrackCheckBox->isChecked());
+  bool drawTracks = m_ui.drawTrackCheckBox->isChecked();
+  m_ui.fitMethodComboBox->setEnabled(drawTracks);
+  m_ui.plotter->drawEvent(m_ui.eventSpinBox->value(), drawTracks, m_ui.fitMethodComboBox->currentIndex());
 }
 
 void MainWindow::saveButtonClicked()
