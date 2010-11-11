@@ -131,3 +131,11 @@ void Plotter::unzoom()
 {
   qDebug() << "Plotter::unzoom()";
 }
+
+void Plotter::updateTrackFindingParameters(int slopeBins, int offsetBins, double trackerPull, double trdPull)
+{
+  m_trackFinding->setSlopeBins(slopeBins);
+  m_trackFinding->setOffsetBins(offsetBins);
+  m_trackFinding->setTrackerPull(trackerPull);
+  m_trackFinding->setTrdPull(trdPull);
+}
