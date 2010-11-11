@@ -1,5 +1,5 @@
-#ifndef PlotHits_hh
-#define PlotHits_hh
+#ifndef HitsPlot_hh
+#define HitsPlot_hh
 
 #include <QVector>
 
@@ -13,24 +13,21 @@ class TLine;
 class TMarker;
 class TLatex;
 
-class PlotHits
+class HitsPlot
 {
   
 public:
-  PlotHits();
-  ~PlotHits();
+  HitsPlot();
+  ~HitsPlot();
   
 public:
-  void plot(QVector<Hit*> hits, Track* track = 0);
+  double yStretchFactor();
+  void draw(TCanvas* canvas, QVector<Hit*> hits, Track* track = 0);
 
 private:
   void clear();
-  void saveCanvas(const char* format);
 
 private:
-  static unsigned int saves;
-
-  TCanvas*            m_canvas;
   TH2D*               m_positionHist;
   TGaxis*             m_yAxis;
 
@@ -40,6 +37,7 @@ private:
   QVector<TMarker*>   m_markers;
   TLatex*             m_fitInfo;
 
+  double m_stretchFactor;
 };
 
-#endif /* PlotHits_hh */
+#endif /* HitsPlot_hh */

@@ -27,7 +27,7 @@ DataInterface::~DataInterface()
 
 void DataInterface::addFiles(const char* listName)
 {
-  m_chain->addFiles(listName);
+  m_chain->addFileList(listName);
 }
 
 void DataInterface::addSuitableTracks()

@@ -1,29 +1,33 @@
 #include "Plotter.hh"
+#include "MainWindow.hh"
 
-#include <TApplication.h>
-#include <TStyle.h>
+#include <QApplication>
+#include <QStringList>
+
 #include <TROOT.h>
-
-#include <iostream>
+#include <TStyle.h>
 
 int main(int argc, char* argv[])
 {
-  if (argc != 2) {
-    std::cout << "Please give a filename to open. Should be a list of root files. Example: residuals all_runs.txt" << std::endl;
-    return -1;
-  }
-  
-  const char* filename = argv[1];
-
-  TApplication app("app", &argc, argv);
   gROOT->SetStyle("Plain");
-  gStyle->SetPalette(1,0);
+  gStyle->SetPalette(1, 0);
   gStyle->SetOptFit(111);
   gStyle->SetLineScalePS(1);
+  gStyle->SetPadRightMargin(0.16);
+  gStyle->SetLabelFont(42, "XYZ");
+  gStyle->SetLabelSize(0.03, "XYZ");
+  gStyle->SetStatFont(42);
+  gStyle->SetStatFontSize(0.02);
+  gStyle->SetTextFont(42);
+  gStyle->SetTitleFont(42, "XYZ");
+  gStyle->SetTitleSize(0.03, "XYZ");
 
-  Plotter plotter;
-  plotter.addFiles(filename);
-  plotter.process();
-
-  return 0;
+  QApplication application(argc, argv);
+  MainWindow window;
+  foreach(QString fileList, application.arguments()) {
+    if (fileList != application.arguments().first())
+      window.addFileList(fileList);
+  }
+  window.showMaximized();
+  return application.exec();
 }

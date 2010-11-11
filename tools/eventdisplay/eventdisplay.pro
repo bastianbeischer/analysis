@@ -13,7 +13,7 @@ UI_DIR      = ./.tmp
 RCC_DIR     = ./.tmp
 
 # Forms
-FORMS =
+FORMS+= MainWindow.ui
 
 INCLUDEPATH += $$TOPLEVEL/event \
                $$TOPLEVEL/tracking \
@@ -27,12 +27,14 @@ LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
 
 # Headers
 HEADERS = Plotter.hh \
-          PlotHits.hh
+          HitsPlot.hh \
+          MainWindow.hh
 
 # Sources
 SOURCES = main.cc \
           Plotter.cc \
-          PlotHits.cc
+          HitsPlot.cc \
+          MainWindow.cc
 
 include($$TOPLEVEL/root.pri)
 
