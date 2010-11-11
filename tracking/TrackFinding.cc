@@ -11,7 +11,12 @@
 TrackFinding::TrackFinding() :
   m_maxSlope(1.),
   m_maxOffset(100.),
-  m_trackFindingHist(new TH2I("trackFindingHist", "trackFindingHist", 51, -m_maxSlope, m_maxSlope, 51, -m_maxOffset, m_maxOffset))
+  m_slopeBins(51),
+  m_offsetBins(51),
+  m_trackerPull(5.),
+  m_trdPull(5.),
+  m_tofPull(5.),
+  m_trackFindingHist(new TH2I("trackFindingHist", "trackFindingHist", m_slopeBins, -m_maxSlope, m_maxSlope, m_offsetBins, -m_maxOffset, m_maxOffset))
 {
 }
 
@@ -49,14 +54,14 @@ QVector<Hit*> TrackFinding::findTrack(QVector<Hit*> hits)
   straightLine.setSlopeX(slopeMax);
   straightLine.setX0(offsetMax);
 
+  double saveTrackerPull = m_trackerPull;
+  m_trackerPull = 100.;
   QVector<Hit*> hitsOnTrack;
   foreach(Hit* hit, hits) {
-    int maxPull = 5;
-    if (hit->type() == Hit::tracker) maxPull = 100;
-    if (hit->type() == Hit::trd)     maxPull = 3;
-    if (isInCorridor(&straightLine, hit, maxPull)) 
+    if (isInCorridor(&straightLine, hit)) 
       hitsOnTrack.push_back(hit);
   }
+  m_trackerPull = saveTrackerPull;
 
   // improve
   BrokenLine brokenLine;
@@ -65,8 +70,7 @@ QVector<Hit*> TrackFinding::findTrack(QVector<Hit*> hits)
   // redetermine hits on track
   QVector<Hit*> hitsOnTrackAfterFit;
   foreach(Hit* hit, hitsOnTrack) {
-    int maxPull = 3;
-    if (isInCorridor(&brokenLine, hit, maxPull))
+    if (isInCorridor(&brokenLine, hit))
       hitsOnTrackAfterFit.push_back(hit);
   }
 
@@ -74,7 +78,7 @@ QVector<Hit*> TrackFinding::findTrack(QVector<Hit*> hits)
 }
 
 
-bool TrackFinding::isInCorridor(Track* track, Hit* hit, int maxPull) const
+bool TrackFinding::isInCorridor(Track* track, Hit* hit) const
 {
   assert(track);
 
@@ -87,6 +91,14 @@ bool TrackFinding::isInCorridor(Track* track, Hit* hit, int maxPull) const
 
   double res = (pos - trackPos).x();
   double resolution = hit->resolutionEstimate();
+
+  double maxPull = 3.;
+  if (hit->type() == Hit::tracker)
+    maxPull = m_trackerPull;
+  if (hit->type() == Hit::tracker)
+    maxPull = m_trdPull;
+  if (hit->type() == Hit::tracker)
+    maxPull = m_tofPull;
 
   return (fabs(res/resolution) < maxPull);
 }
