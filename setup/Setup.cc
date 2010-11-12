@@ -61,7 +61,6 @@ void Setup::construct()
       if (group == "layer") {
         double z = key.split("/").at(1).toDouble();
         Layer* layer = this->layer(z);
-        std::cout << "Constructing layer at: " << z << " at address: " << layer << std::endl;
 
         QStringList detIds = m_settings->value(key).toStringList();
         foreach(QString detId, detIds) {
@@ -69,7 +68,6 @@ void Setup::construct()
           if (ok) {
             DetectorElement* element = this->element(id);
             layer->addElement(element);
-            std::cout << "adding element with id: " << std::hex << id << std::dec << std::endl;
           }
         }
       } // construct layers and elements
