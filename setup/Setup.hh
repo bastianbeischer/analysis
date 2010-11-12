@@ -45,7 +45,7 @@ private:
   Setup();
   
 private:
-  void              constructElements();
+  void              construct();
 
 private:
   static Setup*                          m_instance;

@@ -4,7 +4,8 @@
 #include <QVector>
 #include <QMap>
 
-class DetectorElement;
+#include "DetectorElement.hh"
+
 class Cluster;
 class Hit;
 
@@ -17,20 +18,23 @@ public:
   ~Layer();
   
 public:
-  QVector<Cluster*> clusters()    const;
-  Cluster*          bestCluster() const;
+  QVector<Cluster*>     clusters()    const;
+  Cluster*              bestCluster() const;
 
 public:
-  void              addHitToDetector(Hit* hit);
-  void              clearHitsInDetectors();
-  void              sortHits();
+  void                  addElement(DetectorElement* element) {m_elements[element->id()] = element;}
+  void                  addHitToDetector(Hit* hit);
+  void                  clearHitsInDetectors();
+  void                  sortHits();
 
 public:
-  double            z()         const {return m_z;}
-  unsigned short    nElements() const {return m_elements.size();}
+  double                z()         const {return m_z;}
+  unsigned short        nElements() const {return m_elements.size();}
 
-  bool              contains(unsigned short detId) const;
-  const char*       printInfo();
+
+  QList<unsigned short> detIds();
+  bool                  contains(unsigned short detId) const;
+  const char*           printInfo();
 
 private:
   double                                 m_z;

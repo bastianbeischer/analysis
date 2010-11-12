@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <iostream>
 #include <sstream>
+#include <cassert>
 
 #include "Cluster.hh"
 #include "Setup.hh"
@@ -26,10 +27,9 @@ Layer::~Layer()
 void Layer::addHitToDetector(Hit* hit)
 {
   unsigned short detId = hit->detId() - hit->channel();
-  Setup* setup = Setup::instance();
-  DetectorElement* element = setup->element(detId);
+  DetectorElement* element = m_elements[detId];
+  assert(element);
   element->addHit(hit);
-  m_elements[detId] = element;
 }
 
 void Layer::clearHitsInDetectors()
@@ -87,4 +87,12 @@ const char* Layer::printInfo()
     stream << element->nHits() << " ";
 
   return stream.str().c_str();
+}
+
+QList<unsigned short> Layer::detIds()
+{
+  QList<unsigned short> detIds;
+  foreach(DetectorElement* element, m_elements)
+    detIds.push_back(element->id());
+  return detIds;
 }
