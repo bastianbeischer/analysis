@@ -4,6 +4,7 @@
 #include "Cluster.hh"
 #include "TOFCluster.hh"
 #include "SimpleEvent.hh"
+#include "CenteredBrokenLine.hh"
 #include "BrokenLine.hh"
 #include "StraightLine.hh"
 #include "Layer.hh"
@@ -82,7 +83,7 @@ void Plotter::process()
 
       // create track for this layer
       if(!m_tracks[layer])
-        m_tracks[layer] = new BrokenLine;
+        m_tracks[layer] = new CenteredBrokenLine;
 
       // remove clusters in this layer from clusters for track fit
       QVector<Hit*> clustersForFit;
