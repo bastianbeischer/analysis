@@ -39,6 +39,8 @@ void DataChain::init()
   m_event = 0;
   m_currentEntry = -1;
   m_chain->SetBranchAddress("event", &m_event);
+  m_chain->SetCacheSize(10000000);
+  m_chain->AddBranchToCache("*");
 }
 
 void DataChain::setFileList(const char* listName)
