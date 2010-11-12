@@ -12,6 +12,7 @@
 #include <QProcess>
 
 #include <iostream>
+#include <cmath>
 
 Setup* Setup::m_instance = 0;
 
@@ -30,7 +31,7 @@ Setup::Setup() :
   }
   m_settings = new QSettings(path+"setup.conf", QSettings::IniFormat);
 
-  constructElements();
+  construct();
 }
 
 Setup::~Setup()
@@ -49,17 +50,37 @@ Setup* Setup::instance()
   return m_instance;
 }
 
-void Setup::constructElements()
+void Setup::construct()
 {
   if (m_settings) {
     foreach(QString key, m_settings->allKeys()) {
       bool ok;
-      unsigned short detId = key.split("/").at(1).toUShort(&ok, 16);
-      if (ok) {
-        DetectorElement* element = this->element(detId);
-        element->setAlignmentShift(m_settings->value(key).toDouble());
-      }
-    }
+      QString group = key.split("/").at(0);
+
+      // construct all layers and elements
+      if (group == "layer") {
+        double z = key.split("/").at(1).toDouble();
+        Layer* layer = this->layer(z);
+
+        QStringList detIds = m_settings->value(key).toStringList();
+        foreach(QString detId, detIds) {
+          unsigned short id = detId.toUShort(&ok, 16);
+          if (ok) {
+            DetectorElement* element = this->element(id);
+            layer->addElement(element);
+          }
+        }
+      } // construct layers and elements
+      
+      // set alignment parameters
+      else {
+        unsigned short detId = key.split("/").at(1).toUShort(&ok, 16);
+        if (ok) {
+          DetectorElement* element = this->element(detId);
+          element->setAlignmentShift(m_settings->value(key).toDouble());
+        }
+      } // set alignment
+    } // all keys
   }
 }
 
@@ -97,6 +118,11 @@ DetectorElement* Setup::nextElement()
 
 Layer* Setup::layer(double z)
 {
+  // round to two digits.
+  z *= 100.;
+  z = round(z);
+  z /= 100.;
+
   if (!m_layers[z]) m_layers[z] = new Layer(z);
   return m_layers[z];
 }
@@ -129,7 +155,6 @@ QVector<Cluster*> Setup::generateClusters(QVector<Hit*> hits)
     Cluster* cluster = dynamic_cast<Cluster*>(hit);
     if (cluster) {
       clusters.push_back(cluster);
-      layer(hit->position().z());
     }
     else {
       needToFindClusters = true;
@@ -141,10 +166,8 @@ QVector<Cluster*> Setup::generateClusters(QVector<Hit*> hits)
     Layer* layer = firstLayer();
     while(layer) {
       clusters += layer->clusters();
-      // QVector<Cluster*> clustersHere = layer->clusters();
-      // foreach(Cluster* cluster, clustersHere)
-      //   clusters.push_back(cluster);
 
+      // // alternative: use only the best cluster
       // Cluster* cluster = layer->bestCluster();
       // if (cluster)
       //   clusters.push_back(cluster);
@@ -175,8 +198,7 @@ void Setup::addHitsToLayers(QVector<Hit*> hits)
 
   foreach(Hit* hit, hits) {
     double z = hit->position().z();
-    Layer* layer = this->layer(z);
-    layer->addHitToDetector(hit);
+    layer(z)->addHitToDetector(hit);
   }
   foreach(Layer* layer, m_layers) {
     layer->sortHits();
@@ -185,14 +207,28 @@ void Setup::addHitsToLayers(QVector<Hit*> hits)
 
 void Setup::clearHitsFromLayers()
 {
-  foreach(Layer* layer, m_layers) {
+  foreach(Layer* layer, m_layers)
     layer->clearHitsInDetectors();
-  }
 }
 
 void Setup::writeSettings()
 {
   if (m_settings) {
+    // layer section
+    m_settings->beginGroup("layer");
+    foreach(Layer* layer, m_layers) {
+      double z = layer->z();
+      QList<unsigned short> detIds = layer->detIds();
+      QStringList stringList;
+      foreach(unsigned short detId, detIds)
+        stringList.push_back(QString("0x%1").arg(detId,0,16));
+      QString key = QString("%1").arg(z);
+
+      m_settings->setValue(key, QVariant(stringList));
+    }
+    m_settings->endGroup();
+
+    // tracker, trd and tof sections
     foreach(DetectorElement* element, m_elements) {
       QString typeString;
       unsigned short type = element->type();
@@ -202,6 +238,9 @@ void Setup::writeSettings()
 
       m_settings->setValue(typeString + "/" + QString("0x%1").arg(element->id(),0,16), element->alignmentShift());
     }
+
+    // in order for the file to end up on disk we need to call "sync" here
     m_settings->sync();
   }
 }
+

@@ -29,6 +29,7 @@ public:
   void              deleteClusters();
   void              setAlignmentShift(double shift) {m_alignmentShift = shift;}
   void              sortHits();
+  void              debug();
 
 public:
   unsigned short    type()           const {return m_type;}

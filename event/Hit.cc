@@ -48,7 +48,7 @@ double Hit::angle() const
 double Hit::resolutionEstimate() const
 {
   double resolution = 0.;
-  if (m_type == tracker) resolution = 1.;
+  if (m_type == tracker) resolution = 50e-3;
   if (m_type == trd)     resolution = 6./sqrt(12);
   if (m_type == tof)     resolution = 50./sqrt(12);
   return resolution;

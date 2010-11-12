@@ -21,6 +21,8 @@ public:
   void fill(Hit* hit, Track* track);
   void draw();
 
+  double z() const {return m_z;}
+
 private:
   static int                       m_counter;
 

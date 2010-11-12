@@ -4,7 +4,9 @@
 #include "Cluster.hh"
 #include "TOFCluster.hh"
 #include "SimpleEvent.hh"
-#include "Track.hh"
+#include "CenteredBrokenLine.hh"
+#include "BrokenLine.hh"
+#include "StraightLine.hh"
 #include "Layer.hh"
 #include "TrackFinding.hh"
 #include "ResidualPlot.hh"
@@ -38,7 +40,7 @@ Plotter::~Plotter()
 
 void Plotter::addFiles(const char* listName)
 {
-  m_chain->addFiles(listName);
+  m_chain->addFileList(listName);
 }
 
 void Plotter::process()
@@ -67,6 +69,13 @@ void Plotter::process()
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
 
+    int nTrackerHits = 0;
+    foreach(Hit* hit, clusters)
+      if (hit->type() == Hit::tracker)
+        nTrackerHits++;
+    if (nTrackerHits != 8)
+      continue;
+
     // fit once for each layer
     Layer* layer = setup->firstLayer();
     while(layer) {
@@ -74,17 +83,19 @@ void Plotter::process()
 
       // create track for this layer
       if(!m_tracks[layer])
-        m_tracks[layer] = new Track;
+        m_tracks[layer] = new CenteredBrokenLine;
 
       // remove clusters in this layer from clusters for track fit
       QVector<Hit*> clustersForFit;
       QVector<Hit*> clustersInThisLayer;
       
       foreach(Hit* hit, clusters) {
-        if (hit->position().z() != z)
+        if (hit->position().z() != z) {
           clustersForFit.push_back(hit);
-        else
+        }
+        else {
           clustersInThisLayer.push_back(hit);
+        }
       }
 
       if (!m_residualPlots[layer])
@@ -116,5 +127,6 @@ void Plotter::process()
 void Plotter::draw()
 {
   foreach(ResidualPlot* plot, m_residualPlots)
-    plot->draw();
+    if (plot->z() > -240 && plot->z() < 240)
+      plot->draw();
 }

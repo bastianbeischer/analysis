@@ -53,11 +53,10 @@ void Matrix::resetArrays()
 
 void Matrix::fillMatrixFromTrack(Track* track)
 {
-  resetArrays();
-
   QVector<Hit*> hits = track->hits();
   
   foreach(Hit* hit, hits) {
+    resetArrays();
 
     // use only tracker hits for alignment
     if(hit->type() != Hit::tracker)
@@ -114,6 +113,9 @@ void Matrix::fillMatrixFromTrack(Track* track)
     TMatrixD V3 = TMatrixD(1,1);
     V3 = Lin * V2 * LinTrans;
 
+    int offsetXindex = k>0 ? 0 : 1;
+    int slopeXindex = k>0 ? 3 : 4;
+
     float y,sigma;
     if (useTangens) {
       y = -xi*fx + fy;
@@ -127,6 +129,12 @@ void Matrix::fillMatrixFromTrack(Track* track)
         m_localDerivatives[1] = 1.;
         m_localDerivatives[2] = -k*xi;
         m_localDerivatives[3] = k;
+      }
+      else if (m_nLocal == 6) {
+        m_localDerivatives[offsetXindex] = -xi;
+        m_localDerivatives[2]            = 1.;
+        m_localDerivatives[slopeXindex]  = -k*xi;
+        m_localDerivatives[5]            = k;
       }
       else if (m_nLocal == 2) {
         m_localDerivatives[0] = 1.;
@@ -145,6 +153,12 @@ void Matrix::fillMatrixFromTrack(Track* track)
         m_localDerivatives[1] = -xi;
         m_localDerivatives[2] = k;
         m_localDerivatives[3] = -k*xi;
+      }
+      else if (m_nLocal == 6) {
+        m_localDerivatives[offsetXindex] = 1.;
+        m_localDerivatives[2]            = -xi;
+        m_localDerivatives[slopeXindex]  = k;
+        m_localDerivatives[5]            = -k*xi;
       }
       else if (m_nLocal == 2) {
         m_localDerivatives[0] = 1.;

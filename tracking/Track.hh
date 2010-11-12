@@ -3,9 +3,8 @@
 
 #include <QVector>
 
-#include <TVector3.h>
-
 class Hit;
+class TVector3;
 
 class Track
 {
@@ -15,38 +14,24 @@ public:
   ~Track();
 
 public:
-  void           setVerbose(unsigned short verb) {m_verbose = verb;}
-  void           setX0(double x0)                {m_x0 = x0;}
-  void           setY0(double y0)                {m_y0 = y0;}
-  void           setSlopeX(double slopeX)        {m_slopeX = slopeX;}
-  void           setSlopeY(double slopeY)        {m_slopeY = slopeY;}
+  void             setVerbose(unsigned short verb) {m_verbose = verb;}
 
 public:
-  unsigned short verbose()          const {return m_verbose;}
-  double         x0()               const {return m_x0;}
-  double         y0()               const {return m_y0;}
-  double         slopeX()           const {return m_slopeX;}
-  double         slopeY()           const {return m_slopeY;}
-  double         chi2()             const {return m_chi2;}
-  unsigned int   ndf()              const {return m_ndf;}
-  QVector<Hit*>  hits()             const {return m_hits;}
+  unsigned short   verbose()          const {return m_verbose;}
+  double           chi2()             const {return m_chi2;}
+  unsigned int     ndf()              const {return m_ndf;}
+  QVector<Hit*>    hits()             const {return m_hits;}
 
-  double         x(double z)        const {return m_x0 + z*m_slopeX;}
-  double         y(double z)        const {return m_y0 + z*m_slopeY;}
-  TVector3       position(double z) const {return TVector3(x(z), y(z), z);}
+  virtual double   x(double z)        const = 0;
+  virtual double   y(double z)        const = 0;
+  virtual TVector3 position(double z) const = 0;
 
 public:
-  int            fit   (QVector<Hit*> hits);
-  int            fit2D (QVector<Hit*> hits);
-  int            fitTrd(QVector<Hit*> hits);
+  virtual int      fit   (QVector<Hit*> hits) = 0;
 
-private:
+protected:
   unsigned short    m_verbose;
 
-  double            m_x0;
-  double            m_slopeX;
-  double            m_y0;
-  double            m_slopeY;
   double            m_chi2;
   unsigned int      m_ndf;
 

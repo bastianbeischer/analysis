@@ -1,5 +1,5 @@
 nGlobal      176
-nLocal       4
+nLocal       6
 verbose      1
 nStdDev      0
 nLocalIter   1

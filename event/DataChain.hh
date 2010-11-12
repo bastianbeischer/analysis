@@ -14,7 +14,8 @@ public:
   ~DataChain();
   
 public:
-  void addFiles(const char* listName);
+  void setFileList(const char* listName);
+  void addFileList(const char* listName);
 
 public:
   unsigned int nEntries() const {return m_chain->GetEntries();}

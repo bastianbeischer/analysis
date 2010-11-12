@@ -1,8 +1,11 @@
-#include "PlotHits.hh"
+#include "HitsPlot.hh"
 
 #include "Hit.hh"
 #include "TOFSipmHit.hh"
 #include "Track.hh"
+#include "BrokenLine.hh"
+#include "CenteredBrokenLine.hh"
+#include "StraightLine.hh"
 #include "TOFCluster.hh"
 
 #include <TCanvas.h>
@@ -15,16 +18,14 @@
 #include <TPaletteAxis.h>
 #include <TGaxis.h>
 #include <TMarker.h>
+#include <TStyle.h>
 
 #include <iostream>
 
-unsigned int PlotHits::saves = 0;
-
-PlotHits::PlotHits() :
-  m_canvas(new TCanvas("PlotHits", "PlotHits", 1300, 900)),
-  m_positionHist(new TH2D("2D EventDisplay", "2D Event Display", 100, -200., 200., 100, -650, 350)),
-  m_yAxis(0),
-  m_fitInfo(0)
+HitsPlot::HitsPlot()
+  : m_positionHist(new TH2D("2D EventDisplay", "", 100, -200., 200., 100, -650, 350))
+  , m_yAxis(0)
+  , m_fitInfo(0)
 {
   m_positionHist->GetXaxis()->SetTitle("x / mm");
   m_positionHist->GetYaxis()->SetTitle("z / mm");
@@ -36,10 +37,7 @@ PlotHits::PlotHits() :
   m_positionHist->Fill(1e5, 1e5);
   m_positionHist->SetStats(false);
   m_positionHist->Draw("colz");
-
-  m_canvas->SetRightMargin(0.16);
   gPad->Update();
-
   const double widthModule  = 65.;
   const double heightModule = 20.;
   const double zTracker[4] = {227., 60., -60., -227};
@@ -103,27 +101,33 @@ PlotHits::PlotHits() :
   // new axis for y
   double min = -400;
   double max = 400;
-  m_yAxis = new TGaxis(gPad->GetUxmin(), gPad->GetUymax(), gPad->GetUxmax(), gPad->GetUymax(), min, max, 510, "+L");
+  m_yAxis = new TGaxis(gPad->GetUxmin(), gPad->GetUymax(), gPad->GetUxmax(), gPad->GetUymax(), min, max, 510, "-");
   m_yAxis->SetLineColor(kRed);
   m_yAxis->SetTextColor(kRed);
   m_yAxis->SetLabelColor(kRed);
-  m_yAxis->SetLabelOffset(-0.05);
+  m_yAxis->SetLabelOffset(0);
   m_yAxis->SetTitle("y / mm");
-  m_yAxis->SetTitleOffset(-1.2);
+  m_yAxis->SetTitleOffset(1.2);
+  m_yAxis->SetLabelFont(gStyle->GetLabelFont());
+  m_yAxis->SetLabelSize(gStyle->GetLabelSize());
+  m_yAxis->SetTitleFont(gStyle->GetTitleFont());
+  m_yAxis->SetTitleSize(gStyle->GetTitleSize());
   m_yAxis->Draw();
   gPad->Update();
+  m_stretchFactor =
+    (m_positionHist->GetXaxis()->GetXmax() - m_positionHist->GetXaxis()->GetXmin())
+    / (m_yAxis->GetWmax() - m_yAxis->GetWmin());
 }
 
-PlotHits::~PlotHits()
+HitsPlot::~HitsPlot()
 {
-  delete m_canvas;
   delete m_positionHist;
   delete m_yAxis;
   qDeleteAll(m_boxes);
   clear();
 }
 
-void PlotHits::clear()
+void HitsPlot::clear()
 {
   qDeleteAll(m_hits);
   m_hits.clear();
@@ -135,14 +139,142 @@ void PlotHits::clear()
   m_fitInfo = 0;
 }
 
-void PlotHits::plot(QVector<Hit*> hits, Track* track)
+double HitsPlot::yStretchFactor()
 {
-  m_canvas->cd();
+  return m_stretchFactor;
+}
+
+void HitsPlot::draw(TCanvas* canvas, QVector<Hit*> hits, Track* track)
+{
+  canvas->cd();
   clear();
 
-  double stretchfactor = (m_positionHist->GetXaxis()->GetXmax() - m_positionHist->GetXaxis()->GetXmin()) / (m_yAxis->GetWmax() - m_yAxis->GetWmin());
-
   TPaletteAxis* palette = (TPaletteAxis*) m_positionHist->GetListOfFunctions()->FindObject("palette");
+
+
+  if (track) {
+    double z_min = m_positionHist->GetYaxis()->GetXmin();
+    double z_max = m_positionHist->GetYaxis()->GetXmax();
+
+    StraightLine* straightLine = dynamic_cast<StraightLine*>(track);
+    if (straightLine) {
+      double x0 = straightLine->x0();
+      double slopeX = straightLine->slopeX();
+      double x_min = x0 + z_min * slopeX;
+      double x_max = x0 + z_max * slopeX;
+
+      TLine* x_line = new TLine(x_min, z_min, x_max, z_max);
+      x_line->SetLineColor(kBlack);
+      x_line->SetLineWidth(1);
+      x_line->Draw("SAME");
+      m_lines.push_back(x_line);
+
+      // strech because we want to show x and y in the same view (convert 40cm to 20cm)
+      double y0 = straightLine->y0();
+      double slopeY = straightLine->slopeY();
+      double y_min = y0 + z_min * slopeY;
+      double y_max = y0 + z_max * slopeY;
+
+      TLine* y_line = new TLine(m_stretchFactor*y_min, z_min, m_stretchFactor*y_max, z_max);
+      y_line->SetLineColor(kRed);
+      y_line->SetLineWidth(1);
+      y_line->SetLineStyle(1);
+      y_line->Draw("SAME");
+      m_lines.push_back(y_line);
+    }
+
+    BrokenLine* brokenLine = dynamic_cast<BrokenLine*>(track);
+    if (brokenLine) {
+      double zIntersection = brokenLine->zIntersection();
+
+      double x0, slopeX, x_min, x_max;
+      TLine* x_line;
+
+      // lower line
+      x0 = brokenLine->lowerX0();
+      slopeX = brokenLine->lowerSlopeX();
+      x_min = x0 + z_min * slopeX;
+      x_max = x0 + zIntersection * slopeX;
+      x_line = new TLine(x_min, z_min, x_max, zIntersection);
+      x_line->SetLineColor(kBlack);
+      x_line->SetLineWidth(1);
+      x_line->Draw("SAME");
+      m_lines.push_back(x_line);
+
+      // upper line
+      x0 = brokenLine->upperX0();
+      slopeX = brokenLine->upperSlopeX();
+      x_min = x0 + zIntersection * slopeX;
+      x_max = x0 + z_max * slopeX;
+      x_line = new TLine(x_min, zIntersection, x_max, z_max);
+      x_line->SetLineColor(kBlack);
+      x_line->SetLineWidth(1);
+      x_line->Draw("SAME");
+      m_lines.push_back(x_line);
+
+      // strech because we want to show x and y in the same view (convert 40cm to 20cm)
+      double y0 = brokenLine->y0();
+      double slopeY = brokenLine->slopeY();
+      double y_min = y0 + z_min * slopeY;
+      double y_max = y0 + z_max * slopeY;
+
+      TLine* y_line = new TLine(m_stretchFactor*y_min, z_min, m_stretchFactor*y_max, z_max);
+      y_line->SetLineColor(kRed);
+      y_line->SetLineWidth(1);
+      y_line->SetLineStyle(1);
+      y_line->Draw("SAME");
+      m_lines.push_back(y_line);
+    }
+
+    CenteredBrokenLine* centeredBrokenLine = dynamic_cast<CenteredBrokenLine*>(track);
+    if (centeredBrokenLine) {
+      double zIntersection = centeredBrokenLine->zIntersection();
+
+      double x0, slopeX, x_min, x_max;
+      TLine* x_line;
+
+      // lower line
+      x0 = centeredBrokenLine->x0();
+      slopeX = centeredBrokenLine->lowerSlopeX();
+      x_min = x0 + z_min * slopeX;
+      x_max = x0 + zIntersection * slopeX;
+      x_line = new TLine(x_min, z_min, x_max, zIntersection);
+      x_line->SetLineColor(kBlack);
+      x_line->SetLineWidth(1);
+      x_line->Draw("SAME");
+      m_lines.push_back(x_line);
+
+      // upper line
+      slopeX = centeredBrokenLine->upperSlopeX();
+      x_min = x0 + zIntersection * slopeX;
+      x_max = x0 + z_max * slopeX;
+      x_line = new TLine(x_min, zIntersection, x_max, z_max);
+      x_line->SetLineColor(kBlack);
+      x_line->SetLineWidth(1);
+      x_line->Draw("SAME");
+      m_lines.push_back(x_line);
+
+      // strech because we want to show x and y in the same view (convert 40cm to 20cm)
+      double y0 = centeredBrokenLine->y0();
+      double slopeY = centeredBrokenLine->slopeY();
+      double y_min = y0 + z_min * slopeY;
+      double y_max = y0 + z_max * slopeY;
+
+      TLine* y_line = new TLine(m_stretchFactor*y_min, z_min, m_stretchFactor*y_max, z_max);
+      y_line->SetLineColor(kRed);
+      y_line->SetLineWidth(1);
+      y_line->SetLineStyle(1);
+      y_line->Draw("SAME");
+      m_lines.push_back(y_line);
+    }
+
+    char text[128];
+    sprintf(text, "#chi^{2} / ndf = %.1f / %d", track->chi2(), track->ndf());
+    m_fitInfo = new TLatex(90, z_min + 0.64*(z_max-z_min), text);
+    m_fitInfo->SetTextSize(0.03);
+    m_fitInfo->Draw("SAME");
+  }
+
   foreach(Hit* hit, hits) {
     double angle = hit->angle();
     TVector3 position = hit->position();
@@ -160,39 +292,33 @@ void PlotHits::plot(QVector<Hit*> hits, Track* track)
 
       TVector3 calculatedPos = 0.5*(position+counterPos) + u*direction;
       position = calculatedPos;
+    }
 
-      TOFCluster* tofCluster = dynamic_cast<TOFCluster*>(hit);
-      if (tofCluster) {
-        if (tofCluster->signalHeight() > 4*200) {
-          TMarker* marker = new TMarker(stretchfactor * tofCluster->yEstimate(), tofCluster->position().z(), 20);
-          marker->SetMarkerSize(.5);
-          marker->Draw("SAME");
-          m_markers.push_back(marker);
-        }
+    TOFCluster* tofCluster = dynamic_cast<TOFCluster*>(hit);
+    if (tofCluster) {
+      if (tofCluster->signalHeight() > 4*200) {
+        TMarker* marker = new TMarker(m_stretchFactor * tofCluster->yEstimate(), tofCluster->position().z(), 20);
+        marker->SetMarkerSize(.5);
+        marker->Draw("SAME");
+        m_markers.push_back(marker);
+      }
 
-        /*
+      /*
         TLine* y_tofErrorLine = new TLine(
-          stretchfactor * (tofCluster->yEstimate() - tofCluster->yResolutionEstimate()),
-          tofCluster->position().z(),
-          stretchfactor * (tofCluster->yEstimate() + tofCluster->yResolutionEstimate()),
-          tofCluster->position().z()
+        m_stretchFactor * (tofCluster->yEstimate() - tofCluster->yResolutionEstimate()),
+        tofCluster->position().z(),
+        m_stretchFactor * (tofCluster->yEstimate() + tofCluster->yResolutionEstimate()),
+        tofCluster->position().z()
         );
         y_tofErrorLine->SetLineColor(kRed);
         y_tofErrorLine->SetLineWidth(1);
         y_tofErrorLine->SetLineStyle(1);
         y_tofErrorLine->Draw("SAME");
         m_lines.push_back(y_tofErrorLine); */
-      }
     }
 
     int amplitude = hit->signalHeight();
-    // if (hit->type() == Hit::tof) {
-    //   std::cout << amplitude << std::endl; 
-    // }
-    // if (hit->type() == Hit::tof)
-    //   amplitude = ((TOFSipmHit*) hit)->timeOverThreshold();
     Hit::ModuleType type = hit->type();
-
     double x = position.x();
     double z = position.z();
     int color = palette->GetValueColor(amplitude);
@@ -221,50 +347,6 @@ void PlotHits::plot(QVector<Hit*> hits, Track* track)
     m_hits.push_back(box);
   }
 
-  if (track) {
-    double x0 = track->x0();
-    double slopeX = track->slopeX();
-    double z_min = m_positionHist->GetYaxis()->GetXmin();
-    double z_max = m_positionHist->GetYaxis()->GetXmax();
-    double x_min = x0 + z_min * slopeX;
-    double x_max = x0 + z_max * slopeX;
-
-    TLine* x_line = new TLine(x_min, z_min, x_max, z_max);
-    x_line->SetLineColor(kBlack);
-    x_line->SetLineWidth(2);
-    x_line->Draw("SAME");
-    m_lines.push_back(x_line);
-
-    // strech because we want to show x and y in the same view (convert 40cm to 20cm)
-    double y0 = track->y0();
-    double slopeY = track->slopeY();
-    double y_min = y0 + z_min * slopeY;
-    double y_max = y0 + z_max * slopeY;
-
-    TLine* y_line = new TLine(stretchfactor*y_min, z_min, stretchfactor*y_max, z_max);
-    y_line->SetLineColor(kRed);
-    y_line->SetLineWidth(1);
-    y_line->SetLineStyle(1);
-    y_line->Draw("SAME");
-    m_lines.push_back(y_line);
-
-    char text[128];
-    sprintf(text, "#chi^{2} / ndf = %.1f / %d", track->chi2(), track->ndf());
-    m_fitInfo = new TLatex(90, z_min + 0.64*(z_max-z_min), text);
-    m_fitInfo->SetTextSize(0.03);
-    m_fitInfo->Draw("SAME");
-  }
-
-  m_canvas->Modified();
-
-  saveCanvas("png");
-}
-
-void PlotHits::saveCanvas(const char* format)
-{
-  const char* title = m_canvas->GetTitle();
-  char fileName[128];
-  sprintf(fileName, "%s_%03d.%s", title, saves, format);
-  m_canvas->SaveAs(fileName);
-  saves++;
+  canvas->Modified();
+  canvas->Update();
 }

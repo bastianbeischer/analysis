@@ -10,11 +10,17 @@ MOC_DIR     = ./.tmp
 UI_DIR      = ./.tmp
 RCC_DIR     = ./.tmp
 
-SOURCES += Track.cc \     
-           TrackFinding.cc
+SOURCES += Track.cc \
+           TrackFinding.cc \
+           StraightLine.cc \
+           BrokenLine.cc \
+           CenteredBrokenLine.cc
 
 HEADERS += Track.hh \     
-           TrackFinding.hh
+           TrackFinding.hh \
+           StraightLine.hh \
+           BrokenLine.hh \
+           CenteredBrokenLine.hh
 
 INCLUDEPATH += $$TOPLEVEL/event
 
