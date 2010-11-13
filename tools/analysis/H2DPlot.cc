@@ -5,7 +5,7 @@
 
 H2DPlot::H2DPlot(Topic topic, const QString& title, int nBinsX, double xMin, double xMax, int nBinsY, double yMin, double yMax)
   : AnalysisPlot(topic, title)
-  , m_histogram(new TH2D(qPrintable(title), qPrintable(title), nBinsX, xMin, xMax, nBinsY, yMin, yMax))
+  , m_histogram(new TH2D(qPrintable(title+QString::number(id())), qPrintable(title), nBinsX, xMin, xMax, nBinsY, yMin, yMax))
 {}
 
 H2DPlot::~H2DPlot()
@@ -16,7 +16,7 @@ H2DPlot::~H2DPlot()
 void H2DPlot::draw(TCanvas* canvas) const
 {
   canvas->cd();
-  m_histogram->Draw();
+  m_histogram->Draw("col.z");
 }
 
 void H2DPlot::clear()

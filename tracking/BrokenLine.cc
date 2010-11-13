@@ -19,6 +19,7 @@ BrokenLine::BrokenLine() :
   m_slopeY(0),
   m_zIntersection(0)
 {
+  m_type = Track::BrokenLine;
   m_matrix = new BrokenLineMatrix;
 }
 
@@ -28,8 +29,9 @@ BrokenLine::~BrokenLine()
 
 int BrokenLine::fit(QVector<Hit*> hits)
 {
-  int retVal = m_matrix->fit(hits);
-  if (retVal != 0) {
+  m_fitGood = m_matrix->fit(hits);
+
+  if (m_fitGood != 0) {
     TVectorD solution = *(m_matrix->solution());
 
     // return information from the fit.
@@ -57,7 +59,7 @@ int BrokenLine::fit(QVector<Hit*> hits)
     }
   }
 
-  return retVal;
+  return m_fitGood;
 }
 
 double BrokenLine::x(double z) const

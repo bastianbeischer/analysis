@@ -15,8 +15,8 @@ BendingPositionPlot::~BendingPositionPlot()
 
 void BendingPositionPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
 {
-  BrokenLine* line = dynamic_cast<BrokenLine*>(track);
-  if (line) {
+  if (track->type() == Track::BrokenLine) {
+    BrokenLine* line = static_cast<BrokenLine*>(track);
     int nTrackerHits = 0;
     foreach(Hit* hit, clusters)
       if (hit->type() == Hit::tracker)

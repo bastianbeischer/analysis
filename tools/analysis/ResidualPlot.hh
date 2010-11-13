@@ -3,37 +3,26 @@
 
 #include <QMap>
 
-class Hit;
-class Track;
-class TCanvas;
-class TH1I;
-class TH2I;
+#include "H2DPlot.hh"
 
-class ResidualPlot
+class Layer;
+class Track;
+
+class ResidualPlot :
+  public H2DPlot
 {
   
 public:
-  ResidualPlot();
-  ResidualPlot(double z);
+  ResidualPlot(AnalysisPlot::Topic topic, Layer* layer);
   ~ResidualPlot();
   
 public:
-  void fill(Hit* hit, Track* track);
-  void draw();
-
-  double z() const {return m_z;}
+  void processEvent(const QVector<Hit*>& hit, Track* track = 0, SimpleEvent* event = 0);
+  void finalize();
 
 private:
-  static int                       m_counter;
+  const Layer* m_layer;
 
-  char                             m_titleStem[128];
-  double                           m_z;
-
-  TCanvas*                         m_canvas1D;
-  TCanvas*                         m_canvas2D;
-  QMap<unsigned short, TH1I*>      m_residuals1D;
-  TH2I*                            m_residuals2D;
-  
 };
 
 #endif /* ResidualPlot_hh */

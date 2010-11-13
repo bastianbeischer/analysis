@@ -18,6 +18,7 @@ CenteredBrokenLine::CenteredBrokenLine() :
   m_slopeY(0),
   m_zIntersection(0.)
 {
+  m_type = Track::CenteredBrokenLine;
   m_matrix = new CenteredBrokenLineMatrix;
 }
 
@@ -27,9 +28,9 @@ CenteredBrokenLine::~CenteredBrokenLine()
 
 int CenteredBrokenLine::fit(QVector<Hit*> hits)
 {
-  int retVal = m_matrix->fit(hits);
+  m_fitGood = m_matrix->fit(hits);
 
-  if (retVal != 0) {
+  if (m_fitGood != 0) {
     TVectorD solution = *(m_matrix->solution());
 
     // return information from the fit.
@@ -54,7 +55,7 @@ int CenteredBrokenLine::fit(QVector<Hit*> hits)
     }
   }
 
-  return retVal;
+  return m_fitGood;
 }
 
 double CenteredBrokenLine::x(double z) const
