@@ -8,6 +8,7 @@ SUBDIRS  = event \
            alignment/millepede \
            alignment \
            tools/alignment \
+           tools/analysis \
            tools/eventdisplay \
            tools/parser \
            tools/residuals \
