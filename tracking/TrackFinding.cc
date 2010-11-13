@@ -62,15 +62,18 @@ QVector<Hit*> TrackFinding::findTrack(QVector<Hit*> hits)
       hitsForFit.push_back(hit);
   }
 
-  // improve
-  CenteredBrokenLine brokenLine;
-  brokenLine.fit(hitsForFit);
-
-  // redetermine hits on track
+  // improve by redetermining hits on track
   QVector<Hit*> hitsOnTrack;
-  foreach(Hit* hit, hits) {
-    if (isInCorridor(&brokenLine, hit))
-      hitsOnTrack.push_back(hit);
+
+  CenteredBrokenLine cbl;
+  if (cbl.fit(hitsForFit)) {
+    foreach(Hit* hit, hits) {
+      if (isInCorridor(&cbl, hit))
+        hitsOnTrack.push_back(hit);
+    }
+  }
+  else {
+    hitsOnTrack = hitsForFit;
   }
 
   return hitsOnTrack;

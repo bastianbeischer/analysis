@@ -3,6 +3,7 @@
 
 #include <QVector>
 
+class Matrix;
 class Hit;
 class TVector3;
 
@@ -30,6 +31,8 @@ public:
   virtual int      fit   (QVector<Hit*> hits) = 0;
 
 protected:
+  Matrix*           m_matrix;
+
   unsigned short    m_verbose;
 
   double            m_chi2;
