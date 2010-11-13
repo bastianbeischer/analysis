@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QDialog" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>917</width>
+    <height>656</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>PERDaix event display</string>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <widget class="QWidget" name="leftWidget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="1">
+         <widget class="QPushButton" name="addFileListButton">
+          <property name="text">
+           <string>add file list</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QPushButton" name="setFileListButton">
+          <property name="text">
+           <string>set file list</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QCheckBox" name="signalHeightUpperTrackerCheckBox">
+          <property name="text">
+           <string>signal height upper tracker</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QPushButton" name="signalHeightUpperTrackerButton">
+          <property name="text">
+           <string>show</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QCheckBox" name="signalHeightLowerTrackerCheckBox">
+          <property name="text">
+           <string>signal height lower tracker</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="signalHeightLowerTrackerButton">
+          <property name="text">
+           <string>show</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QCheckBox" name="signalHeightTRDCheckBox">
+          <property name="text">
+           <string>signal height TRD</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="signalHeightTRDButton">
+          <property name="text">
+           <string>show</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QCheckBox" name="timeOverThresholdCheckBox">
+          <property name="text">
+           <string>time over threshold</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QPushButton" name="timeOverThresholdButton">
+          <property name="text">
+           <string>show</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QCheckBox" name="trackingCheckBox">
+          <property name="text">
+           <string>tracking</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QPushButton" name="trackingButton">
+          <property name="text">
+           <string>show</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QCheckBox" name="occupancyCheckBox">
+          <property name="text">
+           <string>occupancy</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QPushButton" name="occupancyButton">
+          <property name="text">
+           <string>show</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QCheckBox" name="residualsUpperTrackerCheckBox">
+          <property name="text">
+           <string>residuals upper tracker</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QPushButton" name="residualsUpperTrackerButton">
+          <property name="text">
+           <string>show</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="0">
+         <widget class="QCheckBox" name="residualsLowerTrackerCheckBox">
+          <property name="text">
+           <string>residuals lower tracker</string>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="1">
+         <widget class="QPushButton" name="residualsLowerTrackerButton">
+          <property name="text">
+           <string>show</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="0">
+         <widget class="QCheckBox" name="residualsTRDCheckBox">
+          <property name="text">
+           <string>residuals TRD</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="1">
+         <widget class="QPushButton" name="residualsTRDButton">
+          <property name="text">
+           <string>show</string>
+          </property>
+         </widget>
+        </item>
+        <item row="9" column="0">
+         <widget class="QCheckBox" name="momentumReconstructionCheckBox">
+          <property name="text">
+           <string>momentum reconstruction</string>
+          </property>
+         </widget>
+        </item>
+        <item row="9" column="1">
+         <widget class="QPushButton" name="momentumReconstructionButton">
+          <property name="text">
+           <string>show</string>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="0">
+         <widget class="QCheckBox" name="miscellaneousTrackerCheckBox">
+          <property name="text">
+           <string>miscellaneous tracker</string>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="1">
+         <widget class="QPushButton" name="miscellaneousTrackerButton">
+          <property name="text">
+           <string>show</string>
+          </property>
+         </widget>
+        </item>
+        <item row="11" column="0">
+         <widget class="QCheckBox" name="miscellaneousTRDCheckBox">
+          <property name="text">
+           <string>miscellaneous TRD</string>
+          </property>
+         </widget>
+        </item>
+        <item row="11" column="1">
+         <widget class="QPushButton" name="miscellaneousTRDButton">
+          <property name="text">
+           <string>show</string>
+          </property>
+         </widget>
+        </item>
+        <item row="12" column="0">
+         <widget class="QCheckBox" name="miscellaneousTOFCheckBox">
+          <property name="text">
+           <string>miscellaneous TOF</string>
+          </property>
+         </widget>
+        </item>
+        <item row="12" column="1">
+         <widget class="QPushButton" name="miscellaneousTOFButton">
+          <property name="text">
+           <string>show</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QComboBox" name="trackComboBox">
+        <item>
+         <property name="text">
+          <string>centered broken line</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>broken line</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>straight line</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>no track</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="analyzeButton">
+        <property name="text">
+         <string>start analysis</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QProgressBar" name="progressBar">
+        <property name="value">
+         <number>0</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="rightWidget" native="true"/>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>signalHeightUpperTrackerCheckBox</tabstop>
+  <tabstop>signalHeightLowerTrackerCheckBox</tabstop>
+  <tabstop>signalHeightTRDCheckBox</tabstop>
+  <tabstop>timeOverThresholdCheckBox</tabstop>
+  <tabstop>trackingCheckBox</tabstop>
+  <tabstop>occupancyCheckBox</tabstop>
+  <tabstop>residualsUpperTrackerCheckBox</tabstop>
+  <tabstop>residualsLowerTrackerCheckBox</tabstop>
+  <tabstop>residualsTRDCheckBox</tabstop>
+  <tabstop>momentumReconstructionCheckBox</tabstop>
+  <tabstop>miscellaneousTrackerCheckBox</tabstop>
+  <tabstop>miscellaneousTRDCheckBox</tabstop>
+  <tabstop>miscellaneousTOFCheckBox</tabstop>
+  <tabstop>signalHeightUpperTrackerButton</tabstop>
+  <tabstop>signalHeightLowerTrackerButton</tabstop>
+  <tabstop>signalHeightTRDButton</tabstop>
+  <tabstop>timeOverThresholdButton</tabstop>
+  <tabstop>trackingButton</tabstop>
+  <tabstop>occupancyButton</tabstop>
+  <tabstop>residualsUpperTrackerButton</tabstop>
+  <tabstop>residualsLowerTrackerButton</tabstop>
+  <tabstop>residualsTRDButton</tabstop>
+  <tabstop>momentumReconstructionButton</tabstop>
+  <tabstop>miscellaneousTrackerButton</tabstop>
+  <tabstop>miscellaneousTRDButton</tabstop>
+  <tabstop>miscellaneousTOFButton</tabstop>
+  <tabstop>analyzeButton</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
