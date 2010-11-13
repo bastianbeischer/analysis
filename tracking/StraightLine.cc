@@ -17,6 +17,7 @@ StraightLine::StraightLine() :
   m_y0(0),
   m_slopeY(0)
 {
+  m_type = Track::StraightLine;
   m_matrix = new StraightLineMatrix;
 }
 
@@ -26,19 +27,19 @@ StraightLine::~StraightLine()
 
 int StraightLine::fit(QVector<Hit*> hits)
 {
-  int retVal = m_matrix->fit(hits);
+  m_fitGood = m_matrix->fit(hits);
 
-  if (retVal != 0) {
+  if (m_fitGood != 0) {
     TVectorD solution = *(m_matrix->solution());
     
     // return information from the fit.
-    m_x0     = solution(0);
-    m_y0     = solution(1);
-    m_slopeX = solution(2);
-    m_slopeY = solution(3);
-    m_chi2   = m_matrix->chi2();
-    m_ndf    = m_matrix->ndf();
-    m_hits   = hits;
+    m_x0      = solution(0);
+    m_y0      = solution(1);
+    m_slopeX  = solution(2);
+    m_slopeY  = solution(3);
+    m_chi2    = m_matrix->chi2();
+    m_ndf     = m_matrix->ndf();
+    m_hits    = hits;
 
     if (m_verbose > 0) {
       std::cout << "--------------------------------------------------------------------------------------------------" << std::endl;
@@ -52,7 +53,7 @@ int StraightLine::fit(QVector<Hit*> hits)
 
   }
 
-  return retVal;
+  return m_fitGood;
 }
 
 int StraightLine::fitTrd(QVector<Hit*> hits)

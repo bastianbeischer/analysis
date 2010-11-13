@@ -8,6 +8,7 @@
 #include "BrokenLine.hh"
 #include "StraightLine.hh"
 #include "BendingPositionPlot.hh"
+#include "ResidualPlot.hh"
 
 #include <QDebug>
 #include <QFileDialog>
@@ -152,6 +153,13 @@ void MainWindow::setupAnalysis()
   if (m_ui.occupancyCheckBox->isChecked()) {
   }
   if (m_ui.residualsUpperTrackerCheckBox->isChecked()) {
+    Setup* setup = Setup::instance();
+    Layer* layer = setup->firstLayer();
+    while(layer) {
+      if (layer->z() > 0 && layer->z() < 240)
+        m_plotter->addPlot(new ResidualPlot(AnalysisPlot::ResidualsUpperTracker, layer));
+      layer = setup->nextLayer();
+    }
   }
   if (m_ui.residualsLowerTrackerCheckBox->isChecked()) {
   }
@@ -204,17 +212,7 @@ void MainWindow::setupAnalysis()
     m_plotter->setTrackType(0);
   }
 
-  Setup* setup = Setup::instance();
-  Layer* layer = setup->firstLayer();
-  while (layer) {
-    //double z = layer->z();
-
-
-      layer = setup->nextLayer();
-
-  //plotter->addPlot(new ResidualPlot());
-  }
-  m_updateTimer->start(100);
+  m_updateTimer->start(500);
 }
 
 void MainWindow::analyzeButtonClicked()
