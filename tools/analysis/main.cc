@@ -19,9 +19,9 @@ int main(int argc, char* argv[])
   gStyle->SetLegendBorderSize(1);
 
   gStyle->SetPalette(1, 0);
+  gStyle->SetOptStat(0);
   gStyle->SetOptFit(111);
   gStyle->SetLineScalePS(1);
-  gStyle->SetPadRightMargin(0.16);
   gStyle->SetLabelFont(42, "XYZ");
   gStyle->SetLabelSize(0.03, "XYZ");
   gStyle->SetStatFont(42);
@@ -36,6 +36,6 @@ int main(int argc, char* argv[])
     if (fileList != application.arguments().first())
       window.addFileList(fileList);
   }
-  window.show();
+  window.showMaximized();
   return application.exec();
 }

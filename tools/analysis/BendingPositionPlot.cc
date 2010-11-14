@@ -6,8 +6,9 @@
 #include <TH1.h>
 
 BendingPositionPlot::BendingPositionPlot()
-  : H1DPlot(AnalysisPlot::Tracking, "BendingPositionPlot", 1000, -1000, 1000)
+  : H1DPlot(AnalysisPlot::Tracking, "bending position", 1000, -1000, 1000)
 {
+  m_histogram->GetXaxis()->SetTitle("z / mm");
 }
 
 BendingPositionPlot::~BendingPositionPlot()

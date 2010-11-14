@@ -9,8 +9,8 @@ class GeometricOccupancyPlot : public H2DPlot {
     virtual ~GeometricOccupancyPlot();
     virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
     virtual void finalize();
-	private:
-		double m_zPosition;
+  private:
+    double m_zPosition;
 };
 
 #endif

@@ -59,7 +59,7 @@ Cluster* Layer::bestCluster() const
 
   int maxAmplitude = 0;
   Cluster* bestCluster = 0;
-  for (QVector<Cluster*>::iterator it = allClusters.begin(); it != allClusters.end(); it++) {
+  for (QVector<Cluster*>::iterator it = allClusters.begin(); it != allClusters.end(); ++it) {
     Cluster* cluster = (*it);
     int amplitude = cluster->signalHeight();
     if (amplitude > maxAmplitude) {

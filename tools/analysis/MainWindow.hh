@@ -4,7 +4,6 @@
 #include "ui_MainWindow.h"
 
 class Plotter;
-class QLabel;
 class QTabBar;
 class QTimer;
 
@@ -21,18 +20,18 @@ class MainWindow : public QDialog {
     void setOrAddFileListButtonClicked();
     void analyzeButtonClicked();
     void saveButtonClicked();
-    void tabBarCloseRequested(int);
-    void tabBarCurrentChanged(int);
+    void listWidgetItemChanged(QListWidgetItem*);
+    void listWidgetCurrentRowChanged(int);
     void showButtonsClicked();
+    void mainWindowFinished();
   private:
     void setupAnalysis();
     void startAnalysis();
+    void removeListWidgetItem(int);
 
-    Ui_MainWindow m_ui;
+    Ui_mainWindow m_ui;
     QTimer* m_updateTimer;
     Plotter* m_plotter;
-    QLabel* m_positionLabel;
-    QTabBar* m_tabBar;
     QVector<unsigned int> m_activePlots;
 };
 

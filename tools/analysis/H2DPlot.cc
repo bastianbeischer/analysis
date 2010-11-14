@@ -5,7 +5,7 @@
 
 H2DPlot::H2DPlot(Topic topic, const QString& title, int nBinsX, double xMin, double xMax, int nBinsY, double yMin, double yMax)
   : AnalysisPlot(topic, title)
-  , m_histogram(new TH2D(qPrintable(title+QString::number(id())), qPrintable(title), nBinsX, xMin, xMax, nBinsY, yMin, yMax))
+  , m_histogram(new TH2D(qPrintable(title+QString::number(id())), "", nBinsX, xMin, xMax, nBinsY, yMin, yMax))
 {}
 
 H2DPlot::~H2DPlot()

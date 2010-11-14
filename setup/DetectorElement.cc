@@ -50,7 +50,7 @@ void DetectorElement::sortHits()
   QList<Hit*> hits = m_hits.values();
   qSort(hits.begin(), hits.end(), comparePositions);
   m_hits.clear();
-  for (int i = 0; i < hits.size(); i++) {
+  for (int i = 0; i < hits.size(); ++i) {
     m_hits[i] = hits.at(i);
   }
 }
@@ -64,7 +64,7 @@ void DetectorElement::debug()
     if (hit) {
       std::cout << i << " " << hit->position().x() << "     "  << hit->signalHeight() << std::endl;
     }
-    i++;
+    ++i;
   }
   std::cout << "Clusters:" << std::endl;
   int j = 0;
@@ -73,8 +73,8 @@ void DetectorElement::debug()
     std::cout << "No. " << j << ":" << std::endl;
     foreach(Hit* hit, cluster->hits()) {
       std::cout << i << " " << hit->signalHeight() << std::endl;
-      i++;
+      ++i;
     }
-    j++;
+    ++j;
   }
 }

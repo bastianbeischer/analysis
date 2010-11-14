@@ -9,7 +9,7 @@ class CenteredBrokenLineMatrix :
   
 public:
   CenteredBrokenLineMatrix();
-  ~CenteredBrokenLineMatrix();
+  virtual ~CenteredBrokenLineMatrix();
   
 protected:
   void fillMatrixFromHit(unsigned int i, bool useTangens, float k, float xi);

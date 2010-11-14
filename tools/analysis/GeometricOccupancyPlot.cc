@@ -7,11 +7,11 @@
 #include <TAxis.h>
 
 GeometricOccupancyPlot::GeometricOccupancyPlot(double zPosition)
-  : H2DPlot(AnalysisPlot::Occupancy, QString("occupancy %1").arg(zPosition), 1000, -250, 250, 12000, -120, 120)
-	, m_zPosition(zPosition)
+  : H2DPlot(AnalysisPlot::Occupancy, QString("occupancy %1").arg(zPosition), 100, -250, 250, 120, -120, 120)
+  , m_zPosition(zPosition)
 {
-	m_histogram->GetXaxis()->SetTitle("y / mm");
-	m_histogram->GetYaxis()->SetTitle("x / mm");
+  m_histogram->GetXaxis()->SetTitle("y / mm");
+  m_histogram->GetYaxis()->SetTitle("x / mm");
 }
 
 GeometricOccupancyPlot::~GeometricOccupancyPlot()

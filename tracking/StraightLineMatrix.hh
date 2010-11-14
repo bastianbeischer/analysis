@@ -9,7 +9,7 @@ class StraightLineMatrix :
   
 public:
   StraightLineMatrix();
-  ~StraightLineMatrix();
+  virtual ~StraightLineMatrix();
   
 protected:
   void fillMatrixFromHit(unsigned int i, bool useTangens, float k, float xi);

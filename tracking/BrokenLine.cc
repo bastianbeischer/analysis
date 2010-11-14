@@ -25,9 +25,10 @@ BrokenLine::BrokenLine() :
 
 BrokenLine::~BrokenLine()
 {
+  delete m_matrix;
 }
 
-int BrokenLine::fit(QVector<Hit*> hits)
+int BrokenLine::fit(const QVector<Hit*>& hits)
 {
   m_fitGood = m_matrix->fit(hits);
 

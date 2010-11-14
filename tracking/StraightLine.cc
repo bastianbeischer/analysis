@@ -23,9 +23,10 @@ StraightLine::StraightLine() :
 
 StraightLine::~StraightLine()
 {
+  delete m_matrix;
 }
 
-int StraightLine::fit(QVector<Hit*> hits)
+int StraightLine::fit(const QVector<Hit*>& hits)
 {
   m_fitGood = m_matrix->fit(hits);
 
@@ -56,7 +57,7 @@ int StraightLine::fit(QVector<Hit*> hits)
   return m_fitGood;
 }
 
-int StraightLine::fitTrd(QVector<Hit*> hits)
+int StraightLine::fitTrd(const QVector<Hit*>& hits)
 {
   QVector<Hit*> trdHits;
   foreach(Hit* hit, hits) {
@@ -66,7 +67,7 @@ int StraightLine::fitTrd(QVector<Hit*> hits)
   return fit2D(trdHits);
 }
 
-int StraightLine::fit2D(QVector<Hit*> hits)
+int StraightLine::fit2D(const QVector<Hit*>& hits)
 {
   // fill graph with points
   TGraphErrors graph;

@@ -7,50 +7,43 @@
 #include "CenteredBrokenLine.hh"
 #include "BrokenLine.hh"
 #include "StraightLine.hh"
+
 #include "BendingPositionPlot.hh"
 #include "ResidualPlot.hh"
+#include "GeometricOccupancyPlot.hh"
 
 #include <QDebug>
 #include <QFileDialog>
 #include <QVBoxLayout>
 #include <QTimer>
-#include <QLabel>
 
 MainWindow::MainWindow(QWidget* parent)
   : QDialog(parent)
   , m_updateTimer(0)
   , m_plotter(0)
-  , m_positionLabel(0)
-  , m_tabBar(0)
   , m_activePlots()
 {
   m_ui.setupUi(this);
   
-  m_positionLabel = new QLabel(m_ui.rightWidget);
-  
   m_plotter = new Plotter(m_ui.rightWidget);
-  m_plotter->setPositionLabel(m_positionLabel);
+  m_plotter->setTitleLabel(m_ui.titleLabel);
+  m_plotter->setPositionLabel(m_ui.positionLabel);
   m_plotter->setProgressBar(m_ui.progressBar);
-  
-  m_tabBar = new QTabBar(m_ui.rightWidget);
-  m_tabBar->setExpanding(false);
-  m_tabBar->setTabsClosable(true);
-  connect(m_tabBar, SIGNAL(tabCloseRequested(int)), this, SLOT(tabBarCloseRequested(int)));
-  connect(m_tabBar, SIGNAL(currentChanged(int)), this, SLOT(tabBarCurrentChanged(int)));
   
   QVBoxLayout* layout = new QVBoxLayout;
   layout->setContentsMargins(0, 0, 0, 0);
-  layout->addWidget(m_tabBar);
   layout->addWidget(m_plotter);
-  layout->addWidget(m_positionLabel);
   m_ui.rightWidget->setLayout(layout);
 
   m_updateTimer = new QTimer(this);
   connect(m_updateTimer, SIGNAL(timeout()), m_plotter, SLOT(update()));
-
+  
+  connect(this, SIGNAL(finished(int)), this, SLOT(mainWindowFinished()));
   connect(m_ui.analyzeButton, SIGNAL(clicked()), this, SLOT(analyzeButtonClicked()));
   connect(m_ui.setFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
   connect(m_ui.addFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
+  connect(m_ui.listWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(listWidgetItemChanged(QListWidgetItem*)));
+  connect(m_ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(listWidgetCurrentRowChanged(int)));
 
   connect(m_ui.signalHeightUpperTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.signalHeightLowerTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
@@ -104,39 +97,52 @@ void MainWindow::showButtonsClicked()
   } else if (b == m_ui.miscellaneousTOFButton) {
     topic = AnalysisPlot::MiscellaneousTOF;
   }
-  if (b->text() == "show") {
-    b->setText("hide");
+  if (b->text() == "+") {
+    b->setText("-");
     QVector<unsigned int> plotIndices = m_plotter->plotIndices(topic);
     for (int i = 0; i < plotIndices.size(); ++i) {
       m_activePlots.append(plotIndices[i]);
-      m_tabBar->addTab(m_plotter->plotTitle(plotIndices[i]));
+      QListWidgetItem* item = new QListWidgetItem(m_plotter->plotTitle(plotIndices[i]));
+      item->setCheckState(Qt::Checked);
+      item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+      m_ui.listWidget->addItem(item);
     }
   } else {
-    b->setText("show");
-    for (int i = m_tabBar->count() - 1; i >= 0; --i) {
+    b->setText("+");
+    for (int i = m_ui.listWidget->count() - 1; i >= 0; --i) {
       if (m_plotter->plotTopic(m_activePlots[i]) == topic)
-        tabBarCloseRequested(i);
+        removeListWidgetItem(i);
     }
   }
 }
 
-void MainWindow::tabBarCloseRequested(int i)
+void MainWindow::removeListWidgetItem(int i)
 {
+  delete m_ui.listWidget->takeItem(i);
   m_activePlots.remove(i);
-  m_tabBar->removeTab(i);
 }
 
-void MainWindow::tabBarCurrentChanged(int i)
+void MainWindow::listWidgetItemChanged(QListWidgetItem* item)
 {
-  m_plotter->selectPlot(m_activePlots.size() ? m_activePlots[i] : -1);
+  if (item && item->checkState() == Qt::Unchecked) {
+    removeListWidgetItem(m_ui.listWidget->row(item));
+  }
+}
+
+void MainWindow::listWidgetCurrentRowChanged(int i)
+{
+  if (i < 0 || m_activePlots.size() == 0) {
+    m_plotter->selectPlot(-1);
+    return;
+  }
+  m_plotter->selectPlot(m_activePlots[i]);
 }
 
 void MainWindow::setupAnalysis()
 {
   m_plotter->clearPlots();
   m_activePlots.clear();
-  while (m_tabBar->count())
-    m_tabBar->removeTab(0);
+  m_ui.listWidget->clear();
   if (m_ui.signalHeightUpperTrackerCheckBox->isChecked()) {
   }
   if (m_ui.signalHeightLowerTrackerCheckBox->isChecked()) {
@@ -147,10 +153,14 @@ void MainWindow::setupAnalysis()
   }
   if (m_ui.trackingCheckBox->isChecked()) {
     m_plotter->addPlot(new BendingPositionPlot);
-    m_plotter->addPlot(new BendingPositionPlot);
-    m_plotter->addPlot(new BendingPositionPlot);
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
+    Setup* setup = Setup::instance();
+    Layer* layer = setup->firstLayer();
+    while(layer) {
+      m_plotter->addPlot(new GeometricOccupancyPlot(layer->z()));
+      layer = setup->nextLayer();
+    }
   }
   if (m_ui.residualsUpperTrackerCheckBox->isChecked()) {
     Setup* setup = Setup::instance();
@@ -174,19 +184,19 @@ void MainWindow::setupAnalysis()
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
   }
   
-  m_ui.signalHeightUpperTrackerButton->setText("show");
-  m_ui.signalHeightLowerTrackerButton->setText("show");
-  m_ui.signalHeightTRDButton->setText("show");
-  m_ui.timeOverThresholdButton->setText("show");
-  m_ui.trackingButton->setText("show");
-  m_ui.occupancyButton->setText("show");
-  m_ui.residualsUpperTrackerButton->setText("show");
-  m_ui.residualsLowerTrackerButton->setText("show");
-  m_ui.residualsTRDButton->setText("show");
-  m_ui.momentumReconstructionButton->setText("show");
-  m_ui.miscellaneousTrackerButton->setText("show");
-  m_ui.miscellaneousTRDButton->setText("show");
-  m_ui.miscellaneousTOFButton->setText("show");
+  m_ui.signalHeightUpperTrackerButton->setText("+");
+  m_ui.signalHeightLowerTrackerButton->setText("+");
+  m_ui.signalHeightTRDButton->setText("+");
+  m_ui.timeOverThresholdButton->setText("+");
+  m_ui.trackingButton->setText("+");
+  m_ui.occupancyButton->setText("+");
+  m_ui.residualsUpperTrackerButton->setText("+");
+  m_ui.residualsLowerTrackerButton->setText("+");
+  m_ui.residualsTRDButton->setText("+");
+  m_ui.momentumReconstructionButton->setText("+");
+  m_ui.miscellaneousTrackerButton->setText("+");
+  m_ui.miscellaneousTRDButton->setText("+");
+  m_ui.miscellaneousTOFButton->setText("+");
 
   m_ui.signalHeightUpperTrackerButton->setEnabled(m_ui.signalHeightUpperTrackerCheckBox->isChecked());
   m_ui.signalHeightLowerTrackerButton->setEnabled(m_ui.signalHeightLowerTrackerCheckBox->isChecked());
@@ -262,4 +272,9 @@ void MainWindow::saveButtonClicked()
   if (!fileName.endsWith(fileEnding))
     fileName.append(fileEnding);
   m_plotter->saveCanvas(fileName);
+}
+
+void MainWindow::mainWindowFinished()
+{
+  m_plotter->abortAnalysis();
 }

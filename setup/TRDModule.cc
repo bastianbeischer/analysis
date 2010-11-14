@@ -26,7 +26,7 @@ QVector<Cluster*> TRDModule::findClusters()
   const int seedThreshold = 10;
   const int neighbourThreshold = 10;
 
-  for (unsigned short channel = 0; channel < 16; channel++) {
+  for (unsigned short channel = 0; channel < 16; ++channel) {
     if (m_hits[channel]) {
       Hit* hit = m_hits[channel];
       
@@ -38,13 +38,13 @@ QVector<Cluster*> TRDModule::findClusters()
         short rightCursor = channel+1;
         while(rightCursor < 16 && m_hits[rightCursor] && m_hits[rightCursor]->signalHeight() > neighbourThreshold) {
           cluster->addHit(m_hits[rightCursor]);
-          rightCursor++;
+          ++rightCursor;
         }
         // look to the left
         short leftCursor = channel-1;
         while(leftCursor >=0 && m_hits[leftCursor] && m_hits[leftCursor]->signalHeight() > neighbourThreshold) {
           cluster->addHit(m_hits[leftCursor]);
-          leftCursor++;
+          ++leftCursor;
         }
 
         cluster->processHits();

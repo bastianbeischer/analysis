@@ -8,6 +8,7 @@
 #include <TH2I.h>
 #include <cmath>
 #include <cassert>
+#include <iostream>
 
 TrackFinding::TrackFinding() :
   m_maxSlope(1.),
@@ -26,12 +27,12 @@ TrackFinding::~TrackFinding()
   delete m_trackFindingHist;
 }
 
-QVector<Hit*> TrackFinding::findTrack(QVector<Hit*> hits)
+QVector<Hit*> TrackFinding::findTrack(const QVector<Hit*>& hits)
 {
   m_trackFindingHist->Reset();
 
-  for (QVector<Hit*>::iterator firstHit = hits.begin(); firstHit != hits.end(); firstHit++) {
-    for (QVector<Hit*>::iterator secondHit = firstHit; secondHit != hits.end(); secondHit++) {
+  for (QVector<Hit*>::ConstIterator firstHit = hits.begin(); firstHit != hits.end(); firstHit++) {
+    for (QVector<Hit*>::ConstIterator secondHit = firstHit; secondHit != hits.end(); secondHit++) {
       if ((*firstHit)->type() == Hit::tof || (*secondHit)->type() == Hit::tof) continue;
       double x1 = (*firstHit)->position().x();
       double x2 = (*secondHit)->position().x();
@@ -50,7 +51,6 @@ QVector<Hit*> TrackFinding::findTrack(QVector<Hit*> hits)
   m_trackFindingHist->GetMaximumBin(maxX, maxY, maxZ);
   double slopeMax = m_trackFindingHist->GetXaxis()->GetBinCenter(maxX);
   double offsetMax  = m_trackFindingHist->GetYaxis()->GetBinCenter(maxY);
-
   StraightLine straightLine;
   straightLine.setSlopeX(slopeMax);
   straightLine.setX0(offsetMax);

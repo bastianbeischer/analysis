@@ -2,6 +2,8 @@
 
 #include "Matrix.hh"
 
+#include <iostream>
+
 Track::Track() :
   m_type(None),
   m_matrix(0),
@@ -14,5 +16,4 @@ Track::Track() :
 
 Track::~Track()
 {
-  delete m_matrix;
 }

@@ -9,7 +9,7 @@ class BrokenLineMatrix :
   
 public:
   BrokenLineMatrix();
-  ~BrokenLineMatrix();
+  virtual ~BrokenLineMatrix();
   
 protected:
   void fillMatrixFromHit(unsigned int i, bool useTangens, float k, float xi);

@@ -100,7 +100,7 @@ DetectorElement* Setup::firstElement()
 
 Layer* Setup::nextLayer()
 {
-  m_layerIt++;
+  ++m_layerIt;
   if (m_layerIt == m_layers.end())
     return 0;
 
@@ -109,7 +109,7 @@ Layer* Setup::nextLayer()
 
 DetectorElement* Setup::nextElement()
 {
-  m_elementIt++;
+  ++m_elementIt;
   if (m_elementIt == m_elements.end())
     return 0;
 

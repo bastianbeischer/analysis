@@ -5,7 +5,7 @@
 
 H1DPlot::H1DPlot(Topic topic, const QString& title, int nBins, double xMin, double xMax)
   : AnalysisPlot(topic, title)
-  , m_histogram(new TH1D(qPrintable(title+QString::number(id())), qPrintable(title), nBins, xMin, xMax))
+  , m_histogram(new TH1D(qPrintable(title+QString::number(id())), "", nBins, xMin, xMax))
 {}
 
 H1DPlot::~H1DPlot()

@@ -24,9 +24,10 @@ CenteredBrokenLine::CenteredBrokenLine() :
 
 CenteredBrokenLine::~CenteredBrokenLine()
 {
+  delete m_matrix;
 }
 
-int CenteredBrokenLine::fit(QVector<Hit*> hits)
+int CenteredBrokenLine::fit(const QVector<Hit*>& hits)
 {
   m_fitGood = m_matrix->fit(hits);
 

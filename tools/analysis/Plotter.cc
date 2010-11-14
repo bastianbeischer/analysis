@@ -14,16 +14,22 @@
 #include <QDebug>
 
 #include <TPad.h>
+#include <TROOT.h>
+
+#include <iostream>
 
 Plotter::Plotter(QWidget* parent)
   : TQtWidget(parent)
+  , m_titleLabel(0)
   , m_positionLabel(0)
   , m_progressBar(0)
   , m_track(0)
   , m_trackFinding(new TrackFinding())
   , m_chain(new DataChain())
   , m_eventLoopOff(true)
+  , m_selectedPlot(-1)
 {
+  gROOT->cd();
   setMouseTracking(true);
 }
 
@@ -41,11 +47,15 @@ unsigned int Plotter::numberOfPlots()
   return m_plots.size();
 }
 
+void Plotter::setTitleLabel(QLabel* label)
+{
+  m_titleLabel = label;
+}
+
 void Plotter::setPositionLabel(QLabel* label)
 {
   m_positionLabel = label;
 }
-
 
 void Plotter::setProgressBar(QProgressBar* bar)
 {
@@ -62,13 +72,13 @@ void Plotter::mouseReleaseEvent(QMouseEvent*)
 
 void Plotter::mouseMoveEvent(QMouseEvent* event)
 {
-  if (m_positionLabel) {
-    double x = gPad->AbsPixeltoX(event->x());
-    double y = gPad->AbsPixeltoY(event->y());
-    m_positionLabel->setText(QString("x=%1%2 y=%3%4")
-      .arg(x < 0 ? "-" : "+").arg(qAbs(x), 6, 'f', 2, '0')
-      .arg(y < 0 ? "-" : "+").arg(qAbs(y), 6, 'f', 2, '0'));
-  }
+  if (!m_positionLabel || m_selectedPlot < 0)
+    return;
+  double x = gPad->AbsPixeltoX(event->x());
+  double y = gPad->AbsPixeltoY(event->y());
+  m_positionLabel->setText(QString("%1%2  %3%4")
+    .arg(x < 0 ? '-' : '+').arg(qAbs(x), 7, 'f', 3, '0')
+    .arg(y < 0 ? '-' : '+').arg(qAbs(y), 7, 'f', 3, '0'));
 }
 
 void Plotter::saveCanvas(const QString& fileName)
@@ -112,10 +122,17 @@ void Plotter::selectPlot(int i)
 {
   Q_ASSERT(i < int(numberOfPlots()));
   if (i < 0) {
+    if (m_titleLabel)
+      m_titleLabel->clear();
+    if (m_positionLabel)
+      m_positionLabel->clear();
     gPad->Clear();
   } else {
+    if (m_titleLabel)
+      m_titleLabel->setText(m_plots[i]->title());
     m_plots[i]->draw(GetCanvas());
   }
+  m_selectedPlot = i;
 }
 
 void Plotter::clearPlots()

@@ -27,6 +27,7 @@ public:
   const QString& plotTitle(unsigned int);
   AnalysisPlot::Topic plotTopic(unsigned int);
   void selectPlot(int);
+  void setTitleLabel(QLabel*);
   void setPositionLabel(QLabel*);
   void setProgressBar(QProgressBar*);
   void saveCanvas(const QString& fileName);
@@ -44,13 +45,15 @@ protected:
   void mouseMoveEvent(QMouseEvent* event);
   void mouseReleaseEvent(QMouseEvent *event);
 private:
+  QLabel* m_titleLabel;
   QLabel* m_positionLabel;
   QProgressBar* m_progressBar;
   QVector<AnalysisPlot*> m_plots;
   Track* m_track;
   TrackFinding* m_trackFinding;
-   DataChain* m_chain;
+  DataChain* m_chain;
   bool m_eventLoopOff;
+  int m_selectedPlot;
 };
 
 #endif /* Plotter_hh */
