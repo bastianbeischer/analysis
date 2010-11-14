@@ -9,6 +9,7 @@
 #include "StraightLine.hh"
 
 #include "BendingPositionPlot.hh"
+#include "BendingAnglePlot.hh"
 #include "ResidualPlot.hh"
 #include "GeometricOccupancyPlot.hh"
 
@@ -155,6 +156,7 @@ void MainWindow::setupAnalysis()
   }
   if (m_ui.trackingCheckBox->isChecked()) {
     m_plotter->addPlot(new BendingPositionPlot);
+    m_plotter->addPlot(new BendingAnglePlot);
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
     Layer* layer = setup->firstLayer();
