@@ -78,7 +78,7 @@ bool Layer::contains(unsigned short detId) const
   return false;
 }
 
-const char* Layer::printInfo()
+const char* Layer::printInfo() const
 {
   std::stringstream stream;
 
@@ -89,7 +89,7 @@ const char* Layer::printInfo()
   return stream.str().c_str();
 }
 
-QList<unsigned short> Layer::detIds()
+QList<unsigned short> Layer::detIds() const
 {
   QList<unsigned short> detIds;
   foreach(DetectorElement* element, m_elements)

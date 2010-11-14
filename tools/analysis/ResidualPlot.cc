@@ -13,7 +13,7 @@
 #include <cmath>
 
 ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer) :
-  H2DPlot(topic, "res", 1, 0, 1, 200, -3., 3.),
+  H2DPlot(topic, "res", layer->nElements(), 0, layer->nElements(), 200, -3., 3.),
   m_layer(layer)
 {
 }
@@ -60,7 +60,9 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleE
       trackPos.RotateZ(-angle);
 
       double res = (pos - trackPos).x();
-      m_histogram->Fill(0., res);
+      int index = m_layer->detIds().indexOf(hit->detId() - hit->channel());
+
+      m_histogram->Fill(index, res);
     }
   }
   delete mytrack;
