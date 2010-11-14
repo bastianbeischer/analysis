@@ -16,6 +16,7 @@ ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer) :
   H2DPlot(topic, "res", layer->nElements(), 0, layer->nElements(), 200, -3., 3.),
   m_layer(layer)
 {
+  setTitle(QString("Residuals layer at %1").arg(layer->z()));
 }
 
 ResidualPlot::~ResidualPlot()
