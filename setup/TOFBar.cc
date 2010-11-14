@@ -23,7 +23,7 @@ QVector<Cluster*> TOFBar::findClusters()
   if(m_hits.size() >= 3) {
     TOFCluster* tofCluster = new TOFCluster;
     foreach(Hit* hit, m_hits) {
-      tofCluster->addHit(hit);
+      tofCluster->addHit(new Hit(*hit));
     }
     tofCluster->processHits();
     m_clusters.push_back(tofCluster);

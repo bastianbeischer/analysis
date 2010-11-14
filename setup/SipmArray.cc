@@ -29,18 +29,18 @@ QVector<Cluster*> SipmArray::findClusters()
       
     if (hit->signalHeight() > seedThreshold) {
       Cluster* cluster = new Cluster;
-      cluster->addHit(hit);
+      cluster->addHit(new Hit(*hit));
 
       // look to the right
       short rightCursor = channel+1;
       while(rightCursor < 32 && m_hits[rightCursor] && m_hits[rightCursor]->signalHeight() > neighbourThreshold) {
-        cluster->addHit(m_hits[rightCursor]);
+        cluster->addHit(new Hit(*m_hits[rightCursor]));
         ++rightCursor;
       }
       // look to the left
       short leftCursor = channel-1;
       while(leftCursor >=0 && m_hits[leftCursor] && m_hits[leftCursor]->signalHeight() > neighbourThreshold) {
-        cluster->addHit(m_hits[leftCursor]);
+        cluster->addHit(new Hit(*m_hits[leftCursor]));
         --leftCursor;
       }
 
