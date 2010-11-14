@@ -2,9 +2,9 @@
 
 unsigned long AnalysisPlot::s_analysisPlotCounter = 0;
 
-AnalysisPlot::AnalysisPlot(Topic topic, const QString& title)
+AnalysisPlot::AnalysisPlot(Topic topic)
   : m_topic(topic)
-  , m_title(title)
+  , m_title("")
   , m_id(s_analysisPlotCounter)
 {
   ++s_analysisPlotCounter;

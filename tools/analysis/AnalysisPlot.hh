@@ -16,7 +16,7 @@ class AnalysisPlot {
       ResidualsUpperTracker, ResidualsLowerTracker, ResidualsTRD, MomentumReconstruction,
       MiscellaneousTracker, MiscellaneousTRD, MiscellaneousTOF, TopicEnd};
   public:
-    AnalysisPlot(Topic, const QString& title);
+    AnalysisPlot(Topic);
     virtual ~AnalysisPlot();
     unsigned long id();
     void setTitle(const QString& title);

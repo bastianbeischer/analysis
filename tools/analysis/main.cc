@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
   gStyle->SetOptStat(0);
   gStyle->SetOptFit(111);
   gStyle->SetLineScalePS(1);
-	gStyle->SetHistLineWidth(2);
+  gStyle->SetHistLineWidth(2);
   gStyle->SetLabelFont(42, "XYZ");
   gStyle->SetLabelSize(0.03, "XYZ");
   gStyle->SetStatFont(42);

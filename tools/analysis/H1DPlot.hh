@@ -7,19 +7,23 @@ class Hit;
 class Track;
 class SimpleEvent;
 
-class TH1;
-class TCanvas;
+class TH1D;
+class THStack;
 
 class H1DPlot : public AnalysisPlot {
   public:
-    H1DPlot(Topic, const QString& title, int nBins, double xMin, double xMax);
+    H1DPlot(Topic);
     virtual ~H1DPlot();
     virtual void draw(TCanvas*) const;
     virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0) = 0;
     virtual void finalize() = 0;
     virtual void clear();
-  protected:
-    TH1* m_histogram;
+    virtual void clear(int);
+    int numberOfHistograms();
+    TH1D* histogram(int i);
+    void addHistogram(TH1D*);
+  private:
+    THStack* m_histograms;
 };
 
 #endif

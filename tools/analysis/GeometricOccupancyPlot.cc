@@ -7,11 +7,14 @@
 #include <TAxis.h>
 
 GeometricOccupancyPlot::GeometricOccupancyPlot(double zPosition)
-  : H2DPlot(AnalysisPlot::Occupancy, QString("occupancy %1").arg(zPosition), 100, -250, 250, 120, -120, 120)
+  : H2DPlot(AnalysisPlot::Occupancy)
   , m_zPosition(zPosition)
 {
-  m_histogram->GetXaxis()->SetTitle("y / mm");
-  m_histogram->GetYaxis()->SetTitle("x / mm");
+  setTitle(QString("occupancy %1").arg(zPosition));
+  TH2D* histogram = new TH2D(qPrintable(title()), "", 100, -250, 250, 120, -120, 120);
+  histogram->GetXaxis()->SetTitle("y / mm");
+  histogram->GetYaxis()->SetTitle("x / mm");
+  addHistogram(histogram);
 }
 
 GeometricOccupancyPlot::~GeometricOccupancyPlot()
@@ -26,7 +29,7 @@ void GeometricOccupancyPlot::processEvent(const QVector<Hit*>& clusters, Track* 
         ++nTrackerHits;
     if (nTrackerHits != 8)
       return;
-    m_histogram->Fill(track->y(m_zPosition), track->x(m_zPosition));
+    histogram(0)->Fill(track->y(m_zPosition), track->x(m_zPosition));
   }
 }
 

@@ -6,9 +6,12 @@
 #include <TH1.h>
 
 BendingPositionPlot::BendingPositionPlot()
-  : H1DPlot(AnalysisPlot::Tracking, "bending position", 1000, -1000, 1000)
+  : H1DPlot(AnalysisPlot::Tracking)
 {
-  m_histogram->GetXaxis()->SetTitle("z / mm");
+  setTitle("bending position");
+  TH1D* histogram = new TH1D("bending position", "", 1000, -1000, 1000);
+  histogram->GetXaxis()->SetTitle("z / mm");
+  addHistogram(histogram);
 }
 
 BendingPositionPlot::~BendingPositionPlot()
@@ -24,7 +27,7 @@ void BendingPositionPlot::processEvent(const QVector<Hit*>& clusters, Track* tra
         ++nTrackerHits;
     if (nTrackerHits != 8)
       return;
-    m_histogram->Fill(line->zIntersection());
+    histogram(0)->Fill(line->zIntersection());
   }
 }
 

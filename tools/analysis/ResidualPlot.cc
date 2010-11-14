@@ -12,11 +12,15 @@
 
 #include <cmath>
 
-ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer) :
-  H2DPlot(topic, "res", layer->nElements(), 0, layer->nElements(), 200, -3., 3.),
-  m_layer(layer)
+ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer)
+  : H2DPlot(topic)
+  , m_layer(layer)
 {
   setTitle(QString("Residuals layer at %1").arg(layer->z()));
+  TH2D* histogram = new TH2D(qPrintable(title()+QString::number(id())), "", layer->nElements(), 0, layer->nElements(), 200, -3., 3.);
+  histogram->GetXaxis()->SetTitle("SiPM array number");
+  histogram->GetXaxis()->SetTitle("residue / mm");
+  addHistogram(histogram);
 }
 
 ResidualPlot::~ResidualPlot()
@@ -63,7 +67,7 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleE
       double res = (pos - trackPos).x();
       int index = m_layer->detIds().indexOf(hit->detId() - hit->channel());
 
-      m_histogram->Fill(index, res);
+      histogram(0)->Fill(index, res);
     }
   }
   delete mytrack;
