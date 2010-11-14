@@ -34,6 +34,8 @@ int Matrix::fit(QVector<Hit*> hits)
   }
 
   // declare matrices for the calculation
+  if (m_A) delete m_A;
+  if (m_solution) delete m_solution;
   m_A = new TMatrixD(m_nRow, m_nCol);
   m_solution = new TVectorD(m_nCol);
   TVectorD b(m_nRow);
