@@ -140,6 +140,8 @@ void MainWindow::listWidgetCurrentRowChanged(int i)
 
 void MainWindow::setupAnalysis()
 {
+  Setup* setup = Setup::instance();
+
   m_plotter->clearPlots();
   m_activePlots.clear();
   m_ui.listWidget->clear();
@@ -155,7 +157,6 @@ void MainWindow::setupAnalysis()
     m_plotter->addPlot(new BendingPositionPlot);
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
-    Setup* setup = Setup::instance();
     Layer* layer = setup->firstLayer();
     while(layer) {
       m_plotter->addPlot(new GeometricOccupancyPlot(layer->z()));
@@ -163,7 +164,6 @@ void MainWindow::setupAnalysis()
     }
   }
   if (m_ui.residualsUpperTrackerCheckBox->isChecked()) {
-    Setup* setup = Setup::instance();
     Layer* layer = setup->firstLayer();
     while(layer) {
       if (layer->z() > 0 && layer->z() < 240)
@@ -172,8 +172,20 @@ void MainWindow::setupAnalysis()
     }
   }
   if (m_ui.residualsLowerTrackerCheckBox->isChecked()) {
+    Layer* layer = setup->firstLayer();
+    while(layer) {
+      if (layer->z() > -240 && layer->z() < 0)
+        m_plotter->addPlot(new ResidualPlot(AnalysisPlot::ResidualsLowerTracker, layer));
+      layer = setup->nextLayer();
+    }
   }
   if (m_ui.residualsTRDCheckBox->isChecked()) {
+    Layer* layer = setup->firstLayer();
+    while(layer) {
+      if (layer->z() > -520 && layer->z() < -240)
+        m_plotter->addPlot(new ResidualPlot(AnalysisPlot::ResidualsTRD, layer));
+      layer = setup->nextLayer();
+    }
   }
   if (m_ui.momentumReconstructionCheckBox->isChecked()) {
   }
