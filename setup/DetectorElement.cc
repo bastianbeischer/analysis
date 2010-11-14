@@ -72,9 +72,23 @@ void DetectorElement::debug()
     i = 0;
     std::cout << "No. " << j << ":" << std::endl;
     foreach(Hit* hit, cluster->hits()) {
-      std::cout << i << " " << hit->signalHeight() << std::endl;
+      std::cout << hit->channel() << " " << hit->signalHeight() << std::endl;
       ++i;
     }
     ++j;
   }
+  // std::vector<int> channels;
+  // foreach(Cluster* cluster, m_clusters) {
+  //   foreach(Hit* hit, cluster->hits()) {
+  //     int channel = hit->channel();
+  //     if (std::find(channels.begin(), channels.end(), channel) != channels.end()) {
+  //       std::cout << "BAD" << std::endl;
+  //       exit(-1);
+  //     }
+  //     else {
+  //       // std::cout << channel << std::endl;
+  //       channels.push_back(hit->channel());
+  //     }
+  //   }
+  // }
 }

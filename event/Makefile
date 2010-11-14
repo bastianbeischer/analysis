@@ -10,11 +10,9 @@ DICTS   = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=Dict.cc))
 OBJECTS = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=.o)) $(DICTS:.cc=.o)
 
 # Compilers and Flags
-CC           := gcc
 CXX          := g++
 INCLUDEFLAGS := -I$(INCLUDEDIR) -I$(shell root-config --incdir)
 LIBS         := $(shell root-config --libs)
-CCFLAGS      := -Wall -fPIC $(INCLUDEFLAGS) -MMD
 CXXFLAGS     := -Wall -fPIC $(INCLUDEFLAGS) -MMD
 
 .PHONY: all clean
