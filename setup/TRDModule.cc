@@ -3,8 +3,6 @@
 #include "Hit.hh"
 #include "Cluster.hh"
 
-#include <iostream>
-
 TRDModule::TRDModule() :
   DetectorElement()
 {
@@ -44,7 +42,7 @@ QVector<Cluster*> TRDModule::findClusters()
         short leftCursor = channel-1;
         while(leftCursor >=0 && m_hits[leftCursor] && m_hits[leftCursor]->signalHeight() > neighbourThreshold) {
           cluster->addHit(m_hits[leftCursor]);
-          ++leftCursor;
+          --leftCursor;
         }
 
         cluster->processHits();
