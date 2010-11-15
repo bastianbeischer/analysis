@@ -13,8 +13,32 @@
 ClassImp(DataDescription);
 
 DataDescription::DataDescription()
-  : m_numberOfRuns(0)
+  : TObject()
+  , m_numberOfRuns(0)
 {
+}
+
+DataDescription::DataDescription(const DataDescription& other)
+  : TObject(other)
+  , m_comment(other.m_comment)
+  , m_softwareVersionHash(other.m_softwareVersionHash)
+  , m_eventNumberOffset(other.m_eventNumberOffset)
+  , m_runFileNames(other.m_runFileNames)
+  , m_runFileSoftwareVersionHash(other.m_runFileSoftwareVersionHash)
+  , m_numberOfRuns(other.m_numberOfRuns)
+{
+}
+
+const DataDescription& DataDescription::operator=(const DataDescription& right)
+{
+  static_cast<TObject>(*this) = static_cast<TObject>(right);
+  m_comment = right.m_comment;
+  m_softwareVersionHash = right.m_softwareVersionHash;
+  m_eventNumberOffset = right.m_eventNumberOffset;
+  m_runFileNames = right.m_runFileNames;
+  m_runFileSoftwareVersionHash = right.m_runFileSoftwareVersionHash;
+  m_numberOfRuns = right.m_numberOfRuns;
+  return *this;
 }
 
 DataDescription::~DataDescription()

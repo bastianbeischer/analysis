@@ -32,6 +32,7 @@ TOFSipmHit::TOFSipmHit(const TOFSipmHit& other)
 
 const TOFSipmHit& TOFSipmHit::operator=(const TOFSipmHit& right)
 {
+  static_cast<Hit>(*this) = static_cast<Hit>(right);
   m_channel = right.m_channel;
   m_startTime = right.m_startTime;
   m_timeOverThreshold = right.m_timeOverThreshold;

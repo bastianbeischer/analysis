@@ -25,6 +25,7 @@ Hit::Hit(ModuleType typ, unsigned short detId, int signalHeight, TVector3 positi
 }
 
 Hit::Hit(const Hit& other) :
+  TObject(other),
   m_type(other.m_type),
   m_detId(other.m_detId),
   m_signalHeight(other.m_signalHeight),
@@ -35,6 +36,7 @@ Hit::Hit(const Hit& other) :
 
 const Hit& Hit::operator=(const Hit& right)
 {
+  static_cast<TObject>(*this) = static_cast<TObject>(right);
   m_type = right.m_type;
   m_detId = right.m_detId;
   m_signalHeight = right.m_signalHeight;

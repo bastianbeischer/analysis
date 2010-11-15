@@ -12,6 +12,8 @@ class SimpleEvent :
 public:
   SimpleEvent();
   SimpleEvent(int id, int time);
+  SimpleEvent(const SimpleEvent& other);
+  const SimpleEvent& operator=(const SimpleEvent& right);
   ~SimpleEvent();
 
 public:
