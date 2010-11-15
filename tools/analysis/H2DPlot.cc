@@ -1,52 +1,38 @@
 #include "H2DPlot.hh"
 
 #include <TH2.h>
-#include <THStack.h>
 #include <TList.h>
 #include <TCanvas.h>
 
 H2DPlot::H2DPlot(Topic topic)
   : AnalysisPlot(topic)
-  , m_histograms(new THStack)
+  , m_histogram()
 {}
 
 H2DPlot::~H2DPlot()
 {
-  for (int i = 0; i < numberOfHistograms(); ++i)
-    delete histogram(i);
-  delete m_histograms;
+  delete m_histogram;
 }
     
 void H2DPlot::draw(TCanvas* canvas) const
 {
   canvas->cd();
-  m_histograms->Draw("COLZ");
+  m_histogram->Draw("COLZ");
 }
 
 void H2DPlot::clear()
 {
-  for (int i = 0; i < numberOfHistograms(); ++i)
-    clear(i);
+  m_histogram->Clear();
 }
 
-void H2DPlot::clear(int i)
+TH2D* H2DPlot::histogram()
 {
-  Q_ASSERT(0 <= i && i < numberOfHistograms());
-  histogram(i)->Clear();
+  return m_histogram;
 }
 
-int H2DPlot::numberOfHistograms()
+void H2DPlot::setHistogram(TH2D* h)
 {
-  return m_histograms->GetHists()->GetSize();
-}
-
-TH2D* H2DPlot::histogram(int i)
-{
-  Q_ASSERT(0 <= i && i < numberOfHistograms());
-  return static_cast<TH2D*>(m_histograms->GetHists()->At(i));
-}
-
-void H2DPlot::addHistogram(TH2D* h)
-{
-  m_histograms->Add(h);
+  if (m_histogram)
+    delete m_histogram;
+  m_histogram = h;
 }

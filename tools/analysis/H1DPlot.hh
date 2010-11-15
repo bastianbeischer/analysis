@@ -8,7 +8,6 @@ class Track;
 class SimpleEvent;
 
 class TH1D;
-class THStack;
 
 class H1DPlot : public AnalysisPlot {
   public:
@@ -22,11 +21,8 @@ class H1DPlot : public AnalysisPlot {
     int numberOfHistograms();
     TH1D* histogram(int i);
     void addHistogram(TH1D*);
-    void setAxisTitles(const QString&, const QString&);
   private:
-    THStack* m_histograms;
-    QString m_xAxisTitle;
-    QString m_yAxisTitle;
+    QVector<TH1D*> m_histograms;
 };
 
 #endif

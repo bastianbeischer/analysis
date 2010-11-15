@@ -18,12 +18,10 @@ class H2DPlot : public AnalysisPlot {
     virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0) = 0;
     virtual void finalize() = 0;
     virtual void clear();
-    virtual void clear(int);
-    int numberOfHistograms();
-    TH2D* histogram(int i);
-    void addHistogram(TH2D*);
-  protected:
-    THStack* m_histograms;
+    TH2D* histogram();
+    void setHistogram(TH2D*);
+  private:
+    TH2D* m_histogram;
 };
 
 #endif

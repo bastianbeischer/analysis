@@ -14,7 +14,7 @@ GeometricOccupancyPlot::GeometricOccupancyPlot(double zPosition)
   TH2D* histogram = new TH2D(qPrintable(title()), "", 100, -250, 250, 120, -120, 120);
   histogram->GetXaxis()->SetTitle("y / mm");
   histogram->GetYaxis()->SetTitle("x / mm");
-  addHistogram(histogram);
+  setHistogram(histogram);
 }
 
 GeometricOccupancyPlot::~GeometricOccupancyPlot()
@@ -29,7 +29,7 @@ void GeometricOccupancyPlot::processEvent(const QVector<Hit*>& clusters, Track* 
         ++nTrackerHits;
     if (nTrackerHits != 8)
       return;
-    histogram(0)->Fill(track->y(m_zPosition), track->x(m_zPosition));
+    histogram()->Fill(track->y(m_zPosition), track->x(m_zPosition));
   }
 }
 

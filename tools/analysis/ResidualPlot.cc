@@ -19,8 +19,8 @@ ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer)
   setTitle(QString("Residuals layer at %1").arg(layer->z()));
   TH2D* histogram = new TH2D(qPrintable(title()+QString::number(id())), "", layer->nElements(), 0, layer->nElements(), 200, -3., 3.);
   histogram->GetXaxis()->SetTitle("SiPM array number");
-  histogram->GetXaxis()->SetTitle("residue / mm");
-  addHistogram(histogram);
+  histogram->GetYaxis()->SetTitle("residue / mm");
+  setHistogram(histogram);
 }
 
 ResidualPlot::~ResidualPlot()
@@ -67,7 +67,7 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleE
       double res = (pos - trackPos).x();
       int index = m_layer->detIds().indexOf(hit->detId() - hit->channel());
 
-      histogram(0)->Fill(index, res);
+      histogram()->Fill(index, res);
     }
   }
   delete mytrack;

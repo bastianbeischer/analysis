@@ -24,12 +24,12 @@ int main(int argc, char* argv[])
   gStyle->SetLineScalePS(1);
   gStyle->SetHistLineWidth(2);
   gStyle->SetLabelFont(42, "XYZ");
-  gStyle->SetLabelSize(0.03, "XYZ");
+  gStyle->SetLabelSize(0.025, "XYZ");
   gStyle->SetStatFont(42);
-  gStyle->SetStatFontSize(0.02);
+  gStyle->SetStatFontSize(0.025);
   gStyle->SetTextFont(42);
   gStyle->SetTitleFont(42, "XYZ");
-  gStyle->SetTitleSize(0.03, "XYZ");
+  gStyle->SetTitleSize(0.025, "XYZ");
 
   QApplication application(argc, argv);
   MainWindow window;
