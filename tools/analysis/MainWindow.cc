@@ -14,6 +14,7 @@
 #include "GeometricOccupancyPlot.hh"
 #include "BendingAnglePositionPlot.hh"
 #include "Chi2Plot.hh"
+#include "TOFPositionCorrelationPlot.hh"
 
 #include <QDebug>
 #include <QFileDialog>
@@ -201,6 +202,12 @@ void MainWindow::setupAnalysis()
   if (m_ui.miscellaneousTRDCheckBox->isChecked()) {
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
+    DetectorElement* element = setup->firstElement();
+    while (element) {
+      if (element->type() == DetectorElement::tof)
+        m_plotter->addPlot(new TOFPositionCorrelationPlot(element->id()));
+      element = setup->nextElement();
+    }
   }
   
   m_ui.signalHeightUpperTrackerButton->setText("+");
