@@ -34,7 +34,8 @@ HEADERS = MainWindow.hh \
           BendingPositionPlot.hh \
           GeometricOccupancyPlot.hh \
           ResidualPlot.hh \
-          BendingAnglePlot.hh
+          BendingAnglePlot.hh \
+					BendingAnglePositionPlot.hh
 
 # Sources
 SOURCES = main.cc \
@@ -46,7 +47,8 @@ SOURCES = main.cc \
           BendingPositionPlot.cc \
           GeometricOccupancyPlot.cc \
           ResidualPlot.cc \
-          BendingAnglePlot.cc
+          BendingAnglePlot.cc \
+					BendingAnglePositionPlot.cc
 
 include($$TOPLEVEL/root.pri)
 

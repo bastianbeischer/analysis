@@ -14,7 +14,7 @@ H2DPlot::~H2DPlot()
   delete m_histogram;
 }
     
-void H2DPlot::draw(TCanvas* canvas) const
+void H2DPlot::draw(TCanvas* canvas)
 {
   canvas->cd();
   m_histogram->Draw("COLZ");

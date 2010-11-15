@@ -41,9 +41,9 @@ public slots:
   void finalizeAnalysis();
   void update();
 protected:
-  void mousePressEvent(QMouseEvent *event);
+  //void mousePressEvent(QMouseEvent *event);
   void mouseMoveEvent(QMouseEvent* event);
-  void mouseReleaseEvent(QMouseEvent *event);
+  //void mouseReleaseEvent(QMouseEvent *event);
 private:
   QLabel* m_titleLabel;
   QLabel* m_positionLabel;
