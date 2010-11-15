@@ -69,17 +69,21 @@ void DataChain::addFileList(const char* listName)
     // version string
     TFile file(filename, "READ");
     TTree* tree = (TTree*)file.Get("SimpleEventTree");
+    int nEntries = tree->GetEntries();
+    if (m_offsets.size() == 0)
+      m_offsets.push_back(nEntries);
+    else 
+      m_offsets.push_back(nEntries + m_offsets.back());
     DataDescription* desc = (DataDescription*) tree->GetUserInfo()->First();
     if (desc) {
       std::cout << " (version: " << desc->softwareVersionHash() << ")" << std::endl;
-      m_chain->GetUserInfo()->Add(desc);
     }
   }
   
   std::cout << "DONE: Chain contains " << m_chain->GetEntries() << " events" << std::endl;
 }
 
-SimpleEvent* DataChain::event(unsigned int i) 
+SimpleEvent* DataChain::event(unsigned int i)
 {
   assert(i < m_chain->GetEntries());
   m_currentEntry = i;
@@ -87,11 +91,29 @@ SimpleEvent* DataChain::event(unsigned int i)
   return m_event;
 }
 
-SimpleEvent* DataChain::nextEvent() 
+SimpleEvent* DataChain::nextEvent()
 {
   m_currentEntry++;
   if (m_currentEntry >= m_chain->GetEntries())
     return 0;
   m_chain->GetEntry(m_currentEntry); 
   return m_event;
+}
+
+const DataDescription* DataChain::currentDescription() const
+{
+  return (const DataDescription*) m_chain->GetTree()->GetUserInfo()->First();
+}
+
+int DataChain::entryInFile() const
+{
+  int entryInFile = m_currentEntry;
+  for (unsigned int i = 0; i < m_offsets.size(); i++) {
+    if (m_currentEntry >= m_offsets[i]) {
+      entryInFile -= m_offsets[i];
+      break;
+    }
+  }
+  assert(entryInFile >= 0);
+  return entryInFile;
 }
