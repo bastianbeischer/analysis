@@ -13,7 +13,7 @@ class H1DPlot : public AnalysisPlot {
   public:
     H1DPlot(Topic);
     virtual ~H1DPlot();
-    virtual void draw(TCanvas*) const;
+    virtual void draw(TCanvas*);
     virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0) = 0;
     virtual void finalize() = 0;
     virtual void clear();

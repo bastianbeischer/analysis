@@ -15,7 +15,7 @@ H1DPlot::~H1DPlot()
   qDeleteAll(m_histograms);
 }
 
-void H1DPlot::draw(TCanvas* canvas) const
+void H1DPlot::draw(TCanvas* canvas)
 {
   canvas->cd();
   foreach (TH1D* h, m_histograms)

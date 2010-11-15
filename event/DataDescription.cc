@@ -53,12 +53,15 @@ long DataDescription::eventNumberInRunFile(long eventNumber) const
 
 const std::string& DataDescription::runFileForEventNumber(long eventNumber) const
 {
-  int i = 0;
-  for (; i < numberOfRuns(); ++i) {
-    if (m_eventNumberOffset[i] >= eventNumber)
+  int runNo = 0;
+  for (int i = 0; i < m_numberOfRuns; ++i) {
+    if (eventNumber >= m_eventNumberOffset[i]) {
+      runNo = i+1;
       break;
+    }
   }
-  return m_runFileNames[i];
+  assert(runNo < m_numberOfRuns);
+  return m_runFileNames[runNo];
 }
 
     
@@ -67,6 +70,7 @@ void DataDescription::addRunFile(const std::string& fileName, const std::string&
   m_runFileNames.push_back(fileName);
   m_eventNumberOffset.push_back(m_numberOfRuns == 0 ? nEvents : nEvents + m_eventNumberOffset[m_numberOfRuns-1]);
   m_runFileSoftwareVersionHash.push_back(softwareVersionHash);
+  ++m_numberOfRuns;
 }
     
 long DataDescription::numberOfEventsInRunFile(int i) const

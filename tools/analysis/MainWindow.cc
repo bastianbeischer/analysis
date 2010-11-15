@@ -12,6 +12,7 @@
 #include "BendingAnglePlot.hh"
 #include "ResidualPlot.hh"
 #include "GeometricOccupancyPlot.hh"
+#include "BendingAnglePositionPlot.hh"
 
 #include <QDebug>
 #include <QFileDialog>
@@ -157,6 +158,8 @@ void MainWindow::setupAnalysis()
   if (m_ui.trackingCheckBox->isChecked()) {
     m_plotter->addPlot(new BendingPositionPlot);
     m_plotter->addPlot(new BendingAnglePlot);
+    for (double cut = .004; cut < .008; cut+=.001)
+      m_plotter->addPlot(new BendingAnglePositionPlot(cut));
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
     Layer* layer = setup->firstLayer();

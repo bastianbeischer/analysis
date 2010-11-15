@@ -14,7 +14,7 @@ BendingAnglePlot::BendingAnglePlot()
 {
   setTitle("bending angle");
   TH1D* histogram = 0;
-  histogram = new TH1D("bending angle all tracks", "", 2000, -.2, .2);
+  histogram = new TH1D("bending angle all tracks", "", 400, -.2, .2);
   histogram->GetXaxis()->SetTitle("bending angle / rad");
   addHistogram(histogram);
   histogram = new TH1D("bending angle insige magnet", "", 400, -.2, .2);
@@ -48,17 +48,18 @@ void BendingAnglePlot::processEvent(const QVector<Hit*>& clusters, Track* track,
     if (nTrackerHits != 8)
       return;
     double alpha = atan(upperSlope) - atan(lowerSlope);
-    double r = track->x(0)*track->x(0) + track->y(0)*track->y(0);
+    double r = sqrt(track->x(0)*track->x(0) + track->y(0)*track->y(0));
     histogram(0)->Fill(alpha);
-    if (r < 150)
+    if (r < 75)
       histogram(1)->Fill(alpha);
-    if (r > 250) {
+    if (r > 140)
       histogram(2)->Fill(alpha);
-    }
-
   }
 }
 
 void BendingAnglePlot::finalize()
 {
+  // histogram(0)->Scale(1./histogram(0)->Integral("width"));
+  // histogram(1)->Scale(1./histogram(1)->Integral("width"));
+  // histogram(2)->Scale(1./histogram(2)->Integral("width"));
 }

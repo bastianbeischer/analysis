@@ -22,7 +22,7 @@ class AnalysisPlot {
     void setTitle(const QString& title);
     const QString& title() const;
     Topic topic() const;
-    virtual void draw(TCanvas*) const = 0;
+    virtual void draw(TCanvas*) = 0;
     virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0) = 0;
     virtual void finalize() = 0;
     virtual void clear() = 0;

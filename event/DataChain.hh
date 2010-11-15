@@ -4,6 +4,7 @@
 #include <TChain.h>
 
 class SimpleEvent;
+class DataDescription;
 
 class DataChain
 {
@@ -24,14 +25,22 @@ public:
   SimpleEvent* event(unsigned int i);
   SimpleEvent* nextEvent();
 
-private:
-  void         init();
+  const TFile* currentFile() const {return (const TFile*) m_chain->GetFile();}
+  const TTree* currentTree() const {return (const TTree*) m_chain->GetTree();}
+  const DataDescription* currentDescription() const;
+
+  int entry() const {return m_currentEntry;}
+  int entryInFile() const;
 
 private:
-  TChain*       m_chain;
-  SimpleEvent*  m_event;
+  void init();
 
-  int           m_currentEntry;
+private:
+  TChain*          m_chain;
+  SimpleEvent*     m_event;
+
+  int              m_currentEntry;
+  std::vector<int> m_offsets;
 
 };
 
