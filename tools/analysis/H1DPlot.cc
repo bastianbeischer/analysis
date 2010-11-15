@@ -4,14 +4,19 @@
 #include <THStack.h>
 #include <TList.h>
 #include <TCanvas.h>
+#include <TPad.h>
 
 H1DPlot::H1DPlot(Topic topic)
   : AnalysisPlot(topic)
   , m_histograms(new THStack())
+  , m_xAxisTitle("")
+  , m_yAxisTitle("")
 {}
 
 H1DPlot::~H1DPlot()
 {
+  for (int i = 0; i < numberOfHistograms(); ++i)
+    delete histogram(i);
   delete m_histograms;
 }
 
@@ -19,6 +24,10 @@ void H1DPlot::draw(TCanvas* canvas) const
 {
   canvas->cd();
   m_histograms->Draw();
+  m_histograms->GetXaxis()->SetTitle(qPrintable(m_xAxisTitle));
+  m_histograms->GetYaxis()->SetTitle(qPrintable(m_yAxisTitle));
+  gPad->Modified();
+  gPad->Update();
 }
 
 void H1DPlot::clear()
@@ -49,3 +58,8 @@ void H1DPlot::addHistogram(TH1D* h)
   m_histograms->Add(h);
 }
 
+void H1DPlot::setAxisTitles(const QString& xTitle, const QString& yTitle)
+{
+  m_xAxisTitle = xTitle;
+  m_yAxisTitle = yTitle;
+}

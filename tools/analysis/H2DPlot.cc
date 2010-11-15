@@ -12,6 +12,8 @@ H2DPlot::H2DPlot(Topic topic)
 
 H2DPlot::~H2DPlot()
 {
+  for (int i = 0; i < numberOfHistograms(); ++i)
+    delete histogram(i);
   delete m_histograms;
 }
     
