@@ -1,6 +1,7 @@
 #include "TOFBar.hh"
 
 #include "TOFCluster.hh"
+#include "TOFSipmHit.hh"
 
 TOFBar::TOFBar() :
   DetectorElement()
@@ -23,7 +24,8 @@ QVector<Cluster*> TOFBar::findClusters()
   if(m_hits.size() >= 3) {
     TOFCluster* tofCluster = new TOFCluster;
     foreach(Hit* hit, m_hits) {
-      tofCluster->addHit(new Hit(*hit));
+      TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
+      tofCluster->addHit(new TOFSipmHit(*tofHit));
     }
     tofCluster->processHits();
     m_clusters.push_back(tofCluster);
