@@ -15,35 +15,23 @@ int main(int argc, char** argv)
     return -1;
   }
 
-  QString temp(argv[1]);
-  QString file = temp;
-  QString output;
+  QString input(argv[1]);
+  QString output = input;
   if (argc == 3) {
     output = argv[2];
   }
   else {
-    QString path = "";
-
-    QStringList envVariables = QProcess::systemEnvironment();
-    QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_DATA=*"));
-    if (filteredVars.size() != 0) {
-      QString entry = filteredVars.first();
-      path = entry.split("=").at(1);
-      path += "/";
-    }
-
-    output = temp.replace(QRegExp("\\..*$"), ".root");
-    output = path + (output.split(QRegExp("/"))).last();
+    output = output.replace(QRegExp("\\..*$"), ".root");
   }
 
   DataManager dm;
   dm.setOutputFileName(output);
 
   QRegExp root(".*\\.dat$");
-  if (root.exactMatch(file))
-    dm.parseSingleRun(file);
+  if (root.exactMatch(input))
+    dm.parseSingleRun(input);
   else
-    dm.parseListOfRuns(file);
+    dm.parseListOfRuns(input);
 
   return 0;
 }
