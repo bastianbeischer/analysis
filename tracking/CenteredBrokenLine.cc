@@ -32,7 +32,7 @@ int CenteredBrokenLine::fit(const QVector<Hit*>& hits)
   m_fitGood = m_matrix->fit(hits);
 
   if (m_fitGood != 0) {
-    TVectorD solution = *(m_matrix->solution());
+    TVectorD solution = m_matrix->solution();
 
     // return information from the fit.
     m_x0            = solution(0);

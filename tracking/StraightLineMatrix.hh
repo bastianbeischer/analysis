@@ -12,7 +12,7 @@ public:
   virtual ~StraightLineMatrix();
   
 protected:
-  void fillMatrixFromHit(unsigned int i, bool useTangens, float k, float xi);
+  void fillMatrixFromHit(TMatrixD& A, unsigned int i, bool useTangens, float k, float xi);
   
 };
 

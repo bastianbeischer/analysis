@@ -14,12 +14,12 @@ public:
   virtual ~Matrix();
   
   int fit(QVector<Hit*> hits);
-  TVectorD* solution() const {return m_solution;}
+  TVectorD solution() const {return m_solution;}
   double chi2() const {return m_chi2;}
   double ndf() const {return m_ndf;}
   
 protected:
-  virtual void fillMatrixFromHit(unsigned int i, bool useTangens, float k, float xi) = 0;
+  virtual void fillMatrixFromHit(TMatrixD& A, unsigned int i, bool useTangens, float k, float xi) = 0;
 
 protected:
   unsigned int m_nRow;
@@ -28,8 +28,7 @@ protected:
   double m_chi2;
   double m_ndf;
 
-  TMatrixD* m_A;
-  TVectorD* m_solution;
+  TVectorD m_solution;
 
 };
 
