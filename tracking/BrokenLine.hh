@@ -4,6 +4,7 @@
 #include "Track.hh"
 
 #include <TVector3.h>
+#include <cmath>
 
 class Hit;
 
@@ -30,6 +31,7 @@ public:
   double         upperSlopeX()      const {return m_upperSlopeX;}
   double         lowerSlopeX()      const {return m_lowerSlopeX;}
   double         slopeY()           const {return m_slopeY;}
+  double         bendingAngle()     const {return atan(m_upperSlopeX) - atan(m_lowerSlopeX);}
   double         zIntersection()    const {return m_zIntersection;}
 
   double         x(double z)        const;
