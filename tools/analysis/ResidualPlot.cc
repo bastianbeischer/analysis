@@ -33,8 +33,14 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleE
   QVector<Hit*> hitsForFit;
   QVector<Hit*> hitsInThisLayer;
       
+  int nTrackerHits = 0;
+  foreach(Hit* hit, hits)
+    if (hit->type() == Hit::tracker)
+      ++nTrackerHits;
+  if (nTrackerHits != 8)
+    return;
+
   foreach(Hit* hit, hits) {
-    // test
     double z = hit->position().z();
     z = round(z*100.)/100.;
     if (z != m_layer->z()) {
