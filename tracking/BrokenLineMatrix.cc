@@ -4,6 +4,7 @@ BrokenLineMatrix::BrokenLineMatrix() :
   Matrix()
 {
   m_nCol = 6;
+  m_solution.ResizeTo(m_nCol);
 }
 
 BrokenLineMatrix::~BrokenLineMatrix()

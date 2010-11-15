@@ -6,6 +6,7 @@ StraightLineMatrix::StraightLineMatrix() :
   Matrix()
 {
   m_nCol = 4;
+  m_solution.ResizeTo(m_nCol);
 }
 
 StraightLineMatrix::~StraightLineMatrix()

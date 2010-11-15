@@ -4,6 +4,7 @@ CenteredBrokenLineMatrix::CenteredBrokenLineMatrix() :
   Matrix()
 {
   m_nCol = 5;
+  m_solution.ResizeTo(m_nCol);
 }
 
 CenteredBrokenLineMatrix::~CenteredBrokenLineMatrix()
