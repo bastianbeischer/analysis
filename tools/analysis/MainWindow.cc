@@ -13,6 +13,7 @@
 #include "ResidualPlot.hh"
 #include "GeometricOccupancyPlot.hh"
 #include "BendingAnglePositionPlot.hh"
+#include "Chi2Plot.hh"
 
 #include <QDebug>
 #include <QFileDialog>
@@ -160,6 +161,7 @@ void MainWindow::setupAnalysis()
     m_plotter->addPlot(new BendingAnglePlot);
     for (double cut = .004; cut < .008; cut+=.001)
       m_plotter->addPlot(new BendingAnglePositionPlot(cut));
+    m_plotter->addPlot(new Chi2Plot);
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
     Layer* layer = setup->firstLayer();
