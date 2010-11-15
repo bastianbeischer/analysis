@@ -156,8 +156,8 @@ void HitsPlot::draw(TCanvas* canvas, QVector<Hit*> hits, Track* track)
     double z_min = m_positionHist->GetYaxis()->GetXmin();
     double z_max = m_positionHist->GetYaxis()->GetXmax();
 
-    StraightLine* straightLine = dynamic_cast<StraightLine*>(track);
-    if (straightLine) {
+    if (track->type() == Track::StraightLine) {
+      StraightLine* straightLine = static_cast<StraightLine*>(track);
       double x0 = straightLine->x0();
       double slopeX = straightLine->slopeX();
       double x_min = x0 + z_min * slopeX;
@@ -183,8 +183,8 @@ void HitsPlot::draw(TCanvas* canvas, QVector<Hit*> hits, Track* track)
       m_lines.push_back(y_line);
     }
 
-    BrokenLine* brokenLine = dynamic_cast<BrokenLine*>(track);
-    if (brokenLine) {
+    if (track->type() == Track::BrokenLine) {
+      BrokenLine* brokenLine = static_cast<BrokenLine*>(track);
       double zIntersection = brokenLine->zIntersection();
 
       double x0, slopeX, x_min, x_max;
@@ -226,8 +226,8 @@ void HitsPlot::draw(TCanvas* canvas, QVector<Hit*> hits, Track* track)
       m_lines.push_back(y_line);
     }
 
-    CenteredBrokenLine* centeredBrokenLine = dynamic_cast<CenteredBrokenLine*>(track);
-    if (centeredBrokenLine) {
+    if (track->type() == Track::CenteredBrokenLine) {
+      CenteredBrokenLine* centeredBrokenLine = static_cast<CenteredBrokenLine*>(track);
       double zIntersection = centeredBrokenLine->zIntersection();
 
       double x0, slopeX, x_min, x_max;

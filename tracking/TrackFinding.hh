@@ -12,7 +12,7 @@ class TrackFinding
   
 public:
   TrackFinding();
-  ~TrackFinding();
+  virtual ~TrackFinding();
 
   void setSlopeBins(int nBins) {m_slopeBins = nBins;}
   void setOffsetBins(int nBins) {m_offsetBins = nBins;}
@@ -20,7 +20,7 @@ public:
   void setTrdPull(double pull) {m_trdPull = pull;}
   void setTofPull(double pull) {m_tofPull = pull;}
 
-  QVector<Hit*> findTrack(QVector<Hit*> hits);
+  QVector<Hit*> findTrack(const QVector<Hit*>& hits);
 
 private:
   bool isInCorridor(Track* track, Hit* hit, double pullOverRide = -1) const;

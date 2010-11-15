@@ -6,11 +6,14 @@
 
 ClassImp(Cluster);
 
-Cluster::Cluster()
+Cluster::Cluster() :
+  Hit(),
+  m_hits()
 {
 }
 
 Cluster::Cluster(std::vector<Hit*> hits) :
+  Hit(),
   m_hits(hits)
 {
   processHits();
@@ -18,6 +21,10 @@ Cluster::Cluster(std::vector<Hit*> hits) :
 
 Cluster::~Cluster()
 {
+  for (std::vector<Hit*>::iterator it = m_hits.begin(); it != m_hits.end(); it++) {
+    delete *it;
+  }
+  m_hits.clear();
 }
 
 void Cluster::processHits()
@@ -69,7 +76,5 @@ void Cluster::processHits()
   m_signalHeight = amplitude;
   m_position = position;
   m_counterPosition = counterPosition;
-
-  // m_outputHit = new Hit(Hit::tracker, detId, amplitude, position, counterPosition);
 }
 

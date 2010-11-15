@@ -40,9 +40,9 @@ bool TrackSelection::passes(Track* track)
     passes = false;
 
   foreach(Plane plane, m_planes) {
-    double z = plane.first;
-    double x = track->x(z);
-    double y = track->y(z);
+    //double z = plane.first;
+    //double x = track->x(z);
+    //double y = track->y(z);
 
     QRectF rectangle = plane.second;
     // if (rectangle.contains(x,y))

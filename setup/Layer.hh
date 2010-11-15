@@ -32,9 +32,9 @@ public:
   unsigned short        nElements() const {return m_elements.size();}
 
 
-  QList<unsigned short> detIds();
+  QList<unsigned short> detIds() const;
   bool                  contains(unsigned short detId) const;
-  const char*           printInfo();
+  const char*           printInfo() const;
 
 private:
   double                                 m_z;

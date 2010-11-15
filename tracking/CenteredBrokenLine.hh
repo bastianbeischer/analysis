@@ -13,7 +13,7 @@ class CenteredBrokenLine :
   
 public:
   CenteredBrokenLine();
-  ~CenteredBrokenLine();
+  virtual ~CenteredBrokenLine();
   
 public:
   void           setX0(double x0)                {m_x0 = x0;}
@@ -35,7 +35,7 @@ public:
   TVector3       position(double z) const {return TVector3(x(z), y(z), z);}
 
 public:
-  int            fit   (QVector<Hit*> hits);
+  int            fit   (const QVector<Hit*>& hits);
 
 private:
   double            m_x0;

@@ -13,7 +13,7 @@ class BrokenLine :
   
 public:
   BrokenLine();
-  ~BrokenLine();
+  virtual ~BrokenLine();
   
 public:
   void           setUpperX0(double upperX0)      {m_upperX0 = upperX0;}
@@ -37,7 +37,7 @@ public:
   TVector3       position(double z) const {return TVector3(x(z), y(z), z);}
 
 public:
-  int            fit   (QVector<Hit*> hits);
+  int            fit   (const QVector<Hit*>& hits);
 
 private:
   double            m_upperX0;
