@@ -33,11 +33,19 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleE
   QVector<Hit*> hitsForFit;
   QVector<Hit*> hitsInThisLayer;
       
+  // plot only exactly 8 tracker hits
   int nTrackerHits = 0;
   foreach(Hit* hit, hits)
     if (hit->type() == Hit::tracker)
       ++nTrackerHits;
   if (nTrackerHits != 8)
+    return;
+
+  // only select tracks which didn't pass through the magnet
+  double x0 = track->x(0.);
+  double y0 = track->y(0.);
+  double r = sqrt(x0*x0 + y0*y0);
+  if (r > 65 && r < 110)
     return;
 
   foreach(Hit* hit, hits) {
