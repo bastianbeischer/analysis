@@ -1,7 +1,5 @@
 #include "StraightLineMatrix.hh"
 
-#include <cmath>
-
 StraightLineMatrix::StraightLineMatrix() :
   Matrix()
 {
@@ -13,7 +11,12 @@ StraightLineMatrix::~StraightLineMatrix()
 {
 }
 
-void StraightLineMatrix::fillMatrixFromHit(TMatrixD& A, unsigned int i, bool useTangens, float k, float xi)
+bool StraightLineMatrix::checkInvertability(const QVector<Hit*>& hits) const
+{
+  return false;
+}
+
+void StraightLineMatrix::fillMatrixFromHit(TMatrixD& A, unsigned int i, bool useTangens, float k, float xi) const
 {
   if (useTangens) {
     A(i,0)            = -xi;

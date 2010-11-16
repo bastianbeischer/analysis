@@ -21,7 +21,8 @@ public:
   double ndf() const {return m_ndf;}
   
 protected:
-  virtual void fillMatrixFromHit(TMatrixD& A, unsigned int i, bool useTangens, float k, float xi) = 0;
+  virtual bool checkInvertability(const QVector<Hit*>& hits) const = 0;
+  virtual void fillMatrixFromHit(TMatrixD& A, unsigned int i, bool useTangens, float k, float xi) const = 0;
 
 protected:
   unsigned int m_nRow;

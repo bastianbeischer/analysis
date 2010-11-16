@@ -25,8 +25,7 @@ int Matrix::fit(const QVector<Hit*>& hits)
   // basic dimensions of matrices
   m_nRow = nHits;
 
-  if (m_nRow < m_nCol) {
-    //std::cerr << "Matrix::fit -- Can't fit: not enough hits!" << std::endl;
+  if (!checkInvertability(hits)) {
     return 0;
   }
 
@@ -103,10 +102,10 @@ int Matrix::fit(const QVector<Hit*>& hits)
   // calculate solution
 
   // U is diagonal, inverse should always exist unless someone specified sigma = inf or something strange
-  if (U.Determinant() == 0) {
-    //std::cerr << "Matrix::fit -- U is singular!" << std::endl;
-    return 0;
-  }
+  // if (U.Determinant() == 0) {
+  //   //std::cerr << "Matrix::fit -- U is singular!" << std::endl;
+  //   return 0;
+  // }
   TMatrixD Uinv = U;
   Uinv.Invert();
   TMatrixD ATranspose(m_nCol,m_nRow);
@@ -114,10 +113,10 @@ int Matrix::fit(const QVector<Hit*>& hits)
   TMatrixD M = ATranspose * Uinv * A;
   TVectorD c = ATranspose * Uinv * b;
 
-  if (M.Determinant() == 0) {
-    //std::cerr << "Matrix::fit -- M is singular!" << std::endl;
-    return 0;
-  }
+  // if (M.Determinant() == 0) {
+  //   //std::cerr << "Matrix::fit -- M is singular!" << std::endl;
+  //   return 0;
+  // }
   TMatrixD Minv = M;
   Minv.Invert();
 
