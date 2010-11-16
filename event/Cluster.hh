@@ -12,7 +12,7 @@ class Cluster :
   
 public:
   Cluster();
-  Cluster(std::vector<Hit*> hits);
+  Cluster(const std::vector<Hit*>& hits);
   Cluster(const Cluster& other);
   const Cluster& operator=(const Cluster& right);
   virtual ~Cluster();

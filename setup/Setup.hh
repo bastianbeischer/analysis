@@ -32,10 +32,10 @@ public:
   DetectorElement*  nextElement();
 
 public:
-  QVector<Cluster*> generateClusters(QVector<Hit*> hits);
+  QVector<Cluster*> generateClusters(const QVector<Hit*>& hits);
   void              deleteClusters();
   void              clearClusters();
-  void              addHitsToLayers(QVector<Hit*> hits);
+  void              addHitsToLayers(const QVector<Hit*>& hits);
   void              clearHitsFromLayers();
 
 public:

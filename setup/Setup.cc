@@ -145,7 +145,7 @@ DetectorElement* Setup::element(unsigned short id)
   return m_elements[id];
 }
 
-QVector<Cluster*> Setup::generateClusters(QVector<Hit*> hits)
+QVector<Cluster*> Setup::generateClusters(const QVector<Hit*>& hits)
 {
   QVector<Cluster*> clusters;
 
@@ -191,7 +191,7 @@ void Setup::clearClusters()
     element->clearClusters();
 }
 
-void Setup::addHitsToLayers(QVector<Hit*> hits)
+void Setup::addHitsToLayers(const QVector<Hit*>& hits)
 {
   // remove old hits
   clearHitsFromLayers();

@@ -19,7 +19,7 @@ TRDModule::~TRDModule()
 {
 }
 
-QVector<Cluster*> TRDModule::findClusters()
+const QVector<Cluster*>& TRDModule::findClusters()
 {
   const int seedThreshold = 10;
   const int neighbourThreshold = 10;

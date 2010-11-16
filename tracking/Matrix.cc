@@ -18,7 +18,7 @@ Matrix::~Matrix()
 {
 }
 
-int Matrix::fit(QVector<Hit*> hits)
+int Matrix::fit(const QVector<Hit*>& hits)
 {
   unsigned int nHits = hits.size();
 
