@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget* parent)
   
   connect(this, SIGNAL(finished(int)), this, SLOT(mainWindowFinished()));
   connect(m_ui.analyzeButton, SIGNAL(clicked()), this, SLOT(analyzeButtonClicked()));
+  connect(m_ui.saveCanvasButton, SIGNAL(clicked()), this, SLOT(saveCanvasButtonClicked()));
   connect(m_ui.setFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
   connect(m_ui.addFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
   connect(m_ui.listWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(listWidgetItemChanged(QListWidgetItem*)));
@@ -290,7 +291,7 @@ void MainWindow::setFileList(const QString& fileName)
   m_plotter->setFileList(fileName);
 }
 
-void MainWindow::saveButtonClicked()
+void MainWindow::saveCanvasButtonClicked()
 {
   QString fileEnding;
   QString fileName = QFileDialog::getSaveFileName(this, "save event", "", "svg;;pdf;;root;;png", &fileEnding);
