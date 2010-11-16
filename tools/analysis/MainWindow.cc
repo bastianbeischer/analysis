@@ -15,6 +15,7 @@
 #include "BendingAnglePositionPlot.hh"
 #include "Chi2Plot.hh"
 #include "TOFPositionCorrelationPlot.hh"
+#include "MomentumSpectrumPlot.hh"
 
 #include <QDebug>
 #include <QFileDialog>
@@ -196,6 +197,7 @@ void MainWindow::setupAnalysis()
     }
   }
   if (m_ui.momentumReconstructionCheckBox->isChecked()) {
+    m_plotter->addPlot(new MomentumSpectrumPlot);
   }
   if (m_ui.miscellaneousTrackerCheckBox->isChecked()) {
   }
