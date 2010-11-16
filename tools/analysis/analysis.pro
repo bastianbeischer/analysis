@@ -38,7 +38,6 @@ HEADERS = MainWindow.hh \
           BendingAnglePositionPlot.hh \
           Chi2Plot.hh \
           TOFPositionCorrelationPlot.hh \
-          TimeOfFlightPlot.hh \
           MomentumSpectrumPlot.hh \
           TimeOfFlightPlot.hh
 
@@ -56,7 +55,6 @@ SOURCES = main.cc \
           BendingAnglePositionPlot.cc \
           Chi2Plot.cc \
           TOFPositionCorrelationPlot.cc \
-          TimeOfFlightPlot.cc \
           MomentumSpectrumPlot.cc \
           TimeOfFlightPlot.cc
 
