@@ -9,6 +9,8 @@
 #include <TGraphErrors.h>
 #include <TF1.h>
 
+#include <QDebug>
+
 TOFPositionCorrelationPlot::TOFPositionCorrelationPlot(unsigned short id)
   : H2DPlot(AnalysisPlot::MiscellaneousTOF)
   , m_id(id)
@@ -21,6 +23,7 @@ TOFPositionCorrelationPlot::TOFPositionCorrelationPlot(unsigned short id)
   histogram->GetYaxis()->SetTitle("y_{TOF} / mm");
   setHistogram(histogram);
   m_correlationFunction->SetRange(-450, 450);
+  m_correlationFunction->SetParameters(0, 1);
 }
 
 TOFPositionCorrelationPlot::~TOFPositionCorrelationPlot()
@@ -60,10 +63,13 @@ void TOFPositionCorrelationPlot::finalize()
     TF1 f("tofPositionCorreletionFitFunction", "gaus");
     TH1D* h = histogram()->ProjectionY("_py", i+1, i+1);
     if (h->GetEntries() > 10) {
-      h->Fit(&f, "QN0");
-      int ndf = nBins - f.GetNumberFreeParameters();
-      if (f.GetChisquare() / ndf < 5.) {
-        double x = histogram()->GetXaxis()->GetBinCenter(i+1);
+      double x = histogram()->GetXaxis()->GetBinCenter(i+1);
+      double sigma = 100;
+      f.SetParameters(h->GetMaximum(), x, sigma);
+      qDebug() << h->GetMaximum();
+      f.SetRange(x - 5 * sigma, x + 5 * sigma);
+      h->Fit(&f, "QN0R");
+      if (0.5 < f.GetChisquare() / f.GetNDF() && f.GetChisquare() / f.GetNDF() < 5.) {
         int nPoints = m_correlationGraph->GetN();
         m_correlationGraph->SetPoint(nPoints, x, f.GetParameter(1));
         m_correlationGraph->SetPointError(nPoints, 0, f.GetParError(1));
