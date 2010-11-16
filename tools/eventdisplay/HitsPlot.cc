@@ -48,7 +48,7 @@ void HitsPlot::clearHits()
 void HitsPlot::draw(TCanvas* canvas, const QVector<Hit*>& hits, Track* track)
 {
   canvas->cd();
-  clear();
+  clearHits();
 
   TPaletteAxis* palette = (TPaletteAxis*) histogram()->GetListOfFunctions()->FindObject("palette");
 
