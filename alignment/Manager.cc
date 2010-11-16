@@ -1,9 +1,8 @@
 #include "Manager.hh"
 
-#include "Matrix.hh"
+#include "AlignmentMatrix.hh"
 #include "Strategy.hh"
 #include "Parameters.hh"
-#include "Matrix.hh"
 #include "Track.hh"
 #include "Setup.hh"
 #include "DetectorElement.hh"
@@ -18,7 +17,7 @@ Manager* Manager::m_instance = 0;
 
 Manager::Manager() :
   m_strategy(new Strategy),
-  m_matrix(new Matrix),
+  m_matrix(new AlignmentMatrix),
   m_parameters(m_strategy->parameters())
 {
 }

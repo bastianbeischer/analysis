@@ -4,7 +4,7 @@
 #include <QVector>
 #include <QString>
 
-class Matrix;
+class AlignmentMatrix;
 class Strategy;
 class Parameters;
 class Track;
@@ -30,13 +30,13 @@ private:
   Manager();
 
 private:
-  static Manager* m_instance;
+  static Manager*  m_instance;
 
-  Strategy*       m_strategy;
-  Matrix*         m_matrix;
-  Parameters*     m_parameters;
+  Strategy*        m_strategy;
+  AlignmentMatrix* m_matrix;
+  Parameters*      m_parameters;
 
-  QVector<Track*> m_tracks;
+  QVector<Track*>  m_tracks;
 
 };
 

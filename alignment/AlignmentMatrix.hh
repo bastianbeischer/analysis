@@ -1,15 +1,15 @@
-#ifndef Matrix_hh
-#define Matrix_hh
+#ifndef AlignmentMatrix_hh
+#define AlignmentMatrix_hh
 
 class Track;
 class TestbeamSetup;
 
-class Matrix
+class AlignmentMatrix
 {
 
 public:
-  Matrix();
-  ~Matrix();
+  AlignmentMatrix();
+  ~AlignmentMatrix();
 
 public:
   void fillMatrixFromTrack(Track* track);
@@ -25,4 +25,4 @@ protected:
 
 };
 
-#endif /* Matrix_hh */
+#endif /* AlignmentMatrix_hh */
