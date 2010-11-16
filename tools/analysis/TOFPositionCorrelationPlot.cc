@@ -66,7 +66,6 @@ void TOFPositionCorrelationPlot::finalize()
       double x = histogram()->GetXaxis()->GetBinCenter(i+1);
       double sigma = 100;
       f.SetParameters(h->GetMaximum(), x, sigma);
-      qDebug() << h->GetMaximum();
       f.SetRange(x - 5 * sigma, x + 5 * sigma);
       h->Fit(&f, "QN0R");
       if (0.5 < f.GetChisquare() / f.GetNDF() && f.GetChisquare() / f.GetNDF() < 5.) {

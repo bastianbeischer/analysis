@@ -20,6 +20,7 @@ class MainWindow : public QDialog {
     void setOrAddFileListButtonClicked();
     void analyzeButtonClicked();
     void saveCanvasButtonClicked();
+    void saveAllCanvasButtonClicked();
     void listWidgetItemChanged(QListWidgetItem*);
     void listWidgetCurrentRowChanged(int);
     void showButtonsClicked();
