@@ -31,6 +31,7 @@ public:
 
   int entry() const {return m_currentEntry;}
   int entryInFile() const;
+  const std::string& rawFileNameForEvent() const;
 
 private:
   void init();
