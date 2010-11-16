@@ -30,16 +30,8 @@ BendingAnglePlot::~BendingAnglePlot()
 
 void BendingAnglePlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
 {
-  if (!track || (track->type() != Track::BrokenLine && track->type() != Track::CenteredBrokenLine))
+  if (!track)
     return;
-
-  double alpha = 0;
-  if (track->type() == Track::BrokenLine) {
-    alpha = static_cast<BrokenLine*>(track)->bendingAngle();
-  }
-  if (track->type() == Track::CenteredBrokenLine) {
-    alpha = static_cast<CenteredBrokenLine*>(track)->bendingAngle();
-  }
 
   int nTrackerHits = 0;
   foreach(Hit* hit, clusters)
@@ -48,6 +40,7 @@ void BendingAnglePlot::processEvent(const QVector<Hit*>& clusters, Track* track,
   if (nTrackerHits != 8)
     return;
 
+  double alpha = track->bendingAngle();
   double r = sqrt(track->x(0)*track->x(0) + track->y(0)*track->y(0));
   histogram(0)->Fill(alpha);
   if (r < 75)

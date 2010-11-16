@@ -31,6 +31,8 @@ public:
   virtual double   x(double z)        const = 0;
   virtual double   y(double z)        const = 0;
   virtual TVector3 position(double z) const = 0;
+  virtual double   bendingAngle()     const = 0;
+  double           pt()               const;
 
 public:
   virtual int      fit   (const QVector<Hit*>& hits) = 0;

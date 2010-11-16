@@ -39,14 +39,6 @@ void MomentumSpectrumPlot::processEvent(const QVector<Hit*>& hits, Track* track,
   if (!track || (track->type() != Track::BrokenLine && track->type() != Track::CenteredBrokenLine))
     return;
 
-  double alpha = 0;
-  if (track->type() == Track::BrokenLine) {
-    alpha = static_cast<BrokenLine*>(track)->bendingAngle();
-  }
-  if (track->type() == Track::CenteredBrokenLine) {
-    alpha = static_cast<CenteredBrokenLine*>(track)->bendingAngle();
-  }
-
   int nTrackerHits = 0;
   foreach(Hit* hit, hits)
     if (hit->type() == Hit::tracker)
@@ -54,13 +46,7 @@ void MomentumSpectrumPlot::processEvent(const QVector<Hit*>& hits, Track* track,
   if (nTrackerHits != 8)
     return;
 
-  double z0_magnet = -40.; // mm
-  double z1_magnet =  40.; // mm
-  double x0_magnet = track->x(z0_magnet); // mm
-  double x1_magnet = track->x(z1_magnet); // mm
-  double B_estimate = 0.27; // tesla
-  double L  = sqrt(pow(x1_magnet - x0_magnet, 2.) + pow(z1_magnet - z0_magnet,2.))*1000.; // convert from mm to m
-  double pt = 0.3*B_estimate*L/alpha/1e6; // GeV
+  double pt = track->pt();
 
   double r = sqrt(track->x(0)*track->x(0) + track->y(0)*track->y(0));
   //  histogram(0)->Fill(pt);
