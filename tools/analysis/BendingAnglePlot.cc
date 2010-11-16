@@ -58,7 +58,7 @@ void BendingAnglePlot::processEvent(const QVector<Hit*>& clusters, Track* track,
 
 void BendingAnglePlot::finalize()
 {
-  // histogram(0)->Scale(1./histogram(0)->Integral("width"));
-  // histogram(1)->Scale(1./histogram(1)->Integral("width"));
-  // histogram(2)->Scale(1./histogram(2)->Integral("width"));
+  histogram(0)->Scale(1./histogram(0)->Integral("width"));
+  histogram(1)->Scale(1./histogram(1)->Integral("width"));
+  histogram(2)->Scale(1./histogram(2)->Integral("width"));
 }

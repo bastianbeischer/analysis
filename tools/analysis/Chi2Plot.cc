@@ -28,8 +28,10 @@ void Chi2Plot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent
   if (nTrackerHits != 8)
     return;
 
-  if (track) {
-    histogram(0)->Fill(track->chi2());
+  if (track && track->fitGood()) {
+    if ((int)track->ndf() == 20 - track->nParameters()) {
+      histogram(0)->Fill(track->chi2());
+    }
   }
 }
 
