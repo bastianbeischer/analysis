@@ -37,7 +37,8 @@ HEADERS = MainWindow.hh \
           BendingAnglePlot.hh \
           BendingAnglePositionPlot.hh \
           Chi2Plot.hh \
-          TOFPositionCorrelationPlot.hh
+          TOFPositionCorrelationPlot.hh \
+					TimeOfFlightPlot.hh
 
 # Sources
 SOURCES = main.cc \
@@ -52,7 +53,8 @@ SOURCES = main.cc \
           BendingAnglePlot.cc \
           BendingAnglePositionPlot.cc \
           Chi2Plot.cc \
-          TOFPositionCorrelationPlot.cc
+          TOFPositionCorrelationPlot.cc \
+					TimeOfFlightPlot.cc
 
 include($$TOPLEVEL/root.pri)
 

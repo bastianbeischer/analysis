@@ -12,7 +12,7 @@ TOFPositionCorrelationPlot::TOFPositionCorrelationPlot(unsigned short id)
   , m_id(id)
 {
   setTitle(QString("occupancy %1").arg(id));
-  TH2D* histogram = new TH2D(qPrintable(title()), "", 50, -250, 250, 50, -250, 250);
+  TH2D* histogram = new TH2D(qPrintable(title()), "", 35, -350, 350, 70, -350, 350);
   histogram->GetXaxis()->SetTitle("y_{tracker} / mm");
   histogram->GetYaxis()->SetTitle("y_{TOF} / mm");
   setHistogram(histogram);
@@ -32,7 +32,7 @@ void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, Tra
       return;
     foreach(Hit* hit, clusters)
       if (hit->type() == Hit::tof && (hit->detId()-hit->channel()) == m_id)
-        histogram()->Fill(track->y(hit->position().z()), static_cast<TOFCluster*>(hit)->yEstimate());
+        histogram()->Fill(track->y(hit->position().z()), static_cast<TOFCluster*>(hit)->yEstimate(false));
   }
 }
 

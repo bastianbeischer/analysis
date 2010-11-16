@@ -37,6 +37,6 @@ int main(int argc, char* argv[])
     if (fileList != application.arguments().first())
       window.addFileList(fileList);
   }
-  window.showMaximized();
+  window.show();
   return application.exec();
 }
