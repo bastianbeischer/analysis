@@ -20,7 +20,7 @@ public:
   virtual ~DetectorElement();
   
 public:
-  virtual QVector<Cluster*> findClusters() = 0;
+  virtual const QVector<Cluster*>& findClusters() = 0;
 
 public:
   void              addHit(Hit* hit)                {m_hits[hit->channel()] = hit;}

@@ -12,7 +12,7 @@ Cluster::Cluster() :
 {
 }
 
-Cluster::Cluster(std::vector<Hit*> hits) :
+Cluster::Cluster(const std::vector<Hit*>& hits) :
   Hit(),
   m_hits(hits)
 {

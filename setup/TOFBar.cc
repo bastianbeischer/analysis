@@ -19,7 +19,7 @@ TOFBar::~TOFBar()
 {
 }
 
-QVector<Cluster*> TOFBar::findClusters()
+const QVector<Cluster*>& TOFBar::findClusters()
 {
   if(m_hits.size() >= 3) {
     TOFCluster* tofCluster = new TOFCluster;

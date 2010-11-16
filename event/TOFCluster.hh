@@ -6,7 +6,7 @@
 class TOFCluster : public Cluster {
   public:
     TOFCluster();
-    TOFCluster(std::vector<Hit*> hits);
+    TOFCluster(const std::vector<Hit*>& hits);
     TOFCluster(const TOFCluster& other);
     const TOFCluster& operator=(const TOFCluster& right);
     virtual ~TOFCluster();

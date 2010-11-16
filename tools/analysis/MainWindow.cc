@@ -12,6 +12,7 @@
 #include "BendingAnglePlot.hh"
 #include "ResidualPlot.hh"
 #include "GeometricOccupancyPlot.hh"
+#include "GeometricOccupancyProjectionPlot.hh"
 #include "BendingAnglePositionPlot.hh"
 #include "Chi2Plot.hh"
 #include "TOFPositionCorrelationPlot.hh"
@@ -45,6 +46,8 @@ MainWindow::MainWindow(QWidget* parent)
   
   connect(this, SIGNAL(finished(int)), this, SLOT(mainWindowFinished()));
   connect(m_ui.analyzeButton, SIGNAL(clicked()), this, SLOT(analyzeButtonClicked()));
+  connect(m_ui.saveCanvasButton, SIGNAL(clicked()), this, SLOT(saveCanvasButtonClicked()));
+  connect(m_ui.saveAllCanvasesButton, SIGNAL(clicked()), this, SLOT(saveAllCanvasButtonClicked()));
   connect(m_ui.setFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
   connect(m_ui.addFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
   connect(m_ui.listWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(listWidgetItemChanged(QListWidgetItem*)));
@@ -169,6 +172,7 @@ void MainWindow::setupAnalysis()
     Layer* layer = setup->firstLayer();
     while(layer) {
       m_plotter->addPlot(new GeometricOccupancyPlot(layer->z()));
+      m_plotter->addPlot(new GeometricOccupancyProjectionPlot(layer->z()));
       layer = setup->nextLayer();
     }
   }
@@ -290,16 +294,31 @@ void MainWindow::setFileList(const QString& fileName)
   m_plotter->setFileList(fileName);
 }
 
-void MainWindow::saveButtonClicked()
+void MainWindow::saveCanvasButtonClicked()
 {
   QString fileEnding;
-  QString fileName = QFileDialog::getSaveFileName(this, "save event", "", "svg;;pdf;;root;;png", &fileEnding);
+  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "svg;;pdf;;root;;png", &fileEnding);
   if (fileName.isEmpty())
     return;
   fileEnding.prepend('.');
   if (!fileName.endsWith(fileEnding))
     fileName.append(fileEnding);
   m_plotter->saveCanvas(fileName);
+}
+
+void MainWindow::saveAllCanvasButtonClicked()
+{
+  QFileDialog dialog(this, "save all canvases displayed", ".");
+  dialog.setFileMode(QFileDialog::DirectoryOnly);
+  if (dialog.exec())
+    for (int i = 0; i < m_ui.listWidget->count(); ++i) {
+      m_ui.listWidget->setCurrentRow(i);
+      QString directoryName = dialog.selectedFiles().first();
+      m_plotter->saveCanvas(directoryName + '/' + m_plotter->plotTitle(m_activePlots[i]) + ".svg");
+      m_plotter->saveCanvas(directoryName + '/' + m_plotter->plotTitle(m_activePlots[i]) + ".pdf");
+      m_plotter->saveCanvas(directoryName + '/' + m_plotter->plotTitle(m_activePlots[i]) + ".root");
+      m_plotter->saveCanvas(directoryName + '/' + m_plotter->plotTitle(m_activePlots[i]) + ".png");
+    }
 }
 
 void MainWindow::mainWindowFinished()

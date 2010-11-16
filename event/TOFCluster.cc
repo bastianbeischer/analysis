@@ -14,7 +14,7 @@ TOFCluster::TOFCluster()
   , m_yResolutionEstimate(395./sqrt(12.))
 {}
 
-TOFCluster::TOFCluster(std::vector<Hit*> hits)
+TOFCluster::TOFCluster(const std::vector<Hit*>& hits)
   : Cluster(hits)
 {
 }

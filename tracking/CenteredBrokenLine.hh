@@ -34,7 +34,6 @@ public:
 
   double         x(double z)        const;
   double         y(double z)        const;
-  TVector3       position(double z) const {return TVector3(x(z), y(z), z);}
 
 public:
   int            fit   (const QVector<Hit*>& hits);

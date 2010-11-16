@@ -22,7 +22,7 @@ public:
   
 public:
   double yStretchFactor();
-  void draw(TCanvas* canvas, QVector<Hit*> hits, Track* track = 0);
+  void draw(TCanvas* canvas, const QVector<Hit*>& hits, Track* track = 0);
 
 private:
   void clear();

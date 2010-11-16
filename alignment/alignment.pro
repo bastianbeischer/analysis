@@ -13,7 +13,7 @@ RCC_DIR     = ./.tmp
 SOURCES += Constraint.cc \
            DataInterface.cc \
            Manager.cc \
-           Matrix.cc \
+           AlignmentMatrix.cc \
            Parameters.cc \
            Strategy.cc \
            TrackSelection.cc
@@ -21,7 +21,7 @@ SOURCES += Constraint.cc \
 HEADERS += Constraint.hh \
            DataInterface.hh \
            Manager.hh \
-           Matrix.hh \
+           AlignmentMatrix.hh \
            Parameters.hh \
            Strategy.hh \
            TrackSelection.hh

@@ -1,4 +1,4 @@
-#include "Matrix.hh"
+#include "AlignmentMatrix.hh"
 
 #include "Manager.hh"
 #include "Strategy.hh"
@@ -13,7 +13,7 @@
 
 #include <cmath>
 
-Matrix::Matrix() :
+AlignmentMatrix::AlignmentMatrix() :
   m_nGlobal(0),
   m_nLocal(0),
   m_globalDerivatives(0),
@@ -21,13 +21,13 @@ Matrix::Matrix() :
 {
 }
 
-Matrix::~Matrix()
+AlignmentMatrix::~AlignmentMatrix()
 {
   delete[] m_globalDerivatives;
   delete[] m_localDerivatives;
 }
 
-void Matrix::init()
+void AlignmentMatrix::init()
 {
   Manager* manager = Manager::instance();
   Strategy* strategy = manager->strategy();
@@ -43,7 +43,7 @@ void Matrix::init()
   resetArrays();
 }
 
-void Matrix::resetArrays()
+void AlignmentMatrix::resetArrays()
 {
   for (unsigned int i = 0; i < m_nGlobal; i++)
     m_globalDerivatives[i] = 0.;
@@ -51,7 +51,7 @@ void Matrix::resetArrays()
     m_localDerivatives[i] = 0.;
 }
 
-void Matrix::fillMatrixFromTrack(Track* track)
+void AlignmentMatrix::fillMatrixFromTrack(Track* track)
 {
   QVector<Hit*> hits = track->hits();
   

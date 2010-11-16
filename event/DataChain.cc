@@ -117,3 +117,8 @@ int DataChain::entryInFile() const
   assert(entryInFile >= 0);
   return entryInFile;
 }
+
+const std::string& DataChain::rawFileNameForEvent() const
+{
+  return currentDescription()->runFileForEventNumber(entryInFile());
+}

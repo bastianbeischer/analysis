@@ -1,0 +1,16 @@
+#ifndef GeometricOccupancyProjectionPlot_hh
+#define GeometricOccupancyProjectionPlot_hh
+
+#include "H1DPlot.hh"
+
+class GeometricOccupancyProjectionPlot : public H1DPlot {
+  public:
+    GeometricOccupancyProjectionPlot(double zPosition);
+    virtual ~GeometricOccupancyProjectionPlot();
+    virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
+    virtual void finalize();
+  private:
+    double m_zPosition;
+};
+
+#endif

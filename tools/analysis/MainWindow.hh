@@ -19,7 +19,8 @@ class MainWindow : public QDialog {
   private slots:
     void setOrAddFileListButtonClicked();
     void analyzeButtonClicked();
-    void saveButtonClicked();
+    void saveCanvasButtonClicked();
+    void saveAllCanvasButtonClicked();
     void listWidgetItemChanged(QListWidgetItem*);
     void listWidgetCurrentRowChanged(int);
     void showButtonsClicked();

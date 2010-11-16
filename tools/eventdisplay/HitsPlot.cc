@@ -144,7 +144,7 @@ double HitsPlot::yStretchFactor()
   return m_stretchFactor;
 }
 
-void HitsPlot::draw(TCanvas* canvas, QVector<Hit*> hits, Track* track)
+void HitsPlot::draw(TCanvas* canvas, const QVector<Hit*>& hits, Track* track)
 {
   canvas->cd();
   clear();

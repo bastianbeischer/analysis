@@ -13,8 +13,10 @@ public:
   Matrix();
   virtual ~Matrix();
   
-  int fit(QVector<Hit*> hits);
+  int fit(const QVector<Hit*>& hits);
   TVectorD solution() const {return m_solution;}
+  unsigned int nRow() const {return m_nRow;}
+  unsigned int nCol() const {return m_nCol;}
   double chi2() const {return m_chi2;}
   double ndf() const {return m_ndf;}
   

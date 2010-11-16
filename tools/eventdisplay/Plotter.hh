@@ -4,7 +4,6 @@
 #include <TQtWidget.h>
 
 #include <QString>
-#include <QVector3D>
 
 class TCanvas;
 class DataChain;
