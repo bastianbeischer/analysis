@@ -65,7 +65,6 @@ void MomentumSpectrumPlot::processEvent(const QVector<Hit*>& hits, Track* track,
   double r = sqrt(track->x(0)*track->x(0) + track->y(0)*track->y(0));
   //  histogram(0)->Fill(pt);
   if (r < 75) {
-    std::cout << pt << std::endl;
     histogram(0)->Fill(pt);
   }
   //  if (r > 140)
