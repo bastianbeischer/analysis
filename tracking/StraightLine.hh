@@ -30,6 +30,7 @@ public:
   double         x(double z)        const {return m_x0 + z*m_slopeX;}
   double         y(double z)        const {return m_y0 + z*m_slopeY;}
   TVector3       position(double z) const {return TVector3(x(z), y(z), z);}
+  double         bendingAngle()     const {return 0.;}
 
 public:
   int            fit   (const QVector<Hit*>& hits);
