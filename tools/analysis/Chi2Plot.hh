@@ -1,11 +1,10 @@
 #ifndef Chi2Plot_hh
 #define Chi2Plot_hh
 
+#include "AnalysisPlot.hh"
 #include "H1DPlot.hh"
 
-class Chi2Plot :
-  public H1DPlot
-{
+class Chi2Plot : public AnalysisPlot, public H1DPlot {
   
 public:
   Chi2Plot();

@@ -6,7 +6,8 @@
 #include <TH1.h>
 
 TimeOfFlightPlot::TimeOfFlightPlot()
-  : H1DPlot(AnalysisPlot::MiscellaneousTOF)
+  : AnalysisPlot(AnalysisPlot::MiscellaneousTOF)
+  , H1DPlot()
 {
   setTitle("time of flight");
   TH1D* histogram = new TH1D("time of flight", "", 100, -10, 10);

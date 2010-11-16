@@ -1,9 +1,11 @@
 #ifndef MomentumSpectrumPlot_hh
 #define MomentumSpectrumPlot_hh
 
+#include "AnalysisPlot.hh"
 #include "H1DPlot.hh"
 
 class MomentumSpectrumPlot :
+  public AnalysisPlot,
   public H1DPlot
 {
   

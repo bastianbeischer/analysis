@@ -7,7 +7,8 @@
 #include <TAxis.h>
 
 GeometricOccupancyPlot::GeometricOccupancyPlot(double zPosition)
-  : H2DPlot(AnalysisPlot::Occupancy)
+  : AnalysisPlot(AnalysisPlot::Occupancy)
+  , H2DPlot()
   , m_zPosition(zPosition)
 {
   setTitle(QString("occupancy %1").arg(zPosition));

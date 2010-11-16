@@ -1,9 +1,10 @@
 #ifndef GeometricOccupancyPlot_hh
 #define GeometricOccupancyPlot_hh
 
+#include "AnalysisPlot.hh"
 #include "H2DPlot.hh"
 
-class GeometricOccupancyPlot : public H2DPlot {
+class GeometricOccupancyPlot : public AnalysisPlot, public H2DPlot {
   public:
     explicit GeometricOccupancyPlot(double zPosition);
     virtual ~GeometricOccupancyPlot();

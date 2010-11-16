@@ -29,6 +29,7 @@ LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
 HEADERS = MainWindow.hh \
           Plotter.hh \
           AnalysisPlot.hh \
+          RootPlot.hh \
           H1DPlot.hh \
           H2DPlot.hh \
           BendingPositionPlot.hh \
@@ -47,6 +48,7 @@ SOURCES = main.cc \
           MainWindow.cc \
           Plotter.cc \
           AnalysisPlot.cc \
+          RootPlot.cc \
           H1DPlot.cc \
           H2DPlot.cc \
           BendingPositionPlot.cc \

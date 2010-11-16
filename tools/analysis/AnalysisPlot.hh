@@ -4,12 +4,14 @@
 #include <QVector>
 #include <QString>
 
+#include "RootPlot.hh"
+
 class Hit;
 class Track;
 class SimpleEvent;
 class TCanvas;
 
-class AnalysisPlot {
+class AnalysisPlot : virtual public RootPlot {
   public:
     enum Topic {TopicBegin, SignalHeightUpperTracker = TopicBegin,
       SignalHeightLowerTracker, SignalHeightTRD, TimeOverThreshold, Tracking, Occupancy,
@@ -22,10 +24,8 @@ class AnalysisPlot {
     void setTitle(const QString& title);
     const QString& title() const;
     Topic topic() const;
-    virtual void draw(TCanvas*) = 0;
     virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0) = 0;
     virtual void finalize() = 0;
-    virtual void clear() = 0;
   private:
     Topic m_topic;
     QString m_title;

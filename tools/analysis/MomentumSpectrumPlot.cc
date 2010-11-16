@@ -10,7 +10,8 @@
 #include <iostream>
 
 MomentumSpectrumPlot::MomentumSpectrumPlot() :
-  H1DPlot(AnalysisPlot::MomentumReconstruction)
+  AnalysisPlot(AnalysisPlot::MomentumReconstruction),
+  H1DPlot()
 {
   setTitle("spectrum");
   TH1D* histogram = new TH1D(qPrintable(title()), "", 100, -20, 20);

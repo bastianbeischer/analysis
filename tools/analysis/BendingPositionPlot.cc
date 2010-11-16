@@ -6,7 +6,8 @@
 #include <TH1.h>
 
 BendingPositionPlot::BendingPositionPlot()
-  : H1DPlot(AnalysisPlot::Tracking)
+  : AnalysisPlot(AnalysisPlot::Tracking)
+  , H1DPlot()
 {
   setTitle("bending position");
   TH1D* histogram = new TH1D("bending position", "", 1000, -1000, 1000);

@@ -1,9 +1,10 @@
 #ifndef TimeOfFlightPlot_hh
 #define TimeOfFlightPlot_hh
 
+#include "AnalysisPlot.hh"
 #include "H1DPlot.hh"
 
-class TimeOfFlightPlot : public H1DPlot {
+class TimeOfFlightPlot : public AnalysisPlot, public H1DPlot {
   public:
     TimeOfFlightPlot();
     virtual ~TimeOfFlightPlot();

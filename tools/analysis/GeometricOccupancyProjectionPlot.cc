@@ -10,7 +10,8 @@
 #include <cmath>
 
 GeometricOccupancyProjectionPlot::GeometricOccupancyProjectionPlot(double zPosition)
-  : H1DPlot(AnalysisPlot::Occupancy)
+  : AnalysisPlot(AnalysisPlot::Occupancy)
+  , H1DPlot()
   , m_zPosition(zPosition)
 {
   setTitle(QString("occupancy projection %1").arg(zPosition));

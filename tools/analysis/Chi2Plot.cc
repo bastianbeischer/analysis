@@ -6,7 +6,8 @@
 #include "Track.hh"
 
 Chi2Plot::Chi2Plot() :
-  H1DPlot(AnalysisPlot::Tracking)
+  AnalysisPlot(AnalysisPlot::Tracking),
+  H1DPlot()
 {
   setTitle("chi2");
   TH1D* histogram = new TH1D("chi2", "", 250, 0., 100.);

@@ -12,7 +12,8 @@
 #include <QDebug>
 
 TOFPositionCorrelationPlot::TOFPositionCorrelationPlot(unsigned short id)
-  : H2DPlot(AnalysisPlot::MiscellaneousTOF)
+  : AnalysisPlot(AnalysisPlot::MiscellaneousTOF)
+  , H2DPlot()
   , m_id(id)
   , m_correlationGraph(new TGraphErrors)
   , m_correlationFunction(new TF1(qPrintable(QString("tof correlation Function %1").arg(id)), "pol1"))

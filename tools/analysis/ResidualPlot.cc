@@ -13,7 +13,8 @@
 #include <cmath>
 
 ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer)
-  : H2DPlot(topic)
+  : AnalysisPlot(topic)
+  , H2DPlot()
   , m_layer(layer)
 {
   setTitle(QString("Residuals layer at %1").arg(layer->z()));

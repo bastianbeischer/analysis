@@ -10,7 +10,8 @@
 #include <cmath>
 
 BendingAnglePlot::BendingAnglePlot()
-  : H1DPlot(AnalysisPlot::Tracking)
+  : AnalysisPlot(AnalysisPlot::Tracking)
+  , H1DPlot()
 {
   setTitle("bending angle");
   TH1D* histogram = 0;
