@@ -12,11 +12,13 @@ RCC_DIR     = ./.tmp
 
 SOURCES += RootPlot.cc \
            H1DPlot.cc \
-           H2DPlot.cc
+           H2DPlot.cc \
+           PerdaixDisplay.cc
 
 HEADERS += RootPlot.hh \
            H1DPlot.hh \
-           H2DPlot.hh
+           H2DPlot.hh \
+           PerdaixDisplay.hh
 
 INCLUDEPATH +=
 

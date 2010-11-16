@@ -23,111 +23,17 @@
 #include <iostream>
 
 HitsPlot::HitsPlot()
-  : m_positionHist(new TH2D("2D EventDisplay", "", 100, -200., 200., 100, -650, 350))
-  , m_yAxis(0)
+  : PerdaixDisplay()
   , m_fitInfo(0)
 {
-  m_positionHist->GetXaxis()->SetTitle("x / mm");
-  m_positionHist->GetYaxis()->SetTitle("z / mm");
-  m_positionHist->GetZaxis()->SetTitle("signal height / ADC counts");
-  m_positionHist->GetZaxis()->SetTitleOffset(1.4);
-  m_positionHist->SetContour(99);
-  m_positionHist->SetMinimum(0);
-  m_positionHist->SetMaximum(4096);
-  m_positionHist->Fill(1e5, 1e5);
-  m_positionHist->SetStats(false);
-  m_positionHist->Draw("colz");
-  gPad->Update();
-  const double widthModule  = 65.;
-  const double heightModule = 20.;
-  const double zTracker[4] = {227., 60., -60., -227};
-
-  const double trdWidth  = 200.;
-  const double trdHeight = 222.;
-  const double trdX0     = 0.;
-  const double trdZ0     = -411.;
-
-  const double tofHeight = 6.;
-  const double tofWidth  = 50.;
-  const double zUpperLayer = 406.55 - 125.;
-  const double zLowerLayer = -406.55 - 125.;
-  const double zTof[4]   = {zUpperLayer + 0.5*tofHeight,
-                            zUpperLayer - 0.5*tofHeight,
-                            zLowerLayer + 0.5*tofHeight, 
-                            zLowerLayer - 0.5*tofHeight};
-
-  m_boxes.push_back(new TBox(-1.5*widthModule, zTracker[0] - heightModule/2., -0.5*widthModule, zTracker[0] + heightModule/2.));
-  m_boxes.push_back(new TBox(-0.5*widthModule, zTracker[0] - heightModule/2.,  0.5*widthModule, zTracker[0] + heightModule/2.));
-  m_boxes.push_back(new TBox( 0.5*widthModule, zTracker[0] - heightModule/2.,  1.5*widthModule, zTracker[0] + heightModule/2.));
-    
-  m_boxes.push_back(new TBox(-1.0*widthModule, zTracker[1] - heightModule/2.,  0.0*widthModule, zTracker[1] + heightModule/2.));
-  m_boxes.push_back(new TBox( 0.0*widthModule, zTracker[1] - heightModule/2.,  1.0*widthModule, zTracker[1] + heightModule/2.));
-
-  m_boxes.push_back(new TBox(-1.0*widthModule, zTracker[2] - heightModule/2.,  0.0*widthModule, zTracker[2] + heightModule/2.));
-  m_boxes.push_back(new TBox( 0.0*widthModule, zTracker[2] - heightModule/2.,  1.0*widthModule, zTracker[2] + heightModule/2.));
-
-  m_boxes.push_back(new TBox(-1.5*widthModule, zTracker[3] - heightModule/2., -0.5*widthModule, zTracker[3] + heightModule/2.));
-  m_boxes.push_back(new TBox(-0.5*widthModule, zTracker[3] - heightModule/2.,  0.5*widthModule, zTracker[3] + heightModule/2.));
-  m_boxes.push_back(new TBox( 0.5*widthModule, zTracker[3] - heightModule/2.,  1.5*widthModule, zTracker[3] + heightModule/2.));
-     
-  m_boxes.push_back(new TBox(trdX0 - 0.5*trdWidth, trdZ0 - 0.5*trdHeight, trdX0 + 0.5*trdWidth, trdZ0 + 0.5*trdHeight));
-
-  m_boxes.push_back(new TBox(-2.0*tofWidth, zTof[0] - 0.5*tofHeight, -1.0*tofWidth, zTof[0] + 0.5*tofHeight));
-  m_boxes.push_back(new TBox(-1.0*tofWidth, zTof[0] - 0.5*tofHeight, -0.0*tofWidth, zTof[0] + 0.5*tofHeight));
-  m_boxes.push_back(new TBox( 0.0*tofWidth, zTof[0] - 0.5*tofHeight,  1.0*tofWidth, zTof[0] + 0.5*tofHeight));
-  m_boxes.push_back(new TBox( 1.0*tofWidth, zTof[0] - 0.5*tofHeight,  2.0*tofWidth, zTof[0] + 0.5*tofHeight));
-
-  m_boxes.push_back(new TBox(-2.0*tofWidth, zTof[1] - 0.5*tofHeight, -1.0*tofWidth, zTof[1] + 0.5*tofHeight));
-  m_boxes.push_back(new TBox(-1.0*tofWidth, zTof[1] - 0.5*tofHeight, -0.0*tofWidth, zTof[1] + 0.5*tofHeight));
-  m_boxes.push_back(new TBox( 0.0*tofWidth, zTof[1] - 0.5*tofHeight,  1.0*tofWidth, zTof[1] + 0.5*tofHeight));
-  m_boxes.push_back(new TBox( 1.0*tofWidth, zTof[1] - 0.5*tofHeight,  2.0*tofWidth, zTof[1] + 0.5*tofHeight));
-
-  m_boxes.push_back(new TBox(-2.0*tofWidth, zTof[2] - 0.5*tofHeight, -1.0*tofWidth, zTof[2] + 0.5*tofHeight));
-  m_boxes.push_back(new TBox(-1.0*tofWidth, zTof[2] - 0.5*tofHeight, -0.0*tofWidth, zTof[2] + 0.5*tofHeight));
-  m_boxes.push_back(new TBox( 0.0*tofWidth, zTof[2] - 0.5*tofHeight,  1.0*tofWidth, zTof[2] + 0.5*tofHeight));
-  m_boxes.push_back(new TBox( 1.0*tofWidth, zTof[2] - 0.5*tofHeight,  2.0*tofWidth, zTof[2] + 0.5*tofHeight));
-
-  m_boxes.push_back(new TBox(-2.0*tofWidth, zTof[3] - 0.5*tofHeight, -1.0*tofWidth, zTof[3] + 0.5*tofHeight));
-  m_boxes.push_back(new TBox(-1.0*tofWidth, zTof[3] - 0.5*tofHeight, -0.0*tofWidth, zTof[3] + 0.5*tofHeight));
-  m_boxes.push_back(new TBox( 0.0*tofWidth, zTof[3] - 0.5*tofHeight,  1.0*tofWidth, zTof[3] + 0.5*tofHeight));
-  m_boxes.push_back(new TBox( 1.0*tofWidth, zTof[3] - 0.5*tofHeight,  2.0*tofWidth, zTof[3] + 0.5*tofHeight));
-  
-  foreach(TBox* box, m_boxes) {
-    box->SetFillStyle(0);
-    box->SetLineStyle(1);
-    box->Draw("SAME");
-  }
-
-  // new axis for y
-  double min = -400;
-  double max = 400;
-  m_yAxis = new TGaxis(gPad->GetUxmin(), gPad->GetUymax(), gPad->GetUxmax(), gPad->GetUymax(), min, max, 510, "-");
-  m_yAxis->SetLineColor(kRed);
-  m_yAxis->SetTextColor(kRed);
-  m_yAxis->SetLabelColor(kRed);
-  m_yAxis->SetLabelOffset(0);
-  m_yAxis->SetTitle("y / mm");
-  m_yAxis->SetTitleOffset(1.2);
-  m_yAxis->SetLabelFont(gStyle->GetLabelFont());
-  m_yAxis->SetLabelSize(gStyle->GetLabelSize());
-  m_yAxis->SetTitleFont(gStyle->GetTitleFont());
-  m_yAxis->SetTitleSize(gStyle->GetTitleSize());
-  m_yAxis->Draw();
-  gPad->Update();
-  m_stretchFactor =
-    (m_positionHist->GetXaxis()->GetXmax() - m_positionHist->GetXaxis()->GetXmin())
-    / (m_yAxis->GetWmax() - m_yAxis->GetWmin());
 }
 
 HitsPlot::~HitsPlot()
 {
-  delete m_positionHist;
-  delete m_yAxis;
-  qDeleteAll(m_boxes);
-  clear();
+  clearHits();
 }
 
-void HitsPlot::clear()
+void HitsPlot::clearHits()
 {
   qDeleteAll(m_hits);
   m_hits.clear();
@@ -139,22 +45,16 @@ void HitsPlot::clear()
   m_fitInfo = 0;
 }
 
-double HitsPlot::yStretchFactor()
-{
-  return m_stretchFactor;
-}
-
 void HitsPlot::draw(TCanvas* canvas, const QVector<Hit*>& hits, Track* track)
 {
   canvas->cd();
   clear();
 
-  TPaletteAxis* palette = (TPaletteAxis*) m_positionHist->GetListOfFunctions()->FindObject("palette");
-
+  TPaletteAxis* palette = (TPaletteAxis*) histogram()->GetListOfFunctions()->FindObject("palette");
 
   if (track) {
-    double z_min = m_positionHist->GetYaxis()->GetXmin();
-    double z_max = m_positionHist->GetYaxis()->GetXmax();
+    double z_min = histogram()->GetYaxis()->GetXmin();
+    double z_max = histogram()->GetYaxis()->GetXmax();
 
     if (track->type() == Track::StraightLine) {
       StraightLine* straightLine = static_cast<StraightLine*>(track);
@@ -175,7 +75,7 @@ void HitsPlot::draw(TCanvas* canvas, const QVector<Hit*>& hits, Track* track)
       double y_min = y0 + z_min * slopeY;
       double y_max = y0 + z_max * slopeY;
 
-      TLine* y_line = new TLine(m_stretchFactor*y_min, z_min, m_stretchFactor*y_max, z_max);
+      TLine* y_line = new TLine(m_yStretchFactor*y_min, z_min, m_yStretchFactor*y_max, z_max);
       y_line->SetLineColor(kRed);
       y_line->SetLineWidth(1);
       y_line->SetLineStyle(1);
@@ -218,7 +118,7 @@ void HitsPlot::draw(TCanvas* canvas, const QVector<Hit*>& hits, Track* track)
       double y_min = y0 + z_min * slopeY;
       double y_max = y0 + z_max * slopeY;
 
-      TLine* y_line = new TLine(m_stretchFactor*y_min, z_min, m_stretchFactor*y_max, z_max);
+      TLine* y_line = new TLine(m_yStretchFactor*y_min, z_min, m_yStretchFactor*y_max, z_max);
       y_line->SetLineColor(kRed);
       y_line->SetLineWidth(1);
       y_line->SetLineStyle(1);
@@ -260,7 +160,7 @@ void HitsPlot::draw(TCanvas* canvas, const QVector<Hit*>& hits, Track* track)
       double y_min = y0 + z_min * slopeY;
       double y_max = y0 + z_max * slopeY;
 
-      TLine* y_line = new TLine(m_stretchFactor*y_min, z_min, m_stretchFactor*y_max, z_max);
+      TLine* y_line = new TLine(m_yStretchFactor*y_min, z_min, m_yStretchFactor*y_max, z_max);
       y_line->SetLineColor(kRed);
       y_line->SetLineWidth(1);
       y_line->SetLineStyle(1);
@@ -297,7 +197,7 @@ void HitsPlot::draw(TCanvas* canvas, const QVector<Hit*>& hits, Track* track)
     TOFCluster* tofCluster = dynamic_cast<TOFCluster*>(hit);
     if (tofCluster) {
       if (tofCluster->signalHeight() > 4*200) {
-        TMarker* marker = new TMarker(m_stretchFactor * tofCluster->yEstimate(), tofCluster->position().z(), 20);
+        TMarker* marker = new TMarker(m_yStretchFactor * tofCluster->yEstimate(), tofCluster->position().z(), 20);
         marker->SetMarkerSize(.5);
         marker->Draw("SAME");
         m_markers.push_back(marker);
@@ -305,9 +205,9 @@ void HitsPlot::draw(TCanvas* canvas, const QVector<Hit*>& hits, Track* track)
 
       /*
         TLine* y_tofErrorLine = new TLine(
-        m_stretchFactor * (tofCluster->yEstimate() - tofCluster->yResolutionEstimate()),
+        m_yStretchFactor * (tofCluster->yEstimate() - tofCluster->yResolutionEstimate()),
         tofCluster->position().z(),
-        m_stretchFactor * (tofCluster->yEstimate() + tofCluster->yResolutionEstimate()),
+        m_yStretchFactor * (tofCluster->yEstimate() + tofCluster->yResolutionEstimate()),
         tofCluster->position().z()
         );
         y_tofErrorLine->SetLineColor(kRed);
