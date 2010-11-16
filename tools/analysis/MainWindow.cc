@@ -250,7 +250,7 @@ void MainWindow::setupAnalysis()
     m_plotter->setTrackType(new BrokenLine());
   } else if (m_ui.trackComboBox->currentText() == "straight line") {
     m_plotter->setTrackType(new StraightLine());
-  } else if (m_ui.trackComboBox->currentText() == "none") {
+  } else if (m_ui.trackComboBox->currentText() == "no track") {
     m_plotter->setTrackType(0);
   }
 
