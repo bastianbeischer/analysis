@@ -10,15 +10,12 @@
 Matrix::Matrix() :
   m_nRow(0),
   m_nCol(0),
-  m_A(0),
-  m_solution(0)
+  m_solution(TVectorD(0))
 {
 }
 
 Matrix::~Matrix()
 {
-  delete m_A;
-  delete m_solution;
 }
 
 int Matrix::fit(QVector<Hit*> hits)
@@ -34,10 +31,8 @@ int Matrix::fit(QVector<Hit*> hits)
   }
 
   // declare matrices for the calculation
-  if (m_A) delete m_A;
-  if (m_solution) delete m_solution;
-  m_A = new TMatrixD(m_nRow, m_nCol);
-  m_solution = new TVectorD(m_nCol);
+  TMatrixD A(m_nRow, m_nCol);
+  TVectorD solution(m_nCol);
   TVectorD b(m_nRow);
   TMatrixD U(m_nRow,m_nRow);
   TMatrixD CombineXandY(1,2);
@@ -71,8 +66,8 @@ int Matrix::fit(QVector<Hit*> hits)
     }
 
     for (unsigned int j = 0; j < m_nCol; j++)
-      (*m_A)(i,j) = 0.;
-    fillMatrixFromHit(i, useTangens, k, xi);
+      A(i,j) = 0.;
+    fillMatrixFromHit(A, i, useTangens, k, xi);
 
     // calculate covariance matrix
 
@@ -116,8 +111,8 @@ int Matrix::fit(QVector<Hit*> hits)
   TMatrixD Uinv = U;
   Uinv.Invert();
   TMatrixD ATranspose(m_nCol,m_nRow);
-  ATranspose.Transpose(*m_A);
-  TMatrixD M = ATranspose * Uinv * (*m_A);
+  ATranspose.Transpose(A);
+  TMatrixD M = ATranspose * Uinv * A;
   TVectorD c = ATranspose * Uinv * b;
 
   if (M.Determinant() == 0) {
@@ -127,16 +122,18 @@ int Matrix::fit(QVector<Hit*> hits)
   TMatrixD Minv = M;
   Minv.Invert();
 
-  *m_solution = Minv * c;
+  solution = Minv * c;
 
   // calculate chi2 and track positions from fit parameters
   TMatrixD residuum(m_nRow,1);
   for (unsigned int i = 0; i < m_nRow; i++)
-    residuum(i,0) = ((*m_A)*(*m_solution) - b)(i);
+    residuum(i,0) = (A*solution - b)(i);
   TMatrixD residuumTrans(1,m_nRow);
   residuumTrans.Transpose(residuum);
+
   m_chi2 = (residuumTrans * Uinv * residuum)(0,0);
   m_ndf = m_nRow - m_nCol;
+  m_solution = solution;
 
   return 1;
 }

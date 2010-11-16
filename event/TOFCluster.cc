@@ -19,6 +19,21 @@ TOFCluster::TOFCluster(std::vector<Hit*> hits)
 {
 }
 
+TOFCluster::TOFCluster(const TOFCluster& other)
+  : Cluster(other)
+  , m_yEstimate(other.m_yEstimate)
+  , m_yResolutionEstimate(other.m_yResolutionEstimate)
+{
+}
+
+const TOFCluster& TOFCluster::operator=(const TOFCluster& right)
+{
+  static_cast<Cluster>(*this) = static_cast<Cluster>(right);
+  m_yEstimate = right.m_yEstimate;
+  m_yResolutionEstimate = right.m_yResolutionEstimate;
+  return *this;
+}
+
 TOFCluster::~TOFCluster()
 {}
 
@@ -56,9 +71,9 @@ void TOFCluster::processHits()
     //const double barLength = 395; // mm
     const double refractiveIndex = 1.58;
     const double speedOfLight = 299792458; // m/s
-    m_yEstimate = 0.5e-6 * refractiveIndex * speedOfLight * dt;
+    m_yEstimate = 0.5e-6 * speedOfLight / refractiveIndex * dt;
     double sigmaDt = 0.6; //TODO replace with function of m_yEstimate.
-    m_yResolutionEstimate = 0.5e-6 * refractiveIndex * speedOfLight * sigmaDt;
+    m_yResolutionEstimate = 0.5e-6 * speedOfLight / refractiveIndex * sigmaDt;
   }
 
   TVector3 position = TVector3(x,y,z);

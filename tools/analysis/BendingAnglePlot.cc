@@ -30,31 +30,30 @@ BendingAnglePlot::~BendingAnglePlot()
 
 void BendingAnglePlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
 {
-  double upperSlope = 0, lowerSlope = 0;
+  if (!track || (track->type() != Track::BrokenLine && track->type() != Track::CenteredBrokenLine))
+    return;
+
+  double alpha = 0;
   if (track->type() == Track::BrokenLine) {
-    upperSlope = static_cast<BrokenLine*>(track)->upperSlopeX();
-    lowerSlope = static_cast<BrokenLine*>(track)->lowerSlopeX();
+    alpha = static_cast<BrokenLine*>(track)->bendingAngle();
   }
   if (track->type() == Track::CenteredBrokenLine) {
-    upperSlope = static_cast<CenteredBrokenLine*>(track)->upperSlopeX();
-    lowerSlope = static_cast<CenteredBrokenLine*>(track)->lowerSlopeX();
+    alpha = static_cast<CenteredBrokenLine*>(track)->bendingAngle();
   }
 
-  if (track->type() == Track::BrokenLine || track->type() == Track::CenteredBrokenLine) {
-    int nTrackerHits = 0;
-    foreach(Hit* hit, clusters)
-      if (hit->type() == Hit::tracker)
-        ++nTrackerHits;
-    if (nTrackerHits != 8)
-      return;
-    double alpha = atan(upperSlope) - atan(lowerSlope);
-    double r = sqrt(track->x(0)*track->x(0) + track->y(0)*track->y(0));
-    histogram(0)->Fill(alpha);
-    if (r < 75)
-      histogram(1)->Fill(alpha);
-    if (r > 140)
-      histogram(2)->Fill(alpha);
-  }
+  int nTrackerHits = 0;
+  foreach(Hit* hit, clusters)
+    if (hit->type() == Hit::tracker)
+      ++nTrackerHits;
+  if (nTrackerHits != 8)
+    return;
+
+  double r = sqrt(track->x(0)*track->x(0) + track->y(0)*track->y(0));
+  histogram(0)->Fill(alpha);
+  if (r < 75)
+    histogram(1)->Fill(alpha);
+  if (r > 140)
+    histogram(2)->Fill(alpha);
 }
 
 void BendingAnglePlot::finalize()

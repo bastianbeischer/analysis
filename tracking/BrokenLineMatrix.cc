@@ -4,27 +4,28 @@ BrokenLineMatrix::BrokenLineMatrix() :
   Matrix()
 {
   m_nCol = 6;
+  m_solution.ResizeTo(m_nCol);
 }
 
 BrokenLineMatrix::~BrokenLineMatrix()
 {
 }
 
-void BrokenLineMatrix::fillMatrixFromHit(unsigned int i, bool useTangens, float k, float xi)
+void BrokenLineMatrix::fillMatrixFromHit(TMatrixD& A, unsigned int i, bool useTangens, float k, float xi)
 {
   int offsetXindex = k > 0. ? 0 : 1;
   int slopeXindex = k > 0. ? 3 : 4;
 
   if (useTangens) {
-    (*m_A)(i,offsetXindex) = -xi;
-    (*m_A)(i,2)            = 1.;
-    (*m_A)(i,slopeXindex)  = -k*xi;
-    (*m_A)(i,5)            = k;
+    A(i,offsetXindex) = -xi;
+    A(i,2)            = 1.;
+    A(i,slopeXindex)  = -k*xi;
+    A(i,5)            = k;
   }
   else {
-    (*m_A)(i,offsetXindex) = 1.;
-    (*m_A)(i,2)            = -xi;
-    (*m_A)(i,slopeXindex)  = k;
-    (*m_A)(i,5)            = -k*xi;
+    A(i,offsetXindex) = 1.;
+    A(i,2)            = -xi;
+    A(i,slopeXindex)  = k;
+    A(i,5)            = -k*xi;
   }
 }

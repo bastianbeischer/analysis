@@ -13,6 +13,9 @@ public:
 public:
   TOFSipmHit();
   TOFSipmHit(unsigned short detId, TVector3 position, TVector3 counterPosition);
+  TOFSipmHit(const TOFSipmHit& other);
+  const TOFSipmHit& operator=(const TOFSipmHit& right);
+
   virtual ~TOFSipmHit();
 
   void processTDCHits();

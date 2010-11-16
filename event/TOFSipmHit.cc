@@ -21,6 +21,24 @@ TOFSipmHit::TOFSipmHit(unsigned short detId, TVector3 position, TVector3 counter
   , m_levelChanges()
 {}
 
+TOFSipmHit::TOFSipmHit(const TOFSipmHit& other)
+  : Hit(other)
+  , m_channel(other.m_channel)
+  , m_startTime(other.m_startTime)
+  , m_timeOverThreshold(other.m_timeOverThreshold)
+  , m_levelChanges(other.m_levelChanges)
+{
+}
+
+const TOFSipmHit& TOFSipmHit::operator=(const TOFSipmHit& right)
+{
+  static_cast<Hit>(*this) = static_cast<Hit>(right);
+  m_channel = right.m_channel;
+  m_startTime = right.m_startTime;
+  m_timeOverThreshold = right.m_timeOverThreshold;
+  m_levelChanges = right.m_levelChanges;
+  return *this;
+}
 
 TOFSipmHit::~TOFSipmHit()
 {}

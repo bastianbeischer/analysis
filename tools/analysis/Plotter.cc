@@ -61,14 +61,16 @@ void Plotter::setProgressBar(QProgressBar* bar)
 {
   m_progressBar = bar;
 }
-/*
-void Plotter::mousePressEvent(QMouseEvent*)
+
+void Plotter::mousePressEvent(QMouseEvent* event)
 {
+  TQtWidget::mousePressEvent(event);
 }
 
-void Plotter::mouseReleaseEvent(QMouseEvent*)
+void Plotter::mouseReleaseEvent(QMouseEvent* event)
 {
-}*/
+  TQtWidget::mouseReleaseEvent(event);
+}
 
 void Plotter::mouseMoveEvent(QMouseEvent* event)
 {
@@ -79,7 +81,7 @@ void Plotter::mouseMoveEvent(QMouseEvent* event)
   m_positionLabel->setText(QString("%1%2  %3%4")
     .arg(x < 0 ? '-' : '+').arg(qAbs(x), 7, 'f', 3, '0')
     .arg(y < 0 ? '-' : '+').arg(qAbs(y), 7, 'f', 3, '0'));
-	TQtWidget::mouseMoveEvent(event);
+  TQtWidget::mouseMoveEvent(event);
 }
 
 void Plotter::saveCanvas(const QString& fileName)

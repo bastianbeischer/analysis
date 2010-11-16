@@ -19,6 +19,21 @@ Cluster::Cluster(std::vector<Hit*> hits) :
   processHits();
 }
 
+Cluster::Cluster(const Cluster& other) :
+  Hit(other),
+  m_hits(other.m_hits)
+{
+  processHits();
+}
+
+const Cluster& Cluster::operator=(const Cluster& right)
+{
+  static_cast<Hit>(*this) = static_cast<Hit>(right);
+  m_hits = right.m_hits;
+  processHits();
+  return *this;
+}
+
 Cluster::~Cluster()
 {
   for (std::vector<Hit*>::iterator it = m_hits.begin(); it != m_hits.end(); it++) {
@@ -29,6 +44,10 @@ Cluster::~Cluster()
 
 void Cluster::processHits()
 {
+  if (m_hits.size() == 0) {
+    return;
+  }
+  
   double x  = 0., y  = 0., z  = 0.;
   double xc = 0., yc = 0., zc = 0.;
   unsigned short detId;
@@ -36,10 +55,6 @@ void Cluster::processHits()
   double weightedMeanC;
   double sumOfWeights;
 
-  if (m_hits.size() == 0) {
-    return;
-  }
-  
   Hit* firstHit = m_hits.at(0);
   Hit::ModuleType type = firstHit->type();
   detId = firstHit->detId() - firstHit->channel();

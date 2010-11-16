@@ -11,6 +11,8 @@ class DataDescription : public TObject
 {
   public:
     DataDescription();
+    DataDescription(const DataDescription& other);
+    const DataDescription& operator=(const DataDescription& right);
     ~DataDescription();
 
     static const std::string calculateSoftwareVersionHash();
