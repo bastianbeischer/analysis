@@ -12,6 +12,7 @@
 #include "BendingAnglePlot.hh"
 #include "ResidualPlot.hh"
 #include "GeometricOccupancyPlot.hh"
+#include "GeometricOccupancyProjectionPlot.hh"
 #include "BendingAnglePositionPlot.hh"
 #include "Chi2Plot.hh"
 #include "TOFPositionCorrelationPlot.hh"
@@ -171,6 +172,7 @@ void MainWindow::setupAnalysis()
     Layer* layer = setup->firstLayer();
     while(layer) {
       m_plotter->addPlot(new GeometricOccupancyPlot(layer->z()));
+      m_plotter->addPlot(new GeometricOccupancyProjectionPlot(layer->z()));
       layer = setup->nextLayer();
     }
   }

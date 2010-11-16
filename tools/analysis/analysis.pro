@@ -39,7 +39,8 @@ HEADERS = MainWindow.hh \
           Chi2Plot.hh \
           TOFPositionCorrelationPlot.hh \
           MomentumSpectrumPlot.hh \
-          TimeOfFlightPlot.hh
+          TimeOfFlightPlot.hh \
+          GeometricOccupancyProjectionPlot.hh
 
 # Sources
 SOURCES = main.cc \
@@ -56,7 +57,8 @@ SOURCES = main.cc \
           Chi2Plot.cc \
           TOFPositionCorrelationPlot.cc \
           MomentumSpectrumPlot.cc \
-          TimeOfFlightPlot.cc
+          TimeOfFlightPlot.cc \
+          GeometricOccupancyProjectionPlot.cc
 
 include($$TOPLEVEL/root.pri)
 
