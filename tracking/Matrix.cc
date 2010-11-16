@@ -38,7 +38,6 @@ int Matrix::fit(const QVector<Hit*>& hits)
   TMatrixD CombineXandY(1,2);
 
   for (unsigned int i = 0; i < m_nRow; i++) {
-
     Hit* hit = hits.at(i);
 
     TVector3 pos = hit->position();
