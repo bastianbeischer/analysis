@@ -10,6 +10,11 @@
 #include "SipmArray.hh"
 #include "Hit.hh"
 
+static bool compareDetectorPosition(const DetectorElement* element1, const DetectorElement* element2)
+{
+  return element1->position().x() < element2->position().x();
+}
+
 Layer::Layer() :
   m_z(0)
 {
@@ -95,4 +100,12 @@ QList<unsigned short> Layer::detIds() const
   foreach(DetectorElement* element, m_elements)
     detIds.push_back(element->id());
   return detIds;
+}
+
+void Layer::sortIdsByPosition()
+{
+  QList<DetectorElement*> elements = m_elements.values();
+  qSort(elements.begin(), elements.end(), compareDetectorPosition);
+  foreach(DetectorElement* element, elements)
+    m_ids.push_back(element->id());
 }

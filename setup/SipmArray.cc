@@ -2,6 +2,7 @@
 
 #include "Hit.hh"
 #include "Cluster.hh"
+#include "Setup.hh"
 
 SipmArray::SipmArray() :
   DetectorElement()
@@ -13,6 +14,8 @@ SipmArray::SipmArray(unsigned short detId) :
   DetectorElement(detId)
 {
   m_type = tracker;
+  m_position = Setup::instance()->configFilePosition("tracker", m_id);
+  m_alignmentShift = Setup::instance()->configFileAlignmentShift("tracker", m_id);
 }
 
 SipmArray::~SipmArray()

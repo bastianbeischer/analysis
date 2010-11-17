@@ -15,6 +15,7 @@ bool comparePositions(const Hit* hit1, const Hit* hit2)
 DetectorElement::DetectorElement() :
   m_type(none),
   m_id(0),
+  m_position(QVector3D(0.,0.,0.)),
   m_alignmentShift(0.)
 {
 }
@@ -22,6 +23,7 @@ DetectorElement::DetectorElement() :
 DetectorElement::DetectorElement(unsigned short id) :
   m_type(none),
   m_id(id),
+  m_position(QVector3D(0.,0.,0.)),
   m_alignmentShift(0.)
 {
 }

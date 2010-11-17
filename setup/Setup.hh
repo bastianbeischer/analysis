@@ -9,6 +9,7 @@ class Hit;
 class Layer;
 class DetectorElement;
 class QSettings;
+class QVector3D;
 
 typedef QMap<double,Layer*>::iterator LayerIterator;
 typedef QMap<unsigned short,DetectorElement*>::iterator ElementIterator;
@@ -39,6 +40,10 @@ public:
   void              clearHitsFromLayers();
 
 public:
+  QVector3D         configFilePosition(QString group, unsigned short detId) const;
+  double            configFileAlignmentShift(QString group, unsigned short detId) const;
+
+public:
   void              writeSettings();
 
 private:
@@ -50,6 +55,7 @@ private:
 private:
   static Setup*                          m_instance;
 
+  QSettings*                             m_coordinates;
   QSettings*                             m_settings;
 
   LayerIterator                          m_layerIt;

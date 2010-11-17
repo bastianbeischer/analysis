@@ -2,6 +2,7 @@
 
 #include "Hit.hh"
 #include "Cluster.hh"
+#include "Setup.hh"
 
 TRDModule::TRDModule() :
   DetectorElement()
@@ -13,6 +14,8 @@ TRDModule::TRDModule(unsigned short detId) :
   DetectorElement(detId)
 {
   m_type = trd;
+  m_position = Setup::instance()->configFilePosition("trd", m_id);
+  m_alignmentShift = Setup::instance()->configFileAlignmentShift("trd", m_id);
 }
 
 TRDModule::~TRDModule()
@@ -55,4 +58,3 @@ const QVector<Cluster*>& TRDModule::findClusters()
 
   return m_clusters;
 }
-

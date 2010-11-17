@@ -29,18 +29,21 @@ public:
 
 public:
   double                z()         const {return m_z;}
+  QList<DetectorElement*> elements() const {return m_elements.values();}
   unsigned short        nElements() const {return m_elements.size();}
 
 
   QList<unsigned short> detIds() const;
   bool                  contains(unsigned short detId) const;
   const char*           printInfo() const;
+  void                  sortIdsByPosition();
 
 private:
   double                                 m_z;
 
   QMap<unsigned short, DetectorElement*> m_elements;
-  
+  QList<unsigned short>                  m_ids;
+
 };
 
 #endif /* Layer_hh */

@@ -1,7 +1,6 @@
 #ifndef Converter_hh
 #define Converter_hh
 
-class QSettings;
 class RawEvent;
 class SimpleEvent;
 class SingleFile;
@@ -18,7 +17,6 @@ public:
 
 private:
   const SingleFile* m_file;
-  const QSettings*  m_settings;
   
 };
 

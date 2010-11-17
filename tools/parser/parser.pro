@@ -15,10 +15,12 @@ RCC_DIR     = ./.tmp
 # Forms
 FORMS =
 
-INCLUDEPATH += $$TOPLEVEL/event
+INCLUDEPATH += $$TOPLEVEL/event \
+               $$TOPLEVEL/setup
 DEPENDPATH += $$INCLUDEPATH
 
-LIBS += -L$$TOPLEVEL/lib -lSimpleEvent
+LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
+                         -lsetup
 
 # Headers
 HEADERS = Converter.hh \

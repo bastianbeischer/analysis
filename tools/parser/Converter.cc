@@ -9,12 +9,13 @@
 #include "TrackerDataBlock.h"
 #include "TRDDataBlock.h"
 #include "TOFDataBlock.h"
+#include "Setup.hh"
 
 #include "CLHEP/Units/SystemOfUnits.h"
 
 #include <TVector3.h>
-#include <QSettings>
 #include <QDebug>
+#include <QVector3D>
 
 #include <iostream>
 
@@ -33,28 +34,12 @@ const int tdcChannelToSipm[64] = {
 };
 
 Converter::Converter(const SingleFile* file) :
-  m_file(file),
-  m_settings(0)
+  m_file(file)
 {
-  QStringList envVariables = QProcess::systemEnvironment();
-  QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
-  QString path = "";
-  if (filteredVars.size() != 0) {
-    QString entry = filteredVars.first();
-    path = entry.split("=").at(1);
-    path += "/conf/";
-  }
-  else {
-    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
-  }
-
-  qDebug() << "Using geometry file: " + path + "perdaix_coordinates.conf";
-  m_settings = new QSettings(path+"perdaix_coordinates.conf", QSettings::IniFormat);
 }
 
 Converter::~Converter()
 {
-  delete m_settings;
 }
 
 SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
@@ -107,16 +92,17 @@ SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
     // process data
     unsigned short detId = id->GetID16();
     std::map<unsigned short, TOFSipmHit*> tofHitMap; // maps channel to sipm hits
+    Setup* setup = Setup::instance();
 
     for (int i = 0; i < nValues; i++) {
 
       if (id->IsTracker()) {
         int amplitude = static_cast<int>(temp[i]);
 
-        QList<QVariant> liste = m_settings->value("tracker/"+QString::number(detId | i,16)).toList();
-        TVector3 pos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
-        liste = m_settings->value("trackerback/"+QString::number(detId | i,16)).toList();
-        TVector3 counterPos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
+        QVector3D qtPos = setup->configFilePosition("tracker", detId | i);
+        TVector3 pos(qtPos.x(), qtPos.y(), qtPos.z());
+        qtPos = setup->configFilePosition("trackerback", detId | i);
+        TVector3 counterPos(qtPos.x(), qtPos.y(), qtPos.z());
 
         simpleEvent->addHit(new Hit(Hit::tracker, detId | i, amplitude, pos, counterPos));
       } // tracker
@@ -124,10 +110,10 @@ SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
       else if (id->IsTRD()) {
         int amplitude = static_cast<int>(temp[i]);
 
-        QList<QVariant> liste = m_settings->value("trd/"+QString::number(detId | i,16)).toList();
-        TVector3 pos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
-        liste = m_settings->value("trdback/"+QString::number(detId | i,16)).toList();
-        TVector3 counterPos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
+        QVector3D qtPos = setup->configFilePosition("trd", detId | i);
+        TVector3 pos(qtPos.x(), qtPos.y(), qtPos.z());
+        qtPos = setup->configFilePosition("trdback", detId | i);
+        TVector3 counterPos(qtPos.x(), qtPos.y(), qtPos.z());
 
         simpleEvent->addHit(new Hit(Hit::trd, detId | i, amplitude, pos, counterPos));
       } // trd
@@ -136,10 +122,10 @@ SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
         const quint32 value = ((TOFDataBlock*) dataBlock)->GetRawData()[i];
         int channel = TOFSipmHit::channelFromData(value);
 
-        QList<QVariant> liste = m_settings->value("tof/"+QString::number(detId | channel,16)).toList();
-        TVector3 pos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
-        liste = m_settings->value("tofback/"+QString::number(detId | channel,16)).toList();
-        TVector3 counterPos(liste[0].toDouble(), liste[1].toDouble(), liste[2].toDouble());
+        QVector3D qtPos = setup->configFilePosition("tof", detId | channel);
+        TVector3 pos(qtPos.x(), qtPos.y(), qtPos.z());
+        qtPos = setup->configFilePosition("tofback", detId | channel);
+        TVector3 counterPos(qtPos.x(), qtPos.y(), qtPos.z());
 
         unsigned short bar = tdcChannelToBar[channel] << 2;
         unsigned short sipm = tdcChannelToSipm[channel];

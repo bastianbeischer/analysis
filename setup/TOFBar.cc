@@ -2,6 +2,7 @@
 
 #include "TOFCluster.hh"
 #include "TOFSipmHit.hh"
+#include "Setup.hh"
 
 TOFBar::TOFBar() :
   DetectorElement()
@@ -13,6 +14,8 @@ TOFBar::TOFBar(unsigned short detId) :
   DetectorElement(detId)
 {
   m_type = tof;
+  m_position = Setup::instance()->configFilePosition("tof", m_id);
+  m_alignmentShift = Setup::instance()->configFileAlignmentShift("tof", m_id);
 }
 
 TOFBar::~TOFBar()
@@ -32,3 +35,4 @@ const QVector<Cluster*>& TOFBar::findClusters()
   }
   return m_clusters;
 }
+
