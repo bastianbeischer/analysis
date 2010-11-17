@@ -177,7 +177,7 @@ void MainWindow::setupAnalysis()
     DetectorElement* element = setup->firstElement();
     while(element) {
       if (element->type() == DetectorElement::tracker && element->position().z() < 0)
-        m_plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightUpperTracker, element->id()));
+        m_plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightLowerTracker, element->id()));
       element = setup->nextElement();
     }
   }
@@ -201,7 +201,7 @@ void MainWindow::setupAnalysis()
     DetectorElement* element = setup->firstElement();
     while(element) {
       if (element->type() == DetectorElement::tracker && element->position().z() < 0)
-        m_plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterLengthUpperTracker, element->id()));
+        m_plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterLengthLowerTracker, element->id()));
       element = setup->nextElement();
     }
   }
@@ -273,6 +273,9 @@ void MainWindow::setupAnalysis()
   m_ui.signalHeightUpperTrackerButton->setText("+");
   m_ui.signalHeightLowerTrackerButton->setText("+");
   m_ui.signalHeightTRDButton->setText("+");
+  m_ui.clusterLengthUpperTrackerButton->setText("+");
+  m_ui.clusterLengthLowerTrackerButton->setText("+");
+  m_ui.clusterLengthTRDButton->setText("+");
   m_ui.timeOverThresholdButton->setText("+");
   m_ui.trackingButton->setText("+");
   m_ui.occupancyButton->setText("+");
@@ -287,6 +290,9 @@ void MainWindow::setupAnalysis()
   m_ui.signalHeightUpperTrackerButton->setEnabled(m_ui.signalHeightUpperTrackerCheckBox->isChecked());
   m_ui.signalHeightLowerTrackerButton->setEnabled(m_ui.signalHeightLowerTrackerCheckBox->isChecked());
   m_ui.signalHeightTRDButton->setEnabled(m_ui.signalHeightTRDCheckBox->isChecked());
+  m_ui.clusterLengthUpperTrackerButton->setEnabled(m_ui.clusterLengthUpperTrackerCheckBox->isChecked());
+  m_ui.clusterLengthLowerTrackerButton->setEnabled(m_ui.clusterLengthLowerTrackerCheckBox->isChecked());
+  m_ui.clusterLengthTRDButton->setEnabled(m_ui.clusterLengthTRDCheckBox->isChecked());
   m_ui.timeOverThresholdButton->setEnabled(m_ui.timeOverThresholdCheckBox->isChecked());
   m_ui.trackingButton->setEnabled(m_ui.trackingCheckBox->isChecked());
   m_ui.occupancyButton->setEnabled(m_ui.occupancyCheckBox->isChecked());
