@@ -31,6 +31,8 @@ public:
   void              sortHits();
   void              debug();
 
+  void              setAlignmentShift(double shift) {m_alignmentShift = shift;}
+
 public:
   unsigned short    type()           const {return m_type;}
   unsigned short    id()             const {return m_id;}
