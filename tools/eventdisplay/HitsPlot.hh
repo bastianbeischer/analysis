@@ -23,6 +23,7 @@ public:
   void drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* track = 0);
 
 private:
+  void drawHits();
   void clearHits();
 
 private:

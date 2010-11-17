@@ -56,6 +56,7 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
     double z_min = histogram()->GetYaxis()->GetXmin();
     double z_max = histogram()->GetYaxis()->GetXmax();
 
+    double y0 = 0., slopeY = 0.;
     if (track->type() == Track::StraightLine) {
       StraightLine* straightLine = static_cast<StraightLine*>(track);
       double x0 = straightLine->x0();
@@ -70,29 +71,30 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
       m_lines.push_back(x_line);
 
       // strech because we want to show x and y in the same view (convert 40cm to 20cm)
-      double y0 = straightLine->y0();
-      double slopeY = straightLine->slopeY();
-      double y_min = y0 + z_min * slopeY;
-      double y_max = y0 + z_max * slopeY;
-
-      TLine* y_line = new TLine(m_yStretchFactor*y_min, z_min, m_yStretchFactor*y_max, z_max);
-      y_line->SetLineColor(kRed);
-      y_line->SetLineWidth(1);
-      y_line->SetLineStyle(1);
-      y_line->Draw("SAME");
-      m_lines.push_back(y_line);
+      y0 = straightLine->y0();
+      slopeY = straightLine->slopeY();
     }
-
-    if (track->type() == Track::BrokenLine) {
-      BrokenLine* brokenLine = static_cast<BrokenLine*>(track);
-      double zIntersection = brokenLine->zIntersection();
-
-      double x0, slopeX, x_min, x_max;
+    else if (track->type() == Track::BrokenLine || track->type() == Track::CenteredBrokenLine ) {
+      double x0, slopeX, zIntersection, x_min, x_max;
       TLine* x_line;
 
       // lower line
-      x0 = brokenLine->lowerX0();
-      slopeX = brokenLine->lowerSlopeX();
+      if (track->type() == Track::BrokenLine) {
+        BrokenLine* brokenLine = static_cast<BrokenLine*>(track);
+        zIntersection = brokenLine->zIntersection();
+        x0 = brokenLine->lowerX0();
+        slopeX = brokenLine->lowerSlopeX();
+        y0 = brokenLine->y0();
+        slopeY = brokenLine->slopeY();
+      }
+      else if (track->type() == Track::CenteredBrokenLine) {
+        CenteredBrokenLine* centeredBrokenLine = static_cast<CenteredBrokenLine*>(track);
+        zIntersection = centeredBrokenLine->zIntersection();
+        x0 = centeredBrokenLine->x0();
+        slopeX = centeredBrokenLine->lowerSlopeX();
+        y0 = centeredBrokenLine->y0();
+        slopeY = centeredBrokenLine->slopeY();
+      }
       x_min = x0 + z_min * slopeX;
       x_max = x0 + zIntersection * slopeX;
       x_line = new TLine(x_min, z_min, x_max, zIntersection);
@@ -102,8 +104,18 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
       m_lines.push_back(x_line);
 
       // upper line
-      x0 = brokenLine->upperX0();
-      slopeX = brokenLine->upperSlopeX();
+      if (track->type() == Track::BrokenLine) {
+        BrokenLine* brokenLine = static_cast<BrokenLine*>(track);
+        zIntersection = brokenLine->zIntersection();
+        x0 = brokenLine->upperX0();
+        slopeX = brokenLine->upperSlopeX();
+      }
+      else if (track->type() == Track::CenteredBrokenLine) {
+        CenteredBrokenLine* centeredBrokenLine = static_cast<CenteredBrokenLine*>(track);
+        zIntersection = centeredBrokenLine->zIntersection();
+        x0 = centeredBrokenLine->x0();
+        slopeX = centeredBrokenLine->upperSlopeX();
+      }
       x_min = x0 + zIntersection * slopeX;
       x_max = x0 + z_max * slopeX;
       x_line = new TLine(x_min, zIntersection, x_max, z_max);
@@ -111,62 +123,16 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
       x_line->SetLineWidth(1);
       x_line->Draw("SAME");
       m_lines.push_back(x_line);
-
-      // strech because we want to show x and y in the same view (convert 40cm to 20cm)
-      double y0 = brokenLine->y0();
-      double slopeY = brokenLine->slopeY();
-      double y_min = y0 + z_min * slopeY;
-      double y_max = y0 + z_max * slopeY;
-
-      TLine* y_line = new TLine(m_yStretchFactor*y_min, z_min, m_yStretchFactor*y_max, z_max);
-      y_line->SetLineColor(kRed);
-      y_line->SetLineWidth(1);
-      y_line->SetLineStyle(1);
-      y_line->Draw("SAME");
-      m_lines.push_back(y_line);
     }
 
-    if (track->type() == Track::CenteredBrokenLine) {
-      CenteredBrokenLine* centeredBrokenLine = static_cast<CenteredBrokenLine*>(track);
-      double zIntersection = centeredBrokenLine->zIntersection();
-
-      double x0, slopeX, x_min, x_max;
-      TLine* x_line;
-
-      // lower line
-      x0 = centeredBrokenLine->x0();
-      slopeX = centeredBrokenLine->lowerSlopeX();
-      x_min = x0 + z_min * slopeX;
-      x_max = x0 + zIntersection * slopeX;
-      x_line = new TLine(x_min, z_min, x_max, zIntersection);
-      x_line->SetLineColor(kBlack);
-      x_line->SetLineWidth(1);
-      x_line->Draw("SAME");
-      m_lines.push_back(x_line);
-
-      // upper line
-      slopeX = centeredBrokenLine->upperSlopeX();
-      x_min = x0 + zIntersection * slopeX;
-      x_max = x0 + z_max * slopeX;
-      x_line = new TLine(x_min, zIntersection, x_max, z_max);
-      x_line->SetLineColor(kBlack);
-      x_line->SetLineWidth(1);
-      x_line->Draw("SAME");
-      m_lines.push_back(x_line);
-
-      // strech because we want to show x and y in the same view (convert 40cm to 20cm)
-      double y0 = centeredBrokenLine->y0();
-      double slopeY = centeredBrokenLine->slopeY();
-      double y_min = y0 + z_min * slopeY;
-      double y_max = y0 + z_max * slopeY;
-
-      TLine* y_line = new TLine(m_yStretchFactor*y_min, z_min, m_yStretchFactor*y_max, z_max);
-      y_line->SetLineColor(kRed);
-      y_line->SetLineWidth(1);
-      y_line->SetLineStyle(1);
-      y_line->Draw("SAME");
-      m_lines.push_back(y_line);
-    }
+    double y_min = y0 + z_min * slopeY;
+    double y_max = y0 + z_max * slopeY;
+    TLine* y_line = new TLine(m_yStretchFactor*y_min, z_min, m_yStretchFactor*y_max, z_max);
+    y_line->SetLineColor(kRed);
+    y_line->SetLineWidth(1);
+    y_line->SetLineStyle(1);
+    y_line->Draw("SAME");
+    m_lines.push_back(y_line);
 
     char text[128];
     sprintf(text, "#chi^{2} / ndf = %.1f / %d", track->chi2(), track->ndf());

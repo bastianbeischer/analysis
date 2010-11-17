@@ -37,6 +37,7 @@ Plotter::Plotter(QWidget* parent)
   , m_positionLabel(0)
 {
   m_hitsPlot->draw(GetCanvas());
+  gPad->Update();
   setMouseTracking(true);
 }
 

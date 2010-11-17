@@ -29,9 +29,7 @@ PerdaixDisplay::~PerdaixDisplay()
 
 void PerdaixDisplay::draw(TCanvas* can)
 {
-  can->cd();
-  histogram()->Draw("colz");
-  gPad->Update();
+  H2DPlot::draw(can);
   foreach(TBox* box, m_boxes) {
     box->SetFillStyle(0);
     box->SetLineStyle(1);
