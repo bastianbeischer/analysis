@@ -12,7 +12,7 @@ public:
   virtual ~CenteredBrokenLineMatrix();
   
 protected:
-  bool checkInvertability(const QVector<Hit*>& hits) const;
+  // bool checkInvertability(const QVector<Hit*>& hits) const;
   void fillMatrixFromHit(TMatrixD& A, unsigned int i, bool useTangens, float k, float xi) const;
   
 };

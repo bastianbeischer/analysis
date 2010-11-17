@@ -11,10 +11,10 @@ BrokenLineMatrix::~BrokenLineMatrix()
 {
 }
 
-bool BrokenLineMatrix::checkInvertability(const QVector<Hit*>& hits) const
-{
-  return false;
-}
+// bool BrokenLineMatrix::checkInvertability(const QVector<Hit*>& hits) const
+// {
+//   return Matrix::checkInvertability(hits);
+// }
 
 void BrokenLineMatrix::fillMatrixFromHit(TMatrixD& A, unsigned int i, bool useTangens, float k, float xi) const
 {

@@ -28,18 +28,15 @@ int Matrix::fit(const QVector<Hit*>& hits)
   // basic dimensions of matrices
   m_nRow = nHits;
 
-  if (m_nRow < m_nCol)
+  if (!checkInvertability(hits)) {
     return 0;
-
-  // if (!checkInvertability(hits)) {
-  //   return 0;
-  // }
+  }
 
   // declare matrices for the calculation
   TMatrixD A(m_nRow, m_nCol);
   TVectorD solution(m_nCol);
   TVectorD b(m_nRow);
-  TMatrixD U(m_nRow,m_nRow);
+  TMatrixD Uinv(m_nRow,m_nRow);
   TMatrixD CombineXandY(1,2);
 
   for (unsigned int i = 0; i < m_nRow; i++) {
@@ -100,37 +97,18 @@ int Matrix::fit(const QVector<Hit*>& hits)
     TMatrixD V3 = TMatrixD(1,1);
     V3 = CombineXandY * V2 * CombineXandYTrans;
 
-    U(i,i) = V3(0,0); // this is the sigma for the i'th measurement
+    Uinv(i,i) = 1./V3(0,0); // this is the sigma for the i'th measurement
 
   } // loop over hits
   
-  
   // calculate solution
-
-  // U is diagonal, inverse should always exist unless someone specified sigma = inf or something strange
-  // if (U.Determinant() == 0) {
-  //   //std::cerr << "Matrix::fit -- U is singular!" << std::endl;
-  //   return 0;
-  // }
-  TMatrixD Uinv = U;
-  Uinv.Invert();
   TMatrixD ATranspose(m_nCol,m_nRow);
   ATranspose.Transpose(A);
   TMatrixD M = ATranspose * Uinv * A;
   TVectorD c = ATranspose * Uinv * b;
 
-  // if (M.Determinant() == 0) {
-  //   QMap<double,QMap<double,int> > angles;
-  //   foreach(Hit* hit, hits) {
-  //     double angle = round(hit->angle()*180./M_PI * 10.)/10.;
-  //     angles[angle][hit->position().z()]++;
-  //   }
-  //   qDebug() << angles;
-  //   //std::cerr << "Matrix::fit -- M is singular!" << std::endl;
-  //   return 0;
-  // }
   TMatrixD Minv = M;
-  Minv.Invert();
+  Minv.InvertFast();
 
   solution = Minv * c;
 
@@ -148,11 +126,26 @@ int Matrix::fit(const QVector<Hit*>& hits)
   return 1;
 }
 
-bool Matrix::checkInvertability(const QVector<Hit*>& /*hits*/) const
+// currently more strict than "necessary"
+bool Matrix::checkInvertability(const QVector<Hit*>& hits) const
 {
-  if(m_nRow < m_nCol) {
-    //qDebug() << "0: return false";
+  if(m_nRow < m_nCol)
     return false;
+
+  QMap<double,int> anglesTop;
+  QMap<double,int> anglesBottom;
+  foreach(Hit* hit, hits) {
+    double angle = round(hit->angle()*180./M_PI * 10.)/10.;
+    if (hit->position().z() > 0.) {
+      anglesTop[angle]++;
+    }
+    else {
+      anglesBottom[angle]++;
+    }
   }
+
+  if (anglesTop.size() < 2 || anglesBottom.size() < 2)
+    return false;
+
   return true;
 }
