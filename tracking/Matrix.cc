@@ -7,6 +7,9 @@
 #include <cmath>
 #include <iostream>
 
+#include <QDebug>
+#include <QPair>
+
 Matrix::Matrix() :
   m_nRow(0),
   m_nCol(0),
@@ -25,9 +28,12 @@ int Matrix::fit(const QVector<Hit*>& hits)
   // basic dimensions of matrices
   m_nRow = nHits;
 
-  if (!checkInvertability(hits)) {
+  if (m_nRow < m_nCol)
     return 0;
-  }
+
+  // if (!checkInvertability(hits)) {
+  //   return 0;
+  // }
 
   // declare matrices for the calculation
   TMatrixD A(m_nRow, m_nCol);
@@ -114,6 +120,12 @@ int Matrix::fit(const QVector<Hit*>& hits)
   TVectorD c = ATranspose * Uinv * b;
 
   // if (M.Determinant() == 0) {
+  //   QMap<double,QMap<double,int> > angles;
+  //   foreach(Hit* hit, hits) {
+  //     double angle = round(hit->angle()*180./M_PI * 10.)/10.;
+  //     angles[angle][hit->position().z()]++;
+  //   }
+  //   qDebug() << angles;
   //   //std::cerr << "Matrix::fit -- M is singular!" << std::endl;
   //   return 0;
   // }
@@ -134,4 +146,13 @@ int Matrix::fit(const QVector<Hit*>& hits)
   m_solution = solution;
 
   return 1;
+}
+
+bool Matrix::checkInvertability(const QVector<Hit*>& /*hits*/) const
+{
+  if(m_nRow < m_nCol) {
+    //qDebug() << "0: return false";
+    return false;
+  }
+  return true;
 }

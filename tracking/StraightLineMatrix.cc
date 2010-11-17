@@ -1,5 +1,9 @@
 #include "StraightLineMatrix.hh"
 
+#include "Hit.hh"
+#include <QDebug>
+#include <cmath>
+
 StraightLineMatrix::StraightLineMatrix() :
   Matrix()
 {
@@ -13,7 +17,33 @@ StraightLineMatrix::~StraightLineMatrix()
 
 bool StraightLineMatrix::checkInvertability(const QVector<Hit*>& hits) const
 {
-  return false;
+  bool ret = Matrix::checkInvertability(hits);
+  if(!ret)
+    return ret;
+
+  typedef QMap<double,int> ZMap;
+  QMap<double,ZMap> angles;
+  foreach(Hit* hit, hits) {
+    double angle = round(hit->angle()*180./M_PI * 10.)/10.;
+    angles[angle][hit->position().z()]++;
+  }
+
+  //qDebug() << angles;
+  
+  if (angles.size() < 2) {
+    //qDebug() << "1: return false";
+    return false;
+  }
+  if (angles.size() == 2) {
+    foreach(ZMap zMap, angles) {
+      if (zMap.size() < 2) {
+        return false;
+        //qDebug() << "2: return false";
+      }
+    }
+  }
+
+  return true;
 }
 
 void StraightLineMatrix::fillMatrixFromHit(TMatrixD& A, unsigned int i, bool useTangens, float k, float xi) const
