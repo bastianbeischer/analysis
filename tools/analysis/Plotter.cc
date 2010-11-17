@@ -1,12 +1,10 @@
 #include "Plotter.hh"
 #include "AnalysisPlot.hh"
-#include "TrackFinding.hh"
 #include "SimpleEvent.hh"
-#include "Hit.hh"
-#include "Cluster.hh"
-#include "Track.hh"
 #include "Setup.hh"
 #include "DataChain.hh"
+#include "EventQueue.hh"
+#include "AnalysisThread.hh"
 
 #include <QApplication>
 #include <QLabel>
@@ -22,9 +20,8 @@ Plotter::Plotter(QWidget* parent)
   : TQtWidget(parent)
   , m_titleLabel(0)
   , m_positionLabel(0)
-  , m_progressBar(0)
-  , m_track(0)
-  , m_trackFinding(new TrackFinding())
+  , m_dataChainProgressBar(0)
+  , m_eventQueueProgressBar(0)
   , m_chain(new DataChain())
   , m_eventLoopOff(true)
   , m_selectedPlot(-1)
@@ -36,9 +33,6 @@ Plotter::Plotter(QWidget* parent)
 Plotter::~Plotter()
 {
   qDeleteAll(m_plots);
-  delete m_trackFinding;
-  if (m_track)
-    delete m_track;
   delete m_chain;
 }
 
@@ -57,9 +51,14 @@ void Plotter::setPositionLabel(QLabel* label)
   m_positionLabel = label;
 }
 
-void Plotter::setProgressBar(QProgressBar* bar)
+void Plotter::setDataChainProgressBar(QProgressBar* bar)
 {
-  m_progressBar = bar;
+  m_dataChainProgressBar = bar;
+}
+
+void Plotter::setEventQueueProgressBar(QProgressBar* bar)
+{
+  m_eventQueueProgressBar = bar;
 }
 
 void Plotter::mousePressEvent(QMouseEvent* event)
@@ -144,31 +143,10 @@ void Plotter::clearPlots()
   m_plots.clear();
 }
 
-void Plotter::processEvent(SimpleEvent* event)
-{
-  QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
-  QVector<Hit*> clusters;
-  foreach(Cluster* cluster, Setup::instance()->generateClusters(hits))
-    clusters.append(cluster);
-  QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
-  if (m_track)
-    m_track->fit(trackClusters);
-  foreach(AnalysisPlot* plot, m_plots)
-    plot->processEvent(trackClusters, m_track, event);
-  Setup::instance()->deleteClusters();
-}
-
 void Plotter::finalizeAnalysis()
 {
   foreach(AnalysisPlot* plot, m_plots)
     plot->finalize();
-}
-
-void Plotter::setTrackType(Track* track)
-{
-  if (m_track)
-    delete m_track;
-  m_track = track;
 }
 
 void Plotter::abortAnalysis()
@@ -176,21 +154,50 @@ void Plotter::abortAnalysis()
   m_eventLoopOff = true;
 }
 
-void Plotter::startAnalysis()
+void Plotter::startAnalysis(Track::Type type, int numberOfThreads)
 {
   m_eventLoopOff = false;
-  if (m_progressBar)
-    m_progressBar->reset();
+
+  EventQueue queue;
+  QVector<AnalysisThread*> threads;
+  for (int i = 0; i < numberOfThreads; ++i) {
+    AnalysisThread* thread = new AnalysisThread(&queue, type, m_plots, this);
+    threads.append(thread);
+    thread->start();
+  }
+
+  if (m_dataChainProgressBar)
+    m_dataChainProgressBar->reset();
   unsigned int nEntries = m_chain->nEntries();
-  for (unsigned int i = 0; i < nEntries; i++) {
-    SimpleEvent* event = m_chain->event(i);
-    processEvent(event);
-    if (m_progressBar)
-       m_progressBar->setValue(100 * (i + 1) / nEntries);
+  int freeSpace = 0;
+  int queuedEvents = 0;
+  for (unsigned int i = 0; i < nEntries;) {
+    freeSpace = queue.freeSpace();
+    queuedEvents = queue.numberOfEvents();
+    if (freeSpace > .4 * EventQueue::s_bufferSize) {
+      for (int j = 0; j < freeSpace; ++j) {
+        SimpleEvent* event = m_chain->event(i);
+        queue.enqueue(new SimpleEvent(*event));
+        ++i;
+        if (m_dataChainProgressBar)
+          m_dataChainProgressBar->setValue(100 * (i + 1) / nEntries);
+        if (m_eventQueueProgressBar)
+          m_eventQueueProgressBar->setValue(100 * queuedEvents / EventQueue::s_bufferSize);
+      }
+    }
     if (m_eventLoopOff)
-      break;
+        break;
     qApp->processEvents();
   }
+
+  do {
+    queuedEvents = queue.numberOfEvents();
+    m_eventQueueProgressBar->setValue(100 * queuedEvents / EventQueue::s_bufferSize);
+    qApp->processEvents();
+  } while (queuedEvents);
+  foreach (AnalysisThread* thread, threads)
+    thread->stop();
+  qDeleteAll(threads);
   finalizeAnalysis();
 }
 

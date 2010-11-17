@@ -30,6 +30,8 @@ LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
 # Headers
 HEADERS = MainWindow.hh \
           Plotter.hh \
+          EventQueue.hh \
+          AnalysisThread.hh \
           AnalysisPlot.hh \
           RootPlot.hh \
           H1DPlot.hh \
@@ -51,6 +53,8 @@ HEADERS = MainWindow.hh \
 SOURCES = main.cc \
           MainWindow.cc \
           Plotter.cc \
+          EventQueue.cc \
+          AnalysisThread.cc \
           AnalysisPlot.cc \
           RootPlot.cc \
           H1DPlot.cc \

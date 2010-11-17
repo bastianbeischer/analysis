@@ -37,7 +37,8 @@ MainWindow::MainWindow(QWidget* parent)
   m_plotter = new Plotter(m_ui.rightWidget);
   m_plotter->setTitleLabel(m_ui.titleLabel);
   m_plotter->setPositionLabel(m_ui.positionLabel);
-  m_plotter->setProgressBar(m_ui.progressBar);
+  m_plotter->setDataChainProgressBar(m_ui.dataChainProgressBar);
+  m_plotter->setEventQueueProgressBar(m_ui.eventQueueProgressBar);
   
   QVBoxLayout* layout = new QVBoxLayout;
   layout->setContentsMargins(0, 0, 0, 0);
@@ -304,16 +305,6 @@ void MainWindow::setupAnalysis()
   m_ui.miscellaneousTRDButton->setEnabled(m_ui.miscellaneousTRDCheckBox->isChecked());
   m_ui.miscellaneousTOFButton->setEnabled(m_ui.miscellaneousTOFCheckBox->isChecked());
 
-  if (m_ui.trackComboBox->currentText() == "centered broken line") {
-    m_plotter->setTrackType(new CenteredBrokenLine());
-  } else if (m_ui.trackComboBox->currentText() == "broken line") {
-    m_plotter->setTrackType(new BrokenLine());
-  } else if (m_ui.trackComboBox->currentText() == "straight line") {
-    m_plotter->setTrackType(new StraightLine());
-  } else if (m_ui.trackComboBox->currentText() == "no track") {
-    m_plotter->setTrackType(0);
-  }
-
   m_updateTimer->start(500);
 }
 
@@ -323,7 +314,15 @@ void MainWindow::analyzeButtonClicked()
     m_ui.analyzeButton->setText("abort analysis");
     m_ui.trackComboBox->setEnabled(false);
     setupAnalysis();
-    m_plotter->startAnalysis();
+    if (m_ui.trackComboBox->currentText() == "centered broken line") {
+      m_plotter->startAnalysis(Track::CenteredBrokenLine, m_ui.numberOfThreadsSpinBox->value());
+    } else if (m_ui.trackComboBox->currentText() == "broken line") {
+      m_plotter->startAnalysis(Track::BrokenLine , m_ui.numberOfThreadsSpinBox->value());
+    } else if (m_ui.trackComboBox->currentText() == "straight line") {
+      m_plotter->startAnalysis(Track::StraightLine, m_ui.numberOfThreadsSpinBox->value());
+    } else if (m_ui.trackComboBox->currentText() == "none") {
+      m_plotter->startAnalysis(Track::None, m_ui.numberOfThreadsSpinBox->value());
+    }
   } else {
     m_plotter->abortAnalysis();
     m_ui.trackComboBox->setEnabled(true);

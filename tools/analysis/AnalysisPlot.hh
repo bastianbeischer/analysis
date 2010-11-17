@@ -3,6 +3,8 @@
 
 #include "RootPlot.hh"
 
+#include <QMutex>
+
 class Hit;
 class Track;
 class SimpleEvent;
@@ -20,6 +22,8 @@ class AnalysisPlot : virtual public RootPlot {
     Topic topic() const;
     virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0) = 0;
     virtual void finalize() = 0;
+  protected:
+    QMutex m_mutex;
   private:
     Topic m_topic;
 };

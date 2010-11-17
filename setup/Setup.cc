@@ -148,9 +148,8 @@ QVector<Cluster*> Setup::generateClusters(const QVector<Hit*>& hits)
 
   bool needToFindClusters = false;
   foreach(Hit* hit, hits) {
-    if (strcmp(hit->ClassName(), "Cluster")==0 || strcmp(hit->ClassName(), "TOFCluster")==0) {
-      Cluster* cluster = static_cast<Cluster*>(hit);
-      clusters.push_back(cluster);
+    if (strcmp(hit->ClassName(), "Cluster") == 0 || strcmp(hit->ClassName(), "TOFCluster") == 0) {
+      clusters.push_back(static_cast<Cluster*>(hit));
     }
     else {
       needToFindClusters = true;

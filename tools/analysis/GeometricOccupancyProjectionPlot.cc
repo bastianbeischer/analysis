@@ -25,6 +25,7 @@ GeometricOccupancyProjectionPlot::~GeometricOccupancyProjectionPlot()
 
 void GeometricOccupancyProjectionPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
 {
+  QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 

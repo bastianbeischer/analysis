@@ -40,9 +40,6 @@
       </font>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
-      <property name="margin">
-       <number>0</number>
-      </property>
       <item>
        <widget class="QPushButton" name="addFileListButton">
         <property name="font">
@@ -726,30 +723,60 @@ TRD</string>
         </item>
         <item>
          <property name="text">
-          <string>no track</string>
+          <string>none</string>
          </property>
         </item>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="analyzeButton">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QSpinBox" name="numberOfThreadsSpinBox">
+          <property name="maximumSize">
+           <size>
+            <width>40</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>8</number>
+          </property>
+          <property name="value">
+           <number>2</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="analyzeButton">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>start analysis</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QProgressBar" name="dataChainProgressBar">
         <property name="font">
          <font>
           <family>DejaVu Sans</family>
          </font>
         </property>
-        <property name="text">
-         <string>start analysis</string>
+        <property name="value">
+         <number>0</number>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QProgressBar" name="progressBar">
-        <property name="font">
-         <font>
-          <family>DejaVu Sans</family>
-         </font>
-        </property>
+       <widget class="QProgressBar" name="eventQueueProgressBar">
         <property name="value">
          <number>0</number>
         </property>

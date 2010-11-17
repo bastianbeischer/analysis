@@ -20,8 +20,9 @@ TimeOfFlightPlot::~TimeOfFlightPlot()
 
 void TimeOfFlightPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
 {
+  QMutexLocker locker(&m_mutex);
   if (track->type() == Track::BrokenLine) {
-    BrokenLine* line = static_cast<BrokenLine*>(track);
+    //BrokenLine* line = static_cast<BrokenLine*>(track);
     int nTrackerHits = 0;
     foreach(Hit* hit, clusters)
       if (hit->type() == Hit::tracker)
