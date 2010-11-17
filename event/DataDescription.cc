@@ -29,18 +29,6 @@ DataDescription::DataDescription(const DataDescription& other)
 {
 }
 
-const DataDescription& DataDescription::operator=(const DataDescription& right)
-{
-  static_cast<TObject>(*this) = static_cast<TObject>(right);
-  m_comment = right.m_comment;
-  m_softwareVersionHash = right.m_softwareVersionHash;
-  m_eventNumberOffset = right.m_eventNumberOffset;
-  m_runFileNames = right.m_runFileNames;
-  m_runFileSoftwareVersionHash = right.m_runFileSoftwareVersionHash;
-  m_numberOfRuns = right.m_numberOfRuns;
-  return *this;
-}
-
 DataDescription::~DataDescription()
 {}
 

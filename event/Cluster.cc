@@ -1,6 +1,9 @@
 #include "Cluster.hh"
 
 #include "Hit.hh"
+#include "Cluster.hh"
+#include "TOFSipmHit.hh"
+#include "TOFCluster.hh"
 
 #include <cmath>
 
@@ -20,18 +23,27 @@ Cluster::Cluster(const std::vector<Hit*>& hits) :
 }
 
 Cluster::Cluster(const Cluster& other) :
-  Hit(other),
-  m_hits(other.m_hits)
+  Hit(other)
 {
+  m_hits.clear();
+  for (std::vector<Hit*>::const_iterator it = other.m_hits.begin(); it != other.m_hits.end(); it++) {
+    Hit* hit = *it;
+    if (strcmp(hit->ClassName(), "Hit") == 0)
+      m_hits.push_back(new Hit(*hit));
+    else if (strcmp(hit->ClassName(), "Cluster") == 0) {
+      Cluster* cluster = static_cast<Cluster*>(hit);
+      m_hits.push_back(new Cluster(*cluster));
+    }
+    else if (strcmp(hit->ClassName(), "TOFSipmHit") == 0) {
+      TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
+      m_hits.push_back(new TOFSipmHit(*tofHit));
+    }
+    else if (strcmp(hit->ClassName(), "TOFCluster") == 0) {
+      TOFCluster* cluster = static_cast<TOFCluster*>(hit);
+      m_hits.push_back(new TOFCluster(*cluster));
+    }
+  }
   processHits();
-}
-
-const Cluster& Cluster::operator=(const Cluster& right)
-{
-  static_cast<Hit>(*this) = static_cast<Hit>(right);
-  m_hits = right.m_hits;
-  processHits();
-  return *this;
 }
 
 Cluster::~Cluster()

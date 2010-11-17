@@ -26,14 +26,6 @@ TOFCluster::TOFCluster(const TOFCluster& other)
 {
 }
 
-const TOFCluster& TOFCluster::operator=(const TOFCluster& right)
-{
-  static_cast<Cluster>(*this) = static_cast<Cluster>(right);
-  m_yEstimate = right.m_yEstimate;
-  m_yResolutionEstimate = right.m_yResolutionEstimate;
-  return *this;
-}
-
 TOFCluster::~TOFCluster()
 {}
 

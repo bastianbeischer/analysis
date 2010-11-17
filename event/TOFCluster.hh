@@ -8,7 +8,6 @@ class TOFCluster : public Cluster {
     TOFCluster();
     TOFCluster(const std::vector<Hit*>& hits);
     TOFCluster(const TOFCluster& other);
-    const TOFCluster& operator=(const TOFCluster& right);
     virtual ~TOFCluster();
     virtual void processHits();
     double yEstimate(bool forceIntoBar = true);
