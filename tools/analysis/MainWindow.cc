@@ -18,8 +18,10 @@
 #include "TOFPositionCorrelationPlot.hh"
 #include "MomentumSpectrumPlot.hh"
 #include "SignalHeightPlot.hh"
+#include "ClusterLengthPlot.hh"
 
 #include <QDebug>
+#include <QVector3D>
 #include <QFileDialog>
 #include <QVBoxLayout>
 #include <QTimer>
@@ -57,6 +59,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.signalHeightUpperTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.signalHeightLowerTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.signalHeightTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.clusterLengthUpperTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.clusterLengthLowerTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.clusterLengthTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.timeOverThresholdButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.trackingButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.occupancyButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
@@ -85,6 +90,12 @@ void MainWindow::showButtonsClicked()
     topic = AnalysisPlot::SignalHeightLowerTracker;
   } else if (b == m_ui.signalHeightTRDButton) {
     topic = AnalysisPlot::SignalHeightTRD;
+  } else if (b == m_ui.clusterLengthUpperTrackerButton) {
+    topic = AnalysisPlot::ClusterLengthUpperTracker;
+  } else if (b == m_ui.clusterLengthLowerTrackerButton) {
+    topic = AnalysisPlot::ClusterLengthLowerTracker;
+  } else if (b == m_ui.clusterLengthTRDButton) {
+    topic = AnalysisPlot::ClusterLengthTRD;
   } else if (b == m_ui.timeOverThresholdButton) {
     topic = AnalysisPlot::TimeOverThreshold;
   } else if (b == m_ui.trackingButton) {
@@ -157,18 +168,48 @@ void MainWindow::setupAnalysis()
   if (m_ui.signalHeightUpperTrackerCheckBox->isChecked()) {
     DetectorElement* element = setup->firstElement();
     while(element) {
-      if (element->type() == DetectorElement::tracker)
+      if (element->type() == DetectorElement::tracker && element->position().z() > 0)
         m_plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightUpperTracker, element->id()));
       element = setup->nextElement();
     }
   }
   if (m_ui.signalHeightLowerTrackerCheckBox->isChecked()) {
+    DetectorElement* element = setup->firstElement();
+    while(element) {
+      if (element->type() == DetectorElement::tracker && element->position().z() < 0)
+        m_plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightUpperTracker, element->id()));
+      element = setup->nextElement();
+    }
   }
   if (m_ui.signalHeightTRDCheckBox->isChecked()) {
     DetectorElement* element = setup->firstElement();
     while(element) {
       if (element->type() == DetectorElement::trd)
         m_plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightTRD, element->id()));
+      element = setup->nextElement();
+    }
+  }
+  if (m_ui.clusterLengthUpperTrackerCheckBox->isChecked()) {
+    DetectorElement* element = setup->firstElement();
+    while(element) {
+      if (element->type() == DetectorElement::tracker && element->position().z() > 0)
+        m_plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterLengthUpperTracker, element->id()));
+      element = setup->nextElement();
+    }
+  }
+  if (m_ui.clusterLengthLowerTrackerCheckBox->isChecked()) {
+    DetectorElement* element = setup->firstElement();
+    while(element) {
+      if (element->type() == DetectorElement::tracker && element->position().z() < 0)
+        m_plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterLengthUpperTracker, element->id()));
+      element = setup->nextElement();
+    }
+  }
+  if (m_ui.clusterLengthTRDCheckBox->isChecked()) {
+    DetectorElement* element = setup->firstElement();
+    while(element) {
+      if (element->type() == DetectorElement::trd)
+        m_plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterLengthTRD, element->id()));
       element = setup->nextElement();
     }
   }
