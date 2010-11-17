@@ -12,6 +12,5 @@ SUBDIRS  = event \
            tools/analysis \
            tools/eventdisplay \
            tools/parser \
-           tools/residuals \
            tools/preAnalysis
 
