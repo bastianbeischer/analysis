@@ -36,6 +36,7 @@ Plotter::Plotter(QWidget* parent)
   , m_hitsPlot(new HitsPlot)
   , m_positionLabel(0)
 {
+  m_hitsPlot->draw(GetCanvas());
   setMouseTracking(true);
 }
 
@@ -104,22 +105,19 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod)
   QVector<Hit*> clusters;
   foreach(Cluster* cluster, setup->generateClusters(hits))
     clusters.push_back(cluster);
+  Track* track = 0;
   if (drawTrack) {
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
-    Track* track = 0;
     if (fitMethod == 0)
       track = new StraightLine;
     else if (fitMethod == 1)
       track = new BrokenLine;
     else if (fitMethod == 2)
       track = new CenteredBrokenLine;
-    if (track->fit(clusters)) {
-      m_hitsPlot->draw(GetCanvas(), clusters, track);
-      return;
-    }
+    track->fit(clusters);
   }
-  m_hitsPlot->draw(GetCanvas(), clusters);
+  m_hitsPlot->drawEvent(GetCanvas(), clusters, track);
 }
 
 void Plotter::saveCanvas(const QString& fileName)

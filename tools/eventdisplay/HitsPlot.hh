@@ -20,7 +20,7 @@ public:
   ~HitsPlot();
   
 public:
-  void draw(TCanvas* canvas, const QVector<Hit*>& hits, Track* track = 0);
+  void drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* track = 0);
 
 private:
   void clearHits();

@@ -45,14 +45,14 @@ void HitsPlot::clearHits()
   m_fitInfo = 0;
 }
 
-void HitsPlot::draw(TCanvas* canvas, const QVector<Hit*>& hits, Track* track)
+void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* track)
 {
   canvas->cd();
   clearHits();
 
   TPaletteAxis* palette = (TPaletteAxis*) histogram()->GetListOfFunctions()->FindObject("palette");
 
-  if (track) {
+  if (track && track->fitGood()) {
     double z_min = histogram()->GetYaxis()->GetXmin();
     double z_max = histogram()->GetYaxis()->GetXmax();
 
