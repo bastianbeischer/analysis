@@ -37,7 +37,7 @@ MomentumSpectrumPlot::~MomentumSpectrumPlot()
 
 void MomentumSpectrumPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* /*event*/)
 {
-  if (!track || (track->type() != Track::BrokenLine && track->type() != Track::CenteredBrokenLine))
+  if (!track || !track->fitGood())
     return;
 
   int nTrackerHits = 0;

@@ -31,7 +31,7 @@ BendingAnglePlot::~BendingAnglePlot()
 
 void BendingAnglePlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
 {
-  if (!track)
+  if (!track || !track->fitGood())
     return;
 
   int nTrackerHits = 0;

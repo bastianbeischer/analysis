@@ -30,6 +30,9 @@ ResidualPlot::~ResidualPlot()
 
 void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* /*event*/)
 {
+  if (!track || !track->fitGood())
+    return;
+
   // remove hits in this layer from hits for track fit
   QVector<Hit*> hitsForFit;
   QVector<Hit*> hitsInThisLayer;

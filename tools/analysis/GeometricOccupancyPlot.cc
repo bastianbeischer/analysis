@@ -23,15 +23,17 @@ GeometricOccupancyPlot::~GeometricOccupancyPlot()
 
 void GeometricOccupancyPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
 {
-  if (track) {
-    int nTrackerHits = 0;
-    foreach(Hit* hit, clusters)
-      if (hit->type() == Hit::tracker)
-        ++nTrackerHits;
-    if (nTrackerHits != 8)
-      return;
-    histogram()->Fill(track->y(m_zPosition), track->x(m_zPosition));
-  }
+  if (!track || !track->fitGood())
+    return;
+
+  int nTrackerHits = 0;
+  foreach(Hit* hit, clusters)
+    if (hit->type() == Hit::tracker)
+      ++nTrackerHits;
+  if (nTrackerHits != 8)
+    return;
+
+  histogram()->Fill(track->y(m_zPosition), track->x(m_zPosition));
 }
 
 void GeometricOccupancyPlot::finalize()

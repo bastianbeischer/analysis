@@ -39,7 +39,7 @@ void BendingAnglePositionPlot::draw(TCanvas* canvas)
 
 void BendingAnglePositionPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
 {
-  if (!track)
+  if (!track || !track->fitGood())
     return;
 
   int nTrackerHits = 0;

@@ -35,17 +35,19 @@ TOFPositionCorrelationPlot::~TOFPositionCorrelationPlot()
 
 void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
 {
-  if (track) {
-    int nTrackerHits = 0;
-    foreach(Hit* hit, clusters)
-      if (hit->type() == Hit::tracker)
-        ++nTrackerHits;
-    if (nTrackerHits != 8)
-      return;
-    foreach(Hit* hit, clusters)
-      if (hit->type() == Hit::tof && (hit->detId()-hit->channel()) == m_id)
-        histogram()->Fill(track->y(hit->position().z()), static_cast<TOFCluster*>(hit)->yEstimate(false));
-  }
+  if (!track || !track->fitGood())
+    return;
+
+  int nTrackerHits = 0;
+  foreach(Hit* hit, clusters)
+    if (hit->type() == Hit::tracker)
+      ++nTrackerHits;
+  if (nTrackerHits != 8)
+    return;
+
+  foreach(Hit* hit, clusters)
+    if (hit->type() == Hit::tof && (hit->detId()-hit->channel()) == m_id)
+      histogram()->Fill(track->y(hit->position().z()), static_cast<TOFCluster*>(hit)->yEstimate(false));
 }
 
 void TOFPositionCorrelationPlot::draw(TCanvas* canvas)

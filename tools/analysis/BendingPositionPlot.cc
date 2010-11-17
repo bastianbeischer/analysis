@@ -20,6 +20,9 @@ BendingPositionPlot::~BendingPositionPlot()
 
 void BendingPositionPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
 {
+  if(!track || !track->fitGood())
+    return;
+
   if (track->type() == Track::BrokenLine) {
     BrokenLine* line = static_cast<BrokenLine*>(track);
     int nTrackerHits = 0;
