@@ -16,6 +16,8 @@
 #include <QSettings>
 #include <QDebug>
 
+#include <iostream>
+
 const int tdcChannelToBar[64] = {
   5,  5,  1,  1,  4,  4,  0,  0,  7,  7,  3,  3,  6,  6,  2,  2,
   6,  6,  2,  2,  7,  7,  3,  3,  4,  4,  0,  0,  5,  5,  1,  1,
@@ -40,7 +42,10 @@ Converter::Converter(const SingleFile* file) :
   if (filteredVars.size() != 0) {
     QString entry = filteredVars.first();
     path = entry.split("=").at(1);
-    path += "/tools/parser/";
+    path += "/conf/";
+  }
+  else {
+    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
 
   qDebug() << "Using geometry file: " + path + "perdaix_coordinates.conf";

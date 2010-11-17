@@ -27,7 +27,10 @@ Setup::Setup() :
   if (filteredVars.size() != 0) {
     QString entry = filteredVars.first();
     path = entry.split("=").at(1);
-    path += "/setup/";
+    path += "/conf/";
+  }
+  else {
+    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
   m_settings = new QSettings(path+"setup.conf", QSettings::IniFormat);
 
