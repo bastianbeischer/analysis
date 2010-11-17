@@ -43,7 +43,8 @@ HEADERS = MainWindow.hh \
           TOFPositionCorrelationPlot.hh \
           MomentumSpectrumPlot.hh \
           TimeOfFlightPlot.hh \
-          GeometricOccupancyProjectionPlot.hh
+          GeometricOccupancyProjectionPlot.hh \
+          SignalHeightPlot.hh
 
 # Sources
 SOURCES = main.cc \
@@ -62,7 +63,8 @@ SOURCES = main.cc \
           TOFPositionCorrelationPlot.cc \
           MomentumSpectrumPlot.cc \
           TimeOfFlightPlot.cc \
-          GeometricOccupancyProjectionPlot.cc
+          GeometricOccupancyProjectionPlot.cc \
+          SignalHeightPlot.cc
 
 include($$TOPLEVEL/root.pri)
 

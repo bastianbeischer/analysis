@@ -17,6 +17,7 @@
 #include "Chi2Plot.hh"
 #include "TOFPositionCorrelationPlot.hh"
 #include "MomentumSpectrumPlot.hh"
+#include "SignalHeightPlot.hh"
 
 #include <QDebug>
 #include <QFileDialog>
@@ -154,10 +155,22 @@ void MainWindow::setupAnalysis()
   m_activePlots.clear();
   m_ui.listWidget->clear();
   if (m_ui.signalHeightUpperTrackerCheckBox->isChecked()) {
+    DetectorElement* element = setup->firstElement();
+    while(element) {
+      if (element->type() == DetectorElement::tracker)
+        m_plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightUpperTracker, element->id()));
+      element = setup->nextElement();
+    }
   }
   if (m_ui.signalHeightLowerTrackerCheckBox->isChecked()) {
   }
   if (m_ui.signalHeightTRDCheckBox->isChecked()) {
+    DetectorElement* element = setup->firstElement();
+    while(element) {
+      if (element->type() == DetectorElement::trd)
+        m_plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightTRD, element->id()));
+      element = setup->nextElement();
+    }
   }
   if (m_ui.timeOverThresholdCheckBox->isChecked()) {
   }
