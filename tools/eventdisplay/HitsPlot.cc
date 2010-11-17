@@ -160,8 +160,8 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
       position = calculatedPos;
     }
 
-    TOFCluster* tofCluster = dynamic_cast<TOFCluster*>(hit);
-    if (tofCluster) {
+    if (strcmp(hit->ClassName(), "TOFCluster") == 0) {
+      TOFCluster* tofCluster = static_cast<TOFCluster*>(hit);
       if (tofCluster->signalHeight() > 4*200) {
         TMarker* marker = new TMarker(m_yStretchFactor * tofCluster->yEstimate(), tofCluster->position().z(), 20);
         marker->SetMarkerSize(.5);

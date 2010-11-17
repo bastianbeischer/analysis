@@ -146,11 +146,10 @@ QVector<Cluster*> Setup::generateClusters(const QVector<Hit*>& hits)
 {
   QVector<Cluster*> clusters;
 
-  clearClusters();
   bool needToFindClusters = false;
   foreach(Hit* hit, hits) {
-    Cluster* cluster = dynamic_cast<Cluster*>(hit);
-    if (cluster) {
+    if (strcmp(hit->ClassName(), "Cluster")==0 || strcmp(hit->ClassName(), "TOFCluster")==0) {
+      Cluster* cluster = static_cast<Cluster*>(hit);
       clusters.push_back(cluster);
     }
     else {
@@ -159,6 +158,7 @@ QVector<Cluster*> Setup::generateClusters(const QVector<Hit*>& hits)
   }
 
   if (needToFindClusters) {
+    clearClusters();
     addHitsToLayers(hits);
     Layer* layer = firstLayer();
     while(layer) {
