@@ -2,7 +2,10 @@
 
 #include "Track.hh"
 #include "Hit.hh"
+#include "Layer.hh"
+#include "Setup.hh"
 
+#include <QMap>
 #include <QVector>
 #include <cmath>
 #include <cfloat>
@@ -32,12 +35,22 @@ void TrackSelection::processTrack(Track* track)
 
 void TrackSelection::checkAllTrackerLayers(Track* track)
 {
-  int nTrackerHits = 0;
-  foreach(Hit* hit, track->hits())
-    if (hit->type() == Hit::tracker)
-      ++nTrackerHits;
-  if (nTrackerHits == 8)
-    m_flags = static_cast<Flags>(m_flags | AllTrackerLayers);
+  // count hits in each tracker layer
+  QMap<double, int> counts;
+  foreach(Hit* hit, track->hits()) {
+    if (hit->type() == Hit::tracker) {
+      double z = round(hit->position().z()*100.)/100.;
+      counts[z]++;
+    }
+  }
+  // exactly 8 layers
+  if (counts.size() != 8)
+    return;
+  // exactly 1 count in each layer
+  foreach(int count, counts)
+    if (count != 1)
+      return;
+  m_flags = static_cast<Flags>(m_flags | AllTrackerLayers);
 }
 
 void TrackSelection::checkInsideMagnet(Track* track)
