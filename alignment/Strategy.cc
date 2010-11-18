@@ -134,13 +134,9 @@ void Strategy::fixLayer(unsigned short layerNumber)
     layer = setup->nextLayer();
   }
   
-  DetectorElement* element = setup->firstElement();
-  while(layer != 0 && element != 0) {
+  foreach(DetectorElement* element, layer->elements()) {
     unsigned short detId = element->id();
-    if (layer->contains(detId)) {
-      unsigned int index = m_parameters->indexForDetId(detId);
-      m_parameters->setParameterSigma(index, 0.);
-    }
-    element = setup->nextElement();
+    unsigned int index = m_parameters->indexForDetId(detId);
+    m_parameters->setParameterSigma(index, 0.);
   }
 }
