@@ -18,7 +18,8 @@ SOURCES += Track.cc \
            Matrix.cc \
            StraightLineMatrix.cc \
            BrokenLineMatrix.cc \
-           CenteredBrokenLineMatrix.cc
+           CenteredBrokenLineMatrix.cc \
+           TrackSelection.cc
 
 HEADERS += Track.hh \     
            TrackFinding.hh \
@@ -28,7 +29,8 @@ HEADERS += Track.hh \
            Matrix.hh \
            StraightLineMatrix.hh \
            BrokenLineMatrix.hh \
-           CenteredBrokenLineMatrix.hh
+           CenteredBrokenLineMatrix.hh \
+           TrackSelection.cc
 
 INCLUDEPATH += $$TOPLEVEL/event
 
