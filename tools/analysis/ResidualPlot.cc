@@ -65,7 +65,7 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSe
     }
   }
 
-  Track* mytrack;
+  Track* mytrack = 0;
   if (track->type() == Track::StraightLine)
     mytrack = new StraightLine;
   else if (track->type() == Track::BrokenLine)
