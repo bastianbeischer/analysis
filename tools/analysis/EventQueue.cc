@@ -28,7 +28,6 @@ void EventQueue::enqueue(SimpleEvent* event)
 {
   QMutexLocker locker(&m_mutex);
   m_queue.enqueue(event);
-  std::cout << '+' << std::flush;
 }
 
 SimpleEvent* EventQueue::dequeue()
@@ -36,6 +35,5 @@ SimpleEvent* EventQueue::dequeue()
   QMutexLocker locker(&m_mutex);
   if (m_queue.isEmpty())
     return 0;
-  std::cout << '-' << std::flush;
   return m_queue.dequeue();
 }

@@ -39,7 +39,7 @@ AnalysisThread::~AnalysisThread()
 void AnalysisThread::start()
 {
   m_abort = false;
-  QThread::start(QThread::HighestPriority);
+  QThread::start();
 }
 
 void AnalysisThread::stop()
@@ -47,6 +47,7 @@ void AnalysisThread::stop()
   m_mutex.lock();
   m_abort = true;
   m_mutex.unlock();
+  wait();
 }
 
 void AnalysisThread::run()

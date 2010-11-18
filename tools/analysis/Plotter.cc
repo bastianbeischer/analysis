@@ -174,7 +174,7 @@ void Plotter::startAnalysis(Track::Type type, int numberOfThreads)
   for (unsigned int i = 0; i < nEntries;) {
     freeSpace = queue.freeSpace();
     queuedEvents = queue.numberOfEvents();
-    if (freeSpace > .4 * EventQueue::s_bufferSize) {
+    if (freeSpace > .2 * EventQueue::s_bufferSize) {
       for (int j = 0; j < freeSpace; ++j) {
         SimpleEvent* event = m_chain->event(i);
         queue.enqueue(new SimpleEvent(*event));
@@ -183,6 +183,7 @@ void Plotter::startAnalysis(Track::Type type, int numberOfThreads)
           m_dataChainProgressBar->setValue(100 * (i + 1) / nEntries);
         if (m_eventQueueProgressBar)
           m_eventQueueProgressBar->setValue(100 * queuedEvents / EventQueue::s_bufferSize);
+        qApp->processEvents();
       }
     }
     if (m_eventLoopOff)
