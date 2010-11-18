@@ -18,10 +18,10 @@ TrackSelection::~TrackSelection()
 
 void TrackSelection::processTrack(Track* track)
 {
+  m_flags = None;
+
   if (!track)
     return;
-
-  m_flags = None;
 
   checkAllTrackerLayers(track);
   checkInsideMagnet(track);
