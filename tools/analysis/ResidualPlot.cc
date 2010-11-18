@@ -18,7 +18,14 @@ ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer)
   , m_layer(layer)
 {
   setTitle(QString("Residuals layer at %1").arg(layer->z()));
-  TH2D* histogram = new TH2D(qPrintable(title()+QString::number(id())), "", layer->nElements(), 0, layer->nElements(), 200, -3., 3.);
+
+  double max = 0.;
+  if (topic == AnalysisPlot::ResidualsUpperTracker || AnalysisPlot::ResidualsLowerTracker)
+    max = 3.;
+  if (topic == AnalysisPlot::ResidualsTRD)
+    max = 10.;
+
+  TH2D* histogram = new TH2D(qPrintable(title()+QString::number(id())), "", layer->nElements(), 0, layer->nElements(), 200, -max, max);
   histogram->GetXaxis()->SetTitle("SiPM array number");
   histogram->GetYaxis()->SetTitle("residue / mm");
   setHistogram(histogram);
