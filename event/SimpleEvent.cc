@@ -28,7 +28,6 @@ SimpleEvent::SimpleEvent(const SimpleEvent& other) :
   m_eventId(other.m_eventId),
   m_time(other.m_time)
 {
-  m_hits.clear();
   for (std::vector<Hit*>::const_iterator it = other.m_hits.begin(); it != other.m_hits.end(); it++) {
     Hit* hit = *it;
     if (strcmp(hit->ClassName(), "Hit") == 0)

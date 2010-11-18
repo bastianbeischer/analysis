@@ -25,7 +25,6 @@ Cluster::Cluster(const std::vector<Hit*>& hits) :
 Cluster::Cluster(const Cluster& other) :
   Hit(other)
 {
-  m_hits.clear();
   for (std::vector<Hit*>::const_iterator it = other.m_hits.begin(); it != other.m_hits.end(); it++) {
     Hit* hit = *it;
     if (strcmp(hit->ClassName(), "Hit") == 0)
@@ -43,7 +42,6 @@ Cluster::Cluster(const Cluster& other) :
       m_hits.push_back(new TOFCluster(*cluster));
     }
   }
-  processHits();
 }
 
 Cluster::~Cluster()
