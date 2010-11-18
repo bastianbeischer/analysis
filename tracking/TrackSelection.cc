@@ -42,8 +42,16 @@ void TrackSelection::checkInsideMagnet(Track* track)
 {
   double r1 = sqrt(pow(track->x(40.), 2.) + pow(track->y(40.), 2.));
   double r2 = sqrt(pow(track->x(-40.), 2.) + pow(track->y(-40.), 2.));
-  if (r1 < 7.5 && r2 < 7.5)
+  if (r1 < 75 && r2 < 75)
     m_flags = static_cast<Flags>(m_flags | InsideMagnet);
+}
+
+void TrackSelection::checkOutsideMagnet(Track* track)
+{
+  double r1 = sqrt(pow(track->x(40.), 2.) + pow(track->y(40.), 2.));
+  double r2 = sqrt(pow(track->x(-40.), 2.) + pow(track->y(-40.), 2.));
+  if (r1 > 120 && r2 > 120)
+    m_flags = static_cast<Flags>(m_flags | OutsideMagnet);
 }
 
 void TrackSelection::checkHighPt(Track* track)
@@ -56,7 +64,6 @@ void TrackSelection::checkHighPt(Track* track)
 
 void TrackSelection::checkMagnetCollision(Track* track)
 {
-  // only select tracks which didn't pass through the magnet
   double x0 = track->x(0.);
   double y0 = track->y(0.);
   double r = sqrt(x0*x0 + y0*y0);

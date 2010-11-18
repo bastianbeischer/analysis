@@ -53,7 +53,6 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSe
   // remove hits in this layer from hits for track fit
   QVector<Hit*> hitsForFit;
   QVector<Hit*> hitsInThisLayer;
-      
 
   foreach(Hit* hit, hits) {
     double z = hit->position().z();

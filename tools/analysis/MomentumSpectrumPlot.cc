@@ -38,10 +38,8 @@ void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Track* track, Trac
 
   double pt = track->pt();
 
-  double r = sqrt(track->x(0)*track->x(0) + track->y(0)*track->y(0));
-  if (r < 75) {
+  if (flags & TrackSelection::InsideMagnet)
     histogram(0)->Fill(pt);
-  }
 }
 
 void MomentumSpectrumPlot::finalize()

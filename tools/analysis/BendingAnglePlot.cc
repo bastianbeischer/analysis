@@ -41,11 +41,11 @@ void BendingAnglePlot::processEvent(const QVector<Hit*>& /*clusters*/, Track* tr
     return;
 
   double alpha = track->bendingAngle();
-  double r = sqrt(track->x(0)*track->x(0) + track->y(0)*track->y(0));
+
   histogram(0)->Fill(alpha);
-  if (r < 75)
+  if(flags & TrackSelection::InsideMagnet)
     histogram(1)->Fill(alpha);
-  if (r > 140)
+  if(flags & TrackSelection::OutsideMagnet)
     histogram(2)->Fill(alpha);
 }
 

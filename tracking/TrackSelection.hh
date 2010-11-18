@@ -10,7 +10,7 @@ public:
   TrackSelection();
   ~TrackSelection();
   
-  enum Flags {None=0,AllTrackerLayers=1,InsideMagnet=2, HighPt=4, MagnetCollision=8};
+  enum Flags {None=0,AllTrackerLayers=1, InsideMagnet=2, OutsideMagnet=4, HighPt=8, MagnetCollision=16};
 
 public:
   void processTrack(Track*);
@@ -19,6 +19,7 @@ public:
 private:
   void checkAllTrackerLayers(Track*);
   void checkInsideMagnet(Track*);
+  void checkOutsideMagnet(Track*);
   void checkHighPt(Track*);
   void checkMagnetCollision(Track*);
 
