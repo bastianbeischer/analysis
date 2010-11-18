@@ -15,7 +15,7 @@ public:
   virtual ~Track();
 
 public:
-  enum Type {None, StraightLine, BrokenLine, CenteredBrokenLine};
+  enum Type {None=-1, StraightLine, BrokenLine, CenteredBrokenLine};
 
   void             setVerbose(unsigned short verb) {m_verbose = verb;}
 
