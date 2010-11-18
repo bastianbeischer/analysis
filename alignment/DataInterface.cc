@@ -47,7 +47,7 @@ void DataInterface::addSuitableTracks()
     clusters = m_trackFinding->findTrack(clusters);
 
     Track* track = new StraightLine;
-    if (track->fit(clusters) && m_trackSelection->passes(track)) {
+    if (track->fit(clusters)) {
       manager->addTrack(track);
     }
     else {
