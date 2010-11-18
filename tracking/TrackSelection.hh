@@ -10,11 +10,11 @@ public:
   TrackSelection();
   ~TrackSelection();
   
-  enum Flags {None=0,AllTrackerLayers=1, InsideMagnet=2, OutsideMagnet=4, HighPt=8, MagnetCollision=16};
+  enum Flags {None=0, AllTrackerLayers=1, InsideMagnet=2, OutsideMagnet=4, HighPt=8, MagnetCollision=16};
 
 public:
   void processTrack(Track*);
-  Flags flags() const {return m_flags;}
+  const Flags& flags() const {return m_flags;}
 
 private:
   void checkAllTrackerLayers(Track*);

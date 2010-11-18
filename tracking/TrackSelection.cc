@@ -8,7 +8,7 @@
 #include <cfloat>
 
 TrackSelection::TrackSelection() :
-  m_flags(TrackSelection::None)
+  m_flags(None)
 {
 }
 
