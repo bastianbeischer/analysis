@@ -10,6 +10,7 @@
 class EventQueue;
 class AnalysisPlot;
 class Track;
+class TrackSelection;
 class TrackFinding;
 
 class AnalysisThread : public QThread {
@@ -24,6 +25,7 @@ Q_OBJECT
   private:
     EventQueue* m_queue;
     Track* m_track;
+    TrackSelection* m_trackSelection;
     TrackFinding* m_trackFinding;
     QVector<AnalysisPlot*> m_plots;
     bool m_abort;

@@ -8,7 +8,7 @@ class TimeOfFlightPlot : public AnalysisPlot, public H1DPlot {
   public:
     TimeOfFlightPlot();
     virtual ~TimeOfFlightPlot();
-    virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
+    virtual void processEvent(const QVector<Hit*>&, Track* = 0, TrackSelection* = 0, SimpleEvent* = 0);
     virtual void finalize();
 };
 

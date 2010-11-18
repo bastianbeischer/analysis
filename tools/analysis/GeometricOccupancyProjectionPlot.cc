@@ -2,6 +2,7 @@
 #include "BrokenLine.hh"
 #include "CenteredBrokenLine.hh"
 
+#include "TrackSelection.hh"
 #include "Hit.hh"
 
 #include <TH1.h>
@@ -23,17 +24,14 @@ GeometricOccupancyProjectionPlot::GeometricOccupancyProjectionPlot(double zPosit
 GeometricOccupancyProjectionPlot::~GeometricOccupancyProjectionPlot()
 {}
 
-void GeometricOccupancyProjectionPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void GeometricOccupancyProjectionPlot::processEvent(const QVector<Hit*>&, Track* track, TrackSelection* selection, SimpleEvent*)
 {
   // QMutexLocker locker(&m_mutex);
-  if (!track || !track->fitGood())
+  if (!track || !selection || !track->fitGood())
     return;
 
-  int nTrackerHits = 0;
-  foreach(Hit* hit, clusters)
-    if (hit->type() == Hit::tracker)
-      ++nTrackerHits;
-  if (nTrackerHits != 8)
+  TrackSelection::Flags flags = selection->flags();
+  if (!(flags & TrackSelection::AllTrackerLayers))
     return;
 
   histogram(0)->Fill(track->x(m_zPosition));

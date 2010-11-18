@@ -1,6 +1,7 @@
 #include "BendingPositionPlot.hh"
 #include "BrokenLine.hh"
 
+#include "TrackSelection.hh"
 #include "Hit.hh"
 
 #include <TH1.h>
@@ -18,20 +19,19 @@ BendingPositionPlot::BendingPositionPlot()
 BendingPositionPlot::~BendingPositionPlot()
 {}
 
-void BendingPositionPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void BendingPositionPlot::processEvent(const QVector<Hit*>&, Track* track, TrackSelection* selection, SimpleEvent*)
 {
   // QMutexLocker locker(&m_mutex);
-  if(!track || !track->fitGood())
+  if(!track || !selection || !track->fitGood())
     return;
 
   if (track->type() == Track::BrokenLine) {
     BrokenLine* line = static_cast<BrokenLine*>(track);
-    int nTrackerHits = 0;
-    foreach(Hit* hit, clusters)
-      if (hit->type() == Hit::tracker)
-        ++nTrackerHits;
-    if (nTrackerHits != 8)
+
+    TrackSelection::Flags flags = selection->flags();
+    if (!(flags & TrackSelection::AllTrackerLayers))
       return;
+
     histogram(0)->Fill(line->zIntersection());
   }
 }

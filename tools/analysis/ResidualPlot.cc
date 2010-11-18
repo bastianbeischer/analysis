@@ -1,5 +1,6 @@
 #include "ResidualPlot.hh"
 
+#include "TrackSelection.hh"
 #include "Layer.hh"
 #include "Hit.hh"
 #include "StraightLine.hh"
@@ -35,24 +36,20 @@ ResidualPlot::~ResidualPlot()
 {
 }
 
-void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* /*event*/)
+void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSelection* selection, SimpleEvent* /*event*/)
 {
   // QMutexLocker locker(&m_mutex);
-  if (!track || !track->fitGood())
+  if (!track || !selection || !track->fitGood())
+    return;
+
+  TrackSelection::Flags flags = selection->flags();
+  if (!(flags & TrackSelection::AllTrackerLayers))
     return;
 
   // remove hits in this layer from hits for track fit
   QVector<Hit*> hitsForFit;
   QVector<Hit*> hitsInThisLayer;
       
-  // plot only exactly 8 tracker hits
-  int nTrackerHits = 0;
-  foreach(Hit* hit, hits)
-    if (hit->type() == Hit::tracker)
-      ++nTrackerHits;
-  if (nTrackerHits != 8)
-    return;
-
   // only select tracks which didn't pass through the magnet
   double x0 = track->x(0.);
   double y0 = track->y(0.);

@@ -2,6 +2,7 @@
 
 #include <TH1D.h>
 
+#include "TrackSelection.hh"
 #include "Hit.hh"
 
 SignalHeightPlot::SignalHeightPlot(AnalysisPlot::Topic topic, unsigned short id) :
@@ -28,13 +29,13 @@ SignalHeightPlot::~SignalHeightPlot()
 {
 }
 
-void SignalHeightPlot::processEvent(const QVector<Hit*>& hits, Track* /*track*/, SimpleEvent* /*event*/)
+void SignalHeightPlot::processEvent(const QVector<Hit*>& hits, Track*, TrackSelection* selection, SimpleEvent*)
 {
-  int nTrackerHits = 0;
-  foreach(Hit* hit, hits)
-    if (hit->type() == Hit::tracker)
-      ++nTrackerHits;
-  if (nTrackerHits != 8)
+  if(!selection)
+    return;
+
+  TrackSelection::Flags flags = selection->flags();
+  if (!(flags & TrackSelection::AllTrackerLayers))
     return;
 
   foreach(Hit* hit, hits) {

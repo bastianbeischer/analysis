@@ -1,5 +1,6 @@
 #include "ClusterLengthPlot.hh"
 
+#include "TrackSelection.hh"
 #include <TH1D.h>
 
 #include "Hit.hh"
@@ -19,13 +20,13 @@ ClusterLengthPlot::~ClusterLengthPlot()
 {
 }
 
-void ClusterLengthPlot::processEvent(const QVector<Hit*>& hits, Track* /*track*/, SimpleEvent* /*event*/)
+void ClusterLengthPlot::processEvent(const QVector<Hit*>& hits, Track*, TrackSelection* selection, SimpleEvent*)
 {
-  int nTrackerHits = 0;
-  foreach(Hit* hit, hits)
-    if (hit->type() == Hit::tracker)
-      ++nTrackerHits;
-  if (nTrackerHits != 8)
+  if (!selection)
+    return;
+
+  TrackSelection::Flags flags = selection->flags();
+  if (!(flags & TrackSelection::AllTrackerLayers))
     return;
 
   foreach(Hit* hit, hits) {

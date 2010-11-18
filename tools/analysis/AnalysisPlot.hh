@@ -7,6 +7,7 @@
 
 class Hit;
 class Track;
+class TrackSelection;
 class SimpleEvent;
 
 class AnalysisPlot : virtual public RootPlot {
@@ -20,7 +21,7 @@ class AnalysisPlot : virtual public RootPlot {
     AnalysisPlot(Topic);
     virtual ~AnalysisPlot();
     Topic topic() const;
-    virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0) = 0;
+    virtual void processEvent(const QVector<Hit*>&, Track* = 0, TrackSelection* = 0, SimpleEvent* = 0) = 0;
     virtual void finalize() = 0;
   protected:
     QMutex m_mutex;

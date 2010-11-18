@@ -3,6 +3,7 @@
 #include <TH1D.h>
 
 #include "Hit.hh"
+#include "TrackSelection.hh"
 #include "Track.hh"
 #include "BrokenLine.hh"
 #include "CenteredBrokenLine.hh"
@@ -25,17 +26,14 @@ MomentumSpectrumPlot::~MomentumSpectrumPlot()
 {
 }
 
-void MomentumSpectrumPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* /*event*/)
+void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Track* track, TrackSelection* selection, SimpleEvent* /*event*/)
 {
   // QMutexLocker locker(&m_mutex);
-  if (!track || !track->fitGood())
+  if (!track || !selection || !track->fitGood())
     return;
 
-  int nTrackerHits = 0;
-  foreach(Hit* hit, hits)
-    if (hit->type() == Hit::tracker)
-      ++nTrackerHits;
-  if (nTrackerHits != 8)
+  TrackSelection::Flags flags = selection->flags();
+  if (!(flags & TrackSelection::AllTrackerLayers))
     return;
 
   double pt = track->pt();
