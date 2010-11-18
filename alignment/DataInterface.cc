@@ -4,7 +4,7 @@
 #include "Cluster.hh"
 #include "SimpleEvent.hh"
 #include "Layer.hh"
-#include "StraightLine.hh"
+#include "CenteredBrokenLine.hh"
 #include "DataChain.hh"
 #include "TrackSelection.hh"
 #include "TrackFinding.hh"
@@ -46,9 +46,15 @@ void DataInterface::addSuitableTracks()
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
 
-    Track* track = new StraightLine;
+    Track* track = new CenteredBrokenLine;
+    TrackSelection selection;
     if (track->fit(clusters)) {
-      manager->addTrack(track);
+      selection.processTrack(track);
+      TrackSelection::Flags flags = selection.flags();
+      if ( (flags & TrackSelection::AllTrackerLayers) &&
+          !(flags & TrackSelection::MagnetCollision) ) {
+        manager->addTrack(track);
+      }
     }
     else {
       delete track;
