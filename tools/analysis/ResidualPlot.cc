@@ -46,16 +46,14 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSe
   if (!(flags & TrackSelection::AllTrackerLayers))
     return;
 
+  // only select tracks which didn't pass through the magnet
+  if ((flags & TrackSelection::MagnetCollision))
+    return;
+
   // remove hits in this layer from hits for track fit
   QVector<Hit*> hitsForFit;
   QVector<Hit*> hitsInThisLayer;
       
-  // only select tracks which didn't pass through the magnet
-  double x0 = track->x(0.);
-  double y0 = track->y(0.);
-  double r = sqrt(x0*x0 + y0*y0);
-  if (r > 65 && r < 110)
-    return;
 
   foreach(Hit* hit, hits) {
     double z = hit->position().z();
