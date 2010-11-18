@@ -61,9 +61,9 @@ void Cluster::processHits()
   double x  = 0., y  = 0., z  = 0.;
   double xc = 0., yc = 0., zc = 0.;
   unsigned short detId;
-  double weightedMean;
-  double weightedMeanC;
-  double sumOfWeights;
+  double weightedMean = 0.;
+  double weightedMeanC = 0.;
+  double sumOfWeights = 0.;
 
   Hit* firstHit = m_hits.at(0);
   Hit::ModuleType type = firstHit->type();
