@@ -33,7 +33,7 @@ public:
   unsigned short        nElements() const {return m_elements.size();}
 
 
-  QList<unsigned short> detIds() const;
+  const QList<unsigned short>& detIds() const {return m_ids;};
   bool                  contains(unsigned short detId) const;
   const char*           printInfo() const;
   void                  sortIdsByPosition();
