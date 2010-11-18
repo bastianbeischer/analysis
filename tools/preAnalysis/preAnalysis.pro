@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = preAnalysis
 
-CONFIG += debug
+#CONFIG += debug
 
 TOPLEVEL = ../..
 

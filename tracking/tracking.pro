@@ -1,6 +1,8 @@
 TEMPLATE = lib
 TARGET = tracking
 
+#CONFIG += debug
+
 TOPLEVEL    = ..
 
 # Seperate source & build dirs

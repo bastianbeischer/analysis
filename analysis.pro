@@ -13,4 +13,3 @@ SUBDIRS  = event \
            tools/eventdisplay \
            tools/parser \
            tools/preAnalysis
-
