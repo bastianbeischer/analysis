@@ -11,6 +11,8 @@
 #include "Manager.hh"
 #include "Setup.hh"
 
+#include <iostream>
+
 DataInterface::DataInterface() :
   m_chain(new DataChain),
   m_trackSelection(new TrackSelection),
@@ -35,7 +37,16 @@ void DataInterface::addSuitableTracks()
   Manager* manager = Manager::instance();
   Setup* setup = Setup::instance();
   
-  for (unsigned int i = 0; i < m_chain->nEntries(); i++) {
+  unsigned int nEntries = m_chain->nEntries();
+  std::cout << std::endl;
+  std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
+  std::cout << "| Processing:                                                                                        |" << std::endl;
+  std::cout << "| 0%     10%       20%       30%       40%       50%       60%       70%       80%       90%     100%|" << std::endl;
+  std::cout << "|.........|.........|.........|.........|.........|.........|.........|.........|.........|..........|" << std::endl;
+  std::cout << "|" << std::flush;
+  int iFactors = 0;
+
+  for (unsigned int i = 0; i < nEntries; i++) {
     SimpleEvent* event = m_chain->event(i);
     
     QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
@@ -60,5 +71,12 @@ void DataInterface::addSuitableTracks()
       delete track;
     }
     
+    if ( i > iFactors*nEntries/100. ) {
+      std::cout << "#" << std::flush;
+      iFactors++;
+    }
   }
+
+  std::cout << "|" << std::endl;
+  std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
 }
