@@ -37,7 +37,7 @@ MomentumSpectrumPlot::~MomentumSpectrumPlot()
 
 void MomentumSpectrumPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* /*event*/)
 {
-  QMutexLocker locker(&m_mutex);
+  // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 
