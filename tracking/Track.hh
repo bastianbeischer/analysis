@@ -30,6 +30,8 @@ public:
   
   virtual double   x(double z)        const = 0;
   virtual double   y(double z)        const = 0;
+  virtual double   slopeX(double z)   const = 0;
+  virtual double   slopeY(double z)   const = 0;
   virtual double   bendingAngle()     const = 0;
   TVector3         position(double z) const {return TVector3(x(z), y(z), z);}
   double           pt()               const;

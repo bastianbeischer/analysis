@@ -70,3 +70,15 @@ double CenteredBrokenLine::y(double z) const
 {
   return m_y0 + z*m_slopeY;
 }
+
+double CenteredBrokenLine::slopeX(double z) const
+{
+  if (z > m_zIntersection)
+    return m_upperSlopeX;
+  return m_lowerSlopeX;
+}
+
+double CenteredBrokenLine::slopeY(double) const
+{
+  return m_slopeY;
+}

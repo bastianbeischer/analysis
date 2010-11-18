@@ -29,6 +29,8 @@ public:
 
   double         x(double z)        const {return m_x0 + z*m_slopeX;}
   double         y(double z)        const {return m_y0 + z*m_slopeY;}
+  double         slopeX(double)     const {return slopeX();}
+  double         slopeY(double)     const {return slopeY();}
   double         bendingAngle()     const {return 0.;}
 
 public:

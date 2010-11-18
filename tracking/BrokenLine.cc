@@ -74,3 +74,15 @@ double BrokenLine::y(double z) const
 {
   return m_y0 + z*m_slopeY;
 }
+
+double BrokenLine::slopeX(double z) const
+{
+  if (z > m_zIntersection)
+    return m_upperSlopeX;
+  return m_lowerSlopeX;
+}
+
+double BrokenLine::slopeY(double) const
+{
+  return m_slopeY;
+}
