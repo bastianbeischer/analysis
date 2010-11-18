@@ -77,6 +77,7 @@ void Setup::construct()
           layer->addElement(element);
         }
       } // elements
+      layer->sortIdsByPosition();
     } // layers
     m_settings->endGroup();
   } // settings

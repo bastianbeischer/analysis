@@ -94,14 +94,6 @@ const char* Layer::printInfo() const
   return stream.str().c_str();
 }
 
-QList<unsigned short> Layer::detIds() const
-{
-  QList<unsigned short> detIds;
-  foreach(DetectorElement* element, m_elements)
-    detIds.push_back(element->id());
-  return detIds;
-}
-
 void Layer::sortIdsByPosition()
 {
   QList<DetectorElement*> elements = m_elements.values();
