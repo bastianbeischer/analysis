@@ -5,7 +5,8 @@
 
 #include <QVector>
 
-TrackSelection::TrackSelection()
+TrackSelection::TrackSelection() :
+  m_flags(TrackSelection::None)
 {
 }
 
@@ -13,38 +14,31 @@ TrackSelection::~TrackSelection()
 {
 }
 
-bool TrackSelection::passes(Track* track, Flags flags)
+void TrackSelection::processTrack(Track* track)
 {
-  bool result = true;
-  if (flags & AllTrackerLayers) {
-    result = result && checkAllTrackerLayers(track);
-  }
-  if (flags & InsideMagnet) {
-    result = result && checkInsideMagnet(track);
-  }
-  if (flags & HighPt) {
-    result = result && checkHighPt(track);
-  }
-  return result;
+  checkAllTrackerLayers(track);
+  checkInsideMagnet(track);
+  checkHighPt(track);
 }
 
-bool TrackSelection::checkAllTrackerLayers(Track* track)
+void TrackSelection::checkAllTrackerLayers(Track* track)
 {
   int nTrackerHits = 0;
   foreach(Hit* hit, track->hits())
     if (hit->type() == Hit::tracker)
       ++nTrackerHits;
   if (nTrackerHits != 8)
-    return false;
-  return true;
+    return;
+
+  m_flags = static_cast<Flags>(m_flags | AllTrackerLayers);
 }
 
-bool TrackSelection::checkInsideMagnet(Track* track)
+void TrackSelection::checkInsideMagnet(Track* /*track*/)
 {
-  return true;
+  m_flags = static_cast<Flags>(m_flags | InsideMagnet);
 }
 
-bool TrackSelection::checkHighPt(Track* track)
+void TrackSelection::checkHighPt(Track* /*track*/)
 {
-  return true;
+  m_flags = static_cast<Flags>(m_flags | HighPt);
 }
