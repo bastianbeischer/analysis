@@ -175,7 +175,7 @@ void Plotter::startAnalysis(Track::Type type, int numberOfThreads)
     freeSpace = queue.freeSpace();
     queuedEvents = queue.numberOfEvents();
     if (freeSpace > .2 * EventQueue::s_bufferSize) {
-      for (int j = 0; j < freeSpace; ++j) {
+      for (int j = 0; j < freeSpace && i < nEntries; ++j) {
         SimpleEvent* event = m_chain->event(i);
         queue.enqueue(new SimpleEvent(*event));
         ++i;
