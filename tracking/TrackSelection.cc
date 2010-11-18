@@ -2,8 +2,6 @@
 
 #include "Track.hh"
 #include "Hit.hh"
-#include "Layer.hh"
-#include "Setup.hh"
 
 #include <QMap>
 #include <QVector>
