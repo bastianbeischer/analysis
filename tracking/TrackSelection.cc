@@ -25,7 +25,9 @@ void TrackSelection::processTrack(Track* track)
 
   checkAllTrackerLayers(track);
   checkInsideMagnet(track);
+  checkOutsideMagnet(track);
   checkHighPt(track);
+  checkMagnetCollision(track);
 }
 
 void TrackSelection::checkAllTrackerLayers(Track* track)
