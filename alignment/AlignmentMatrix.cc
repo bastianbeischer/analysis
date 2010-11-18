@@ -59,8 +59,8 @@ void AlignmentMatrix::fillMatrixFromTrack(Track* track)
     resetArrays();
 
     // use only tracker hits for alignment
-    if(hit->type() != Hit::tracker)
-      continue;
+    // if(hit->type() != Hit::tracker)
+    //   continue;
 
     // position
     TVector3 pos = hit->position();
@@ -77,8 +77,7 @@ void AlignmentMatrix::fillMatrixFromTrack(Track* track)
     float xi = useTangens ? tan(angle) : 1./tan(angle);
 
     // specify resolution
-    //double sigmaV = hit->resolutionEstimate();
-    double sigmaV = 0.05;
+    double sigmaV = hit->resolutionEstimate();
 
     // detector ID
     unsigned short detId = hit->detId() - hit->channel();

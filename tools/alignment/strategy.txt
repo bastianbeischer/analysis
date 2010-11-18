@@ -6,7 +6,7 @@ nLocalIter   1
 cutfactor    100
 nGlobalIter  1
 
-readDataFrom /home/beischer/institut/perdaix/analysis/lists/flightday_reduced.txt
+readDataFrom /home/beischer/institut/perdaix/analysis/lists/andreas.txt
 
 fixLayer     16
 fixLayer     9
