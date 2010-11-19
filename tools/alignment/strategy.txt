@@ -1,12 +1,10 @@
 nGlobal      192
-nLocal       6
+nLocal       5
 verbose      1
 nStdDev      0
 nLocalIter   1
 cutfactor    100
 nGlobalIter  1
-
-readDataFrom ../../lists/andreas.txt
 
 fixLayer     1             
 fixLayer     2
@@ -23,4 +21,8 @@ fixLayer     9
 fixLayer     10
 
 fixLayer     11
-fixLayer     18
+fixLayer     12
+fixLayer     13
+fixLayer     14
+
+readDataFrom ../../lists/andreas.txt
