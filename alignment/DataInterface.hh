@@ -1,6 +1,7 @@
 #ifndef DataInterface_hh
 #define DataInterface_hh
 
+class AlignmentMatrix;
 class DataChain;
 class TrackSelection;
 class TrackFinding;
@@ -14,7 +15,7 @@ public:
   
 public:
   void addFiles(const char* listName);
-  void addSuitableTracks();
+  void process(AlignmentMatrix* matrix);
 
 private:
   DataChain*      m_chain;

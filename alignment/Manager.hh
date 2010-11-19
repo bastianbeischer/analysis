@@ -5,9 +5,9 @@
 #include <QString>
 
 class AlignmentMatrix;
+class DataInterface;
 class Strategy;
 class Parameters;
-class Track;
 
 class Manager
 {
@@ -24,8 +24,6 @@ public:
   void            startAlignment();
   void            saveResults() const;
 
-  void            addTrack(Track* track) {m_tracks.push_back(track);}
-
 private:
   Manager();
 
@@ -35,8 +33,7 @@ private:
   Strategy*        m_strategy;
   AlignmentMatrix* m_matrix;
   Parameters*      m_parameters;
-
-  QVector<Track*>  m_tracks;
+  DataInterface*   m_dataInterface;
 
 };
 

@@ -1,5 +1,6 @@
 #include "DataInterface.hh"
 
+#include "AlignmentMatrix.hh"
 #include "Hit.hh"
 #include "Cluster.hh"
 #include "SimpleEvent.hh"
@@ -10,6 +11,8 @@
 #include "TrackFinding.hh"
 #include "Manager.hh"
 #include "Setup.hh"
+
+#include "millepede.h"
 
 #include <iostream>
 
@@ -32,9 +35,8 @@ void DataInterface::addFiles(const char* listName)
   m_chain->addFileList(listName);
 }
 
-void DataInterface::addSuitableTracks()
+void DataInterface::process(AlignmentMatrix* matrix)
 {
-  Manager* manager = Manager::instance();
   Setup* setup = Setup::instance();
   
   unsigned int nEntries = m_chain->nEntries();
@@ -64,7 +66,8 @@ void DataInterface::addSuitableTracks()
       TrackSelection::Flags flags = selection.flags();
       if ( (flags & TrackSelection::AllTrackerLayers) &&
           !(flags & TrackSelection::MagnetCollision) ) {
-        manager->addTrack(track);
+        matrix->fillMatrixFromTrack(track);
+        FITLOC();
       }
     }
     else {
