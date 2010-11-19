@@ -53,6 +53,8 @@ void TrackSelection::checkAllTrackerLayers(Track* track)
 
 void TrackSelection::checkInsideMagnet(Track* track)
 {
+  if (!track->fitGood())
+    return;
   double r1 = sqrt(pow(track->x(40.), 2.) + pow(track->y(40.), 2.));
   double r2 = sqrt(pow(track->x(-40.), 2.) + pow(track->y(-40.), 2.));
   if (r1 < 75 && r2 < 75)
@@ -61,6 +63,8 @@ void TrackSelection::checkInsideMagnet(Track* track)
 
 void TrackSelection::checkOutsideMagnet(Track* track)
 {
+  if (!track->fitGood())
+    return;
   double r1 = sqrt(pow(track->x(40.), 2.) + pow(track->y(40.), 2.));
   double r2 = sqrt(pow(track->x(-40.), 2.) + pow(track->y(-40.), 2.));
   if (r1 > 120 && r2 > 120)
@@ -69,6 +73,8 @@ void TrackSelection::checkOutsideMagnet(Track* track)
 
 void TrackSelection::checkHighPt(Track* track)
 {
+  if (!track->fitGood())
+    return;
   double pt = track->pt();
   // 2GeV currently...
   if (pt > 2 || pt == DBL_MAX)
@@ -77,6 +83,8 @@ void TrackSelection::checkHighPt(Track* track)
 
 void TrackSelection::checkMagnetCollision(Track* track)
 {
+  if (!track->fitGood())
+    return;
   double x0 = track->x(0.);
   double y0 = track->y(0.);
   double r = sqrt(x0*x0 + y0*y0);
