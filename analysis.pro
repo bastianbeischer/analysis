@@ -3,7 +3,7 @@ TEMPLATE = subdirs
 CONFIG  += ordered
 
 SUBDIRS  = event \
-           rootPlot \
+           rootplot \
            setup \
            tracking \
            alignment/millepede \

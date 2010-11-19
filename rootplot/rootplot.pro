@@ -1,5 +1,5 @@
 TEMPLATE = lib
-TARGET = rootPlot
+TARGET = rootplot
 
 TOPLEVEL    = ..
 
