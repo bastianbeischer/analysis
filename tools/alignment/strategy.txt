@@ -6,7 +6,7 @@ nLocalIter   1
 cutfactor    100
 nGlobalIter  1
 
-readDataFrom /home/bastian/institut/perdaix/analysis/lists/andreas.txt
+readDataFrom ../../lists/andreas.txt
 
 fixLayer     1             
 fixLayer     2
