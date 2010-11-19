@@ -12,6 +12,7 @@
 #include <TVector3.h>
 
 #include <cmath>
+#include <iostream>
 
 ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer)
   : AnalysisPlot(topic)
@@ -55,9 +56,8 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSe
   QVector<Hit*> hitsInThisLayer;
 
   foreach(Hit* hit, hits) {
-    double z = hit->position().z();
-    z = round(z*100.)/100.;
-    if (z != m_layer->z()) {
+    double z = round(hit->position().z()*100)/100.;
+    if (fabs(z - m_layer->z()) > 5) {
       hitsForFit.push_back(hit);
     }
     else {
@@ -74,11 +74,10 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSe
     mytrack = new CenteredBrokenLine;
 
   // fit and fill histograms
-  if (track->fit(hitsForFit)) {
+  if (mytrack->fit(hitsForFit)) {
     foreach(Hit* hit, hitsInThisLayer) {
-      
       TVector3 pos = 0.5* (hit->position() + hit->counterPosition());
-      TVector3 trackPos = track->position(m_layer->z());
+      TVector3 trackPos = mytrack->position(m_layer->z());
 
       double angle = hit->angle();
       pos.RotateZ(-angle);
@@ -86,7 +85,7 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSe
 
       double res = (pos - trackPos).x();
       int index = m_layer->detIds().indexOf(hit->detId() - hit->channel());
-
+  
       histogram()->Fill(index, res);
     }
   }
