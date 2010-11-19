@@ -27,7 +27,7 @@
 #include <QTimer>
 
 MainWindow::MainWindow(QWidget* parent)
-  : QDialog(parent)
+  : QWidget(parent)
   , m_updateTimer(0)
   , m_plotter(0)
   , m_activePlots()

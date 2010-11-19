@@ -9,7 +9,7 @@ class QTimer;
 
 class DataChain;
 
-class MainWindow : public QDialog {
+class MainWindow : public QWidget {
   Q_OBJECT
   public:
     MainWindow(QWidget* parent = 0);
