@@ -19,6 +19,7 @@
 #include "MomentumSpectrumPlot.hh"
 #include "SignalHeightPlot.hh"
 #include "ClusterLengthPlot.hh"
+#include "TimeOfFlightPlot.hh"
 
 #include <QDebug>
 #include <QVector3D>
@@ -263,6 +264,7 @@ void MainWindow::setupAnalysis()
   if (m_ui.miscellaneousTRDCheckBox->isChecked()) {
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
+    m_plotter->addPlot(new TimeOfFlightPlot());
     DetectorElement* element = setup->firstElement();
     while (element) {
       if (element->type() == DetectorElement::tof)

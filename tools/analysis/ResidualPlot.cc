@@ -72,6 +72,7 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSe
     mytrack = new BrokenLine;
   else if (track->type() == Track::CenteredBrokenLine)
     mytrack = new CenteredBrokenLine;
+  else mytrack = 0;
 
   // fit and fill histograms
   if (mytrack->fit(hitsForFit)) {
