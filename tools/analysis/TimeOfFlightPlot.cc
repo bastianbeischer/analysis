@@ -141,7 +141,6 @@ void TimeOfFlightPlot::processEvent(const QVector<Hit*>& hits, Track* track, Tra
   //qDebug() << "---";
   double deltaT = (correctedLeftStopTime+correctedRightStopTime)/2. - (correctedLeftStartTime+correctedRightStartTime)/2.;
   double trackLength = (upperPoint-lowerPoint).Mag();
-  qDebug() << trackLength;
   histogram(0)->Fill(deltaT * speedOfLight / trackLength);
 }
 
