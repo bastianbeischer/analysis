@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = analysis
 
-CONFIG += debug
+#CONFIG += debug
 
 TOPLEVEL = ../..
 
@@ -16,19 +16,24 @@ RCC_DIR     = ./.tmp
 FORMS+= MainWindow.ui
 
 INCLUDEPATH += $$TOPLEVEL/event \
-               $$TOPLEVEL/tracking \
-               $$TOPLEVEL/setup
+               $$TOPLEVEL/rootplot \
+               $$TOPLEVEL/setup \
+               $$TOPLEVEL/tracking
 
 DEPENDPATH += $$INCLUDEPATH
 
 LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
                          -ltracking \
+                         -lrootplot \
                          -lsetup
 
 # Headers
 HEADERS = MainWindow.hh \
           Plotter.hh \
+          EventQueue.hh \
+          AnalysisThread.hh \
           AnalysisPlot.hh \
+          RootPlot.hh \
           H1DPlot.hh \
           H2DPlot.hh \
           BendingPositionPlot.hh \
@@ -40,13 +45,18 @@ HEADERS = MainWindow.hh \
           TOFPositionCorrelationPlot.hh \
           MomentumSpectrumPlot.hh \
           TimeOfFlightPlot.hh \
-          GeometricOccupancyProjectionPlot.hh
+          GeometricOccupancyProjectionPlot.hh \
+          SignalHeightPlot.hh \
+          ClusterLengthPlot.cc
 
 # Sources
 SOURCES = main.cc \
           MainWindow.cc \
           Plotter.cc \
+          EventQueue.cc \
+          AnalysisThread.cc \
           AnalysisPlot.cc \
+          RootPlot.cc \
           H1DPlot.cc \
           H2DPlot.cc \
           BendingPositionPlot.cc \
@@ -58,7 +68,9 @@ SOURCES = main.cc \
           TOFPositionCorrelationPlot.cc \
           MomentumSpectrumPlot.cc \
           TimeOfFlightPlot.cc \
-          GeometricOccupancyProjectionPlot.cc
+          GeometricOccupancyProjectionPlot.cc \
+          SignalHeightPlot.cc \
+          ClusterLengthPlot.cc
 
 include($$TOPLEVEL/root.pri)
 

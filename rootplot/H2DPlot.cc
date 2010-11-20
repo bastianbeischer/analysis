@@ -4,8 +4,8 @@
 #include <TList.h>
 #include <TCanvas.h>
 
-H2DPlot::H2DPlot(Topic topic)
-  : AnalysisPlot(topic)
+H2DPlot::H2DPlot()
+  : RootPlot()
   , m_histogram()
 {}
 

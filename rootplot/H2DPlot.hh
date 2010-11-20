@@ -1,18 +1,16 @@
 #ifndef H2DPlot_hh
 #define H2DPlot_hh
 
-#include "AnalysisPlot.hh"
+#include "RootPlot.hh"
 
-class Hit;
-class Track;
-class SimpleEvent;
+#include <QVector>
 
+class TCanvas;
 class TH2D;
-class THStack;
 
-class H2DPlot : public AnalysisPlot {
+class H2DPlot : virtual public RootPlot {
   public:
-    H2DPlot(Topic);
+    H2DPlot();
     virtual ~H2DPlot();
     virtual void draw(TCanvas*);
     virtual void clear();

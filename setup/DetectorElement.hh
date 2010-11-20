@@ -3,6 +3,7 @@
 
 #include <QMap>
 #include <QVector>
+#include <QVector3D>
 
 #include "Hit.hh"
 
@@ -27,20 +28,23 @@ public:
   void              clearHits()                     {m_hits.clear();}
   void              clearClusters()                 {m_clusters.clear();}
   void              deleteClusters();
-  void              setAlignmentShift(double shift) {m_alignmentShift = shift;}
   void              sortHits();
   void              debug();
+
+  void              setAlignmentShift(double shift) {m_alignmentShift = shift;}
 
 public:
   unsigned short    type()           const {return m_type;}
   unsigned short    id()             const {return m_id;}
   unsigned short    nHits()          const {return m_hits.size();}
   double            alignmentShift() const {return m_alignmentShift;}
+  QVector3D         position()       const {return m_position;}
 
 protected:
   Type                       m_type;
   unsigned short             m_id;
 
+  QVector3D                  m_position;
   double                     m_alignmentShift;
 
   QMap<unsigned short, Hit*> m_hits;

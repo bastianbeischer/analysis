@@ -3,6 +3,7 @@
 #include "CenteredBrokenLine.hh"
 
 #include "Hit.hh"
+#include "TrackSelection.hh"
 
 #include <TH1.h>
 #include <TCanvas.h>
@@ -10,7 +11,8 @@
 #include <cmath>
 
 BendingAnglePlot::BendingAnglePlot()
-  : H1DPlot(AnalysisPlot::Tracking)
+  : AnalysisPlot(AnalysisPlot::Tracking)
+  , H1DPlot()
 {
   setTitle("bending angle");
   TH1D* histogram = 0;
@@ -28,24 +30,22 @@ BendingAnglePlot::BendingAnglePlot()
 BendingAnglePlot::~BendingAnglePlot()
 {}
 
-void BendingAnglePlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void BendingAnglePlot::processEvent(const QVector<Hit*>& /*clusters*/, Track* track, TrackSelection* selection, SimpleEvent*)
 {
-  if (!track)
+  // QMutexLocker locker(&m_mutex);
+  if (!track || !selection || !track->fitGood())
     return;
 
-  int nTrackerHits = 0;
-  foreach(Hit* hit, clusters)
-    if (hit->type() == Hit::tracker)
-      ++nTrackerHits;
-  if (nTrackerHits != 8)
+  TrackSelection::Flags flags = selection->flags();
+  if (!(flags & TrackSelection::AllTrackerLayers))
     return;
 
   double alpha = track->bendingAngle();
-  double r = sqrt(track->x(0)*track->x(0) + track->y(0)*track->y(0));
+
   histogram(0)->Fill(alpha);
-  if (r < 75)
+  if(flags & TrackSelection::InsideMagnet)
     histogram(1)->Fill(alpha);
-  if (r > 140)
+  if(flags & TrackSelection::OutsideMagnet)
     histogram(2)->Fill(alpha);
 }
 

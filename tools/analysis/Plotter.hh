@@ -2,6 +2,7 @@
 #define Plotter_hh
 
 #include "AnalysisPlot.hh"
+#include "Track.hh"
 
 #include <TQtWidget.h>
 
@@ -10,9 +11,6 @@
 class QLabel;
 class QProgressBar;
 class AnalysisPlot;
-class Track;
-class TrackFinding;
-class SimpleEvent;
 class DataChain;
 
 class Plotter : public TQtWidget {
@@ -29,14 +27,13 @@ public:
   void selectPlot(int);
   void setTitleLabel(QLabel*);
   void setPositionLabel(QLabel*);
-  void setProgressBar(QProgressBar*);
+  void setDataChainProgressBar(QProgressBar*);
+  void setEventQueueProgressBar(QProgressBar*);
   void saveCanvas(const QString& fileName);
-  void processEvent(SimpleEvent*);
-  void setTrackType(Track*);
   void addFileList(const QString& fileName);
   void setFileList(const QString& fileName);
 public slots:
-  void startAnalysis();
+  void startAnalysis(Track::Type, int numberOfThreads);
   void abortAnalysis();
   void finalizeAnalysis();
   void update();
@@ -47,10 +44,9 @@ protected:
 private:
   QLabel* m_titleLabel;
   QLabel* m_positionLabel;
-  QProgressBar* m_progressBar;
+  QProgressBar* m_dataChainProgressBar;
+  QProgressBar* m_eventQueueProgressBar;
   QVector<AnalysisPlot*> m_plots;
-  Track* m_track;
-  TrackFinding* m_trackFinding;
   DataChain* m_chain;
   bool m_eventLoopOff;
   int m_selectedPlot;

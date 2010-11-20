@@ -1,5 +1,10 @@
 #include "SimpleEvent.hh"
 
+#include "Hit.hh"
+#include "Cluster.hh"
+#include "TOFSipmHit.hh"
+#include "TOFCluster.hh"
+
 ClassImp( SimpleEvent );
 
 SimpleEvent::SimpleEvent() :
@@ -21,18 +26,25 @@ SimpleEvent::SimpleEvent(int id, int time) :
 SimpleEvent::SimpleEvent(const SimpleEvent& other) :
   TObject(other),
   m_eventId(other.m_eventId),
-  m_time(other.m_time),
-  m_hits(other.m_hits)
+  m_time(other.m_time)
 {
-}
-
-const SimpleEvent& SimpleEvent::operator=(const SimpleEvent& right)
-{
-  static_cast<TObject>(*this) = static_cast<TObject>(right);
-  m_eventId = right.m_eventId;
-  m_time = right.m_time;
-  m_hits = right.m_hits;
-  return *this;
+  for (std::vector<Hit*>::const_iterator it = other.m_hits.begin(); it != other.m_hits.end(); it++) {
+    Hit* hit = *it;
+    if (strcmp(hit->ClassName(), "Hit") == 0)
+      m_hits.push_back(new Hit(*hit));
+    else if (strcmp(hit->ClassName(), "Cluster") == 0) {
+      Cluster* cluster = static_cast<Cluster*>(hit);
+      m_hits.push_back(new Cluster(*cluster));
+    }
+    else if (strcmp(hit->ClassName(), "TOFSipmHit") == 0) {
+      TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
+      m_hits.push_back(new TOFSipmHit(*tofHit));
+    }
+    else if (strcmp(hit->ClassName(), "TOFCluster") == 0) {
+      TOFCluster* cluster = static_cast<TOFCluster*>(hit);
+      m_hits.push_back(new TOFCluster(*cluster));
+    }
+  }
 }
 
 SimpleEvent::~SimpleEvent()

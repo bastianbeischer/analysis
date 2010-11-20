@@ -2,6 +2,7 @@
 #include "BrokenLine.hh"
 #include "CenteredBrokenLine.hh"
 
+#include "TrackSelection.hh"
 #include "Hit.hh"
 
 #include <TH1.h>
@@ -10,7 +11,8 @@
 #include <cmath>
 
 GeometricOccupancyProjectionPlot::GeometricOccupancyProjectionPlot(double zPosition)
-  : H1DPlot(AnalysisPlot::Occupancy)
+  : AnalysisPlot(AnalysisPlot::Occupancy)
+  , H1DPlot()
   , m_zPosition(zPosition)
 {
   setTitle(QString("occupancy projection %1").arg(zPosition));
@@ -22,17 +24,17 @@ GeometricOccupancyProjectionPlot::GeometricOccupancyProjectionPlot(double zPosit
 GeometricOccupancyProjectionPlot::~GeometricOccupancyProjectionPlot()
 {}
 
-void GeometricOccupancyProjectionPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void GeometricOccupancyProjectionPlot::processEvent(const QVector<Hit*>&, Track* track, TrackSelection* selection, SimpleEvent*)
 {
-  if (track) {
-    int nTrackerHits = 0;
-    foreach(Hit* hit, clusters)
-      if (hit->type() == Hit::tracker)
-        ++nTrackerHits;
-    if (nTrackerHits != 8)
-      return;
-    histogram(0)->Fill(track->x(m_zPosition));
-  }
+  // QMutexLocker locker(&m_mutex);
+  if (!track || !selection || !track->fitGood())
+    return;
+
+  TrackSelection::Flags flags = selection->flags();
+  if (!(flags & TrackSelection::AllTrackerLayers))
+    return;
+
+  histogram(0)->Fill(track->x(m_zPosition));
 }
 
 void GeometricOccupancyProjectionPlot::finalize()

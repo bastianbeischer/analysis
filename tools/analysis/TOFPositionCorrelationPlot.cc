@@ -1,6 +1,7 @@
 #include "TOFPositionCorrelationPlot.hh"
 #include "BrokenLine.hh"
 
+#include "TrackSelection.hh"
 #include "Hit.hh"
 #include "TOFCluster.hh"
 
@@ -12,7 +13,8 @@
 #include <QDebug>
 
 TOFPositionCorrelationPlot::TOFPositionCorrelationPlot(unsigned short id)
-  : H2DPlot(AnalysisPlot::MiscellaneousTOF)
+  : AnalysisPlot(AnalysisPlot::MiscellaneousTOF)
+  , H2DPlot()
   , m_id(id)
   , m_correlationGraph(new TGraphErrors)
   , m_correlationFunction(new TF1(qPrintable(QString("tof correlation Function %1").arg(id)), "pol1"))
@@ -32,19 +34,19 @@ TOFPositionCorrelationPlot::~TOFPositionCorrelationPlot()
   delete m_correlationFunction;
 }
 
-void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, Track* track, TrackSelection* selection, SimpleEvent*)
 {
-  if (track) {
-    int nTrackerHits = 0;
-    foreach(Hit* hit, clusters)
-      if (hit->type() == Hit::tracker)
-        ++nTrackerHits;
-    if (nTrackerHits != 8)
-      return;
-    foreach(Hit* hit, clusters)
-      if (hit->type() == Hit::tof && (hit->detId()-hit->channel()) == m_id)
-        histogram()->Fill(track->y(hit->position().z()), static_cast<TOFCluster*>(hit)->yEstimate(false));
-  }
+  // QMutexLocker locker(&m_mutex);
+  if (!track || !selection || !track->fitGood())
+    return;
+
+  TrackSelection::Flags flags = selection->flags();
+  if (!(flags & TrackSelection::AllTrackerLayers))
+    return;
+
+  foreach(Hit* hit, clusters)
+    if (hit->type() == Hit::tof && (hit->detId()-hit->channel()) == m_id)
+      histogram()->Fill(track->y(hit->position().z()), static_cast<TOFCluster*>(hit)->yEstimate(false));
 }
 
 void TOFPositionCorrelationPlot::draw(TCanvas* canvas)

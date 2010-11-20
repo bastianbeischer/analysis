@@ -1,20 +1,19 @@
 #ifndef H1DPlot_hh
 #define H1DPlot_hh
 
-#include "AnalysisPlot.hh"
+#include "RootPlot.hh"
 
-class Hit;
-class Track;
-class SimpleEvent;
+#include <QVector>
 
+class TCanvas;
 class TH1D;
 
-class H1DPlot : public AnalysisPlot {
+class H1DPlot : virtual public RootPlot {
   public:
-    H1DPlot(Topic);
+    H1DPlot();
     virtual ~H1DPlot();
-    virtual void draw(TCanvas*);
-    virtual void clear();
+    void draw(TCanvas*);
+    void clear();
     virtual void clear(int);
     int numberOfHistograms();
     TH1D* histogram(int i);

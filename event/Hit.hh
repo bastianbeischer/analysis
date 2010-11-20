@@ -21,7 +21,6 @@ public:
       TVector3 counterPosition);
 
   Hit(const Hit& other);
-  const Hit& operator=(const Hit& right);
 
   virtual ~Hit();
 

@@ -1,6 +1,9 @@
 #include "Cluster.hh"
 
 #include "Hit.hh"
+#include "Cluster.hh"
+#include "TOFSipmHit.hh"
+#include "TOFCluster.hh"
 
 #include <cmath>
 
@@ -20,18 +23,25 @@ Cluster::Cluster(const std::vector<Hit*>& hits) :
 }
 
 Cluster::Cluster(const Cluster& other) :
-  Hit(other),
-  m_hits(other.m_hits)
+  Hit(other)
 {
-  processHits();
-}
-
-const Cluster& Cluster::operator=(const Cluster& right)
-{
-  static_cast<Hit>(*this) = static_cast<Hit>(right);
-  m_hits = right.m_hits;
-  processHits();
-  return *this;
+  for (std::vector<Hit*>::const_iterator it = other.m_hits.begin(); it != other.m_hits.end(); it++) {
+    Hit* hit = *it;
+    if (strcmp(hit->ClassName(), "Hit") == 0)
+      m_hits.push_back(new Hit(*hit));
+    else if (strcmp(hit->ClassName(), "Cluster") == 0) {
+      Cluster* cluster = static_cast<Cluster*>(hit);
+      m_hits.push_back(new Cluster(*cluster));
+    }
+    else if (strcmp(hit->ClassName(), "TOFSipmHit") == 0) {
+      TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
+      m_hits.push_back(new TOFSipmHit(*tofHit));
+    }
+    else if (strcmp(hit->ClassName(), "TOFCluster") == 0) {
+      TOFCluster* cluster = static_cast<TOFCluster*>(hit);
+      m_hits.push_back(new TOFCluster(*cluster));
+    }
+  }
 }
 
 Cluster::~Cluster()
@@ -51,9 +61,9 @@ void Cluster::processHits()
   double x  = 0., y  = 0., z  = 0.;
   double xc = 0., yc = 0., zc = 0.;
   unsigned short detId;
-  double weightedMean;
-  double weightedMeanC;
-  double sumOfWeights;
+  double weightedMean = 0.;
+  double weightedMeanC = 0.;
+  double sumOfWeights = 0.;
 
   Hit* firstHit = m_hits.at(0);
   Hit::ModuleType type = firstHit->type();

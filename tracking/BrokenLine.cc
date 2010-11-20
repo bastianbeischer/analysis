@@ -30,7 +30,9 @@ BrokenLine::~BrokenLine()
 
 int BrokenLine::fit(const QVector<Hit*>& hits)
 {
-  m_fitGood = m_matrix->fit(hits);
+  m_hits = hits;
+
+  m_fitGood = m_matrix->fit(m_hits);
 
   if (m_fitGood != 0) {
     TVectorD solution = m_matrix->solution();
@@ -44,7 +46,6 @@ int BrokenLine::fit(const QVector<Hit*>& hits)
     m_slopeY        = solution(5);
     m_chi2          = m_matrix->chi2();
     m_ndf           = m_matrix->ndf();
-    m_hits          = hits;
     m_zIntersection = (m_upperX0 - m_lowerX0) / (m_lowerSlopeX - m_upperSlopeX);
 
     if (m_verbose > 0) {
@@ -73,4 +74,16 @@ double BrokenLine::x(double z) const
 double BrokenLine::y(double z) const
 {
   return m_y0 + z*m_slopeY;
+}
+
+double BrokenLine::slopeX(double z) const
+{
+  if (z > m_zIntersection)
+    return m_upperSlopeX;
+  return m_lowerSlopeX;
+}
+
+double BrokenLine::slopeY(double) const
+{
+  return m_slopeY;
 }

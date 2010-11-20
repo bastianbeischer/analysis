@@ -16,12 +16,14 @@ RCC_DIR     = ./.tmp
 FORMS+= MainWindow.ui
 
 INCLUDEPATH += $$TOPLEVEL/event \
+               $$TOPLEVEL/rootplot \
                $$TOPLEVEL/tracking \
                $$TOPLEVEL/setup
 
 DEPENDPATH += $$INCLUDEPATH
 
 LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
+                         -lrootplot \
                          -ltracking \
                          -lsetup
 

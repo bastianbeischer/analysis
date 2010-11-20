@@ -6,6 +6,7 @@
 
 #include <TROOT.h>
 #include <TStyle.h>
+#include <TH1.h>
 
 int main(int argc, char* argv[])
 {
@@ -31,6 +32,8 @@ int main(int argc, char* argv[])
   gStyle->SetTitleFont(42, "XYZ");
   gStyle->SetTitleSize(0.025, "XYZ");
   gStyle->SetMarkerStyle(20);
+
+  TH1::AddDirectory(false);
 
   QApplication application(argc, argv);
   MainWindow window;

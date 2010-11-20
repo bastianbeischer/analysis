@@ -5,8 +5,8 @@
 #include <TCanvas.h>
 #include <TPad.h>
 
-H1DPlot::H1DPlot(Topic topic)
-  : AnalysisPlot(topic)
+H1DPlot::H1DPlot()
+  : RootPlot()
   , m_histograms()
 {}
 

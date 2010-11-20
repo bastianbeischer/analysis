@@ -14,7 +14,6 @@ public:
   Cluster();
   Cluster(const std::vector<Hit*>& hits);
   Cluster(const Cluster& other);
-  const Cluster& operator=(const Cluster& right);
   virtual ~Cluster();
   
 public:

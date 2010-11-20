@@ -34,10 +34,10 @@ QVector<Hit*> TrackFinding::findTrack(const QVector<Hit*>& hits)
   for (QVector<Hit*>::ConstIterator firstHit = hits.begin(); firstHit != hits.end(); firstHit++) {
     for (QVector<Hit*>::ConstIterator secondHit = firstHit; secondHit != hits.end(); secondHit++) {
       if ((*firstHit)->type() == Hit::tof || (*secondHit)->type() == Hit::tof) continue;
-      double x1 = (*firstHit)->position().x();
-      double x2 = (*secondHit)->position().x();
-      double z1 = (*firstHit)->position().z();
-      double z2 = (*secondHit)->position().z();
+      double x1 = 0.5*((*firstHit)->position() + (*firstHit)->counterPosition()).x();
+      double x2 = 0.5*((*secondHit)->position() + (*secondHit)->counterPosition()).x();
+      double z1 = 0.5*((*firstHit)->position() + (*firstHit)->counterPosition()).z();
+      double z2 = 0.5*((*secondHit)->position() + (*secondHit)->counterPosition()).z();
 
       if (fabs(z2 - z1) > 20) {
         double slope = (x2-x1)/(z2-z1);

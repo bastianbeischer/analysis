@@ -1,15 +1,16 @@
 #ifndef BendingAnglePositionPlot_hh
 #define BendingAnglePositionPlot_hh
 
+#include "AnalysisPlot.hh"
 #include "H2DPlot.hh"
 
 class TCanvas;
 
-class BendingAnglePositionPlot : public H2DPlot {
+class BendingAnglePositionPlot : public AnalysisPlot, public H2DPlot {
   public:
-    explicit BendingAnglePositionPlot(double cut);
+    BendingAnglePositionPlot(double cut);
     virtual ~BendingAnglePositionPlot();
-    virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
+    virtual void processEvent(const QVector<Hit*>&, Track* = 0, TrackSelection* = 0, SimpleEvent* = 0);
     virtual void finalize();
     virtual void draw(TCanvas* canvas);
   private:

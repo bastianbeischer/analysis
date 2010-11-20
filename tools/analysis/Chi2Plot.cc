@@ -2,11 +2,13 @@
 
 #include <TH1D.h>
 
+#include "TrackSelection.hh"
 #include "Hit.hh"
 #include "Track.hh"
 
 Chi2Plot::Chi2Plot() :
-  H1DPlot(AnalysisPlot::Tracking)
+  AnalysisPlot(AnalysisPlot::Tracking),
+  H1DPlot()
 {
   setTitle("chi2");
   TH1D* histogram = new TH1D("chi2", "", 250, 0., 100.);
@@ -19,19 +21,18 @@ Chi2Plot::~Chi2Plot()
 {
 }
 
-void Chi2Plot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* /*event*/)
+void Chi2Plot::processEvent(const QVector<Hit*>&, Track* track, TrackSelection* selection, SimpleEvent* /*event*/)
 {
-  int nTrackerHits = 0;
-  foreach(Hit* hit, hits)
-    if (hit->type() == Hit::tracker)
-      ++nTrackerHits;
-  if (nTrackerHits != 8)
+  // QMutexLocker locker(&m_mutex);
+  if(!track || !selection || !track->fitGood())
     return;
 
-  if (track && track->fitGood()) {
-    if ((int)track->ndf() == 20 - track->nParameters()) {
-      histogram(0)->Fill(track->chi2());
-    }
+  TrackSelection::Flags flags = selection->flags();
+  if (!(flags & TrackSelection::AllTrackerLayers))
+    return;
+
+  if ((int)track->ndf() == 20 - track->nParameters()) {
+    histogram(0)->Fill(track->chi2());
   }
 }
 

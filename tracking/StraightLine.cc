@@ -28,7 +28,9 @@ StraightLine::~StraightLine()
 
 int StraightLine::fit(const QVector<Hit*>& hits)
 {
-  m_fitGood = m_matrix->fit(hits);
+  m_hits = hits;
+
+  m_fitGood = m_matrix->fit(m_hits);
 
   if (m_fitGood != 0) {
     TVectorD solution = m_matrix->solution();
@@ -40,7 +42,6 @@ int StraightLine::fit(const QVector<Hit*>& hits)
     m_slopeY  = solution(3);
     m_chi2    = m_matrix->chi2();
     m_ndf     = m_matrix->ndf();
-    m_hits    = hits;
 
     if (m_verbose > 0) {
       std::cout << "--------------------------------------------------------------------------------------------------" << std::endl;
@@ -59,8 +60,10 @@ int StraightLine::fit(const QVector<Hit*>& hits)
 
 int StraightLine::fitTrd(const QVector<Hit*>& hits)
 {
+  m_hits = hits;
+
   QVector<Hit*> trdHits;
-  foreach(Hit* hit, hits) {
+  foreach(Hit* hit, m_hits) {
     if (hit->type() == Hit::trd)
       trdHits.push_back(hit);
   }
@@ -69,10 +72,12 @@ int StraightLine::fitTrd(const QVector<Hit*>& hits)
 
 int StraightLine::fit2D(const QVector<Hit*>& hits)
 {
+  m_hits = hits;
+
   // fill graph with points
   TGraphErrors graph;
   int i = 0;
-  foreach(Hit* hit, hits) {
+  foreach(Hit* hit, m_hits) {
     if (hit->type() == Hit::trd) {
       graph.SetPoint(i, hit->position().z(), hit->position().x());
       graph.SetPointError(i, 0, 6./sqrt(12));
@@ -96,7 +101,6 @@ int StraightLine::fit2D(const QVector<Hit*>& hits)
   m_slopeX = fit->GetParameter(1);
   m_chi2   = fit->GetChisquare();
   m_ndf    = fit->GetNDF();
-  m_hits   = hits;
 
   return 1;
 }
