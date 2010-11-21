@@ -6,7 +6,6 @@
 #include <QMainWindow>
 
 class QTabBar;
-class QTimer;
 
 class DataChain;
 
@@ -32,7 +31,6 @@ class MainWindow : public QMainWindow {
     void closeEvent(QCloseEvent*);
 
     Ui_mainWindow m_ui;
-    QTimer* m_updateTimer;
     QVector<unsigned int> m_activePlots;
 };
 

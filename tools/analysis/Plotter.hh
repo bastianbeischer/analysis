@@ -7,6 +7,8 @@
 #include <TQtWidget.h>
 
 #include <QVector>
+#include <QTime>
+#include <QTimer>
 
 class QLabel;
 class QProgressBar;
@@ -27,6 +29,7 @@ public:
   void selectPlot(int);
   void setTitleLabel(QLabel*);
   void setPositionLabel(QLabel*);
+  void setTimeLabel(QLabel*);
   void setDataChainProgressBar(QProgressBar*);
   void setEventQueueProgressBar(QProgressBar*);
   void saveCanvas(const QString& fileName);
@@ -44,6 +47,9 @@ protected:
 private:
   QLabel* m_titleLabel;
   QLabel* m_positionLabel;
+  QLabel* m_timeLabel;
+  QTime m_time;
+  QTimer m_updateTimer;
   QProgressBar* m_dataChainProgressBar;
   QProgressBar* m_eventQueueProgressBar;
   QVector<AnalysisPlot*> m_plots;

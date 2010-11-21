@@ -20,6 +20,9 @@ Plotter::Plotter(QWidget* parent)
   : TQtWidget(parent)
   , m_titleLabel(0)
   , m_positionLabel(0)
+  , m_timeLabel(0)
+  , m_time()
+  , m_updateTimer(this)
   , m_dataChainProgressBar(0)
   , m_eventQueueProgressBar(0)
   , m_chain(new DataChain())
@@ -28,6 +31,8 @@ Plotter::Plotter(QWidget* parent)
 {
   gROOT->cd();
   setMouseTracking(true);
+  connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
+  m_updateTimer.start(500);
 }
 
 Plotter::~Plotter()
@@ -90,6 +95,8 @@ void Plotter::saveCanvas(const QString& fileName)
 
 void Plotter::update()
 {
+  if (!m_eventLoopOff && m_timeLabel)
+    m_timeLabel->setText(QString("%1s").arg(m_time.elapsed()/1000));
   gPad->Modified();
   gPad->Update();
 }
@@ -166,8 +173,10 @@ void Plotter::startAnalysis(Track::Type type, int numberOfThreads)
     thread->start();
   }
 
+  m_time.restart();
   if (m_dataChainProgressBar)
     m_dataChainProgressBar->reset();
+
   unsigned int nEntries = m_chain->nEntries();
   int freeSpace = 0;
   int queuedEvents = 0;
@@ -200,6 +209,7 @@ void Plotter::startAnalysis(Track::Type type, int numberOfThreads)
     thread->stop();
   qDeleteAll(threads);
   finalizeAnalysis();
+  m_eventLoopOff = true;
 }
 
 void Plotter::addFileList(const QString& fileName)
@@ -210,4 +220,9 @@ void Plotter::addFileList(const QString& fileName)
 void Plotter::setFileList(const QString& fileName)
 {
   m_chain->setFileList(qPrintable(fileName));
+}
+
+void Plotter::setTimeLabel(QLabel* label)
+{
+  m_timeLabel = label;
 }

@@ -25,23 +25,19 @@
 #include <QVector3D>
 #include <QFileDialog>
 #include <QVBoxLayout>
-#include <QTimer>
 
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
-  , m_updateTimer(0)
   , m_activePlots()
 {
   m_ui.setupUi(this);
   
   m_ui.plotter->setTitleLabel(m_ui.titleLabel);
   m_ui.plotter->setPositionLabel(m_ui.positionLabel);
+  m_ui.plotter->setTimeLabel(m_ui.timeLabel);
   m_ui.plotter->setDataChainProgressBar(m_ui.dataChainProgressBar);
   m_ui.plotter->setEventQueueProgressBar(m_ui.eventQueueProgressBar);
 
-  m_updateTimer = new QTimer(this);
-  connect(m_updateTimer, SIGNAL(timeout()), m_ui.plotter, SLOT(update()));
-  
   connect(m_ui.analyzeButton, SIGNAL(clicked()), this, SLOT(analyzeButtonClicked()));
   connect(m_ui.saveCanvasButton, SIGNAL(clicked()), this, SLOT(saveCanvasButtonClicked()));
   connect(m_ui.saveAllCanvasesButton, SIGNAL(clicked()), this, SLOT(saveAllCanvasButtonClicked()));
@@ -299,7 +295,6 @@ void MainWindow::setupAnalysis()
   m_ui.miscellaneousTRDButton->setEnabled(m_ui.miscellaneousTRDCheckBox->isChecked());
   m_ui.miscellaneousTOFButton->setEnabled(m_ui.miscellaneousTOFCheckBox->isChecked());
 
-  m_updateTimer->start(500);
 }
 
 void MainWindow::analyzeButtonClicked()
