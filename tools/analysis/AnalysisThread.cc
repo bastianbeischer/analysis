@@ -72,6 +72,8 @@ void AnalysisThread::run()
         plot->processEvent(trackClusters, m_track, m_trackSelection, event);
       Setup::instance()->deleteClusters();
       delete event;
+    } else {
+      usleep(1000);
     }
     m_mutex.lock();
     if (m_abort) {

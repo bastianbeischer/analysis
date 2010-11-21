@@ -15,7 +15,7 @@ class EventQueue {
     void enqueue(SimpleEvent*);
     SimpleEvent* dequeue();
     
-    static const int s_bufferSize = 2000;
+    static const int s_bufferSize = 1000;
   private:
     QQueue<SimpleEvent*> m_queue;
     QMutex m_mutex;

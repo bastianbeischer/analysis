@@ -165,10 +165,12 @@ void Plotter::startAnalysis(Track::Type type, int numberOfThreads)
 {
   m_eventLoopOff = false;
 
-  EventQueue queue;
+  QVector<EventQueue*> queues;
   QVector<AnalysisThread*> threads;
   for (int i = 0; i < numberOfThreads; ++i) {
-    AnalysisThread* thread = new AnalysisThread(&queue, type, m_plots, this);
+    EventQueue* queue = new EventQueue();
+    queues.append(queue);
+    AnalysisThread* thread = new AnalysisThread(queue, type, m_plots, this);
     threads.append(thread);
     thread->start();
   }
@@ -181,18 +183,22 @@ void Plotter::startAnalysis(Track::Type type, int numberOfThreads)
   int freeSpace = 0;
   int queuedEvents = 0;
   for (unsigned int i = 0; i < nEntries;) {
-    freeSpace = queue.freeSpace();
-    queuedEvents = queue.numberOfEvents();
-    if (freeSpace > .2 * EventQueue::s_bufferSize) {
-      for (int j = 0; j < freeSpace && i < nEntries; ++j) {
-        SimpleEvent* event = m_chain->event(i);
-        queue.enqueue(new SimpleEvent(*event));
-        ++i;
-        if (m_dataChainProgressBar)
-          m_dataChainProgressBar->setValue(100 * (i + 1) / nEntries);
-        if (m_eventQueueProgressBar)
-          m_eventQueueProgressBar->setValue(100 * queuedEvents / EventQueue::s_bufferSize);
-        qApp->processEvents();
+    queuedEvents = 0;
+    foreach(EventQueue* queue, queues)
+      queuedEvents+= queue->numberOfEvents();
+    foreach(EventQueue* queue, queues) {
+      freeSpace = queue->freeSpace();
+      if (freeSpace > .2 * EventQueue::s_bufferSize) {
+        for (int j = 0; j < freeSpace && i < nEntries; ++j) {
+          SimpleEvent* event = m_chain->event(i);
+          queue->enqueue(new SimpleEvent(*event));
+          ++i;
+          if (m_dataChainProgressBar)
+            m_dataChainProgressBar->setValue(100 * (i + 1) / nEntries);
+          if (m_eventQueueProgressBar)
+            m_eventQueueProgressBar->setValue(100 * queuedEvents / EventQueue::s_bufferSize);
+          qApp->processEvents();
+        }
       }
     }
     if (m_eventLoopOff)
@@ -201,13 +207,16 @@ void Plotter::startAnalysis(Track::Type type, int numberOfThreads)
   }
 
   do {
-    queuedEvents = queue.numberOfEvents();
+    queuedEvents = 0;
+    foreach(EventQueue* queue, queues)
+      queuedEvents+= queue->numberOfEvents();
     m_eventQueueProgressBar->setValue(100 * queuedEvents / EventQueue::s_bufferSize);
     qApp->processEvents();
   } while (queuedEvents);
   foreach (AnalysisThread* thread, threads)
     thread->stop();
   qDeleteAll(threads);
+  qDeleteAll(queues);
   finalizeAnalysis();
   m_eventLoopOff = true;
 }
