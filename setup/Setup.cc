@@ -64,22 +64,23 @@ Setup* Setup::instance()
 void Setup::construct()
 {
   if (m_settings) {
-    m_settings->beginGroup("layer");
-    foreach(QString key, m_settings->childKeys()) {
-      double z = key.toDouble();
-      Layer* layer = this->layer(z);
-      QStringList detIds = m_settings->value(key).toStringList();
-      foreach(QString detId, detIds) {
-        bool ok;
-        unsigned short id = detId.toUShort(&ok, 16);
-        if (ok) {
-          DetectorElement* element = this->element(id);
-          layer->addElement(element);
-        }
-      } // elements
-      layer->sortIdsByPosition();
+    foreach(QString key, m_settings->allKeys()) {
+      QStringList list = key.split("/");
+      if (list[0] == "layer") {
+        double z = list[1].toDouble();
+        Layer* layer = this->layer(z);
+        QStringList detIds = m_settings->value(key).toStringList();
+        foreach(QString detId, detIds) {
+          bool ok;
+          unsigned short id = detId.toUShort(&ok, 16);
+          if (ok) {
+            DetectorElement* element = this->element(id);
+            layer->addElement(element);
+          }
+        } // elements
+        layer->sortIdsByPosition();
+      }
     } // layers
-    m_settings->endGroup();
   } // settings
 }
 
@@ -217,6 +218,7 @@ QVector3D Setup::configFilePosition(QString group, unsigned short detId) const
 
 double Setup::configFileAlignmentShift(QString group, unsigned short detId) const
 {
+  assert(m_settings);
   return m_settings->value(group+"/0x"+QString::number(detId,16)).toDouble();
 }
 
