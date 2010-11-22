@@ -25,4 +25,8 @@ fixLayer     12
 fixLayer     13
 fixLayer     14
 
+fixLayer     16
+fixLayer     17
+fixLayer     18
+
 readDataFrom ../../lists/andreas.txt
