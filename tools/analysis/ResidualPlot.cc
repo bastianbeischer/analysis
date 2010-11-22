@@ -1,6 +1,7 @@
 #include "ResidualPlot.hh"
 
 #include "TrackSelection.hh"
+#include "Setup.hh"
 #include "Layer.hh"
 #include "Setup.hh"
 #include "Cluster.hh"
@@ -114,7 +115,10 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSe
         channel = subHits.at(imax)->channel();
       }
 
-      histogram()->Fill(index*nChannels + channel, res);
+      double alignmentShift = Setup::instance()->element(detId)->alignmentShift();
+
+      histogram()->Fill(index*nChannels + channel, res-alignmentShift);
+      histogram()->Fill(index, res-alignmentShift);
     }
   }
   delete mytrack;
