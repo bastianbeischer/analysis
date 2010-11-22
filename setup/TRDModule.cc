@@ -22,8 +22,10 @@ TRDModule::~TRDModule()
 {
 }
 
-const QVector<Cluster*>& TRDModule::findClusters()
+QVector<Cluster*> TRDModule::findClusters()
 {
+  QVector<Cluster*> clusters;
+
   const int seedThreshold = 10;
   const int neighbourThreshold = 10;
 
@@ -49,12 +51,12 @@ const QVector<Cluster*>& TRDModule::findClusters()
         }
 
         cluster->processHits();
-        m_clusters.push_back(cluster);
+        clusters.push_back(cluster);
 
         channel = rightCursor + 1;
       }
     }
   }
 
-  return m_clusters;
+  return clusters;
 }

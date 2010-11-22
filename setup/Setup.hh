@@ -34,8 +34,6 @@ public:
 
 public:
   QVector<Cluster*> generateClusters(const QVector<Hit*>& hits);
-  void              deleteClusters();
-  void              clearClusters();
   void              addHitsToLayers(const QVector<Hit*>& hits);
   void              clearHitsFromLayers();
 

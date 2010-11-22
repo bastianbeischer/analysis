@@ -22,8 +22,9 @@ TOFBar::~TOFBar()
 {
 }
 
-const QVector<Cluster*>& TOFBar::findClusters()
+QVector<Cluster*> TOFBar::findClusters()
 {
+  QVector<Cluster*> clusters;
   if(m_hits.size() >= 3) {
     TOFCluster* tofCluster = new TOFCluster;
     foreach(Hit* hit, m_hits) {
@@ -31,8 +32,8 @@ const QVector<Cluster*>& TOFBar::findClusters()
       tofCluster->addHit(new TOFSipmHit(*tofHit));
     }
     tofCluster->processHits();
-    m_clusters.push_back(tofCluster);
+    clusters.push_back(tofCluster);
   }
-  return m_clusters;
+  return clusters;
 }
 

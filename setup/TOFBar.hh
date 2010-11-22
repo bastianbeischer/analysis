@@ -17,7 +17,7 @@ public:
   ~TOFBar();
   
 public:
-  const QVector<Cluster*>& findClusters();
+  QVector<Cluster*> findClusters();
   
 };
 

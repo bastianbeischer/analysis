@@ -98,7 +98,6 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod)
     m_track = 0;
   }
   Setup* setup = Setup::instance();
-  setup->deleteClusters();
   Q_ASSERT(i < numberOfEvents());
   SimpleEvent* event = m_chain->event(i);
   // vector of all hits in this event
@@ -119,6 +118,7 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod)
     track->fit(clusters);
   }
   m_hitsPlot->drawEvent(GetCanvas(), clusters, track);
+  qDeleteAll(clusters);
 }
 
 void Plotter::saveCanvas(const QString& fileName)

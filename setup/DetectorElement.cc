@@ -32,13 +32,6 @@ DetectorElement::~DetectorElement()
 {
 }
 
-void DetectorElement::deleteClusters()
-{
-  foreach(Cluster* cluster, m_clusters)
-    delete cluster;
-  m_clusters.clear();
-}
-
 void DetectorElement::sortHits()
 {
   // check if all channels are present --> otherwise reinserting into map will be wrong if a channel was skipped
@@ -57,7 +50,7 @@ void DetectorElement::sortHits()
   }
 }
 
-void DetectorElement::debug()
+void DetectorElement::debug(const QVector<Cluster*>& clusters)
 {
   std::cout << "------------------------" << std::endl;
   int i = 0;
@@ -70,7 +63,7 @@ void DetectorElement::debug()
   }
   std::cout << "Clusters:" << std::endl;
   int j = 0;
-  foreach(Cluster* cluster, m_clusters) {
+  foreach(Cluster* cluster, clusters) {
     i = 0;
     std::cout << "No. " << j << ":" << std::endl;
     foreach(Hit* hit, cluster->hits()) {

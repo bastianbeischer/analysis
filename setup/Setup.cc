@@ -159,7 +159,6 @@ QVector<Cluster*> Setup::generateClusters(const QVector<Hit*>& hits)
   }
 
   if (needToFindClusters) {
-    clearClusters();
     addHitsToLayers(hits);
     Layer* layer = firstLayer();
     while(layer) {
@@ -175,18 +174,6 @@ QVector<Cluster*> Setup::generateClusters(const QVector<Hit*>& hits)
     }
   }
   return clusters;
-}
-
-void Setup::deleteClusters()
-{
-  foreach(DetectorElement* element, m_elements)
-    element->deleteClusters();
-}
-
-void Setup::clearClusters()
-{
-  foreach(DetectorElement* element, m_elements)
-    element->clearClusters();
 }
 
 void Setup::addHitsToLayers(const QVector<Hit*>& hits)

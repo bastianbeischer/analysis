@@ -1,7 +1,7 @@
 #include "SipmArray.hh"
 
-#include "Hit.hh"
 #include "Cluster.hh"
+#include "Hit.hh"
 #include "Setup.hh"
 
 SipmArray::SipmArray() :
@@ -22,8 +22,10 @@ SipmArray::~SipmArray()
 {
 }
 
-const QVector<Cluster*>& SipmArray::findClusters()
+QVector<Cluster*> SipmArray::findClusters()
 {
+  QVector<Cluster*> clusters;
+
   const int seedThreshold = 300;
   const int neighbourThreshold = 100;
 
@@ -48,11 +50,11 @@ const QVector<Cluster*>& SipmArray::findClusters()
       }
 
       cluster->processHits();
-      m_clusters.push_back(cluster);
+      clusters.push_back(cluster);
 
       channel = rightCursor + 1;
     }
   }
 
-  return m_clusters;
+  return clusters;
 }
