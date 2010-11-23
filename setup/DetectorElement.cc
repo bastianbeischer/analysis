@@ -93,7 +93,7 @@ TVector3 DetectorElement::positionForHit(const Hit* hit) const
   TVector3 pos = hit->position();
   TVector3 counterPos = hit->counterPosition();
   double angle = hit->angle();
-  TVector3 alignmentCorr(alignmentShift(), 0, 0);
+  TVector3 alignmentCorr(-alignmentShift(), 0, 0);
   alignmentCorr.RotateZ(angle);
   return 0.5*(pos+counterPos) + alignmentCorr;
 }
