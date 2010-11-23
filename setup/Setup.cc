@@ -197,6 +197,12 @@ void Setup::clearHitsFromLayers()
     layer->clearHitsInDetectors();
 }
 
+TVector3 Setup::positionForHit(const Hit* hit)
+{
+  DetectorElement* element = this->element(hit->detId() - hit->channel());
+  return element->positionForHit(hit);
+}
+
 TVector3 Setup::configFilePosition(QString group, unsigned short detId) const
 {
   assert(m_coordinates);

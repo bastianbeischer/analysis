@@ -37,6 +37,7 @@ public:
   QVector<Cluster*> generateClusters(const QVector<Hit*>& hits);
   void              addHitsToLayers(const QVector<Hit*>& hits);
   void              clearHitsFromLayers();
+  TVector3          positionForHit(const Hit* hit);
 
 public:
   TVector3          configFilePosition(QString group, unsigned short detId) const;

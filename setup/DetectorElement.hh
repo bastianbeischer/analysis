@@ -39,6 +39,8 @@ public:
   double            alignmentShift() const {return m_alignmentShift;}
   TVector3          position()       const {return m_position;}
 
+  TVector3          positionForHit(const Hit* hit) const;
+
 protected:
   Type                       m_type;
   unsigned short             m_id;
