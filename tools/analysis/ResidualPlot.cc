@@ -2,6 +2,7 @@
 
 #include "TrackSelection.hh"
 #include "Layer.hh"
+#include "Setup.hh"
 #include "Hit.hh"
 #include "StraightLine.hh"
 #include "BrokenLine.hh"
@@ -77,7 +78,8 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSe
   // fit and fill histograms
   if (mytrack->fit(hitsForFit)) {
     foreach(Hit* hit, hitsInThisLayer) {
-      TVector3 pos = 0.5* (hit->position() + hit->counterPosition());
+      //      TVector3 pos = 0.5* (hit->position() + hit->counterPosition());
+      TVector3 pos = Setup::instance()->positionForHit(hit);
       TVector3 trackPos = mytrack->position(m_layer->z());
 
       double angle = hit->angle();

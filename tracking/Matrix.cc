@@ -3,6 +3,7 @@
 #include <TMatrixD.h>
 
 #include "Hit.hh"
+#include "Setup.hh"
 
 #include <cmath>
 #include <iostream>
@@ -42,7 +43,7 @@ int Matrix::fit(const QVector<Hit*>& hits)
   for (unsigned int i = 0; i < m_nRow; i++) {
     Hit* hit = hits.at(i);
 
-    TVector3 pos = hit->position();
+    TVector3 pos = Setup::instance()->positionForHit(hit);
 
     // get information from detector...
     double angle = hit->angle();
@@ -51,7 +52,7 @@ int Matrix::fit(const QVector<Hit*>& hits)
     // fill matrix
     // this parameter is arbitrary. z0 = 0 should minimize correlations...
     float z0 = 0.0;
-    float k = hit->position().z() - z0;
+    float k = pos.z() - z0;
     bool useTangens = fabs(angle) < M_PI/4. ? true : false;
     float xi = useTangens ? tan(angle) : 1./tan(angle);
 
