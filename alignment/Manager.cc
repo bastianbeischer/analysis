@@ -61,7 +61,9 @@ void Manager::saveResults() const
     unsigned short detId = element->id();
     unsigned int index = m_parameters->indexForDetId(detId);
     float shift = m_parameters->parameter(index);
-    element->setAlignmentShift(shift);
+    float sigma = m_parameters->parameterSigma(index);
+    if (sigma != 0)
+      element->setAlignmentShift(shift);
     element = setup->nextElement();
   }
 
