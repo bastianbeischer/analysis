@@ -4,6 +4,8 @@
 #include "Cluster.hh"
 #include "Setup.hh"
 
+#include <QString>
+
 TRDModule::TRDModule() :
   DetectorElement()
 {

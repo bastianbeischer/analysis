@@ -4,6 +4,8 @@
 #include "Hit.hh"
 #include "Setup.hh"
 
+#include <QString>
+
 SipmArray::SipmArray() :
   DetectorElement()
 {

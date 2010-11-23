@@ -10,9 +10,10 @@
 #include <QStringList>
 #include <QSettings>
 #include <QProcess>
-#include <QVector3D>
-
 #include <QDebug>
+
+#include <TVector3.h>
+
 #include <iostream>
 #include <cassert>
 #include <cmath>
@@ -196,11 +197,11 @@ void Setup::clearHitsFromLayers()
     layer->clearHitsInDetectors();
 }
 
-QVector3D Setup::configFilePosition(QString group, unsigned short detId) const
+TVector3 Setup::configFilePosition(QString group, unsigned short detId) const
 {
   assert(m_coordinates);
   QList<QVariant> list = m_coordinates->value(group+"/"+QString::number(detId,16)).toList();
-  return QVector3D(list[0].toDouble(), list[1].toDouble(), list[2].toDouble());
+  return TVector3(list[0].toDouble(), list[1].toDouble(), list[2].toDouble());
 }
 
 double Setup::configFileAlignmentShift(QString group, unsigned short detId) const

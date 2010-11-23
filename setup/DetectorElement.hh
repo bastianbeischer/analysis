@@ -3,7 +3,8 @@
 
 #include <QMap>
 #include <QVector>
-#include <QVector3D>
+
+#include <TVector3.h>
 
 #include "Hit.hh"
 
@@ -36,13 +37,13 @@ public:
   unsigned short    id()             const {return m_id;}
   unsigned short    nHits()          const {return m_hits.size();}
   double            alignmentShift() const {return m_alignmentShift;}
-  QVector3D         position()       const {return m_position;}
+  TVector3          position()       const {return m_position;}
 
 protected:
   Type                       m_type;
   unsigned short             m_id;
 
-  QVector3D                  m_position;
+  TVector3                   m_position;
   double                     m_alignmentShift;
 
   QMap<unsigned short, Hit*> m_hits;

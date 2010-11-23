@@ -4,6 +4,8 @@
 #include "TOFSipmHit.hh"
 #include "Setup.hh"
 
+#include <QString>
+
 TOFBar::TOFBar() :
   DetectorElement()
 {

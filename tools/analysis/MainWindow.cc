@@ -22,7 +22,6 @@
 #include "TimeOfFlightPlot.hh"
 
 #include <QDebug>
-#include <QVector3D>
 #include <QFileDialog>
 #include <QVBoxLayout>
 
