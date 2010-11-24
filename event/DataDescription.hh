@@ -31,7 +31,8 @@ class DataDescription : public TObject
     int timeOfRun(int) const;
     
     long eventNumberInRunFile(long eventNumber) const;
-    const std::string& runFileForEventNumber(long eventNumber) const;
+    int runFileForEventNumber(long eventNumber) const;
+    const std::string& runFileNameForEventNumber(long eventNumber) const;
     
   private:
     std::string m_comment;
