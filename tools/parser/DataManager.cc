@@ -93,13 +93,14 @@ void DataManager::saveAndCloseOutput()
   m_outputFile->Close();
 }
 
+
 void DataManager::processFiles()
 {
   std::cout << "Starting conversion to Simple Events." << std::endl;
+  Converter converter;
   foreach(SingleFile* inputFile, m_inputFiles) {
-    Converter converter(inputFile);
     for (unsigned int iEvent = 0; iEvent < inputFile->getNumberOfEvents(); iEvent++) {
-      m_currentEvent = converter.generateSimpleEvent(iEvent);
+      m_currentEvent = converter.generateSimpleEvent(inputFile, iEvent);
       m_outputTree->Fill();
     }
   }

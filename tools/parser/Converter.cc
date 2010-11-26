@@ -32,8 +32,7 @@ const int tdcChannelToSipm[64] = {
   1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0
 };
 
-Converter::Converter(const SingleFile* file) :
-  m_file(file)
+Converter::Converter()
 {
 }
 
@@ -41,9 +40,9 @@ Converter::~Converter()
 {
 }
 
-SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
+SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int eventNo)
 {
-  const RawEvent* event = m_file->getRawEvent(eventNo);
+  const RawEvent* event = file->getRawEvent(eventNo);
 
   // construct new simple event
   int eventId = event->GetEventID();
@@ -82,7 +81,7 @@ SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
     //get calibration for non-tof detectors
     for (int i = 0; i < nMax; i++) {
       if (!id->IsTOF()) {
-        Calibration* cali = m_file->getCalibrationForDetector(id, i);
+        Calibration* cali = file->getCalibrationForDetector(id, i);
         Q_ASSERT(cali);
         cali->GetAmplitudes(values + i*nValues/nMax, temp + i*nValues/nMax);
       }
