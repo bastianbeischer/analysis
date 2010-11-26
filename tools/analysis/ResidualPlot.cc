@@ -95,9 +95,11 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSe
       trackPos.RotateZ(-angle);
 
       double res = (pos - trackPos).x();
-      int index = m_layer->detIds().indexOf(hit->detId() - hit->channel());
-  
-      histogram()->Fill(index, res);
+      unsigned short detId = hit->detId() - hit->channel();
+      unsigned short index = m_layer->detIds().indexOf(detId);
+      unsigned short nChannels = Setup::instance()->element(detId)->nChannels();
+
+      histogram()->Fill(index*nChannels + hit->channel(), res);
     }
   }
   delete mytrack;
