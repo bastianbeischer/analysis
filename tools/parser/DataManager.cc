@@ -98,11 +98,34 @@ void DataManager::processFiles()
 {
   std::cout << "Starting conversion to Simple Events." << std::endl;
   Converter converter;
+  int totalNumberOfEvents = 0;
+  int currentGlobalEvent = 0;
+  foreach(SingleFile* inputFile, m_inputFiles) {
+    totalNumberOfEvents += inputFile->getNumberOfEvents();
+  }
+
+  std::cout << std::endl;
+  std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
+  std::cout << "| Processing:                                                                                        |" << std::endl;
+  std::cout << "| 0%     10%       20%       30%       40%       50%       60%       70%       80%       90%     100%|" << std::endl;
+  std::cout << "|.........|.........|.........|.........|.........|.........|.........|.........|.........|..........|" << std::endl;
+  std::cout << "|" << std::flush;
+  int iFactors = 0;
+
   foreach(SingleFile* inputFile, m_inputFiles) {
     for (unsigned int iEvent = 0; iEvent < inputFile->getNumberOfEvents(); iEvent++) {
       m_currentEvent = converter.generateSimpleEvent(inputFile, iEvent);
       m_outputTree->Fill();
+
+      if ( currentGlobalEvent > iFactors*totalNumberOfEvents/100. ) {
+        std::cout << "#" << std::flush;
+        iFactors++;
+      }
+      currentGlobalEvent++;
     }
   }
+
+  std::cout << "|" << std::endl;
+  std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
   std::cout << "Finished conversion." << std::endl;
 }
