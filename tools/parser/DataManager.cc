@@ -116,6 +116,7 @@ void DataManager::processFiles()
     for (unsigned int iEvent = 0; iEvent < inputFile->getNumberOfEvents(); iEvent++) {
       m_currentEvent = converter.generateSimpleEvent(inputFile, iEvent);
       m_outputTree->Fill();
+      delete m_currentEvent;
 
       if ( currentGlobalEvent > iFactors*totalNumberOfEvents/100. ) {
         std::cout << "#" << std::flush;
