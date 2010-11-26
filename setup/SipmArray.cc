@@ -10,12 +10,14 @@ SipmArray::SipmArray() :
   DetectorElement()
 {
   m_type = tracker;
+  m_nChannels = 32;
 }
 
 SipmArray::SipmArray(unsigned short detId) :
   DetectorElement(detId)
 {
   m_type = tracker;
+  m_nChannels = 32;
   m_position = Setup::instance()->configFilePosition("tracker", m_id);
   m_alignmentShift = Setup::instance()->configFileAlignmentShift("tracker", m_id);
 }
@@ -31,7 +33,7 @@ QVector<Cluster*> SipmArray::findClusters()
   const int seedThreshold = 300;
   const int neighbourThreshold = 100;
 
-  for (unsigned short channel = 0; channel < 32; ++channel) {
+  for (unsigned short channel = 0; channel < m_nChannels; ++channel) {
     Hit* hit = m_hits[channel];
       
     if (hit->signalHeight() > seedThreshold) {
@@ -40,7 +42,7 @@ QVector<Cluster*> SipmArray::findClusters()
 
       // look to the right
       short rightCursor = channel+1;
-      while(rightCursor < 32 && m_hits[rightCursor] && m_hits[rightCursor]->signalHeight() > neighbourThreshold) {
+      while(rightCursor < m_nChannels && m_hits[rightCursor] && m_hits[rightCursor]->signalHeight() > neighbourThreshold) {
         cluster->addHit(new Hit(*m_hits[rightCursor]));
         ++rightCursor;
       }

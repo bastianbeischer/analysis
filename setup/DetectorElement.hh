@@ -35,6 +35,7 @@ public:
 public:
   unsigned short    type()           const {return m_type;}
   unsigned short    id()             const {return m_id;}
+  unsigned short    nChannels()      const {return m_nChannels;}
   unsigned short    nHits()          const {return m_hits.size();}
   double            alignmentShift() const {return m_alignmentShift;}
   TVector3          position()       const {return m_position;}
@@ -44,6 +45,7 @@ public:
 protected:
   Type                       m_type;
   unsigned short             m_id;
+  unsigned short             m_nChannels;
 
   TVector3                   m_position;
   double                     m_alignmentShift;

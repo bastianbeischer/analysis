@@ -10,12 +10,14 @@ TOFBar::TOFBar() :
   DetectorElement()
 {
   m_type = tof;
+  m_nChannels = 4;
 }
 
 TOFBar::TOFBar(unsigned short detId) :
   DetectorElement(detId)
 {
   m_type = tof;
+  m_nChannels = 4;
   m_position = Setup::instance()->configFilePosition("tof", m_id);
   m_alignmentShift = Setup::instance()->configFileAlignmentShift("tof", m_id);
 }
