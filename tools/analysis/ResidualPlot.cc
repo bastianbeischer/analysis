@@ -28,8 +28,16 @@ ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer)
   if (topic == AnalysisPlot::ResidualsTRD)
     max = 10.;
 
-  TH2D* histogram = new TH2D(qPrintable(title()+QString::number(id())), "", layer->nElements(), 0, layer->nElements(), 200, -max, max);
-  histogram->GetXaxis()->SetTitle("SiPM array number");
+  unsigned short nElements = layer->nElements();
+  unsigned short nChannels = layer->elements().first()->nChannels();
+  TH2D* histogram = new TH2D(qPrintable(title()+QString::number(id())), "", nElements*nChannels, 0, nElements*nChannels, 200, -max, max);
+
+  if (topic == AnalysisPlot::ResidualsUpperTracker || AnalysisPlot::ResidualsLowerTracker) {
+    histogram->GetXaxis()->SetTitle("SiPM array number");
+  }
+  if (topic == AnalysisPlot::ResidualsTRD) {
+    histogram->GetXaxis()->SetTitle("TRD module number");
+  }
   histogram->GetYaxis()->SetTitle("residue / mm");
   setHistogram(histogram);
 }
