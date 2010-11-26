@@ -3,6 +3,7 @@
 #include "TrackSelection.hh"
 #include "Layer.hh"
 #include "Setup.hh"
+#include "Cluster.hh"
 #include "Hit.hh"
 #include "StraightLine.hh"
 #include "BrokenLine.hh"
@@ -98,8 +99,22 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSe
       unsigned short detId = hit->detId() - hit->channel();
       unsigned short index = m_layer->detIds().indexOf(detId);
       unsigned short nChannels = Setup::instance()->element(detId)->nChannels();
+      unsigned short channel = hit->channel();
+      if (strcmp(hit->ClassName(), "Cluster") == 0) {
+        int max = 0;
+        int imax = 0;
+        Cluster* cluster = static_cast<Cluster*>(hit);
+        std::vector<Hit*> subHits = cluster->hits();
+        for (unsigned int i = 0 ; i < subHits.size(); i++) {
+          if (subHits.at(i)->signalHeight() > max) {
+            max = subHits.at(i)->signalHeight();
+            imax = i;
+          }
+        }
+        channel = subHits.at(imax)->channel();
+      }
 
-      histogram()->Fill(index*nChannels + hit->channel(), res);
+      histogram()->Fill(index*nChannels + channel, res);
     }
   }
   delete mytrack;
