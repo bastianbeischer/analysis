@@ -22,10 +22,7 @@ fixLayer     10
 
 fixLayer     11
 fixLayer     12
-fixLayer     13
-fixLayer     14
 
-fixLayer     16
 fixLayer     17
 fixLayer     18
 
