@@ -52,7 +52,7 @@ void DetectorElement::sortHits()
   }
 }
 
-void DetectorElement::debug(const QVector<Cluster*>& clusters)
+void DetectorElement::debug(const QVector<Hit*>& clusters)
 {
   std::cout << "------------------------" << std::endl;
   int i = 0;
@@ -65,9 +65,10 @@ void DetectorElement::debug(const QVector<Cluster*>& clusters)
   }
   std::cout << "Clusters:" << std::endl;
   int j = 0;
-  foreach(Cluster* cluster, clusters) {
+  foreach(Hit* hit, clusters) {
     i = 0;
     std::cout << "No. " << j << ":" << std::endl;
+    Cluster* cluster = static_cast<Cluster*>(hit);
     foreach(Hit* hit, cluster->hits()) {
       std::cout << hit->channel() << " " << hit->signalHeight() << std::endl;
       ++i;

@@ -18,7 +18,7 @@ public:
   ~Layer();
   
 public:
-  QVector<Cluster*>     clusters()    const;
+  QVector<Hit*>         clusters()    const;
   Cluster*              bestCluster() const;
 
 public:

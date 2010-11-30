@@ -17,7 +17,7 @@ public:
   ~TOFBar();
   
 public:
-  QVector<Cluster*> findClusters();
+  QVector<Hit*> findClusters();
   
 };
 

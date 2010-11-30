@@ -34,7 +34,7 @@ public:
   DetectorElement*  nextElement();
 
 public:
-  QVector<Cluster*> generateClusters(const QVector<Hit*>& hits);
+  QVector<Hit*>     generateClusters(const QVector<Hit*>& hits);
   void              addHitsToLayers(const QVector<Hit*>& hits);
   void              clearHitsFromLayers();
   TVector3          positionForHit(const Hit* hit);

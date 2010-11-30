@@ -145,35 +145,24 @@ DetectorElement* Setup::element(unsigned short id)
   return m_elements[id];
 }
 
-QVector<Cluster*> Setup::generateClusters(const QVector<Hit*>& hits)
+QVector<Hit*> Setup::generateClusters(const QVector<Hit*>& hits)
 {
-  QVector<Cluster*> clusters;
+  QVector<Hit*> clusters;
 
-  bool needToFindClusters = false;
-  foreach(Hit* hit, hits) {
-    if (strcmp(hit->ClassName(), "Cluster") == 0 || strcmp(hit->ClassName(), "TOFCluster") == 0) {
-      clusters.push_back(static_cast<Cluster*>(hit));
-    }
-    else {
-      needToFindClusters = true;
-    }
+  addHitsToLayers(hits);
+  Layer* layer = firstLayer();
+  while(layer) {
+    clusters += layer->clusters();
+
+    // // alternative: use only the best cluster
+    // Cluster* cluster = layer->bestCluster();
+    // if (cluster)
+    //   clusters.push_back(cluster);
+
+    // update pointer
+    layer = nextLayer();
   }
 
-  if (needToFindClusters) {
-    addHitsToLayers(hits);
-    Layer* layer = firstLayer();
-    while(layer) {
-      clusters += layer->clusters();
-
-      // // alternative: use only the best cluster
-      // Cluster* cluster = layer->bestCluster();
-      // if (cluster)
-      //   clusters.push_back(cluster);
-
-      // update pointer
-      layer = nextLayer();
-    }
-  }
   return clusters;
 }
 

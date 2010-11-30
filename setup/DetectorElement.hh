@@ -22,13 +22,13 @@ public:
   virtual ~DetectorElement();
   
 public:
-  virtual QVector<Cluster*> findClusters() = 0;
+  virtual QVector<Hit*> findClusters() = 0;
 
 public:
   void              addHit(Hit* hit)                {m_hits[hit->channel()] = hit;}
   void              clearHits()                     {m_hits.clear();}
   void              sortHits();
-  void              debug(const QVector<Cluster*>&);
+  void              debug(const QVector<Hit*>&);
 
   void              setAlignmentShift(double shift) {m_alignmentShift = shift;}
 
