@@ -108,8 +108,9 @@ const DataDescription* DataChain::currentDescription() const
 int DataChain::entryInFile() const
 {
   int entryInFile = m_currentEntry;
-  for (unsigned int i = 0; i < m_offsets.size(); i++) {
-    if (m_currentEntry >= m_offsets[i]) {
+
+  for (unsigned int i = 0; i < m_offsets.size() - 1; i++) {
+    if (m_currentEntry >= m_offsets[i] && m_currentEntry < m_offsets[i+1]) {
       entryInFile -= m_offsets[i];
       break;
     }
