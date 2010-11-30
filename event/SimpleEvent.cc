@@ -11,14 +11,16 @@ SimpleEvent::SimpleEvent() :
   TObject(),
   m_eventId(0),
   m_time(0),
+  m_contentType(None),
   m_hits()
 {
 }
 
-SimpleEvent::SimpleEvent(int id, int time) :
+SimpleEvent::SimpleEvent(int id, int time, ContentType type) :
   TObject(),
   m_eventId(id),
   m_time(time),
+  m_contentType(type),
   m_hits()
 {
 }
@@ -26,7 +28,8 @@ SimpleEvent::SimpleEvent(int id, int time) :
 SimpleEvent::SimpleEvent(const SimpleEvent& other) :
   TObject(other),
   m_eventId(other.m_eventId),
-  m_time(other.m_time)
+  m_time(other.m_time),
+  m_contentType(other.m_contentType)
 {
   for (std::vector<Hit*>::const_iterator it = other.m_hits.begin(); it != other.m_hits.end(); it++) {
     Hit* hit = *it;
