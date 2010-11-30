@@ -70,6 +70,7 @@ int main(int argc, char** argv)
       
       destinationTree.Fill();
 
+      delete destinationEvent;
     } // events in this root file
 
     line = inStream.readLine();
