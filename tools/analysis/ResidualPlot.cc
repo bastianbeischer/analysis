@@ -115,9 +115,7 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSe
         channel = subHits.at(imax)->channel();
       }
 
-      double alignmentShift = Setup::instance()->element(detId)->alignmentShift();
-
-      histogram()->Fill(index*nChannels + channel, res-alignmentShift);
+      histogram()->Fill(index*nChannels + channel, res);
     }
   }
   delete mytrack;
