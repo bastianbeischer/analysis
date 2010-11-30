@@ -61,14 +61,10 @@ void AnalysisThread::run()
     if (event) {
       QVector<Hit*> clusters;
       QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
-      bool gotToDeleteClusters = false;
-      if (event->contentType() == SimpleEvent::Clusters) {
+      if (event->contentType() == SimpleEvent::Clusters)
         clusters = hits;
-      }
-      else {
+      else
         clusters = Setup::instance()->generateClusters(hits);
-        gotToDeleteClusters = true;
-      }
       QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
       if (m_track) {
         m_track->fit(trackClusters);
@@ -76,7 +72,7 @@ void AnalysisThread::run()
       }
       foreach (AnalysisPlot* plot, m_plots)
         plot->processEvent(trackClusters, m_track, m_trackSelection, event);
-      if (gotToDeleteClusters)
+      if (event->contentType() == SimpleEvent::RawData)
         qDeleteAll(clusters);
       delete event;
     } else {

@@ -102,14 +102,10 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod)
 
   QVector<Hit*> clusters;
   QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
-  bool gotToDeleteClusters = false;
-  if (event->contentType() == SimpleEvent::Clusters) {
+  if (event->contentType() == SimpleEvent::Clusters)
     clusters = hits;
-  }
-  else {
+  else
     clusters = Setup::instance()->generateClusters(hits);
-    gotToDeleteClusters = true;
-  }
 
   Track* track = 0;
   if (drawTrack) {
@@ -124,7 +120,7 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod)
     track->fit(clusters);
   }
   m_hitsPlot->drawEvent(GetCanvas(), clusters, track);
-  if (gotToDeleteClusters)
+  if (event->contentType() == SimpleEvent::RawData)
     qDeleteAll(clusters);
 }
 

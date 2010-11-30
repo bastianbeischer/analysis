@@ -53,14 +53,10 @@ void DataInterface::process(AlignmentMatrix* matrix)
     
     QVector<Hit*> clusters;
     QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
-    bool gotToDeleteClusters = false;
-    if (event->contentType() == SimpleEvent::Clusters) {
+    if (event->contentType() == SimpleEvent::Clusters)
       clusters = hits;
-    }
-    else {
+    else
       clusters = setup->generateClusters(hits);
-      gotToDeleteClusters = true;
-    }
 
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
@@ -80,7 +76,7 @@ void DataInterface::process(AlignmentMatrix* matrix)
       delete track;
     }
     
-    if (gotToDeleteClusters)
+    if (event->contentType() == SimpleEvent::RawData)
       qDeleteAll(clusters);
 
     if ( i > iFactors*nEntries/100. ) {
