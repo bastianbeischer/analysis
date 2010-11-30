@@ -102,7 +102,7 @@ SimpleEvent* DataChain::nextEvent()
 
 const DataDescription* DataChain::currentDescription() const
 {
-  return (const DataDescription*) m_chain->GetTree()->GetUserInfo()->First();
+  return static_cast<const DataDescription*>(m_chain->GetTree()->GetUserInfo()->First());
 }
 
 int DataChain::entryInFile() const
