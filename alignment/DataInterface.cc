@@ -51,10 +51,16 @@ void DataInterface::process(AlignmentMatrix* matrix)
   for (unsigned int i = 0; i < nEntries; i++) {
     SimpleEvent* event = m_chain->event(i);
     
-    QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
     QVector<Hit*> clusters;
-    foreach(Cluster* cluster, setup->generateClusters(hits))
-      clusters.push_back(cluster);
+    QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
+    bool gotToDeleteClusters = false;
+    if (event->contentType() == SimpleEvent::Clusters) {
+      clusters = hits;
+    }
+    else {
+      clusters = setup->generateClusters(hits);
+      gotToDeleteClusters = true;
+    }
 
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
@@ -74,6 +80,9 @@ void DataInterface::process(AlignmentMatrix* matrix)
       delete track;
     }
     
+    if (gotToDeleteClusters)
+      qDeleteAll(clusters);
+
     if ( i > iFactors*nEntries/100. ) {
       std::cout << "#" << std::flush;
       iFactors++;

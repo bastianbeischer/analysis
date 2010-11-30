@@ -65,7 +65,7 @@ int main(int argc, char** argv)
       QVector<Hit*> hits = QVector<Hit*>::fromStdVector(sourceEvent->hits());
 
       // do the zero compression
-      foreach(Cluster* cluster, setup->generateClusters(hits))
+      foreach(Hit* cluster, setup->generateClusters(hits))
         destinationEvent->addHit(cluster);
       
       destinationTree.Fill();
