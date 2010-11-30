@@ -15,7 +15,8 @@ bool comparePositions(const Hit* hit1, const Hit* hit2)
 DetectorElement::DetectorElement() :
   m_type(none),
   m_id(0),
-  m_position(QVector3D(0.,0.,0.)),
+  m_nChannels(0),
+  m_position(TVector3(0.,0.,0.)),
   m_alignmentShift(0.)
 {
 }
@@ -23,20 +24,14 @@ DetectorElement::DetectorElement() :
 DetectorElement::DetectorElement(unsigned short id) :
   m_type(none),
   m_id(id),
-  m_position(QVector3D(0.,0.,0.)),
+  m_nChannels(0),
+  m_position(TVector3(0.,0.,0.)),
   m_alignmentShift(0.)
 {
 }
 
 DetectorElement::~DetectorElement()
 {
-}
-
-void DetectorElement::deleteClusters()
-{
-  foreach(Cluster* cluster, m_clusters)
-    delete cluster;
-  m_clusters.clear();
 }
 
 void DetectorElement::sortHits()
@@ -57,7 +52,7 @@ void DetectorElement::sortHits()
   }
 }
 
-void DetectorElement::debug()
+void DetectorElement::debug(const QVector<Cluster*>& clusters)
 {
   std::cout << "------------------------" << std::endl;
   int i = 0;
@@ -70,7 +65,7 @@ void DetectorElement::debug()
   }
   std::cout << "Clusters:" << std::endl;
   int j = 0;
-  foreach(Cluster* cluster, m_clusters) {
+  foreach(Cluster* cluster, clusters) {
     i = 0;
     std::cout << "No. " << j << ":" << std::endl;
     foreach(Hit* hit, cluster->hits()) {
@@ -93,4 +88,14 @@ void DetectorElement::debug()
   //     }
   //   }
   // }
+}
+
+TVector3 DetectorElement::positionForHit(const Hit* hit) const
+{
+  TVector3 pos = hit->position();
+  TVector3 counterPos = hit->counterPosition();
+  double angle = hit->angle();
+  TVector3 alignmentCorr(-alignmentShift(), 0, 0);
+  alignmentCorr.RotateZ(angle);
+  return 0.5*(pos+counterPos) + alignmentCorr;
 }

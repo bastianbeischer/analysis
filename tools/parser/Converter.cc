@@ -15,7 +15,6 @@
 
 #include <TVector3.h>
 #include <QDebug>
-#include <QVector3D>
 
 #include <iostream>
 
@@ -33,8 +32,7 @@ const int tdcChannelToSipm[64] = {
   1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0
 };
 
-Converter::Converter(const SingleFile* file) :
-  m_file(file)
+Converter::Converter()
 {
 }
 
@@ -42,9 +40,9 @@ Converter::~Converter()
 {
 }
 
-SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
+SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int eventNo)
 {
-  const RawEvent* event = m_file->getRawEvent(eventNo);
+  const RawEvent* event = file->getRawEvent(eventNo);
 
   // construct new simple event
   int eventId = event->GetEventID();
@@ -83,7 +81,7 @@ SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
     //get calibration for non-tof detectors
     for (int i = 0; i < nMax; i++) {
       if (!id->IsTOF()) {
-        Calibration* cali = m_file->getCalibrationForDetector(id, i);
+        Calibration* cali = file->getCalibrationForDetector(id, i);
         Q_ASSERT(cali);
         cali->GetAmplitudes(values + i*nValues/nMax, temp + i*nValues/nMax);
       }
@@ -99,10 +97,8 @@ SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
       if (id->IsTracker()) {
         int amplitude = static_cast<int>(temp[i]);
 
-        QVector3D qtPos = setup->configFilePosition("tracker", detId | i);
-        TVector3 pos(qtPos.x(), qtPos.y(), qtPos.z());
-        qtPos = setup->configFilePosition("trackerback", detId | i);
-        TVector3 counterPos(qtPos.x(), qtPos.y(), qtPos.z());
+        TVector3 pos = setup->configFilePosition("tracker", detId | i);
+        TVector3 counterPos = setup->configFilePosition("trackerback", detId | i);
 
         simpleEvent->addHit(new Hit(Hit::tracker, detId | i, amplitude, pos, counterPos));
       } // tracker
@@ -110,10 +106,8 @@ SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
       else if (id->IsTRD()) {
         int amplitude = static_cast<int>(temp[i]);
 
-        QVector3D qtPos = setup->configFilePosition("trd", detId | i);
-        TVector3 pos(qtPos.x(), qtPos.y(), qtPos.z());
-        qtPos = setup->configFilePosition("trdback", detId | i);
-        TVector3 counterPos(qtPos.x(), qtPos.y(), qtPos.z());
+        TVector3 pos = setup->configFilePosition("trd", detId | i);
+        TVector3 counterPos = setup->configFilePosition("trdback", detId | i);
 
         simpleEvent->addHit(new Hit(Hit::trd, detId | i, amplitude, pos, counterPos));
       } // trd
@@ -122,10 +116,8 @@ SimpleEvent* Converter::generateSimpleEvent(unsigned int eventNo)
         const quint32 value = ((TOFDataBlock*) dataBlock)->GetRawData()[i];
         int channel = TOFSipmHit::channelFromData(value);
 
-        QVector3D qtPos = setup->configFilePosition("tof", detId | channel);
-        TVector3 pos(qtPos.x(), qtPos.y(), qtPos.z());
-        qtPos = setup->configFilePosition("tofback", detId | channel);
-        TVector3 counterPos(qtPos.x(), qtPos.y(), qtPos.z());
+        TVector3 pos = setup->configFilePosition("tof", detId | channel);
+        TVector3 counterPos = setup->configFilePosition("tofback", detId | channel);
 
         unsigned short bar = tdcChannelToBar[channel] << 2;
         unsigned short sipm = tdcChannelToSipm[channel];

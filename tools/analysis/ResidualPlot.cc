@@ -2,6 +2,8 @@
 
 #include "TrackSelection.hh"
 #include "Layer.hh"
+#include "Setup.hh"
+#include "Cluster.hh"
 #include "Hit.hh"
 #include "StraightLine.hh"
 #include "BrokenLine.hh"
@@ -27,8 +29,16 @@ ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer)
   if (topic == AnalysisPlot::ResidualsTRD)
     max = 10.;
 
-  TH2D* histogram = new TH2D(qPrintable(title()+QString::number(id())), "", layer->nElements(), 0, layer->nElements(), 200, -max, max);
-  histogram->GetXaxis()->SetTitle("SiPM array number");
+  unsigned short nElements = layer->nElements();
+  unsigned short nChannels = layer->elements().first()->nChannels();
+  TH2D* histogram = new TH2D(qPrintable(title()+QString::number(id())), "", nElements*nChannels, 0, nElements*nChannels, 200, -max, max);
+
+  if (topic == AnalysisPlot::ResidualsUpperTracker || AnalysisPlot::ResidualsLowerTracker) {
+    histogram->GetXaxis()->SetTitle("SiPM array number");
+  }
+  if (topic == AnalysisPlot::ResidualsTRD) {
+    histogram->GetXaxis()->SetTitle("TRD module number");
+  }
   histogram->GetYaxis()->SetTitle("residue / mm");
   setHistogram(histogram);
 }
@@ -77,7 +87,8 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSe
   // fit and fill histograms
   if (mytrack->fit(hitsForFit)) {
     foreach(Hit* hit, hitsInThisLayer) {
-      TVector3 pos = 0.5* (hit->position() + hit->counterPosition());
+      //      TVector3 pos = 0.5* (hit->position() + hit->counterPosition());
+      TVector3 pos = Setup::instance()->positionForHit(hit);
       TVector3 trackPos = mytrack->position(m_layer->z());
 
       double angle = hit->angle();
@@ -85,9 +96,25 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSe
       trackPos.RotateZ(-angle);
 
       double res = (pos - trackPos).x();
-      int index = m_layer->detIds().indexOf(hit->detId() - hit->channel());
-  
-      histogram()->Fill(index, res);
+      unsigned short detId = hit->detId() - hit->channel();
+      unsigned short index = m_layer->detIds().indexOf(detId);
+      unsigned short nChannels = Setup::instance()->element(detId)->nChannels();
+      unsigned short channel = hit->channel();
+      if (strcmp(hit->ClassName(), "Cluster") == 0) {
+        int max = 0;
+        int imax = 0;
+        Cluster* cluster = static_cast<Cluster*>(hit);
+        std::vector<Hit*> subHits = cluster->hits();
+        for (unsigned int i = 0 ; i < subHits.size(); i++) {
+          if (subHits.at(i)->signalHeight() > max) {
+            max = subHits.at(i)->signalHeight();
+            imax = i;
+          }
+        }
+        channel = subHits.at(imax)->channel();
+      }
+
+      histogram()->Fill(index*nChannels + channel, res);
     }
   }
   delete mytrack;

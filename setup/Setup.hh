@@ -4,12 +4,13 @@
 #include <QMap>
 #include <QVector>
 
+#include <TVector3.h>
+
 class Cluster;
 class Hit;
 class Layer;
 class DetectorElement;
 class QSettings;
-class QVector3D;
 
 typedef QMap<double,Layer*>::iterator LayerIterator;
 typedef QMap<unsigned short,DetectorElement*>::iterator ElementIterator;
@@ -34,13 +35,12 @@ public:
 
 public:
   QVector<Cluster*> generateClusters(const QVector<Hit*>& hits);
-  void              deleteClusters();
-  void              clearClusters();
   void              addHitsToLayers(const QVector<Hit*>& hits);
   void              clearHitsFromLayers();
+  TVector3          positionForHit(const Hit* hit);
 
 public:
-  QVector3D         configFilePosition(QString group, unsigned short detId) const;
+  TVector3          configFilePosition(QString group, unsigned short detId) const;
   double            configFileAlignmentShift(QString group, unsigned short detId) const;
 
 public:

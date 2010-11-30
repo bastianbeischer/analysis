@@ -70,8 +70,10 @@ void AnalysisThread::run()
       }
       foreach (AnalysisPlot* plot, m_plots)
         plot->processEvent(trackClusters, m_track, m_trackSelection, event);
-      Setup::instance()->deleteClusters();
+      //qDeleteAll(clusters);
       delete event;
+    } else {
+      usleep(1000);
     }
     m_mutex.lock();
     if (m_abort) {

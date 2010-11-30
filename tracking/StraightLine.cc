@@ -2,6 +2,7 @@
 
 #include "StraightLineMatrix.hh"
 #include "Hit.hh"
+#include "Setup.hh"
 
 #include <TGraphErrors.h>
 #include <TF1.h>
@@ -79,12 +80,14 @@ int StraightLine::fit2D(const QVector<Hit*>& hits)
   int i = 0;
   foreach(Hit* hit, m_hits) {
     if (hit->type() == Hit::trd) {
-      graph.SetPoint(i, hit->position().z(), hit->position().x());
+      TVector3 pos = Setup::instance()->positionForHit(hit);
+      graph.SetPoint(i, pos.z(), pos.x());
       graph.SetPointError(i, 0, 6./sqrt(12));
       i++;
     }
     else if (hit->type() == Hit::tracker) {
-      graph.SetPoint(i, hit->position().z(), hit->position().x());
+      TVector3 pos = Setup::instance()->positionForHit(hit);
+      graph.SetPoint(i, pos.z(), pos.x());
       graph.SetPointError(i, 0, 1.);
       i++;
     }

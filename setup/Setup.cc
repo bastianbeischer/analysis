@@ -10,9 +10,10 @@
 #include <QStringList>
 #include <QSettings>
 #include <QProcess>
-#include <QVector3D>
-
 #include <QDebug>
+
+#include <TVector3.h>
+
 #include <iostream>
 #include <cassert>
 #include <cmath>
@@ -64,22 +65,23 @@ Setup* Setup::instance()
 void Setup::construct()
 {
   if (m_settings) {
-    m_settings->beginGroup("layer");
-    foreach(QString key, m_settings->childKeys()) {
-      double z = key.toDouble();
-      Layer* layer = this->layer(z);
-      QStringList detIds = m_settings->value(key).toStringList();
-      foreach(QString detId, detIds) {
-        bool ok;
-        unsigned short id = detId.toUShort(&ok, 16);
-        if (ok) {
-          DetectorElement* element = this->element(id);
-          layer->addElement(element);
-        }
-      } // elements
-      layer->sortIdsByPosition();
+    foreach(QString key, m_settings->allKeys()) {
+      QStringList list = key.split("/");
+      if (list[0] == "layer") {
+        double z = list[1].toDouble();
+        Layer* layer = this->layer(z);
+        QStringList detIds = m_settings->value(key).toStringList();
+        foreach(QString detId, detIds) {
+          bool ok;
+          unsigned short id = detId.toUShort(&ok, 16);
+          if (ok) {
+            DetectorElement* element = this->element(id);
+            layer->addElement(element);
+          }
+        } // elements
+        layer->sortIdsByPosition();
+      }
     } // layers
-    m_settings->endGroup();
   } // settings
 }
 
@@ -158,7 +160,6 @@ QVector<Cluster*> Setup::generateClusters(const QVector<Hit*>& hits)
   }
 
   if (needToFindClusters) {
-    clearClusters();
     addHitsToLayers(hits);
     Layer* layer = firstLayer();
     while(layer) {
@@ -174,18 +175,6 @@ QVector<Cluster*> Setup::generateClusters(const QVector<Hit*>& hits)
     }
   }
   return clusters;
-}
-
-void Setup::deleteClusters()
-{
-  foreach(DetectorElement* element, m_elements)
-    element->deleteClusters();
-}
-
-void Setup::clearClusters()
-{
-  foreach(DetectorElement* element, m_elements)
-    element->clearClusters();
 }
 
 void Setup::addHitsToLayers(const QVector<Hit*>& hits)
@@ -208,15 +197,22 @@ void Setup::clearHitsFromLayers()
     layer->clearHitsInDetectors();
 }
 
-QVector3D Setup::configFilePosition(QString group, unsigned short detId) const
+TVector3 Setup::positionForHit(const Hit* hit)
+{
+  DetectorElement* element = this->element(hit->detId() - hit->channel());
+  return element->positionForHit(hit);
+}
+
+TVector3 Setup::configFilePosition(QString group, unsigned short detId) const
 {
   assert(m_coordinates);
   QList<QVariant> list = m_coordinates->value(group+"/"+QString::number(detId,16)).toList();
-  return QVector3D(list[0].toDouble(), list[1].toDouble(), list[2].toDouble());
+  return TVector3(list[0].toDouble(), list[1].toDouble(), list[2].toDouble());
 }
 
 double Setup::configFileAlignmentShift(QString group, unsigned short detId) const
 {
+  assert(m_settings);
   return m_settings->value(group+"/0x"+QString::number(detId,16)).toDouble();
 }
 

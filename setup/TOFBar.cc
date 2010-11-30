@@ -4,16 +4,20 @@
 #include "TOFSipmHit.hh"
 #include "Setup.hh"
 
+#include <QString>
+
 TOFBar::TOFBar() :
   DetectorElement()
 {
   m_type = tof;
+  m_nChannels = 4;
 }
 
 TOFBar::TOFBar(unsigned short detId) :
   DetectorElement(detId)
 {
   m_type = tof;
+  m_nChannels = 4;
   m_position = Setup::instance()->configFilePosition("tof", m_id);
   m_alignmentShift = Setup::instance()->configFileAlignmentShift("tof", m_id);
 }
@@ -22,8 +26,9 @@ TOFBar::~TOFBar()
 {
 }
 
-const QVector<Cluster*>& TOFBar::findClusters()
+QVector<Cluster*> TOFBar::findClusters()
 {
+  QVector<Cluster*> clusters;
   if(m_hits.size() >= 3) {
     TOFCluster* tofCluster = new TOFCluster;
     foreach(Hit* hit, m_hits) {
@@ -31,8 +36,8 @@ const QVector<Cluster*>& TOFBar::findClusters()
       tofCluster->addHit(new TOFSipmHit(*tofHit));
     }
     tofCluster->processHits();
-    m_clusters.push_back(tofCluster);
+    clusters.push_back(tofCluster);
   }
-  return m_clusters;
+  return clusters;
 }
 

@@ -120,5 +120,5 @@ int DataChain::entryInFile() const
 
 const std::string& DataChain::rawFileNameForEvent() const
 {
-  return currentDescription()->runFileForEventNumber(entryInFile());
+  return currentDescription()->runFileNameForEventNumber(entryInFile());
 }

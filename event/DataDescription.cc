@@ -6,6 +6,7 @@
 #include <string.h>
 #include <iostream>
 #include <sstream>
+#include <cstdlib>
 
 #include <TFile.h>
 #include <TTree.h>
@@ -50,10 +51,23 @@ void DataDescription::setSoftwareVersionHash()
   assert(m_softwareVersionHash.length() == 40);
 }
 
-int DataDescription::timeOfRun(int) const
+int DataDescription::timeOfRun(int run) const
 {
-  //TODO
-  return 0;
+  assert(run < m_numberOfRuns);
+  std::string fileName = m_runFileNames[run];
+  int strSize = fileName.size();
+
+  //seek backwards for "_"
+  int i = fileName.rfind("_");
+
+  //get the runnumber
+  std::string numStr;
+  for (i += 1; i < strSize; i++)
+    if (isdigit(fileName[i]))
+      numStr.push_back(fileName[i]);
+    else
+      break;
+  return atoi(numStr.c_str());
 }
     
 
@@ -63,7 +77,7 @@ long DataDescription::eventNumberInRunFile(long eventNumber) const
   return 0;
 }
 
-const std::string& DataDescription::runFileForEventNumber(long eventNumber) const
+int DataDescription::runFileForEventNumber(long eventNumber) const
 {
   int runNo = 0;
   for (int i = 0; i < m_numberOfRuns; ++i) {
@@ -73,9 +87,14 @@ const std::string& DataDescription::runFileForEventNumber(long eventNumber) cons
     }
   }
   assert(runNo < m_numberOfRuns);
-  return m_runFileNames[runNo];
+  return runNo;
 }
 
+const std::string& DataDescription::runFileNameForEventNumber(long eventNumber) const
+{
+  int runNo = runFileForEventNumber(eventNumber);
+  return m_runFileNames[runNo];
+}
     
 void DataDescription::addRunFile(const std::string& fileName, const std::string& softwareVersionHash, const int nEvents)
 {
