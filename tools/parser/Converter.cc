@@ -46,7 +46,7 @@ SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int
 
   // construct new simple event
   int eventId = event->GetEventID();
-  int time = event->GetTime();
+  int time = event->GetTime() + file->getStartTime();
   SimpleEvent* simpleEvent = new SimpleEvent(eventId, time, SimpleEvent::RawData);
 
   // loop over all present detector IDs

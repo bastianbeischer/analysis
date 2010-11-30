@@ -151,3 +151,13 @@ Calibration* SingleFile::getCalibrationForDetector(DetectorID* id, int whichCali
   return 0;
 }
 
+
+unsigned int SingleFile::getStartTime() const
+{
+  return m_runFile->GetStartTime();
+}
+
+unsigned int SingleFile::getStopTime() const
+{
+  return m_runFile->GetStopTime();
+}
