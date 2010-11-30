@@ -81,6 +81,8 @@ void TOFCluster::processHits()
   m_signalHeight = signalHeight;
   m_position = position;
   m_counterPosition = counterPosition;
+
+  calculateAngle();
 }
 
 double TOFCluster::yEstimate(bool forceIntoBar)

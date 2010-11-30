@@ -30,9 +30,9 @@ public:
   int            signalHeight()    const {return m_signalHeight;}
   TVector3       position()        const {return m_position;}
   TVector3       counterPosition() const {return m_counterPosition;}
+  double         angle()           const {return m_angle;}
 
 public:
-  double         angle()              const;
   double         resolutionEstimate() const;
 
   unsigned short device()     const;
@@ -41,11 +41,15 @@ public:
   unsigned short channel()    const;
 
 protected:
+  void           calculateAngle();
+
+protected:
   ModuleType     m_type;
   unsigned short m_detId;
   int            m_signalHeight;
   TVector3       m_position;
   TVector3       m_counterPosition;
+  double         m_angle;
 
   ClassDef(Hit, 1);
 

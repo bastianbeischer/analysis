@@ -10,7 +10,8 @@ Hit::Hit() :
   m_detId(0x0),
   m_signalHeight(0),
   m_position(TVector3()),
-  m_counterPosition(TVector3())
+  m_counterPosition(TVector3()),
+  m_angle(0.)
 {
 }
 
@@ -20,8 +21,10 @@ Hit::Hit(ModuleType typ, unsigned short detId, int signalHeight, TVector3 positi
   m_detId(detId),
   m_signalHeight(signalHeight),
   m_position(position),
-  m_counterPosition(counterPosition)
+  m_counterPosition(counterPosition),
+  m_angle(0.)
 {
+  calculateAngle();
 }
 
 Hit::Hit(const Hit& other) :
@@ -30,7 +33,8 @@ Hit::Hit(const Hit& other) :
   m_detId(other.m_detId),
   m_signalHeight(other.m_signalHeight),
   m_position(other.m_position),
-  m_counterPosition(other.m_counterPosition)
+  m_counterPosition(other.m_counterPosition),
+  m_angle(other.m_angle)
 {
 }
 
@@ -38,7 +42,7 @@ Hit::~Hit()
 {
 }
 
-double Hit::angle() const
+void Hit::calculateAngle()
 {
   // y-axis
   TVector3 axis(0.,1.,0.);
@@ -52,16 +56,15 @@ double Hit::angle() const
   if (dir.x() > 0)
     angle = -angle;
 
-  return angle;
+  m_angle = angle;
 }
 
 double Hit::resolutionEstimate() const
 {
-  double resolution = 0.;
-  if (m_type == tracker) resolution = 50e-3;
-  if (m_type == trd)     resolution = 6./sqrt(12);
-  if (m_type == tof)     resolution = 50./sqrt(12);
-  return resolution;
+  if (m_type == tracker) return 50e-3;
+  if (m_type == trd)     return 6./sqrt(12);
+  if (m_type == tof)     return 50./sqrt(12);
+  return 0;
 }
 
 unsigned short Hit::device() const

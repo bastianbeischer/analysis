@@ -101,5 +101,7 @@ void Cluster::processHits()
   m_signalHeight = amplitude;
   m_position = position;
   m_counterPosition = counterPosition;
+  
+  calculateAngle();
 }
 
