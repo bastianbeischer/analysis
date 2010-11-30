@@ -12,9 +12,10 @@ public:
   TrackSelection();
   ~TrackSelection();
   
-  enum Flag {None=0, AllTrackerLayers=1, InsideMagnet=2, OutsideMagnet=4, HighPt=8, MagnetCollision=16};
+  enum Flag {None=0x00, AllTrackerLayers=0x01, InsideMagnet=0x02, OutsideMagnet=0x04, HighPt=0x08, 
+             MagnetCollision=0x10};
 
-  Q_DECLARE_FLAGS(Flags, Flag)
+  Q_DECLARE_FLAGS(Flags, Flag);
 
 public:
   void processTrack(Track*);
