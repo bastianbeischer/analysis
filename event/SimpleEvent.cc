@@ -10,16 +10,18 @@ ClassImp( SimpleEvent );
 SimpleEvent::SimpleEvent() :
   TObject(),
   m_eventId(0),
-  m_time(0),
+  m_runStartTime(0),
+  m_eventTime(0),
   m_contentType(None),
   m_hits()
 {
 }
 
-SimpleEvent::SimpleEvent(int id, int time, ContentType type) :
+SimpleEvent::SimpleEvent(unsigned int id, unsigned int runStartTime, unsigned int eventTime, ContentType type) :
   TObject(),
   m_eventId(id),
-  m_time(time),
+  m_runStartTime(runStartTime),
+  m_eventTime(eventTime),
   m_contentType(type),
   m_hits()
 {
@@ -28,7 +30,8 @@ SimpleEvent::SimpleEvent(int id, int time, ContentType type) :
 SimpleEvent::SimpleEvent(const SimpleEvent& other) :
   TObject(other),
   m_eventId(other.m_eventId),
-  m_time(other.m_time),
+  m_runStartTime(other.m_runStartTime),
+  m_eventTime(other.m_eventTime),
   m_contentType(other.m_contentType)
 {
   for (std::vector<Hit*>::const_iterator it = other.m_hits.begin(); it != other.m_hits.end(); it++) {
