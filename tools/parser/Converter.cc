@@ -46,7 +46,7 @@ SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int
 
   // construct new simple event
   unsigned int eventId = event->GetEventID();
-  unsigned int runStartTime = file->getStartTime();; // convert ms to s for 
+  unsigned int runStartTime = file->getStartTime(); // convert ms to s for 
   unsigned int eventTime = event->GetTime();
   SimpleEvent* simpleEvent = new SimpleEvent(eventId, runStartTime, eventTime, SimpleEvent::RawData);
 
