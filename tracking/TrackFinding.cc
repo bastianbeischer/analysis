@@ -31,24 +31,31 @@ QVector<Hit*> TrackFinding::findTrack(const QVector<Hit*>& hits)
 {
   m_trackFindingHist->Reset();
 
+  int max = 0;
+  int maxBin = 0;
   for (QVector<Hit*>::ConstIterator firstHit = hits.begin(); firstHit != hits.end(); firstHit++) {
     for (QVector<Hit*>::ConstIterator secondHit = firstHit; secondHit != hits.end(); secondHit++) {
       if ((*firstHit)->type() == Hit::tof || (*secondHit)->type() == Hit::tof) continue;
-      double x1 = 0.5*((*firstHit)->position() + (*firstHit)->counterPosition()).x();
-      double x2 = 0.5*((*secondHit)->position() + (*secondHit)->counterPosition()).x();
-      double z1 = 0.5*((*firstHit)->position() + (*firstHit)->counterPosition()).z();
-      double z2 = 0.5*((*secondHit)->position() + (*secondHit)->counterPosition()).z();
+      double x1 = 0.5*((*firstHit)->position().x() + (*firstHit)->counterPosition().x());
+      double x2 = 0.5*((*secondHit)->position().x() + (*secondHit)->counterPosition().x());
+      double z1 = (*firstHit)->position().z();
+      double z2 = (*secondHit)->position().z();
 
       if (fabs(z2 - z1) > 20) {
         double slope = (x2-x1)/(z2-z1);
         double offset = x1 - slope*z1;
-        m_trackFindingHist->Fill(slope,offset);
+        int bin = m_trackFindingHist->Fill(slope,offset);
+        int content = m_trackFindingHist->GetBinContent(bin);
+        if (content > max) {
+          max = content;
+          maxBin = bin;
+        }
       }
     }
   }
 
   int maxX, maxY, maxZ;
-  m_trackFindingHist->GetMaximumBin(maxX, maxY, maxZ);
+  m_trackFindingHist->GetBinXYZ(maxBin, maxX, maxY, maxZ);
   double slopeMax = m_trackFindingHist->GetXaxis()->GetBinCenter(maxX);
   double offsetMax  = m_trackFindingHist->GetYaxis()->GetBinCenter(maxY);
   StraightLine straightLine;
