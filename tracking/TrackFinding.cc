@@ -84,14 +84,19 @@ bool TrackFinding::isInCorridor(Track* track, Hit* hit, double pullOverRide) con
 {
   assert(track);
 
-  TVector3 pos = 0.5* (hit->position() + hit->counterPosition());
-  TVector3 trackPos = track->position(hit->position().z());
+  double z = hit->position().z();
+  double hitX = 0.5*(hit->position().x() + hit->counterPosition().x());
+  double hitY = 0.5*(hit->position().y() + hit->counterPosition().y());
+  double trackX = track->x(z);
+  double trackY = track->y(z);
 
   double angle = hit->angle();
-  pos.RotateZ(-angle);
-  trackPos.RotateZ(-angle);
+  double c = cos(-angle);
+  double s = sin(-angle);
+  double hitU = c*hitX - s*hitY;
+  double trackU = c*trackX - s*trackY;
 
-  double res = (pos - trackPos).x();
+  double res = hitU - trackU;
   double resolution = hit->resolutionEstimate();
 
   double maxPull = 0;
