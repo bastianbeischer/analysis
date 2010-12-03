@@ -25,23 +25,23 @@ public:
   virtual ~Hit();
 
 public:
-  ModuleType     type()            const {return m_type;}
-  unsigned short detId()           const {return m_detId;}
-  int            signalHeight()    const {return m_signalHeight;}
-  TVector3       position()        const {return m_position;}
-  TVector3       counterPosition() const {return m_counterPosition;}
-  double         angle()           const {return m_angle;}
+  ModuleType      type()            const {return m_type;}
+  unsigned short  detId()           const {return m_detId;}
+  int             signalHeight()    const {return m_signalHeight;}
+  const TVector3& position()        const {return m_position;}
+  const TVector3& counterPosition() const {return m_counterPosition;}
+  double          angle()           const {return m_angle;}
 
 public:
-  double         resolutionEstimate() const;
+  double          resolutionEstimate() const;
 
-  unsigned short device()     const;
-  unsigned short connection() const;
-  unsigned short block()      const;
-  unsigned short channel()    const;
+  unsigned short  device()     const;
+  unsigned short  connection() const;
+  unsigned short  block()      const;
+  unsigned short  channel()    const;
 
 protected:
-  void           calculateAngle();
+  void            calculateAngle();
 
 protected:
   ModuleType     m_type;
