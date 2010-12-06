@@ -43,7 +43,7 @@ int Matrix::fit(const QVector<Hit*>& hits)
   for (unsigned int i = 0; i < m_nRow; i++) {
     Hit* hit = hits.at(i);
 
-    TVector3 pos = Setup::instance()->positionForHit(hit);
+    TVector3 pos = hit->position();
 
     // get information from detector...
     double angle = hit->angle();

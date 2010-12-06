@@ -89,8 +89,8 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSe
   if (mytrack->fit(hitsForFit)) {
     foreach(Hit* hit, hitsInThisLayer) {
       double z = m_layer->z();
-      double hitX = Setup::instance()->positionForHit(hit).x();
-      double hitY = Setup::instance()->positionForHit(hit).y();
+      double hitX = hit->position().x();
+      double hitY = hit->position().y();
       double trackX = mytrack->x(z);
       double trackY = mytrack->y(z);
 

@@ -63,7 +63,7 @@ void AlignmentMatrix::fillMatrixFromTrack(Track* track)
     //   continue;
 
     // position
-    TVector3 pos = Setup::instance()->positionForHit(hit);
+    TVector3 pos = hit->position();
     float fx = pos.x();
     float fy = pos.y();
     float fz = pos.z();
