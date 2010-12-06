@@ -58,6 +58,8 @@ void DataInterface::process(AlignmentMatrix* matrix)
     else
       clusters = setup->generateClusters(hits);
 
+    Setup::instance()->applyCorrections(clusters);
+
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
 
