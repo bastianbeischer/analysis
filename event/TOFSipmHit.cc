@@ -35,7 +35,7 @@ TOFSipmHit::~TOFSipmHit()
 
 void TOFSipmHit::applyTimeShift(double shift)
 {
-  // TODO
+  m_startTime += shift;
 }
 
 void TOFSipmHit::processTDCHits()
