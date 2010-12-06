@@ -17,6 +17,7 @@ public:
 
   virtual ~TOFSipmHit();
 
+  void applyTimeShift(double);
   void processTDCHits();
 
   double startTime() const {return m_startTime;}

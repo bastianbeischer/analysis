@@ -25,6 +25,9 @@ public:
   virtual ~Hit();
 
 public:
+  void setPosition(const TVector3 pos) {m_position = pos;}
+
+public:
   ModuleType      type()            const {return m_type;}
   unsigned short  detId()           const {return m_detId;}
   int             signalHeight()    const {return m_signalHeight;}
