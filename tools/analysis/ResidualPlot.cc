@@ -88,15 +88,20 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSe
   // fit and fill histograms
   if (mytrack->fit(hitsForFit)) {
     foreach(Hit* hit, hitsInThisLayer) {
-      //      TVector3 pos = 0.5* (hit->position() + hit->counterPosition());
-      TVector3 pos = Setup::instance()->positionForHit(hit);
-      TVector3 trackPos = mytrack->position(m_layer->z());
+      double z = m_layer->z();
+      double hitX = Setup::instance()->positionForHit(hit).x();
+      double hitY = Setup::instance()->positionForHit(hit).y();
+      double trackX = mytrack->x(z);
+      double trackY = mytrack->y(z);
 
-      double angle = hit->angle();
-      pos.RotateZ(-angle);
-      trackPos.RotateZ(-angle);
+      double angle = (-1.)*hit->angle();
+      double c = cos(angle);
+      double s = sin(angle);
+      double hitU = c*hitX - s*hitY;
+      double trackU = c*trackX - s*trackY;
 
-      double res = (pos - trackPos).x();
+      double res = hitU - trackU;
+
       unsigned short detId = hit->detId() - hit->channel();
       unsigned short index = m_layer->detIds().indexOf(detId);
       unsigned short nChannels = Setup::instance()->element(detId)->nChannels();

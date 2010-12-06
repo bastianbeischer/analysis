@@ -97,9 +97,9 @@ bool TrackFinding::isInCorridor(Track* track, Hit* hit, double pullOverRide) con
   double trackX = track->x(z);
   double trackY = track->y(z);
 
-  double angle = hit->angle();
-  double c = cos(-angle);
-  double s = sin(-angle);
+  double angle = (-1.)*hit->angle();
+  double c = cos(angle);
+  double s = sin(angle);
   double hitU = c*hitX - s*hitY;
   double trackU = c*trackX - s*trackY;
 

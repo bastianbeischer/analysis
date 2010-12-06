@@ -4,6 +4,7 @@
 
 #include "Cluster.hh"
 
+#include <cmath>
 #include <cassert>
 #include <iostream>
 
@@ -93,10 +94,19 @@ void DetectorElement::debug(const QVector<Hit*>& clusters)
 
 TVector3 DetectorElement::positionForHit(const Hit* hit) const
 {
-  TVector3 pos = hit->position();
-  TVector3 counterPos = hit->counterPosition();
+  double posX = hit->position().x();
+  double posY = hit->position().y();
+  double posZ = hit->position().z();
+  double counterPosX = hit->counterPosition().x();
+  double counterPosY = hit->counterPosition().y();
+
+  double x = -alignmentShift();
+  double y = 0.;
   double angle = hit->angle();
-  TVector3 alignmentCorr(-alignmentShift(), 0, 0);
-  alignmentCorr.RotateZ(angle);
-  return 0.5*(pos+counterPos) + alignmentCorr;
+  double c = cos(angle);
+  double s = sin(angle);
+  double u = c*x - s*y;
+  double v = s*x + c*y;
+
+  return TVector3(0.5*(posX+counterPosX) + u, 0.5*(posY+counterPosY) + v, posZ);
 }
