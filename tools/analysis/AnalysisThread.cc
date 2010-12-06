@@ -65,6 +65,7 @@ void AnalysisThread::run()
         clusters = hits;
       else
         clusters = Setup::instance()->generateClusters(hits);
+
       QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
       if (m_track) {
         m_track->fit(trackClusters);

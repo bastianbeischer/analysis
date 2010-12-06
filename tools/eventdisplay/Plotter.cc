@@ -128,7 +128,7 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QTextBrow
   quint32 eventNumberInRootFile = m_chain->entryInFile();
   quint32 runFileNo = currentDesc->runFileForEventNumber(eventNumberInRootFile);
   quint32 eventInRunFile = currentDesc->eventNumberInRunFile(eventNumberInRootFile);
-  QString rootFileName = QString::fromStdString(m_chain->getCurrentFile()->GetName());
+  QString rootFileName = QString::fromStdString(m_chain->currentFile()->GetName());
   QString runfileName = QString::fromStdString(currentDesc->runFileNameForEventNumber(eventNumberInRootFile));
   QDateTime timeOfRun = QDateTime::fromTime_t(event->runStartTime());
   QDateTime timeOfEvent = timeOfRun.addMSecs(event->eventTime());
