@@ -11,6 +11,7 @@ class TrackFinding;
 class Track;
 class HitsPlot;
 class QLabel;
+class QTextBrowser;
 
 class Plotter : public TQtWidget {
 Q_OBJECT
@@ -21,7 +22,7 @@ public:
   unsigned int numberOfEvents();
   void setFileList(const QString& listName);
   void addFileList(const QString& listName);
-  void drawEvent(unsigned int i, bool drawTrack, int fitMethod);
+  void drawEvent(unsigned int i, bool drawTrack, int fitMethod, QTextBrowser& infoTextBox);
   void saveCanvas(const QString& fileName);
   void setPositionLabel(QLabel* label);
 public slots:

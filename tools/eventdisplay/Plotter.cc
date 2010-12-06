@@ -21,8 +21,10 @@
 #include <TList.h>
 #include <TPad.h>
 
+#include <QTextBrowser>
 #include <QLabel>
 #include <QVector>
+#include <QDateTime>
 #include <QDebug>
 
 #include <fstream>
@@ -91,7 +93,7 @@ void Plotter::mouseMoveEvent(QMouseEvent* event)
   }
 }
 
-void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod)
+void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QTextBrowser& infoTextBrowser)
 {
   if (m_track) {
     delete m_track;
@@ -120,6 +122,30 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod)
     track->fit(clusters);
   }
   m_hitsPlot->drawEvent(GetCanvas(), clusters, track);
+
+  //show info for event
+  const DataDescription* currentDesc = m_chain->currentDescription();
+  quint32 eventNumberInRootFile = m_chain->entryInFile();
+  quint32 runFileNo = currentDesc->runFileForEventNumber(eventNumberInRootFile);
+  quint32 eventInRunFile = currentDesc->eventNumberInRunFile(eventNumberInRootFile);
+  QString rootFileName = QString::fromStdString(m_chain->getCurrentFile()->GetName());
+  QString runfileName = QString::fromStdString(currentDesc->runFileNameForEventNumber(eventNumberInRootFile));
+  QDateTime timeOfRunFile = QDateTime::fromTime_t(currentDesc->timeOfRun(runFileNo));
+  QDateTime timeOfEvent = QDateTime::fromTime_t(event->time());
+  quint64 msOfEventInRun = timeOfRunFile.time().msecsTo(timeOfEvent.time());
+  //QTime timeInRunFile(0,0,0,event->time());
+  timeOfEvent = timeOfEvent.addMSecs(000);
+
+  infoTextBrowser.clear();
+  infoTextBrowser.append("time of event:\n" + timeOfEvent.toString("dd.MM.yyyy hh:mm:ss.zzz"));
+  infoTextBrowser.append("\n root file:\n " +  rootFileName);
+  infoTextBrowser.append("\n event in root file:\n " +  QString::number(eventNumberInRootFile));
+  infoTextBrowser.append("\n  runfile:\n  " +  QString::number(runFileNo));
+  infoTextBrowser.append("\n  run start:\n  " +  timeOfRunFile.toString("dd.MM.yyyy hh:mm:ss.zzz"));
+  infoTextBrowser.append("\n  runfilename:\n  " +  runfileName);
+  infoTextBrowser.append("\n  event in runfile:\n  " +  QString::number(eventInRunFile));
+  infoTextBrowser.append("\n  ms in runfile:\n  " + QString::number(msOfEventInRun));
+
   if (event->contentType() == SimpleEvent::RawData)
     qDeleteAll(clusters);
 }
