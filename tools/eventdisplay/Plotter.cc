@@ -130,21 +130,18 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QTextBrow
   quint32 eventInRunFile = currentDesc->eventNumberInRunFile(eventNumberInRootFile);
   QString rootFileName = QString::fromStdString(m_chain->getCurrentFile()->GetName());
   QString runfileName = QString::fromStdString(currentDesc->runFileNameForEventNumber(eventNumberInRootFile));
-  QDateTime timeOfRunFile = QDateTime::fromTime_t(currentDesc->timeOfRun(runFileNo));
-  QDateTime timeOfEvent = QDateTime::fromTime_t(event->time());
-  quint64 msOfEventInRun = timeOfRunFile.time().msecsTo(timeOfEvent.time());
-  //QTime timeInRunFile(0,0,0,event->time());
-  timeOfEvent = timeOfEvent.addMSecs(000);
+  QDateTime timeOfRun = QDateTime::fromTime_t(event->runStartTime());
+  QDateTime timeOfEvent = timeOfRun.addMSecs(event->eventTime());
 
   infoTextBrowser.clear();
   infoTextBrowser.append("time of event:\n" + timeOfEvent.toString("dd.MM.yyyy hh:mm:ss.zzz"));
   infoTextBrowser.append("\n root file:\n " +  rootFileName);
   infoTextBrowser.append("\n event in root file:\n " +  QString::number(eventNumberInRootFile));
   infoTextBrowser.append("\n  runfile:\n  " +  QString::number(runFileNo));
-  infoTextBrowser.append("\n  run start:\n  " +  timeOfRunFile.toString("dd.MM.yyyy hh:mm:ss.zzz"));
+  infoTextBrowser.append("\n  run start:\n  " +  timeOfRun.toString("dd.MM.yyyy hh:mm:ss.zzz"));
   infoTextBrowser.append("\n  runfilename:\n  " +  runfileName);
   infoTextBrowser.append("\n  event in runfile:\n  " +  QString::number(eventInRunFile));
-  infoTextBrowser.append("\n  ms in runfile:\n  " + QString::number(msOfEventInRun));
+  //infoTextBrowser.append("\n  ms in runfile:\n  " + QString::number(msOfEventInRun));
 
   if (event->contentType() == SimpleEvent::RawData)
     qDeleteAll(clusters);
