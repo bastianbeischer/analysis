@@ -1,6 +1,8 @@
 #include "Setup.hh"
 
 #include "Cluster.hh"
+#include "TOFCluster.hh"
+#include "TOFSipmHit.hh"
 #include "Layer.hh"
 #include "DetectorElement.hh"
 #include "SipmArray.hh"
@@ -186,17 +188,43 @@ void Setup::clearHitsFromLayers()
     layer->clearHitsInDetectors();
 }
 
+void Setup::applyCorrections(QVector<Hit*>& hits, CorrectionFlags flags)
+{
+  foreach(Hit* hit, hits) {
+    if (flags & Alignment) {
+      hit->setPosition(positionForHit(hit));
+    }
+    if (flags & TimeShifts) {
+      if (strcmp(hit->ClassName(), "TOFCluster") == 0) {
+        TOFCluster* cluster = static_cast<TOFCluster*>(hit);
+        std::vector<Hit*> subHits = cluster->hits();
+        for (std::vector<Hit*>::iterator it = subHits.begin(); it != subHits.end(); it++) {
+          TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(*it);
+          double timeShift = timeShiftForHit(hit);
+          tofHit->applyTimeShift(timeShift);
+        }
+        cluster->processHits();
+      }
+      else if (strcmp(hit->ClassName(), "TOFSipmHit") == 0) {
+        TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
+        double timeShift = timeShiftForHit(hit);
+        tofHit->applyTimeShift(timeShift);
+      }
+    }
+  }
+}
+
 TVector3 Setup::positionForHit(const Hit* hit)
 {
   DetectorElement* element = this->element(hit->detId() - hit->channel());
   return element->positionForHit(hit);
 }
 
-const QVector<double>& Setup::timeShifts(const Hit* hit)
+double Setup::timeShiftForHit(const Hit* hit)
 {
   Q_ASSERT(hit->type() == Hit::Tof);
   DetectorElement* element = this->element(hit->detId() - hit->channel());
-  return static_cast<TOFBar*>(element)->timeShifts();
+  return static_cast<TOFBar*>(element)->timeShift(hit->channel());
 }
 
 TVector3 Setup::configFilePosition(QString group, unsigned short detId) const
@@ -248,7 +276,7 @@ void Setup::writeSettings()
       if (type == DetectorElement::tof) {
         for (unsigned short channel = 0; channel < element->nChannels(); channel++) {
           unsigned short channelID = element->id() | channel;
-          double timeShift = static_cast<TOFBar*>(element)->timeShifts()[channel];
+          double timeShift = static_cast<TOFBar*>(element)->timeShift(channel);
           m_settings->setValue(typeString + "tofTimeShift/" + QString("0x%1").arg(channelID, 0, 16), timeShift);
         }
       }

@@ -5,6 +5,7 @@
 #include "Setup.hh"
 
 #include <QString>
+#include <cassert>
 
 TOFBar::TOFBar() :
   DetectorElement()
@@ -44,9 +45,10 @@ QVector<Hit*> TOFBar::findClusters()
   return clusters;
 }
 
-const QVector<double>& TOFBar::timeShifts()
+double TOFBar::timeShift(unsigned short channel)
 {
-  return m_timeShifts;
+  assert(channel < m_nChannels);
+  return m_timeShifts[channel];
 }
 
 void TOFBar::setTimeShifts(double ch0, double ch1, double ch2, double ch3)

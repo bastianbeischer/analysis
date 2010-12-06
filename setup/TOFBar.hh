@@ -18,9 +18,11 @@ public:
 public:
   QVector<Hit*> findClusters();
   void setTimeShifts(double ch0, double ch1, double ch2, double ch3);
-  const QVector<double>& timeShifts();
+  double timeShift(unsigned short channel);
+
 private:
   QVector<double> m_timeShifts;
+
 };
 
 #endif /* TOFBar_hh */
