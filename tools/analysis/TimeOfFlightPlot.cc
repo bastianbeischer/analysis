@@ -5,6 +5,8 @@
 #include "TOFConstants.hh"
 #include "TOFCluster.hh"
 #include "TOFSipmHit.hh"
+#include "Setup.hh"
+#include "TOFBar.hh"
 
 #include <TH1.h>
 #include <TVector3.h>
@@ -40,6 +42,9 @@ void TimeOfFlightPlot::processEvent(const QVector<Hit*>& hits, Track* track, Tra
     if (!strcmp(hit->ClassName(), "TOFCluster")) {
       TOFCluster* cluster = static_cast<TOFCluster*>(hit);
       Q_ASSERT(cluster->hits().size() <= 4);
+
+      TOFBar* element = static_cast<TOFBar*>(Setup::instance()->element(cluster->detId()));
+      //qDebug() << element->timeShifts() << hex << element->id();
 
       // if cluster is on track
       if (qAbs(track->x(hit->position().z()) - cluster->position().x()) <= tofBarWidth / 2.) {

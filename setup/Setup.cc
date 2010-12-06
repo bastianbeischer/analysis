@@ -132,7 +132,7 @@ DetectorElement* Setup::element(unsigned short id)
 {
   // this should differentiate between types of detector elements according to the QSettings file soon
   unsigned short usbBoard = (id >> 8) << 8;
-    
+  
   if (!m_elements[id]) {
     if (usbBoard == 0x3200 || usbBoard == 0x3600 || usbBoard == 0x3400 || usbBoard == 0x3500)
       m_elements[id] = new TRDModule(id);
@@ -192,6 +192,13 @@ TVector3 Setup::positionForHit(const Hit* hit)
   return element->positionForHit(hit);
 }
 
+const QVector<double>& Setup::timeShifts(const Hit* hit)
+{
+  Q_ASSERT(hit->type() == Hit::Tof);
+  DetectorElement* element = this->element(hit->detId() - hit->channel());
+  return static_cast<TOFBar*>(element)->timeShifts();
+}
+
 TVector3 Setup::configFilePosition(QString group, unsigned short detId) const
 {
   assert(m_coordinates);
@@ -203,6 +210,12 @@ double Setup::configFileAlignmentShift(QString group, unsigned short detId) cons
 {
   assert(m_settings);
   return m_settings->value(group+"/0x"+QString::number(detId,16)).toDouble();
+}
+
+double Setup::configFileTimeShift(unsigned short detId) const
+{
+  assert(m_settings);
+  return m_settings->value("tofTimeShift/0x"+QString::number(detId,16), 1).toDouble();
 }
 
 void Setup::writeSettings()
@@ -230,7 +243,15 @@ void Setup::writeSettings()
       if (type == DetectorElement::trd)     typeString = "trd";
       if (type == DetectorElement::tof)     typeString = "tof";
 
-      m_settings->setValue(typeString + "/" + QString("0x%1").arg(element->id(),0,16), element->alignmentShift());
+      m_settings->setValue(typeString + "/" + QString("0x%1").arg(element->id(), 0, 16), element->alignmentShift());
+
+      if (type == DetectorElement::tof) {
+        for (unsigned short channel = 0; channel < element->nChannels(); channel++) {
+          unsigned short channelID = element->id() | channel;
+          double timeShift = static_cast<TOFBar*>(element)->timeShifts()[channel];
+          m_settings->setValue(typeString + "tofTimeShift/" + QString("0x%1").arg(channelID, 0, 16), timeShift);
+        }
+      }
     }
 
     // in order for the file to end up on disk we need to call "sync" here

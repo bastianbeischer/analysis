@@ -13,13 +13,16 @@ TOFBar::TOFBar() :
   m_nChannels = 4;
 }
 
-TOFBar::TOFBar(unsigned short detId) :
-  DetectorElement(detId)
+TOFBar::TOFBar(unsigned short detId)
+  : DetectorElement(detId)
 {
   m_type = tof;
   m_nChannels = 4;
   m_position = Setup::instance()->configFilePosition("tof", m_id);
   m_alignmentShift = Setup::instance()->configFileAlignmentShift("tof", m_id);
+  m_timeShifts = QVector<double>(m_nChannels, 0);
+  for(unsigned short channel = 0; channel < m_nChannels; ++channel)
+    m_timeShifts[channel] = Setup::instance()->configFileTimeShift(detId | channel);
 }
 
 TOFBar::~TOFBar()
@@ -41,3 +44,15 @@ QVector<Hit*> TOFBar::findClusters()
   return clusters;
 }
 
+const QVector<double>& TOFBar::timeShifts()
+{
+  return m_timeShifts;
+}
+
+void TOFBar::setTimeShifts(double ch0, double ch1, double ch2, double ch3)
+{
+  m_timeShifts[0] = ch0;
+  m_timeShifts[1] = ch1;
+  m_timeShifts[2] = ch2;
+  m_timeShifts[3] = ch3;
+}

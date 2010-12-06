@@ -38,10 +38,12 @@ public:
   void              addHitsToLayers(const QVector<Hit*>& hits);
   void              clearHitsFromLayers();
   TVector3          positionForHit(const Hit* hit);
+  const QVector<double>& timeShifts(const Hit* hit);
 
 public:
   TVector3          configFilePosition(QString group, unsigned short detId) const;
   double            configFileAlignmentShift(QString group, unsigned short detId) const;
+  double            configFileTimeShift(unsigned short detId) const;
 
 public:
   void              writeSettings();
