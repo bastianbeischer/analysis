@@ -10,6 +10,8 @@
 #include <cassert>
 #include <iostream>
 
+int TrackFinding::s_histCounter = 0;
+
 TrackFinding::TrackFinding() :
   m_maxSlope(1.),
   m_maxOffset(100.),
@@ -17,9 +19,12 @@ TrackFinding::TrackFinding() :
   m_offsetBins(41),
   m_trackerPull(30.),
   m_trdPull(5.),
-  m_tofPull(5.),
-  m_trackFindingHist(new TH2I("trackFindingHist", "trackFindingHist", m_slopeBins, -m_maxSlope, m_maxSlope, m_offsetBins, -m_maxOffset, m_maxOffset))
+  m_tofPull(5.)
 {
+  char title[128];
+  sprintf(title, "trackFindingHist_%d", s_histCounter);
+  m_trackFindingHist = new TH2I(title, title, m_slopeBins, -m_maxSlope, m_maxSlope, m_offsetBins, -m_maxOffset, m_maxOffset);
+  s_histCounter++;
 }
 
 TrackFinding::~TrackFinding()
