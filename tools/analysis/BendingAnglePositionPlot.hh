@@ -16,7 +16,6 @@ public:
 private:
   double m_cut;
   TH2D*  m_normHisto;
-
 };
 
 #endif

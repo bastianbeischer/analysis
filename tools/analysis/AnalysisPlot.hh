@@ -22,7 +22,8 @@ public:
   virtual ~AnalysisPlot();
   Topic topic() const;
   virtual void processEvent(const QVector<Hit*>&, Track* = 0, TrackSelection* = 0, SimpleEvent* = 0) = 0;
-  virtual void finalize() = 0;
+  virtual void finalize() {}
+  virtual void update() {}
 protected:
   QMutex m_mutex;
 private:

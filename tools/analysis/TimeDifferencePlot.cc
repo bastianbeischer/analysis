@@ -1,4 +1,4 @@
-#include "TimeOfFlightPlot.hh"
+#include "TimeDifferencePlot.hh"
 #include "BrokenLine.hh"
 #include "TrackSelection.hh"
 #include "Hit.hh"
@@ -10,37 +10,24 @@
 
 #include <TH1.h>
 #include <TVector3.h>
-#include <TLatex.h>
 
 #include <QDebug>
 
-TimeOfFlightPlot::TimeOfFlightPlot()
+TimeDifferencePlot::TimeDifferencePlot()
   : AnalysisPlot(AnalysisPlot::MiscellaneousTOF)
-  , H1DPlot()
+  , H2DPlot()
 {
-  setTitle("time of flight");
-  TH1D* histogram = new TH1D("time of flight", "", 1200, -60, 60);
-  histogram->GetXaxis()->SetTitle("c #Deltat / L_{track}");
+  setTitle("time difference");
+  TH2D* histogram = new TH1D("time difference", "", 8, 0, 8, 100, -10, 10);
+  histogram->GetXaxis()->SetTitle("channel");
+  histogram->GetYaxis()->SetTitle("#Deltat / ns");
   addHistogram(histogram);
-  TLatex* latex = 0;
-  latex = new TLatex(.15, .85, 0);
-  latex->SetNDC();
-  latex->SetTextAlign(13);
-  latex->SetTextFont(82);
-  latex->SetTextSize(0.03);
-  addLatex(latex);
-  latex = new TLatex(.15, .82, 0);
-  latex->SetNDC();
-  latex->SetTextAlign(13);
-  latex->SetTextFont(82);
-  latex->SetTextSize(0.03);
-  addLatex(latex);
 }
 
-TimeOfFlightPlot::~TimeOfFlightPlot()
+TimeDifferencePlot::~TimeDifferencePlot()
 {}
 
-void TimeOfFlightPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSelection* selection, SimpleEvent*)
+void TimeDifferencePlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSelection* selection, SimpleEvent*)
 {
   // QMutexLocker locker(&m_mutex);
   if (!track || !selection || !track->fitGood())
@@ -57,7 +44,7 @@ void TimeOfFlightPlot::processEvent(const QVector<Hit*>& hits, Track* track, Tra
       TOFCluster* cluster = static_cast<TOFCluster*>(hit);
       Q_ASSERT(cluster->hits().size() <= 4);
 
-      //TOFBar* element = static_cast<TOFBar*>(Setup::instance()->element(cluster->detId()));
+      TOFBar* element = static_cast<TOFBar*>(Setup::instance()->element(cluster->detId()));
       //qDebug() << element->timeShifts() << hex << element->id();
 
       // if cluster is on track
@@ -160,11 +147,5 @@ void TimeOfFlightPlot::processEvent(const QVector<Hit*>& hits, Track* track, Tra
   //qDebug() << "---";
   double deltaT = (correctedLeftStopTime+correctedRightStopTime)/2. - (correctedLeftStartTime+correctedRightStartTime)/2.;
   double trackLength = (upperPoint-lowerPoint).Mag();
-  histogram()->Fill(deltaT * speedOfLight / trackLength);
-}
-
-void TimeOfFlightPlot::update()
-{
-  latex(0)->SetTitle(qPrintable(QString("mean = %1").arg(histogram()->GetMean())));
-  latex(1)->SetTitle(qPrintable(QString("RMS  = %1").arg(histogram()->GetRMS())));
+  histogram(0)->Fill(deltaT * speedOfLight / trackLength);
 }

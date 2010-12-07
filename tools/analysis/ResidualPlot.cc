@@ -125,7 +125,3 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSe
   }
   delete mytrack;
 }
-
-void ResidualPlot::finalize()
-{
-}

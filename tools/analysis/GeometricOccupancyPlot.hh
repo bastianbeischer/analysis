@@ -9,7 +9,6 @@ public:
   explicit GeometricOccupancyPlot(double zPosition);
   virtual ~GeometricOccupancyPlot();
   virtual void processEvent(const QVector<Hit*>&, Track* = 0, TrackSelection* = 0, SimpleEvent* = 0);
-  virtual void finalize();
 private:
   double m_zPosition;
 };

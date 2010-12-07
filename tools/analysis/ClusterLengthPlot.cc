@@ -35,7 +35,3 @@ void ClusterLengthPlot::processEvent(const QVector<Hit*>& hits, Track*, TrackSel
       histogram(0)->Fill(cluster->hits().size());
   }
 }
-
-void ClusterLengthPlot::finalize()
-{
-}

@@ -17,7 +17,6 @@ public:
   ~MomentumSpectrumPlot();
   
   void processEvent(const QVector<Hit*>&, Track* = 0, TrackSelection* = 0, SimpleEvent* = 0);
-  void finalize();
 
 private:
   Range m_range;

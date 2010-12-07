@@ -35,7 +35,3 @@ void Chi2Plot::processEvent(const QVector<Hit*>&, Track* track, TrackSelection* 
     histogram(0)->Fill(track->chi2());
   }
 }
-
-void Chi2Plot::finalize()
-{
-}

@@ -43,7 +43,3 @@ void SignalHeightPlot::processEvent(const QVector<Hit*>& hits, Track*, TrackSele
       histogram(0)->Fill(hit->signalHeight());
   }
 }
-
-void SignalHeightPlot::finalize()
-{
-}

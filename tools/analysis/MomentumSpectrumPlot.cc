@@ -61,7 +61,3 @@ void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Track* track, Trac
     histogram(0)->Fill(pt);
   }
 }
-
-void MomentumSpectrumPlot::finalize()
-{
-}

@@ -35,7 +35,3 @@ void BendingPositionPlot::processEvent(const QVector<Hit*>&, Track* track, Track
     histogram(0)->Fill(line->zIntersection());
   }
 }
-
-void BendingPositionPlot::finalize()
-{
-}
