@@ -7,18 +7,18 @@
 class SimpleEvent;
 
 class EventQueue {
-  public:
-    EventQueue();
-    ~EventQueue();
-    int freeSpace();
-    int numberOfEvents();
-    void enqueue(SimpleEvent*);
-    SimpleEvent* dequeue();
+public:
+  EventQueue();
+  ~EventQueue();
+  int freeSpace();
+  int numberOfEvents();
+  void enqueue(SimpleEvent*);
+  SimpleEvent* dequeue();
     
-    static const int s_bufferSize = 1000;
-  private:
-    QQueue<SimpleEvent*> m_queue;
-    QMutex m_mutex;
+  static const int s_bufferSize = 1000;
+private:
+  QQueue<SimpleEvent*> m_queue;
+  QMutex m_mutex;
 };
 
 #endif

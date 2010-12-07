@@ -5,11 +5,11 @@
 #include "H1DPlot.hh"
 
 class BendingPositionPlot : public AnalysisPlot, public H1DPlot {
-  public:
-    BendingPositionPlot();
-    virtual ~BendingPositionPlot();
-    virtual void processEvent(const QVector<Hit*>&, Track* = 0, TrackSelection* = 0, SimpleEvent* = 0);
-    virtual void finalize();
+public:
+  BendingPositionPlot();
+  virtual ~BendingPositionPlot();
+  virtual void processEvent(const QVector<Hit*>&, Track* = 0, TrackSelection* = 0, SimpleEvent* = 0);
+  virtual void finalize();
 };
 
 #endif
