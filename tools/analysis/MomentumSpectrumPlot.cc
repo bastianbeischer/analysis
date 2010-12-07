@@ -58,6 +58,6 @@ void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Track* track, Trac
       return;
     if (m_range == Positive && pt <= 0)
       return;
-    histogram(0)->Fill(pt);
+    histogram()->Fill(pt);
   }
 }

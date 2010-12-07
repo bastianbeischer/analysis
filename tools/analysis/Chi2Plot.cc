@@ -32,6 +32,6 @@ void Chi2Plot::processEvent(const QVector<Hit*>&, Track* track, TrackSelection* 
     return;
 
   if ((int)track->ndf() == 20 - track->nParameters()) {
-    histogram(0)->Fill(track->chi2());
+    histogram()->Fill(track->chi2());
   }
 }
