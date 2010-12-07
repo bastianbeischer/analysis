@@ -38,13 +38,13 @@ QVector<Hit*> TrackFinding::findTrack(const QVector<Hit*>& hits)
 
   int max = 0;
   int maxBin = 0;
-  for (QVector<Hit*>::ConstIterator firstHit = hits.begin(); firstHit != hits.end(); firstHit++) {
-    for (QVector<Hit*>::ConstIterator secondHit = firstHit; secondHit != hits.end(); secondHit++) {
-      if ((*firstHit)->type() == Hit::tof || (*secondHit)->type() == Hit::tof) continue;
-      double x1 = 0.5*((*firstHit)->position().x() + (*firstHit)->counterPosition().x());
-      double x2 = 0.5*((*secondHit)->position().x() + (*secondHit)->counterPosition().x());
-      double z1 = (*firstHit)->position().z();
-      double z2 = (*secondHit)->position().z();
+  for (QVector<Hit*>::ConstIterator firstHitIt = hits.begin(); firstHitIt != hits.end(); firstHitIt++) {
+    for (QVector<Hit*>::ConstIterator secondHitIt = firstHitIt; secondHitIt != hits.end(); secondHitIt++) {
+      if ((*firstHitIt)->type() == Hit::tof || (*secondHitIt)->type() == Hit::tof) continue;
+      double x1 = (*firstHitIt)->position().x();
+      double x2 = (*secondHitIt)->position().x();
+      double z1 = (*firstHitIt)->position().z();
+      double z2 = (*secondHitIt)->position().z();
 
       if (fabs(z2 - z1) > 20) {
         double slope = (x2-x1)/(z2-z1);
