@@ -18,6 +18,7 @@ void H2DPlot::draw(TCanvas* canvas)
 {
   canvas->cd();
   m_histogram->Draw("COLZ");
+  RootPlot::draw(canvas);
 }
 
 void H2DPlot::clear()

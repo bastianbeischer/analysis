@@ -1,6 +1,8 @@
 #ifndef TrackSelection_hh
 #define TrackSelection_hh
 
+#include <QFlags>
+
 class Track;
 
 class TrackSelection
@@ -10,7 +12,10 @@ public:
   TrackSelection();
   ~TrackSelection();
   
-  enum Flags {None=0, AllTrackerLayers=1, InsideMagnet=2, OutsideMagnet=4, HighPt=8, MagnetCollision=16};
+  enum Flag {None=0x00, AllTrackerLayers=0x01, InsideMagnet=0x02, OutsideMagnet=0x04, HighPt=0x08, 
+             MagnetCollision=0x10};
+
+  Q_DECLARE_FLAGS(Flags, Flag);
 
 public:
   void processTrack(Track*);
@@ -27,5 +32,7 @@ private:
   Flags m_flags;
 
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(TrackSelection::Flags);
 
 #endif /* TrackSelection_hh */

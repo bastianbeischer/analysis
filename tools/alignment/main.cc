@@ -15,7 +15,7 @@ int main(int argc, char** argv)
   Manager* manager = Manager::instance();
   manager->loadStrategyFromFile(fileName);
   manager->startAlignment();
-  //  manager->saveResults();
+  manager->saveResults();
 
   return 0;
 }

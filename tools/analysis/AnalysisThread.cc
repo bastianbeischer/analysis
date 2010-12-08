@@ -59,10 +59,19 @@ void AnalysisThread::run()
   forever {
     SimpleEvent* event = m_queue->dequeue();
     if (event) {
-      QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
       QVector<Hit*> clusters;
-      foreach(Cluster* cluster, Setup::instance()->generateClusters(hits))
-        clusters.append(cluster);
+      QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
+      if (event->contentType() == SimpleEvent::Clusters)
+        clusters = hits;
+      else
+        clusters = Setup::instance()->generateClusters(hits);
+
+      // Setup::CorrectionFlags flags;
+      // flags |= Setup::Alignment;
+      // flags |= Setup::TimeShifts;
+      // Setup::instance()->applyCorrections(hits, flags);
+      Setup::instance()->applyCorrections(hits);
+
       QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
       if (m_track) {
         m_track->fit(trackClusters);
@@ -70,7 +79,8 @@ void AnalysisThread::run()
       }
       foreach (AnalysisPlot* plot, m_plots)
         plot->processEvent(trackClusters, m_track, m_trackSelection, event);
-      //qDeleteAll(clusters);
+      if (event->contentType() == SimpleEvent::RawData)
+        qDeleteAll(clusters);
       delete event;
     } else {
       usleep(1000);

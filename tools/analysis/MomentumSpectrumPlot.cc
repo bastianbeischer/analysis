@@ -10,12 +10,27 @@
 
 #include <iostream>
 
-MomentumSpectrumPlot::MomentumSpectrumPlot() :
+MomentumSpectrumPlot::MomentumSpectrumPlot(Range range) :
   AnalysisPlot(AnalysisPlot::MomentumReconstruction),
-  H1DPlot()
+  H1DPlot(),
+  m_range(range)
 {
-  setTitle("spectrum");
-  TH1D* histogram = new TH1D(qPrintable(title()), "", 100, -20, 20);
+  setTitle("Momentum Spectrum");
+
+  int lowerBound = -20;
+  int upperBound = 20;
+  if (m_range == All) {
+    setTitle(title() + " - All");
+  }
+  else if (m_range == Negative) {
+    setTitle(title() + " - Negative");
+    upperBound = -1e-5;
+  }
+  else if (m_range == Positive) {
+    setTitle(title() + " - Positive");
+    lowerBound = 1e-5;
+  }
+  TH1D* histogram = new TH1D(qPrintable(title()), "", 100, lowerBound, upperBound);
   histogram->GetXaxis()->SetTitle("p / GeV");
   histogram->GetYaxis()->SetTitle("entries");
   histogram->SetLineColor(kBlack);
@@ -38,10 +53,11 @@ void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Track* track, Trac
 
   double pt = track->pt();
 
-  if (flags & TrackSelection::InsideMagnet)
-    histogram(0)->Fill(pt);
-}
-
-void MomentumSpectrumPlot::finalize()
-{
+  if (flags & TrackSelection::InsideMagnet) {
+    if (m_range == Negative && pt >= 0)
+      return;
+    if (m_range == Positive && pt <= 0)
+      return;
+    histogram()->Fill(pt);
+  }
 }

@@ -1,15 +1,20 @@
 #include "DataInterface.hh"
 
+#include "AlignmentMatrix.hh"
 #include "Hit.hh"
 #include "Cluster.hh"
 #include "SimpleEvent.hh"
 #include "Layer.hh"
-#include "StraightLine.hh"
+#include "CenteredBrokenLine.hh"
 #include "DataChain.hh"
 #include "TrackSelection.hh"
 #include "TrackFinding.hh"
 #include "Manager.hh"
 #include "Setup.hh"
+
+#include "millepede.h"
+
+#include <iostream>
 
 DataInterface::DataInterface() :
   m_chain(new DataChain),
@@ -30,29 +35,58 @@ void DataInterface::addFiles(const char* listName)
   m_chain->addFileList(listName);
 }
 
-void DataInterface::addSuitableTracks()
+void DataInterface::process(AlignmentMatrix* matrix)
 {
-  Manager* manager = Manager::instance();
   Setup* setup = Setup::instance();
   
-  for (unsigned int i = 0; i < m_chain->nEntries(); i++) {
+  unsigned int nEntries = m_chain->nEntries();
+  std::cout << std::endl;
+  std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
+  std::cout << "| Processing:                                                                                        |" << std::endl;
+  std::cout << "| 0%     10%       20%       30%       40%       50%       60%       70%       80%       90%     100%|" << std::endl;
+  std::cout << "|.........|.........|.........|.........|.........|.........|.........|.........|.........|..........|" << std::endl;
+  std::cout << "|" << std::flush;
+  int iFactors = 0;
+
+  for (unsigned int i = 0; i < nEntries; i++) {
     SimpleEvent* event = m_chain->event(i);
     
-    QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
     QVector<Hit*> clusters;
-    foreach(Cluster* cluster, setup->generateClusters(hits))
-      clusters.push_back(cluster);
+    QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
+    if (event->contentType() == SimpleEvent::Clusters)
+      clusters = hits;
+    else
+      clusters = setup->generateClusters(hits);
+
+    Setup::instance()->applyCorrections(clusters);
 
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
 
-    Track* track = new StraightLine;
-    if (track->fit(clusters) && m_trackSelection->passes(track)) {
-      manager->addTrack(track);
+    Track* track = new CenteredBrokenLine;
+    TrackSelection selection;
+    if (track->fit(clusters)) {
+      selection.processTrack(track);
+      TrackSelection::Flags flags = selection.flags();
+      if ( (flags & TrackSelection::AllTrackerLayers) &&
+          !(flags & TrackSelection::MagnetCollision) ) {
+        matrix->fillMatrixFromTrack(track);
+        FITLOC();
+      }
     }
     else {
       delete track;
     }
     
+    if (event->contentType() == SimpleEvent::RawData)
+      qDeleteAll(clusters);
+
+    if ( i > iFactors*nEntries/100. ) {
+      std::cout << "#" << std::flush;
+      iFactors++;
+    }
   }
+
+  std::cout << "|" << std::endl;
+  std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
 }

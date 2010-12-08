@@ -1,20 +1,29 @@
-nGlobal      176
-nLocal       6
+nGlobal      192
+nLocal       5
 verbose      1
 nStdDev      0
 nLocalIter   1
 cutfactor    100
 nGlobalIter  1
 
-readDataFrom /home/beischer/institut/perdaix/analysis/lists/flightday_reduced.txt
-
-fixLayer     16
-fixLayer     9
-fixLayer     1
+fixLayer     1             
 fixLayer     2
+fixLayer     19            
+fixLayer     20
+
 fixLayer     3
 fixLayer     4
 fixLayer     5
 fixLayer     6
 fixLayer     7
 fixLayer     8
+fixLayer     9
+fixLayer     10
+
+fixLayer     11
+fixLayer     12
+
+fixLayer     17
+fixLayer     18
+
+readDataFrom ../../lists/andreas.txt

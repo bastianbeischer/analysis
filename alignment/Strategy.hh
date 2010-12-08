@@ -20,6 +20,7 @@ public:
   void                 init();
 
   Parameters*          parameters()               const {return m_parameters;}
+  DataInterface*       dataInterface()             const {return m_dataInterface;}
   unsigned int         numberOfGlobalIterations() const {return m_nGlobalIterations;}
   unsigned int         numberOfGlobalParameters() const {return m_nGlobal;}
   unsigned int         numberOfLocalParameters()  const {return m_nLocal;}

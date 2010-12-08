@@ -3,6 +3,7 @@
 
 #include <QMap>
 #include <QVector>
+#include <QFlags>
 
 #include <TVector3.h>
 
@@ -19,6 +20,10 @@ class Setup
 {
   
 public:
+  enum CorrectionFlag {None = 0x0, Alignment = 0x1, TimeShifts = 0x2};
+  Q_DECLARE_FLAGS(CorrectionFlags, CorrectionFlag);
+
+public:
   ~Setup();
 
   static Setup*     instance();
@@ -34,14 +39,15 @@ public:
   DetectorElement*  nextElement();
 
 public:
-  QVector<Cluster*> generateClusters(const QVector<Hit*>& hits);
+  QVector<Hit*>     generateClusters(const QVector<Hit*>& hits);
   void              addHitsToLayers(const QVector<Hit*>& hits);
   void              clearHitsFromLayers();
-  TVector3          positionForHit(const Hit* hit);
+  void              applyCorrections(QVector<Hit*>& hits, CorrectionFlags flags = ~CorrectionFlags(0));
 
 public:
   TVector3          configFilePosition(QString group, unsigned short detId) const;
   double            configFileAlignmentShift(QString group, unsigned short detId) const;
+  double            configFileTimeShift(unsigned short detId) const;
 
 public:
   void              writeSettings();
@@ -51,6 +57,8 @@ private:
   
 private:
   void              construct();
+  TVector3          positionForHit(const Hit* hit);
+  double            timeShiftForHit(const Hit* hit);
 
 private:
   static Setup*                          m_instance;
@@ -65,5 +73,7 @@ private:
   QMap<unsigned short, DetectorElement*> m_elements;
 
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(Setup::CorrectionFlags);
 
 #endif /* Setup_hh */

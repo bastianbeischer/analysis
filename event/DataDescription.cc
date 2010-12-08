@@ -73,15 +73,24 @@ int DataDescription::timeOfRun(int run) const
 
 long DataDescription::eventNumberInRunFile(long eventNumber) const
 {
-  //TODO
-  return 0;
+  int entryInFile = eventNumber;
+
+  for (unsigned int i = 0; i < m_eventNumberOffset.size() - 1; i++) {
+    if (eventNumber >= m_eventNumberOffset[i] && eventNumber < m_eventNumberOffset[i+1]) {
+      entryInFile -= m_eventNumberOffset[i];
+      break;
+    }
+  }
+  assert(entryInFile >= 0);
+  return entryInFile;
 }
 
 int DataDescription::runFileForEventNumber(long eventNumber) const
 {
   int runNo = 0;
-  for (int i = 0; i < m_numberOfRuns; ++i) {
-    if (eventNumber >= m_eventNumberOffset[i]) {
+  
+  for (int i = 0; i < m_numberOfRuns-1; ++i) {
+    if (eventNumber >= m_eventNumberOffset[i] && eventNumber < m_eventNumberOffset[i+1]) {
       runNo = i+1;
       break;
     }

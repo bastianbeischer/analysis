@@ -13,7 +13,7 @@ public:
   ~SipmArray();
   
 public:
-  QVector<Cluster*> findClusters(); // these clusters have to be deleted by hand!
+  QVector<Hit*> findClusters(); // these clusters have to be deleted by hand!
 
 };
 

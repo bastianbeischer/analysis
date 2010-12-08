@@ -40,10 +40,6 @@ void SignalHeightPlot::processEvent(const QVector<Hit*>& hits, Track*, TrackSele
 
   foreach(Hit* hit, hits) {
     if (hit->detId() - hit->channel() == m_id)
-      histogram(0)->Fill(hit->signalHeight());
+      histogram()->Fill(hit->signalHeight());
   }
-}
-
-void SignalHeightPlot::finalize()
-{
 }

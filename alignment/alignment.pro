@@ -15,16 +15,14 @@ SOURCES += Constraint.cc \
            Manager.cc \
            AlignmentMatrix.cc \
            Parameters.cc \
-           Strategy.cc \
-           TrackSelection.cc
+           Strategy.cc
 
 HEADERS += Constraint.hh \
            DataInterface.hh \
            Manager.hh \
            AlignmentMatrix.hh \
            Parameters.hh \
-           Strategy.hh \
-           TrackSelection.hh
+           Strategy.hh
 
 INCLUDEPATH += $$TOPLEVEL/event \
                $$TOPLEVEL/setup \

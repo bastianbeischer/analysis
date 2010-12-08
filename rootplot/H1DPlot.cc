@@ -23,6 +23,7 @@ void H1DPlot::draw(TCanvas* canvas)
       h->Draw();
     else
       h->Draw("SAME");
+  RootPlot::draw(canvas);
 }
 
 void H1DPlot::clear()

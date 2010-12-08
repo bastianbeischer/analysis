@@ -32,10 +32,6 @@ void ClusterLengthPlot::processEvent(const QVector<Hit*>& hits, Track*, TrackSel
   foreach(Hit* hit, hits) {
     Cluster* cluster = static_cast<Cluster*>(hit);
     if (hit->detId() - hit->channel() == m_id)
-      histogram(0)->Fill(cluster->hits().size());
+      histogram()->Fill(cluster->hits().size());
   }
-}
-
-void ClusterLengthPlot::finalize()
-{
 }

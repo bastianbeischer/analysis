@@ -36,6 +36,7 @@ private:
   double            m_tofPull;
 
   TH2I*             m_trackFindingHist;
+  static int        s_histCounter;
   
 };
 

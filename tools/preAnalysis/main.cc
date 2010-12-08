@@ -59,17 +59,18 @@ int main(int argc, char** argv)
     // loop over all events in this root file
     for (unsigned long eventIt = 0; eventIt < nEvents; ++eventIt) {
       sourceTree->GetEntry(eventIt);
-      destinationEvent = new SimpleEvent(sourceEvent->eventId(), sourceEvent->time());
+      destinationEvent = new SimpleEvent(sourceEvent->eventId(), sourceEvent->runStartTime(), sourceEvent->eventTime(), SimpleEvent::Clusters);
 
       // vector of all hits in this event
       QVector<Hit*> hits = QVector<Hit*>::fromStdVector(sourceEvent->hits());
 
       // do the zero compression
-      foreach(Cluster* cluster, setup->generateClusters(hits))
+      foreach(Hit* cluster, setup->generateClusters(hits))
         destinationEvent->addHit(cluster);
       
       destinationTree.Fill();
 
+      delete destinationEvent;
     } // events in this root file
 
     line = inStream.readLine();

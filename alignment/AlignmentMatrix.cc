@@ -56,11 +56,11 @@ void AlignmentMatrix::fillMatrixFromTrack(Track* track)
   QVector<Hit*> hits = track->hits();
   
   foreach(Hit* hit, hits) {
-    resetArrays();
-
-    // use only tracker hits for alignment
-    if(hit->type() != Hit::tracker)
-      continue;
+    //resetArrays();
+    
+    //use only tracker hits for alignment
+    // if(hit->type() != Hit::tracker)
+    //   continue;
 
     // position
     TVector3 pos = hit->position();
@@ -77,8 +77,7 @@ void AlignmentMatrix::fillMatrixFromTrack(Track* track)
     float xi = useTangens ? tan(angle) : 1./tan(angle);
 
     // specify resolution
-    //double sigmaV = hit->resolutionEstimate();
-    double sigmaV = 0.05;
+    double sigmaV = hit->resolutionEstimate();
 
     // detector ID
     unsigned short detId = hit->detId() - hit->channel();
@@ -112,9 +111,10 @@ void AlignmentMatrix::fillMatrixFromTrack(Track* track)
     LinTrans.Transpose(Lin);
     TMatrixD V3 = TMatrixD(1,1);
     V3 = Lin * V2 * LinTrans;
-
-    int offsetXindex = k>0 ? 0 : 1;
-    int slopeXindex = k>0 ? 3 : 4;
+    
+    
+    int offsetXindex = 0;
+    int slopeXindex = 0;
 
     float y,sigma;
     if (useTangens) {
@@ -130,7 +130,16 @@ void AlignmentMatrix::fillMatrixFromTrack(Track* track)
         m_localDerivatives[2] = -k*xi;
         m_localDerivatives[3] = k;
       }
+      else if (m_nLocal == 5) {
+        slopeXindex = k>0 ? 2 : 3;
+        m_localDerivatives[0]            = -xi;
+        m_localDerivatives[1]            = 1.;
+        m_localDerivatives[slopeXindex]  = -k*xi;
+        m_localDerivatives[4]            = k;
+      }
       else if (m_nLocal == 6) {
+        offsetXindex = k>0 ? 0 : 1;
+        slopeXindex = k>0 ? 3 : 4;
         m_localDerivatives[offsetXindex] = -xi;
         m_localDerivatives[2]            = 1.;
         m_localDerivatives[slopeXindex]  = -k*xi;
@@ -154,7 +163,16 @@ void AlignmentMatrix::fillMatrixFromTrack(Track* track)
         m_localDerivatives[2] = k;
         m_localDerivatives[3] = -k*xi;
       }
+      else if (m_nLocal == 5) {
+        slopeXindex = k>0 ? 2 : 3;
+        m_localDerivatives[0]            = -xi;
+        m_localDerivatives[1]            = 1.;
+        m_localDerivatives[slopeXindex]  = -k*xi;
+        m_localDerivatives[4]            = k;
+      }
       else if (m_nLocal == 6) {
+        offsetXindex = k>0 ? 0 : 1;
+        slopeXindex = k>0 ? 3 : 4;
         m_localDerivatives[offsetXindex] = 1.;
         m_localDerivatives[2]            = -xi;
         m_localDerivatives[slopeXindex]  = k;

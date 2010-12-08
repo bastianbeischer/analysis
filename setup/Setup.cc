@@ -1,6 +1,8 @@
 #include "Setup.hh"
 
 #include "Cluster.hh"
+#include "TOFCluster.hh"
+#include "TOFSipmHit.hh"
 #include "Layer.hh"
 #include "DetectorElement.hh"
 #include "SipmArray.hh"
@@ -132,7 +134,7 @@ DetectorElement* Setup::element(unsigned short id)
 {
   // this should differentiate between types of detector elements according to the QSettings file soon
   unsigned short usbBoard = (id >> 8) << 8;
-    
+  
   if (!m_elements[id]) {
     if (usbBoard == 0x3200 || usbBoard == 0x3600 || usbBoard == 0x3400 || usbBoard == 0x3500)
       m_elements[id] = new TRDModule(id);
@@ -145,35 +147,24 @@ DetectorElement* Setup::element(unsigned short id)
   return m_elements[id];
 }
 
-QVector<Cluster*> Setup::generateClusters(const QVector<Hit*>& hits)
+QVector<Hit*> Setup::generateClusters(const QVector<Hit*>& hits)
 {
-  QVector<Cluster*> clusters;
+  QVector<Hit*> clusters;
 
-  bool needToFindClusters = false;
-  foreach(Hit* hit, hits) {
-    if (strcmp(hit->ClassName(), "Cluster") == 0 || strcmp(hit->ClassName(), "TOFCluster") == 0) {
-      clusters.push_back(static_cast<Cluster*>(hit));
-    }
-    else {
-      needToFindClusters = true;
-    }
+  addHitsToLayers(hits);
+  Layer* layer = firstLayer();
+  while(layer) {
+    clusters += layer->clusters();
+
+    // // alternative: use only the best cluster
+    // Cluster* cluster = layer->bestCluster();
+    // if (cluster)
+    //   clusters.push_back(cluster);
+
+    // update pointer
+    layer = nextLayer();
   }
 
-  if (needToFindClusters) {
-    addHitsToLayers(hits);
-    Layer* layer = firstLayer();
-    while(layer) {
-      clusters += layer->clusters();
-
-      // // alternative: use only the best cluster
-      // Cluster* cluster = layer->bestCluster();
-      // if (cluster)
-      //   clusters.push_back(cluster);
-
-      // update pointer
-      layer = nextLayer();
-    }
-  }
   return clusters;
 }
 
@@ -197,10 +188,43 @@ void Setup::clearHitsFromLayers()
     layer->clearHitsInDetectors();
 }
 
+void Setup::applyCorrections(QVector<Hit*>& hits, CorrectionFlags flags)
+{
+  foreach(Hit* hit, hits) {
+    if (flags & Alignment) {
+      hit->setPosition(positionForHit(hit));
+    }
+    if (flags & TimeShifts) {
+      if (strcmp(hit->ClassName(), "TOFCluster") == 0) {
+        TOFCluster* cluster = static_cast<TOFCluster*>(hit);
+        std::vector<Hit*> subHits = cluster->hits();
+        for (std::vector<Hit*>::iterator it = subHits.begin(); it != subHits.end(); it++) {
+          TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(*it);
+          double timeShift = timeShiftForHit(hit);
+          tofHit->applyTimeShift(timeShift);
+        }
+        cluster->processHits();
+      }
+      else if (strcmp(hit->ClassName(), "TOFSipmHit") == 0) {
+        TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
+        double timeShift = timeShiftForHit(hit);
+        tofHit->applyTimeShift(timeShift);
+      }
+    }
+  }
+}
+
 TVector3 Setup::positionForHit(const Hit* hit)
 {
   DetectorElement* element = this->element(hit->detId() - hit->channel());
   return element->positionForHit(hit);
+}
+
+double Setup::timeShiftForHit(const Hit* hit)
+{
+  Q_ASSERT(hit->type() == Hit::Tof);
+  DetectorElement* element = this->element(hit->detId() - hit->channel());
+  return static_cast<TOFBar*>(element)->timeShift(hit->channel());
 }
 
 TVector3 Setup::configFilePosition(QString group, unsigned short detId) const
@@ -214,6 +238,12 @@ double Setup::configFileAlignmentShift(QString group, unsigned short detId) cons
 {
   assert(m_settings);
   return m_settings->value(group+"/0x"+QString::number(detId,16)).toDouble();
+}
+
+double Setup::configFileTimeShift(unsigned short detId) const
+{
+  assert(m_settings);
+  return m_settings->value("tofTimeShift/0x"+QString::number(detId,16), 1).toDouble();
 }
 
 void Setup::writeSettings()
@@ -241,7 +271,15 @@ void Setup::writeSettings()
       if (type == DetectorElement::trd)     typeString = "trd";
       if (type == DetectorElement::tof)     typeString = "tof";
 
-      m_settings->setValue(typeString + "/" + QString("0x%1").arg(element->id(),0,16), element->alignmentShift());
+      m_settings->setValue(typeString + "/" + QString("0x%1").arg(element->id(), 0, 16), element->alignmentShift());
+
+      if (type == DetectorElement::tof) {
+        for (unsigned short channel = 0; channel < element->nChannels(); channel++) {
+          unsigned short channelID = element->id() | channel;
+          double timeShift = static_cast<TOFBar*>(element)->timeShift(channel);
+          m_settings->setValue(typeString + "tofTimeShift/" + QString("0x%1").arg(channelID, 0, 16), timeShift);
+        }
+      }
     }
 
     // in order for the file to end up on disk we need to call "sync" here

@@ -5,9 +5,12 @@
 #include "TOFConstants.hh"
 #include "TOFCluster.hh"
 #include "TOFSipmHit.hh"
+#include "Setup.hh"
+#include "TOFBar.hh"
 
 #include <TH1.h>
 #include <TVector3.h>
+#include <TLatex.h>
 
 #include <QDebug>
 
@@ -19,6 +22,19 @@ TimeOfFlightPlot::TimeOfFlightPlot()
   TH1D* histogram = new TH1D("time of flight", "", 1200, -60, 60);
   histogram->GetXaxis()->SetTitle("c #Deltat / L_{track}");
   addHistogram(histogram);
+  TLatex* latex = 0;
+  latex = new TLatex(.15, .85, 0);
+  latex->SetNDC();
+  latex->SetTextAlign(13);
+  latex->SetTextFont(82);
+  latex->SetTextSize(0.03);
+  addLatex(latex);
+  latex = new TLatex(.15, .82, 0);
+  latex->SetNDC();
+  latex->SetTextAlign(13);
+  latex->SetTextFont(82);
+  latex->SetTextSize(0.03);
+  addLatex(latex);
 }
 
 TimeOfFlightPlot::~TimeOfFlightPlot()
@@ -40,6 +56,9 @@ void TimeOfFlightPlot::processEvent(const QVector<Hit*>& hits, Track* track, Tra
     if (!strcmp(hit->ClassName(), "TOFCluster")) {
       TOFCluster* cluster = static_cast<TOFCluster*>(hit);
       Q_ASSERT(cluster->hits().size() <= 4);
+
+      //TOFBar* element = static_cast<TOFBar*>(Setup::instance()->element(cluster->detId()));
+      //qDebug() << element->timeShifts() << hex << element->id();
 
       // if cluster is on track
       if (qAbs(track->x(hit->position().z()) - cluster->position().x()) <= tofBarWidth / 2.) {
@@ -141,9 +160,11 @@ void TimeOfFlightPlot::processEvent(const QVector<Hit*>& hits, Track* track, Tra
   //qDebug() << "---";
   double deltaT = (correctedLeftStopTime+correctedRightStopTime)/2. - (correctedLeftStartTime+correctedRightStartTime)/2.;
   double trackLength = (upperPoint-lowerPoint).Mag();
-  histogram(0)->Fill(deltaT * speedOfLight / trackLength);
+  histogram()->Fill(deltaT * speedOfLight / trackLength);
 }
 
-void TimeOfFlightPlot::finalize()
+void TimeOfFlightPlot::update()
 {
+  latex(0)->SetTitle(qPrintable(QString("mean = %1").arg(histogram()->GetMean())));
+  latex(1)->SetTitle(qPrintable(QString("RMS  = %1").arg(histogram()->GetRMS())));
 }

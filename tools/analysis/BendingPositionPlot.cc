@@ -32,10 +32,6 @@ void BendingPositionPlot::processEvent(const QVector<Hit*>&, Track* track, Track
     if (!(flags & TrackSelection::AllTrackerLayers))
       return;
 
-    histogram(0)->Fill(line->zIntersection());
+    histogram()->Fill(line->zIntersection());
   }
-}
-
-void BendingPositionPlot::finalize()
-{
 }

@@ -1,9 +1,9 @@
 #include "Manager.hh"
 
+#include "DataInterface.hh"
 #include "AlignmentMatrix.hh"
 #include "Strategy.hh"
 #include "Parameters.hh"
-#include "Track.hh"
 #include "Setup.hh"
 #include "DetectorElement.hh"
 
@@ -18,14 +18,13 @@ Manager* Manager::m_instance = 0;
 Manager::Manager() :
   m_strategy(new Strategy),
   m_matrix(new AlignmentMatrix),
-  m_parameters(m_strategy->parameters())
+  m_parameters(m_strategy->parameters()),
+  m_dataInterface(m_strategy->dataInterface())
 {
 }
 
 Manager::~Manager()
 {
-  foreach(Track* track, m_tracks)
-    delete track;
   delete m_strategy;
   delete m_matrix;
 }
@@ -48,12 +47,7 @@ void Manager::startAlignment()
 
   for (unsigned int iIteration = 1; iIteration <= m_strategy->numberOfGlobalIterations(); iIteration++) {
     m_strategy->init();
-
-    foreach(Track* track, m_tracks) {
-      m_matrix->fillMatrixFromTrack(track);
-      FITLOC();
-    }
-
+    m_dataInterface->process(m_matrix);
     FITGLO(m_parameters->parameterArray());
   }
 }
@@ -67,7 +61,9 @@ void Manager::saveResults() const
     unsigned short detId = element->id();
     unsigned int index = m_parameters->indexForDetId(detId);
     float shift = m_parameters->parameter(index);
-    element->setAlignmentShift(shift);
+    float sigma = m_parameters->parameterSigma(index);
+    if (sigma != 0)
+      element->setAlignmentShift(shift);
     element = setup->nextElement();
   }
 

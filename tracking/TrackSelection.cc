@@ -48,7 +48,7 @@ void TrackSelection::checkAllTrackerLayers(Track* track)
   foreach(int count, counts)
     if (count != 1)
       return;
-  m_flags = static_cast<Flags>(m_flags | AllTrackerLayers);
+  m_flags |= AllTrackerLayers;
 }
 
 void TrackSelection::checkInsideMagnet(Track* track)
@@ -58,7 +58,7 @@ void TrackSelection::checkInsideMagnet(Track* track)
   double r1 = sqrt(pow(track->x(40.), 2.) + pow(track->y(40.), 2.));
   double r2 = sqrt(pow(track->x(-40.), 2.) + pow(track->y(-40.), 2.));
   if (r1 < 75 && r2 < 75)
-    m_flags = static_cast<Flags>(m_flags | InsideMagnet);
+    m_flags |= InsideMagnet;
 }
 
 void TrackSelection::checkOutsideMagnet(Track* track)
@@ -68,7 +68,7 @@ void TrackSelection::checkOutsideMagnet(Track* track)
   double r1 = sqrt(pow(track->x(40.), 2.) + pow(track->y(40.), 2.));
   double r2 = sqrt(pow(track->x(-40.), 2.) + pow(track->y(-40.), 2.));
   if (r1 > 120 && r2 > 120)
-    m_flags = static_cast<Flags>(m_flags | OutsideMagnet);
+    m_flags |= OutsideMagnet;
 }
 
 void TrackSelection::checkHighPt(Track* track)
@@ -78,7 +78,7 @@ void TrackSelection::checkHighPt(Track* track)
   double pt = track->pt();
   // 2GeV currently...
   if (pt > 2 || pt == DBL_MAX)
-    m_flags = static_cast<Flags>(m_flags | HighPt);
+    m_flags |= HighPt;
 }
 
 void TrackSelection::checkMagnetCollision(Track* track)
@@ -89,5 +89,5 @@ void TrackSelection::checkMagnetCollision(Track* track)
   double y0 = track->y(0.);
   double r = sqrt(x0*x0 + y0*y0);
   if (r > 65 && r < 110)
-    m_flags = static_cast<Flags>(m_flags | MagnetCollision);
+    m_flags |= MagnetCollision;
 }

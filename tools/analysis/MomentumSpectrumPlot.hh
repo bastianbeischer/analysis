@@ -10,11 +10,16 @@ class MomentumSpectrumPlot :
 {
   
 public:
-  MomentumSpectrumPlot();
+  enum Range {All=0, Positive=1, Negative=2};
+
+public:
+  MomentumSpectrumPlot(Range range = All);
   ~MomentumSpectrumPlot();
   
   void processEvent(const QVector<Hit*>&, Track* = 0, TrackSelection* = 0, SimpleEvent* = 0);
-  void finalize();
+
+private:
+  Range m_range;
 
 };
 

@@ -51,7 +51,7 @@ void Strategy::init()
   foreach(Constraint* cons, m_constraints) 
     cons->activate();
 
-  //INITUN(m_nIter, m_cutValue);
+  INITUN(m_nIter, m_cutValue);
 }
 
 bool Strategy::readFromFile(QString fileName)
@@ -111,7 +111,6 @@ bool Strategy::readFromFile(QString fileName)
     }
     else if (parameterName == "readDataFrom") {
       m_dataInterface->addFiles(qPrintable(value));
-      m_dataInterface->addSuitableTracks();
     }
   }
 
@@ -134,13 +133,13 @@ void Strategy::fixLayer(unsigned short layerNumber)
     layer = setup->nextLayer();
   }
   
-  DetectorElement* element = setup->firstElement();
-  while(layer != 0 && element != 0) {
+  std::cout << "fixing layer: " << i << " at " << layer->z() << " with detIds: ";
+
+  foreach(DetectorElement* element, layer->elements()) {
     unsigned short detId = element->id();
-    if (layer->contains(detId)) {
-      unsigned int index = m_parameters->indexForDetId(detId);
-      m_parameters->setParameterSigma(index, 0.);
-    }
-    element = setup->nextElement();
+    unsigned int index = m_parameters->indexForDetId(detId);
+    std::cout << std::hex << detId << std::dec <<  "(" << index << ") ";
+    m_parameters->setParameterSigma(index, 0.);
   }
+  std::cout << std::endl;
 }

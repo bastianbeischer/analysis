@@ -43,7 +43,7 @@ int Matrix::fit(const QVector<Hit*>& hits)
   for (unsigned int i = 0; i < m_nRow; i++) {
     Hit* hit = hits.at(i);
 
-    TVector3 pos = Setup::instance()->positionForHit(hit);
+    TVector3 pos = hit->position();
 
     // get information from detector...
     double angle = hit->angle();
@@ -54,7 +54,7 @@ int Matrix::fit(const QVector<Hit*>& hits)
     float z0 = 0.0;
     float k = pos.z() - z0;
     bool useTangens = fabs(angle) < M_PI/4. ? true : false;
-    float xi = useTangens ? tan(angle) : 1./tan(angle);
+    float xi = useTangens ? sin(angle)/cos(angle) : cos(angle)/sin(angle);
 
     if (useTangens) {
       CombineXandY(0,0) = -xi;

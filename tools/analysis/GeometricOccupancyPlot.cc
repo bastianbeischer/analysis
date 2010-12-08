@@ -34,7 +34,3 @@ void GeometricOccupancyPlot::processEvent(const QVector<Hit*>&, Track* track, Tr
 
   histogram()->Fill(track->y(m_zPosition), track->x(m_zPosition));
 }
-
-void GeometricOccupancyPlot::finalize()
-{
-}

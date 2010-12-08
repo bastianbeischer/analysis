@@ -97,6 +97,8 @@ void Plotter::update()
 {
   if (!m_eventLoopOff && m_timeLabel)
     m_timeLabel->setText(QString("%1s").arg(m_time.elapsed()/1000));
+  if (0 <= m_selectedPlot && m_selectedPlot < m_plots.size())
+    m_plots[m_selectedPlot]->update();
   gPad->Modified();
   gPad->Update();
 }

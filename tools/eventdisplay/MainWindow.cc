@@ -68,7 +68,7 @@ void MainWindow::update()
   
   bool drawTracks = m_ui.drawTrackCheckBox->isChecked();
   m_ui.fitMethodComboBox->setEnabled(drawTracks);
-  m_ui.plotter->drawEvent(m_ui.eventSpinBox->value(), drawTracks, m_ui.fitMethodComboBox->currentIndex());
+  m_ui.plotter->drawEvent(m_ui.eventSpinBox->value(), drawTracks, m_ui.fitMethodComboBox->currentIndex(), *m_ui.infoTextBrowser);
 }
 
 void MainWindow::saveButtonClicked()

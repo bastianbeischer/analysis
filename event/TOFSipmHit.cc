@@ -33,6 +33,11 @@ TOFSipmHit::TOFSipmHit(const TOFSipmHit& other)
 TOFSipmHit::~TOFSipmHit()
 {}
 
+void TOFSipmHit::applyTimeShift(double shift)
+{
+  m_startTime += shift;
+}
+
 void TOFSipmHit::processTDCHits()
 {
   std::vector<double> tot;

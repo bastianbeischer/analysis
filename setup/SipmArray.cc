@@ -26,9 +26,9 @@ SipmArray::~SipmArray()
 {
 }
 
-QVector<Cluster*> SipmArray::findClusters()
+QVector<Hit*> SipmArray::findClusters()
 {
-  QVector<Cluster*> clusters;
+  QVector<Hit*> clusters;
 
   const int seedThreshold = 300;
   const int neighbourThreshold = 100;

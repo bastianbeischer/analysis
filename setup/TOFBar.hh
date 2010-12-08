@@ -15,10 +15,14 @@ public:
   TOFBar();
   TOFBar(unsigned short detId);
   ~TOFBar();
-  
 public:
-  QVector<Cluster*> findClusters();
-  
+  QVector<Hit*> findClusters();
+  void setTimeShifts(double ch0, double ch1, double ch2, double ch3);
+  double timeShift(unsigned short channel);
+
+private:
+  QVector<double> m_timeShifts;
+
 };
 
 #endif /* TOFBar_hh */

@@ -49,9 +49,9 @@ void Layer::sortHits()
     element->sortHits();
 }
 
-QVector<Cluster*> Layer::clusters() const
+QVector<Hit*> Layer::clusters() const
 {
-  QVector<Cluster*> allClusters;
+  QVector<Hit*> allClusters;
   foreach(DetectorElement* element, m_elements)
     allClusters += element->findClusters();
 
@@ -60,12 +60,12 @@ QVector<Cluster*> Layer::clusters() const
 
 Cluster* Layer::bestCluster() const
 {
-  QVector<Cluster*> allClusters = clusters();
+  QVector<Hit*> allClusters = clusters();
 
   int maxAmplitude = 0;
   Cluster* bestCluster = 0;
-  for (QVector<Cluster*>::iterator it = allClusters.begin(); it != allClusters.end(); ++it) {
-    Cluster* cluster = (*it);
+  for (QVector<Hit*>::iterator it = allClusters.begin(); it != allClusters.end(); ++it) {
+    Cluster* cluster = static_cast<Cluster*>((*it));
     int amplitude = cluster->signalHeight();
     if (amplitude > maxAmplitude) {
       maxAmplitude = amplitude;

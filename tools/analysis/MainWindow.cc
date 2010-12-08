@@ -244,7 +244,9 @@ void MainWindow::setupAnalysis()
     }
   }
   if (m_ui.momentumReconstructionCheckBox->isChecked()) {
-    m_ui.plotter->addPlot(new MomentumSpectrumPlot);
+    m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::All));
+    m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Positive));
+    m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Negative));
   }
   if (m_ui.miscellaneousTrackerCheckBox->isChecked()) {
   }

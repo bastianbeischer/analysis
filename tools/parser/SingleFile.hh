@@ -26,7 +26,9 @@ public:
   unsigned int    getNumberOfEvents()                                      const {return m_rawEvents.size();}
   const RawEvent* getRawEvent(unsigned int eventNo)                        const {return m_rawEvents.at(eventNo);}
   Calibration*    getCalibrationForDetector(DetectorID* id, int whichCali) const;
-  
+  unsigned int    getStartTime() const;
+  unsigned int    getStopTime() const;
+
 private:
   void init();
   void cleanupLists();

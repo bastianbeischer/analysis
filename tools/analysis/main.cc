@@ -33,8 +33,6 @@ int main(int argc, char* argv[])
   gStyle->SetTitleSize(0.025, "XYZ");
   gStyle->SetMarkerStyle(20);
 
-  TH1::AddDirectory(false);
-
   QApplication application(argc, argv);
   MainWindow window;
   foreach(QString fileList, application.arguments()) {

@@ -21,8 +21,10 @@
 #include <TList.h>
 #include <TPad.h>
 
+#include <QTextBrowser>
 #include <QLabel>
 #include <QVector>
+#include <QDateTime>
 #include <QDebug>
 
 #include <fstream>
@@ -91,20 +93,24 @@ void Plotter::mouseMoveEvent(QMouseEvent* event)
   }
 }
 
-void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod)
+void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QTextBrowser& infoTextBrowser)
 {
   if (m_track) {
     delete m_track;
     m_track = 0;
   }
-  Setup* setup = Setup::instance();
   Q_ASSERT(i < numberOfEvents());
   SimpleEvent* event = m_chain->event(i);
-  // vector of all hits in this event
-  QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
+
   QVector<Hit*> clusters;
-  foreach(Cluster* cluster, setup->generateClusters(hits))
-    clusters.push_back(cluster);
+  QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
+  if (event->contentType() == SimpleEvent::Clusters)
+    clusters = hits;
+  else
+    clusters = Setup::instance()->generateClusters(hits);
+
+  Setup::instance()->applyCorrections(clusters);
+
   Track* track = 0;
   if (drawTrack) {
     // track finding
@@ -118,7 +124,29 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod)
     track->fit(clusters);
   }
   m_hitsPlot->drawEvent(GetCanvas(), clusters, track);
-  qDeleteAll(clusters);
+
+  //show info for event
+  const DataDescription* currentDesc = m_chain->currentDescription();
+  quint32 eventNumberInRootFile = m_chain->entryInFile();
+  quint32 runFileNo = currentDesc->runFileForEventNumber(eventNumberInRootFile);
+  quint32 eventInRunFile = currentDesc->eventNumberInRunFile(eventNumberInRootFile);
+  QString rootFileName = QString::fromStdString(m_chain->currentFile()->GetName());
+  QString runfileName = QString::fromStdString(currentDesc->runFileNameForEventNumber(eventNumberInRootFile));
+  QDateTime timeOfRun = QDateTime::fromTime_t(event->runStartTime());
+  QDateTime timeOfEvent = timeOfRun.addMSecs(event->eventTime());
+
+  infoTextBrowser.clear();
+  infoTextBrowser.append("time of event:\n" + timeOfEvent.toString("dd.MM.yyyy hh:mm:ss.zzz"));
+  infoTextBrowser.append("\n root file:\n " +  rootFileName);
+  infoTextBrowser.append("\n event in root file:\n " +  QString::number(eventNumberInRootFile));
+  infoTextBrowser.append("\n  runfile:\n  " +  QString::number(runFileNo));
+  infoTextBrowser.append("\n  run start:\n  " +  timeOfRun.toString("dd.MM.yyyy hh:mm:ss.zzz"));
+  infoTextBrowser.append("\n  runfilename:\n  " +  runfileName);
+  infoTextBrowser.append("\n  event in runfile:\n  " +  QString::number(eventInRunFile));
+  //infoTextBrowser.append("\n  ms in runfile:\n  " + QString::number(msOfEventInRun));
+
+  if (event->contentType() == SimpleEvent::RawData)
+    qDeleteAll(clusters);
 }
 
 void Plotter::saveCanvas(const QString& fileName)
