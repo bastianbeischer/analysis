@@ -20,6 +20,7 @@
 #include "SignalHeightPlot.hh"
 #include "ClusterLengthPlot.hh"
 #include "TimeOfFlightPlot.hh"
+#include "TimeDifferencePlot.hh"
 
 #include <QDebug>
 #include <QFileDialog>
@@ -260,6 +261,14 @@ void MainWindow::setupAnalysis()
         m_ui.plotter->addPlot(new TOFPositionCorrelationPlot(element->id()));
       element = setup->nextElement();
     }
+    m_ui.plotter->addPlot(new TimeDifferencePlot(0x8000, 0x8010));
+    m_ui.plotter->addPlot(new TimeDifferencePlot(0x8004, 0x8014));
+    m_ui.plotter->addPlot(new TimeDifferencePlot(0x8008, 0x8018));
+    m_ui.plotter->addPlot(new TimeDifferencePlot(0x800c, 0x801c));
+    m_ui.plotter->addPlot(new TimeDifferencePlot(0x8020, 0x8030));
+    m_ui.plotter->addPlot(new TimeDifferencePlot(0x8024, 0x8034));
+    m_ui.plotter->addPlot(new TimeDifferencePlot(0x8028, 0x8038));
+    m_ui.plotter->addPlot(new TimeDifferencePlot(0x802c, 0x803c));
   }
   
   m_ui.signalHeightUpperTrackerButton->setText("+");
