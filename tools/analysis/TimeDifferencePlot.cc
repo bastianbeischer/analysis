@@ -10,7 +10,7 @@
 
 #include <TH2.h>
 #include <TVector3.h>
-
+#include <iostream>
 #include <QDebug>
 
 TimeDifferencePlot::TimeDifferencePlot(unsigned short topBarId, unsigned short bottomBarId)
@@ -19,9 +19,11 @@ TimeDifferencePlot::TimeDifferencePlot(unsigned short topBarId, unsigned short b
   , m_topBarId(topBarId)
   , m_bottomBarId(bottomBarId)
 {
-  setTitle("time difference");
-  TH2D* histogram = new TH2D("time difference", "", 8, 0, 8, 100, -10, 10);
+  QString title = QString("time difference 0x%1 0x%2").arg(topBarId, 0, 16).arg(bottomBarId, 0, 16);
+  setTitle(title);
+  TH2D* histogram = new TH2D(qPrintable(title), "", 8, 0, 8, 80, -10, 10);
   histogram->GetXaxis()->SetTitle("channel");
+  histogram->GetXaxis()->SetRangeUser(1, 8);
   histogram->GetYaxis()->SetTitle("#Deltat / ns");
   setHistogram(histogram);
 }
@@ -38,16 +40,28 @@ void TimeDifferencePlot::processEvent(const QVector<Hit*>& hits, Track* track, T
   TrackSelection::Flags flags = selection->flags();
   if (!(flags & TrackSelection::AllTrackerLayers))
     return;
-
+  double t[8];
+  for (int i = 0; i < 8; ++i)
+    t[i] = -1;
   foreach (Hit* hit, hits) {
-    if (!strcmp(hit->ClassName(), "TOFCluster")) {
-      //TOFCluster* cluster = static_cast<TOFCluster*>(hit);
-      //TOFBar* element = static_cast<TOFBar*>(Setup::instance()->element(cluster->detId()));
+    if (hit->detId() == m_topBarId || hit->detId() == m_bottomBarId) {
+      TOFCluster* cluster = static_cast<TOFCluster*>(hit);
+      const TVector3& position = cluster->position();
+      if (qAbs(track->y(position.z())) > 10)
+        continue;
+      if (qAbs(track->x(position.z())-position.x()) > 20)
+        continue;
+      foreach(Hit* hit, cluster->hits()) {
+        TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
+        int tofChannel = tofHit->detId() - cluster->detId();
+        t[(m_topBarId == cluster->detId() ? 0 : 4) + tofChannel] = tofHit->startTime();
+      }
     }
   }
 
-  //histogram()->Fill(deltaT * speedOfLight / trackLength);
+  for (int i = 0; i < 8; ++i) {
+    if (t[i] < 0)
+      continue;
+    histogram()->Fill(i, t[i]-t[0]);
+  }
 }
-
-void TimeDifferencePlot::finalize()
-{}
