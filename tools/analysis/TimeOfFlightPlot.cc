@@ -50,15 +50,15 @@ void TimeOfFlightPlot::processEvent(const QVector<Hit*>& hits, Track* track, Tra
   if (!(flags & TrackSelection::AllTrackerLayers))
     return;
 
-  double t[4][4] = {{-1}};
+  double t[4][4];
+  for (int i = 0; i < 4; ++i)
+    for (int j = 0; j < 4; ++j)
+      t[i][j] = -1;
 
   foreach (Hit* hit, hits) {
     if (!strcmp(hit->ClassName(), "TOFCluster")) {
       TOFCluster* cluster = static_cast<TOFCluster*>(hit);
       Q_ASSERT(cluster->hits().size() <= 4);
-
-      //TOFBar* element = static_cast<TOFBar*>(Setup::instance()->element(cluster->detId()));
-      //qDebug() << element->timeShifts() << hex << element->id();
 
       // if cluster is on track
       if (qAbs(track->x(hit->position().z()) - cluster->position().x()) <= tofBarWidth / 2.) {
@@ -79,21 +79,21 @@ void TimeOfFlightPlot::processEvent(const QVector<Hit*>& hits, Track* track, Tra
           TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(cluster->hits()[i]);
           if (tofHit->position().y() < 0) {
             if (tofHit->position().x() < cluster->position().x()) {
-              Q_ASSERT(t[layer][0] == 0);
+              Q_ASSERT(t[layer][0] < 0);
               t[layer][0] = tofHit->startTime();
             }
             if (tofHit->position().x() > cluster->position().x()) {
-              Q_ASSERT(t[layer][1] == 0);
+              Q_ASSERT(t[layer][1] < 0);
               t[layer][1] = tofHit->startTime();
             }
           }
           if (tofHit->position().y() > 0) {
             if (tofHit->position().x() < cluster->position().x()) {
-              Q_ASSERT(t[layer][2] == 0);
+              Q_ASSERT(t[layer][2] < 0);
               t[layer][2] = tofHit->startTime();
             }
             if (tofHit->position().x() > cluster->position().x()) {
-              Q_ASSERT(t[layer][3] == 0);
+              Q_ASSERT(t[layer][3] < 0);
               t[layer][3] = tofHit->startTime();
             }
           }
