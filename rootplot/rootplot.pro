@@ -1,6 +1,8 @@
 TEMPLATE = lib
 TARGET = rootplot
 
+CONFIG += debug
+
 TOPLEVEL    = ..
 
 # Seperate source & build dirs

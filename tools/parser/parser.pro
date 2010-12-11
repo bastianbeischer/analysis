@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = parser
 
-#CONFIG += debug
+CONFIG += debug
 
 TOPLEVEL = ../..
 

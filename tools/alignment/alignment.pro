@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = alignment
 
-#CONFIG += debug
+CONFIG += debug
 
 TOPLEVEL = ../..
 

@@ -1,6 +1,8 @@
 TEMPLATE = lib
 TARGET = alignment
 
+CONFIG += debug
+
 TOPLEVEL    = ..
 
 # Seperate source & build dirs

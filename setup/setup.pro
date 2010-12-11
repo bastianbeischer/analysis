@@ -1,6 +1,8 @@
 TEMPLATE = lib
 TARGET = setup
 
+CONFIG += debug
+
 TOPLEVEL    = ..
 
 # Seperate source & build dirs
