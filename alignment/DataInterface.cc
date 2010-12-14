@@ -11,6 +11,7 @@
 #include "TrackFinding.hh"
 #include "Manager.hh"
 #include "Setup.hh"
+#include "Corrections.hh"
 
 #include "millepede.h"
 
@@ -58,7 +59,7 @@ void DataInterface::process(AlignmentMatrix* matrix)
     else
       clusters = setup->generateClusters(hits);
 
-    Setup::instance()->applyCorrections(clusters);
+    Corrections::apply(clusters);
 
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
