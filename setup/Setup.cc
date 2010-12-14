@@ -122,9 +122,7 @@ DetectorElement* Setup::nextElement()
 Layer* Setup::layer(double z)
 {
   // round to two digits.
-  z *= 100.;
-  z = round(z);
-  z /= 100.;
+  z = round(z*100.)/100.;
 
   if (!m_layers[z]) m_layers[z] = new Layer(z);
   return m_layers[z];
