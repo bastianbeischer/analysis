@@ -41,7 +41,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.analyzeButton, SIGNAL(clicked()), this, SLOT(analyzeButtonClicked()));
   connect(m_ui.saveCanvasButton, SIGNAL(clicked()), this, SLOT(saveCanvasButtonClicked()));
   connect(m_ui.saveAllCanvasesButton, SIGNAL(clicked()), this, SLOT(saveAllCanvasButtonClicked()));
-  connect(m_ui.setFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
+	connect(m_ui.saveForPostAnalysisButton, SIGNAL(clicked()), this, SLOT(saveForPostAnalysisButtonClicked()));
+	connect(m_ui.chooseAllButton, SIGNAL(clicked()), this, SLOT(chooseAllButtonClicked()));
+	connect(m_ui.setFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
   connect(m_ui.addFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
   connect(m_ui.listWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(listWidgetItemChanged(QListWidgetItem*)));
   connect(m_ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(listWidgetCurrentRowChanged(int)));
@@ -62,6 +64,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.miscellaneousTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTOFButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  
 
   setupAnalysis();
 }
@@ -355,10 +358,10 @@ void MainWindow::setFileList(const QString& fileName)
 void MainWindow::saveCanvasButtonClicked()
 {
   QString fileEnding;
-  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "svg;;pdf;;root;;png", &fileEnding);
+  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "*.svg;;*.pdf;;*.root;;*.png", &fileEnding);
   if (fileName.isEmpty())
     return;
-  fileEnding.prepend('.');
+  fileEnding.remove(0, 1);
   if (!fileName.endsWith(fileEnding))
     fileName.append(fileEnding);
   m_ui.plotter->saveCanvas(fileName);
@@ -374,9 +377,40 @@ void MainWindow::saveAllCanvasButtonClicked()
       QString directoryName = dialog.selectedFiles().first();
       m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".svg");
       m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".pdf");
-      m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".root");
       m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".png");
     }
+}
+
+void MainWindow::saveForPostAnalysisButtonClicked()
+{
+	QString fileEnding;
+  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "*.root", &fileEnding);
+  if (fileName.isEmpty())
+    return;
+  fileEnding.remove(0, 1);
+  if (!fileName.endsWith(fileEnding))
+    fileName.append(fileEnding);
+  m_ui.plotter->saveForPostAnalysis(fileName);
+}
+
+void MainWindow::chooseAllButtonClicked()
+{
+	m_ui.signalHeightUpperTrackerCheckBox->setChecked(true);
+	m_ui.signalHeightLowerTrackerCheckBox->setChecked(true);
+	m_ui.signalHeightTRDCheckBox->setChecked(true);
+	m_ui.clusterLengthUpperTrackerCheckBox->setChecked(true);
+	m_ui.clusterLengthLowerTrackerCheckBox->setChecked(true);
+	m_ui.clusterLengthTRDCheckBox->setChecked(true);
+	m_ui.timeOverThresholdCheckBox->setChecked(true);
+	m_ui.trackingCheckBox->setChecked(true);
+	m_ui.occupancyCheckBox->setChecked(true);
+	m_ui.residualsUpperTrackerCheckBox->setChecked(true);
+	m_ui.residualsLowerTrackerCheckBox->setChecked(true);
+	m_ui.residualsTRDCheckBox->setChecked(true);
+	m_ui.momentumReconstructionCheckBox->setChecked(true);
+	m_ui.miscellaneousTrackerCheckBox->setChecked(true);
+	m_ui.miscellaneousTRDCheckBox->setChecked(true);
+	m_ui.miscellaneousTOFCheckBox->setChecked(true);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

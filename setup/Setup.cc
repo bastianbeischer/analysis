@@ -222,7 +222,7 @@ TVector3 Setup::positionForHit(const Hit* hit)
 
 double Setup::timeShiftForHit(const Hit* hit)
 {
-  Q_ASSERT(hit->type() == Hit::Tof);
+  Q_ASSERT(hit->type() == Hit::tof);
   DetectorElement* element = this->element(hit->detId() - hit->channel());
   return static_cast<TOFBar*>(element)->timeShift(hit->channel());
 }

@@ -33,6 +33,7 @@ public:
   void setDataChainProgressBar(QProgressBar*);
   void setEventQueueProgressBar(QProgressBar*);
   void saveCanvas(const QString& fileName);
+	void saveForPostAnalysis(const QString&);
   void addFileList(const QString& fileName);
   void setFileList(const QString& fileName);
 public slots:

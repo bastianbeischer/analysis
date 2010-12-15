@@ -15,7 +15,7 @@ public:
   virtual ~RootPlot();
 public:
   virtual void draw(TCanvas*);
-  virtual void clear() = 0;
+  virtual void clear() {}
   unsigned long id() const {return m_id;}
   void setTitle(const QString& title) {m_title = title;}
   const QString& title() const {return m_title;}
