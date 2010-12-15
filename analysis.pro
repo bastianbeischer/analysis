@@ -7,8 +7,4 @@ SUBDIRS  = event \
            setup \
            tracking \
            alignment \
-           tools/alignment \
-           tools/analysis \
-           tools/eventdisplay \
-           tools/parser \
-           tools/preAnalysis
+           tools 

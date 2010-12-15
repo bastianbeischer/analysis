@@ -90,6 +90,20 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="saveForPostAnalysisButton">
+         <property name="text">
+          <string>save for post analysis</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="chooseAllButton">
+         <property name="text">
+          <string>choose all</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QScrollArea" name="scrollArea">
          <property name="font">
           <font>

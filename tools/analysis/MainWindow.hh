@@ -21,6 +21,8 @@ private slots:
   void analyzeButtonClicked();
   void saveCanvasButtonClicked();
   void saveAllCanvasButtonClicked();
+	void saveForPostAnalysisButtonClicked();
+	void chooseAllButtonClicked();
   void listWidgetItemChanged(QListWidgetItem*);
   void listWidgetCurrentRowChanged(int);
   void showButtonsClicked();
