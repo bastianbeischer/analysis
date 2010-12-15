@@ -2,7 +2,7 @@
 
 #include <TH1D.h>
 
-#include "TrackSelection.hh"
+#include "TrackInformation.hh"
 #include "Hit.hh"
 #include "Track.hh"
 
@@ -21,14 +21,14 @@ Chi2Plot::~Chi2Plot()
 {
 }
 
-void Chi2Plot::processEvent(const QVector<Hit*>&, Track* track, TrackSelection* selection, SimpleEvent* /*event*/)
+void Chi2Plot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent* /*event*/)
 {
   // QMutexLocker locker(&m_mutex);
-  if(!track || !selection || !track->fitGood())
+  if(!track || !track->fitGood())
     return;
 
-  TrackSelection::Flags flags = selection->flags();
-  if (!(flags & TrackSelection::AllTrackerLayers))
+  TrackInformation::Flags flags = track->information()->flags();
+  if (!(flags & TrackInformation::AllTrackerLayers))
     return;
 
   if ((int)track->ndf() == 20 - track->nParameters()) {

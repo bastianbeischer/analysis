@@ -7,7 +7,7 @@
 #include "Layer.hh"
 #include "CenteredBrokenLine.hh"
 #include "DataChain.hh"
-#include "TrackSelection.hh"
+#include "TrackInformation.hh"
 #include "TrackFinding.hh"
 #include "Manager.hh"
 #include "Setup.hh"
@@ -19,7 +19,6 @@
 
 DataInterface::DataInterface() :
   m_chain(new DataChain),
-  m_trackSelection(new TrackSelection),
   m_trackFinding(new TrackFinding)
 {
 }
@@ -27,7 +26,6 @@ DataInterface::DataInterface() :
 DataInterface::~DataInterface()
 {
   delete m_chain;
-  delete m_trackSelection;
   delete m_trackFinding;
 }
 
@@ -59,18 +57,17 @@ void DataInterface::process(AlignmentMatrix* matrix)
     else
       clusters = setup->generateClusters(hits);
 
-    Corrections::apply(clusters);
+    Corrections corrections;
+    corrections.apply(clusters);
 
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
 
     Track* track = new CenteredBrokenLine;
-    TrackSelection selection;
     if (track->fit(clusters)) {
-      selection.processTrack(track);
-      TrackSelection::Flags flags = selection.flags();
-      if ( (flags & TrackSelection::AllTrackerLayers) &&
-          !(flags & TrackSelection::MagnetCollision) ) {
+      TrackInformation::Flags flags = track->information()->flags();
+      if ( (flags & TrackInformation::AllTrackerLayers) &&
+          !(flags & TrackInformation::MagnetCollision) ) {
         matrix->fillMatrixFromTrack(track);
         FITLOC();
       }

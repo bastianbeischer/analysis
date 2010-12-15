@@ -1,6 +1,6 @@
 #include "ResidualPlot.hh"
 
-#include "TrackSelection.hh"
+#include "TrackInformation.hh"
 #include "Setup.hh"
 #include "Layer.hh"
 #include "Setup.hh"
@@ -48,18 +48,18 @@ ResidualPlot::~ResidualPlot()
 {
 }
 
-void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSelection* selection, SimpleEvent* /*event*/)
+void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* /*event*/)
 {
   // QMutexLocker locker(&m_mutex);
-  if (!track || !selection || !track->fitGood())
+  if (!track || !track->fitGood())
     return;
 
-  TrackSelection::Flags flags = selection->flags();
-  if (!(flags & TrackSelection::AllTrackerLayers))
+  TrackInformation::Flags flags = track->information()->flags();
+  if (!(flags & TrackInformation::AllTrackerLayers))
     return;
 
   // only select tracks which didn't pass through the magnet
-  if ((flags & TrackSelection::MagnetCollision))
+  if ((flags & TrackInformation::MagnetCollision))
     return;
 
   // remove hits in this layer from hits for track fit

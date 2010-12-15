@@ -10,24 +10,24 @@ class Corrections
 {
   
 public:
-  enum CorrectionFlag {None = 0x0, Alignment = 0x1, TimeShifts = 0x2, TrdMopv = 0x4, TofTimeOverThreshold = 0x8};
-  Q_DECLARE_FLAGS(CorrectionFlags, CorrectionFlag);
+  enum Flag {None = 0x0, Alignment = 0x1, TimeShifts = 0x2, TrdMopv = 0x4, TofTimeOverThreshold = 0x8};
+  Q_DECLARE_FLAGS(Flags, Flag);
 
 public:
   Corrections();
   ~Corrections();
   
 public:
-  static void apply(QVector<Hit*>&, CorrectionFlags = ~CorrectionFlags(0));
+  void apply(QVector<Hit*>&, Flags = ~Flags(0));
   
 private:
-  static void alignment(Hit*);
-  static void timeShift(Hit*);
-  static void trdMopv(Hit*);
-  static void tofTimeOverThreshold(Hit*);
+  void alignment(Hit*);
+  void timeShift(Hit*);
+  void trdMopv(Hit*);
+  void tofTimeOverThreshold(Hit*);
 
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(Corrections::CorrectionFlags);
+Q_DECLARE_OPERATORS_FOR_FLAGS(Corrections::Flags);
 
 #endif /* Corrections_hh */

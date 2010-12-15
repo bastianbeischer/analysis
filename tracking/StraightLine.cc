@@ -1,6 +1,7 @@
 #include "StraightLine.hh"
 
 #include "StraightLineMatrix.hh"
+#include "TrackInformation.hh"
 #include "Hit.hh"
 #include "Setup.hh"
 
@@ -55,6 +56,8 @@ int StraightLine::fit(const QVector<Hit*>& hits)
     }
 
   }
+
+  m_information->process();
 
   return m_fitGood;
 }

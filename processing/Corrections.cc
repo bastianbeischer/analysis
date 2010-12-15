@@ -17,7 +17,7 @@ Corrections::~Corrections()
 {
 }
 
-void Corrections::apply(QVector<Hit*>& hits, CorrectionFlags flags)
+void Corrections::apply(QVector<Hit*>& hits, Flags flags)
 {
   foreach(Hit* hit, hits) {
     if (flags & Alignment) alignment(hit);

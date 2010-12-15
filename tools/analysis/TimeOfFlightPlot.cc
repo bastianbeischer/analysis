@@ -1,6 +1,6 @@
 #include "TimeOfFlightPlot.hh"
 #include "BrokenLine.hh"
-#include "TrackSelection.hh"
+#include "TrackInformation.hh"
 #include "Hit.hh"
 #include "TOFConstants.hh"
 #include "TOFCluster.hh"
@@ -40,14 +40,14 @@ TimeOfFlightPlot::TimeOfFlightPlot()
 TimeOfFlightPlot::~TimeOfFlightPlot()
 {}
 
-void TimeOfFlightPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSelection* selection, SimpleEvent*)
+void TimeOfFlightPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
 {
   // QMutexLocker locker(&m_mutex);
-  if (!track || !selection || !track->fitGood())
+  if (!track || !track->fitGood())
     return;
 
-  TrackSelection::Flags flags = selection->flags();
-  if (!(flags & TrackSelection::AllTrackerLayers))
+  TrackInformation::Flags flags = track->information()->flags();
+  if (!(flags & TrackInformation::AllTrackerLayers))
     return;
 
   double t[4][4];
