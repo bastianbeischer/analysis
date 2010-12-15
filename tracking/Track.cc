@@ -1,5 +1,6 @@
 #include "Track.hh"
 
+#include "TrackInformation.hh"
 #include "Matrix.hh"
 
 #include <iostream>
@@ -8,6 +9,7 @@
 
 Track::Track() :
   m_type(None),
+  m_information(new TrackInformation(this)),
   m_matrix(0),
   m_verbose(0),
   m_fitGood(0),
@@ -18,6 +20,7 @@ Track::Track() :
 
 Track::~Track()
 {
+  delete m_information;
 }
 
 double Track::pt() const

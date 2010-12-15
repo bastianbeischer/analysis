@@ -13,10 +13,12 @@ UI_DIR      = ./.tmp
 RCC_DIR     = ./.tmp
 
 SOURCES += Corrections.cc \
-           TrackSelection.cc
+#           TrackSelection.cc \
+#           Particle.cc
 
 HEADERS += Corrections.hh \
-           TrackSelection.hh
+#           TrackSelection.hh \
+#           Particle.hh
 
 INCLUDEPATH += $$TOPLEVEL/event \
                $$TOPLEVEL/setup \

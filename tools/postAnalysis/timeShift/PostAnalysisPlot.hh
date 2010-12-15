@@ -7,7 +7,6 @@
 
 class Hit;
 class Track;
-class TrackSelection;
 class SimpleEvent;
 
 class PostAnalysisPlot : virtual public RootPlot {

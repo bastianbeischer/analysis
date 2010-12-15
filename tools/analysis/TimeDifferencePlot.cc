@@ -1,6 +1,6 @@
 #include "TimeDifferencePlot.hh"
 #include "BrokenLine.hh"
-#include "TrackSelection.hh"
+#include "TrackInformation.hh"
 #include "Hit.hh"
 #include "TOFConstants.hh"
 #include "TOFCluster.hh"
@@ -34,14 +34,14 @@ TimeDifferencePlot::TimeDifferencePlot(unsigned short topBarId, unsigned short b
 TimeDifferencePlot::~TimeDifferencePlot()
 {}
 
-void TimeDifferencePlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSelection* selection, SimpleEvent*)
+void TimeDifferencePlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
 {
   // QMutexLocker locker(&m_mutex);
-  if (!track || !selection || !track->fitGood())
+  if (!track || !track->fitGood())
     return;
 
-  TrackSelection::Flags flags = selection->flags();
-  if (!(flags & TrackSelection::AllTrackerLayers))
+  TrackInformation::Flags flags = track->information()->flags();
+  if (!(flags & TrackInformation::AllTrackerLayers))
     return;
   double t[8];
   for (int i = 0; i < 8; ++i)

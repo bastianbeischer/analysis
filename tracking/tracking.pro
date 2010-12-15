@@ -13,6 +13,7 @@ UI_DIR      = ./.tmp
 RCC_DIR     = ./.tmp
 
 SOURCES += Track.cc \
+           TrackInformation.cc \
            TrackFinding.cc \
            StraightLine.cc \
            BrokenLine.cc \
@@ -23,6 +24,7 @@ SOURCES += Track.cc \
            CenteredBrokenLineMatrix.cc
 
 HEADERS += Track.hh \     
+           TrackInformation.hh \
            TrackFinding.hh \
            StraightLine.hh \
            BrokenLine.hh \

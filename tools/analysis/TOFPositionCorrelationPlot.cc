@@ -1,7 +1,7 @@
 #include "TOFPositionCorrelationPlot.hh"
 #include "BrokenLine.hh"
 
-#include "TrackSelection.hh"
+#include "TrackInformation.hh"
 #include "Hit.hh"
 #include "TOFCluster.hh"
 
@@ -34,14 +34,14 @@ TOFPositionCorrelationPlot::~TOFPositionCorrelationPlot()
   delete m_correlationFunction;
 }
 
-void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, Track* track, TrackSelection* selection, SimpleEvent*)
+void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
 {
   // QMutexLocker locker(&m_mutex);
-  if (!track || !selection || !track->fitGood())
+  if (!track || !track->fitGood())
     return;
 
-  TrackSelection::Flags flags = selection->flags();
-  if (!(flags & TrackSelection::AllTrackerLayers))
+  TrackInformation::Flags flags = track->information()->flags();
+  if (!(flags & TrackInformation::AllTrackerLayers))
     return;
 
   foreach(Hit* hit, clusters)

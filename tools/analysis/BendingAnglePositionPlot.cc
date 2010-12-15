@@ -2,7 +2,7 @@
 #include "BrokenLine.hh"
 #include "CenteredBrokenLine.hh"
 
-#include "TrackSelection.hh"
+#include "TrackInformation.hh"
 #include "Hit.hh"
 
 #include <TH2.h>
@@ -38,14 +38,14 @@ void BendingAnglePositionPlot::draw(TCanvas* canvas)
   histogram()->Draw("lego");
 }
 
-void BendingAnglePositionPlot::processEvent(const QVector<Hit*>&, Track* track, TrackSelection* selection, SimpleEvent*)
+void BendingAnglePositionPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
 {
   // QMutexLocker locker(&m_mutex);
-  if (!track || !selection || !track->fitGood())
+  if (!track || !track->fitGood())
     return;
 
-  TrackSelection::Flags flags = selection->flags();
-  if (!(flags & TrackSelection::AllTrackerLayers))
+  TrackInformation::Flags flags = track->information()->flags();
+  if (!(flags & TrackInformation::AllTrackerLayers))
     return;
 
   double alpha = track->bendingAngle();
