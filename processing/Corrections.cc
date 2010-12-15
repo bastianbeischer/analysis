@@ -37,7 +37,13 @@ void Corrections::alignment(Hit* hit)
 void Corrections::timeShift(Hit* hit)
 {
   Setup* setup = Setup::instance();
-  if (strcmp(hit->ClassName(), "TOFCluster") == 0) {
+  if (strcmp(hit->ClassName(), "TOFSipmHit") == 0) {
+    TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
+    DetectorElement* element = setup->element(hit->detId() - hit->channel());
+    double timeShift = static_cast<TOFBar*>(element)->timeShift(hit->channel());
+    tofHit->applyTimeShift(timeShift);
+  }
+  else if (strcmp(hit->ClassName(), "TOFCluster") == 0) {
     TOFCluster* cluster = static_cast<TOFCluster*>(hit);
     std::vector<Hit*> subHits = cluster->hits();
     for (std::vector<Hit*>::iterator it = subHits.begin(); it != subHits.end(); it++) {
@@ -47,12 +53,6 @@ void Corrections::timeShift(Hit* hit)
       tofHit->applyTimeShift(timeShift);
     }
     cluster->processHits();
-  }
-  else if (strcmp(hit->ClassName(), "TOFSipmHit") == 0) {
-    TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
-    DetectorElement* element = setup->element(hit->detId() - hit->channel());
-    double timeShift = static_cast<TOFBar*>(element)->timeShift(hit->channel());
-    tofHit->applyTimeShift(timeShift);
   }
 }
 
