@@ -11,6 +11,7 @@
 #include "SimpleEvent.hh"
 #include "Setup.hh"
 #include "EventQueue.hh"
+#include "Corrections.hh"
 
 #include <iostream>
 
@@ -70,7 +71,7 @@ void AnalysisThread::run()
       // flags |= Setup::Alignment;
       // flags |= Setup::TimeShifts;
       // Setup::instance()->applyCorrections(hits, flags);
-      Setup::instance()->applyCorrections(hits);
+      Corrections::apply(hits);
 
       QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
       if (m_track) {

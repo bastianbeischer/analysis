@@ -27,6 +27,7 @@ HEADERS += Constraint.hh \
            Strategy.hh
 
 INCLUDEPATH += $$TOPLEVEL/event \
+               $$TOPLEVEL/processing \
                $$TOPLEVEL/setup \
                $$TOPLEVEL/tracking \
                 ./millepede
@@ -34,6 +35,7 @@ INCLUDEPATH += $$TOPLEVEL/event \
 DEPENDPATH += $$INCLUDEPATH
 
 LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
+                         -lprocessing \
                          -lsetup \
                          -ltracking \
            -L./millepede -lmillepede \

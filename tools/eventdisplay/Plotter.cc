@@ -11,6 +11,7 @@
 #include "Layer.hh"
 #include "TrackFinding.hh"
 #include "Setup.hh"
+#include "Corrections.hh"
 #include "DataDescription.hh"
 #include "HitsPlot.hh"
 
@@ -109,7 +110,7 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QTextBrow
   else
     clusters = Setup::instance()->generateClusters(hits);
 
-  Setup::instance()->applyCorrections(clusters);
+  Corrections::apply(clusters);
 
   Track* track = 0;
   if (drawTrack) {
