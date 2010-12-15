@@ -96,16 +96,16 @@ void Plotter::saveCanvas(const QString& fileName)
 
 void Plotter::saveForPostAnalysis(const QString& fileName)
 {
-	int savedSelectedPlot = m_selectedPlot;
-	TFile file(qPrintable(fileName), "RECREATE");
-	for (unsigned int i = 0; i < numberOfPlots(); ++i) {
-		selectPlot(i);
-		GetCanvas()->SetName(qPrintable(plotTitle(i) + " canvas"));
-		GetCanvas()->Write();
-	}
-	file.Close();
-	selectPlot(savedSelectedPlot);
-	GetCanvas()->SetName("tqtwidget");
+  int savedSelectedPlot = m_selectedPlot;
+  TFile file(qPrintable(fileName), "RECREATE");
+  for (unsigned int i = 0; i < numberOfPlots(); ++i) {
+    selectPlot(i);
+    GetCanvas()->SetName(qPrintable(plotTitle(i) + " canvas"));
+    GetCanvas()->Write();
+  }
+  file.Close();
+  selectPlot(savedSelectedPlot);
+  GetCanvas()->SetName("tqtwidget");
 }
 
 void Plotter::update()

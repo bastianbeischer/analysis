@@ -23,9 +23,9 @@ void H1DPlot::draw(TCanvas* canvas)
   foreach (TH1D* h, m_histograms)
     if (h == m_histograms.first()) {
       h->Draw();
-		} else {
+    } else {
       h->Draw("SAME");
-		}
+    }
   RootPlot::draw(canvas);
 }
 

@@ -26,11 +26,21 @@ TimeDifferenceHistogram::TimeDifferenceHistogram(TCanvas* canvas, int ch)
   QString title = QString("%1 channel %2").arg(canvas->GetName()).arg(ch);
   setTitle(title);
   TH1D* projection = histogram->ProjectionY("tmp", ch+1, ch+1);
-  projection->Rebin(4);
+  if (ch > 0)
+    projection->Smooth();
   projection->SetName(qPrintable(title));
   projection->GetXaxis()->SetTitle("#Deltat / ns");
   m_fitFunction = new TF1(qPrintable(title + "Function"), "gaus", projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
   projection->Fit(m_fitFunction, "QN0");
+  if (ch > 0) {
+    for (int i = 0; i < 5; ++i) {
+      double mean = m_fitFunction->GetParameter(1);
+      double sigma = m_fitFunction->GetParameter(2);
+      m_fitFunction->SetRange(mean - 1.5 * sigma, mean + 1.5 * sigma);
+      projection->Fit(m_fitFunction, "RQN0");
+    }
+  }
+  m_fitFunction->SetRange(projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
   QStringList stringList = title.split(" ");
   int id = (stringList[ch < 4 ? 2 : 3].remove(0, 2).toInt(0, 16)) | (ch - (ch < 4 ? 0 : 4));
   std::cout << "0x" <<std::hex << id << "=" << -m_fitFunction->GetParameter(1) << std::endl;

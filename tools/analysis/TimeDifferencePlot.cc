@@ -21,9 +21,12 @@ TimeDifferencePlot::TimeDifferencePlot(unsigned short topBarId, unsigned short b
 {
   QString title = QString("time difference 0x%1 0x%2").arg(topBarId, 0, 16).arg(bottomBarId, 0, 16);
   setTitle(title);
-  TH2D* histogram = new TH2D(qPrintable(title), "", 8, 0, 8, 80, -10, 10);
+  int nBins = 100;
+  double min = -10;
+  double max = 10;
+  TH2D* histogram = new TH2D(qPrintable(title), "", 8, -0.5, 7.5, nBins, min-.5*(max-min)/nBins, max-.5*(max-min)/nBins);
   histogram->GetXaxis()->SetTitle("channel");
-  histogram->GetXaxis()->SetRangeUser(1, 8);
+  histogram->GetXaxis()->SetRangeUser(0.5, 7.5);
   histogram->GetYaxis()->SetTitle("#Deltat / ns");
   setHistogram(histogram);
 }
