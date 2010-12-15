@@ -37,7 +37,7 @@ public:
   double           pt()               const;
 
 public:
-  virtual int      fit   (const QVector<Hit*>& hits) = 0;
+  virtual int      fit (const QVector<Hit*>& hits) = 0;
 
 protected:
   Type              m_type;
