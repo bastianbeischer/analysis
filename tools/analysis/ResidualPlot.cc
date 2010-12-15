@@ -86,7 +86,7 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleE
   else mytrack = 0;
 
   // fit and fill histograms
-  if (mytrack->fit(hitsForFit)) {
+  if (mytrack->process(hitsForFit)) {
     foreach(Hit* hit, hitsInThisLayer) {
       double z = m_layer->z();
       double hitX = hit->position().x();

@@ -64,7 +64,7 @@ void DataInterface::process(AlignmentMatrix* matrix)
     clusters = m_trackFinding->findTrack(clusters);
 
     Track* track = new CenteredBrokenLine;
-    if (track->fit(clusters)) {
+    if (track->process(clusters)) {
       TrackInformation::Flags flags = track->information()->flags();
       if ( (flags & TrackInformation::AllTrackerLayers) &&
           !(flags & TrackInformation::MagnetCollision) ) {
