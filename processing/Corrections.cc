@@ -48,7 +48,7 @@ void Corrections::timeShift(Hit* hit)
     std::vector<Hit*> subHits = cluster->hits();
     for (std::vector<Hit*>::iterator it = subHits.begin(); it != subHits.end(); it++) {
       TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(*it);
-      DetectorElement* element = setup->element(hit->detId() - hit->channel());
+      DetectorElement* element = setup->element(cluster->detId() - cluster->channel());
       double timeShift = static_cast<TOFBar*>(element)->timeShift((*it)->channel());
       tofHit->applyTimeShift(timeShift);
     }
