@@ -78,7 +78,7 @@ QVector<Hit*> TrackFinding::findTrack(const QVector<Hit*>& hits)
   QVector<Hit*> hitsOnTrack;
 
   CenteredBrokenLine cbl;
-  if (cbl.fit(hitsForFit)) {
+  if (cbl.process(hitsForFit)) {
     foreach(Hit* hit, hits) {
       if (isInCorridor(&cbl, hit))
         hitsOnTrack.push_back(hit);
