@@ -9,18 +9,19 @@
 
 class SensorsData {
 public:
-	enum DataType { SENSORS, ATC, EBASS };
+	enum DataType { SENSORS, ATC /*,EBASS*/ };
 	
 public:
 	SensorsData();
 	bool setFile(const char* file);
-	double getPrevious(DataType type, const char* id, time_t time, unsigned int &diff);
-	double getNext(DataType type, const char* id, time_t time, unsigned int &diff);
-	double getAverage(DataType type, const char* id, time_t time); // Will return NaN if out of bounds.
-	std::map<unsigned int,double> getValues(DataType type, const char* id);
+	float getPrevious(DataType type, const char* id, time_t time, unsigned int *diff);
+	float getNext(DataType type, const char* id, time_t time, unsigned int *diff);
+	float getAverage(DataType type, const char* id, time_t time); // Will return NaN if out of bounds.
+	std::map<unsigned int,float> getValues(DataType type, const char* id);
 	
 	
 	char** getKeys(DataType type);
+	int getNumberOfKeys(DataType type);
 	
 private:
 	std::map<unsigned int,unsigned int> m_sensorstimes;
