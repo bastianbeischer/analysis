@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = eventdisplay
 
-#CONFIG += debug
+CONFIG += debug
 
 TOPLEVEL = ../..
 

@@ -1,7 +1,7 @@
 TEMPLATE = lib
 TARGET = tracking
 
-#CONFIG += debug
+CONFIG += debug
 
 TOPLEVEL    = ..
 

@@ -1,7 +1,7 @@
 TEMPLATE = app
 TARGET = analysis
 
-#CONFIG += debug
+CONFIG += debug
 
 TOPLEVEL = ../..
 

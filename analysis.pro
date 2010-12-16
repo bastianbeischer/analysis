@@ -6,7 +6,6 @@ SUBDIRS  = event \
            rootplot \
            setup \
            tracking \
-           alignment/millepede \
            alignment \
            tools/alignment \
            tools/analysis \

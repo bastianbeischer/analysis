@@ -1,7 +1,8 @@
 TEMPLATE = lib
 TARGET = millepede
 QT -= core gui
-#CONFIG += debug
+
+CONFIG += debug
 
 TOPLEVEL    = ../..
 
