@@ -19,8 +19,8 @@ bool SensorsData::setFile(const char* file) {
   m_atctree = (TTree*)m_file->Get("ATC");
 #ifdef EBASS
   m_ebasstree = (TTree*)m_file->Get("EBASS");
-#endif EBASS
-  if ((m_sensorstree == NULL | m_atctree == NULL /*| m_ebasstree == NULL*/)) {
+#endif
+  if ((m_sensorstree == NULL || m_atctree == NULL /*|| m_ebasstree == NULL*/)) {
     delete m_sensorstree;
     delete m_atctree;
 #ifdef EBASS
@@ -33,7 +33,6 @@ bool SensorsData::setFile(const char* file) {
   }
   unsigned int atctime;
   unsigned int sensortime;
-  unsigned int ebasstime;
   m_atctree->SetBranchAddress("time",&atctime);
   for (int i = 0;i<m_atctree->GetEntries();i++) {
     m_atctree->GetEntry(i);
@@ -45,6 +44,7 @@ bool SensorsData::setFile(const char* file) {
     m_sensorstimes[sensortime] = i;
   }
 #ifdef EBASS
+  unsigned int ebasstime;
   m_ebasstree->SetBranchAddress("time",&ebasstime);
   for (int i = 0;i<m_ebasstree->GetEntries();i++) {
     m_ebasstree->GetEntry(i);
@@ -67,7 +67,7 @@ float SensorsData::getPrevious(DataType type, const char* id, time_t time, unsig
   std::map<unsigned int,unsigned int>::iterator it = map.find(time);
   if (it == map.end()) {
     it = map.lower_bound(time);
-    if ((*it).first > time) {
+    if ((*it).first > (unsigned long)time) {
       it--;
     };
   }
