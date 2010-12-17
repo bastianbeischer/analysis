@@ -21,6 +21,7 @@
 #include "ClusterLengthPlot.hh"
 #include "TimeOfFlightPlot.hh"
 #include "TimeDifferencePlot.hh"
+#include "TimeOfFlightMomentumCorrelationPlot.hh"
 
 #include <QDebug>
 #include <QFileDialog>
@@ -64,7 +65,6 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.miscellaneousTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTOFButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  
 
   setupAnalysis();
 }
@@ -251,6 +251,7 @@ void MainWindow::setupAnalysis()
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::All));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Positive));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Negative));
+    m_ui.plotter->addPlot(new TimeOfFlightMomentumCorrelationPlot());
   }
   if (m_ui.miscellaneousTrackerCheckBox->isChecked()) {
   }

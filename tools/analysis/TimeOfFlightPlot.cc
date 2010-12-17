@@ -20,7 +20,7 @@ TimeOfFlightPlot::TimeOfFlightPlot()
 {
   setTitle("time of flight");
   TH1D* histogram = new TH1D("time of flight", "", 1200, -60, 60);
-  histogram->GetXaxis()->SetTitle("c #Deltat / L_{track}");
+  histogram->GetXaxis()->SetTitle("1 / #beta");
   addHistogram(histogram);
   TLatex* latex = 0;
   latex = new TLatex(.15, .85, 0);
@@ -56,7 +56,7 @@ void TimeOfFlightPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEv
   const TVector3& lowerPoint = track->position(lowerTofPosition);
   double trackLength = (upperPoint-lowerPoint).Mag();
 
-  histogram()->Fill(deltaT * speedOfLight / trackLength);
+  histogram()->Fill(1./track->beta());
 }
 
 void TimeOfFlightPlot::update()

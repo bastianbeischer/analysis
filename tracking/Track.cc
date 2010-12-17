@@ -174,3 +174,12 @@ double Track::p() const
   double p = sqrt((sx*sx + sy*sy + 1)/(sx*sx + 1)) * m_pt;
   return p;
 }
+
+double Track::beta() const
+{
+  const TVector3& upperPoint = position(upperTofPosition);
+  const TVector3& middlePoint = position(0);
+  const TVector3& lowerPoint = position(lowerTofPosition);
+  double trackLength = (upperPoint-middlePoint).Mag() + (middlePoint-lowerPoint).Mag();
+  return trackLength / (timeOfFlight() * speedOfLight);
+}

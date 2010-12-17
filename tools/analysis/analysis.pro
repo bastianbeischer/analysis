@@ -50,7 +50,8 @@ HEADERS = MainWindow.hh \
           GeometricOccupancyProjectionPlot.hh \
           SignalHeightPlot.hh \
           ClusterLengthPlot.hh \
-          TimeDifferencePlot.hh
+          TimeDifferencePlot.hh \
+          TimeOfFlightMomentumCorrelationPlot.hh
 
 # Sources
 SOURCES = main.cc \
@@ -74,7 +75,8 @@ SOURCES = main.cc \
           GeometricOccupancyProjectionPlot.cc \
           SignalHeightPlot.cc \
           ClusterLengthPlot.cc \
-          TimeDifferencePlot.cc
+          TimeDifferencePlot.cc \
+          TimeOfFlightMomentumCorrelationPlot.cc
 
 include($$TOPLEVEL/root.pri)
 

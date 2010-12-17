@@ -39,6 +39,7 @@ public:
   virtual double   bendingAngle()     const = 0;
   TVector3         position(double z) const {return TVector3(x(z), y(z), z);}
   double           p()                const;
+  double           beta()             const;
 
 public:
   int process(const QVector<Hit*>& hit);
