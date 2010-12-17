@@ -165,3 +165,12 @@ void Track::calculateTimeOfFlight()
   //qDebug() << "---";
   m_timeOfFlight = (correctedLeftStopTime+correctedRightStopTime)/2. - (correctedLeftStartTime+correctedRightStartTime)/2.;
 }
+
+double Track::p() const
+{
+  double z = 100.;
+  double sx = slopeX(z);
+  double sy = slopeY(z);
+  double p = sqrt((sx*sx + sy*sy + 1)/(sx*sx + 1)) * m_pt;
+  return p;
+}

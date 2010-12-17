@@ -38,7 +38,7 @@ public:
   virtual double   slopeY(double z)   const = 0;
   virtual double   bendingAngle()     const = 0;
   TVector3         position(double z) const {return TVector3(x(z), y(z), z);}
-
+  double           p()                const;
 
 public:
   int process(const QVector<Hit*>& hit);
