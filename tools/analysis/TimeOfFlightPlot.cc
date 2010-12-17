@@ -45,17 +45,9 @@ void TimeOfFlightPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEv
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
-
   TrackInformation::Flags flags = track->information()->flags();
   if (!(flags & TrackInformation::AllTrackerLayers))
     return;
-
-  double deltaT = track->timeOfFlight();
-
-  const TVector3& upperPoint = track->position(upperTofPosition);
-  const TVector3& lowerPoint = track->position(lowerTofPosition);
-  double trackLength = (upperPoint-lowerPoint).Mag();
-
   histogram()->Fill(1./track->beta());
 }
 

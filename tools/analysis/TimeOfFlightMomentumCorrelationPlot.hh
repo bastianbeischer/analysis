@@ -15,6 +15,7 @@ public:
   virtual void finalize();
   virtual void draw(TCanvas*);
 private:
+  QVector<TF1*> m_functions;
 };
 
 #endif
