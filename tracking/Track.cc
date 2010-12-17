@@ -3,7 +3,7 @@
 #include "TrackInformation.hh"
 #include "Matrix.hh"
 #include "Hit.hh"
-#include "TOFConstants.hh"
+#include "Constants.hh"
 #include "TOFCluster.hh"
 #include "TOFSipmHit.hh"
 

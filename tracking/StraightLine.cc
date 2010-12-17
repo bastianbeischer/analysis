@@ -3,7 +3,6 @@
 #include "StraightLineMatrix.hh"
 #include "TrackInformation.hh"
 #include "Hit.hh"
-#include "Setup.hh"
 
 #include <TGraphErrors.h>
 #include <TF1.h>

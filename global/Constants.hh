@@ -1,5 +1,5 @@
-#ifndef TOFConstants_hh
-#define TOFConstants_hh
+#ifndef Constants_hh
+#define Constants_hh
 
 const double speedOfLight = 299.792458;  // mm/ns
 const double tofBarLength = 395;         // mm

@@ -2,7 +2,7 @@
 #include "BrokenLine.hh"
 #include "TrackInformation.hh"
 #include "Hit.hh"
-#include "TOFConstants.hh"
+#include "Constants.hh"
 #include "TOFCluster.hh"
 #include "TOFSipmHit.hh"
 #include "Setup.hh"
