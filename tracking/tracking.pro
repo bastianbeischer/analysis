@@ -34,10 +34,10 @@ HEADERS += Track.hh \
            BrokenLineMatrix.hh \
            CenteredBrokenLineMatrix.hh
 
-INCLUDEPATH += $$TOPLEVEL/event $$TOPLEVEL/setup
+INCLUDEPATH += $$TOPLEVEL/event $$TOPLEVEL/global
 
 DEPENDPATH += $$INCLUDEPATH
 
-LIBS += -L$$TOPLEVEL/lib -lSimpleEvent -lsetup
+LIBS += -L$$TOPLEVEL/lib -lSimpleEvent
 
 include(../root.pri)
