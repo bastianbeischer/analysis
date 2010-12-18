@@ -5,7 +5,6 @@
 #include "H2DPlot.hh"
 
 class TGraphErrors;
-class TF1;
 
 class TOFPositionCorrelationPlot : public AnalysisPlot, public H2DPlot {
 public:
@@ -17,7 +16,6 @@ public:
 private:
   unsigned short m_id;
   TGraphErrors* m_correlationGraph;
-  TF1* m_correlationFunction;
 };
 
 #endif

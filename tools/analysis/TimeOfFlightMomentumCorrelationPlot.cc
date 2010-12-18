@@ -46,7 +46,7 @@ TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
   function->SetLineColor(kBlue);
   function->SetLineStyle(2);
   legend->AddEntry(function, "e^{#pm}", "l");
-  m_functions.append(function);
+  addFunction(function);
 
   function = new TF1("muonCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 1);
   function->SetParameter(0, muonMass);
@@ -54,7 +54,7 @@ TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
   function->SetLineColor(kGreen);
   function->SetLineStyle(2);
   legend->AddEntry(function, "#mu^{#pm}", "l");
-  m_functions.append(function);
+  addFunction(function);
 
   function = new TF1("pionCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 1);
   function->SetParameter(0, pionMass);
@@ -62,7 +62,7 @@ TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
   function->SetLineColor(kCyan);
   function->SetLineStyle(2);
   legend->AddEntry(function, "#pi^{#pm}", "l");
-  m_functions.append(function);
+  addFunction(function);
 
   function = new TF1("protonCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 1);
   function->SetParameter(0, protonMass);
@@ -70,7 +70,7 @@ TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
   function->SetNpx(1000);
   function->SetLineStyle(2);
   legend->AddEntry(function, "p^{#pm}", "l");
-  m_functions.append(function);
+  addFunction(function);
 
   function = new TF1("He", timeOfFlightMomentumCorrelationFunction, 0.01, xMax, 1);
   function->SetParameter(0, heliumMass);
@@ -78,7 +78,7 @@ TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
   function->SetNpx(1000);
   function->SetLineStyle(2);
   legend->AddEntry(function, "He", "l");
-  m_functions.append(function);
+  addFunction(function);
   
   addLegend(legend);
 }
@@ -96,15 +96,4 @@ void TimeOfFlightMomentumCorrelationPlot::processEvent(const QVector<Hit*>&, Tra
   if (!(flags & (TrackInformation::AllTrackerLayers | TrackInformation::InsideMagnet)))
     return;
   histogram()->Fill(track->p(), 1./track->beta());
-}
-
-void TimeOfFlightMomentumCorrelationPlot::draw(TCanvas* canvas)
-{
-  H2DPlot::draw(canvas);
-  foreach (TF1* function, m_functions)
-    function->Draw("SAME");
-}
-
-void TimeOfFlightMomentumCorrelationPlot::finalize()
-{
 }

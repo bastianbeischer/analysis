@@ -12,10 +12,6 @@ public:
   explicit TimeOfFlightMomentumCorrelationPlot();
   virtual ~TimeOfFlightMomentumCorrelationPlot();
   virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
-  virtual void finalize();
-  virtual void draw(TCanvas*);
-private:
-  QVector<TF1*> m_functions;
 };
 
 #endif
