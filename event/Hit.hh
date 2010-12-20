@@ -25,6 +25,7 @@ public:
   virtual ~Hit();
 
 public:
+  void setSignalHeight(const int height) {m_signalHeight = height;}
   void setPosition(const TVector3 pos) {m_position = pos;}
 
 public:
