@@ -319,6 +319,8 @@ void MainWindow::analyzeButtonClicked()
     setupAnalysis();
     if (m_ui.trackComboBox->currentText() == "centered broken line") {
       m_ui.plotter->startAnalysis(Track::CenteredBrokenLine, m_ui.numberOfThreadsSpinBox->value());
+    } else if (m_ui.trackComboBox->currentText() == "centered broken line 2D") {
+      m_ui.plotter->startAnalysis(Track::CenteredBrokenLine2D, m_ui.numberOfThreadsSpinBox->value());
     } else if (m_ui.trackComboBox->currentText() == "broken line") {
       m_ui.plotter->startAnalysis(Track::BrokenLine , m_ui.numberOfThreadsSpinBox->value());
     } else if (m_ui.trackComboBox->currentText() == "straight line") {

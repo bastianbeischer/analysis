@@ -2,6 +2,7 @@
 #include "AnalysisPlot.hh"
 #include "Track.hh"
 #include "CenteredBrokenLine.hh"
+#include "CenteredBrokenLine2D.hh"
 #include "BrokenLine.hh"
 #include "StraightLine.hh"
 #include "TrackFinding.hh"
@@ -25,6 +26,8 @@ AnalysisThread::AnalysisThread(EventQueue* queue, Track::Type track, const QVect
 {
   if (track == Track::CenteredBrokenLine)
     m_track = new CenteredBrokenLine;
+  else if (track == Track::CenteredBrokenLine2D)
+    m_track = new CenteredBrokenLine2D;
   else if (track == Track::BrokenLine)
     m_track = new BrokenLine;
   else if (track == Track::StraightLine)

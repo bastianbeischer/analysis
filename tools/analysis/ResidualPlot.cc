@@ -9,6 +9,7 @@
 #include "StraightLine.hh"
 #include "BrokenLine.hh"
 #include "CenteredBrokenLine.hh"
+#include "CenteredBrokenLine2D.hh"
 #include "Track.hh"
 #include "TH2D.h"
 
@@ -83,6 +84,8 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleE
     mytrack = new BrokenLine;
   else if (track->type() == Track::CenteredBrokenLine)
     mytrack = new CenteredBrokenLine;
+  else if (track->type() == Track::CenteredBrokenLine2D)
+    mytrack = new CenteredBrokenLine2D;
   else mytrack = 0;
 
   // fit and fill histograms

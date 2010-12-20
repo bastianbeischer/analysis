@@ -18,10 +18,12 @@ SOURCES += Track.cc \
            StraightLine.cc \
            BrokenLine.cc \
            CenteredBrokenLine.cc \
+           CenteredBrokenLine2D.cc \
            Matrix.cc \
            StraightLineMatrix.cc \
            BrokenLineMatrix.cc \
-           CenteredBrokenLineMatrix.cc
+           CenteredBrokenLineMatrix.cc \
+           CenteredBrokenLineMatrix2D.cc
 
 HEADERS += Track.hh \     
            TrackInformation.hh \
@@ -29,10 +31,12 @@ HEADERS += Track.hh \
            StraightLine.hh \
            BrokenLine.hh \
            CenteredBrokenLine.hh \
+           CenteredBrokenLine2D.hh \
            Matrix.hh \
            StraightLineMatrix.hh \
            BrokenLineMatrix.hh \
-           CenteredBrokenLineMatrix.hh
+           CenteredBrokenLineMatrix.hh \
+           CenteredBrokenLineMatrix2D.hh
 
 INCLUDEPATH += $$TOPLEVEL/event $$TOPLEVEL/global
 

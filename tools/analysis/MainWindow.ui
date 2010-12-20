@@ -130,8 +130,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>173</width>
-            <height>694</height>
+            <width>177</width>
+            <height>522</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -724,6 +724,11 @@ TRD</string>
          <item>
           <property name="text">
            <string>centered broken line</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>centered broken line 2D</string>
           </property>
          </item>
          <item>
