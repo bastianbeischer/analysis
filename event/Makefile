@@ -13,7 +13,7 @@ OBJECTS = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=.o)) $(DICTS:.cc=.o)
 CXX          := g++
 INCLUDEFLAGS := -I$(INCLUDEDIR) -I$(shell root-config --incdir)
 LIBS         := $(shell root-config --libs)
-CXXFLAGS     := -march=native -mtune=native -g -O2 -Wall -fPIC $(INCLUDEFLAGS) -MMD
+CXXFLAGS     := -g -O2 -Wall -fPIC $(INCLUDEFLAGS) -MMD
 
 .PHONY: all clean
 .SECONDARY: $(DICTS)
