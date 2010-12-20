@@ -1,6 +1,5 @@
 #include "GeometricOccupancyProjectionPlot.hh"
-#include "BrokenLine.hh"
-#include "CenteredBrokenLine.hh"
+#include "Track.hh"
 
 #include "TrackInformation.hh"
 #include "Hit.hh"

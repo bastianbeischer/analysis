@@ -1,6 +1,5 @@
 #include "BendingAnglePositionPlot.hh"
 #include "BrokenLine.hh"
-#include "CenteredBrokenLine.hh"
 
 #include "TrackInformation.hh"
 #include "Hit.hh"

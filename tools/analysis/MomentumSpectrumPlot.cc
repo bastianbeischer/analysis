@@ -5,8 +5,6 @@
 #include "Hit.hh"
 #include "TrackInformation.hh"
 #include "Track.hh"
-#include "BrokenLine.hh"
-#include "CenteredBrokenLine.hh"
 
 #include <iostream>
 
