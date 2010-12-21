@@ -30,4 +30,5 @@ LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
                          -lsetup \
                          -ltracking
 
-include(../root.pri)
+include($$TOPLEVEL/root.pri)
+include($$TOPLEVEL/macx.pri)

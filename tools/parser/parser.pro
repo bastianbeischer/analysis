@@ -35,5 +35,6 @@ SOURCES = main.cc \
                   
 include(perdaix.pri)
 include($$TOPLEVEL/root.pri)
+include($$TOPLEVEL/macx.pri)
 
 QMAKE_LFLAGS -= -Wl,--as-needed

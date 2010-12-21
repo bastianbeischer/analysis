@@ -28,4 +28,5 @@ DEPENDPATH += $$INCLUDEPATH
 
 LIBS +=
 
-include(../root.pri)
+include($$TOPLEVEL/root.pri)
+include($$TOPLEVEL/macx.pri)
