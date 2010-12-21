@@ -1,6 +1,7 @@
 #include "MomentumSpectrumPlot.hh"
 
 #include <TH1D.h>
+#include <TLatex.h>
 
 #include "Hit.hh"
 #include "TrackInformation.hh"
@@ -33,6 +34,13 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Range range) :
   histogram->GetYaxis()->SetTitle("entries");
   histogram->SetLineColor(kBlack);
   addHistogram(histogram);
+  TLatex* latex = 0;
+  latex = new TLatex(.15, .85, 0);
+  latex->SetNDC();
+  latex->SetTextAlign(13);
+  latex->SetTextFont(82);
+  latex->SetTextSize(0.03);
+  addLatex(latex);
 }
 
 MomentumSpectrumPlot::~MomentumSpectrumPlot()
@@ -58,4 +66,9 @@ void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Track* track, Simp
       return;
     histogram()->Fill(pt);
   }
+}
+
+void MomentumSpectrumPlot::update()
+{
+  latex(0)->SetTitle(qPrintable(QString("entries = %1").arg(histogram()->GetEntries())));
 }
