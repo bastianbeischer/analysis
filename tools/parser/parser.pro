@@ -33,8 +33,8 @@ SOURCES = main.cc \
           DataManager.cc \
           SingleFile.cc
                   
-include(perdaix.pri)
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
+include(perdaix.pri)
 
 QMAKE_LFLAGS -= -Wl,--as-needed
