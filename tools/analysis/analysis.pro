@@ -52,7 +52,10 @@ HEADERS = MainWindow.hh \
           SignalHeightPlot.hh \
           ClusterLengthPlot.hh \
           TimeDifferencePlot.hh \
-          TimeOfFlightMomentumCorrelationPlot.hh
+          TimeOfFlightMomentumCorrelationPlot.hh \
+          TRDCalculations.hh \
+          TRDClustersOnTrackPlot.hh \
+          TRDDistanceInTube.hh
 
 # Sources
 SOURCES = main.cc \
@@ -77,7 +80,10 @@ SOURCES = main.cc \
           SignalHeightPlot.cc \
           ClusterLengthPlot.cc \
           TimeDifferencePlot.cc \
-          TimeOfFlightMomentumCorrelationPlot.cc
+          TimeOfFlightMomentumCorrelationPlot.cc \
+          TRDCalculations.cc \
+          TRDClustersOnTrackPlot.cc \
+          TRDDistanceInTube.cc \
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
