@@ -9,12 +9,12 @@
 
 #include "Track.hh"
 
-TRDFitPlot::TRDFitPlot(AnalysisPlot::Topic topic) :
+TRDFitPlot::TRDFitPlot(AnalysisPlot::Topic topic, QString title) :
   AnalysisPlot(topic),
   H1DPlot()
 {
-  setTitle("TRD MPVs");
-  TH1D* histogram = new TH1D(qPrintable(title()), "", 50, 5, 20);
+  setTitle(title);
+  TH1D* histogram = new TH1D(qPrintable(this->title()), "", 50, 5, 20);
   histogram->SetStats(true);
   addHistogram(histogram);
 }

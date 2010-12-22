@@ -9,7 +9,7 @@ class TRDFitPlot : public AnalysisPlot, public H1DPlot
 {
   
 public:
-  TRDFitPlot(AnalysisPlot::Topic);
+  TRDFitPlot(AnalysisPlot::Topic, QString title);
   ~TRDFitPlot();
 
   virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);

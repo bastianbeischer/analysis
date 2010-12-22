@@ -25,6 +25,7 @@
 #include "TRDClustersOnTrackPlot.hh"
 #include "TRDDistanceWireToTrackPlot.hh"
 #include "TRDDistanceInTube.hh"
+#include "TRDMoPVTimeEvolutionPlot.hh"
 #include "TRDEnergyDepositionOverMomentumPlot.hh"
 #include "TRDSpectrumPlot.hh"
 #include "TRDFitPlot.hh"
@@ -189,15 +190,14 @@ void MainWindow::setupAnalysis()
       element = setup->nextElement();
     }
 
-    // //add time evolution plot of trd module MoPV
-    // m_ui.plotter->addPlot( new TRDMoPVTimeEvolutionPlot(AnalysisPlot::SignalHeightTRD) );
+    //add time evolution plot of trd module MoPV
+    m_ui.plotter->addPlot( new TRDMoPVTimeEvolutionPlot(AnalysisPlot::SignalHeightTRD) );
 
     //add trd spectrum for whole trd
     m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
     
     //add the MPV distribution plot for modules
-    TRDFitPlot* mpvModuleTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD);
-    mpvModuleTRDPlot->setTitle("MPVs of TRD Modules");
+    TRDFitPlot* mpvModuleTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD, "MPVs of TRD Modules");
 
     //add trd spectra normalized to distance in tube:
     element = setup->firstElement();
@@ -212,8 +212,7 @@ void MainWindow::setupAnalysis()
     m_ui.plotter->addPlot(mpvModuleTRDPlot);
 
     // add the MPV distribution plot for channels
-    TRDFitPlot* mpvChannelTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD);
-    mpvChannelTRDPlot->setTitle("MPVs of TRD Channels");
+    TRDFitPlot* mpvChannelTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD, "MPVs of TRD Channels");
 
     //add trd spectra normalized to distance in tube:
     element = setup->firstElement();

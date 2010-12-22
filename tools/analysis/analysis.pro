@@ -60,7 +60,8 @@ HEADERS = MainWindow.hh \
           TRDEnergyDepositionOverMomentumPlot.hh \
           TRDSpectrumPlot.hh \
           TRDFitPlot.hh \
-          TRDOccupancyPlot.hh
+          TRDOccupancyPlot.hh \
+          TRDMoPVTimeEvolutionPlot.hh
 
 # Sources
 SOURCES = main.cc \
@@ -93,7 +94,8 @@ SOURCES = main.cc \
           TRDEnergyDepositionOverMomentumPlot.cc \
           TRDSpectrumPlot.cc \
           TRDFitPlot.cc \
-          TRDOccupancyPlot.cc
+          TRDOccupancyPlot.cc \
+          TRDMoPVTimeEvolutionPlot.cc
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
