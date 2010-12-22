@@ -26,7 +26,7 @@ void GraphPlot::clear()
 {
   for (int i = 0; i < numberOfGraphs(); i++)
     clear(i);
-nn}
+}
 
 void GraphPlot::clear(int i)
 {
