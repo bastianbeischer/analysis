@@ -22,8 +22,10 @@
 #include "TimeOfFlightPlot.hh"
 #include "TimeDifferencePlot.hh"
 #include "TimeOfFlightMomentumCorrelationPlot.hh"
+#include "TRDClustersOnTrackPlot.hh"
+#include "TRDDistanceWireToTrackPlot.hh"
+#include "TRDDistanceInTube.hh"
 
-#include <QDebug>
 #include <QFileDialog>
 #include <QVBoxLayout>
 
@@ -256,6 +258,9 @@ void MainWindow::setupAnalysis()
   if (m_ui.miscellaneousTrackerCheckBox->isChecked()) {
   }
   if (m_ui.miscellaneousTRDCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisPlot::MiscellaneousTRD));
+    m_ui.plotter->addPlot(new TRDDistanceWireToTrackPlot(AnalysisPlot::MiscellaneousTRD));
+    m_ui.plotter->addPlot(new TRDDistanceInTube(AnalysisPlot::MiscellaneousTRD));
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TimeOfFlightPlot());
