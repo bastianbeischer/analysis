@@ -25,6 +25,7 @@
 #include "TRDClustersOnTrackPlot.hh"
 #include "TRDDistanceWireToTrackPlot.hh"
 #include "TRDDistanceInTube.hh"
+#include "TRDEnergyDepositionOverMomentumPlot.hh"
 
 #include <QFileDialog>
 #include <QVBoxLayout>
@@ -183,6 +184,8 @@ void MainWindow::setupAnalysis()
         m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightTRD, element->id()));
       element = setup->nextElement();
     }
+    //add energy over momentum plot
+    m_ui.plotter->addPlot(new TRDEnergyDepositionOverMomentumPlot(AnalysisPlot::SignalHeightTRD));
   }
   if (m_ui.clusterLengthUpperTrackerCheckBox->isChecked()) {
     DetectorElement* element = setup->firstElement();
