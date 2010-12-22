@@ -28,6 +28,7 @@
 #include "TRDEnergyDepositionOverMomentumPlot.hh"
 #include "TRDSpectrumPlot.hh"
 #include "TRDFitPlot.hh"
+#include "TRDOccupancyPlot.hh"
 
 #include <QFileDialog>
 #include <QVBoxLayout>
@@ -265,6 +266,9 @@ void MainWindow::setupAnalysis()
     m_ui.plotter->addPlot(new Chi2Plot);
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::numberOfHits));
+    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeights));
+    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits));
     Layer* layer = setup->firstLayer();
     while(layer) {
       m_ui.plotter->addPlot(new GeometricOccupancyPlot(layer->z()));
