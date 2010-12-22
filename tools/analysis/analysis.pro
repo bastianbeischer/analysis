@@ -55,7 +55,8 @@ HEADERS = MainWindow.hh \
           TimeOfFlightMomentumCorrelationPlot.hh \
           TRDCalculations.hh \
           TRDClustersOnTrackPlot.hh \
-          TRDDistanceInTube.hh
+          TRDDistanceInTube.hh \
+          TRDDistanceWireToTrackPlot.hh
 
 # Sources
 SOURCES = main.cc \
@@ -84,6 +85,7 @@ SOURCES = main.cc \
           TRDCalculations.cc \
           TRDClustersOnTrackPlot.cc \
           TRDDistanceInTube.cc \
+          TRDDistanceWireToTrackPlot.cc
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
