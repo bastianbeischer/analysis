@@ -26,6 +26,8 @@
 #include "TRDDistanceWireToTrackPlot.hh"
 #include "TRDDistanceInTube.hh"
 #include "TRDEnergyDepositionOverMomentumPlot.hh"
+#include "TRDSpectrumPlot.hh"
+#include "TRDFitPlot.hh"
 
 #include <QFileDialog>
 #include <QVBoxLayout>
@@ -178,12 +180,54 @@ void MainWindow::setupAnalysis()
     }
   }
   if (m_ui.signalHeightTRDCheckBox->isChecked()) {
+
     DetectorElement* element = setup->firstElement();
     while(element) {
       if (element->type() == DetectorElement::trd)
         m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightTRD, element->id()));
       element = setup->nextElement();
     }
+
+    // //add time evolution plot of trd module MoPV
+    // m_ui.plotter->addPlot( new TRDMoPVTimeEvolutionPlot(AnalysisPlot::SignalHeightTRD) );
+
+    //add trd spectrum for whole trd
+    m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
+    
+    //add the MPV distribution plot for modules
+    TRDFitPlot* mpvModuleTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD);
+    mpvModuleTRDPlot->setTitle("MPVs of TRD Modules");
+
+    //add trd spectra normalized to distance in tube:
+    element = setup->firstElement();
+    while(element) {
+      if (element->type() == DetectorElement::trd){
+        TRDSpectrumPlot* trdModuleSpectrumPlot = new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, element->id(),TRDSpectrumPlot::module);
+        m_ui.plotter->addPlot(trdModuleSpectrumPlot);
+        mpvModuleTRDPlot->addLandauFit(trdModuleSpectrumPlot->landauFit());
+      }
+      element = setup->nextElement();
+    }
+    m_ui.plotter->addPlot(mpvModuleTRDPlot);
+
+    // add the MPV distribution plot for channels
+    TRDFitPlot* mpvChannelTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD);
+    mpvChannelTRDPlot->setTitle("MPVs of TRD Channels");
+
+    //add trd spectra normalized to distance in tube:
+    element = setup->firstElement();
+    while(element) {
+      if (element->type() == DetectorElement::trd){
+        for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++){
+          TRDSpectrumPlot* trdChannelSpectrumPlot = new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, element->id() | tubeNo,TRDSpectrumPlot::channel);
+          m_ui.plotter->addPlot(trdChannelSpectrumPlot);
+          mpvChannelTRDPlot->addLandauFit(trdChannelSpectrumPlot->landauFit());
+        }
+      }
+      element = setup->nextElement();
+    }
+    m_ui.plotter->addPlot(mpvChannelTRDPlot);
+
     //add energy over momentum plot
     m_ui.plotter->addPlot(new TRDEnergyDepositionOverMomentumPlot(AnalysisPlot::SignalHeightTRD));
   }

@@ -57,7 +57,10 @@ HEADERS = MainWindow.hh \
           TRDClustersOnTrackPlot.hh \
           TRDDistanceInTube.hh \
           TRDDistanceWireToTrackPlot.hh \
-          TRDEnergyDepositionOverMomentumPlot.hh
+          TRDEnergyDepositionOverMomentumPlot.hh \
+          TRDSpectrumPlot.hh \
+          TRDFitPlot.hh
+
 
 # Sources
 SOURCES = main.cc \
@@ -87,7 +90,9 @@ SOURCES = main.cc \
           TRDClustersOnTrackPlot.cc \
           TRDDistanceInTube.cc \
           TRDDistanceWireToTrackPlot.cc \
-         TRDEnergyDepositionOverMomentumPlot.cc
+          TRDEnergyDepositionOverMomentumPlot.cc \
+          TRDSpectrumPlot.cc \
+          TRDFitPlot.cc
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
