@@ -7,14 +7,31 @@
 #include "DetectorElement.hh"
 #include "TOFBar.hh"
 
+#include <QProcess>
+#include <QSettings>
+
 #include <cstring>
 
-Corrections::Corrections()
+Corrections::Corrections() :
+  m_trdSettings(0)
 {
+  QStringList envVariables = QProcess::systemEnvironment();
+  QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
+  QString path = "";
+  if (filteredVars.size() != 0) {
+    QString entry = filteredVars.first();
+    path = entry.split("=").at(1);
+    path += "/conf/";
+  }
+  else {
+    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
+  }
+  m_trdSettings = new QSettings(path+"TRDCorrections.conf", QSettings::IniFormat);
 }
 
 Corrections::~Corrections()
 {
+  delete m_trdSettings;
 }
 
 void Corrections::apply(QVector<Hit*>& hits, Flags flags)
@@ -56,10 +73,38 @@ void Corrections::timeShift(Hit* hit)
   }
 }
 
-void Corrections::trdMopv(Hit*)
+void Corrections::trdMopv(Hit* hit)
 {
+  //only process TRD hits
+  if ( hit->type() != Hit::trd )
+    return;
+
+  if (strcmp(hit->ClassName(), "Hit") == 0) {
+    double trdScalingFactor = this->trdScalingFactor(hit->detId()) ;
+    hit->setSignalHeight(hit->signalHeight() * trdScalingFactor) ;
+  }
+  else if (strcmp(hit->ClassName(), "Cluster") == 0) {
+    Cluster* cluster = static_cast<Cluster*>(hit) ;
+    for (std::vector<Hit*>::iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
+      Hit* trdHit = *it;
+      double trdScalingFactor = this->trdScalingFactor(trdHit->detId()) ;
+      trdHit->setSignalHeight(trdHit->signalHeight() * trdScalingFactor) ;
+    }
+  }
 }
 
 void Corrections::tofTimeOverThreshold(Hit*)
 {
 }
+
+double Corrections::trdScalingFactor(unsigned int channel)
+{
+  return m_trdSettings->value( "ConstScaleFactor/" + QString::number(channel,16) , 1.).toDouble() ;
+}
+
+void Corrections::setTrdScalingFactor(unsigned int channel, double value)
+{
+  m_trdSettings->setValue( "ConstScaleFactor/" + QString::number(channel,16), value) ;
+  m_trdSettings->sync();
+}
+

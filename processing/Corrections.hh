@@ -4,6 +4,7 @@
 #include <QFlags>
 #include <QVector>
 
+class QSettings;
 class Hit;
 
 class Corrections
@@ -25,6 +26,13 @@ private:
   void timeShift(Hit*);
   void trdMopv(Hit*);
   void tofTimeOverThreshold(Hit*);
+
+private:
+  double trdScalingFactor(unsigned int);
+  void setTrdScalingFactor(unsigned int, double);
+
+private:
+  QSettings* m_trdSettings;
 
 };
 
