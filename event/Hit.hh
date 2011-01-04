@@ -16,7 +16,7 @@ public:
 
   Hit(ModuleType typ,
       unsigned short detId,
-      int signalHeight,
+      double signalHeight,
       TVector3 position,
       TVector3 counterPosition);
 
@@ -25,13 +25,13 @@ public:
   virtual ~Hit();
 
 public:
-  void setSignalHeight(const int height) {m_signalHeight = height;}
+  void setSignalHeight(const double height) {m_signalHeight = height;}
   void setPosition(const TVector3 pos) {m_position = pos;}
 
 public:
   ModuleType      type()            const {return m_type;}
   unsigned short  detId()           const {return m_detId;}
-  int             signalHeight()    const {return m_signalHeight;}
+  double          signalHeight()    const {return m_signalHeight;}
   const TVector3& position()        const {return m_position;}
   const TVector3& counterPosition() const {return m_counterPosition;}
   double          angle()           const {return m_angle;}
@@ -50,7 +50,7 @@ protected:
 protected:
   ModuleType     m_type;
   unsigned short m_detId;
-  int            m_signalHeight;
+  double         m_signalHeight;
   TVector3       m_position;
   TVector3       m_counterPosition;
   double         m_angle;

@@ -58,13 +58,13 @@ void TOFSipmHit::processTDCHits()
       }
     }
     m_timeOverThreshold = maxTot;
-    m_signalHeight = 10 * maxTot;
+    m_signalHeight = 10. * maxTot;
     m_startTime = startBelongingToMaxTot;
     return;
   }
-  m_timeOverThreshold = 0;
-  m_signalHeight = 0;
-  m_startTime = 0;
+  m_timeOverThreshold = 0.;
+  m_signalHeight = 0.;
+  m_startTime = 0.;
 }
 
 double TOFSipmHit::time(int i) const
