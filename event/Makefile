@@ -4,8 +4,8 @@ TARGET     := $(LIBDIR)/libSimpleEvent.so
 INCLUDEDIR := .
 TEMPDIR    := .tmp
 
-SOURCES = SimpleEvent.cc Hit.cc Cluster.cc DataDescription.cc DataChain.cc TOFSipmHit.cc TOFCluster.cc
-HEADERS = SimpleEvent.hh Hit.hh Cluster.hh DataDescription.hh DataChain.hh TOFSipmHit.hh TOFCluser.hh
+SOURCES = SimpleEvent.cc Hit.cc Cluster.cc DataDescription.cc DataChain.cc TOFSipmHit.cc TOFCluster.cc SensorsData.cc
+HEADERS = SimpleEvent.hh Hit.hh Cluster.hh DataDescription.hh DataChain.hh TOFSipmHit.hh TOFCluser.hh SensorsData.hh
 DICTS   = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=Dict.cc))
 OBJECTS = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=.o)) $(DICTS:.cc=.o)
 
@@ -13,7 +13,7 @@ OBJECTS = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=.o)) $(DICTS:.cc=.o)
 CXX          := g++
 INCLUDEFLAGS := -I$(INCLUDEDIR) -I$(shell root-config --incdir)
 LIBS         := $(shell root-config --libs)
-CXXFLAGS     := -march=native -mtune=native -g -O2 -Wall -fPIC $(INCLUDEFLAGS) -MMD
+CXXFLAGS     := -g -O2 -Wall -fPIC $(INCLUDEFLAGS) -MMD
 
 .PHONY: all clean
 .SECONDARY: $(DICTS)

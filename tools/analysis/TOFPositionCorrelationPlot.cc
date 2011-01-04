@@ -1,7 +1,7 @@
 #include "TOFPositionCorrelationPlot.hh"
 #include "BrokenLine.hh"
 
-#include "TrackSelection.hh"
+#include "TrackInformation.hh"
 #include "Hit.hh"
 #include "TOFCluster.hh"
 
@@ -17,31 +17,31 @@ TOFPositionCorrelationPlot::TOFPositionCorrelationPlot(unsigned short id)
   , H2DPlot()
   , m_id(id)
   , m_correlationGraph(new TGraphErrors)
-  , m_correlationFunction(new TF1(qPrintable(QString("tof correlation Function %1").arg(id)), "pol1"))
 {
   setTitle(QString("tof position correlation 0x%1").arg(id, 0, 16));
   TH2D* histogram = new TH2D(qPrintable(title()), "", 45, -450, 450, 90, -450, 450);
   histogram->GetXaxis()->SetTitle("y_{tracker} / mm");
   histogram->GetYaxis()->SetTitle("y_{TOF} / mm");
   setHistogram(histogram);
-  m_correlationFunction->SetRange(-450, 450);
-  m_correlationFunction->SetParameters(0, 1);
+  TF1* function = new TF1(qPrintable(QString("tof correlation Function %1").arg(id)), "pol1");
+  function->SetRange(-450, 450);
+  function->SetParameters(0, 1);
+  addFunction(function);
 }
 
 TOFPositionCorrelationPlot::~TOFPositionCorrelationPlot()
 {
   delete m_correlationGraph;
-  delete m_correlationFunction;
 }
 
-void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, Track* track, TrackSelection* selection, SimpleEvent*)
+void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
 {
   // QMutexLocker locker(&m_mutex);
-  if (!track || !selection || !track->fitGood())
+  if (!track || !track->fitGood())
     return;
 
-  TrackSelection::Flags flags = selection->flags();
-  if (!(flags & TrackSelection::AllTrackerLayers))
+  TrackInformation::Flags flags = track->information()->flags();
+  if (!(flags & TrackInformation::AllTrackerLayers))
     return;
 
   foreach(Hit* hit, clusters)
@@ -54,7 +54,6 @@ void TOFPositionCorrelationPlot::draw(TCanvas* canvas)
   H2DPlot::draw(canvas);
   if (m_correlationGraph->GetN()) {
     m_correlationGraph->Draw("SAME P");
-    m_correlationFunction->Draw("SAME");
   }
 }
 
@@ -78,5 +77,5 @@ void TOFPositionCorrelationPlot::finalize()
     }
     delete h;
   }
-  m_correlationGraph->Fit(m_correlationFunction, "QN0");
+  m_correlationGraph->Fit(function(), "QN0");
 }

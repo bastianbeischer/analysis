@@ -8,14 +8,14 @@ Hit::Hit() :
   TObject(),
   m_type(none),
   m_detId(0x0),
-  m_signalHeight(0),
+  m_signalHeight(0.),
   m_position(TVector3()),
   m_counterPosition(TVector3()),
   m_angle(0.)
 {
 }
 
-Hit::Hit(ModuleType typ, unsigned short detId, int signalHeight, TVector3 position, TVector3 counterPosition) :
+Hit::Hit(ModuleType typ, unsigned short detId, double signalHeight, TVector3 position, TVector3 counterPosition) :
   TObject(),
   m_type(typ),
   m_detId(detId),

@@ -5,6 +5,8 @@
 #include <TCanvas.h>
 #include <TPad.h>
 
+#include <QDebug>
+
 H1DPlot::H1DPlot()
   : RootPlot()
   , m_histograms()
@@ -19,10 +21,11 @@ void H1DPlot::draw(TCanvas* canvas)
 {
   canvas->cd();
   foreach (TH1D* h, m_histograms)
-    if (h == m_histograms.first())
+    if (h == m_histograms.first()) {
       h->Draw();
-    else
+    } else {
       h->Draw("SAME");
+    }
   RootPlot::draw(canvas);
 }
 

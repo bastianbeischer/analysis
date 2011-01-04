@@ -16,6 +16,8 @@ RCC_DIR     = ./.tmp
 FORMS+= MainWindow.ui
 
 INCLUDEPATH += $$TOPLEVEL/event \
+               $$TOPLEVEL/global \
+               $$TOPLEVEL/processing \
                $$TOPLEVEL/rootplot \
                $$TOPLEVEL/setup \
                $$TOPLEVEL/tracking
@@ -23,6 +25,7 @@ INCLUDEPATH += $$TOPLEVEL/event \
 DEPENDPATH += $$INCLUDEPATH
 
 LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
+                         -lprocessing \
                          -ltracking \
                          -lrootplot \
                          -lsetup
@@ -48,7 +51,8 @@ HEADERS = MainWindow.hh \
           GeometricOccupancyProjectionPlot.hh \
           SignalHeightPlot.hh \
           ClusterLengthPlot.hh \
-          TimeDifferencePlot.hh
+          TimeDifferencePlot.hh \
+          TimeOfFlightMomentumCorrelationPlot.hh
 
 # Sources
 SOURCES = main.cc \
@@ -72,7 +76,8 @@ SOURCES = main.cc \
           GeometricOccupancyProjectionPlot.cc \
           SignalHeightPlot.cc \
           ClusterLengthPlot.cc \
-          TimeDifferencePlot.cc
+          TimeDifferencePlot.cc \
+          TimeOfFlightMomentumCorrelationPlot.cc
 
 include($$TOPLEVEL/root.pri)
 

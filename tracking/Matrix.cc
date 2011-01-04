@@ -3,13 +3,10 @@
 #include <TMatrixD.h>
 
 #include "Hit.hh"
-#include "Setup.hh"
+
+#include <QMap>
 
 #include <cmath>
-#include <iostream>
-
-#include <QDebug>
-#include <QPair>
 
 Matrix::Matrix() :
   m_nRow(0),

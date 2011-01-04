@@ -5,12 +5,12 @@
 
 class Track;
 
-class TrackSelection
+class TrackInformation
 {
   
 public:
-  TrackSelection();
-  ~TrackSelection();
+  TrackInformation(const Track* track);
+  ~TrackInformation();
   
   enum Flag {None=0x00, AllTrackerLayers=0x01, InsideMagnet=0x02, OutsideMagnet=0x04, HighPt=0x08, 
              MagnetCollision=0x10};
@@ -18,21 +18,22 @@ public:
   Q_DECLARE_FLAGS(Flags, Flag);
 
 public:
-  void processTrack(Track*);
+  void process();
   const Flags& flags() const {return m_flags;}
 
 private:
-  void checkAllTrackerLayers(Track*);
-  void checkInsideMagnet(Track*);
-  void checkOutsideMagnet(Track*);
-  void checkHighPt(Track*);
-  void checkMagnetCollision(Track*);
+  void checkAllTrackerLayers();
+  void checkInsideMagnet();
+  void checkOutsideMagnet();
+  void checkHighPt();
+  void checkMagnetCollision();
 
 private:
+  const Track* m_track;
   Flags m_flags;
 
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(TrackSelection::Flags);
+Q_DECLARE_OPERATORS_FOR_FLAGS(TrackInformation::Flags);
 
 #endif /* TrackSelection_hh */

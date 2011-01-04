@@ -4,6 +4,7 @@
 #include <TMatrixD.h>
 
 #include "BrokenLineMatrix.hh"
+#include "TrackInformation.hh"
 #include "Hit.hh"
 
 #include <cmath>
@@ -60,6 +61,8 @@ int BrokenLine::fit(const QVector<Hit*>& hits)
       std::cout << "--------------------------------------------------------------------------------------------------" << std::endl;
     }
   }
+
+  m_information->process();
 
   return m_fitGood;
 }

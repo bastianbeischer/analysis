@@ -1,12 +1,11 @@
 #include "MomentumSpectrumPlot.hh"
 
 #include <TH1D.h>
+#include <TLatex.h>
 
 #include "Hit.hh"
-#include "TrackSelection.hh"
+#include "TrackInformation.hh"
 #include "Track.hh"
-#include "BrokenLine.hh"
-#include "CenteredBrokenLine.hh"
 
 #include <iostream>
 
@@ -35,29 +34,41 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Range range) :
   histogram->GetYaxis()->SetTitle("entries");
   histogram->SetLineColor(kBlack);
   addHistogram(histogram);
+  TLatex* latex = 0;
+  latex = new TLatex(.15, .85, 0);
+  latex->SetNDC();
+  latex->SetTextAlign(13);
+  latex->SetTextFont(82);
+  latex->SetTextSize(0.03);
+  addLatex(latex);
 }
 
 MomentumSpectrumPlot::~MomentumSpectrumPlot()
 {
 }
 
-void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Track* track, TrackSelection* selection, SimpleEvent* /*event*/)
+void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent* /*event*/)
 {
   // QMutexLocker locker(&m_mutex);
-  if (!track || !selection || !track->fitGood())
+  if (!track || !track->fitGood())
     return;
 
-  TrackSelection::Flags flags = selection->flags();
-  if (!(flags & TrackSelection::AllTrackerLayers))
+  TrackInformation::Flags flags = track->information()->flags();
+  if (!(flags & TrackInformation::AllTrackerLayers))
     return;
 
   double pt = track->pt();
 
-  if (flags & TrackSelection::InsideMagnet) {
+  if (flags & TrackInformation::InsideMagnet) {
     if (m_range == Negative && pt >= 0)
       return;
     if (m_range == Positive && pt <= 0)
       return;
     histogram()->Fill(pt);
   }
+}
+
+void MomentumSpectrumPlot::update()
+{
+  latex(0)->SetTitle(qPrintable(QString("entries = %1").arg(histogram()->GetEntries())));
 }

@@ -1,6 +1,6 @@
 #include "ResidualPlot.hh"
 
-#include "TrackSelection.hh"
+#include "TrackInformation.hh"
 #include "Setup.hh"
 #include "Layer.hh"
 #include "Setup.hh"
@@ -9,6 +9,7 @@
 #include "StraightLine.hh"
 #include "BrokenLine.hh"
 #include "CenteredBrokenLine.hh"
+#include "CenteredBrokenLine2D.hh"
 #include "Track.hh"
 #include "TH2D.h"
 
@@ -48,18 +49,18 @@ ResidualPlot::~ResidualPlot()
 {
 }
 
-void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSelection* selection, SimpleEvent* /*event*/)
+void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* /*event*/)
 {
   // QMutexLocker locker(&m_mutex);
-  if (!track || !selection || !track->fitGood())
+  if (!track || !track->fitGood())
     return;
 
-  TrackSelection::Flags flags = selection->flags();
-  if (!(flags & TrackSelection::AllTrackerLayers))
+  TrackInformation::Flags flags = track->information()->flags();
+  if (!(flags & TrackInformation::AllTrackerLayers))
     return;
 
   // only select tracks which didn't pass through the magnet
-  if ((flags & TrackSelection::MagnetCollision))
+  if ((flags & TrackInformation::MagnetCollision))
     return;
 
   // remove hits in this layer from hits for track fit
@@ -83,10 +84,12 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, TrackSe
     mytrack = new BrokenLine;
   else if (track->type() == Track::CenteredBrokenLine)
     mytrack = new CenteredBrokenLine;
+  else if (track->type() == Track::CenteredBrokenLine2D)
+    mytrack = new CenteredBrokenLine2D;
   else mytrack = 0;
 
   // fit and fill histograms
-  if (mytrack->fit(hitsForFit)) {
+  if (mytrack->process(hitsForFit)) {
     foreach(Hit* hit, hitsInThisLayer) {
       double z = m_layer->z();
       double hitX = hit->position().x();

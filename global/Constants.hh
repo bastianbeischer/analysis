@@ -1,5 +1,11 @@
-#ifndef TOFConstants_hh
-#define TOFConstants_hh
+#ifndef Constants_hh
+#define Constants_hh
+
+const double electronMass = 0.000511;
+const double muonMass = 0.105658;
+const double pionMass = 0.139570;
+const double protonMass = 0.938272;
+const double heliumMass = 4.002602*protonMass;
 
 const double speedOfLight = 299.792458;  // mm/ns
 const double tofBarLength = 395;         // mm

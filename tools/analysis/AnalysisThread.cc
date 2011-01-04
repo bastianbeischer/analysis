@@ -2,15 +2,16 @@
 #include "AnalysisPlot.hh"
 #include "Track.hh"
 #include "CenteredBrokenLine.hh"
+#include "CenteredBrokenLine2D.hh"
 #include "BrokenLine.hh"
 #include "StraightLine.hh"
-#include "TrackSelection.hh"
 #include "TrackFinding.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
 #include "SimpleEvent.hh"
 #include "Setup.hh"
 #include "EventQueue.hh"
+#include "Corrections.hh"
 
 #include <iostream>
 
@@ -18,7 +19,6 @@ AnalysisThread::AnalysisThread(EventQueue* queue, Track::Type track, const QVect
   : QThread(parent)
   , m_queue(queue)
   , m_track(0)
-  , m_trackSelection(new TrackSelection)
   , m_trackFinding(new TrackFinding)
   , m_plots(plots)
   , m_abort(true)
@@ -26,6 +26,8 @@ AnalysisThread::AnalysisThread(EventQueue* queue, Track::Type track, const QVect
 {
   if (track == Track::CenteredBrokenLine)
     m_track = new CenteredBrokenLine;
+  else if (track == Track::CenteredBrokenLine2D)
+    m_track = new CenteredBrokenLine2D;
   else if (track == Track::BrokenLine)
     m_track = new BrokenLine;
   else if (track == Track::StraightLine)
@@ -36,7 +38,6 @@ AnalysisThread::~AnalysisThread()
 {
   if (m_track)
     delete m_track;
-  delete m_trackSelection;
   delete m_trackFinding;
 }
 
@@ -69,16 +70,15 @@ void AnalysisThread::run()
       // Setup::CorrectionFlags flags;
       // flags |= Setup::Alignment;
       // flags |= Setup::TimeShifts;
-      // Setup::instance()->applyCorrections(hits, flags);
-      Setup::instance()->applyCorrections(hits);
+      Corrections corrections;
+      corrections.apply(clusters);
 
       QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
       if (m_track) {
-        m_track->fit(trackClusters);
-        m_trackSelection->processTrack(m_track);
+        m_track->process(trackClusters);
       }
       foreach (AnalysisPlot* plot, m_plots)
-        plot->processEvent(trackClusters, m_track, m_trackSelection, event);
+        plot->processEvent(trackClusters, m_track, event);
       if (event->contentType() == SimpleEvent::RawData)
         qDeleteAll(clusters);
       delete event;

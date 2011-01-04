@@ -3,12 +3,9 @@ TEMPLATE = subdirs
 CONFIG  += ordered
 
 SUBDIRS  = event \
-           rootplot \
            setup \
            tracking \
+           processing \
            alignment \
-           tools/alignment \
-           tools/analysis \
-           tools/eventdisplay \
-           tools/parser \
-           tools/preAnalysis
+           rootplot \
+           tools

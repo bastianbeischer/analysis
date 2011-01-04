@@ -11,6 +11,7 @@
 #include "Layer.hh"
 #include "TrackFinding.hh"
 #include "Setup.hh"
+#include "Corrections.hh"
 #include "DataDescription.hh"
 #include "HitsPlot.hh"
 
@@ -109,7 +110,8 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QTextBrow
   else
     clusters = Setup::instance()->generateClusters(hits);
 
-  Setup::instance()->applyCorrections(clusters);
+  Corrections corrections;
+  corrections.apply(clusters);
 
   Track* track = 0;
   if (drawTrack) {
@@ -121,7 +123,7 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QTextBrow
       track = new BrokenLine;
     else if (fitMethod == 2)
       track = new CenteredBrokenLine;
-    track->fit(clusters);
+    track->process(clusters);
   }
   m_hitsPlot->drawEvent(GetCanvas(), clusters, track);
 

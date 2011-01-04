@@ -1,8 +1,8 @@
 #include "StraightLine.hh"
 
 #include "StraightLineMatrix.hh"
+#include "TrackInformation.hh"
 #include "Hit.hh"
-#include "Setup.hh"
 
 #include <TGraphErrors.h>
 #include <TF1.h>
@@ -55,6 +55,8 @@ int StraightLine::fit(const QVector<Hit*>& hits)
     }
 
   }
+
+  m_information->process();
 
   return m_fitGood;
 }

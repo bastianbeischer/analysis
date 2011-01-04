@@ -3,7 +3,6 @@
 
 class AlignmentMatrix;
 class DataChain;
-class TrackSelection;
 class TrackFinding;
 
 class DataInterface
@@ -19,8 +18,6 @@ public:
 
 private:
   DataChain*      m_chain;
-
-  TrackSelection* m_trackSelection;
   TrackFinding*   m_trackFinding;
   
 };
