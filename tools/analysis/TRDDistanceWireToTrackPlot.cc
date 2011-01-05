@@ -37,30 +37,31 @@ void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& hits,Track* t
 
   //loop over all hits and count tracker hits
   //also find all clusters on track
-  QVector<Hit*> trdClusterHitsOnTrack;
+  QVector<Cluster*> trdClustersOnTrack;
 
   //TODO: check for off track hits, atm this is Bastians criteria for on track
   foreach(Hit* clusterHit, hits){
-    if (clusterHit->type() == Hit::trd)
-      trdClusterHitsOnTrack.push_back(clusterHit);
+    if (clusterHit->type() == Hit::trd){
+      Cluster* cluster = static_cast<Cluster*>(clusterHit);
+      //check if event contains trd clusters with more than 2 sub hits
+      if (cluster->hits().size() > 2)
+        return;
+
+      trdClustersOnTrack << cluster;
+    }
   }
 
   // cut on number of trd hits
-  if (trdClusterHitsOnTrack.size() < 6)
+  if (trdClustersOnTrack.size() < 6)
     return;
 
-  foreach(Hit* clusterHit, trdClusterHitsOnTrack){
-    Cluster* cluster = static_cast<Cluster*>(clusterHit);
-
-    if (cluster->hits().size() > 2)
-      continue;
-
-    foreach(Hit* hit, cluster->hits()){
-      double distanceWireToTrack = TRDCalculations::distanceTrackToWire(hit, track);
+  foreach(Cluster* cluster, trdClustersOnTrack){
+    //foreach(Hit* hit, cluster->hits()){
+      double distanceWireToTrack = TRDCalculations::distanceTrackToWire(cluster, track);
       //if(fabs(distanceWireToTrack) > 10)
 
         histogram(0)->Fill(distanceWireToTrack);
-    }
+    //}
   }
 }
 

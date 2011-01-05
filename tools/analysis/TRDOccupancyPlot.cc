@@ -61,8 +61,10 @@ void TRDOccupancyPlot::processEvent(const QVector<Hit*>& clustersOnTrack, Track*
   QVector<Hit*> clustersToAnalyze;
 
   if (m_onlyOnTrack){
+    //only use clusters on track
     clustersToAnalyze = clustersOnTrack;
   }else{
+    //use all clusters of the event
     clustersToAnalyze = QVector<Hit*>::fromStdVector(event->hits());
   }
 
