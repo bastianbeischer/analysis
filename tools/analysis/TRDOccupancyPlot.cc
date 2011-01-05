@@ -60,14 +60,14 @@ void TRDOccupancyPlot::processEvent(const QVector<Hit*>& clustersOnTrack, Track*
 
   QVector<Hit*> clustersToAnalyze;
 
-  if (m_onlyOnTrack)
+  if (m_onlyOnTrack){
     clustersToAnalyze = clustersOnTrack;
-  else{
-    clustersToAnalyze = QVector::fromStdVector(event->hits());
+  }else{
+    clustersToAnalyze = QVector<Hit*>::fromStdVector(event->hits());
   }
 
 
-  foreach(Hit* clusterHit, clustersToAnalyze)){
+  foreach(Hit* clusterHit, clustersToAnalyze){
     //only trd:
     if(clusterHit->type() != Hit::trd)
       continue;
