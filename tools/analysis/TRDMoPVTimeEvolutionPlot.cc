@@ -78,7 +78,7 @@ TRDMoPVTimeEvolutionPlot::~TRDMoPVTimeEvolutionPlot()
   for (int i = 0; i < m_binningMap.size(); i++)
          qDeleteAll(m_binningMap.values().at(i));
 
-  qDeleteAll(m_mopvGraphs);
+  //qDeleteAll(m_mopvGraphs);
 }
 
 void TRDMoPVTimeEvolutionPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* event)
@@ -182,6 +182,11 @@ void TRDMoPVTimeEvolutionPlot::finalize() {
   update();
 }
 
+//void TRDMoPVTimeEvolutionPlot::draw(TCanvas* canvas) {
+//  update();
+//  RootPlot::draw(canvas);
+//}
+
 void TRDMoPVTimeEvolutionPlot::update() {
   if(m_graphNeedsUpdate)
     updateGraph();
@@ -214,9 +219,15 @@ void TRDMoPVTimeEvolutionPlot::updateGraph() {
       }
     }
   }
-  multiGraph()->GetXaxis()->SetLimits(m_binningMap.keys().first(), m_binningMap.keys().last());
 
-  m_graphNeedsUpdate = false;
+  TAxis* multiAxis = multiGraph()->GetXaxis();
+  if (multiAxis) {
+    multiGraph()->GetXaxis()->SetLimits(m_binningMap.keys().first(), m_binningMap.keys().last()) ;
+    m_graphNeedsUpdate = false ;
+  } else {
+    m_graphNeedsUpdate = true ;
+  }
+
 }
 
 

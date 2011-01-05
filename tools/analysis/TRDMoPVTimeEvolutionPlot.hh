@@ -23,6 +23,7 @@ public:
   virtual void finalize();
 
   void update();
+//  virtual void draw(TCanvas*);
 
 private:
   void updateGraph();
