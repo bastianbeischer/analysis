@@ -27,12 +27,20 @@ double TRDCalculations::distanceTrackToWire(const Hit* hit, const Track* track)
   TVector3 trdChanPos = hit->position();
   QVector2D trdChanPos2D(trdChanPos.x(),trdChanPos.z());
 
-  TVector3 trackPosAtZOfChannel = track->position(trdChanPos.z());
+  return TRDCalculations::distanceTrackToWire(trdChanPos2D, track);
+}
+
+
+double TRDCalculations::distanceTrackToWire(const QVector2D& trdChanPos2D, const Track* track)
+{
+  //trdChanPos2D = (x coordinate, z coordinate)
+
+  TVector3 trackPosAtZOfChannel = track->position(trdChanPos2D.y());
   QVector2D trackPosAtZOfChannel2D(trackPosAtZOfChannel.x() , trackPosAtZOfChannel.z());
 
 
-  //use lower slope, as we are in the trd, find correct track type:
-  double slopeXinTRD = track->slopeX(trdChanPos.z());
+  //use slope
+  double slopeXinTRD = track->slopeX(trdChanPos2D.y());
 
   QVector2D trackNormal = QVector2D(1.0/slopeXinTRD, -1.0).normalized();
 
