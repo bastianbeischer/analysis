@@ -12,13 +12,9 @@ MOC_DIR     = ./.tmp
 UI_DIR      = ./.tmp
 RCC_DIR     = ./.tmp
 
-SOURCES += Corrections.cc \
-#           TrackSelection.cc \
-#           Particle.cc
+SOURCES += Corrections.cc
 
-HEADERS += Corrections.hh \
-#           TrackSelection.hh \
-#           Particle.hh
+HEADERS += Corrections.hh
 
 INCLUDEPATH += $$TOPLEVEL/event \
                $$TOPLEVEL/setup \
@@ -30,4 +26,5 @@ LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
                          -lsetup \
                          -ltracking
 
-include(../root.pri)
+include($$TOPLEVEL/root.pri)
+include($$TOPLEVEL/macx.pri)

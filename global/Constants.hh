@@ -15,4 +15,6 @@ const double tofRefractiveIndex = 1.58;
 const double upperTofPosition = 281.55;  // mm
 const double lowerTofPosition = -531.55; // mm
 
+const double TRDTubeRadius = 3.0; //mm
+
 #endif

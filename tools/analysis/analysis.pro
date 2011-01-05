@@ -52,7 +52,16 @@ HEADERS = MainWindow.hh \
           SignalHeightPlot.hh \
           ClusterLengthPlot.hh \
           TimeDifferencePlot.hh \
-          TimeOfFlightMomentumCorrelationPlot.hh
+          TimeOfFlightMomentumCorrelationPlot.hh \
+          TRDCalculations.hh \
+          TRDClustersOnTrackPlot.hh \
+          TRDDistanceInTube.hh \
+          TRDDistanceWireToTrackPlot.hh \
+          TRDEnergyDepositionOverMomentumPlot.hh \
+          TRDSpectrumPlot.hh \
+          TRDFitPlot.hh \
+          TRDOccupancyPlot.hh \
+          TRDMoPVTimeEvolutionPlot.hh
 
 # Sources
 SOURCES = main.cc \
@@ -77,8 +86,18 @@ SOURCES = main.cc \
           SignalHeightPlot.cc \
           ClusterLengthPlot.cc \
           TimeDifferencePlot.cc \
-          TimeOfFlightMomentumCorrelationPlot.cc
+          TimeOfFlightMomentumCorrelationPlot.cc \
+          TRDCalculations.cc \
+          TRDClustersOnTrackPlot.cc \
+          TRDDistanceInTube.cc \
+          TRDDistanceWireToTrackPlot.cc \
+          TRDEnergyDepositionOverMomentumPlot.cc \
+          TRDSpectrumPlot.cc \
+          TRDFitPlot.cc \
+          TRDOccupancyPlot.cc \
+          TRDMoPVTimeEvolutionPlot.cc
 
 include($$TOPLEVEL/root.pri)
+include($$TOPLEVEL/macx.pri)
 
 QMAKE_LFLAGS -= -Wl,--as-needed

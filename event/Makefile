@@ -14,6 +14,7 @@ CXX          := g++
 INCLUDEFLAGS := -I$(INCLUDEDIR) -I$(shell root-config --incdir)
 LIBS         := $(shell root-config --libs)
 CXXFLAGS     := -g -O2 -Wall -fPIC $(INCLUDEFLAGS) -MMD
+LFLAGS       := $(shell if [ `uname` = "Darwin" ]; then echo "-install_name @rpath/libSimpleEvent.so"; fi)
 
 .PHONY: all clean
 .SECONDARY: $(DICTS)
@@ -31,7 +32,7 @@ distclean:
 
 
 $(TARGET): $(OBJECTS)
-	$(CXX) -o $(TARGET) $(OBJECTS) -shared $(LIBS)
+	$(CXX) $(LFLAGS) -o $(TARGET) $(OBJECTS) -shared $(LIBS)
 
 $(LIBDIR):
 	@if [ ! -d $(LIBDIR) ]; then mkdir $(LIBDIR); fi

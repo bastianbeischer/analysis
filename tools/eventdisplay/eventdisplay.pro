@@ -41,5 +41,6 @@ SOURCES = main.cc \
           MainWindow.cc
 
 include($$TOPLEVEL/root.pri)
+include($$TOPLEVEL/macx.pri)
 
 QMAKE_LFLAGS -= -Wl,--as-needed
