@@ -2,7 +2,6 @@
 
 #include <TGraph.h>
 
-#include <CLHEP/Units/SystemOfUnits.h>
 
 #include <TMultiGraph.h>
 #include <TGraphErrors.h>
@@ -165,11 +164,11 @@ void TRDMoPVTimeEvolutionPlot::processEvent(const QVector<Hit*>& hits, Track* tr
           TH1D* histo = new TH1D(qPrintable("trdSpectrumHisto_for_bin" + QString::number(binValue) + "_module_0x" + QString::number(moduleID,16)) ,
                                  "egal", 50, 0, 50);
           histoMapOfRunFile.insert(moduleID, histo);
-          //qDebug("fill %f", hit->signalHeight() / (distanceInTube/CLHEP::mm));
-          histo->Fill(hit->signalHeight() / (distanceInTube/CLHEP::mm) );
+          //qDebug("fill %f", hit->signalHeight() / (distanceInTube));
+          histo->Fill(hit->signalHeight() / (distanceInTube) );
         } else {
-          histoMapOfRunFile[moduleID]->Fill(hit->signalHeight() / (distanceInTube/CLHEP::mm) );
-          //qDebug("fill %f", hit->signalHeight() / (distanceInTube/CLHEP::mm));
+          histoMapOfRunFile[moduleID]->Fill(hit->signalHeight() / (distanceInTube) );
+          //qDebug("fill %f", hit->signalHeight() / (distanceInTube));
         }
         //qDebug("histo now contains entries %f", histoMapOfRunFile[moduleID]->GetEntries());
         m_graphNeedsUpdate = true;

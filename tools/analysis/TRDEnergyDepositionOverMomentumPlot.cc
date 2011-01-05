@@ -6,7 +6,6 @@
 
 #include <TGraph.h>
 #include <TAxis.h>
-#include <CLHEP/Units/SystemOfUnits.h>
 
 #include "Cluster.hh"
 #include "Track.hh"
