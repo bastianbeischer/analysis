@@ -9,7 +9,6 @@
 #include <CenteredBrokenLine.hh>
 #include <Constants.hh>
 
-#include <CLHEP/Units/SystemOfUnits.h>
 #include <TVector3.h>
 
 #include <QVector2D>
@@ -39,7 +38,7 @@ double TRDCalculations::distanceTrackToWire(const Hit* hit, const Track* track)
 
   QVector2D circleToTrackAtLevel = trackPosAtZOfChannel2D - trdChanPos2D;
 
-  //qDebug("d on channel  level = %f mm", circleToTrackAtLevel.length() / CLHEP::mm);
+  //qDebug("d on channel  level = %f mm", circleToTrackAtLevel.length());
 
   return QVector2D::dotProduct(trackNormal, circleToTrackAtLevel ) ;
 

@@ -4,8 +4,6 @@
 
 #include <TMarker.h>
 
-#include <CLHEP/Units/SystemOfUnits.h>
-
 #include "Track.hh"
 #include "TrackInformation.hh"
 #include "Cluster.hh"
@@ -105,7 +103,7 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simp
          (m_spectrumType == TRDSpectrumPlot::channel && hit->detId() == m_id)){  //spectrum per channel
         double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
         if(distanceInTube > 0){
-          histogram(0)->Fill(hit->signalHeight() / (distanceInTube/ CLHEP::mm));
+          histogram(0)->Fill(hit->signalHeight() / (distanceInTube));
         }
       }
     }
