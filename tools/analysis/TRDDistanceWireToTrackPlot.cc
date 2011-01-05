@@ -15,7 +15,7 @@ TRDDistanceWireToTrackPlot::TRDDistanceWireToTrackPlot(AnalysisPlot::Topic topic
   H1DPlot()
 {
   setTitle("TRD distance track to wire");
-  TH1D* histogram = new TH1D(qPrintable(title()), qPrintable(title() + ";distance / mm; entries"), 100, -3.5, 3.5);
+  TH1D* histogram = new TH1D(qPrintable(title()), qPrintable(title() + ";distance / mm; entries"), 100, -15, 15);
   histogram->SetStats(true);
   addHistogram(histogram);
 }
@@ -39,7 +39,7 @@ void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& hits,Track* t
   //also find all clusters on track
   QVector<Hit*> trdClusterHitsOnTrack;
 
-  //TODO: check for off track hits ?!?
+  //TODO: check for off track hits, atm this is Bastians criteria for on track
   foreach(Hit* clusterHit, hits){
     if (clusterHit->type() == Hit::trd)
       trdClusterHitsOnTrack.push_back(clusterHit);
@@ -51,9 +51,14 @@ void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& hits,Track* t
 
   foreach(Hit* clusterHit, trdClusterHitsOnTrack){
     Cluster* cluster = static_cast<Cluster*>(clusterHit);
+
+    if (cluster->hits().size() > 2)
+      continue;
+
     foreach(Hit* hit, cluster->hits()){
       double distanceWireToTrack = TRDCalculations::distanceTrackToWire(hit, track);
-      if(fabs(distanceWireToTrack)< TRDTubeRadius)
+      //if(fabs(distanceWireToTrack) > 10)
+
         histogram(0)->Fill(distanceWireToTrack);
     }
   }

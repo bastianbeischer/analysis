@@ -17,7 +17,7 @@ public:
   enum TrdOccupancyType{numberOfHits, sumOfSignalHeights, sumOfSignalHeightsNormalizedToHits};
 
 public:
-  TRDOccupancyPlot(TrdOccupancyType);
+  TRDOccupancyPlot(TrdOccupancyType, bool onlyOnTrack = false);
   ~TRDOccupancyPlot();
   virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
   virtual void finalize();
@@ -35,6 +35,7 @@ private:
   void updateEllipses();
 
   TrdOccupancyType m_occupancyType;
+  bool m_onlyOnTrack;
 
 };
 

@@ -12,22 +12,32 @@
 #include <TAxis.h>
 #include <TPaletteAxis.h>
 
-TRDOccupancyPlot::TRDOccupancyPlot(TrdOccupancyType occupancyType)
+TRDOccupancyPlot::TRDOccupancyPlot(TrdOccupancyType occupancyType, bool onlyOnTrack)
   : AnalysisPlot(AnalysisPlot::Occupancy)
   , H2DPlot()
   , m_occupancyType(occupancyType)
+  , m_onlyOnTrack(onlyOnTrack)
 {
+  QString tempTitle;
   switch(m_occupancyType){
   case TRDOccupancyPlot::numberOfHits:
-    setTitle("TRD occupancy: number of hits, without any filter");
+    tempTitle = "TRD occupancy: number of hits";
     break;
   case TRDOccupancyPlot::sumOfSignalHeights:
-    setTitle("TRD occupancy: signal sum, without any filter");
+    tempTitle = "TRD occupancy: signal sum";
     break;
   case TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits:
-    setTitle("TRD occupancy: signal sum normalized to hits, without any filter");
+    tempTitle = "TRD occupancy: signal sum normalized to hits";
     break;
   }
+
+  if(m_onlyOnTrack)
+    tempTitle += ", only on track";
+  else
+    tempTitle += ", without any filter";
+
+
+  setTitle(tempTitle);
 
   TH2D* histogram = new TH2D(qPrintable(title()), qPrintable(title() + ";x / mm;z /mm"),200,-120,120,200,-550, -250);
   setHistogram(histogram);
@@ -45,9 +55,19 @@ TRDOccupancyPlot::~TRDOccupancyPlot()
   m_ellipses.clear();
 }
 
-void TRDOccupancyPlot::processEvent(const QVector<Hit*>& , Track*, SimpleEvent* event)
+void TRDOccupancyPlot::processEvent(const QVector<Hit*>& clustersOnTrack, Track*, SimpleEvent* event)
 {
-  foreach(Hit* clusterHit, event->hits()){
+
+  QVector<Hit*> clustersToAnalyze;
+
+  if (m_onlyOnTrack)
+    clustersToAnalyze = clustersOnTrack;
+  else{
+    clustersToAnalyze = QVector::fromStdVector(event->hits());
+  }
+
+
+  foreach(Hit* clusterHit, clustersToAnalyze)){
     //only trd:
     if(clusterHit->type() != Hit::trd)
       continue;
