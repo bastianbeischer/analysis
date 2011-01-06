@@ -30,6 +30,7 @@
 #include "TRDSpectrumPlot.hh"
 #include "TRDFitPlot.hh"
 #include "TRDOccupancyPlot.hh"
+#include "TRDEfficiencyPlot.hh"
 
 #include <QFileDialog>
 #include <QVBoxLayout>
@@ -265,6 +266,7 @@ void MainWindow::setupAnalysis()
     m_ui.plotter->addPlot(new Chi2Plot);
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new TRDEfficiencyPlot());
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::numberOfHits));
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::numberOfHits, true));
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeights));
@@ -418,14 +420,21 @@ void MainWindow::setFileList(const QString& fileName)
 
 void MainWindow::saveCanvasButtonClicked()
 {
+  QStringList fileFormatEndings;
+  fileFormatEndings << "svg" << "pdf" << "eps" << "root" << "png";
   QString fileEnding;
-  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "*.svg;;*.pdf;;*.root;;*.png", &fileEnding);
+  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "all;;" + fileFormatEndings.join(";;"), &fileEnding);
   if (fileName.isEmpty())
     return;
-  fileEnding.remove(0, 1);
-  if (!fileName.endsWith(fileEnding))
-    fileName.append(fileEnding);
-  m_ui.plotter->saveCanvas(fileName);
+  if(fileEnding == "all"){
+    foreach(QString fileFormatEnding, fileFormatEndings)
+      m_ui.plotter->saveCanvas(fileName + "." + fileFormatEnding);
+  }else{
+    fileEnding.prepend('.');
+    if (!fileName.endsWith(fileEnding))
+      fileName.append(fileEnding);
+    m_ui.plotter->saveCanvas(fileName);
+  }
 }
 
 void MainWindow::saveAllCanvasButtonClicked()
