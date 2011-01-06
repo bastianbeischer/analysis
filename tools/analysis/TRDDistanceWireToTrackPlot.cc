@@ -14,7 +14,7 @@ TRDDistanceWireToTrackPlot::TRDDistanceWireToTrackPlot(AnalysisPlot::Topic topic
   AnalysisPlot(topic),
   H1DPlot()
 {
-  setTitle("TRD distance track to wire");
+  setTitle("TRD distance of cluster to wire");
   TH1D* histogram = new TH1D(qPrintable(title()), qPrintable(title() + ";distance / mm; entries"), 100, -15, 15);
   histogram->SetStats(true);
   addHistogram(histogram);
