@@ -61,6 +61,7 @@ HEADERS = MainWindow.hh \
           TRDSpectrumPlot.hh \
           TRDFitPlot.hh \
           TRDOccupancyPlot.hh \
+          TRDEfficiencyPlot.hh \
           TRDMoPVTimeEvolutionPlot.hh
 
 # Sources
@@ -95,6 +96,7 @@ SOURCES = main.cc \
           TRDSpectrumPlot.cc \
           TRDFitPlot.cc \
           TRDOccupancyPlot.cc \
+          TRDEfficiencyPlot.cc \
           TRDMoPVTimeEvolutionPlot.cc
 
 include($$TOPLEVEL/root.pri)
