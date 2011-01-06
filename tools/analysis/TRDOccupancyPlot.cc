@@ -150,7 +150,7 @@ void TRDOccupancyPlot::updateEllipses()
       break;
     case TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits:
       if(m_hits[i.key()] == 0)
-        value =0;
+        value = 0;
       else
         value = m_signalHeightSum.value(i.key()) / (double)i.value();
       break;
@@ -165,7 +165,11 @@ void TRDOccupancyPlot::updateEllipses()
 
 void TRDOccupancyPlot::update()
 {
-  updateEllipses();
+  static int counter = 0;
+  if (counter % 10 == 0) {
+    updateEllipses();
+  }
+  counter++;
 }
 
 void TRDOccupancyPlot::initializeEllipses()
