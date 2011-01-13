@@ -27,7 +27,7 @@ private:
   void trdMopv(Hit*);
   void tofTimeOverThreshold(Hit*);
 
-private:
+public:
   double trdScalingFactor(unsigned int);
   void setTrdScalingFactor(unsigned int, double);
 
