@@ -45,17 +45,19 @@ void TRDFitPlot::updateHistogram()
 
   //gather all mpv values
   QVector<double> mpvs;
-  foreach(TF1* landauFit, m_landauFits)
-    mpvs << landauFit->GetParameter(1);
+  foreach(TF1* landauFit, m_landauFits) {
+    if (landauFit->GetParameter(1) > 0)
+      mpvs << landauFit->GetParameter(1);
+  }
 
   //sort
   qSort(mpvs);
 
   //check range
-  int minBin = floor(mpvs.first()) -1;
-  int maxBin = floor(mpvs.last()) +1;
+  double lowerLimit = mpvs.first() - 0.1 * fabs(mpvs.first());
+  double upperLimit = mpvs.last() + 0.1 * fabs(mpvs.last());
 
-  histogram(0)->SetBins(20, minBin, maxBin);
+  histogram(0)->SetBins(20, lowerLimit, upperLimit);
 
   //fill
   foreach(double mpv, mpvs)

@@ -10,15 +10,15 @@
 #include "Hit.hh"
 
 #include "TRDCalculations.hh"
-// #include "TRDCorrections.hh"
+#include "Corrections.hh"
 
 TRDSpectrumPlot::TRDSpectrumPlot(AnalysisPlot::Topic topic, unsigned short id, TRDSpectrumType spectrumType, double lowerMom, double upperMom) :
   AnalysisPlot(topic),
   H1DPlot(),
   m_id(id),
   m_spectrumType(spectrumType),
-  m_landauFitRange_lower(1.0),
-  m_landauFitRange_upper(30.0),
+  m_landauFitRange_lower(0.1),
+  m_landauFitRange_upper(3.0),
   m_lowerMomentum(lowerMom),
   m_upperMomentum(upperMom),
   m_fitRangeMarker_lower(new TMarker(m_landauFitRange_lower, 0,2)),
@@ -49,7 +49,7 @@ TRDSpectrumPlot::TRDSpectrumPlot(AnalysisPlot::Topic topic, unsigned short id, T
   m_fitRangeMarker_lower->SetMarkerColor(kRed);
   m_fitRangeMarker_upper->SetMarkerColor(kRed);
 
-  TH1D* histogram = new TH1D(qPrintable(title()), qPrintable(title() + ";ADCCs per length in tube / (1/mm);entries"), 50, 0, 150);
+  TH1D* histogram = new TH1D(qPrintable(title()), qPrintable(title() + ";ADCCs per length in tube / (1/mm);entries"), 50, 0, 15);
   addHistogram(histogram);
 }
 
@@ -113,21 +113,24 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simp
 
 void TRDSpectrumPlot::finalize()
 {
-  // update();
+   update();
 
-  // //write fit results:
-  // TRDCorrections* trdCorrections = TRDCorrections::instance() ;
-  // if( m_spectrumType == TRDSpectrumPlot::module){
-  //   for (int chan = 0; chan < 16; chan++){
-  //     unsigned short channelID = m_id | chan ;
-  //     double mopvValue = m_landauFit->GetParameter(1) ;
-  //     double oldScalingFactor = trdCorrections->getScalingFactor(channelID) ;
-  //     //TODO target value of mopv is 1 or whatever?
-  //     double newScalingFactor =  15.0 * oldScalingFactor / mopvValue;
-  //     //qDebug("setting for 0x%x old TRDScalingFactor from %f to %f", channelID, oldScalingFactor,  newScalingFactor) ;
-  //     //trdCorrections->setScalingFactor(channelID, newScalingFactor) ;
-  //   }
-  // }
+   if (false) {
+     //write fit results:
+     Corrections* corrections = new Corrections();
+     if( m_spectrumType == TRDSpectrumPlot::module){
+       for (int chan = 0; chan < 16; chan++){
+         unsigned short channelID = m_id | chan ;
+         double mopvValue = m_landauFit->GetParameter(1) ;
+         double oldScalingFactor = corrections->trdScalingFactor(channelID) ;
+         //TODO target value of mopv is 1 or whatever?
+         double newScalingFactor =  1.0 * oldScalingFactor / mopvValue;
+         qDebug("setting for 0x%x old TRDScalingFactor from %f to %f", channelID, oldScalingFactor,  newScalingFactor) ;
+         corrections->setTrdScalingFactor(channelID, newScalingFactor) ;
+       }
+     }
+     delete corrections;
+  }
 }
 
 void TRDSpectrumPlot::update(){
