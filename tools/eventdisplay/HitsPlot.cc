@@ -141,7 +141,9 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
     m_fitInfo->Draw("SAME");
   }
 
-  foreach(Hit* hit, hits) {
+  foreach(Hit* clusterHit, hits) {
+  Cluster* cluster = static_cast<Cluster*>(clusterHit);
+  foreach(Hit* hit, cluster->hits()) {
     double angle = hit->angle();
     TVector3 position = hit->position();
     TVector3 counterPos = hit->counterPosition();
@@ -211,6 +213,7 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
     box->SetFillColor(color);
     box->Draw("SAME");
     m_hits.push_back(box);
+  }
   }
 
   canvas->Modified();
