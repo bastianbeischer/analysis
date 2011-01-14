@@ -141,9 +141,19 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
     m_fitInfo->Draw("SAME");
   }
 
-  foreach(Hit* clusterHit, hits) {
-  Cluster* cluster = static_cast<Cluster*>(clusterHit);
-  foreach(Hit* hit, cluster->hits()) {
+  QVector<Hit*> hitsToPlot;
+  foreach(Hit* hit, hits) {
+    if ( (strcmp(hit->ClassName(), "Hit") == 0) || (strcmp(hit->ClassName(), "TOFSipmHit") == 0) ) {
+      hitsToPlot.push_back(hit);
+    }
+    else if ( (strcmp(hit->ClassName(), "Cluster") == 0) || (strcmp(hit->ClassName(), "TOFCluster") == 0) ) {
+      Cluster* cluster = static_cast<Cluster*>(hit);
+      foreach(Hit* subHit, cluster->hits())
+        hitsToPlot.push_back(subHit);
+    }
+  }
+
+  foreach(Hit* hit, hitsToPlot) {
     double angle = hit->angle();
     TVector3 position = hit->position();
     TVector3 counterPos = hit->counterPosition();
@@ -213,7 +223,6 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
     box->SetFillColor(color);
     box->Draw("SAME");
     m_hits.push_back(box);
-  }
   }
 
   canvas->Modified();
