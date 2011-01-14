@@ -67,12 +67,11 @@ void AnalysisThread::run()
       else
         clusters = Setup::instance()->generateClusters(hits);
 
-      Corrections::Flags flags;
+      // Setup::CorrectionFlags flags;
       // flags |= Setup::Alignment;
       // flags |= Setup::TimeShifts;
-      flags |= Corrections::TrdMopv;
       Corrections corrections;
-      corrections.apply(clusters, flags);
+      corrections.apply(clusters);
 
       QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
       if (m_track) {
