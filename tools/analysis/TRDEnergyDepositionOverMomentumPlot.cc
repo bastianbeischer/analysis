@@ -17,7 +17,7 @@ TRDEnergyDepositionOverMomentumPlot::TRDEnergyDepositionOverMomentumPlot(Analysi
   GraphPlot()
 {
   setTitle("TRD energy deposition over momentum");
-  setMultiGraphTitle(qPrintable(title() + ";momentum / GeV; energy deposition / (ADCCounts per mm per tube "));
+  setMultiGraphTitle(qPrintable(title() + ";rigidity / GV; energy deposition / (ADCCounts per mm per tube "));
 
   TGraph* graph = new TGraph();
   graph->SetMarkerStyle(1);

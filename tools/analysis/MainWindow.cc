@@ -187,7 +187,7 @@ void MainWindow::setupPlots()
   }
   if (m_ui.signalHeightTRDCheckBox->isChecked()) {
 
-     m_ui.plotter->addPlot( new TotalEnergyDepositionPlot(1.5,3) );
+     m_ui.plotter->addPlot( new TotalEnergyDepositionPlot(1,3) );
 
 
     DetectorElement* element = setup->firstElement();
@@ -204,10 +204,10 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
 
     //add trd spectrum for whole trd in rigidity range -1.5 GeV +- 20%
-    m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, -5, -1.5));
+    m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, -3, -1.5));
 
     //add trd spectrum for whole trd in rigidity range 2.5 GeV +- 20%
-    m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, 2.5*(1-0.2), 2.5*(1+0.2)));
+    m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, 1.5, 3));
     
     //add the MPV distribution plot for modules
     TRDFitPlot* mpvModuleTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD, "MPVs of TRD Modules");

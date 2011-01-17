@@ -68,8 +68,8 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simp
 
   //check if all tracker layers have a hit
   TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
-    return;
+  //if (!(flags & TrackInformation::AllTrackerLayers))
+    //return;
 
   //check if track was inside of magnet
   if (!(flags & TrackInformation::InsideMagnet))
