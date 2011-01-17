@@ -428,15 +428,34 @@ void MainWindow::saveCanvasButtonClicked()
 {
   QStringList fileFormatEndings;
   fileFormatEndings << "svg" << "pdf" << "eps" << "root" << "png";
-  QString fileEnding;
-  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "all;;" + fileFormatEndings.join(";;"), &fileEnding);
+  QStringList filters;
+  foreach(QString ending, fileFormatEndings) {
+    QString description = ending.toUpper();
+    filters.append( description + "(*." + ending + ")" );
+  }
+  QString selectedFilter;
+  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "All Files(*.*);;" + filters.join(";;"), &selectedFilter);
+
   if (fileName.isEmpty())
     return;
-  if(fileEnding == "all"){
+
+  // if file name contains an ending, use that. Otherwise use selected filter
+  QString fileEnding;
+  if (fileName.contains('.')) {
+    fileEnding = fileName.split('.').last().toLower();
+  }
+  else {
+    fileEnding = selectedFilter.split("(").first().toLower();
+  }
+
+  // if filter == all, save all endings, otherwise use previously determined ending
+  if(fileEnding == "all files"){
     foreach(QString fileFormatEnding, fileFormatEndings)
       m_ui.plotter->saveCanvas(fileName + "." + fileFormatEnding);
-  }else{
-    fileEnding.prepend('.');
+  }
+  else{
+    if (!fileEnding.startsWith('.'))
+      fileEnding.prepend('.');
     if (!fileName.endsWith(fileEnding))
       fileName.append(fileEnding);
     m_ui.plotter->saveCanvas(fileName);
