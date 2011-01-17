@@ -34,6 +34,7 @@ int Track::process(const QVector<Hit*>& hits)
   int retVal = fit(hits);
   calculatePt();
   calculateTimeOfFlight();
+  m_information->process();
   return retVal;
 }
 

@@ -61,8 +61,6 @@ int CenteredBrokenLine2D::fit(const QVector<Hit*>& hits)
     }
   }
 
-  m_information->process();
-
   return m_fitGood;
 }
 
