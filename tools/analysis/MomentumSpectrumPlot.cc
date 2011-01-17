@@ -54,18 +54,15 @@ void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Track* track, Simp
     return;
 
   TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  if ( !(flags & TrackInformation::AllTrackerLayers) || !(flags & TrackInformation::InsideMagnet) || (flags & TrackInformation::Albedo) )
     return;
 
   double pt = track->pt();
-
-  if (flags & TrackInformation::InsideMagnet) {
-    if (m_range == Negative && pt >= 0)
-      return;
-    if (m_range == Positive && pt <= 0)
-      return;
-    histogram()->Fill(pt);
-  }
+  if (m_range == Negative && pt >= 0)
+    return;
+  if (m_range == Positive && pt <= 0)
+    return;
+  histogram()->Fill(pt);
 }
 
 void MomentumSpectrumPlot::update()
