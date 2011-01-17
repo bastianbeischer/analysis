@@ -30,6 +30,7 @@ void TrackInformation::process()
   checkOutsideMagnet();
   checkHighPt();
   checkMagnetCollision();
+  checkAlbedo();
 }
 
 void TrackInformation::checkAllTrackerLayers()
@@ -91,4 +92,12 @@ void TrackInformation::checkMagnetCollision()
   double r = sqrt(x0*x0 + y0*y0);
   if (r > 65 && r < 110)
     m_flags |= MagnetCollision;
+}
+
+void TrackInformation::checkAlbedo()
+{
+  if (!m_track->fitGood())
+    return;
+  if (m_track->beta() < 0)
+    m_flags |= Albedo;
 }
