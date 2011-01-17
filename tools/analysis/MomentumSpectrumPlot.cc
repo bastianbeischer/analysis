@@ -32,7 +32,7 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Range range) :
   }
   else if (m_range == Positive) {
     setTitle(title() + " - Positive");
-    lowerBound = 2*1e-1;
+    lowerBound = 1e-1;
     std::cout << "ln(upper) = " << log(upperBound) << std::endl;
     std::cout << "ln(lower) = " << log(lowerBound) << std::endl;
     double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
