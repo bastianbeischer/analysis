@@ -31,6 +31,7 @@
 #include "TRDFitPlot.hh"
 #include "TRDOccupancyPlot.hh"
 #include "TRDEfficiencyPlot.hh"
+#include "TotalEnergyDepositionPlot.hh"
 
 #include <QFileDialog>
 #include <QVBoxLayout>
@@ -183,6 +184,9 @@ void MainWindow::setupAnalysis()
     }
   }
   if (m_ui.signalHeightTRDCheckBox->isChecked()) {
+
+     m_ui.plotter->addPlot( new TotalEnergyDepositionPlot(1.5,3) );
+
 
     DetectorElement* element = setup->firstElement();
     while(element) {
