@@ -85,11 +85,15 @@ void Corrections::trdMopv(Hit* hit)
   }
   else if (strcmp(hit->ClassName(), "Cluster") == 0) {
     Cluster* cluster = static_cast<Cluster*>(hit) ;
+    double clusterAmplitude = 0;
     for (std::vector<Hit*>::iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
       Hit* trdHit = *it;
       double trdScalingFactor = this->trdScalingFactor(trdHit->detId()) ;
-      trdHit->setSignalHeight(trdHit->signalHeight() * trdScalingFactor) ;
+      double newHitAmplitude = trdHit->signalHeight() * trdScalingFactor ;
+      trdHit->setSignalHeight(newHitAmplitude) ;
+      clusterAmplitude += newHitAmplitude ;
     }
+    cluster->setSignalHeight(clusterAmplitude);
   }
 }
 
