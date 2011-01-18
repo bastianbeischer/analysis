@@ -18,21 +18,28 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Range range) :
   setTitle("Momentum Spectrum");
 
   int nBins = 100;
-  double lowerBound = -20;
-  double upperBound = 20;
   TH1D* histogram = 0;
   if (m_range == All) {
+    double lowerBound = -20.;
+    double upperBound = 20.;
     setTitle(title() + " - All");
     histogram = new TH1D(qPrintable(title()), "", nBins, lowerBound, upperBound);
   }
   else if (m_range == Negative) {
     setTitle(title() + " - Negative");
-    upperBound = -1e-5;
-    histogram = new TH1D(qPrintable(title()), "", nBins, lowerBound, upperBound);
+    double lowerBound = 1e-1;
+    double upperBound = 20.;
+    double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
+    double p[nBins+1];
+    for (int i = 0; i < nBins+1; i++) {
+      p[nBins-i] = -pow(lowerBound, delta*i+1);
+    }
+    histogram = new TH1D(qPrintable(title()), "", nBins, p);
   }
   else if (m_range == Positive) {
     setTitle(title() + " - Positive");
-    lowerBound = 1e-1;
+    double lowerBound = 1e-1;
+    double upperBound = 20.;
     double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
     double p[nBins+1];
     for (int i = 0; i < nBins+1; i++) {
