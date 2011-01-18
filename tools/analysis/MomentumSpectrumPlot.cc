@@ -33,14 +33,10 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Range range) :
   else if (m_range == Positive) {
     setTitle(title() + " - Positive");
     lowerBound = 1e-1;
-    std::cout << "ln(upper) = " << log(upperBound) << std::endl;
-    std::cout << "ln(lower) = " << log(lowerBound) << std::endl;
     double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
-    std::cout << "delta = " << delta << std::endl;
     double p[nBins+1];
     for (int i = 0; i < nBins+1; i++) {
       p[i] = pow(lowerBound, delta*i+1);
-      std::cout << p[i] << std::endl;
     }
     histogram = new TH1D(qPrintable(title()), "", nBins, p);
   }
