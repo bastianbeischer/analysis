@@ -18,7 +18,7 @@ TotalEnergyDepositionPlot::TotalEnergyDepositionPlot(double lowerMom, double upp
 
   setTitle(QString("Total Signal Sum (%1 GV to %2 GV)").arg(m_lowerMomentum).arg(m_upperMomentum));
 
-  TH1D* histogram = new TH1D(qPrintable(title()), qPrintable(title() + ";Signal Sum ;entries"), 100, 0, 200);
+  TH1D* histogram = new TH1D(qPrintable(title()), qPrintable(title() + ";dE/dx ;entries"), 100, 0, 30);
   addHistogram(histogram);
 }
 
@@ -62,19 +62,21 @@ void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>& hits, Track* t
 
 
   double signalSum = 0;
+  double distanceSum = 0;
 
   foreach(Hit* clusterHit, trdClusterHitsOnTrack){
     Cluster* cluster = static_cast<Cluster*>(clusterHit);
     foreach(Hit* hit, cluster->hits()){
       double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
       if(distanceInTube > 0){
-        signalSum += (hit->signalHeight() / (distanceInTube));
+        signalSum += hit->signalHeight() ;
+        distanceSum += distanceInTube ;
       }
     }
   }
 
 
 
-  histogram(0)->Fill(signalSum);
+  histogram(0)->Fill(signalSum / distanceSum);
 
 }

@@ -187,7 +187,7 @@ void MainWindow::setupPlots()
   }
   if (m_ui.signalHeightTRDCheckBox->isChecked()) {
 
-     m_ui.plotter->addPlot( new TotalEnergyDepositionPlot(1,3) );
+     m_ui.plotter->addPlot( new TotalEnergyDepositionPlot(2,10) );
 
 
     DetectorElement* element = setup->firstElement();
