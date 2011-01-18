@@ -15,6 +15,7 @@
 #include "GeometricOccupancyProjectionPlot.hh"
 #include "BendingAnglePositionPlot.hh"
 #include "Chi2Plot.hh"
+#include "AlbedosVsMomentumPlot.hh"
 #include "TOFPositionCorrelationPlot.hh"
 #include "MomentumSpectrumPlot.hh"
 #include "SignalHeightPlot.hh"
@@ -319,6 +320,7 @@ void MainWindow::setupAnalysis()
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Positive));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Negative));
     m_ui.plotter->addPlot(new TimeOfFlightMomentumCorrelationPlot());
+    m_ui.plotter->addPlot(new AlbedosVsMomentumPlot());
   }
   if (m_ui.miscellaneousTrackerCheckBox->isChecked()) {
   }
