@@ -25,19 +25,9 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Range range) :
     setTitle(title() + " - All");
     histogram = new TH1D(qPrintable(title()), "", nBins, lowerBound, upperBound);
   }
-  else if (m_range == Negative) {
-    setTitle(title() + " - Negative");
-    double lowerBound = 1e-1;
-    double upperBound = 20.;
-    double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
-    double p[nBins+1];
-    for (int i = 0; i < nBins+1; i++) {
-      p[nBins-i] = -pow(lowerBound, delta*i+1);
-    }
-    histogram = new TH1D(qPrintable(title()), "", nBins, p);
-  }
-  else if (m_range == Positive) {
-    setTitle(title() + " - Positive");
+  else {
+    if (m_range == Negative) setTitle(title() + " - Negative");
+    if (m_range == Positive) setTitle(title() + " - Positive");
     double lowerBound = 1e-1;
     double upperBound = 20.;
     double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
@@ -79,6 +69,10 @@ void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Track* track, Simp
     return;
   if (m_range == Positive && pt <= 0)
     return;
+
+  if (m_range == Negative)
+    pt = -pt;
+
   histogram()->Fill(pt);
 }
 
