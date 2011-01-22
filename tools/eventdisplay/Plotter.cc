@@ -73,14 +73,6 @@ void Plotter::setPositionLabel(QLabel* label)
   m_positionLabel = label;
 }
 
-void Plotter::mousePressEvent(QMouseEvent*)
-{
-}
-
-void Plotter::mouseReleaseEvent(QMouseEvent*)
-{
-}
-
 void Plotter::mouseMoveEvent(QMouseEvent* event)
 {
   if (m_positionLabel) {

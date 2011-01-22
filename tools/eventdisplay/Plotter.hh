@@ -29,9 +29,7 @@ public slots:
   void unzoom();
   void updateTrackFindingParameters(int slopeBins, int offsetBins, double trackerPull, double trdPull);
 protected:
-  void mousePressEvent(QMouseEvent *event);
   void mouseMoveEvent(QMouseEvent* event);
-  void mouseReleaseEvent(QMouseEvent *event);
 private:
   TCanvas* m_canvas;
   DataChain* m_chain;
