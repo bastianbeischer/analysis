@@ -18,6 +18,7 @@ GraphPlot::~GraphPlot()
 void GraphPlot::draw(TCanvas* canvas)
 {
   canvas->cd();
+  canvas->Clear();
   m_multiGraph->Draw("A");
   RootPlot::draw(canvas);
 }
