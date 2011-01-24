@@ -3,6 +3,9 @@
 
 #include "ui_MainWindow.h"
 
+#include "Track.hh"
+#include "Corrections.hh"
+
 #include <QMainWindow>
 
 class QTabBar;
@@ -27,7 +30,8 @@ private slots:
   void listWidgetCurrentRowChanged(int);
   void showButtonsClicked();
 private:
-  void setupAnalysis();
+	void setupPlots();
+  void setupAnalysis(Track::Type& type, Corrections::Flags& flags);
   void startAnalysis();
   void removeListWidgetItem(int);
   void closeEvent(QCloseEvent*);

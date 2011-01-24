@@ -15,12 +15,13 @@
 
 #include <iostream>
 
-AnalysisThread::AnalysisThread(EventQueue* queue, Track::Type track, const QVector<AnalysisPlot*>& plots, QObject* parent)
+AnalysisThread::AnalysisThread(EventQueue* queue, Track::Type track, Corrections::Flags flags, const QVector<AnalysisPlot*>& plots, QObject* parent)
   : QThread(parent)
   , m_queue(queue)
   , m_track(0)
   , m_trackFinding(new TrackFinding)
   , m_plots(plots)
+  , m_correctionFlags(flags)
   , m_abort(true)
   , m_mutex()
 {
@@ -67,11 +68,8 @@ void AnalysisThread::run()
       else
         clusters = Setup::instance()->generateClusters(hits);
 
-      // Setup::CorrectionFlags flags;
-      // flags |= Setup::Alignment;
-      // flags |= Setup::TimeShifts;
       Corrections corrections;
-      corrections.apply(clusters);
+      corrections.apply(clusters, m_correctionFlags);
 
       QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
       if (m_track) {

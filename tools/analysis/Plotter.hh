@@ -3,6 +3,7 @@
 
 #include "AnalysisPlot.hh"
 #include "Track.hh"
+#include "Corrections.hh"
 
 #include <TQtWidget.h>
 
@@ -37,7 +38,7 @@ public:
   void addFileList(const QString& fileName);
   void setFileList(const QString& fileName);
 public slots:
-  void startAnalysis(Track::Type, int numberOfThreads);
+  void startAnalysis(Track::Type, Corrections::Flags, int numberOfThreads);
   void abortAnalysis();
   void finalizeAnalysis();
   void update();

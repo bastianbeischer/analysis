@@ -2,6 +2,7 @@
 #define AnalysisThread_hh
 
 #include "Track.hh"
+#include "Corrections.hh"
 
 #include <QThread>
 #include <QMutex>
@@ -15,7 +16,7 @@ class TrackFinding;
 class AnalysisThread : public QThread {
   Q_OBJECT
 public:
-  AnalysisThread(EventQueue*, Track::Type, const QVector<AnalysisPlot*>&, QObject* parent = 0);
+  AnalysisThread(EventQueue*, Track::Type, Corrections::Flags, const QVector<AnalysisPlot*>&, QObject* parent = 0);
   ~AnalysisThread();
   void start();
   void stop();
@@ -26,6 +27,7 @@ private:
   Track* m_track;
   TrackFinding* m_trackFinding;
   QVector<AnalysisPlot*> m_plots;
+  Corrections::Flags m_correctionFlags;
   bool m_abort;
   QMutex m_mutex;
 };

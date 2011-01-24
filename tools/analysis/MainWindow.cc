@@ -7,6 +7,7 @@
 #include "CenteredBrokenLine.hh"
 #include "BrokenLine.hh"
 #include "StraightLine.hh"
+#include "Corrections.hh"
 
 #include "BendingPositionPlot.hh"
 #include "BendingAnglePlot.hh"
@@ -76,7 +77,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.miscellaneousTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTOFButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
 
-  setupAnalysis();
+  setupPlots();
 }
 
 MainWindow::~MainWindow()
@@ -161,7 +162,7 @@ void MainWindow::listWidgetCurrentRowChanged(int i)
   m_ui.plotter->selectPlot(m_activePlots[i]);
 }
 
-void MainWindow::setupAnalysis()
+void MainWindow::setupPlots()
 {
   Setup* setup = Setup::instance();
 
@@ -346,7 +347,32 @@ void MainWindow::setupAnalysis()
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x8028, 0x8038));
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x802c, 0x803c));
   }
-  
+ 
+}
+
+void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
+{
+  if (m_ui.alignmentCorrectionCheckBox->isChecked())
+    flags|= Corrections::Alignment;
+  if (m_ui.timeShiftCorrectionCheckBox->isChecked())
+    flags|= Corrections::TimeShifts;
+  if (m_ui.trdMopValueCorrectionCheckBox->isChecked())
+    flags|= Corrections::TrdMopv;
+  if (m_ui.timeOverThresholdCorrectionCheckBox->isChecked())
+    flags|= Corrections::TofTimeOverThreshold;
+
+  if (m_ui.trackComboBox->currentText() == "centered broken line") {
+    type = Track::CenteredBrokenLine;
+  } else if (m_ui.trackComboBox->currentText() == "centered broken line 2D") {
+    type = Track::CenteredBrokenLine2D;
+  } else if (m_ui.trackComboBox->currentText() == "broken line") {
+    type = Track::BrokenLine;
+  } else if (m_ui.trackComboBox->currentText() == "straight line") {
+    type = Track::StraightLine;
+  } else if (m_ui.trackComboBox->currentText() == "none") {
+    type = Track::None;
+  }
+ 
   m_ui.signalHeightUpperTrackerButton->setText("+");
   m_ui.signalHeightLowerTrackerButton->setText("+");
   m_ui.signalHeightTRDButton->setText("+");
@@ -380,7 +406,6 @@ void MainWindow::setupAnalysis()
   m_ui.miscellaneousTrackerButton->setEnabled(m_ui.miscellaneousTrackerCheckBox->isChecked());
   m_ui.miscellaneousTRDButton->setEnabled(m_ui.miscellaneousTRDCheckBox->isChecked());
   m_ui.miscellaneousTOFButton->setEnabled(m_ui.miscellaneousTOFCheckBox->isChecked());
-
 }
 
 void MainWindow::analyzeButtonClicked()
@@ -388,18 +413,11 @@ void MainWindow::analyzeButtonClicked()
   if (m_ui.analyzeButton->text() == "start analysis") {
     m_ui.analyzeButton->setText("abort analysis");
     m_ui.trackComboBox->setEnabled(false);
-    setupAnalysis();
-    if (m_ui.trackComboBox->currentText() == "centered broken line") {
-      m_ui.plotter->startAnalysis(Track::CenteredBrokenLine, m_ui.numberOfThreadsSpinBox->value());
-    } else if (m_ui.trackComboBox->currentText() == "centered broken line 2D") {
-      m_ui.plotter->startAnalysis(Track::CenteredBrokenLine2D, m_ui.numberOfThreadsSpinBox->value());
-    } else if (m_ui.trackComboBox->currentText() == "broken line") {
-      m_ui.plotter->startAnalysis(Track::BrokenLine , m_ui.numberOfThreadsSpinBox->value());
-    } else if (m_ui.trackComboBox->currentText() == "straight line") {
-      m_ui.plotter->startAnalysis(Track::StraightLine, m_ui.numberOfThreadsSpinBox->value());
-    } else if (m_ui.trackComboBox->currentText() == "none") {
-      m_ui.plotter->startAnalysis(Track::None, m_ui.numberOfThreadsSpinBox->value());
-    }
+    Track::Type type;
+    Corrections::Flags flags;
+    setupAnalysis(type, flags);
+    setupPlots();
+    m_ui.plotter->startAnalysis(type, flags, m_ui.numberOfThreadsSpinBox->value());
   } else {
     m_ui.plotter->abortAnalysis();
     m_ui.trackComboBox->setEnabled(true);
