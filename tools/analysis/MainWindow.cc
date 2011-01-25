@@ -34,9 +34,11 @@
 #include "TRDOccupancyPlot.hh"
 #include "TRDEfficiencyPlot.hh"
 #include "TotalEnergyDepositionPlot.hh"
+#include "TimeResolutionPlot.hh"
 
 #include <QFileDialog>
 #include <QVBoxLayout>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
@@ -338,6 +340,7 @@ void MainWindow::setupPlots()
         m_ui.plotter->addPlot(new TOFPositionCorrelationPlot(element->id()));
       element = setup->nextElement();
     }
+
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x8000, 0x8010));
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x8004, 0x8014));
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x8008, 0x8018));
@@ -346,8 +349,20 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x8024, 0x8034));
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x8028, 0x8038));
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x802c, 0x803c));
+
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x8020, 0x8030));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8024, 0x8034));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8028, 0x8038));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x802c, 0x803c));
   }
- 
+
+  for (int i = 0x8000; i <= 0x803F; ++i) {
+    qDebug()
+      << hex << i
+      << Setup::instance()->element(i)->position().x()
+      << Setup::instance()->element(i)->position().y()
+      << Setup::instance()->element(i)->position().z();
+  }
 }
 
 void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)

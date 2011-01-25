@@ -44,13 +44,7 @@ AlbedosVsMomentumPlot::AlbedosVsMomentumPlot() :
   histogram->SetLineColor(kRed);
   m_albedoHisto = histogram;
 
-  // TLatex* latex = 0;
-  // latex = new TLatex(.15, .85, 0);
-  // latex->SetNDC();
-  // latex->SetTextAlign(13);
-  // latex->SetTextFont(82);
-  // latex->SetTextSize(0.03);
-  // addLatex(latex);
+  // addLatex(RootPlot::newLatex(.15, .85));
 }
 
 AlbedosVsMomentumPlot::~AlbedosVsMomentumPlot()

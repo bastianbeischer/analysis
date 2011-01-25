@@ -22,19 +22,8 @@ TimeOfFlightPlot::TimeOfFlightPlot()
   TH1D* histogram = new TH1D("time of flight", "", 1200, -60, 60);
   histogram->GetXaxis()->SetTitle("1 / #beta");
   addHistogram(histogram);
-  TLatex* latex = 0;
-  latex = new TLatex(.15, .85, 0);
-  latex->SetNDC();
-  latex->SetTextAlign(13);
-  latex->SetTextFont(82);
-  latex->SetTextSize(0.03);
-  addLatex(latex);
-  latex = new TLatex(.15, .82, 0);
-  latex->SetNDC();
-  latex->SetTextAlign(13);
-  latex->SetTextFont(82);
-  latex->SetTextSize(0.03);
-  addLatex(latex);
+  addLatex(RootPlot::newLatex(.15, .85));
+  addLatex(RootPlot::newLatex(.15, .82));
 }
 
 TimeOfFlightPlot::~TimeOfFlightPlot()

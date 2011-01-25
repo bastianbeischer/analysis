@@ -42,13 +42,7 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Range range) :
   histogram->GetYaxis()->SetTitleOffset(1.3);
   histogram->SetLineColor(kBlack);
   addHistogram(histogram);
-  TLatex* latex = 0;
-  latex = new TLatex(.15, .85, 0);
-  latex->SetNDC();
-  latex->SetTextAlign(13);
-  latex->SetTextFont(82);
-  latex->SetTextSize(0.03);
-  addLatex(latex);
+  addLatex(RootPlot::newLatex(.15, .85));
 }
 
 MomentumSpectrumPlot::~MomentumSpectrumPlot()
