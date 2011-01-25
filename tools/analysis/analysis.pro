@@ -36,10 +36,6 @@ HEADERS = MainWindow.hh \
           EventQueue.hh \
           AnalysisThread.hh \
           AnalysisPlot.hh \
-          RootPlot.hh \
-          H1DPlot.hh \
-          H2DPlot.hh \
-          GraphPlot.hh \
           BendingPositionPlot.hh \
           GeometricOccupancyPlot.hh \
           ResidualPlot.hh \
@@ -74,10 +70,6 @@ SOURCES = main.cc \
           EventQueue.cc \
           AnalysisThread.cc \
           AnalysisPlot.cc \
-          RootPlot.cc \
-          H1DPlot.cc \
-          H2DPlot.cc \
-          GraphPlot.cc \
           BendingPositionPlot.cc \
           GeometricOccupancyPlot.cc \
           ResidualPlot.cc \
