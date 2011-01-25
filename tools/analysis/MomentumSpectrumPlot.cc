@@ -38,7 +38,8 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Range range) :
     histogram = new TH1D(qPrintable(title()), "", nBins, p);
   }
   histogram->GetXaxis()->SetTitle("p / GeV");
-  histogram->GetYaxis()->SetTitle("entries");
+  histogram->GetYaxis()->SetTitle("particles / GeV");
+  histogram->GetYaxis()->SetTitleOffset(1.3);
   histogram->SetLineColor(kBlack);
   addHistogram(histogram);
   TLatex* latex = 0;
