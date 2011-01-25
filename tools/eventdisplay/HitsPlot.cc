@@ -7,6 +7,8 @@
 #include "CenteredBrokenLine.hh"
 #include "StraightLine.hh"
 #include "TOFCluster.hh"
+#include "DetectorElement.hh"
+#include "Setup.hh"
 
 #include <TCanvas.h>
 #include <TList.h>
@@ -215,6 +217,10 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
     else if (type == Hit::tof) {
       width = 6.0;
       height = 3.0;
+      unsigned short channel = hit->channel();
+      double offset = 10.0;
+      DetectorElement* element = Setup::instance()->element(hit->detId() - channel);
+      x = element->position().x() + (channel-1.5) * offset + 0.5*width;
     }
 
     TBox* box = new TBox(x-0.5*width, z-0.5*height, x+0.5*width, z+0.5*height);
