@@ -73,7 +73,9 @@ void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Track* track, Simp
   if (m_range == Negative)
     pt = -pt;
 
-  histogram()->Fill(pt);
+  int iBin = histogram()->FindBin(pt);
+  double width = histogram()->GetBinWidth(iBin);
+  histogram()->Fill(pt, 1./width);
 }
 
 void MomentumSpectrumPlot::update()
