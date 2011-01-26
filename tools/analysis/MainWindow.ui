@@ -104,9 +104,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="chooseAllButton">
+        <widget class="QPushButton" name="toggleSelectionButton">
          <property name="text">
-          <string>choose all</string>
+          <string>select all</string>
          </property>
         </widget>
        </item>

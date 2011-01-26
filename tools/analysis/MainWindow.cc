@@ -56,7 +56,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.saveCanvasButton, SIGNAL(clicked()), this, SLOT(saveCanvasButtonClicked()));
   connect(m_ui.saveAllCanvasesButton, SIGNAL(clicked()), this, SLOT(saveAllCanvasButtonClicked()));
   connect(m_ui.saveForPostAnalysisButton, SIGNAL(clicked()), this, SLOT(saveForPostAnalysisButtonClicked()));
-  connect(m_ui.chooseAllButton, SIGNAL(clicked()), this, SLOT(chooseAllButtonClicked()));
+  connect(m_ui.toggleSelectionButton, SIGNAL(clicked()), this, SLOT(toggleSelectionButtonClicked()));
   connect(m_ui.setFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
   connect(m_ui.addFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
   connect(m_ui.toggleGridButton, SIGNAL(clicked()), this, SLOT(toggleGridButtonClicked()));
@@ -521,24 +521,26 @@ void MainWindow::saveForPostAnalysisButtonClicked()
   m_ui.plotter->saveForPostAnalysis(fileName);
 }
 
-void MainWindow::chooseAllButtonClicked()
+void MainWindow::toggleSelectionButtonClicked()
 {
-  m_ui.signalHeightUpperTrackerCheckBox->setChecked(true);
-  m_ui.signalHeightLowerTrackerCheckBox->setChecked(true);
-  m_ui.signalHeightTRDCheckBox->setChecked(true);
-  m_ui.clusterLengthUpperTrackerCheckBox->setChecked(true);
-  m_ui.clusterLengthLowerTrackerCheckBox->setChecked(true);
-  m_ui.clusterLengthTRDCheckBox->setChecked(true);
-  m_ui.timeOverThresholdCheckBox->setChecked(true);
-  m_ui.trackingCheckBox->setChecked(true);
-  m_ui.occupancyCheckBox->setChecked(true);
-  m_ui.residualsUpperTrackerCheckBox->setChecked(true);
-  m_ui.residualsLowerTrackerCheckBox->setChecked(true);
-  m_ui.residualsTRDCheckBox->setChecked(true);
-  m_ui.momentumReconstructionCheckBox->setChecked(true);
-  m_ui.miscellaneousTrackerCheckBox->setChecked(true);
-  m_ui.miscellaneousTRDCheckBox->setChecked(true);
-  m_ui.miscellaneousTOFCheckBox->setChecked(true);
+  bool b = m_ui.toggleSelectionButton->text() == "select all";
+  m_ui.toggleSelectionButton->setText(b ? "deselect all" : "select all");
+  m_ui.signalHeightUpperTrackerCheckBox->setChecked(b);
+  m_ui.signalHeightLowerTrackerCheckBox->setChecked(b);
+  m_ui.signalHeightTRDCheckBox->setChecked(b);
+  m_ui.clusterLengthUpperTrackerCheckBox->setChecked(b);
+  m_ui.clusterLengthLowerTrackerCheckBox->setChecked(b);
+  m_ui.clusterLengthTRDCheckBox->setChecked(b);
+  m_ui.timeOverThresholdCheckBox->setChecked(b);
+  m_ui.trackingCheckBox->setChecked(b);
+  m_ui.occupancyCheckBox->setChecked(b);
+  m_ui.residualsUpperTrackerCheckBox->setChecked(b);
+  m_ui.residualsLowerTrackerCheckBox->setChecked(b);
+  m_ui.residualsTRDCheckBox->setChecked(b);
+  m_ui.momentumReconstructionCheckBox->setChecked(b);
+  m_ui.miscellaneousTrackerCheckBox->setChecked(b);
+  m_ui.miscellaneousTRDCheckBox->setChecked(b);
+  m_ui.miscellaneousTOFCheckBox->setChecked(b);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
