@@ -14,7 +14,10 @@ INCLUDEPATH += \
   $$TOPLEVEL/processing \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/setup \
-  $$TOPLEVEL/tracking
+  $$TOPLEVEL/tracking \
+  ./trdAnalysis
+
+DEPENDPATH += $$INCLUDEPATH
 
 LIBS += \
   -L$$TOPLEVEL/lib \
@@ -22,7 +25,8 @@ LIBS += \
   -lprocessing \
   -ltracking \
   -lrootplot \
-  -lsetup
+  -lsetup \
+  -ltrdAnalysis
 
 CLASSES = \
   AlbedosVsMomentumPlot \
@@ -65,8 +69,10 @@ CLASSES = \
   TotalEnergyDepositionPlot \
   TOFEfficiencyPlot
 
+
 SOURCES += \
   main.cc
+
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
