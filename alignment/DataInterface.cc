@@ -19,7 +19,8 @@
 
 DataInterface::DataInterface() :
   m_chain(new DataChain),
-  m_trackFinding(new TrackFinding)
+  m_trackFinding(new TrackFinding),
+  m_corrections(new Corrections)
 {
 }
 
@@ -27,6 +28,7 @@ DataInterface::~DataInterface()
 {
   delete m_chain;
   delete m_trackFinding;
+  delete m_corrections;
 }
 
 void DataInterface::addFiles(const char* listName)
@@ -57,8 +59,7 @@ void DataInterface::process(AlignmentMatrix* matrix)
     else
       clusters = setup->generateClusters(hits);
 
-    Corrections corrections;
-    corrections.apply(clusters);
+    m_corrections->apply(clusters);
 
     // track finding
     clusters = m_trackFinding->findTrack(clusters);

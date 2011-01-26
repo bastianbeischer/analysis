@@ -4,6 +4,7 @@
 class AlignmentMatrix;
 class DataChain;
 class TrackFinding;
+class Corrections;
 
 class DataInterface
 {
@@ -19,6 +20,7 @@ public:
 private:
   DataChain*      m_chain;
   TrackFinding*   m_trackFinding;
+  Corrections*    m_corrections;
   
 };
 

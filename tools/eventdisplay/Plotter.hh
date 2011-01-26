@@ -6,6 +6,7 @@
 #include <QString>
 
 class TCanvas;
+class Corrections;
 class DataChain;
 class TrackFinding;
 class Track;
@@ -34,6 +35,7 @@ private:
   TCanvas* m_canvas;
   DataChain* m_chain;
   TrackFinding* m_trackFinding;
+  Corrections* m_corrections;
   Track* m_track;
   HitsPlot* m_hitsPlot;
   QLabel* m_positionLabel;

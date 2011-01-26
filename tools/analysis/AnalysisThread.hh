@@ -26,8 +26,8 @@ private:
   EventQueue* m_queue;
   Track* m_track;
   TrackFinding* m_trackFinding;
+  Corrections* m_corrections;
   QVector<AnalysisPlot*> m_plots;
-  Corrections::Flags m_correctionFlags;
   bool m_abort;
   QMutex m_mutex;
 };

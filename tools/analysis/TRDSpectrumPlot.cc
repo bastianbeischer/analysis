@@ -117,19 +117,18 @@ void TRDSpectrumPlot::finalize()
 
    if (false) {
      //write fit results:
-     Corrections* corrections = new Corrections();
+     Corrections corrections;
      if( m_spectrumType == TRDSpectrumPlot::module){
        for (int chan = 0; chan < 16; chan++){
          unsigned short channelID = m_id | chan ;
          double mopvValue = m_landauFit->GetParameter(1) ;
-         double oldScalingFactor = corrections->trdScalingFactor(channelID) ;
+         double oldScalingFactor = corrections.trdScalingFactor(channelID) ;
          //TODO target value of mopv is 1 or whatever?
          double newScalingFactor =  1.0 * oldScalingFactor / mopvValue;
          qDebug("setting for 0x%x old TRDScalingFactor from %f to %f", channelID, oldScalingFactor,  newScalingFactor) ;
-         corrections->setTrdScalingFactor(channelID, newScalingFactor) ;
+         corrections.setTrdScalingFactor(channelID, newScalingFactor) ;
        }
      }
-     delete corrections;
   }
 }
 

@@ -15,11 +15,15 @@ public:
   Q_DECLARE_FLAGS(Flags, Flag);
 
 public:
-  Corrections();
+  Corrections(Flags = ~Flags(0));
   ~Corrections();
   
 public:
-  void apply(QVector<Hit*>&, Flags = ~Flags(0));
+  void setFlags(const Flags& flags) {m_flags = flags;}
+  Flags flags() const {return m_flags;}
+
+public:
+  void apply(QVector<Hit*>&);
   
 private:
   void alignment(Hit*);
@@ -33,6 +37,7 @@ public:
 
 private:
   QSettings* m_trdSettings;
+  Flags      m_flags;
 
 };
 

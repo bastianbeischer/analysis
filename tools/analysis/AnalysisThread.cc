@@ -20,8 +20,8 @@ AnalysisThread::AnalysisThread(EventQueue* queue, Track::Type track, Corrections
   , m_queue(queue)
   , m_track(0)
   , m_trackFinding(new TrackFinding)
+  , m_corrections(new Corrections(flags))
   , m_plots(plots)
-  , m_correctionFlags(flags)
   , m_abort(true)
   , m_mutex()
 {
@@ -40,6 +40,7 @@ AnalysisThread::~AnalysisThread()
   if (m_track)
     delete m_track;
   delete m_trackFinding;
+  delete m_corrections;
 }
 
 void AnalysisThread::start()
@@ -68,8 +69,7 @@ void AnalysisThread::run()
       else
         clusters = Setup::instance()->generateClusters(hits);
 
-      Corrections corrections;
-      corrections.apply(clusters, m_correctionFlags);
+      m_corrections->apply(clusters);
 
       QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
       if (m_track) {

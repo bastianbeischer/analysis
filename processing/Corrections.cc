@@ -12,8 +12,9 @@
 
 #include <cstring>
 
-Corrections::Corrections() :
-  m_trdSettings(0)
+Corrections::Corrections(Flags flags) :
+  m_trdSettings(0),
+  m_flags(flags)
 {
   QStringList envVariables = QProcess::systemEnvironment();
   QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
@@ -34,13 +35,13 @@ Corrections::~Corrections()
   delete m_trdSettings;
 }
 
-void Corrections::apply(QVector<Hit*>& hits, Flags flags)
+void Corrections::apply(QVector<Hit*>& hits)
 {
   foreach(Hit* hit, hits) {
-    if (flags & Alignment) alignment(hit);
-    if (flags & TimeShifts) timeShift(hit);
-    if (flags & TrdMopv) trdMopv(hit);
-    if (flags & TofTimeOverThreshold) tofTimeOverThreshold(hit);
+    if (m_flags & Alignment) alignment(hit);
+    if (m_flags & TimeShifts) timeShift(hit);
+    if (m_flags & TrdMopv) trdMopv(hit);
+    if (m_flags & TofTimeOverThreshold) tofTimeOverThreshold(hit);
   }
 }
 
