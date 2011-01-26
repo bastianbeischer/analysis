@@ -13,9 +13,11 @@ UI_DIR      = ./.tmp
 RCC_DIR     = ./.tmp
 
 HEADERS += TRDCalculations.hh \
+           TRDLikelihood.hh \
            ProtonRejector.hh
 
 SOURCES += TRDCalculations.cc \
+           TRDLikelihood.cc \
            ProtonRejector.cc
 
 INCLUDEPATH += $$TOPLEVEL/event \
