@@ -42,7 +42,7 @@ TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
   legend->SetMargin(.7);
 
   function = new TF1("electronCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 2);
-  function->SetParameter(0, electronMass);
+  function->SetParameter(0, Constants::electronMass);
   function->SetParameter(1, 1);
   function->SetNpx(1000);
   function->SetLineColor(kBlue);
@@ -51,7 +51,7 @@ TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
   addFunction(function);
 
   function = new TF1("muonCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 2);
-  function->SetParameter(0, muonMass);
+  function->SetParameter(0, Constants::muonMass);
   function->SetParameter(1, 1);
   function->SetNpx(1000);
   function->SetLineColor(kGreen);
@@ -60,7 +60,7 @@ TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
   addFunction(function);
 
   function = new TF1("pionCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 2);
-  function->SetParameter(0, pionMass);
+  function->SetParameter(0, Constants::pionMass);
   function->SetParameter(1, 1);
   function->SetNpx(1000);
   function->SetLineColor(kCyan);
@@ -69,7 +69,7 @@ TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
   addFunction(function);
 
   function = new TF1("protonCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 2);
-  function->SetParameter(0, protonMass);
+  function->SetParameter(0, Constants::protonMass);
   function->SetParameter(1, 1);
   function->SetLineColor(kMagenta);
   function->SetNpx(1000);
@@ -78,7 +78,7 @@ TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
   addFunction(function);
 
   function = new TF1("He", timeOfFlightMomentumCorrelationFunction, 0.01, xMax, 2);
-  function->SetParameter(0, heliumMass);
+  function->SetParameter(0, Constants::heliumMass);
   function->SetParameter(1, 2);
   function->SetLineColor(kRed);
   function->SetNpx(1000);

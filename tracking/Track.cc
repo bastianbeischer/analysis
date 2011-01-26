@@ -67,16 +67,16 @@ void Track::calculateTimeOfFlight()
       Q_ASSERT(cluster->hits().size() <= 4);
 
       // if cluster is on track
-      if (qAbs(x(hit->position().z()) - cluster->position().x()) <= tofBarWidth / 2.) {
+      if (qAbs(x(hit->position().z()) - cluster->position().x()) <= Constants::tofBarWidth / 2.) {
         int layer = -1;
         double z = cluster->position().z();
-        if (upperTofPosition < z && z < upperTofPosition + tofBarHeight)
+        if (Constants::upperTofPosition < z && z < Constants::upperTofPosition + Constants::tofBarHeight)
           layer = 0;
-        else if (upperTofPosition - tofBarHeight < z && z < upperTofPosition)
+        else if (Constants::upperTofPosition - Constants::tofBarHeight < z && z < Constants::upperTofPosition)
           layer = 1;
-        else if (lowerTofPosition < z && z < lowerTofPosition + tofBarHeight)
+        else if (Constants::lowerTofPosition < z && z < Constants::lowerTofPosition + Constants::tofBarHeight)
           layer = 2;
-        else if (lowerTofPosition - tofBarHeight < z && z < lowerTofPosition)
+        else if (Constants::lowerTofPosition - Constants::tofBarHeight < z && z < Constants::lowerTofPosition)
           layer = 3;
 
         Q_ASSERT(layer > -1);
@@ -148,16 +148,16 @@ void Track::calculateTimeOfFlight()
     rightStopTime+= time;
   rightStopTime/= rightStopTimes.size();
 
-  const TVector3& upperPoint = position(upperTofPosition);
-  const TVector3& lowerPoint = position(lowerTofPosition);
-  double distanceToLeftStartSipm = tofBarLength/2. + upperPoint.y();
-  double correctedLeftStartTime = leftStartTime - distanceToLeftStartSipm * tofRefractiveIndex / speedOfLight;
-  double distanceToRightStartSipm = tofBarLength/2. - upperPoint.y();
-  double correctedRightStartTime = rightStartTime - distanceToRightStartSipm * tofRefractiveIndex / speedOfLight;
-  double distanceToLeftStopSipm = tofBarLength/2. + lowerPoint.y(); 
-  double correctedLeftStopTime = leftStopTime - distanceToLeftStopSipm * tofRefractiveIndex / speedOfLight;
-  double distacneToRightStopSipm = tofBarLength/2. - lowerPoint.y();
-  double correctedRightStopTime = rightStopTime - distacneToRightStopSipm * tofRefractiveIndex / speedOfLight;
+  const TVector3& upperPoint = position(Constants::upperTofPosition);
+  const TVector3& lowerPoint = position(Constants::lowerTofPosition);
+  double distanceToLeftStartSipm = Constants::tofBarLength/2. + upperPoint.y();
+  double correctedLeftStartTime = leftStartTime - distanceToLeftStartSipm * Constants::tofRefractiveIndex / Constants::speedOfLight;
+  double distanceToRightStartSipm = Constants::tofBarLength/2. - upperPoint.y();
+  double correctedRightStartTime = rightStartTime - distanceToRightStartSipm * Constants::tofRefractiveIndex / Constants::speedOfLight;
+  double distanceToLeftStopSipm = Constants::tofBarLength/2. + lowerPoint.y(); 
+  double correctedLeftStopTime = leftStopTime - distanceToLeftStopSipm * Constants::tofRefractiveIndex / Constants::speedOfLight;
+  double distacneToRightStopSipm = Constants::tofBarLength/2. - lowerPoint.y();
+  double correctedRightStopTime = rightStopTime - distacneToRightStopSipm * Constants::tofRefractiveIndex / Constants::speedOfLight;
 
   //qDebug() << leftStartTimes.size() << rightStartTimes.size() << leftStopTimes.size() << rightStopTimes.size();
   //qDebug() << distanceToLeftStartSipm << distanceToRightStartSipm << distanceToLeftStopSipm << distacneToRightStopSipm;
@@ -178,9 +178,9 @@ double Track::p() const
 
 double Track::beta() const
 {
-  const TVector3& upperPoint = position(upperTofPosition);
+  const TVector3& upperPoint = position(Constants::upperTofPosition);
   const TVector3& middlePoint = position(0);
-  const TVector3& lowerPoint = position(lowerTofPosition);
+  const TVector3& lowerPoint = position(Constants::lowerTofPosition);
   double trackLength = (upperPoint-middlePoint).Mag() + (middlePoint-lowerPoint).Mag();
-  return trackLength / (timeOfFlight() * speedOfLight);
+  return trackLength / (timeOfFlight() * Constants::speedOfLight);
 }

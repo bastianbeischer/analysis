@@ -56,10 +56,10 @@ double TRDCalculations::distanceOnTrackThroughTRDTube(const Hit* hit, const Trac
 {
   double distanceWireToTrack = fabs(TRDCalculations::distanceTrackToWire(hit,track));
 
-  if(distanceWireToTrack >= TRDTubeRadius)
+  if(distanceWireToTrack >= Constants::TRDTubeRadius)
     return 0.0;
 
-  double distanceInTube2D = 2.0* sqrt( TRDTubeRadius * TRDTubeRadius - distanceWireToTrack * distanceWireToTrack);
+  double distanceInTube2D = 2.0* sqrt( Constants::TRDTubeRadius * Constants::TRDTubeRadius - distanceWireToTrack * distanceWireToTrack);
 
   //find y slope:
   double slopeYinTRD = track->slopeY(hit->position().z());

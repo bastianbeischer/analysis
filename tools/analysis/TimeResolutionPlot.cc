@@ -81,14 +81,15 @@ void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Track* track, S
     return;
   if (track->p() < 3)
     return;
-  if (qAbs(track->y(upperTofPosition)-m_y) < 50. && qAbs(track->y(lowerTofPosition)-m_y) < 50.) {
+  if (qAbs(track->y(Constants::upperTofPosition)-m_y) < 50. && qAbs(track->y(Constants::lowerTofPosition)-m_y) < 50.) {
     histogram(0)->Fill(track->timeOfFlight());
     bool idTop1 = false, idTop2 = false, idBottom1 = false, idBottom2 = false;
     foreach (Hit* hit, hits) {
-      if (!idTop1 && hit->detId() == m_idTop1) idTop1 = true;
-      if (!idTop2 && hit->detId() == m_idTop2) idTop2 = true;
-      if (!idBottom1 && hit->detId() == m_idBottom1) idBottom1 = true;
-      if (!idBottom2 && hit->detId() == m_idBottom2) idBottom2 = true;
+      unsigned short barId = hit->detId() - hit->channel();
+      if (!idTop1 && barId == m_idTop1) idTop1 = true;
+      if (!idTop2 && barId == m_idTop2) idTop2 = true;
+      if (!idBottom1 && barId == m_idBottom1) idBottom1 = true;
+      if (!idBottom2 && barId  == m_idBottom2) idBottom2 = true;
     }
     if (idTop1 && idTop2 && idBottom1 && idBottom2)
       histogram(1)->Fill(track->timeOfFlight());
