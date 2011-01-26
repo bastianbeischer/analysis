@@ -19,6 +19,8 @@ public:
     ~TRDLikelihood();
     static TRDLikelihood* instance();
 
+    bool analyzeEvent(const QVector<Hit*>& hits, const Track* track, const SimpleEvent*, bool& isPositronish);
+
     void addLearnEvent(const QVector<Hit*>& hits, const Track* track, const SimpleEvent*, bool isProton);
 
     TH1D* protonModuleLikelihoodHisto(unsigned int moduleID)    {return m_protonModuleLikelihood.value(moduleID) ;}
@@ -34,6 +36,9 @@ private:
 
   QMap <unsigned int, TH1D*> m_positronModuleLikelihood ;
   QMap <unsigned int, TH1D*> m_protonModuleLikelihood ;
+
+  TH1D* m_positronLikelihood;
+  TH1D* m_protonLikelihood;
 
   void initializeModuleLikelihoods() ;
   void normalizeLikelihoodHistos() ;

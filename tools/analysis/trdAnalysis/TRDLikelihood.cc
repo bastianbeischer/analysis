@@ -1,5 +1,7 @@
 #include "TRDLikelihood.hh"
 
+#include <math.h>
+
 #include <QString>
 #include <QStringList>
 #include <QProcess>
@@ -12,7 +14,6 @@
 #include "Cluster.hh"
 #include "Setup.hh"
 #include "DetectorElement.hh"
-
 #include "TRDCalculations.hh"
 
 
@@ -37,12 +38,18 @@ TRDLikelihood::TRDLikelihood()
   m_pathToLikelihoodHistos = path ;
 
   initializeModuleLikelihoods();
+
+  m_positronLikelihood = new TH1D("positronLikelihood", "positronLikelihood;probability;L", 100, 0, 1);
+  m_protonLikelihood = new TH1D("protonLikelihood", "protonLikelihood;probability;L", 100, 0, 1);
 }
 
 TRDLikelihood::~TRDLikelihood(){
   //TODO: needed?
   qDeleteAll(m_positronModuleLikelihood);
   qDeleteAll(m_protonModuleLikelihood);
+
+  delete m_positronLikelihood;
+  delete m_protonLikelihood;
 
   TRDLikelihood::m_instance = 0;
 }
@@ -72,6 +79,104 @@ void TRDLikelihood::initializeModuleLikelihoods(){
     }
     element = setup->nextElement();
   }
+
+}
+
+bool TRDLikelihood::analyzeEvent(const QVector<Hit*>& hits, const Track* track, const SimpleEvent*, bool& isPositronish){
+  //check if everything worked and a track has been fit
+  if (!track || !track->fitGood())
+    return false;
+
+  //check if all tracker layers have a hit
+  TrackInformation::Flags flags = track->information()->flags();
+  if (!(flags & TrackInformation::AllTrackerLayers))
+    return false;
+
+  //check if track was inside of magnet
+  if (!(flags & TrackInformation::InsideMagnet))
+    return false;
+
+  //get the reconstructed momentum
+  double p = track->p(); //GeV
+
+  //only use following momenta 0.5 < |p| < 5
+  double pAbs = qAbs(p);
+  if(pAbs < 0.5 || pAbs > 5)
+    return false;
+
+  //loop over all hits and count tracker hits
+  //also find all clusters on track
+  QVector<Hit*> trdClusterHitsOnTrack;
+
+
+  //TODO: check for off track hits ?!?
+  foreach(Hit* clusterHit, hits){
+    if (clusterHit->type() == Hit::trd)
+      trdClusterHitsOnTrack.push_back(clusterHit);
+  }
+
+
+  //filter: only use events with 6 trd hits
+  if (trdClusterHitsOnTrack.size() < 6)
+    return false;
+
+  /*TODO: -what if normalization to track length doesnt work?
+  *       -what if not all layers have been hit (is there a different likelihood for a hit for different particles?)
+  *       -....
+  */
+
+  //event passed and can be analyzed:
+
+  //get energyDeposition in a Module and save the likelihoods which are stored in histos
+  QVector <double> positronLikelihoods;
+  QVector <double> protonLikelihoods;
+
+  foreach(Hit* clusterHit, trdClusterHitsOnTrack){
+    Cluster* cluster = static_cast<Cluster*>(clusterHit);
+    foreach(Hit* hit, cluster->hits()){
+      double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
+      if(distanceInTube > 0){
+        unsigned int tubeID = hit->detId();
+        unsigned int moduleID = 0xFFF0 & tubeID;
+        double signal = (hit->signalHeight() / distanceInTube) ;
+
+        //get likelihoods:
+
+        TH1D* protonHisto = m_protonModuleLikelihood.value(moduleID);
+        protonLikelihoods <<  protonHisto->GetBinContent( protonHisto->GetBin(signal) );
+
+        TH1D* positronHisto = m_positronModuleLikelihood.value(moduleID);
+        positronLikelihoods << positronHisto->GetBinContent( positronHisto->GetBin(signal) );
+
+      }
+    }
+  }
+
+  //calculate combined likelihoods
+  double protonLikelihood = 0;
+  foreach(double moduleLikelihood, protonLikelihoods)
+    protonLikelihood *= moduleLikelihood;
+  protonLikelihood = pow(protonLikelihood, 1.0 / protonLikelihoods.size() );
+
+  double positronLikelihood = 0;
+  foreach(double moduleLikelihood, positronLikelihoods)
+    positronLikelihood *= moduleLikelihood;
+  positronLikelihood = pow(positronLikelihood, 1.0 / positronLikelihoods.size() );
+
+  //fill into histos
+  m_protonLikelihood->Fill(protonLikelihood);
+  m_positronLikelihood->Fill(positronLikelihood);
+
+  //test:
+  double testValue = positronLikelihood / ( positronLikelihood + protonLikelihood) ;
+
+  if ( testValue > 0.5){
+    isPositronish = true;
+  }else{
+    isPositronish = false;
+  }
+
+  return true;
 
 }
 
