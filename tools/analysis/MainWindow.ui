@@ -97,6 +97,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QPushButton" name="toggleGridButton">
+         <property name="text">
+          <string>show grid</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <widget class="QPushButton" name="chooseAllButton">
          <property name="text">
           <string>choose all</string>

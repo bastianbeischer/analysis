@@ -52,18 +52,18 @@ TimeResolutionPlot::TimeResolutionPlot(unsigned short idTop1, unsigned short idT
   addLatex(RootPlot::newLatex(.15, .76));
   addLatex(RootPlot::newLatex(.15, .73));
   TLatex* latex = 0;
-  latex = RootPlot::newLatex(.15, .68); latex->SetTextColor(kRed);
+  latex = RootPlot::newLatex(.67, .85); latex->SetTextColor(kRed);
   addLatex(latex);
-  latex = RootPlot::newLatex(.15, .65);
+  latex = RootPlot::newLatex(.67, .82);
   latex->SetTextColor(kRed);
   addLatex(latex);
-  latex = RootPlot::newLatex(.15, .62);
+  latex = RootPlot::newLatex(.67, .79);
   latex->SetTextColor(kRed);
   addLatex(latex);
-  latex = RootPlot::newLatex(.15, .59);
+  latex = RootPlot::newLatex(.67, .76);
   latex->SetTextColor(kRed);
   addLatex(latex);
-  latex = RootPlot::newLatex(.15, .56);
+  latex = RootPlot::newLatex(.67, .73);
   latex->SetTextColor(kRed);
   addLatex(latex);
 }
@@ -99,22 +99,22 @@ void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Track* track, S
 void TimeResolutionPlot::update()
 {
   latex(0)->SetTitle(qPrintable(QString("n    = %1").arg(histogram(0)->GetEntries())));
-  latex(1)->SetTitle(qPrintable(QString("mean = %1 ns").arg(0.01*qRound(100.*histogram(0)->GetMean()))));
-  latex(2)->SetTitle(qPrintable(QString("rms  = %1 ns").arg(0.01*qRound(100.*histogram(0)->GetRMS()))));
+  latex(1)->SetTitle(qPrintable(QString("mean = %1 ns").arg(histogram(0)->GetMean(), 0, 'f', 2, ' ')));
+  latex(2)->SetTitle(qPrintable(QString("rms  = %1 ns").arg(histogram(0)->GetRMS(), 0, 'f', 2, ' ')));
   latex(5)->SetTitle(qPrintable(QString("n    = %1").arg(histogram(1)->GetEntries())));
-  latex(6)->SetTitle(qPrintable(QString("mean = %1 ns").arg(0.01*qRound(100.*histogram(1)->GetMean()))));
-  latex(7)->SetTitle(qPrintable(QString("rms  = %1 ns").arg(0.01*qRound(100.*histogram(1)->GetRMS()))));
+  latex(6)->SetTitle(qPrintable(QString("mean = %1 ns").arg(histogram(1)->GetMean(), 0, 'f', 2, ' ')));
+  latex(7)->SetTitle(qPrintable(QString("rms  = %1 ns").arg(histogram(1)->GetRMS(), 0, 'f', 2, ' ')));
 }
 
 void TimeResolutionPlot::finalize()
 {
   function(0)->SetParameters(histogram(0)->GetMaximum(), histogram(0)->GetMean(), histogram(0)->GetRMS());
   histogram(0)->Fit(function(0), "RQN0");
-  latex(3)->SetTitle(qPrintable(QString("t    = %1 ns").arg(0.01*qRound(100.*function(0)->GetParameter(1)))));
-  latex(4)->SetTitle(qPrintable(QString("#sigma    = %1 ns").arg(0.01*qRound(100.*function(0)->GetParameter(2)))));
+  latex(3)->SetTitle(qPrintable(QString("t    = %1 ns").arg(function(0)->GetParameter(1), 0, 'f', 2, ' ')));
+  latex(4)->SetTitle(qPrintable(QString("#sigma    = %1 ns").arg(function(0)->GetParameter(2), 0, 'f', 2, ' ')));
   histogram(1)->Scale(histogram(0)->GetMaximum()/histogram(1)->GetMaximum());
   function(1)->SetParameters(histogram(1)->GetMaximum(), histogram(1)->GetMean(), histogram(1)->GetRMS());
   histogram(1)->Fit(function(1), "RQN0");
-  latex(8)->SetTitle(qPrintable(QString("t    = %1 ns").arg(0.01*qRound(100.*function(1)->GetParameter(1)))));
-  latex(9)->SetTitle(qPrintable(QString("#sigma    = %1 ns").arg(0.01*qRound(100.*function(1)->GetParameter(2)))));
+  latex(8)->SetTitle(qPrintable(QString("t    = %1 ns").arg(function(1)->GetParameter(1), 0, 'f', 2, ' ')));
+  latex(9)->SetTitle(qPrintable(QString("#sigma    = %1 ns").arg(function(1)->GetParameter(2), 0, 'f', 2, ' ')));
 }

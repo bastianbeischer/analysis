@@ -252,3 +252,14 @@ void Plotter::setTimeLabel(QLabel* label)
 {
   m_timeLabel = label;
 }
+
+void Plotter::setGrid(bool b)
+{
+  if (b) {
+    gPad->SetGridx(true);
+    gPad->SetGridy(true);
+  } else {
+    gPad->SetGridx(false);
+    gPad->SetGridy(false);
+  }
+}

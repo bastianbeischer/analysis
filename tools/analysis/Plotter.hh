@@ -31,6 +31,7 @@ public:
   void setTitleLabel(QLabel*);
   void setPositionLabel(QLabel*);
   void setTimeLabel(QLabel*);
+  void setGrid(bool);
   void setDataChainProgressBar(QProgressBar*);
   void setEventQueueProgressBar(QProgressBar*);
   void saveCanvas(const QString& fileName);

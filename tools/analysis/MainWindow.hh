@@ -29,6 +29,7 @@ private slots:
   void listWidgetItemChanged(QListWidgetItem*);
   void listWidgetCurrentRowChanged(int);
   void showButtonsClicked();
+  void toggleGridButtonClicked();
 private:
   void setupPlots();
   void setupAnalysis(Track::Type& type, Corrections::Flags& flags);

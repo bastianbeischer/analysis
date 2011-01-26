@@ -59,6 +59,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.chooseAllButton, SIGNAL(clicked()), this, SLOT(chooseAllButtonClicked()));
   connect(m_ui.setFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
   connect(m_ui.addFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
+  connect(m_ui.toggleGridButton, SIGNAL(clicked()), this, SLOT(toggleGridButtonClicked()));
   connect(m_ui.listWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(listWidgetItemChanged(QListWidgetItem*)));
   connect(m_ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(listWidgetCurrentRowChanged(int)));
 
@@ -544,4 +545,15 @@ void MainWindow::closeEvent(QCloseEvent* event)
 {
   m_ui.plotter->abortAnalysis();
   event->accept();
+}
+
+void MainWindow::toggleGridButtonClicked()
+{
+  if (m_ui.toggleGridButton->text() == "show grid") {
+    m_ui.plotter->setGrid(true);
+    m_ui.toggleGridButton->setText("hide grid");
+  } else {
+    m_ui.plotter->setGrid(false);
+    m_ui.toggleGridButton->setText("show grid");
+  }
 }
