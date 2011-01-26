@@ -15,7 +15,7 @@ public:
   RootPlot();
   virtual ~RootPlot();
 public:
-	static TLatex* newLatex(double rx, double ry);
+  static TLatex* newLatex(double rx, double ry);
 
   virtual void draw(TCanvas*);
   virtual void clear() {}

@@ -30,21 +30,42 @@ TimeResolutionPlot::TimeResolutionPlot(unsigned short idTop1, unsigned short idT
     .arg(m_idBottom1, 0, 16)
     .arg(m_idBottom2, 0, 16);
   setTitle(title);
-  TH1D* histogram = new TH1D(qPrintable(title + " all histogram"), "", 30, 0, 6);
+
+  TH1D* histogram = 0;
+  TF1* function = 0;
+  histogram = new TH1D(qPrintable(title + " all histogram"), "", 30, 0, 6);
   histogram->GetXaxis()->SetTitle("#Deltat / ns");
   addHistogram(histogram);
-  TF1* function = new TF1(qPrintable(title + " all function"), "gaus(0)", 0, 6);
+  function = new TF1(qPrintable(title + " all function"), "gaus(0)", 0, 6);
   addFunction(function);
-
-  qDebug()
-    << Setup::instance()->element(m_idTop1)->position().x()
-    << Setup::instance()->element(m_idTop2)->position().x()
-    << Setup::instance()->element(m_idBottom1)->position().x()
-    << Setup::instance()->element(m_idBottom2)->position().x();
+  histogram = new TH1D(qPrintable(title + " histogram"), "", 30, 0, 6);
+  histogram->GetXaxis()->SetTitle("#Deltat / ns");
+  histogram->SetLineColor(kRed);
+  addHistogram(histogram);
+  function = new TF1(qPrintable(title + " function"), "gaus(0)", 0, 6);
+  function->SetLineColor(kRed);
+  addFunction(function);
 
   addLatex(RootPlot::newLatex(.15, .85));
   addLatex(RootPlot::newLatex(.15, .82));
   addLatex(RootPlot::newLatex(.15, .79));
+  addLatex(RootPlot::newLatex(.15, .76));
+  addLatex(RootPlot::newLatex(.15, .73));
+  TLatex* latex = 0;
+  latex = RootPlot::newLatex(.15, .68); latex->SetTextColor(kRed);
+  addLatex(latex);
+  latex = RootPlot::newLatex(.15, .65);
+  latex->SetTextColor(kRed);
+  addLatex(latex);
+  latex = RootPlot::newLatex(.15, .62);
+  latex->SetTextColor(kRed);
+  addLatex(latex);
+  latex = RootPlot::newLatex(.15, .59);
+  latex->SetTextColor(kRed);
+  addLatex(latex);
+  latex = RootPlot::newLatex(.15, .56);
+  latex->SetTextColor(kRed);
+  addLatex(latex);
 }
 
 TimeResolutionPlot::~TimeResolutionPlot()
@@ -60,41 +81,39 @@ void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Track* track, S
     return;
   if (track->p() < 3)
     return;
-  if (qAbs(track->y(upperTofPosition)-m_y) < 150. && qAbs(track->y(lowerTofPosition)-m_y) < 150.) {
-    histogram()->Fill(track->timeOfFlight());
-    unsigned short up = 0;
-    unsigned short down = 0;
+  if (qAbs(track->y(upperTofPosition)-m_y) < 50. && qAbs(track->y(lowerTofPosition)-m_y) < 50.) {
+    histogram(0)->Fill(track->timeOfFlight());
+    bool idTop1 = false, idTop2 = false, idBottom1 = false, idBottom2 = false;
     foreach (Hit* hit, hits) {
-      if (hit->type() != Hit::tof)
-        continue;
-      TOFCluster* cluster = static_cast<TOFCluster*>(hit);
-      const TVector3& position = cluster->position();
-      if (qAbs(track->x(position.z())-position.x()) > 25)
-        continue;
-      if (position.z() > 0) {
-        //Q_ASSERT(up == 0);
-        up = cluster->detId();
-      } else {
-        //Q_ASSERT(down == 0);
-        down = cluster->detId();
-      }
+      if (!idTop1 && hit->detId() == m_idTop1) idTop1 = true;
+      if (!idTop2 && hit->detId() == m_idTop2) idTop2 = true;
+      if (!idBottom1 && hit->detId() == m_idBottom1) idBottom1 = true;
+      if (!idBottom2 && hit->detId() == m_idBottom2) idBottom2 = true;
     }
-    /*for (int i = 0; i < m_upperId.count(); ++i) {
-      if (m_upperId[i] == up && m_lowerId[i] == down)
-        histogram(i+1)->Fill((upperTofPosition-lowerTofPosition)/(speedOfLight*track->beta()));
-    }*/
+    if (idTop1 && idTop2 && idBottom1 && idBottom2)
+      histogram(1)->Fill(track->timeOfFlight());
   }
 }
 
 void TimeResolutionPlot::update()
 {
-  latex(0)->SetTitle(qPrintable(QString("mean  = %1").arg(histogram()->GetMean())));
-  latex(1)->SetTitle(qPrintable(QString("RMS   = %1").arg(histogram()->GetRMS())));
+  latex(0)->SetTitle(qPrintable(QString("n    = %1").arg(histogram(0)->GetEntries())));
+  latex(1)->SetTitle(qPrintable(QString("mean = %1 ns").arg(0.01*qRound(100.*histogram(0)->GetMean()))));
+  latex(2)->SetTitle(qPrintable(QString("rms  = %1 ns").arg(0.01*qRound(100.*histogram(0)->GetRMS()))));
+  latex(5)->SetTitle(qPrintable(QString("n    = %1").arg(histogram(1)->GetEntries())));
+  latex(6)->SetTitle(qPrintable(QString("mean = %1 ns").arg(0.01*qRound(100.*histogram(1)->GetMean()))));
+  latex(7)->SetTitle(qPrintable(QString("rms  = %1 ns").arg(0.01*qRound(100.*histogram(1)->GetRMS()))));
 }
 
 void TimeResolutionPlot::finalize()
 {
-  function()->SetParameters(histogram()->GetMaximum(), histogram()->GetMean(), histogram()->GetRMS());
-  histogram()->Fit(function(), "RQN0");
-  latex(2)->SetTitle(qPrintable(QString("sigma = %1").arg(function()->GetParameter(2))));
+  function(0)->SetParameters(histogram(0)->GetMaximum(), histogram(0)->GetMean(), histogram(0)->GetRMS());
+  histogram(0)->Fit(function(0), "RQN0");
+  latex(3)->SetTitle(qPrintable(QString("t    = %1 ns").arg(0.01*qRound(100.*function(0)->GetParameter(1)))));
+  latex(4)->SetTitle(qPrintable(QString("#sigma    = %1 ns").arg(0.01*qRound(100.*function(0)->GetParameter(2)))));
+  histogram(1)->Scale(histogram(0)->GetMaximum()/histogram(1)->GetMaximum());
+  function(1)->SetParameters(histogram(1)->GetMaximum(), histogram(1)->GetMean(), histogram(1)->GetRMS());
+  histogram(1)->Fit(function(1), "RQN0");
+  latex(8)->SetTitle(qPrintable(QString("t    = %1 ns").arg(0.01*qRound(100.*function(1)->GetParameter(1)))));
+  latex(9)->SetTitle(qPrintable(QString("#sigma    = %1 ns").arg(0.01*qRound(100.*function(1)->GetParameter(2)))));
 }

@@ -22,7 +22,7 @@ TLatex* RootPlot::newLatex(double rx, double ry)
   latex->SetTextAlign(13);
   latex->SetTextFont(82);
   latex->SetTextSize(0.03);
-	return latex;
+  return latex;
 }
 
 void RootPlot::draw(TCanvas* canvas)

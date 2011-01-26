@@ -355,14 +355,6 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8028, 0x8038));
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x802c, 0x803c));
   }
-
-  for (int i = 0x8000; i <= 0x803F; ++i) {
-    qDebug()
-      << hex << i
-      << Setup::instance()->element(i)->position().x()
-      << Setup::instance()->element(i)->position().y()
-      << Setup::instance()->element(i)->position().z();
-  }
 }
 
 void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
