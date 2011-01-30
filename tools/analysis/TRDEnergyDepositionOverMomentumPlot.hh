@@ -2,9 +2,9 @@
 #define TRDENERGYDEPOSITIONOVERMOMENTUMPLOT_HH
 
 #include "AnalysisPlot.hh"
-#include "GraphPlot.hh"
+#include "H2DPlot.hh"
 
-class TRDEnergyDepositionOverMomentumPlot: public AnalysisPlot, public GraphPlot
+class TRDEnergyDepositionOverMomentumPlot: public AnalysisPlot, public H2DPlot
 {
 
 public:

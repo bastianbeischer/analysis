@@ -4,7 +4,7 @@
 
 #include "math.h"
 
-#include <TGraph.h>
+#include <TH2D.h>
 #include <TAxis.h>
 
 #include "Cluster.hh"
@@ -14,16 +14,15 @@
 
 TRDEnergyDepositionOverMomentumPlot::TRDEnergyDepositionOverMomentumPlot(AnalysisPlot::Topic topic) :
   AnalysisPlot(topic),
-  GraphPlot()
+  H2DPlot()
 {
   setTitle("TRD energy deposition over momentum");
-  setMultiGraphTitle(qPrintable(title() + ";rigidity / GV; energy deposition / (ADCCounts per mm per tube "));
+  //  setMultiGraphTitle(qPrintable(title() + ";rigidity / GV; energy deposition / (ADCCounts per mm per tube "));
 
-  TGraph* graph = new TGraph();
-  graph->SetMarkerStyle(1);
-  addGraph(graph, "P");
-
-  graph->GetXaxis()->SetRangeUser(-10,10);
+  TH2D* histo = new TH2D(qPrintable(title()), qPrintable(title()), 200, -10, 10, 200, 0, 60);
+  histo->GetXaxis()->SetTitle("R / GV");
+  histo->GetYaxis()->SetTitle("dE/dx");
+  setHistogram(histo);
 }
 
 TRDEnergyDepositionOverMomentumPlot::~TRDEnergyDepositionOverMomentumPlot()
@@ -86,16 +85,7 @@ void TRDEnergyDepositionOverMomentumPlot::processEvent(const QVector<Hit*>& hits
   meanEnergyDepPerTubePerDistance /= energyDepPerTubePerDistance.size();
 
   //qDebug() << "mean of " << energyDepPerTubePerDistance << " is " <<  meanEnergyDepPerTubePerDistance;
-  //add a point
-
-  QMutexLocker locker(&m_mutex);
-  //  for(int i = 0; i < energyDepPerTubePerDistance.size(); ++i){
-  //      quint32 numberOfPointsInGraph = graph(0)->GetN();
-  //      graph(0)->SetPoint(numberOfPointsInGraph, p, energyDepPerTubePerDistance[i]);
-  //  }
-
-  quint32 numberOfPointsInGraph = graph(0)->GetN();
-  graph(0)->SetPoint(numberOfPointsInGraph, p, meanEnergyDepPerTubePerDistance);
+  histogram()->Fill(p, meanEnergyDepPerTubePerDistance);
 }
 
 void TRDEnergyDepositionOverMomentumPlot::finalize()
