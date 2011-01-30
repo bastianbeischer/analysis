@@ -35,7 +35,7 @@ void TRDFitPlot::processEvent(const QVector<Hit*>&,Track*, SimpleEvent* /*event*
 
 void TRDFitPlot::finalize()
 {
-  updateHistogram();
+  //updateHistogram();
 }
 
 void TRDFitPlot::updateHistogram()

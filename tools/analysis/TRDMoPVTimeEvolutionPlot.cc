@@ -177,22 +177,26 @@ void TRDMoPVTimeEvolutionPlot::processEvent(const QVector<Hit*>& hits, Track* tr
   }
 }
 
-void TRDMoPVTimeEvolutionPlot::finalize() {
-  update();
+void TRDMoPVTimeEvolutionPlot::finalize()
+{
+  // update();
 }
 
-//void TRDMoPVTimeEvolutionPlot::draw(TCanvas* canvas) {
+//void TRDMoPVTimeEvolutionPlot::draw(TCanvas* canvas)
+//{
 //  update();
 //  RootPlot::draw(canvas);
 //}
 
-void TRDMoPVTimeEvolutionPlot::update() {
+void TRDMoPVTimeEvolutionPlot::update()
+{
   if(m_graphNeedsUpdate)
     updateGraph();
 }
 
 
-void TRDMoPVTimeEvolutionPlot::updateGraph() {
+void TRDMoPVTimeEvolutionPlot::updateGraph()
+{
 
   // qDebug("m_mopvGraphs.size() = %i", m_mopvGraphs.size() );
   // qDebug("m_runFileMap.size() = %i", m_binningMap.size() );
