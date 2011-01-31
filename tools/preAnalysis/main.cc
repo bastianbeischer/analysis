@@ -54,7 +54,15 @@ int main(int argc, char** argv)
     unsigned int nEvents = sourceTree->GetEntries();
     const std::string& hash = static_cast<DataDescription*>(sourceTree->GetUserInfo()->At(0))->softwareVersionHash();
     description.addRunFile(line.toStdString(), hash, nEvents);
-    std::cout << "adding file " << line.toStdString() << " with hash " << hash << std::endl;
+
+    std::cout << std::endl;
+    std::cout << "Adding file " << line.toStdString() << " with hash " << hash << std::endl;
+    std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
+    std::cout << "| Processing:                                                                                        |" << std::endl;
+    std::cout << "| 0%     10%       20%       30%       40%       50%       60%       70%       80%       90%     100%|" << std::endl;
+    std::cout << "|.........|.........|.........|.........|.........|.........|.........|.........|.........|..........|" << std::endl;
+    std::cout << "|" << std::flush;
+    int iFactors = 0;
 
     // loop over all events in this root file
     for (unsigned long eventIt = 0; eventIt < nEvents; ++eventIt) {
@@ -69,9 +77,17 @@ int main(int argc, char** argv)
         destinationEvent->addHit(cluster);
       
       destinationTree.Fill();
-
       delete destinationEvent;
+
+      if ( eventIt > iFactors*nEvents/100. ) {
+        std::cout << "#" << std::flush;
+        iFactors++;
+      }
     } // events in this root file
+
+    std::cout << "|" << std::endl;
+    std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
+    std::cout << "Finished file " << line.toStdString() << std::endl;
 
     line = inStream.readLine();
   } // all root files
