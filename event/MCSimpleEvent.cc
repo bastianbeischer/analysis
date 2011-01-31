@@ -1,5 +1,7 @@
 #include "MCSimpleEvent.hh"
 
-MCSimpleEvent::MCSimpleEvent()
+MCSimpleEvent::MCSimpleEvent():
+    m_mcEventInformation(NULL)
 {
+
 }

@@ -11,6 +11,7 @@
 
 #include "Converter.hh"
 #include "SimpleEvent.hh"
+#include "MCSimpleEvent.hh"
 #include "SingleFile.hh"
 #include "MCSingleFile.hh"
 #include "DataDescription.hh"
@@ -125,9 +126,19 @@ void DataManager::processFiles()
   std::cout << "|" << std::flush;
   int iFactors = 0;
 
-  foreach(SingleFile* inputFile, m_inputFiles) {
+  for (int i = 0; i < m_inputFiles.size(); ++i) {
+    SingleFile* inputFile = m_inputFiles.at(i) ;
+    //TODO not very nice to have 2 lists
+    MCSingleFile* mcInputFile = m_inputMCFiles.at(i) ;
+
     for (unsigned int iEvent = 0; iEvent < inputFile->getNumberOfEvents(); iEvent++) {
-      m_currentEvent = converter.generateSimpleEvent(inputFile, iEvent);
+      if(mcInputFile == NULL)
+        m_currentEvent = converter.generateSimpleEvent(inputFile, iEvent);
+      else
+        m_currentEvent = dynamic_cast<SimpleEvent*>( converter.generateMCSimpleEvent(inputFile, mcInputFile, iEvent) );
+
+
+
       m_outputTree->Fill();
       delete m_currentEvent;
 

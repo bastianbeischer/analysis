@@ -11,7 +11,16 @@
 #include "TOFDataBlock.h"
 #include "Setup.hh"
 
+#include "MCSingleFile.hh"
+#include "MCSimpleEvent.hh"
+#include "MCEventInformation.hh"
+#include "MCEvent.h"
+#include "MCParticle.h"
+#include "MCDigi.h"
+
 #include "CLHEP/Units/SystemOfUnits.h"
+#include <CLHEP/Geometry/Point3D.h>
+#include <CLHEP/Geometry/Vector3D.h>
 
 #include <TVector3.h>
 #include <QDebug>
@@ -141,4 +150,45 @@ SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int
   } // foreach(DetectorID...)
 
   return simpleEvent;
+}
+
+
+MCEventInformation* Converter::generateMCEventInformation(const MCSingleFile* mcFile, unsigned int eventNo){
+
+  //get MCEvent
+  const MCEvent* mcEvent = mcFile->getMCEvent(eventNo) ;
+
+  //read MC data
+  QVector<MCParticle*> particles = mcEvent->GetParticles();
+  QVector<MCDigi*> digis = mcEvent->GetDigis();
+
+  //get info on primary
+  MCParticle* primary = particles.at(0);
+  QVector<MCParticle::DetectorHit> primaryHits = primary->GetHits();
+
+  HepGeom::Vector3D<double> primaryMom = primaryHits.at(0).preStep.momentum;
+
+
+  //convert into data structures used by SimpleEvents
+  TVector3 mcI_primaryMomentum(primaryMom.x(), primaryMom.y(), primaryMom.z())  ;
+
+  //create MC Information Object
+  MCEventInformation* mcEventInfo = new MCEventInformation();
+
+  //fill it with data
+  mcEventInfo->InitialMom(mcI_primaryMomentum);
+
+  return mcEventInfo;
+}
+
+
+MCSimpleEvent* Converter::generateMCSimpleEvent(const SingleFile* file, const MCSingleFile* mcFile, unsigned int eventNo){
+  SimpleEvent* simpleEvent = generateSimpleEvent(file, eventNo);
+  MCEventInformation* mcEventInfo = generateMCEventInformation(mcFile, eventNo);
+
+  MCSimpleEvent* mcSimpleEvent = new MCSimpleEvent();
+
+  qDebug() << mcEventInfo->InitialMom().x() << mcEventInfo->InitialMom().y() << mcEventInfo->InitialMom().z();
+
+  return mcSimpleEvent;
 }

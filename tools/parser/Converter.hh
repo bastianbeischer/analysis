@@ -4,6 +4,11 @@
 class SimpleEvent;
 class SingleFile;
 
+class MCSimpleEvent;
+class MCSingleFile;
+class MCEventInformation;
+
+
 class Converter
 {
   
@@ -13,6 +18,10 @@ public:
   
 public:
   SimpleEvent* generateSimpleEvent(const SingleFile* file, unsigned int eventNo);
+  MCSimpleEvent* generateMCSimpleEvent(const SingleFile* file, const MCSingleFile* mcFile, unsigned int eventNo);
+
+private:
+  MCEventInformation* generateMCEventInformation(const MCSingleFile* mcFile, unsigned int eventNo);
   
 };
 
