@@ -6,6 +6,7 @@
 
 class DataDescription;
 class SingleFile;
+class MCSingleFile;
 class SimpleEvent;
 class TTree;
 class TFile;
@@ -32,6 +33,7 @@ private:
 
 private:
   QList<SingleFile*> m_inputFiles;
+  QList<MCSingleFile*> m_inputMCFiles;
   
   DataDescription*   m_description;
   QString            m_outputFileName;

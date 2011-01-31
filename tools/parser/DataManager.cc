@@ -12,6 +12,7 @@
 #include "Converter.hh"
 #include "SimpleEvent.hh"
 #include "SingleFile.hh"
+#include "MCSingleFile.hh"
 #include "DataDescription.hh"
 
 DataManager::DataManager() :
@@ -75,6 +76,18 @@ void DataManager::addSingleFile(QString fileName)
   SingleFile* file = new SingleFile(qPrintable(fileName));
   m_inputFiles.push_back(file);
   m_description->addRunFile(qPrintable(fileName), hash, file->getNumberOfEvents());
+
+  //try to open a matching mc file:
+  qDebug("looking for MC file");
+  QString mcFileName = fileName.replace(".dat", "_MC.dat");
+  MCSingleFile* mcFile = new MCSingleFile(qPrintable(mcFileName));
+  if (mcFile->IsGood()) {
+    qDebug("found MC file");
+    m_inputMCFiles.push_back(mcFile);
+  } else {
+    qDebug("did find MC file");
+    m_inputMCFiles.push_back(NULL);
+  }
 }
 
 void DataManager::initializeOutput()
