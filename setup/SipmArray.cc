@@ -18,7 +18,7 @@ SipmArray::SipmArray(unsigned short detId) :
 {
   m_type = tracker;
   m_nChannels = 32;
-  m_position = Setup::instance()->configFilePosition("tracker", m_id);
+  m_position = Setup::instance()->configFilePosition("tracker", m_id | (m_nChannels/2));
   m_alignmentShift = Setup::instance()->configFileAlignmentShift("tracker", m_id);
 }
 
