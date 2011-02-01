@@ -1,56 +1,37 @@
 #include "DetectorElement.hh"
 
 #include <QtAlgorithms>
+#include <QString>
 
+#include "Setup.hh"
 #include "Cluster.hh"
 
 #include <cmath>
 #include <cassert>
 #include <iostream>
 
-bool comparePositions(const Hit* hit1, const Hit* hit2)
-{
-  return hit1->position().x() < hit2->position().x();
-}
-
-DetectorElement::DetectorElement() :
-  m_type(none),
-  m_id(0),
-  m_nChannels(0),
-  m_position(TVector3(0.,0.,0.)),
-  m_alignmentShift(0.)
-{
-}
-
-DetectorElement::DetectorElement(unsigned short id) :
-  m_type(none),
+DetectorElement::DetectorElement(Type type, unsigned short id, unsigned short nChannels) :
+  m_type(type),
   m_id(id),
-  m_nChannels(0),
+  m_nChannels(nChannels),
   m_position(TVector3(0.,0.,0.)),
   m_alignmentShift(0.)
 {
+  QString configGroup;
+  if (m_type == tracker) configGroup = "tracker";
+  if (m_type == trd) configGroup = "trd";
+  if (m_type == tof) configGroup = "tof";
+
+  m_position = Setup::instance()->configFilePosition(configGroup, m_id | (m_nChannels/2));
+  m_alignmentShift = Setup::instance()->configFileAlignmentShift(configGroup, m_id);
+  QMap<double, unsigned short> temporaryMap;
+  for (int channel = 0; channel < m_nChannels; channel++)
+    temporaryMap[Setup::instance()->configFilePosition(configGroup, m_id | channel).x()] = channel;
+  m_channelMap = temporaryMap.values().toVector();
 }
 
 DetectorElement::~DetectorElement()
 {
-}
-
-void DetectorElement::sortHits()
-{
-  // check if all channels are present --> otherwise reinserting into map will be wrong if a channel was skipped
-  if (m_type == tracker)
-    assert(m_hits.size() == 32);
-  else if (m_type == trd)
-    assert(m_hits.size() == 16);
-  // else if (m_type == tof)
-  //   assert(hits.size() == 4);
-
-  QList<Hit*> hits = m_hits.values();
-  qSort(hits.begin(), hits.end(), comparePositions);
-  m_hits.clear();
-  for (int i = 0; i < hits.size(); ++i) {
-    m_hits[i] = hits.at(i);
-  }
 }
 
 void DetectorElement::debug(const QVector<Hit*>& clusters)
@@ -109,4 +90,10 @@ TVector3 DetectorElement::positionForHit(const Hit* hit) const
   double v = s*x + c*y;
 
   return TVector3(0.5*(posX+counterPosX) + u, 0.5*(posY+counterPosY) + v, posZ);
+}
+
+unsigned short DetectorElement::sortedChannel(const unsigned short channel) const
+{
+  Q_ASSERT(channel < m_channelMap.size());
+  return m_channelMap.at(channel);
 }

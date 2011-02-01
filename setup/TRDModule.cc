@@ -6,20 +6,9 @@
 
 #include <QString>
 
-TRDModule::TRDModule() :
-  DetectorElement()
-{
-  m_type = trd;
-  m_nChannels = 16;
-}
-
 TRDModule::TRDModule(unsigned short detId) :
-  DetectorElement(detId)
+  DetectorElement(trd, detId, 16)
 {
-  m_type = trd;
-  m_nChannels = 16;
-  m_position = Setup::instance()->configFilePosition("trd", m_id);
-  m_alignmentShift = Setup::instance()->configFileAlignmentShift("trd", m_id);
 }
 
 TRDModule::~TRDModule()

@@ -102,7 +102,8 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleE
 
       unsigned short detId = hit->detId() - hit->channel();
       unsigned short index = m_layer->detIds().indexOf(detId);
-      unsigned short nChannels = Setup::instance()->element(detId)->nChannels();
+      DetectorElement* element = Setup::instance()->element(detId);
+      unsigned short nChannels = element->nChannels();
       unsigned short channel = hit->channel();
       if (strcmp(hit->ClassName(), "Cluster") == 0) {
         int max = 0;
@@ -115,7 +116,7 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleE
             imax = i;
           }
         }
-        channel = subHits.at(imax)->channel();
+        channel = element->sortedChannel(subHits.at(imax)->channel());
       }
 
       histogram()->Fill(index*nChannels + channel, res);

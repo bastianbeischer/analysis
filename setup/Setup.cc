@@ -175,9 +175,6 @@ void Setup::addHitsToLayers(const QVector<Hit*>& hits)
     double z = hit->position().z();
     layer(z)->addHitToDetector(hit);
   }
-  foreach(Layer* layer, m_layers) {
-    layer->sortHits();
-  }
 }
 
 void Setup::clearHitsFromLayers()

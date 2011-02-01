@@ -8,8 +8,7 @@ class SipmArray :
 {
   
 public:
-  SipmArray();
-  SipmArray(unsigned short detId);
+  explicit SipmArray(unsigned short detId);
   ~SipmArray();
   
 public:
