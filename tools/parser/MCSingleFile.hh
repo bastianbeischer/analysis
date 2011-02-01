@@ -4,6 +4,8 @@
 #include <QList>
 //#include <QMap>
 
+#include <QDebug>
+
 class QString;
 class MCEvent;
 class RunFile;
@@ -17,7 +19,7 @@ public:
 
 public:
   unsigned int    getNumberOfEvents()                                    const {return m_MCEvents.size();}
-  const MCEvent*  getMCEvent(unsigned int eventNo)                       const {return m_MCEvents.at(eventNo);}
+  const MCEvent*  getMCEvent(unsigned int eventNo)                       const {qDebug() << getNumberOfEvents();return m_MCEvents.at(eventNo);}
   bool            IsGood();
 
 private:

@@ -49,11 +49,24 @@ void MCSingleFile::open(QString fileName)
     return;
   }
 
-  const MCEvent* mcEvent = (const MCEvent*) m_runFile->ReadNextEvent();
+  //skip calis
+  for (int i=0; i!=nCalibrationEvents; ++i)
+    m_runFile->ReadNextEvent();
 
-  while (mcEvent != NULL) {
-      m_MCEvents.push_back(mcEvent);
+  qDebug() << m_runFile->ReadNextEvent();
+  qDebug() << m_runFile->ReadNextEvent();
+  qDebug() << m_runFile->ReadNextEvent();
+
+  const MCEvent* mcEvent = static_cast<MCEvent*>( m_runFile->ReadNextEvent() );
+
+  int i = 0;
+  while (i < nEvents ||  mcEvent != NULL) {
+    qDebug() << mcEvent;
+    mcEvent = static_cast<MCEvent*>( m_runFile->ReadNextEvent() );
+    i++;
   }
+
+
 }
 
 bool MCSingleFile::IsGood(){
