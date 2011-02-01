@@ -26,7 +26,8 @@ public:
 
 public:
   void setSignalHeight(const double height) {m_signalHeight = height;}
-  void setPosition(const TVector3 pos) {m_position = pos;}
+  void setPosition(const TVector3& pos) {m_position = pos;}
+  void setCounterPosition(const TVector3& pos) {m_counterPosition = pos;}
 
 public:
   ModuleType      type()            const {return m_type;}
