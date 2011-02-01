@@ -24,10 +24,18 @@ DetectorElement::DetectorElement(Type type, unsigned short id, unsigned short nC
 
   m_position = Setup::instance()->configFilePosition(configGroup, m_id | (m_nChannels/2));
   m_alignmentShift = Setup::instance()->configFileAlignmentShift(configGroup, m_id);
-  QMap<double, unsigned short> temporaryMap;
-  for (int channel = 0; channel < m_nChannels; channel++)
-    temporaryMap[Setup::instance()->configFilePosition(configGroup, m_id | channel).x()] = channel;
-  m_channelMap = temporaryMap.values().toVector();
+
+  if (m_type != tof) {
+    QMap<double, unsigned short> temporaryMap;
+    for (int channel = 0; channel < m_nChannels; channel++)
+      temporaryMap[Setup::instance()->configFilePosition(configGroup, m_id | channel).x()] = channel;
+    m_channelMap = temporaryMap.values().toVector();
+  }
+  else {
+    for (int i = 0; i < m_nChannels; i++) {
+      m_channelMap.push_back(i);
+    }
+  }
 }
 
 DetectorElement::~DetectorElement()
