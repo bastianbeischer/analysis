@@ -20,7 +20,7 @@
 DataInterface::DataInterface() :
   m_chain(new DataChain),
   m_trackFinding(new TrackFinding),
-  m_corrections(new Corrections(Corrections::Flags(0)))
+  m_corrections(new Corrections())
 {
 }
 
