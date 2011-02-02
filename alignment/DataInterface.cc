@@ -20,7 +20,7 @@
 DataInterface::DataInterface() :
   m_chain(new DataChain),
   m_trackFinding(new TrackFinding),
-  m_corrections(new Corrections)
+  m_corrections(new Corrections(Corrections::Flags(0)))
 {
 }
 
@@ -64,17 +64,14 @@ void DataInterface::process(AlignmentMatrix* matrix)
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
 
-    Track* track = new CenteredBrokenLine;
-    if (track->process(clusters)) {
-      TrackInformation::Flags flags = track->information()->flags();
+    CenteredBrokenLine track;
+    if (track.process(clusters)) {
+      TrackInformation::Flags flags = track.information()->flags();
       if ( (flags & TrackInformation::AllTrackerLayers) &&
           !(flags & TrackInformation::MagnetCollision) ) {
-        matrix->fillMatrixFromTrack(track);
+        matrix->fillMatrixFromTrack(&track);
         FITLOC();
       }
-    }
-    else {
-      delete track;
     }
     
     if (event->contentType() == SimpleEvent::RawData)
