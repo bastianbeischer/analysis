@@ -49,7 +49,8 @@ void Corrections::alignment(Hit* hit)
 {
   Setup* setup = Setup::instance();
   DetectorElement* element = setup->element(hit->detId() - hit->channel());
-  hit->setPosition(element->positionForHit(hit));
+  if (element->alignmentShift() != 0.)
+    hit->setPosition(element->positionForHit(hit));
 }
 
 void Corrections::timeShift(Hit* hit)
