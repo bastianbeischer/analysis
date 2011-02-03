@@ -279,7 +279,8 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new BendingAnglePlot);
     for (double cut = .004; cut < .008; cut+=.001)
       m_ui.plotter->addPlot(new BendingAnglePositionPlot(cut));
-    m_ui.plotter->addPlot(new Chi2Plot);
+    for (unsigned short ndf = 10; ndf <= 20; ndf++)
+      m_ui.plotter->addPlot(new Chi2Plot(ndf));
     m_ui.plotter->addPlot(new Chi2PerNdfPlot);
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
