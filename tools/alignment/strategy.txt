@@ -1,8 +1,8 @@
 nGlobal      25
 nLocal       5
-verbose      1
-nStdDev      0
-nLocalIter   1
+verbose      0
+nStdDev      3
+nLocalIter   11
 cutfactor    100
 nGlobalIter  1
 
