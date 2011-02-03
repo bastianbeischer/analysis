@@ -13,7 +13,8 @@ public:
   
   void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
   void finalize();
-  
+  void update();
+
 private:
   unsigned short m_ndf;
 

@@ -1,6 +1,7 @@
 #include "Chi2Plot.hh"
 
 #include <TF1.h>
+#include <TLatex.h>
 #include <TH1D.h>
 #include <TMath.h>
 
@@ -36,8 +37,11 @@ Chi2Plot::Chi2Plot(unsigned short ndf) :
   chi2function->SetLineColor(kRed);
   chi2function->SetNpx(1000);
   chi2function->FixParameter(0, 1);
-  chi2function->FixParameter(1, ndf);
+  chi2function->FixParameter(1, m_ndf);
   addFunction(chi2function);
+
+  addLatex(RootPlot::newLatex(.55, .85));
+  addLatex(RootPlot::newLatex(.55, .82));
 }
 
 Chi2Plot::~Chi2Plot()
@@ -56,6 +60,12 @@ void Chi2Plot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent* /*e
 
   if (track->ndf() == m_ndf)
     histogram()->Fill(track->chi2());
+}
+
+void Chi2Plot::update()
+{
+  latex(0)->SetTitle(qPrintable(QString("mean = %1").arg(histogram()->GetMean())));
+  latex(1)->SetTitle(qPrintable(QString("RMS  = %1").arg(histogram()->GetRMS())));
 }
 
 void Chi2Plot::finalize()

@@ -1,5 +1,6 @@
 #include "Chi2PerNdfPlot.hh"
 
+#include <TLatex.h>
 #include <TH1D.h>
 
 #include "TrackInformation.hh"
@@ -19,6 +20,9 @@ Chi2PerNdfPlot::Chi2PerNdfPlot() :
   histogram->GetXaxis()->SetTitle("#chi^{2} / ndf");
   histogram->GetYaxis()->SetTitle("entries");
   addHistogram(histogram);
+
+  addLatex(RootPlot::newLatex(.55, .85));
+  addLatex(RootPlot::newLatex(.55, .82));
 }
 
 Chi2PerNdfPlot::~Chi2PerNdfPlot()
@@ -36,4 +40,10 @@ void Chi2PerNdfPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEven
     return;
 
   histogram()->Fill(track->chi2() / track->ndf());
+}
+
+void Chi2PerNdfPlot::update()
+{
+  latex(0)->SetTitle(qPrintable(QString("mean = %1").arg(histogram()->GetMean())));
+  latex(1)->SetTitle(qPrintable(QString("RMS  = %1").arg(histogram()->GetRMS())));
 }
