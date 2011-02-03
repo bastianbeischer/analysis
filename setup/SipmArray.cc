@@ -6,20 +6,9 @@
 
 #include <QString>
 
-SipmArray::SipmArray() :
-  DetectorElement()
-{
-  m_type = tracker;
-  m_nChannels = 32;
-}
-
 SipmArray::SipmArray(unsigned short detId) :
-  DetectorElement(detId)
+  DetectorElement(tracker, detId, 32)
 {
-  m_type = tracker;
-  m_nChannels = 32;
-  m_position = Setup::instance()->configFilePosition("tracker", m_id);
-  m_alignmentShift = Setup::instance()->configFileAlignmentShift("tracker", m_id);
 }
 
 SipmArray::~SipmArray()

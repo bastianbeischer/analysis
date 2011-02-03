@@ -117,14 +117,17 @@ SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int
         const quint32 value = ((TOFDataBlock*) dataBlock)->GetRawData()[i];
         int channel = TOFSipmHit::channelFromData(value);
 
-        TVector3 pos = setup->configFilePosition("tof", detId | channel);
-        TVector3 counterPos = setup->configFilePosition("tofback", detId | channel);
-
         unsigned short bar = tdcChannelToBar[channel] << 2;
         unsigned short sipm = tdcChannelToSipm[channel];
 
+        unsigned short fullDetId = detId | bar | sipm;
+
+        TVector3 pos = setup->configFilePosition("tof", fullDetId);
+        TVector3 counterPos = setup->configFilePosition("tofback", fullDetId);
+
+
         if (!tofHitMap[channel]) {
-          tofHitMap[channel] = new TOFSipmHit(detId | bar | sipm, pos, counterPos);
+          tofHitMap[channel] = new TOFSipmHit(fullDetId, pos, counterPos);
           simpleEvent->addHit(tofHitMap[channel]);
         }
         tofHitMap[channel]->addLevelChange(value);

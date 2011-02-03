@@ -32,4 +32,5 @@ DEPENDPATH += $$INCLUDEPATH
 
 LIBS += -L$$TOPLEVEL/lib -lSimpleEvent
 
-include(../root.pri)
+include($$TOPLEVEL/root.pri)
+include($$TOPLEVEL/macx.pri)

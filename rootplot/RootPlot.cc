@@ -15,6 +15,16 @@ RootPlot::~RootPlot()
   qDeleteAll(m_function);
 }
   
+TLatex* RootPlot::newLatex(double rx, double ry)
+{
+  TLatex* latex = new TLatex(rx, ry, 0);
+  latex->SetNDC();
+  latex->SetTextAlign(13);
+  latex->SetTextFont(82);
+  latex->SetTextSize(0.03);
+  return latex;
+}
+
 void RootPlot::draw(TCanvas* canvas)
 {
   canvas->cd();

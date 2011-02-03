@@ -178,7 +178,7 @@ void Plotter::abortAnalysis()
   m_eventLoopOff = true;
 }
 
-void Plotter::startAnalysis(Track::Type type, int numberOfThreads)
+void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numberOfThreads)
 {
   m_eventLoopOff = false;
 
@@ -187,7 +187,7 @@ void Plotter::startAnalysis(Track::Type type, int numberOfThreads)
   for (int i = 0; i < numberOfThreads; ++i) {
     EventQueue* queue = new EventQueue();
     queues.append(queue);
-    AnalysisThread* thread = new AnalysisThread(queue, type, m_plots, this);
+    AnalysisThread* thread = new AnalysisThread(queue, type, flags, m_plots, this);
     threads.append(thread);
     thread->start();
   }
@@ -251,4 +251,15 @@ void Plotter::setFileList(const QString& fileName)
 void Plotter::setTimeLabel(QLabel* label)
 {
   m_timeLabel = label;
+}
+
+void Plotter::setGrid(bool b)
+{
+  if (b) {
+    gPad->SetGridx(true);
+    gPad->SetGridy(true);
+  } else {
+    gPad->SetGridx(false);
+    gPad->SetGridy(false);
+  }
 }

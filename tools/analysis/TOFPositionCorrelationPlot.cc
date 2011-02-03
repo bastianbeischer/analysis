@@ -9,6 +9,7 @@
 #include <TAxis.h>
 #include <TGraphErrors.h>
 #include <TF1.h>
+#include <TLatex.h>
 
 #include <QDebug>
 
@@ -27,6 +28,8 @@ TOFPositionCorrelationPlot::TOFPositionCorrelationPlot(unsigned short id)
   function->SetRange(-450, 450);
   function->SetParameters(0, 1);
   addFunction(function);
+  addLatex(RootPlot::newLatex(.15, .85));
+  addLatex(RootPlot::newLatex(.15, .82));
 }
 
 TOFPositionCorrelationPlot::~TOFPositionCorrelationPlot()
@@ -78,4 +81,6 @@ void TOFPositionCorrelationPlot::finalize()
     delete h;
   }
   m_correlationGraph->Fit(function(), "QN0");
+  latex(0)->SetTitle(qPrintable(QString("b = %1 mm").arg(function()->GetParameter(0), 0, 'f', 2, ' ')));
+  latex(1)->SetTitle(qPrintable(QString("m = %1").arg(function()->GetParameter(1), 0, 'f', 2, ' ')));
 }

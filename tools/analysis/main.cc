@@ -31,6 +31,8 @@ int main(int argc, char* argv[])
   gStyle->SetTextFont(42);
   gStyle->SetTitleFont(42, "XYZ");
   gStyle->SetTitleSize(0.025, "XYZ");
+  gStyle->SetPadGridX(1);
+  gStyle->SetPadGridY(1);
   //gStyle->SetMarkerStyle(20);
 
   QApplication application(argc, argv);

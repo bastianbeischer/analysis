@@ -7,6 +7,8 @@
 #include "CenteredBrokenLine.hh"
 #include "StraightLine.hh"
 #include "TOFCluster.hh"
+#include "DetectorElement.hh"
+#include "Setup.hh"
 
 #include <TCanvas.h>
 #include <TList.h>
@@ -141,7 +143,19 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
     m_fitInfo->Draw("SAME");
   }
 
+  QVector<Hit*> hitsToPlot;
   foreach(Hit* hit, hits) {
+    if ( (strcmp(hit->ClassName(), "Hit") == 0) || (strcmp(hit->ClassName(), "TOFSipmHit") == 0) ) {
+      hitsToPlot.push_back(hit);
+    }
+    else if ( (strcmp(hit->ClassName(), "Cluster") == 0) || (strcmp(hit->ClassName(), "TOFCluster") == 0) ) {
+      Cluster* cluster = static_cast<Cluster*>(hit);
+      foreach(Hit* subHit, cluster->hits())
+        hitsToPlot.push_back(subHit);
+    }
+  }
+
+  foreach(Hit* hit, hitsToPlot) {
     double angle = hit->angle();
     TVector3 position = hit->position();
     TVector3 counterPos = hit->counterPosition();
@@ -203,6 +217,10 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
     else if (type == Hit::tof) {
       width = 6.0;
       height = 3.0;
+      unsigned short channel = hit->channel();
+      double offset = 10.0;
+      DetectorElement* element = Setup::instance()->element(hit->detId() - channel);
+      x = element->position().x() + (channel-1.5) * offset + 0.5*width;
     }
 
     TBox* box = new TBox(x-0.5*width, z-0.5*height, x+0.5*width, z+0.5*height);

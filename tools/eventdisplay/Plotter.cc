@@ -35,6 +35,7 @@ Plotter::Plotter(QWidget* parent)
   : TQtWidget(parent)
   , m_chain(new DataChain)
   , m_trackFinding(new TrackFinding)
+  , m_corrections(new Corrections)
   , m_track(0)
   , m_hitsPlot(new HitsPlot)
   , m_positionLabel(0)
@@ -50,6 +51,7 @@ Plotter::~Plotter()
     delete m_track;
   delete m_chain;
   delete m_trackFinding;
+  delete m_corrections;
   delete m_hitsPlot;
 }
 
@@ -71,14 +73,6 @@ unsigned int Plotter::numberOfEvents()
 void Plotter::setPositionLabel(QLabel* label)
 {
   m_positionLabel = label;
-}
-
-void Plotter::mousePressEvent(QMouseEvent*)
-{
-}
-
-void Plotter::mouseReleaseEvent(QMouseEvent*)
-{
 }
 
 void Plotter::mouseMoveEvent(QMouseEvent* event)
@@ -110,8 +104,7 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QTextBrow
   else
     clusters = Setup::instance()->generateClusters(hits);
 
-  Corrections corrections;
-  corrections.apply(clusters);
+  m_corrections->apply(clusters);
 
   Track* track = 0;
   if (drawTrack) {

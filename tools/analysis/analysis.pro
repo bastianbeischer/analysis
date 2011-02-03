@@ -36,23 +36,34 @@ HEADERS = MainWindow.hh \
           EventQueue.hh \
           AnalysisThread.hh \
           AnalysisPlot.hh \
-          RootPlot.hh \
-          H1DPlot.hh \
-          H2DPlot.hh \
           BendingPositionPlot.hh \
           GeometricOccupancyPlot.hh \
           ResidualPlot.hh \
           BendingAnglePlot.hh \
           BendingAnglePositionPlot.hh \
           Chi2Plot.hh \
+          Chi2PerNdfPlot.hh \
           TOFPositionCorrelationPlot.hh \
+          AlbedosVsMomentumPlot.hh \
           MomentumSpectrumPlot.hh \
           TimeOfFlightPlot.hh \
           GeometricOccupancyProjectionPlot.hh \
           SignalHeightPlot.hh \
           ClusterLengthPlot.hh \
           TimeDifferencePlot.hh \
-          TimeOfFlightMomentumCorrelationPlot.hh
+          TimeOfFlightMomentumCorrelationPlot.hh \
+          TRDCalculations.hh \
+          TRDClustersOnTrackPlot.hh \
+          TRDDistanceInTube.hh \
+          TRDDistanceWireToTrackPlot.hh \
+          TRDEnergyDepositionOverMomentumPlot.hh \
+          TRDSpectrumPlot.hh \
+          TRDFitPlot.hh \
+          TRDOccupancyPlot.hh \
+          TRDEfficiencyPlot.hh \
+          TRDMoPVTimeEvolutionPlot.hh \
+          TotalEnergyDepositionPlot.hh \
+          TimeResolutionPlot.hh
 
 # Sources
 SOURCES = main.cc \
@@ -61,24 +72,36 @@ SOURCES = main.cc \
           EventQueue.cc \
           AnalysisThread.cc \
           AnalysisPlot.cc \
-          RootPlot.cc \
-          H1DPlot.cc \
-          H2DPlot.cc \
           BendingPositionPlot.cc \
           GeometricOccupancyPlot.cc \
           ResidualPlot.cc \
           BendingAnglePlot.cc \
           BendingAnglePositionPlot.cc \
           Chi2Plot.cc \
+          Chi2PerNdfPlot.cc \
           TOFPositionCorrelationPlot.cc \
+          AlbedosVsMomentumPlot.cc \
           MomentumSpectrumPlot.cc \
           TimeOfFlightPlot.cc \
           GeometricOccupancyProjectionPlot.cc \
           SignalHeightPlot.cc \
           ClusterLengthPlot.cc \
           TimeDifferencePlot.cc \
-          TimeOfFlightMomentumCorrelationPlot.cc
+          TimeOfFlightMomentumCorrelationPlot.cc \
+          TRDCalculations.cc \
+          TRDClustersOnTrackPlot.cc \
+          TRDDistanceInTube.cc \
+          TRDDistanceWireToTrackPlot.cc \
+          TRDEnergyDepositionOverMomentumPlot.cc \
+          TRDSpectrumPlot.cc \
+          TRDFitPlot.cc \
+          TRDOccupancyPlot.cc \
+          TRDEfficiencyPlot.cc \
+          TRDMoPVTimeEvolutionPlot.cc \
+          TotalEnergyDepositionPlot.cc \
+          TimeResolutionPlot.cc
 
 include($$TOPLEVEL/root.pri)
+include($$TOPLEVEL/macx.pri)
 
 QMAKE_LFLAGS -= -Wl,--as-needed

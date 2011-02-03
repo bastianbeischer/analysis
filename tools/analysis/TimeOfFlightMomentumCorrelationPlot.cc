@@ -17,8 +17,9 @@
 
 double timeOfFlightMomentumCorrelationFunction(double x[], double p[])
 {
-  double v = qAbs(x[0]) < 0.01 ? 0.01 : qAbs(x[0]);
-  return sqrt(v*v+p[0]*p[0])/v;
+  double rigidity = qAbs(x[0]) < 0.01 ? 0.01 : qAbs(x[0]);
+  double momentum = rigidity*p[1] ;
+  return sqrt(momentum*momentum+p[0]*p[0])/momentum;
 }
 
 TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
@@ -33,47 +34,52 @@ TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
   double yMin = -10;
   double yMax = 10;
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, xMin, xMax, nBinsY, yMin, yMax);
-  histogram->GetXaxis()->SetTitle("p / GeV");
+  histogram->GetXaxis()->SetTitle("R / GV");
   histogram->GetYaxis()->SetTitle("1 / #beta");
   setHistogram(histogram);
   TF1* function = 0;
   TLegend* legend = new TLegend(.12, .72, .23, .88);
   legend->SetMargin(.7);
 
-  function = new TF1("electronCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 1);
-  function->SetParameter(0, electronMass);
+  function = new TF1("electronCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 2);
+  function->SetParameter(0, Constants::electronMass);
+  function->SetParameter(1, 1);
   function->SetNpx(1000);
   function->SetLineColor(kBlue);
   function->SetLineStyle(2);
   legend->AddEntry(function, "e^{#pm}", "l");
   addFunction(function);
 
-  function = new TF1("muonCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 1);
-  function->SetParameter(0, muonMass);
+  function = new TF1("muonCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 2);
+  function->SetParameter(0, Constants::muonMass);
+  function->SetParameter(1, 1);
   function->SetNpx(1000);
   function->SetLineColor(kGreen);
   function->SetLineStyle(2);
   legend->AddEntry(function, "#mu^{#pm}", "l");
   addFunction(function);
 
-  function = new TF1("pionCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 1);
-  function->SetParameter(0, pionMass);
+  function = new TF1("pionCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 2);
+  function->SetParameter(0, Constants::pionMass);
+  function->SetParameter(1, 1);
   function->SetNpx(1000);
   function->SetLineColor(kCyan);
   function->SetLineStyle(2);
   legend->AddEntry(function, "#pi^{#pm}", "l");
   addFunction(function);
 
-  function = new TF1("protonCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 1);
-  function->SetParameter(0, protonMass);
+  function = new TF1("protonCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 2);
+  function->SetParameter(0, Constants::protonMass);
+  function->SetParameter(1, 1);
   function->SetLineColor(kMagenta);
   function->SetNpx(1000);
   function->SetLineStyle(2);
   legend->AddEntry(function, "p^{#pm}", "l");
   addFunction(function);
 
-  function = new TF1("He", timeOfFlightMomentumCorrelationFunction, 0.01, xMax, 1);
-  function->SetParameter(0, heliumMass);
+  function = new TF1("He", timeOfFlightMomentumCorrelationFunction, 0.01, xMax, 2);
+  function->SetParameter(0, Constants::heliumMass);
+  function->SetParameter(1, 2);
   function->SetLineColor(kRed);
   function->SetNpx(1000);
   function->SetLineStyle(2);

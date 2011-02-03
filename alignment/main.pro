@@ -41,4 +41,5 @@ LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
            -L./millepede -lmillepede \
                          -lgfortran
 
-include(../root.pri)
+include($$TOPLEVEL/root.pri)
+include($$TOPLEVEL/macx.pri)

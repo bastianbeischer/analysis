@@ -35,12 +35,7 @@ ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer)
   unsigned short nChannels = layer->elements().first()->nChannels();
   TH2D* histogram = new TH2D(qPrintable(title()+QString::number(id())), "", nElements*nChannels, 0, nElements*nChannels, 200, -max, max);
 
-  if (topic == AnalysisPlot::ResidualsUpperTracker || AnalysisPlot::ResidualsLowerTracker) {
-    histogram->GetXaxis()->SetTitle("SiPM array number");
-  }
-  if (topic == AnalysisPlot::ResidualsTRD) {
-    histogram->GetXaxis()->SetTitle("TRD module number");
-  }
+  histogram->GetXaxis()->SetTitle("channel number");
   histogram->GetYaxis()->SetTitle("residue / mm");
   setHistogram(histogram);
 }
@@ -107,7 +102,8 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleE
 
       unsigned short detId = hit->detId() - hit->channel();
       unsigned short index = m_layer->detIds().indexOf(detId);
-      unsigned short nChannels = Setup::instance()->element(detId)->nChannels();
+      DetectorElement* element = Setup::instance()->element(detId);
+      unsigned short nChannels = element->nChannels();
       unsigned short channel = hit->channel();
       if (strcmp(hit->ClassName(), "Cluster") == 0) {
         int max = 0;
@@ -120,7 +116,7 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleE
             imax = i;
           }
         }
-        channel = subHits.at(imax)->channel();
+        channel = element->sortedChannel(subHits.at(imax)->channel());
       }
 
       histogram()->Fill(index*nChannels + channel, res);

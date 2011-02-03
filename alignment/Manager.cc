@@ -42,7 +42,6 @@ bool Manager::loadStrategyFromFile(QString fileName)
 
 void Manager::startAlignment()
 {
-  m_strategy->init();
   m_matrix->init();
 
   for (unsigned int iIteration = 1; iIteration <= m_strategy->numberOfGlobalIterations(); iIteration++) {
@@ -62,8 +61,10 @@ void Manager::saveResults() const
     unsigned int index = m_parameters->indexForDetId(detId);
     float shift = m_parameters->parameter(index);
     float sigma = m_parameters->parameterSigma(index);
-    if (sigma != 0)
-      element->setAlignmentShift(shift);
+    if (sigma != 0) {
+      double oldShift = element->alignmentShift();
+      element->setAlignmentShift(oldShift + shift);
+    }
     element = setup->nextElement();
   }
 

@@ -65,6 +65,9 @@ bool Strategy::readFromFile(QString fileName)
   QTextStream in(&file);
   while (!in.atEnd()) {
     QString line = in.readLine();
+    if (line.startsWith("#"))
+      continue;
+
     QStringList list = line.split(QRegExp("\\s+"));
     if (list.size() < 2)
       continue;

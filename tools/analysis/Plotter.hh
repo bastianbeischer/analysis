@@ -3,6 +3,7 @@
 
 #include "AnalysisPlot.hh"
 #include "Track.hh"
+#include "Corrections.hh"
 
 #include <TQtWidget.h>
 
@@ -30,6 +31,7 @@ public:
   void setTitleLabel(QLabel*);
   void setPositionLabel(QLabel*);
   void setTimeLabel(QLabel*);
+  void setGrid(bool);
   void setDataChainProgressBar(QProgressBar*);
   void setEventQueueProgressBar(QProgressBar*);
   void saveCanvas(const QString& fileName);
@@ -37,7 +39,7 @@ public:
   void addFileList(const QString& fileName);
   void setFileList(const QString& fileName);
 public slots:
-  void startAnalysis(Track::Type, int numberOfThreads);
+  void startAnalysis(Track::Type, Corrections::Flags, int numberOfThreads);
   void abortAnalysis();
   void finalizeAnalysis();
   void update();

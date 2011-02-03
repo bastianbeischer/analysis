@@ -19,7 +19,7 @@ INCLUDEPATH += $$TOPLEVEL/alignment
 
 DEPENDPATH += $$INCLUDEPATH
 
-LIBS += -L$$TOPLEVEL/lib -lalignment -lSimpleEvent -lsetup -ltracking -lmillepede
+LIBS += -L$$TOPLEVEL/lib -lalignment -lprocessing -lSimpleEvent -lsetup -ltracking -lmillepede
 
 # Headers
 HEADERS = 
@@ -28,5 +28,6 @@ HEADERS =
 SOURCES = main.cc
 
 include($$TOPLEVEL/root.pri)
+include($$TOPLEVEL/macx.pri)
 
 QMAKE_LFLAGS -= -Wl,--as-needed

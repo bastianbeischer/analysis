@@ -6,6 +6,7 @@
 #include <QString>
 
 class TCanvas;
+class Corrections;
 class DataChain;
 class TrackFinding;
 class Track;
@@ -29,13 +30,12 @@ public slots:
   void unzoom();
   void updateTrackFindingParameters(int slopeBins, int offsetBins, double trackerPull, double trdPull);
 protected:
-  void mousePressEvent(QMouseEvent *event);
   void mouseMoveEvent(QMouseEvent* event);
-  void mouseReleaseEvent(QMouseEvent *event);
 private:
   TCanvas* m_canvas;
   DataChain* m_chain;
   TrackFinding* m_trackFinding;
+  Corrections* m_corrections;
   Track* m_track;
   HitsPlot* m_hitsPlot;
   QLabel* m_positionLabel;

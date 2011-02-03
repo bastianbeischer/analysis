@@ -19,7 +19,8 @@
 
 DataInterface::DataInterface() :
   m_chain(new DataChain),
-  m_trackFinding(new TrackFinding)
+  m_trackFinding(new TrackFinding),
+  m_corrections(new Corrections())
 {
 }
 
@@ -27,6 +28,7 @@ DataInterface::~DataInterface()
 {
   delete m_chain;
   delete m_trackFinding;
+  delete m_corrections;
 }
 
 void DataInterface::addFiles(const char* listName)
@@ -36,8 +38,6 @@ void DataInterface::addFiles(const char* listName)
 
 void DataInterface::process(AlignmentMatrix* matrix)
 {
-  Setup* setup = Setup::instance();
-  
   unsigned int nEntries = m_chain->nEntries();
   std::cout << std::endl;
   std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
@@ -50,32 +50,32 @@ void DataInterface::process(AlignmentMatrix* matrix)
   for (unsigned int i = 0; i < nEntries; i++) {
     SimpleEvent* event = m_chain->event(i);
     
+    // retrieve data
     QVector<Hit*> clusters;
     QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
     if (event->contentType() == SimpleEvent::Clusters)
       clusters = hits;
     else
-      clusters = setup->generateClusters(hits);
+      clusters = Setup::instance()->generateClusters(hits);
 
-    Corrections corrections;
-    corrections.apply(clusters);
+    // corrections (previous alignment, time shift, ...)
+    m_corrections->apply(clusters);
 
     // track finding
-    clusters = m_trackFinding->findTrack(clusters);
+    QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
 
-    Track* track = new CenteredBrokenLine;
-    if (track->process(clusters)) {
-      TrackInformation::Flags flags = track->information()->flags();
+    // fit in millepede
+    CenteredBrokenLine track;
+    if (track.process(trackClusters)) {
+      TrackInformation::Flags flags = track.information()->flags();
       if ( (flags & TrackInformation::AllTrackerLayers) &&
           !(flags & TrackInformation::MagnetCollision) ) {
-        matrix->fillMatrixFromTrack(track);
+        matrix->fillMatrixFromTrack(&track);
         FITLOC();
       }
     }
-    else {
-      delete track;
-    }
     
+    // delete clusters if necessary
     if (event->contentType() == SimpleEvent::RawData)
       qDeleteAll(clusters);
 

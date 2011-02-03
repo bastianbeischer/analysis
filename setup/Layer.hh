@@ -25,7 +25,6 @@ public:
   void                  addElement(DetectorElement* element) {m_elements[element->id()] = element;}
   void                  addHitToDetector(Hit* hit);
   void                  clearHitsInDetectors();
-  void                  sortHits();
 
 public:
   double                z()         const {return m_z;}

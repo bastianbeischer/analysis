@@ -15,11 +15,13 @@ RCC_DIR     = ./.tmp
 SOURCES += RootPlot.cc \
            H1DPlot.cc \
            H2DPlot.cc \
+           GraphPlot.cc \
            PerdaixDisplay.cc
 
 HEADERS += RootPlot.hh \
            H1DPlot.hh \
            H2DPlot.hh \
+           GraphPlot.hh \
            PerdaixDisplay.hh
 
 INCLUDEPATH +=
@@ -28,4 +30,5 @@ DEPENDPATH += $$INCLUDEPATH
 
 LIBS +=
 
-include(../root.pri)
+include($$TOPLEVEL/root.pri)
+include($$TOPLEVEL/macx.pri)

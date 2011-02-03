@@ -8,8 +8,7 @@ class TRDModule :
 {
   
 public:
-  TRDModule();
-  TRDModule(unsigned short detId);
+  explicit TRDModule(unsigned short detId);
   ~TRDModule();
   
 public:
