@@ -42,7 +42,6 @@ bool Manager::loadStrategyFromFile(QString fileName)
 
 void Manager::startAlignment()
 {
-  m_strategy->init();
   m_matrix->init();
 
   for (unsigned int iIteration = 1; iIteration <= m_strategy->numberOfGlobalIterations(); iIteration++) {
