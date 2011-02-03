@@ -31,11 +31,13 @@ Track::~Track()
 
 int Track::process(const QVector<Hit*>& hits)
 {
-  int retVal = fit(hits);
-  calculatePt();
-  calculateTimeOfFlight();
+  int success = fit(hits);
+  if (success) {
+    calculatePt();
+    calculateTimeOfFlight();
+  }
   m_information->process();
-  return retVal;
+  return success;
 }
 
 void Track::calculatePt()
