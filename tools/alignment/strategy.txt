@@ -1,4 +1,4 @@
-nGlobal      25
+nGlobal      45
 nLocal       5
 verbose      0
 nStdDev      3
