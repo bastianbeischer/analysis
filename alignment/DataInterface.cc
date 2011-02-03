@@ -38,8 +38,6 @@ void DataInterface::addFiles(const char* listName)
 
 void DataInterface::process(AlignmentMatrix* matrix)
 {
-  Setup* setup = Setup::instance();
-  
   unsigned int nEntries = m_chain->nEntries();
   std::cout << std::endl;
   std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
@@ -52,20 +50,23 @@ void DataInterface::process(AlignmentMatrix* matrix)
   for (unsigned int i = 0; i < nEntries; i++) {
     SimpleEvent* event = m_chain->event(i);
     
+    // retrieve data
     QVector<Hit*> clusters;
     QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
     if (event->contentType() == SimpleEvent::Clusters)
       clusters = hits;
     else
-      clusters = setup->generateClusters(hits);
+      clusters = Setup::instance()->generateClusters(hits);
 
+    // corrections (previous alignment, time shift, ...)
     m_corrections->apply(clusters);
 
     // track finding
-    clusters = m_trackFinding->findTrack(clusters);
+    QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
 
+    // fit in millepede
     CenteredBrokenLine track;
-    if (track.process(clusters)) {
+    if (track.process(trackClusters)) {
       TrackInformation::Flags flags = track.information()->flags();
       if ( (flags & TrackInformation::AllTrackerLayers) &&
           !(flags & TrackInformation::MagnetCollision) ) {
@@ -74,6 +75,7 @@ void DataInterface::process(AlignmentMatrix* matrix)
       }
     }
     
+    // delete clusters if necessary
     if (event->contentType() == SimpleEvent::RawData)
       qDeleteAll(clusters);
 
