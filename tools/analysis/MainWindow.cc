@@ -16,6 +16,7 @@
 #include "GeometricOccupancyProjectionPlot.hh"
 #include "BendingAnglePositionPlot.hh"
 #include "Chi2Plot.hh"
+#include "Chi2PerNdfPlot.hh"
 #include "AlbedosVsMomentumPlot.hh"
 #include "TOFPositionCorrelationPlot.hh"
 #include "MomentumSpectrumPlot.hh"
@@ -279,6 +280,7 @@ void MainWindow::setupPlots()
     for (double cut = .004; cut < .008; cut+=.001)
       m_ui.plotter->addPlot(new BendingAnglePositionPlot(cut));
     m_ui.plotter->addPlot(new Chi2Plot);
+    m_ui.plotter->addPlot(new Chi2PerNdfPlot);
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TRDEfficiencyPlot());
