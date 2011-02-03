@@ -99,7 +99,7 @@
        <item>
         <widget class="QPushButton" name="toggleGridButton">
          <property name="text">
-          <string>show grid</string>
+          <string>hide grid</string>
          </property>
         </widget>
        </item>
