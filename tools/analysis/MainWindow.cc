@@ -180,37 +180,18 @@ void MainWindow::setupPlots()
       element = setup->nextElement();
     }
 
-    //add trd spectrum for whole trd
     m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
-
-    //add trd spectrum for whole trd in rigidity range -1.5 GeV +- 20%
     m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, -3, -1.5));
-
-    //add trd spectrum for whole trd in rigidity range 2.5 GeV +- 20%
     m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, 1.5, 3));
     
-    //add the MPV distribution plot for modules
     TRDFitPlot* mpvModuleTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD, "MPVs of TRD Modules");
-
-    //add trd spectra normalized to distance in tube:
+    TRDFitPlot* mpvChannelTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD, "MPVs of TRD Channels");
     element = setup->firstElement();
     while(element) {
       if (element->type() == DetectorElement::trd){
         TRDSpectrumPlot* trdModuleSpectrumPlot = new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, element->id(),TRDSpectrumPlot::module);
         m_ui.plotter->addPlot(trdModuleSpectrumPlot);
         mpvModuleTRDPlot->addLandauFit(trdModuleSpectrumPlot->landauFit());
-      }
-      element = setup->nextElement();
-    }
-    m_ui.plotter->addPlot(mpvModuleTRDPlot);
-
-    // add the MPV distribution plot for channels
-    TRDFitPlot* mpvChannelTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD, "MPVs of TRD Channels");
-
-    //add trd spectra normalized to distance in tube:
-    element = setup->firstElement();
-    while(element) {
-      if (element->type() == DetectorElement::trd){
         for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++){
           TRDSpectrumPlot* trdChannelSpectrumPlot = new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, element->id() | tubeNo,TRDSpectrumPlot::channel);
           m_ui.plotter->addPlot(trdChannelSpectrumPlot);
@@ -219,6 +200,7 @@ void MainWindow::setupPlots()
       }
       element = setup->nextElement();
     }
+    m_ui.plotter->addPlot(mpvModuleTRDPlot);
     m_ui.plotter->addPlot(mpvChannelTRDPlot);
   }
   if (m_ui.clusterLengthTrackerCheckBox->isChecked()) {
@@ -296,6 +278,7 @@ void MainWindow::setupPlots()
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BetaPlot());
+    m_ui.plotter->addPlot(new BetaMomentumCorrelationPlot());
     DetectorElement* element = setup->firstElement();
     while (element) {
       if (element->type() == DetectorElement::tof)
@@ -316,8 +299,6 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8024, 0x8034));
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8028, 0x8038));
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x802c, 0x803c));
-
-    m_ui.plotter->addPlot(new BetaMomentumCorrelationPlot());
   }
 }
 
