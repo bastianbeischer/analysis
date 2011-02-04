@@ -18,8 +18,8 @@ BetaPlot::BetaPlot()
   : AnalysisPlot(AnalysisPlot::MiscellaneousTOF)
   , H1DPlot()
 {
-  setTitle("time of flight");
-  TH1D* histogram = new TH1D("time of flight", "", 1200, -60, 60);
+  setTitle("1 / beta");
+  TH1D* histogram = new TH1D(qPrintable(title()), "", 1200, -60, 60);
   histogram->GetXaxis()->SetTitle("1 / #beta");
   addHistogram(histogram);
   addLatex(RootPlot::newLatex(.15, .85));
