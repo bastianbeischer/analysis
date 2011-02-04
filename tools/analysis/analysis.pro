@@ -44,7 +44,7 @@ CLASSES = \
   GeometricOccupancyProjectionPlot \
   SignalHeightPlot \
   ClusterLengthPlot \
-  TimeDifferencePlot \
+  TOFTimeShiftPlot \
   BetaMomentumCorrelationPlot \
   TRDCalculations \
   TRDClustersOnTrackPlot \
@@ -57,7 +57,8 @@ CLASSES = \
   TRDEfficiencyPlot \
   TRDMoPVTimeEvolutionPlot \
   TotalEnergyDepositionPlot \
-  TimeResolutionPlot
+  TimeResolutionPlot \
+  TOFTimeDifferencePlot
 
 SOURCES += \
   main.cc

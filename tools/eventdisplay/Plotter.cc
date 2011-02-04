@@ -104,7 +104,7 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QTextBrow
   else
     clusters = Setup::instance()->generateClusters(hits);
 
-  m_corrections->apply(clusters);
+  m_corrections->preFitCorrections(clusters);
 
   Track* track = 0;
   if (drawTrack) {

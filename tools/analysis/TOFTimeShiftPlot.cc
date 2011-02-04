@@ -1,4 +1,4 @@
-#include "TimeDifferencePlot.hh"
+#include "TOFTimeShiftPlot.hh"
 #include "BrokenLine.hh"
 #include "TrackInformation.hh"
 #include "Hit.hh"
@@ -13,13 +13,13 @@
 #include <iostream>
 #include <QDebug>
 
-TimeDifferencePlot::TimeDifferencePlot(unsigned short topBarId, unsigned short bottomBarId)
+TOFTimeShiftPlot::TOFTimeShiftPlot(unsigned short topBarId, unsigned short bottomBarId)
   : AnalysisPlot(AnalysisPlot::MiscellaneousTOF)
   , H2DPlot()
   , m_topBarId(topBarId)
   , m_bottomBarId(bottomBarId)
 {
-  QString title = QString("time difference 0x%1 0x%2").arg(topBarId, 0, 16).arg(bottomBarId, 0, 16);
+  QString title = QString("time shift 0x%1 0x%2").arg(topBarId, 0, 16).arg(bottomBarId, 0, 16);
   setTitle(title);
   int nBins = 100;
   double min = -10;
@@ -31,10 +31,10 @@ TimeDifferencePlot::TimeDifferencePlot(unsigned short topBarId, unsigned short b
   setHistogram(histogram);
 }
 
-TimeDifferencePlot::~TimeDifferencePlot()
+TOFTimeShiftPlot::~TOFTimeShiftPlot()
 {}
 
-void TimeDifferencePlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
+void TOFTimeShiftPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
 {
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())

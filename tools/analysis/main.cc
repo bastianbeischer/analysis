@@ -34,6 +34,7 @@ int main(int argc, char* argv[])
   gStyle->SetPadGridX(1);
   gStyle->SetPadGridY(1);
   //gStyle->SetMarkerStyle(20);
+  gStyle->SetNumberContours(99);
 
   QApplication application(argc, argv);
   MainWindow window;

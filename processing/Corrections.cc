@@ -35,7 +35,7 @@ Corrections::~Corrections()
   delete m_trdSettings;
 }
 
-void Corrections::apply(QVector<Hit*>& hits)
+void Corrections::preFitCorrections(QVector<Hit*>& hits)
 {
   foreach(Hit* hit, hits) {
     if (m_flags & Alignment) alignment(hit);
@@ -43,6 +43,11 @@ void Corrections::apply(QVector<Hit*>& hits)
     if (m_flags & TrdMopv) trdMopv(hit);
     if (m_flags & TofTimeOverThreshold) tofTimeOverThreshold(hit);
   }
+}
+
+void Corrections::postFitCorrections(QVector<Hit*>& /*hits*/, Track* track)
+{
+  if (m_flags & PhotonTravelTime) photonTravelTime(track);
 }
 
 void Corrections::alignment(Hit* hit)
@@ -112,5 +117,9 @@ void Corrections::setTrdScalingFactor(unsigned int channel, double value)
 {
   m_trdSettings->setValue( "ConstScaleFactor/" + QString::number(channel,16), value) ;
   m_trdSettings->sync();
+}
+
+void Corrections::photonTravelTime(Track* /*track*/)
+{
 }
 

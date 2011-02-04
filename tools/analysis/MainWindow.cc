@@ -23,7 +23,7 @@
 #include "SignalHeightPlot.hh"
 #include "ClusterLengthPlot.hh"
 #include "BetaPlot.hh"
-#include "TimeDifferencePlot.hh"
+#include "TOFTimeShiftPlot.hh"
 #include "BetaMomentumCorrelationPlot.hh"
 #include "TRDClustersOnTrackPlot.hh"
 #include "TRDDistanceWireToTrackPlot.hh"
@@ -36,6 +36,7 @@
 #include "TRDEfficiencyPlot.hh"
 #include "TotalEnergyDepositionPlot.hh"
 #include "TimeResolutionPlot.hh"
+#include "TOFTimeDifferencePlot.hh"
 
 #include <QFileDialog>
 #include <QVBoxLayout>
@@ -279,21 +280,31 @@ void MainWindow::setupPlots()
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BetaPlot());
     m_ui.plotter->addPlot(new BetaMomentumCorrelationPlot());
-    DetectorElement* element = setup->firstElement();
+
+    DetectorElement* element = 0;
+    
+    element = setup->firstElement();
     while (element) {
       if (element->type() == DetectorElement::tof)
         m_ui.plotter->addPlot(new TOFPositionCorrelationPlot(element->id()));
       element = setup->nextElement();
     }
 
-    m_ui.plotter->addPlot(new TimeDifferencePlot(0x8000, 0x8010));
-    m_ui.plotter->addPlot(new TimeDifferencePlot(0x8004, 0x8014));
-    m_ui.plotter->addPlot(new TimeDifferencePlot(0x8008, 0x8018));
-    m_ui.plotter->addPlot(new TimeDifferencePlot(0x800c, 0x801c));
-    m_ui.plotter->addPlot(new TimeDifferencePlot(0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TimeDifferencePlot(0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TimeDifferencePlot(0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TimeDifferencePlot(0x802c, 0x803c));
+    element = setup->firstElement();
+    while (element) {
+      if (element->type() == DetectorElement::tof)
+        m_ui.plotter->addPlot(new TOFTimeDifferencePlot(element->id()));
+      element = setup->nextElement();
+    }
+
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8000, 0x8010));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8004, 0x8014));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8008, 0x8018));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x800c, 0x801c));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8020, 0x8030));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8024, 0x8034));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8028, 0x8038));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x802c, 0x803c));
 
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x8020, 0x8030));
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8024, 0x8034));
@@ -308,6 +319,8 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
     flags|= Corrections::Alignment;
   if (m_ui.timeShiftCorrectionCheckBox->isChecked())
     flags|= Corrections::TimeShifts;
+  if (m_ui.photonTravelTimeCorrectionCheckBox->isChecked())
+    flags|= Corrections::PhotonTravelTime;
   if (m_ui.trdMopValueCorrectionCheckBox->isChecked())
     flags|= Corrections::TrdMopv;
   if (m_ui.timeOverThresholdCorrectionCheckBox->isChecked())

@@ -59,7 +59,7 @@ void DataInterface::process(AlignmentMatrix* matrix)
       clusters = Setup::instance()->generateClusters(hits);
 
     // corrections (previous alignment, time shift, ...)
-    m_corrections->apply(clusters);
+    m_corrections->preFitCorrections(clusters);
 
     // track finding
     QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);

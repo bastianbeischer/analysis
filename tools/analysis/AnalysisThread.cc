@@ -69,7 +69,7 @@ void AnalysisThread::run()
       else
         clusters = Setup::instance()->generateClusters(hits);
 
-      m_corrections->apply(clusters);
+      m_corrections->preFitCorrections(clusters);
 
       QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
       if (m_track) {

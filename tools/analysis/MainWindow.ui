@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1024</width>
-    <height>600</height>
+    <width>1097</width>
+    <height>679</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -137,8 +137,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>175</width>
-            <height>423</height>
+            <width>173</width>
+            <height>562</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -805,9 +805,9 @@ TRD</string>
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>0</y>
-            <width>192</width>
-            <height>120</height>
+            <y>-44</y>
+            <width>168</width>
+            <height>184</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -824,10 +824,17 @@ TRD</string>
            <item>
             <widget class="QCheckBox" name="timeShiftCorrectionCheckBox">
              <property name="text">
-              <string>timeShifts</string>
+              <string>time shifts</string>
              </property>
              <property name="checked">
               <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="photonTravelTimeCorrectionCheckBox">
+             <property name="text">
+              <string>photon travel time</string>
              </property>
             </widget>
            </item>

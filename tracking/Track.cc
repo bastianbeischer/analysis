@@ -150,23 +150,7 @@ void Track::calculateTimeOfFlight()
     rightStopTime+= time;
   rightStopTime/= rightStopTimes.size();
 
-  const TVector3& upperPoint = position(Constants::upperTofPosition);
-  const TVector3& lowerPoint = position(Constants::lowerTofPosition);
-  double distanceToLeftStartSipm = Constants::tofBarLength/2. + upperPoint.y();
-  double correctedLeftStartTime = leftStartTime - distanceToLeftStartSipm * Constants::tofRefractiveIndex / Constants::speedOfLight;
-  double distanceToRightStartSipm = Constants::tofBarLength/2. - upperPoint.y();
-  double correctedRightStartTime = rightStartTime - distanceToRightStartSipm * Constants::tofRefractiveIndex / Constants::speedOfLight;
-  double distanceToLeftStopSipm = Constants::tofBarLength/2. + lowerPoint.y(); 
-  double correctedLeftStopTime = leftStopTime - distanceToLeftStopSipm * Constants::tofRefractiveIndex / Constants::speedOfLight;
-  double distacneToRightStopSipm = Constants::tofBarLength/2. - lowerPoint.y();
-  double correctedRightStopTime = rightStopTime - distacneToRightStopSipm * Constants::tofRefractiveIndex / Constants::speedOfLight;
-
-  //qDebug() << leftStartTimes.size() << rightStartTimes.size() << leftStopTimes.size() << rightStopTimes.size();
-  //qDebug() << distanceToLeftStartSipm << distanceToRightStartSipm << distanceToLeftStopSipm << distacneToRightStopSipm;
-  //qDebug() << leftStartTime << rightStartTime << leftStopTime << rightStopTime;
-  //qDebug() << correctedLeftStartTime << correctedRightStartTime << correctedLeftStopTime << correctedRightStopTime;
-  //qDebug() << "---";
-  m_timeOfFlight = (correctedLeftStopTime+correctedRightStopTime)/2. - (correctedLeftStartTime+correctedRightStartTime)/2.;
+  m_timeOfFlight = (leftStopTime+rightStopTime)/2. - (leftStartTime+rightStartTime)/2.;
 }
 
 double Track::p() const
