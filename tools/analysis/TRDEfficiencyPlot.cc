@@ -20,7 +20,7 @@
 #include <math.h>
 
 TRDEfficiencyPlot::TRDEfficiencyPlot()
-  : AnalysisPlot(AnalysisPlot::Occupancy)
+  : AnalysisPlot(AnalysisPlot::MiscellaneousTRD)
   , H2DPlot()
 {
   setTitle("TRD efficiency (hits / was on track)");

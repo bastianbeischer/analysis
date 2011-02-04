@@ -231,13 +231,6 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new Chi2PerNdfPlot);
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
-    m_ui.plotter->addPlot(new TRDEfficiencyPlot());
-    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::numberOfHits));
-    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::numberOfHits, true));
-    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeights));
-    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeights, true));
-    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits));
-    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits, true));
     Layer* layer = setup->firstLayer();
     while(layer) {
       m_ui.plotter->addPlot(new GeometricOccupancyPlot(layer->z()));
@@ -275,6 +268,13 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDDistanceInTube(AnalysisPlot::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TotalEnergyDepositionPlot(2,10));
     m_ui.plotter->addPlot(new TRDEnergyDepositionOverMomentumPlot(AnalysisPlot::MiscellaneousTRD));
+    m_ui.plotter->addPlot(new TRDEfficiencyPlot());
+    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::numberOfHits));
+    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::numberOfHits, true));
+    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeights));
+    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeights, true));
+    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits));
+    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits, true));
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BetaPlot());
