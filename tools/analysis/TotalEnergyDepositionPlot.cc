@@ -10,7 +10,7 @@
 #include "TRDCalculations.hh"
 
 TotalEnergyDepositionPlot::TotalEnergyDepositionPlot(double lowerMom, double upperMom) :
-    AnalysisPlot(AnalysisPlot::SignalHeightTRD),
+    AnalysisPlot(AnalysisPlot::MiscellaneousTRD),
   H1DPlot(),
   m_lowerMomentum(lowerMom),
   m_upperMomentum(upperMom)

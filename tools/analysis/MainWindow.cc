@@ -173,19 +173,12 @@ void MainWindow::setupPlots()
     }
   }
   if (m_ui.signalHeightTRDCheckBox->isChecked()) {
-
-     m_ui.plotter->addPlot( new TotalEnergyDepositionPlot(2,10) );
-
-
     DetectorElement* element = setup->firstElement();
     while(element) {
       if (element->type() == DetectorElement::trd)
         m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightTRD, element->id()));
       element = setup->nextElement();
     }
-
-    //add time evolution plot of trd module MoPV
-    m_ui.plotter->addPlot( new TRDMoPVTimeEvolutionPlot(AnalysisPlot::SignalHeightTRD) );
 
     //add trd spectrum for whole trd
     m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
@@ -227,9 +220,6 @@ void MainWindow::setupPlots()
       element = setup->nextElement();
     }
     m_ui.plotter->addPlot(mpvChannelTRDPlot);
-
-    //add energy over momentum plot
-    m_ui.plotter->addPlot(new TRDEnergyDepositionOverMomentumPlot(AnalysisPlot::SignalHeightTRD));
   }
   if (m_ui.clusterLengthTrackerCheckBox->isChecked()) {
     DetectorElement* element = setup->firstElement();
@@ -301,6 +291,8 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisPlot::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TRDDistanceWireToTrackPlot(AnalysisPlot::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TRDDistanceInTube(AnalysisPlot::MiscellaneousTRD));
+    m_ui.plotter->addPlot(new TotalEnergyDepositionPlot(2,10));
+    m_ui.plotter->addPlot(new TRDEnergyDepositionOverMomentumPlot(AnalysisPlot::MiscellaneousTRD));
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BetaPlot());
@@ -315,8 +307,6 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x8004, 0x8014));
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x8008, 0x8018));
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x800c, 0x801c));
-
-    m_ui.plotter->addPlot(new BetaMomentumCorrelationPlot());
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x8020, 0x8030));
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x8024, 0x8034));
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x8028, 0x8038));
@@ -326,6 +316,8 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8024, 0x8034));
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8028, 0x8038));
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x802c, 0x803c));
+
+    m_ui.plotter->addPlot(new BetaMomentumCorrelationPlot());
   }
 }
 
