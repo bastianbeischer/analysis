@@ -3,34 +3,23 @@ TARGET = setup
 
 CONFIG += debug
 
-TOPLEVEL    = ..
+TOPLEVEL = ..
 
-# Seperate source & build dirs
-DESTDIR     = $$TOPLEVEL/lib
-OBJECTS_DIR = ./.tmp
-MOC_DIR     = ./.tmp
-UI_DIR      = ./.tmp
-RCC_DIR     = ./.tmp
+CLASSES += \
+  DetectorElement \
+  Layer \
+  Setup \
+  SipmArray \
+  TRDModule \
+  TOFBar
 
-SOURCES += DetectorElement.cc \
-           Layer.cc \
-           Setup.cc \
-           SipmArray.cc \
-           TRDModule.cc \
-           TOFBar.cc
+INCLUDEPATH += \
+  $$TOPLEVEL/event
 
-HEADERS += DetectorElement.hh \
-           Layer.hh \
-           Setup.hh \
-           SipmArray.hh \
-           TRDModule.hh \
-           TOFBar.hh
-
-INCLUDEPATH += $$TOPLEVEL/event
-
-DEPENDPATH += $$INCLUDEPATH
-
-LIBS += -L$$TOPLEVEL/lib -lSimpleEvent
+LIBS += \
+  -L$$TOPLEVEL/lib \
+  -lSimpleEvent
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
+include($$TOPLEVEL/common.pri)

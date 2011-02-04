@@ -5,42 +5,32 @@ CONFIG += debug
 
 TOPLEVEL = ../..
 
-# Seperate source & build dirs
-DESTDIR     = $$TOPLEVEL/bin
-OBJECTS_DIR = ./.tmp
-MOC_DIR     = ./.tmp
-UI_DIR      = ./.tmp
-RCC_DIR     = ./.tmp
+FORMS+= \
+  MainWindow.ui
 
-# Forms
-FORMS+= MainWindow.ui
+INCLUDEPATH += \
+  $$TOPLEVEL/event \
+  $$TOPLEVEL/processing \
+  $$TOPLEVEL/rootplot \
+  $$TOPLEVEL/tracking \
+  $$TOPLEVEL/setup
 
-INCLUDEPATH += $$TOPLEVEL/event \
-               $$TOPLEVEL/processing \
-               $$TOPLEVEL/rootplot \
-               $$TOPLEVEL/tracking \
-               $$TOPLEVEL/setup
+LIBS += \
+  -L$$TOPLEVEL/lib \
+  -lSimpleEvent \
+  -lprocessing \
+  -lrootplot \
+  -ltracking \
+  -lsetup
 
-DEPENDPATH += $$INCLUDEPATH
+CLASSES+= \
+  Plotter \
+  HitsPlot \
+  MainWindow
 
-LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
-                         -lprocessing \
-                         -lrootplot \
-                         -ltracking \
-                         -lsetup
-
-# Headers
-HEADERS = Plotter.hh \
-          HitsPlot.hh \
-          MainWindow.hh
-
-# Sources
-SOURCES = main.cc \
-          Plotter.cc \
-          HitsPlot.cc \
-          MainWindow.cc
+SOURCES += \
+  main.cc
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
-
-QMAKE_LFLAGS -= -Wl,--as-needed
+include($$TOPLEVEL/common.pri)

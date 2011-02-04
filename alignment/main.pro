@@ -3,43 +3,33 @@ TARGET = alignment
 
 CONFIG += debug
 
-TOPLEVEL    = ..
+TOPLEVEL = ..
 
-# Seperate source & build dirs
-DESTDIR     = $$TOPLEVEL/lib
-OBJECTS_DIR = ./.tmp
-MOC_DIR     = ./.tmp
-UI_DIR      = ./.tmp
-RCC_DIR     = ./.tmp
+CLASSES += \
+  Constraint \
+  DataInterface \
+  Manager \
+  AlignmentMatrix \
+  Parameters \
+  Strategy
 
-SOURCES += Constraint.cc \
-           DataInterface.cc \
-           Manager.cc \
-           AlignmentMatrix.cc \
-           Parameters.cc \
-           Strategy.cc
+INCLUDEPATH += \
+  $$TOPLEVEL/event \
+  $$TOPLEVEL/processing \
+  $$TOPLEVEL/setup \
+  $$TOPLEVEL/tracking \
+  ./millepede
 
-HEADERS += Constraint.hh \
-           DataInterface.hh \
-           Manager.hh \
-           AlignmentMatrix.hh \
-           Parameters.hh \
-           Strategy.hh
-
-INCLUDEPATH += $$TOPLEVEL/event \
-               $$TOPLEVEL/processing \
-               $$TOPLEVEL/setup \
-               $$TOPLEVEL/tracking \
-                ./millepede
-
-DEPENDPATH += $$INCLUDEPATH
-
-LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
-                         -lprocessing \
-                         -lsetup \
-                         -ltracking \
-           -L./millepede -lmillepede \
-                         -lgfortran
+LIBS += \
+  -L$$TOPLEVEL/lib \
+  -lSimpleEvent \
+  -lprocessing \
+  -lsetup \
+  -ltracking \
+  -L./millepede \
+  -lmillepede \
+  -lgfortran
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
+include($$TOPLEVEL/common.pri)

@@ -3,28 +3,22 @@ TARGET = processing
 
 CONFIG += debug
 
-TOPLEVEL    = ..
+TOPLEVEL = ..
 
-# Seperate source & build dirs
-DESTDIR     = $$TOPLEVEL/lib
-OBJECTS_DIR = ./.tmp
-MOC_DIR     = ./.tmp
-UI_DIR      = ./.tmp
-RCC_DIR     = ./.tmp
+CLASSES += \
+  Corrections
 
-SOURCES += Corrections.cc
+INCLUDEPATH += \
+  $$TOPLEVEL/event \
+  $$TOPLEVEL/setup \
+  $$TOPLEVEL/tracking
 
-HEADERS += Corrections.hh
-
-INCLUDEPATH += $$TOPLEVEL/event \
-               $$TOPLEVEL/setup \
-               $$TOPLEVEL/tracking
-
-DEPENDPATH += $$INCLUDEPATH
-
-LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
-                         -lsetup \
-                         -ltracking
+LIBS += \
+  -L$$TOPLEVEL/lib \
+  -lSimpleEvent \
+  -lsetup \
+  -ltracking
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
+include($$TOPLEVEL/common.pri)
