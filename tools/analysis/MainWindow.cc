@@ -64,17 +64,14 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.listWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(listWidgetItemChanged(QListWidgetItem*)));
   connect(m_ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(listWidgetCurrentRowChanged(int)));
 
-  connect(m_ui.signalHeightUpperTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.signalHeightLowerTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.signalHeightTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.signalHeightTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.clusterLengthUpperTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.clusterLengthLowerTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.clusterLengthTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.clusterLengthTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.timeOverThresholdButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.trackingButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.occupancyButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.residualsUpperTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.residualsLowerTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.residualsTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.residualsTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.momentumReconstructionButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
@@ -92,16 +89,12 @@ void MainWindow::showButtonsClicked()
 {
   QPushButton* b = static_cast<QPushButton*>(sender());
   AnalysisPlot::Topic topic = AnalysisPlot::TopicEnd;
-  if (b == m_ui.signalHeightUpperTrackerButton) {
-    topic = AnalysisPlot::SignalHeightUpperTracker;
-  } else if (b == m_ui.signalHeightLowerTrackerButton) {
-    topic = AnalysisPlot::SignalHeightLowerTracker;
+  if (b == m_ui.signalHeightTrackerButton) {
+    topic = AnalysisPlot::SignalHeightTracker;
   } else if (b == m_ui.signalHeightTRDButton) {
     topic = AnalysisPlot::SignalHeightTRD;
-  } else if (b == m_ui.clusterLengthUpperTrackerButton) {
-    topic = AnalysisPlot::ClusterLengthUpperTracker;
-  } else if (b == m_ui.clusterLengthLowerTrackerButton) {
-    topic = AnalysisPlot::ClusterLengthLowerTracker;
+  } else if (b == m_ui.clusterLengthTrackerButton) {
+    topic = AnalysisPlot::ClusterLengthTracker;
   } else if (b == m_ui.clusterLengthTRDButton) {
     topic = AnalysisPlot::ClusterLengthTRD;
   } else if (b == m_ui.timeOverThresholdButton) {
@@ -110,10 +103,8 @@ void MainWindow::showButtonsClicked()
     topic = AnalysisPlot::Tracking;
   } else if (b == m_ui.occupancyButton) {
     topic = AnalysisPlot::Occupancy;
-  } else if (b == m_ui.residualsUpperTrackerButton) {
-    topic = AnalysisPlot::ResidualsUpperTracker;
-  } else if (b == m_ui.residualsLowerTrackerButton) {
-    topic = AnalysisPlot::ResidualsLowerTracker;
+  } else if (b == m_ui.residualsTrackerButton) {
+    topic = AnalysisPlot::ResidualsTracker;
   } else if (b == m_ui.residualsTRDButton) {
     topic = AnalysisPlot::ResidualsTRD;
   } else if (b == m_ui.momentumReconstructionButton) {
@@ -173,19 +164,11 @@ void MainWindow::setupPlots()
   m_ui.plotter->clearPlots();
   m_activePlots.clear();
   m_ui.listWidget->clear();
-  if (m_ui.signalHeightUpperTrackerCheckBox->isChecked()) {
+  if (m_ui.signalHeightTrackerCheckBox->isChecked()) {
     DetectorElement* element = setup->firstElement();
     while(element) {
-      if (element->type() == DetectorElement::tracker && element->position().z() > 0)
-        m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightUpperTracker, element->id()));
-      element = setup->nextElement();
-    }
-  }
-  if (m_ui.signalHeightLowerTrackerCheckBox->isChecked()) {
-    DetectorElement* element = setup->firstElement();
-    while(element) {
-      if (element->type() == DetectorElement::tracker && element->position().z() < 0)
-        m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightLowerTracker, element->id()));
+      if (element->type() == DetectorElement::tracker)
+        m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightTracker, element->id()));
       element = setup->nextElement();
     }
   }
@@ -248,19 +231,11 @@ void MainWindow::setupPlots()
     //add energy over momentum plot
     m_ui.plotter->addPlot(new TRDEnergyDepositionOverMomentumPlot(AnalysisPlot::SignalHeightTRD));
   }
-  if (m_ui.clusterLengthUpperTrackerCheckBox->isChecked()) {
+  if (m_ui.clusterLengthTrackerCheckBox->isChecked()) {
     DetectorElement* element = setup->firstElement();
     while(element) {
-      if (element->type() == DetectorElement::tracker && element->position().z() > 0)
-        m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterLengthUpperTracker, element->id()));
-      element = setup->nextElement();
-    }
-  }
-  if (m_ui.clusterLengthLowerTrackerCheckBox->isChecked()) {
-    DetectorElement* element = setup->firstElement();
-    while(element) {
-      if (element->type() == DetectorElement::tracker && element->position().z() < 0)
-        m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterLengthLowerTracker, element->id()));
+      if (element->type() == DetectorElement::tracker)
+        m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterLengthTracker, element->id()));
       element = setup->nextElement();
     }
   }
@@ -298,19 +273,11 @@ void MainWindow::setupPlots()
       layer = setup->nextLayer();
     }
   }
-  if (m_ui.residualsUpperTrackerCheckBox->isChecked()) {
+  if (m_ui.residualsTrackerCheckBox->isChecked()) {
     Layer* layer = setup->firstLayer();
     while(layer) {
-      if (layer->z() > 0 && layer->z() < 240)
-        m_ui.plotter->addPlot(new ResidualPlot(AnalysisPlot::ResidualsUpperTracker, layer));
-      layer = setup->nextLayer();
-    }
-  }
-  if (m_ui.residualsLowerTrackerCheckBox->isChecked()) {
-    Layer* layer = setup->firstLayer();
-    while(layer) {
-      if (layer->z() > -240 && layer->z() < 0)
-        m_ui.plotter->addPlot(new ResidualPlot(AnalysisPlot::ResidualsLowerTracker, layer));
+      if (layer->z() > -240 && layer->z() < 240)
+        m_ui.plotter->addPlot(new ResidualPlot(AnalysisPlot::ResidualsTracker, layer));
       layer = setup->nextLayer();
     }
   }
@@ -384,34 +351,28 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
     type = Track::None;
   }
  
-  m_ui.signalHeightUpperTrackerButton->setText("+");
-  m_ui.signalHeightLowerTrackerButton->setText("+");
+  m_ui.signalHeightTrackerButton->setText("+");
   m_ui.signalHeightTRDButton->setText("+");
-  m_ui.clusterLengthUpperTrackerButton->setText("+");
-  m_ui.clusterLengthLowerTrackerButton->setText("+");
+  m_ui.clusterLengthTrackerButton->setText("+");
   m_ui.clusterLengthTRDButton->setText("+");
   m_ui.timeOverThresholdButton->setText("+");
   m_ui.trackingButton->setText("+");
   m_ui.occupancyButton->setText("+");
-  m_ui.residualsUpperTrackerButton->setText("+");
-  m_ui.residualsLowerTrackerButton->setText("+");
+  m_ui.residualsTrackerButton->setText("+");
   m_ui.residualsTRDButton->setText("+");
   m_ui.momentumReconstructionButton->setText("+");
   m_ui.miscellaneousTrackerButton->setText("+");
   m_ui.miscellaneousTRDButton->setText("+");
   m_ui.miscellaneousTOFButton->setText("+");
 
-  m_ui.signalHeightUpperTrackerButton->setEnabled(m_ui.signalHeightUpperTrackerCheckBox->isChecked());
-  m_ui.signalHeightLowerTrackerButton->setEnabled(m_ui.signalHeightLowerTrackerCheckBox->isChecked());
+  m_ui.signalHeightTrackerButton->setEnabled(m_ui.signalHeightTrackerCheckBox->isChecked());
   m_ui.signalHeightTRDButton->setEnabled(m_ui.signalHeightTRDCheckBox->isChecked());
-  m_ui.clusterLengthUpperTrackerButton->setEnabled(m_ui.clusterLengthUpperTrackerCheckBox->isChecked());
-  m_ui.clusterLengthLowerTrackerButton->setEnabled(m_ui.clusterLengthLowerTrackerCheckBox->isChecked());
+  m_ui.clusterLengthTrackerButton->setEnabled(m_ui.clusterLengthTrackerCheckBox->isChecked());
   m_ui.clusterLengthTRDButton->setEnabled(m_ui.clusterLengthTRDCheckBox->isChecked());
   m_ui.timeOverThresholdButton->setEnabled(m_ui.timeOverThresholdCheckBox->isChecked());
   m_ui.trackingButton->setEnabled(m_ui.trackingCheckBox->isChecked());
   m_ui.occupancyButton->setEnabled(m_ui.occupancyCheckBox->isChecked());
-  m_ui.residualsUpperTrackerButton->setEnabled(m_ui.residualsUpperTrackerCheckBox->isChecked());
-  m_ui.residualsLowerTrackerButton->setEnabled(m_ui.residualsLowerTrackerCheckBox->isChecked());
+  m_ui.residualsTrackerButton->setEnabled(m_ui.residualsTrackerCheckBox->isChecked());
   m_ui.residualsTRDButton->setEnabled(m_ui.residualsTRDCheckBox->isChecked());
   m_ui.momentumReconstructionButton->setEnabled(m_ui.momentumReconstructionCheckBox->isChecked());
   m_ui.miscellaneousTrackerButton->setEnabled(m_ui.miscellaneousTrackerCheckBox->isChecked());
@@ -528,17 +489,14 @@ void MainWindow::toggleSelectionButtonClicked()
 {
   bool b = m_ui.toggleSelectionButton->text() == "select all";
   m_ui.toggleSelectionButton->setText(b ? "deselect all" : "select all");
-  m_ui.signalHeightUpperTrackerCheckBox->setChecked(b);
-  m_ui.signalHeightLowerTrackerCheckBox->setChecked(b);
+  m_ui.signalHeightTrackerCheckBox->setChecked(b);
   m_ui.signalHeightTRDCheckBox->setChecked(b);
-  m_ui.clusterLengthUpperTrackerCheckBox->setChecked(b);
-  m_ui.clusterLengthLowerTrackerCheckBox->setChecked(b);
+  m_ui.clusterLengthTrackerCheckBox->setChecked(b);
   m_ui.clusterLengthTRDCheckBox->setChecked(b);
   m_ui.timeOverThresholdCheckBox->setChecked(b);
   m_ui.trackingCheckBox->setChecked(b);
   m_ui.occupancyCheckBox->setChecked(b);
-  m_ui.residualsUpperTrackerCheckBox->setChecked(b);
-  m_ui.residualsLowerTrackerCheckBox->setChecked(b);
+  m_ui.residualsTrackerCheckBox->setChecked(b);
   m_ui.residualsTRDCheckBox->setChecked(b);
   m_ui.momentumReconstructionCheckBox->setChecked(b);
   m_ui.miscellaneousTrackerCheckBox->setChecked(b);

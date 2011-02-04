@@ -12,9 +12,9 @@ SignalHeightPlot::SignalHeightPlot(AnalysisPlot::Topic topic, unsigned short id)
   m_id(id)
 {
   int maximum = 0, bins = 0;
-  if (topic == AnalysisPlot::SignalHeightUpperTracker || topic == AnalysisPlot::SignalHeightLowerTracker) {
+  if (topic == AnalysisPlot::SignalHeightTracker) {
     maximum = 4096;
-    bins = 1024;
+    bins = 100;
   }
   else if (topic == AnalysisPlot::SignalHeightTRD) {
     maximum = 1500;

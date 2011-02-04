@@ -11,10 +11,9 @@ class SimpleEvent;
 
 class AnalysisPlot : virtual public RootPlot {
 public:
-  enum Topic {TopicBegin, SignalHeightUpperTracker = TopicBegin,
-              SignalHeightLowerTracker, SignalHeightTRD, ClusterLengthUpperTracker,
-              ClusterLengthLowerTracker, ClusterLengthTRD, TimeOverThreshold, Tracking, Occupancy,
-              ResidualsUpperTracker, ResidualsLowerTracker, ResidualsTRD, MomentumReconstruction,
+  enum Topic {TopicBegin, SignalHeightTracker = TopicBegin, SignalHeightTRD,
+              ClusterLengthTracker, ClusterLengthTRD, TimeOverThreshold, Tracking, Occupancy,
+              ResidualsTracker, ResidualsTRD, MomentumReconstruction,
               MiscellaneousTracker, MiscellaneousTRD, MiscellaneousTOF, TopicEnd};
 public:
   AnalysisPlot(Topic);

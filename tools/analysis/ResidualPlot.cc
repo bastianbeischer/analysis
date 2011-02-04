@@ -26,7 +26,7 @@ ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer)
   setTitle(QString("Residuals layer at %1").arg(layer->z()));
 
   double max = 0.;
-  if (topic == AnalysisPlot::ResidualsUpperTracker || AnalysisPlot::ResidualsLowerTracker)
+  if (topic == AnalysisPlot::ResidualsTracker)
     max = 3.;
   if (topic == AnalysisPlot::ResidualsTRD)
     max = 10.;
