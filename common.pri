@@ -8,7 +8,13 @@ for(class, CLASSES) {
 QMAKE_LFLAGS -= -Wl,--as-needed
 
 # Seperate source & build dirs
-DESTDIR = $$TOPLEVEL/lib
+
+contains(TEMPLATE, app) {
+  DESTDIR = $$TOPLEVEL/bin
+}
+contains(TEMPLATE, lib) {
+  DESTDIR = $$TOPLEVEL/lib
+}
 OBJECTS_DIR = ./.tmp
 MOC_DIR = ./.tmp
 UI_DIR = ./.tmp
