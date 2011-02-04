@@ -1,13 +1,13 @@
-#ifndef TimeOfFlightPlot_hh
-#define TimeOfFlightPlot_hh
+#ifndef BetaPlot_hh
+#define BetaPlot_hh
 
 #include "AnalysisPlot.hh"
 #include "H1DPlot.hh"
 
-class TimeOfFlightPlot : public AnalysisPlot, public H1DPlot {
+class BetaPlot : public AnalysisPlot, public H1DPlot {
 public:
-  TimeOfFlightPlot();
-  virtual ~TimeOfFlightPlot();
+  BetaPlot();
+  virtual ~BetaPlot();
   virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
   virtual void update();
 };

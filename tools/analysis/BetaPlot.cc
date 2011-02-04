@@ -1,4 +1,4 @@
-#include "TimeOfFlightPlot.hh"
+#include "BetaPlot.hh"
 #include "BrokenLine.hh"
 #include "TrackInformation.hh"
 #include "Hit.hh"
@@ -14,7 +14,7 @@
 
 #include <QDebug>
 
-TimeOfFlightPlot::TimeOfFlightPlot()
+BetaPlot::BetaPlot()
   : AnalysisPlot(AnalysisPlot::MiscellaneousTOF)
   , H1DPlot()
 {
@@ -26,10 +26,10 @@ TimeOfFlightPlot::TimeOfFlightPlot()
   addLatex(RootPlot::newLatex(.15, .82));
 }
 
-TimeOfFlightPlot::~TimeOfFlightPlot()
+BetaPlot::~BetaPlot()
 {}
 
-void TimeOfFlightPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
+void BetaPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
 {
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
@@ -40,7 +40,7 @@ void TimeOfFlightPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEv
   histogram()->Fill(1./track->beta());
 }
 
-void TimeOfFlightPlot::update()
+void BetaPlot::update()
 {
   latex(0)->SetTitle(qPrintable(QString("mean = %1").arg(histogram()->GetMean())));
   latex(1)->SetTitle(qPrintable(QString("RMS  = %1").arg(histogram()->GetRMS())));

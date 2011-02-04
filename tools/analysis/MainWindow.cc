@@ -22,7 +22,7 @@
 #include "MomentumSpectrumPlot.hh"
 #include "SignalHeightPlot.hh"
 #include "ClusterLengthPlot.hh"
-#include "TimeOfFlightPlot.hh"
+#include "BetaPlot.hh"
 #include "TimeDifferencePlot.hh"
 #include "TimeOfFlightMomentumCorrelationPlot.hh"
 #include "TRDClustersOnTrackPlot.hh"
@@ -304,7 +304,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDDistanceInTube(AnalysisPlot::MiscellaneousTRD));
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
-    m_ui.plotter->addPlot(new TimeOfFlightPlot());
+    m_ui.plotter->addPlot(new BetaPlot());
     DetectorElement* element = setup->firstElement();
     while (element) {
       if (element->type() == DetectorElement::tof)

@@ -5,7 +5,7 @@ CONFIG += debug
 
 TOPLEVEL = ../..
 
-FORMS+= \
+FORMS += \
   MainWindow.ui
 
 INCLUDEPATH += \
@@ -16,7 +16,8 @@ INCLUDEPATH += \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/tracking
 
-LIBS += -L$$TOPLEVEL/lib \
+LIBS += \
+  -L$$TOPLEVEL/lib \
   -lSimpleEvent \
   -lprocessing \
   -ltracking \
@@ -39,7 +40,7 @@ CLASSES = \
   TOFPositionCorrelationPlot \
   AlbedosVsMomentumPlot \
   MomentumSpectrumPlot \
-  TimeOfFlightPlot \
+  BetaPlot \
   GeometricOccupancyProjectionPlot \
   SignalHeightPlot \
   ClusterLengthPlot \
