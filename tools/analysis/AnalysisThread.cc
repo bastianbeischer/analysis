@@ -73,7 +73,9 @@ void AnalysisThread::run()
 
       QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
       if (m_track) {
-        m_track->process(trackClusters);
+        m_track->fit(trackClusters);
+        m_corrections->postFitCorrections(m_track);
+        m_track->process();
       }
       foreach (AnalysisPlot* plot, m_plots)
         plot->processEvent(trackClusters, m_track, event);

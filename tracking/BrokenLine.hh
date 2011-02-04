@@ -39,8 +39,8 @@ public:
   double         slopeX(double)     const;
   double         slopeY(double)     const;
 
-private:
-  int            fit   (const QVector<Hit*>& hits);
+public:
+  int            fit(const QVector<Hit*>& hits);
 
 private:
   double            m_upperX0;

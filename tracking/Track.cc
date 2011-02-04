@@ -29,15 +29,13 @@ Track::~Track()
   delete m_information;
 }
 
-int Track::process(const QVector<Hit*>& hits)
+void Track::process()
 {
-  int success = fit(hits);
-  if (success) {
+  if (m_fitGood) {
     calculatePt();
     calculateTimeOfFlight();
   }
   m_information->process();
-  return success;
 }
 
 void Track::calculatePt()

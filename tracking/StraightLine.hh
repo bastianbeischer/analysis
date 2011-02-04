@@ -33,10 +33,8 @@ public:
   double         slopeY(double)     const {return slopeY();}
   double         bendingAngle()     const {return 0.;}
 
-private:
-  int            fit   (const QVector<Hit*>& hits);
-  int            fit2D (const QVector<Hit*>& hits);
-  int            fitTrd(const QVector<Hit*>& hits);
+public:
+  int            fit(const QVector<Hit*>& hits);
 
 private:
   double            m_x0;

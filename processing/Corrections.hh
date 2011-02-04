@@ -25,7 +25,7 @@ public:
 
 public:
   void preFitCorrections(QVector<Hit*>&);
-  void postFitCorrections(QVector<Hit*>&, Track*);
+  void postFitCorrections(Track*);
 
 private:
   void alignment(Hit*);

@@ -42,12 +42,12 @@ public:
   double           beta()             const;
 
 public:
-  int process(const QVector<Hit*>& hit);
+  virtual int fit (const QVector<Hit*>& hits) = 0;
+  void process();
   
 private:
   void             calculatePt();
   void             calculateTimeOfFlight();
-  virtual int      fit (const QVector<Hit*>& hits) = 0;
 
 protected:
   Type              m_type;

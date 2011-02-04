@@ -45,7 +45,7 @@ void Corrections::preFitCorrections(QVector<Hit*>& hits)
   }
 }
 
-void Corrections::postFitCorrections(QVector<Hit*>& /*hits*/, Track* track)
+void Corrections::postFitCorrections(Track* track)
 {
   if (m_flags & PhotonTravelTime) photonTravelTime(track);
 }

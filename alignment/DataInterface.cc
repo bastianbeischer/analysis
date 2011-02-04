@@ -66,7 +66,9 @@ void DataInterface::process(AlignmentMatrix* matrix)
 
     // fit in millepede
     CenteredBrokenLine track;
-    if (track.process(trackClusters)) {
+    if (track.fit(trackClusters)) {
+      m_corrections->postFitCorrections(&track);
+      track.process();
       TrackInformation::Flags flags = track.information()->flags();
       if ( (flags & TrackInformation::AllTrackerLayers) &&
           !(flags & TrackInformation::MagnetCollision) ) {
