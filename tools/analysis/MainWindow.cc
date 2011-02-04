@@ -24,7 +24,7 @@
 #include "ClusterLengthPlot.hh"
 #include "BetaPlot.hh"
 #include "TimeDifferencePlot.hh"
-#include "TimeOfFlightMomentumCorrelationPlot.hh"
+#include "BetaMomentumCorrelationPlot.hh"
 #include "TRDClustersOnTrackPlot.hh"
 #include "TRDDistanceWireToTrackPlot.hh"
 #include "TRDDistanceInTube.hh"
@@ -293,7 +293,6 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::All));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Positive));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Negative));
-    m_ui.plotter->addPlot(new TimeOfFlightMomentumCorrelationPlot());
     m_ui.plotter->addPlot(new AlbedosVsMomentumPlot());
   }
   if (m_ui.miscellaneousTrackerCheckBox->isChecked()) {
@@ -316,6 +315,8 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x8004, 0x8014));
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x8008, 0x8018));
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x800c, 0x801c));
+
+    m_ui.plotter->addPlot(new BetaMomentumCorrelationPlot());
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x8020, 0x8030));
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x8024, 0x8034));
     m_ui.plotter->addPlot(new TimeDifferencePlot(0x8028, 0x8038));

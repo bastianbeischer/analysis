@@ -1,4 +1,4 @@
-#include "TimeOfFlightMomentumCorrelationPlot.hh"
+#include "BetaMomentumCorrelationPlot.hh"
 #include "BrokenLine.hh"
 #include "Constants.hh"
 
@@ -22,7 +22,7 @@ double timeOfFlightMomentumCorrelationFunction(double x[], double p[])
   return sqrt(momentum*momentum+p[0]*p[0])/momentum;
 }
 
-TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
+BetaMomentumCorrelationPlot::BetaMomentumCorrelationPlot()
   : AnalysisPlot(AnalysisPlot::MomentumReconstruction)
   , H2DPlot()
 {
@@ -89,11 +89,11 @@ TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
   addLegend(legend);
 }
 
-TimeOfFlightMomentumCorrelationPlot::~TimeOfFlightMomentumCorrelationPlot()
+BetaMomentumCorrelationPlot::~BetaMomentumCorrelationPlot()
 {
 }
 
-void TimeOfFlightMomentumCorrelationPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
+void BetaMomentumCorrelationPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
 {
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())

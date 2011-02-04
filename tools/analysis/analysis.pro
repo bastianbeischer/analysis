@@ -45,7 +45,7 @@ CLASSES = \
   SignalHeightPlot \
   ClusterLengthPlot \
   TimeDifferencePlot \
-  TimeOfFlightMomentumCorrelationPlot \
+  BetaMomentumCorrelationPlot \
   TRDCalculations \
   TRDClustersOnTrackPlot \
   TRDDistanceInTube \
