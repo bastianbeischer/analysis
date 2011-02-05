@@ -11,7 +11,8 @@ CLASSES += \
 INCLUDEPATH += \
   $$TOPLEVEL/event \
   $$TOPLEVEL/setup \
-  $$TOPLEVEL/tracking
+  $$TOPLEVEL/tracking \
+  $$TOPLEVEL/global
 
 LIBS += \
   -L$$TOPLEVEL/lib \
