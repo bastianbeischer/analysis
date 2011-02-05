@@ -35,7 +35,7 @@ DetectorElement::DetectorElement(Type type, unsigned short id, unsigned short nC
     for (int i = 0; i < m_nChannels; i++) {
       m_channelMap.push_back(i);
     }
-  }
+  } 
 }
 
 DetectorElement::~DetectorElement()
