@@ -23,6 +23,8 @@ SignalHeightPlot::SignalHeightPlot(AnalysisPlot::Topic topic, unsigned short id)
 
   setTitle(QString("signal height 0x%1").arg(m_id,0,16));
   TH1D* histogram = new TH1D(qPrintable(title()), "", bins, 0, maximum);
+  histogram->GetXaxis()->SetTitle("signal height / adc counts");
+  histogram->GetYaxis()->SetTitle("entries");
   addHistogram(histogram);
 }
 
