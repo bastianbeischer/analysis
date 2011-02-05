@@ -22,6 +22,7 @@
 #include "MomentumSpectrumPlot.hh"
 #include "SignalHeightPlot.hh"
 #include "ClusterLengthPlot.hh"
+#include "ClusterShapePlot.hh"
 #include "BetaPlot.hh"
 #include "TOFTimeShiftPlot.hh"
 #include "BetaMomentumCorrelationPlot.hh"
@@ -207,8 +208,10 @@ void MainWindow::setupPlots()
   if (m_ui.clusterShapeTrackerCheckBox->isChecked()) {
     DetectorElement* element = setup->firstElement();
     while(element) {
-      if (element->type() == DetectorElement::tracker)
+      if (element->type() == DetectorElement::tracker) {
         m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterShapeTracker, element->id()));
+        m_ui.plotter->addPlot(new ClusterShapePlot(element->id()));
+      }
       element = setup->nextElement();
     }
   }

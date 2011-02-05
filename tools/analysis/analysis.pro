@@ -25,40 +25,41 @@ LIBS += \
   -lsetup
 
 CLASSES = \
-  MainWindow \
-  Plotter \
-  EventQueue \
-  AnalysisThread \
+  AlbedosVsMomentumPlot \
   AnalysisPlot \
-  BendingPositionPlot \
-  GeometricOccupancyPlot \
-  ResidualPlot \
+  AnalysisThread \
   BendingAnglePlot \
   BendingAnglePositionPlot \
-  Chi2Plot \
-  Chi2PerNdfPlot \
-  TOFPositionCorrelationPlot \
-  AlbedosVsMomentumPlot \
-  MomentumSpectrumPlot \
-  BetaPlot \
-  GeometricOccupancyProjectionPlot \
-  SignalHeightPlot \
-  ClusterLengthPlot \
-  TOFTimeShiftPlot \
+  BendingPositionPlot \
   BetaMomentumCorrelationPlot \
+  BetaPlot \
+  Chi2PerNdfPlot \
+  Chi2Plot \
+  ClusterLengthPlot \
+  ClusterShapePlot \
+  EventQueue \
+  GeometricOccupancyPlot \
+  GeometricOccupancyProjectionPlot \
+  MainWindow \
+  MomentumSpectrumPlot \
+  Plotter \
+  ResidualPlot \
+  SignalHeightPlot \
+  TOFPositionCorrelationPlot \
+  TOFTimeDifferencePlot \
+  TOFTimeShiftPlot \
   TRDCalculations \
   TRDClustersOnTrackPlot \
   TRDDistanceInTube \
   TRDDistanceWireToTrackPlot \
-  TRDEnergyDepositionOverMomentumPlot \
-  TRDSpectrumPlot \
-  TRDFitPlot \
-  TRDOccupancyPlot \
   TRDEfficiencyPlot \
+  TRDEnergyDepositionOverMomentumPlot \
+  TRDFitPlot \
   TRDMoPVTimeEvolutionPlot \
-  TotalEnergyDepositionPlot \
+  TRDOccupancyPlot \
+  TRDSpectrumPlot \
   TimeResolutionPlot \
-  TOFTimeDifferencePlot
+  TotalEnergyDepositionPlot
 
 SOURCES += \
   main.cc
