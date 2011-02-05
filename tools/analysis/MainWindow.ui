@@ -137,8 +137,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>173</width>
-            <height>562</height>
+            <width>175</width>
+            <height>423</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -548,23 +548,23 @@ TOF</string>
             </widget>
            </item>
            <item row="2" column="0">
-            <widget class="QCheckBox" name="clusterLengthTrackerCheckBox">
+            <widget class="QCheckBox" name="clusterShapeTrackerCheckBox">
              <property name="text">
-              <string>cluster length
+              <string>cluster shape
 tracker</string>
              </property>
             </widget>
            </item>
            <item row="3" column="0">
-            <widget class="QCheckBox" name="clusterLengthTRDCheckBox">
+            <widget class="QCheckBox" name="clusterShapeTRDCheckBox">
              <property name="text">
-              <string>cluster length
+              <string>cluster shape
 TRD</string>
              </property>
             </widget>
            </item>
            <item row="2" column="1">
-            <widget class="QPushButton" name="clusterLengthTrackerButton">
+            <widget class="QPushButton" name="clusterShapeTrackerButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -588,7 +588,7 @@ TRD</string>
             </widget>
            </item>
            <item row="3" column="1">
-            <widget class="QPushButton" name="clusterLengthTRDButton">
+            <widget class="QPushButton" name="clusterShapeTRDButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -805,9 +805,9 @@ TRD</string>
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-44</y>
-            <width>168</width>
-            <height>184</height>
+            <y>0</y>
+            <width>192</width>
+            <height>145</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">

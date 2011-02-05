@@ -67,8 +67,8 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(m_ui.signalHeightTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.signalHeightTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.clusterLengthTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.clusterLengthTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.clusterShapeTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.clusterShapeTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.timeOverThresholdButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.trackingButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.occupancyButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
@@ -94,10 +94,10 @@ void MainWindow::showButtonsClicked()
     topic = AnalysisPlot::SignalHeightTracker;
   } else if (b == m_ui.signalHeightTRDButton) {
     topic = AnalysisPlot::SignalHeightTRD;
-  } else if (b == m_ui.clusterLengthTrackerButton) {
-    topic = AnalysisPlot::ClusterLengthTracker;
-  } else if (b == m_ui.clusterLengthTRDButton) {
-    topic = AnalysisPlot::ClusterLengthTRD;
+  } else if (b == m_ui.clusterShapeTrackerButton) {
+    topic = AnalysisPlot::ClusterShapeTracker;
+  } else if (b == m_ui.clusterShapeTRDButton) {
+    topic = AnalysisPlot::ClusterShapeTRD;
   } else if (b == m_ui.timeOverThresholdButton) {
     topic = AnalysisPlot::TimeOverThreshold;
   } else if (b == m_ui.trackingButton) {
@@ -204,19 +204,19 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(mpvModuleTRDPlot);
     m_ui.plotter->addPlot(mpvChannelTRDPlot);
   }
-  if (m_ui.clusterLengthTrackerCheckBox->isChecked()) {
+  if (m_ui.clusterShapeTrackerCheckBox->isChecked()) {
     DetectorElement* element = setup->firstElement();
     while(element) {
       if (element->type() == DetectorElement::tracker)
-        m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterLengthTracker, element->id()));
+        m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterShapeTracker, element->id()));
       element = setup->nextElement();
     }
   }
-  if (m_ui.clusterLengthTRDCheckBox->isChecked()) {
+  if (m_ui.clusterShapeTRDCheckBox->isChecked()) {
     DetectorElement* element = setup->firstElement();
     while(element) {
       if (element->type() == DetectorElement::trd)
-        m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterLengthTRD, element->id()));
+        m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterShapeTRD, element->id()));
       element = setup->nextElement();
     }
   }
@@ -340,8 +340,8 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
  
   m_ui.signalHeightTrackerButton->setText("+");
   m_ui.signalHeightTRDButton->setText("+");
-  m_ui.clusterLengthTrackerButton->setText("+");
-  m_ui.clusterLengthTRDButton->setText("+");
+  m_ui.clusterShapeTrackerButton->setText("+");
+  m_ui.clusterShapeTRDButton->setText("+");
   m_ui.timeOverThresholdButton->setText("+");
   m_ui.trackingButton->setText("+");
   m_ui.occupancyButton->setText("+");
@@ -354,8 +354,8 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
 
   m_ui.signalHeightTrackerButton->setEnabled(m_ui.signalHeightTrackerCheckBox->isChecked());
   m_ui.signalHeightTRDButton->setEnabled(m_ui.signalHeightTRDCheckBox->isChecked());
-  m_ui.clusterLengthTrackerButton->setEnabled(m_ui.clusterLengthTrackerCheckBox->isChecked());
-  m_ui.clusterLengthTRDButton->setEnabled(m_ui.clusterLengthTRDCheckBox->isChecked());
+  m_ui.clusterShapeTrackerButton->setEnabled(m_ui.clusterShapeTrackerCheckBox->isChecked());
+  m_ui.clusterShapeTRDButton->setEnabled(m_ui.clusterShapeTRDCheckBox->isChecked());
   m_ui.timeOverThresholdButton->setEnabled(m_ui.timeOverThresholdCheckBox->isChecked());
   m_ui.trackingButton->setEnabled(m_ui.trackingCheckBox->isChecked());
   m_ui.occupancyButton->setEnabled(m_ui.occupancyCheckBox->isChecked());
@@ -478,8 +478,8 @@ void MainWindow::toggleSelectionButtonClicked()
   m_ui.toggleSelectionButton->setText(b ? "deselect all" : "select all");
   m_ui.signalHeightTrackerCheckBox->setChecked(b);
   m_ui.signalHeightTRDCheckBox->setChecked(b);
-  m_ui.clusterLengthTrackerCheckBox->setChecked(b);
-  m_ui.clusterLengthTRDCheckBox->setChecked(b);
+  m_ui.clusterShapeTrackerCheckBox->setChecked(b);
+  m_ui.clusterShapeTRDCheckBox->setChecked(b);
   m_ui.timeOverThresholdCheckBox->setChecked(b);
   m_ui.trackingCheckBox->setChecked(b);
   m_ui.occupancyCheckBox->setChecked(b);
