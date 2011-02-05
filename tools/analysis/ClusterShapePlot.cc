@@ -37,13 +37,12 @@ ClusterShapePlot::ClusterShapePlot(unsigned short id) :
   normHist->SetLineColor(kRed);
   addHistogram(normHist);
 
-  m_eventCountAxis = new TGaxis(x1, 0, x1, 1000, 0, 1000, 510, "+");
+  m_eventCountAxis = new TGaxis(x1, 0, x1, 1000, 0, 1000, 510, "+L");
   m_eventCountAxis->SetLineColor(kRed);
   m_eventCountAxis->SetTextColor(kRed);
   m_eventCountAxis->SetLabelColor(kRed);
-  m_eventCountAxis->SetLabelOffset(0.03);
   m_eventCountAxis->SetTitle("events / strip");
-  m_eventCountAxis->SetTitleOffset(1.2);
+  m_eventCountAxis->SetTitleOffset(1.5);
   m_eventCountAxis->SetLabelFont(gStyle->GetLabelFont());
   m_eventCountAxis->SetLabelSize(gStyle->GetLabelSize());
   m_eventCountAxis->SetTitleFont(gStyle->GetTitleFont());
@@ -102,17 +101,17 @@ void ClusterShapePlot::draw(TCanvas* can)
 void ClusterShapePlot::update()
 {
   latex(0)->SetTitle(qPrintable(QString("events = %1").arg(m_eventCounter)));
+  m_eventCountAxis->SetY1(gPad->GetUymin());
   m_eventCountAxis->SetY2(gPad->GetUymax());
-  m_eventCountAxis->SetWmax(1.05*m_eventCounter);
+  m_eventCountAxis->SetWmax((1.05/0.9)*m_eventCounter);
 }
 
 void ClusterShapePlot::finalize()
 {
   int nBins = histogram(0)->GetNbinsX();
-  int nMax = histogram(1)->GetBinContent(ceil(nBins/2.));
   for (int iBin = 1; iBin <= nBins; ++iBin) {
     int counts = histogram(1)->GetBinContent(iBin);
-    if (counts > 0.05*nMax) {
+    if (counts > 0.01*m_eventCounter) {
       double binContent = histogram(0)->GetBinContent(iBin);
       histogram(0)->SetBinContent(iBin, binContent/counts);
     }
@@ -120,5 +119,5 @@ void ClusterShapePlot::finalize()
       histogram(0)->SetBinContent(iBin,0.);
     }
   }
-  histogram(1)->Scale(histogram(0)->GetBinContent(ceil(nBins/2.))/nMax);
+  histogram(1)->Scale(.9*histogram(0)->GetBinContent(ceil(nBins/2.))/m_eventCounter);
 }
