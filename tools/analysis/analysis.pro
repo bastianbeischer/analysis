@@ -48,6 +48,7 @@ CLASSES = \
   TOFPositionCorrelationPlot \
   TOFTimeDifferencePlot \
   TOFTimeShiftPlot \
+  TotalSignalHeightPlot \
   TRDCalculations \
   TRDClustersOnTrackPlot \
   TRDDistanceInTube \

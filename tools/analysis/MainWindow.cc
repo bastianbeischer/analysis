@@ -38,6 +38,7 @@
 #include "TotalEnergyDepositionPlot.hh"
 #include "TimeResolutionPlot.hh"
 #include "TOFTimeDifferencePlot.hh"
+#include "TotalSignalHeightPlot.hh"
 
 #include <QFileDialog>
 #include <QVBoxLayout>
@@ -265,6 +266,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new AlbedosVsMomentumPlot());
   }
   if (m_ui.miscellaneousTrackerCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new TotalSignalHeightPlot());
   }
   if (m_ui.miscellaneousTRDCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisPlot::MiscellaneousTRD));
