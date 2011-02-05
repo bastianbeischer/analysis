@@ -19,6 +19,7 @@ public:
 
 public:
   void process();
+  void reset() {m_flags = Flags(0);}
   const Flags& flags() const {return m_flags;}
 
 private:
