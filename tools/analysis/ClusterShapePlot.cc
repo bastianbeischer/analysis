@@ -30,6 +30,7 @@ ClusterShapePlot::ClusterShapePlot(unsigned short id) :
   TH1D* histogram = new TH1D(qPrintable(title()),"", nBins, x0, x1);
   histogram->GetXaxis()->SetTitle("strip no. relative to maximum");
   histogram->GetYaxis()->SetTitle("mean amplitude");
+  histogram->GetXaxis()->SetNdivisions(520);
   histogram->GetYaxis()->SetTitleOffset(1.5);
   addHistogram(histogram);
 
@@ -64,16 +65,16 @@ void ClusterShapePlot::processEvent(const QVector<Hit*>& hits, Track*, SimpleEve
     if (element == m_id) {
       std::vector<Hit*>& subHits = cluster->hits();
 
-      // find max strip
-      unsigned short iMax = 0;
-      double max = 0.;
-
-      QMap<double, Hit*> sortMap;// TODO: remove sorting after reprocessing with preAnalysis.
+      // TODO: remove sorting after reprocessing with preAnalysis.
+      QMap<double, Hit*> sortMap;
       for(unsigned short i = 0; i < subHits.size(); ++i) {
         sortMap[subHits.at(i)->position().x()] = subHits.at(i);
       }      
-
       QVector<Hit*> hits = sortMap.values().toVector();
+
+      // find max strip
+      unsigned short iMax = 0;
+      double max = 0.;
       for(unsigned short i = 0; i < hits.size(); ++i) {
         double amplitude = hits.at(i)->signalHeight();
         if (amplitude > max) {
