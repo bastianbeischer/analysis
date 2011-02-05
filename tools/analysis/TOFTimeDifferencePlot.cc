@@ -31,7 +31,9 @@ TOFTimeDifferencePlot::TOFTimeDifferencePlot(unsigned short id)
 }
 
 TOFTimeDifferencePlot::~TOFTimeDifferencePlot()
-{}
+{
+  delete m_normalizationHistogram;
+}
 
 void TOFTimeDifferencePlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
 {
@@ -74,9 +76,10 @@ void TOFTimeDifferencePlot::processEvent(const QVector<Hit*>& clusters, Track* t
       double x = track->x(cluster->position().z()) - cluster->position().x();
       double y = track->y(cluster->position().z());
       double dt = (t[0]+t[1])/2. - (t[2]+t[3])/2.;
-      m_normalizationHistogram->Fill(y, x);
-      if (qAbs(dt) < 5)
+      if (qAbs(dt) < 10) {
+        m_normalizationHistogram->Fill(y, x);
         histogram()->Fill(y, x, dt);
+      }
       return;
     }
   }
@@ -90,6 +93,6 @@ void TOFTimeDifferencePlot::draw(TCanvas* canvas)
 
 void TOFTimeDifferencePlot::finalize()
 {
-  histogram()->GetZaxis()->SetRangeUser(-5, 5);
+  histogram()->GetZaxis()->SetRangeUser(-3, 3);
   histogram()->Divide(m_normalizationHistogram);
 }

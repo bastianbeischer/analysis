@@ -40,6 +40,7 @@ public:
 
 private:
   QSettings* m_trdSettings;
+  QSettings* m_tofSettings;
   Flags      m_flags;
 
 };

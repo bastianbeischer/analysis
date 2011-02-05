@@ -6,15 +6,21 @@
 #include "Setup.hh"
 #include "DetectorElement.hh"
 #include "TOFBar.hh"
+#include "Track.hh"
+#include "TrackInformation.hh"
+#include "Constants.hh"
 
 #include <QProcess>
 #include <QSettings>
+#include <QDebug>
 
 #include <cstring>
+#include <cmath>
 
-Corrections::Corrections(Flags flags) :
-  m_trdSettings(0),
-  m_flags(flags)
+Corrections::Corrections(Flags flags)
+  : m_trdSettings(0)
+  , m_tofSettings(0)
+  , m_flags(flags)
 {
   QStringList envVariables = QProcess::systemEnvironment();
   QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
@@ -27,12 +33,14 @@ Corrections::Corrections(Flags flags) :
   else {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
-  m_trdSettings = new QSettings(path+"TRDCorrections.conf", QSettings::IniFormat);
+  m_trdSettings = new QSettings(path + "TRDCorrections.conf", QSettings::IniFormat);
+  m_tofSettings = new QSettings(path + "TOFCorrections.conf", QSettings::IniFormat);
 }
 
 Corrections::~Corrections()
 {
   delete m_trdSettings;
+  delete m_tofSettings;
 }
 
 void Corrections::preFitCorrections(QVector<Hit*>& hits)
@@ -119,7 +127,29 @@ void Corrections::setTrdScalingFactor(unsigned int channel, double value)
   m_trdSettings->sync();
 }
 
-void Corrections::photonTravelTime(Track* /*track*/)
+void Corrections::photonTravelTime(Track* track)
 {
+  if (!track || !track->fitGood())
+    return;
+  foreach (Hit* cluster, track->hits()) {
+    if (!strcmp(cluster->ClassName(), "TOFCluster")) {
+      TOFCluster* tofCluster = static_cast<TOFCluster*>(cluster);
+      int id = tofCluster->detId();
+      double c0 = m_tofSettings->value(QString("PhotonTravelTimeConstants/%1_c0").arg(id, 0, 16)).toDouble();
+      double c1 = m_tofSettings->value(QString("PhotonTravelTimeConstants/%1_c1").arg(id, 0, 16)).toDouble();
+      double c2 = m_tofSettings->value(QString("PhotonTravelTimeConstants/%1_c2").arg(id, 0, 16)).toDouble();
+      for (unsigned int i = 0; i < tofCluster->hits().size(); ++i) {
+        TOFSipmHit* hit = static_cast<TOFSipmHit*>(tofCluster->hits()[i]);
+        double x = (track->x(cluster->position().z()) - cluster->position().x()) / (Constants::tofBarWidth/2.);
+        double y = track->y(cluster->position().z()) / (Constants::tofBarLength/2.);
+        double s = x < 0 ? 1 : -1;
+        double dt = c0 + c1* y + c2 * s * pow(abs(y), 6) * (1 - cos(3.14*x));
+        if (qAbs(x) < 1 && qAbs(y) < 1 && hit->position().y() < 0) {
+          hit->applyTimeShift(-dt);
+        }
+      }
+      tofCluster->processHits();
+    }
+  }
 }
 
