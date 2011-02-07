@@ -7,6 +7,10 @@
 #include <QProcess>
 #include <QMutexLocker>
 
+#include <QDebug>
+
+#include "TF1.h"
+
 #include "Track.hh"
 #include "TrackInformation.hh"
 #include "SimpleEvent.hh"
@@ -21,7 +25,8 @@ TRDLikelihood* TRDLikelihood::m_instance = 0;
 QMutex TRDLikelihood::m_mutex;
 
 
-TRDLikelihood::TRDLikelihood()
+TRDLikelihood::TRDLikelihood():
+    m_saved(false)
 {
 
   QStringList envVariables = QProcess::systemEnvironment();
@@ -153,28 +158,43 @@ bool TRDLikelihood::analyzeEvent(const QVector<Hit*>& hits, const Track* track, 
   }
 
   //calculate combined likelihoods
-  double protonLikelihood = 0;
+  double protonLikelihood = 1;
   foreach(double moduleLikelihood, protonLikelihoods)
     protonLikelihood *= moduleLikelihood;
+  qDebug()<< "protonLikelihood = " << protonLikelihood;
   protonLikelihood = pow(protonLikelihood, 1.0 / protonLikelihoods.size() );
+  protonLikelihood = protonLikelihood;
 
-  double positronLikelihood = 0;
+  double positronLikelihood = 1;
   foreach(double moduleLikelihood, positronLikelihoods)
     positronLikelihood *= moduleLikelihood;
+  qDebug()<< "positronLikelihood = " << positronLikelihood;
   positronLikelihood = pow(positronLikelihood, 1.0 / positronLikelihoods.size() );
+  positronLikelihood = positronLikelihood;
+
+
 
   //fill into histos
-  m_protonLikelihood->Fill(protonLikelihood);
-  m_positronLikelihood->Fill(positronLikelihood);
+  //m_protonLikelihood->Fill(protonLikelihood);
+  //m_positronLikelihood->Fill(positronLikelihood);
 
   //test:
   double testValue = positronLikelihood / ( positronLikelihood + protonLikelihood) ;
+
+  qDebug() << testValue;
+
+  if (isPositronish)
+    m_positronLikelihood->Fill(testValue);
+  else
+    m_protonLikelihood->Fill(testValue);
 
   if ( testValue > 0.5){
     isPositronish = true;
   }else{
     isPositronish = false;
   }
+
+  qDebug() << isPositronish;
 
   return true;
 
@@ -249,18 +269,38 @@ void TRDLikelihood::normalizeLikelihoodHistos(){
   foreach (TH1D* histo, m_protonModuleLikelihood){
     histo->Sumw2();
     histo->Scale(1.0 / histo->Integral());
+    TF1 *f_ppar= new TF1("f_epar","(landau(0))");
+    f_ppar->SetParameters(0.533941,1.04519,0.90618);
+    histo->Fit(f_ppar);
   }
 
   //normalize positron likelihoods
   foreach (TH1D* histo, m_positronModuleLikelihood){
     histo->Sumw2();
     histo->Scale(1.0 / histo->Integral());
+    TF1 *f_epar= new TF1("f_epar","(landau(0)+landau(3))");
+    f_epar->SetParameters(0.533941,1.04519,0.90618,0.177358,3.7248,4.80789);
+    f_epar->SetParLimits(1,0.8,1.2);
+    f_epar->SetParLimits(4,2,4);
+    histo->Fit(f_epar);
   }
 
 }
 
 
 void TRDLikelihood::saveLikelihoodHistos(){
+
+  if (m_saved){
+    m_protonLikelihood->Sumw2();
+    m_protonLikelihood->Scale(1.0 / m_protonLikelihood->Integral());
+    m_protonLikelihood->SaveAs("protonLikelihoodHisto.root");
+    m_positronLikelihood->Sumw2();
+    m_positronLikelihood->Scale(1.0 / m_positronLikelihood->Integral());
+    m_positronLikelihood->SaveAs("positronLikelihoodHisto.root");
+    return;
+  }
+
+  normalizeLikelihoodHistos();
 
   //save proton likelihoods
   foreach (TH1D* histo, m_protonModuleLikelihood){
@@ -271,5 +311,7 @@ void TRDLikelihood::saveLikelihoodHistos(){
   foreach (TH1D* histo, m_positronModuleLikelihood){
     histo->SaveAs(qPrintable(m_pathToLikelihoodHistos + QString(histo->GetTitle()).replace(" ", "_") + ".root"));
   }
+
+  m_saved = true;
 
 }

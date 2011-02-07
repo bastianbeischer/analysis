@@ -29,10 +29,14 @@ public:
     void saveLikelihoodHistos();
     void loadLikelihoodHistos();
 
+    bool saved() {return m_saved;}
+
 private:
   TRDLikelihood();
 
   static TRDLikelihood* m_instance;
+
+  bool m_saved;
 
   QMap <unsigned int, TH1D*> m_positronModuleLikelihood ;
   QMap <unsigned int, TH1D*> m_protonModuleLikelihood ;
