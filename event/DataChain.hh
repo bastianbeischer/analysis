@@ -17,6 +17,7 @@ public:
 public:
   void setFileList(const char* listName);
   void addFileList(const char* listName);
+  void addRootFile(const char* fileName);
 
 public:
   unsigned int nEntries() const {return m_chain->GetEntries();}

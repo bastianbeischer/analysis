@@ -62,25 +62,31 @@ void DataChain::addFileList(const char* listName)
     file >> filename;
     if (file.eof()) break;
 
-    // starting output
-    std::cout << "Adding " << filename;
-    m_chain->AddFile(filename);
-
-    // version string
-    TFile file(filename, "READ");
-    TTree* tree = (TTree*)file.Get("SimpleEventTree");
-    int nEntries = tree->GetEntries();
-    if (m_offsets.size() == 0)
-      m_offsets.push_back(nEntries);
-    else 
-      m_offsets.push_back(nEntries + m_offsets.back());
-    DataDescription* desc = (DataDescription*) tree->GetUserInfo()->First();
-    if (desc) {
-      std::cout << " (version: " << desc->softwareVersionHash() << ")" << std::endl;
-    }
+    addRootFile(filename);
   }
   
   std::cout << "DONE: Chain contains " << m_chain->GetEntries() << " events" << std::endl;
+}
+
+void DataChain::addRootFile(const char* filename)
+{
+  // starting output
+  std::cout << "Adding " << filename;
+  m_chain->AddFile(filename);
+
+  // version string
+  TFile file(filename, "READ");
+  TTree* tree = (TTree*)file.Get("SimpleEventTree");
+  int nEntries = tree->GetEntries();
+  if (m_offsets.size() == 0)
+    m_offsets.push_back(nEntries);
+  else 
+    m_offsets.push_back(nEntries + m_offsets.back());
+  DataDescription* desc = (DataDescription*) tree->GetUserInfo()->First();
+  std::cout << " with " << nEntries << " events";
+  if (desc) {
+    std::cout << " (version: " << desc->softwareVersionHash() << ")" << std::endl;
+  }
 }
 
 SimpleEvent* DataChain::event(unsigned int i)
