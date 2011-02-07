@@ -238,14 +238,19 @@ void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numb
   m_eventLoopOff = true;
 }
 
+void Plotter::setFileList(const QString& fileName)
+{
+  m_chain->setFileList(qPrintable(fileName));
+}
+
 void Plotter::addFileList(const QString& fileName)
 {
   m_chain->addFileList(qPrintable(fileName));
 }
 
-void Plotter::setFileList(const QString& fileName)
+void Plotter::addRootFile(const QString& file)
 {
-  m_chain->setFileList(qPrintable(fileName));
+  m_chain->addRootFile(qPrintable(file));
 }
 
 void Plotter::setTimeLabel(QLabel* label)

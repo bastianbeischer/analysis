@@ -36,8 +36,9 @@ public:
   void setEventQueueProgressBar(QProgressBar*);
   void saveCanvas(const QString& fileName);
   void saveForPostAnalysis(const QString&);
-  void addFileList(const QString& fileName);
   void setFileList(const QString& fileName);
+  void addFileList(const QString& fileName);
+  void addRootFile(const QString& file);
 public slots:
   void startAnalysis(Track::Type, Corrections::Flags, int numberOfThreads);
   void abortAnalysis();

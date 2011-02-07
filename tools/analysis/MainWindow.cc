@@ -88,6 +88,17 @@ MainWindow::~MainWindow()
 {
 }
 
+void MainWindow::processArguments(QStringList arguments)
+{
+  arguments.removeFirst();
+  foreach(QString argument, arguments) {
+    if (argument.endsWith(".root"))
+      addRootFile(argument);
+    else
+      addFileList(argument);
+  }
+}
+
 void MainWindow::showButtonsClicked()
 {
   QPushButton* b = static_cast<QPushButton*>(sender());
@@ -403,14 +414,19 @@ void MainWindow::setOrAddFileListButtonClicked()
   }
 }
 
+void MainWindow::setFileList(const QString& fileName)
+{
+  m_ui.plotter->setFileList(fileName);
+}
+
 void MainWindow::addFileList(const QString& fileName)
 {
   m_ui.plotter->addFileList(fileName);
 }
 
-void MainWindow::setFileList(const QString& fileName)
+void MainWindow::addRootFile(const QString& file)
 {
-  m_ui.plotter->setFileList(fileName);
+  m_ui.plotter->addRootFile(file);
 }
 
 void MainWindow::saveCanvasButtonClicked()

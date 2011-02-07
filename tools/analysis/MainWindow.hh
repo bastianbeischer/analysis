@@ -17,9 +17,11 @@ class MainWindow : public QMainWindow {
   public:
   MainWindow(QWidget* parent = 0);
   ~MainWindow();
+  void processArguments(QStringList);
+private slots:
   void setFileList(const QString&);
   void addFileList(const QString&);
-private slots:
+  void addRootFile(const QString&);
   void setOrAddFileListButtonClicked();
   void analyzeButtonClicked();
   void saveCanvasButtonClicked();
