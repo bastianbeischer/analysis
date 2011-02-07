@@ -39,6 +39,7 @@
 #include "TimeResolutionPlot.hh"
 #include "TOFTimeDifferencePlot.hh"
 #include "TotalSignalHeightPlot.hh"
+#include "TOFEfficiencyPlot.hh"
 
 #include <QFileDialog>
 #include <QVBoxLayout>
@@ -282,6 +283,17 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Negative));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Inverted));
     m_ui.plotter->addPlot(new AlbedosVsMomentumPlot());
+  }
+  if (m_ui.efficiencyTofCheckBox->isChecked()) {
+    DetectorElement* element = setup->firstElement();
+    while (element) {
+      if (element->type() == DetectorElement::tof) {
+        for (int ch = 0; ch < 4; ++ch) {
+          m_ui.plotter->addPlot(new TOFEfficiencyPlot(element->id() | ch));
+        }
+      }
+      element = setup->nextElement();
+    }
   }
   if (m_ui.miscellaneousTrackerCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TotalSignalHeightPlot());
