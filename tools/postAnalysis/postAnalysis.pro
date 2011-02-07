@@ -4,4 +4,5 @@ CONFIG  += ordered
 
 SUBDIRS  = \
   timeShift \
-  photonTravelTime
+  photonTravelTime \
+  tofEfficiency
