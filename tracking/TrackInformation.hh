@@ -2,6 +2,7 @@
 #define TrackSelection_hh
 
 #include <QFlags>
+#include <QMap>
 
 class Track;
 
@@ -19,8 +20,10 @@ public:
 
 public:
   void process();
-  void reset() {m_flags = Flags(0);}
+  void reset();
   const Flags& flags() const {return m_flags;}
+  const QMap<double,int>& hitsInLayers() const {return m_hitsInLayers;}
+  int numberOfTrackerLayers() const {return m_hitsInLayers.size();}
 
 private:
   void checkAllTrackerLayers();
@@ -33,6 +36,7 @@ private:
 private:
   const Track* m_track;
   Flags m_flags;
+  QMap<double, int> m_hitsInLayers;
 
 };
 
