@@ -23,6 +23,7 @@ public:
   unsigned int numberOfEvents();
   void setFileList(const QString& listName);
   void addFileList(const QString& listName);
+  void addRootFile(const QString&);
   void drawEvent(unsigned int i, bool drawTrack, int fitMethod, QTextBrowser& infoTextBox);
   void saveCanvas(const QString& fileName);
   void setPositionLabel(QLabel* label);

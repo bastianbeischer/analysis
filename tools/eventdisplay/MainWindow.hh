@@ -3,14 +3,18 @@
 
 #include "ui_MainWindow.h"
 
+#include <QStringList>
+
 class MainWindow : public QDialog {
   Q_OBJECT
   public:
   MainWindow(QWidget* parent = 0);
   ~MainWindow();
-  void setFileList(const QString& fileList);
-  void addFileList(const QString& fileList);
+  void processArguments(QStringList);
 private slots:
+  void setFileList(const QString&);
+  void addFileList(const QString&);
+  void addRootFile(const QString&);
   void update();
   void updateEventSpinBox();
   void setOrAddFileListButtonClicked();

@@ -65,6 +65,11 @@ void Plotter::addFileList(const QString& listName)
   m_chain->addFileList(qPrintable(listName));
 }
 
+void Plotter::addRootFile(const QString& file)
+{
+  m_chain->addRootFile(qPrintable(file));
+}
+
 unsigned int Plotter::numberOfEvents()
 {
   return m_chain->nEntries();

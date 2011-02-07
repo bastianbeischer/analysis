@@ -25,6 +25,17 @@ MainWindow::~MainWindow()
 {
 }
 
+void MainWindow::processArguments(QStringList arguments)
+{
+  arguments.removeFirst();
+  foreach(QString argument, arguments) {
+    if (argument.endsWith(".root"))
+      addRootFile(argument);
+    else
+      addFileList(argument);
+  }
+}
+
 void MainWindow::setFileList(const QString& fileList)
 {
   m_ui.plotter->setFileList(fileList);
@@ -35,6 +46,12 @@ void MainWindow::setFileList(const QString& fileList)
 void MainWindow::addFileList(const QString& fileList)
 {
   m_ui.plotter->addFileList(fileList);
+  updateEventSpinBox();
+}
+
+void MainWindow::addRootFile(const QString& file)
+{
+  m_ui.plotter->addRootFile(file);
   updateEventSpinBox();
 }
 
