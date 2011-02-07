@@ -18,6 +18,7 @@ TOFTimeDifferencePlot::TOFTimeDifferencePlot(unsigned short id)
   : AnalysisPlot(AnalysisPlot::MiscellaneousTOF)
   , H2DPlot()
   , m_id(id)
+  , m_updateCounter(0)
 {
   setTitle(QString("tof time difference position 0x%1").arg(id, 0, 16));
   m_normalizationHistogram = new TH2I(qPrintable(title() + " normalization"),  "",
@@ -82,6 +83,15 @@ void TOFTimeDifferencePlot::processEvent(const QVector<Hit*>& clusters, Track* t
       }
       return;
     }
+  }
+}
+
+void TOFTimeDifferencePlot::update()
+{
+  ++m_updateCounter;
+  if (m_updateCounter % 4 == 0) {
+    AnalysisPlot::update();
+    m_updateCounter = 0;
   }
 }
 

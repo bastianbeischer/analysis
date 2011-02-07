@@ -19,6 +19,7 @@ TOFEfficiencyPlot::TOFEfficiencyPlot(unsigned short id)
   : AnalysisPlot(AnalysisPlot::EfficiencyTOF)
   , H2DPlot()
   , m_id(id)
+  , m_updateCounter(0)
 {
   setTitle(QString("tof efficiency 0x%1").arg(id, 0, 16));
   m_normalizationHistogram = new TH2I(qPrintable(title() + " normalization"),  "",
@@ -67,6 +68,15 @@ void TOFEfficiencyPlot::draw(TCanvas* canvas)
 {
   H2DPlot::draw(canvas);
   histogram()->Draw("lego2");
+}
+
+void TOFEfficiencyPlot::update()
+{
+  ++m_updateCounter;
+  if (m_updateCounter % 4 == 0) {
+    AnalysisPlot::update();
+    m_updateCounter = 0;
+  }
 }
 
 void TOFEfficiencyPlot::finalize()
