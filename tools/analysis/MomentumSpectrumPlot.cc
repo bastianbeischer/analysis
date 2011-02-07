@@ -43,7 +43,7 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Type type) :
   }
   else if(m_type == Inverted) {
     setTitle(title() + " - Inverted");
-    nBins = 100;
+    nBins = 300;
     double lowerBound = -10;
     double upperBound = 10;
     histogram = new TH1D(qPrintable(title()), "", nBins, lowerBound, upperBound);
