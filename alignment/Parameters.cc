@@ -76,6 +76,6 @@ unsigned int Parameters::indexForDetId(unsigned short detId) const
   for (int i = 0; i < numberOfHPEs; i++)
     if (connection == trackerConnections[i]) return firstTrackerIndex + i*hposPerHPE*sipmsPerHpo + hpo*sipmsPerHpo + sipm;
 
-  assert(false);
+  Q_ASSERT(false);
   return 0;
 }

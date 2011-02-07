@@ -7,7 +7,6 @@
 
 #include <TH2I.h>
 #include <cmath>
-#include <cassert>
 #include <iostream>
 
 int TrackFinding::s_histCounter = 0;
@@ -94,7 +93,7 @@ QVector<Hit*> TrackFinding::findTrack(const QVector<Hit*>& hits)
 
 bool TrackFinding::isInCorridor(Track* track, Hit* hit, double pullOverRide) const
 {
-  assert(track);
+  Q_ASSERT(track);
 
   double z = hit->position().z();
   double hitX = 0.5*(hit->position().x() + hit->counterPosition().x());

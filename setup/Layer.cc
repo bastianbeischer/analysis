@@ -3,7 +3,6 @@
 #include <cstdio>
 #include <iostream>
 #include <sstream>
-#include <cassert>
 
 #include "Cluster.hh"
 #include "Setup.hh"
@@ -33,7 +32,7 @@ void Layer::addHitToDetector(Hit* hit)
 {
   unsigned short detId = hit->detId() - hit->channel();
   DetectorElement* element = m_elements[detId];
-  assert(element);
+  Q_ASSERT(element);
   element->addHit(hit);
 }
 
