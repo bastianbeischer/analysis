@@ -1,7 +1,8 @@
 #ifndef Constants_hh
 #define Constants_hh
 
-namespace Constants {
+namespace Constants
+{
 
   const double electronMass = 0.000511;
   const double muonMass = 0.105658;

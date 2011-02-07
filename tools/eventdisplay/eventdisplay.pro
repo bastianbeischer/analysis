@@ -13,7 +13,8 @@ INCLUDEPATH += \
   $$TOPLEVEL/processing \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/tracking \
-  $$TOPLEVEL/setup
+  $$TOPLEVEL/setup \
+  $$TOPLEVEL/global
 
 LIBS += \
   -L$$TOPLEVEL/lib \
