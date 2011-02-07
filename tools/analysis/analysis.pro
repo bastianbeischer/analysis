@@ -45,6 +45,7 @@ CLASSES = \
   Plotter \
   ResidualPlot \
   SignalHeightPlot \
+  CutStatisticsPlot \
   TOFPositionCorrelationPlot \
   TOFTimeDifferencePlot \
   TOFTimeShiftPlot \
