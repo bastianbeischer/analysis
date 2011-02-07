@@ -60,7 +60,8 @@ CLASSES = \
   TRDOccupancyPlot \
   TRDSpectrumPlot \
   TimeResolutionPlot \
-  TotalEnergyDepositionPlot
+  TotalEnergyDepositionPlot \
+  TOFEfficiencyPlot
 
 SOURCES += \
   main.cc

@@ -14,7 +14,8 @@ public:
   enum Topic {TopicBegin, SignalHeightTracker = TopicBegin, SignalHeightTRD,
               ClusterShapeTracker, ClusterShapeTRD, TimeOverThreshold, Tracking, Occupancy,
               ResidualsTracker, ResidualsTRD, MomentumReconstruction,
-              MiscellaneousTracker, MiscellaneousTRD, MiscellaneousTOF, TopicEnd};
+              EfficiencyTOF, ResolutionTOF, MiscellaneousTracker, MiscellaneousTRD,
+              MiscellaneousTOF, TopicEnd};
 public:
   AnalysisPlot(Topic);
   virtual ~AnalysisPlot();
