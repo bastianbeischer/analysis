@@ -59,8 +59,8 @@ TH2D* BarEfficiencyPlot::findHistogram(TCanvas* canvas)
 double BarEfficiencyPlot::sumEntries(TH2D* h)
 {
   double sum = 0;
-  for (int binX = 1; binX < h->GetXaxis()->GetNbins(); ++binX) {
-    for (int binY = 1; binY < h->GetYaxis()->GetNbins(); ++binY) {
+  for (int binX = 1; binX <= h->GetXaxis()->GetNbins(); ++binX) {
+    for (int binY = 1; binY <= h->GetYaxis()->GetNbins(); ++binY) {
       sum+= h->GetBinContent(binX, binY);
     }
   }
