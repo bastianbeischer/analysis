@@ -50,6 +50,7 @@ CLASSES = \
   TOFTimeDifferencePlot \
   TOFTimeShiftPlot \
   TotalSignalHeightPlot \
+  TrackerLayerStatisticsPlot \
   TRDCalculations \
   TRDClustersOnTrackPlot \
   TRDDistanceInTube \
