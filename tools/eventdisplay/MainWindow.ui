@@ -43,35 +43,35 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="1">
+         <item row="3" column="1">
           <widget class="QPushButton" name="saveButton">
            <property name="text">
             <string>save image</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="2">
+         <item row="3" column="2">
           <widget class="QPushButton" name="unzoomButton">
            <property name="text">
             <string>unzoom</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="2">
+         <item row="2" column="2">
           <widget class="QPushButton" name="addFileListButton">
            <property name="text">
             <string>add file list</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="1">
+         <item row="2" column="1">
           <widget class="QPushButton" name="setFileListButton">
            <property name="text">
             <string>set file list</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="2">
+         <item row="4" column="2">
           <widget class="QComboBox" name="fitMethodComboBox">
            <property name="enabled">
             <bool>false</bool>
@@ -93,13 +93,27 @@
            </item>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="4" column="1">
           <widget class="QLabel" name="label">
            <property name="text">
             <string>Fit Method:</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QSpinBox" name="eventListSpinBox">
+           <property name="maximum">
+            <number>0</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QPushButton" name="editEventListButton">
+           <property name="text">
+            <string>edit event list</string>
            </property>
           </widget>
          </item>
@@ -195,11 +209,7 @@
        </layout>
       </item>
       <item>
-       <widget class="QTextBrowser" name="infoTextBrowser">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-       </widget>
+       <widget class="QPlainTextEdit" name="textEdit"/>
       </item>
       <item>
        <widget class="QLabel" name="positionLabel">

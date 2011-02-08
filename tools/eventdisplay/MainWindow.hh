@@ -12,6 +12,8 @@ class MainWindow : public QDialog {
   ~MainWindow();
   void processArguments(QStringList);
 private slots:
+  void editEventListButtonClicked();
+  void eventSpinBoxValueChanged(int);
   void setFileList(const QString&);
   void addFileList(const QString&);
   void addRootFile(const QString&);
@@ -21,6 +23,7 @@ private slots:
   void saveButtonClicked();
 private:
   Ui_MainWindow m_ui;
+  QVector<int> m_eventList;
 };
 
 #endif

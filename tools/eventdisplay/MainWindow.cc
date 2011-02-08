@@ -7,10 +7,12 @@ MainWindow::MainWindow(QWidget* parent)
   : QDialog(parent)
 {
   m_ui.setupUi(this);
+  connect(m_ui.editEventListButton, SIGNAL(clicked()), this, SLOT(editEventListButtonClicked()));
   connect(m_ui.setFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
   connect(m_ui.addFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
   connect(m_ui.saveButton, SIGNAL(clicked()), this, SLOT(saveButtonClicked()));
   connect(m_ui.eventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(update()));
+  connect(m_ui.eventListSpinBox, SIGNAL(valueChanged(int)), this, SLOT(eventSpinBoxValueChanged(int)));
   connect(m_ui.drawTrackCheckBox, SIGNAL(stateChanged(int)), this, SLOT(update()));
   connect(m_ui.slopeBinsSpinBox, SIGNAL(valueChanged(int)), this, SLOT(update()));
   connect(m_ui.offsetBinsSpinBox, SIGNAL(valueChanged(int)), this, SLOT(update()));
@@ -23,6 +25,32 @@ MainWindow::MainWindow(QWidget* parent)
 
 MainWindow::~MainWindow()
 {
+}
+
+void MainWindow::editEventListButtonClicked()
+{
+  if (m_ui.editEventListButton->text() == "edit event list") {
+    m_ui.textEdit->clear();
+    foreach(int id, m_eventList)
+      m_ui.textEdit->appendPlainText(QString::number(id));
+    m_ui.textEdit->setReadOnly(false);
+    m_ui.editEventListButton->setText("finish");
+  } else {
+    m_eventList.clear();
+    QStringList list = m_ui.textEdit->toPlainText().split('\n');
+    foreach(QString id, list)
+      m_eventList.append(id.toInt());
+    m_ui.eventListSpinBox->setMaximum(m_eventList.size()-1);
+    m_ui.eventListSpinBox->setValue(0);
+    m_ui.textEdit->setReadOnly(true);
+    m_ui.editEventListButton->setText("edit event list");
+    update();
+  }
+}
+
+void MainWindow::eventSpinBoxValueChanged(int i)
+{
+  m_ui.eventSpinBox->setValue(m_eventList[i]);
 }
 
 void MainWindow::processArguments(QStringList arguments)
@@ -85,7 +113,7 @@ void MainWindow::update()
   
   bool drawTracks = m_ui.drawTrackCheckBox->isChecked();
   m_ui.fitMethodComboBox->setEnabled(drawTracks);
-  m_ui.plotter->drawEvent(m_ui.eventSpinBox->value(), drawTracks, m_ui.fitMethodComboBox->currentIndex(), *m_ui.infoTextBrowser);
+  m_ui.plotter->drawEvent(m_ui.eventSpinBox->value(), drawTracks, m_ui.fitMethodComboBox->currentIndex(), *m_ui.textEdit);
 }
 
 void MainWindow::saveButtonClicked()
