@@ -144,7 +144,32 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
   }
 
   QVector<Hit*> hitsToPlot;
+
   foreach(Hit* hit, hits) {
+    // draw TOF yEstimates
+    if (strcmp(hit->ClassName(), "TOFCluster") == 0) {
+      TOFCluster* tofCluster = static_cast<TOFCluster*>(hit);
+      if (tofCluster->signalHeight() > 4*200) {
+        TMarker* marker = new TMarker(m_yStretchFactor * tofCluster->yEstimate(), tofCluster->position().z(), 20);
+        marker->SetMarkerSize(.5);
+        marker->Draw("SAME");
+        m_markers.push_back(marker);
+      }
+    }
+    /*
+      TLine* y_tofErrorLine = new TLine(
+      m_yStretchFactor * (tofCluster->yEstimate() - tofCluster->yResolutionEstimate()),
+      tofCluster->position().z(),
+      m_yStretchFactor * (tofCluster->yEstimate() + tofCluster->yResolutionEstimate()),
+      tofCluster->position().z()
+      );
+      y_tofErrorLine->SetLineColor(kRed);
+      y_tofErrorLine->SetLineWidth(1);
+      y_tofErrorLine->SetLineStyle(1);
+      y_tofErrorLine->Draw("SAME");
+      m_lines.push_back(y_tofErrorLine); */
+
+    // draw the raw the the rest
     if ( (strcmp(hit->ClassName(), "Hit") == 0) || (strcmp(hit->ClassName(), "TOFSipmHit") == 0) ) {
       hitsToPlot.push_back(hit);
     }
@@ -172,29 +197,6 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
 
       TVector3 calculatedPos = 0.5*(position+counterPos) + u*direction;
       position = calculatedPos;
-    }
-
-    if (strcmp(hit->ClassName(), "TOFCluster") == 0) {
-      TOFCluster* tofCluster = static_cast<TOFCluster*>(hit);
-      if (tofCluster->signalHeight() > 4*200) {
-        TMarker* marker = new TMarker(m_yStretchFactor * tofCluster->yEstimate(), tofCluster->position().z(), 20);
-        marker->SetMarkerSize(.5);
-        marker->Draw("SAME");
-        m_markers.push_back(marker);
-      }
-
-      /*
-        TLine* y_tofErrorLine = new TLine(
-        m_yStretchFactor * (tofCluster->yEstimate() - tofCluster->yResolutionEstimate()),
-        tofCluster->position().z(),
-        m_yStretchFactor * (tofCluster->yEstimate() + tofCluster->yResolutionEstimate()),
-        tofCluster->position().z()
-        );
-        y_tofErrorLine->SetLineColor(kRed);
-        y_tofErrorLine->SetLineWidth(1);
-        y_tofErrorLine->SetLineStyle(1);
-        y_tofErrorLine->Draw("SAME");
-        m_lines.push_back(y_tofErrorLine); */
     }
 
     int amplitude = hit->signalHeight();
