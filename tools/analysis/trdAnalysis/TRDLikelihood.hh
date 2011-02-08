@@ -38,8 +38,27 @@ private:
 
   bool m_saved;
 
+  double m_likelihoodCut;
+
+  int m_noTrackfit;
+  int m_notAllTrackerLayers;
+  int m_notInMagnet;
+  int m_pNotInRange;
+  int m_notEnoughTRDCluster;
+
+
+  int m_protonCorrect;
+  int m_protonFalse;
+  int m_positronCorrect;
+  int m_positronFalse;
+
+
   QMap <unsigned int, TH1D*> m_positronModuleLikelihood ;
   QMap <unsigned int, TH1D*> m_protonModuleLikelihood ;
+
+  TH1D* m_positronModuleSumLikelihood;
+  TH1D* m_protonModuleSumLikelihood;
+
 
   TH1D* m_positronLikelihood;
   TH1D* m_protonLikelihood;

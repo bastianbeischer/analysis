@@ -24,9 +24,18 @@
 TRDLikelihood* TRDLikelihood::m_instance = 0;
 QMutex TRDLikelihood::m_mutex;
 
-
 TRDLikelihood::TRDLikelihood():
-    m_saved(false)
+    m_saved(false),
+    m_likelihoodCut(0.5),
+    m_noTrackfit(0),
+    m_notAllTrackerLayers(0),
+    m_notInMagnet(0),
+    m_pNotInRange(0),
+    m_notEnoughTRDCluster(0),
+    m_protonCorrect(0),
+    m_protonFalse(0),
+    m_positronCorrect(0),
+    m_positronFalse(0)
 {
 
   QStringList envVariables = QProcess::systemEnvironment();
@@ -44,8 +53,8 @@ TRDLikelihood::TRDLikelihood():
 
   initializeModuleLikelihoods();
 
-  m_positronLikelihood = new TH1D("positronLikelihood", "positronLikelihood;probability;L", 100, 0, 1);
-  m_protonLikelihood = new TH1D("protonLikelihood", "protonLikelihood;probability;L", 100, 0, 1);
+  m_positronLikelihood = new TH1D("positronLikelihood", "positronLikelihood;-ln(L);probability", 100, 0, 3);
+  m_protonLikelihood = new TH1D("protonLikelihood", "protonLikelihood;-ln(L);probability", 100, 0, 3);
 }
 
 TRDLikelihood::~TRDLikelihood(){
@@ -55,6 +64,9 @@ TRDLikelihood::~TRDLikelihood(){
 
   delete m_positronLikelihood;
   delete m_protonLikelihood;
+
+  delete m_positronModuleSumLikelihood;
+  delete m_protonModuleSumLikelihood;
 
   TRDLikelihood::m_instance = 0;
 }
@@ -75,15 +87,18 @@ void TRDLikelihood::initializeModuleLikelihoods(){
     if (element->type() == DetectorElement::trd){
       unsigned int detID = element->id();
       QString titlePositronHisto = "Positron Likelihood for module 0x" + QString::number(detID, 16) ;
-      TH1D* positronLikelihoodHisto = new TH1D(qPrintable(titlePositronHisto), qPrintable(titlePositronHisto + ";TRD Signal;Likelihood"), 100, 0, 50);
+      TH1D* positronLikelihoodHisto = new TH1D(qPrintable(titlePositronHisto), qPrintable(titlePositronHisto + ";TRD Signal;Likelihood"), 100, 0, 25);
       m_positronModuleLikelihood.insert(detID, positronLikelihoodHisto);
 
       QString titleProtonHisto = "Proton Likelihood for module 0x" + QString::number(detID, 16) ;
-      TH1D* protonLikelihoodHisto = new TH1D(qPrintable(titleProtonHisto), qPrintable(titleProtonHisto + ";TRD Signal;Likelihood"), 100, 0, 50);
+      TH1D* protonLikelihoodHisto = new TH1D(qPrintable(titleProtonHisto), qPrintable(titleProtonHisto + ";TRD Signal;Likelihood"), 100, 0, 25);
       m_protonModuleLikelihood.insert(detID, protonLikelihoodHisto);
     }
     element = setup->nextElement();
   }
+
+  m_positronModuleSumLikelihood = new TH1D("Positron Likelihood for Sum of Modules", "Positron Likelihood for Sum of Modules;TRD Signal;Likelihood", 250, 0, 25);
+  m_protonModuleSumLikelihood = new TH1D("Proton Likelihood for Sum of Modules", "Proton Likelihood for Sum of Modules;TRD Signal;Likelihood", 250, 0, 25);
 
 }
 
@@ -147,12 +162,20 @@ bool TRDLikelihood::analyzeEvent(const QVector<Hit*>& hits, const Track* track, 
 
         //get likelihoods:
 
-        TH1D* protonHisto = m_protonModuleLikelihood.value(moduleID);
-        protonLikelihoods <<  protonHisto->GetBinContent( protonHisto->GetBin(signal) );
+        //TH1D* protonHisto = m_protonModuleLikelihood.value(moduleID);
+        TH1D* protonHisto = m_protonModuleSumLikelihood;
+        double protonLH = protonHisto->GetBinContent( protonHisto->FindBin(signal) );
+        if(protonLH > 0)
+          protonLikelihoods <<  protonLH;
 
-        TH1D* positronHisto = m_positronModuleLikelihood.value(moduleID);
-        positronLikelihoods << positronHisto->GetBinContent( positronHisto->GetBin(signal) );
+        //TH1D* positronHisto = m_positronModuleLikelihood.value(moduleID);
+        TH1D* positronHisto = m_positronModuleSumLikelihood;
+        double positronLH = positronHisto->GetBinContent( positronHisto->FindBin(signal) );
+        if (positronLH > 0)
+          positronLikelihoods << positronLH;
 
+      } else {
+        //m_noDistanceInTube++;
       }
     }
   }
@@ -161,16 +184,12 @@ bool TRDLikelihood::analyzeEvent(const QVector<Hit*>& hits, const Track* track, 
   double protonLikelihood = 1;
   foreach(double moduleLikelihood, protonLikelihoods)
     protonLikelihood *= moduleLikelihood;
-  qDebug()<< "protonLikelihood = " << protonLikelihood;
   protonLikelihood = pow(protonLikelihood, 1.0 / protonLikelihoods.size() );
-  protonLikelihood = protonLikelihood;
 
   double positronLikelihood = 1;
   foreach(double moduleLikelihood, positronLikelihoods)
     positronLikelihood *= moduleLikelihood;
-  qDebug()<< "positronLikelihood = " << positronLikelihood;
   positronLikelihood = pow(positronLikelihood, 1.0 / positronLikelihoods.size() );
-  positronLikelihood = positronLikelihood;
 
 
 
@@ -179,22 +198,26 @@ bool TRDLikelihood::analyzeEvent(const QVector<Hit*>& hits, const Track* track, 
   //m_positronLikelihood->Fill(positronLikelihood);
 
   //test:
-  double testValue = positronLikelihood / ( positronLikelihood + protonLikelihood) ;
+  double testValue = -log(positronLikelihood / ( positronLikelihood + protonLikelihood)) ;
 
-  qDebug() << testValue;
+  bool isPositron = isPositronish;
 
-  if (isPositronish)
+  if (isPositron)
     m_positronLikelihood->Fill(testValue);
   else
     m_protonLikelihood->Fill(testValue);
 
   if ( testValue > 0.5){
-    isPositronish = true;
-  }else{
     isPositronish = false;
+  }else{
+    isPositronish = true;
   }
 
-  qDebug() << isPositronish;
+  m_protonCorrect += (!isPositron && !isPositronish);
+  m_protonFalse += (!isPositron && isPositronish);
+  m_positronCorrect += (isPositron && isPositronish);
+  m_positronFalse += (isPositron && !isPositronish);
+
 
   return true;
 
@@ -203,25 +226,33 @@ bool TRDLikelihood::analyzeEvent(const QVector<Hit*>& hits, const Track* track, 
 
 void TRDLikelihood::addLearnEvent(const QVector<Hit*>& hits, const Track* track, const SimpleEvent*, bool isProton){
   //check if everything worked and a track has been fit
-  if (!track || !track->fitGood())
+  if (!track || !track->fitGood()){
+    m_noTrackfit++;
     return;
+  }
 
   //check if all tracker layers have a hit
   TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  if (!(flags & TrackInformation::AllTrackerLayers)){
+    m_notAllTrackerLayers++;
     return;
+  }
 
   //check if track was inside of magnet
-  if (!(flags & TrackInformation::InsideMagnet))
+  if (!(flags & TrackInformation::InsideMagnet)){
+    m_notInMagnet++;
     return;
+  }
 
   //get the reconstructed momentum
   double p = track->p(); //GeV
 
   //only use following momenta 0.5 < |p| < 5
   double pAbs = qAbs(p);
-  if(pAbs < 0.5 || pAbs > 5)
+  if(pAbs < 0.5 || pAbs > 5){
+    m_pNotInRange++;
     return;
+  }
 
   //loop over all hits and count tracker hits
   //also find all clusters on track
@@ -236,8 +267,10 @@ void TRDLikelihood::addLearnEvent(const QVector<Hit*>& hits, const Track* track,
 
 
   //filter: only use events with 6 trd hits
-  if (trdClusterHitsOnTrack.size() < 6)
+  if (trdClusterHitsOnTrack.size() < 6){
+    m_notEnoughTRDCluster++;
     return;
+  }
 
 
   foreach(Hit* clusterHit, trdClusterHitsOnTrack){
@@ -252,8 +285,10 @@ void TRDLikelihood::addLearnEvent(const QVector<Hit*>& hits, const Track* track,
         //now fill into correct histo
         if (isProton) {
           m_protonModuleLikelihood.value(moduleID)->Fill(signal);
+          m_protonModuleSumLikelihood->Fill(signal);
         }else{
           m_positronModuleLikelihood.value(moduleID)->Fill(signal);
+          m_positronModuleSumLikelihood->Fill(signal);
         }
       }
     }
@@ -274,6 +309,13 @@ void TRDLikelihood::normalizeLikelihoodHistos(){
     histo->Fit(f_ppar);
   }
 
+  m_protonModuleSumLikelihood->Sumw2();
+  m_protonModuleSumLikelihood->Scale(1.0 / m_protonModuleSumLikelihood->Integral());
+  TF1 *f_ppar= new TF1("f_epar","(landau(0))");
+  f_ppar->SetParameters(0.533941,1.04519,0.90618);
+  m_protonModuleSumLikelihood->Fit(f_ppar);
+
+
   //normalize positron likelihoods
   foreach (TH1D* histo, m_positronModuleLikelihood){
     histo->Sumw2();
@@ -284,6 +326,14 @@ void TRDLikelihood::normalizeLikelihoodHistos(){
     f_epar->SetParLimits(4,2,4);
     histo->Fit(f_epar);
   }
+
+  m_positronModuleSumLikelihood->Sumw2();
+  m_positronModuleSumLikelihood->Scale(1.0 / m_positronModuleSumLikelihood->Integral());
+  TF1 *f_epar= new TF1("f_epar","(landau(0)+landau(3))");
+  f_epar->SetParameters(0.533941,1.04519,0.90618,0.177358,3.7248,4.80789);
+  f_epar->SetParLimits(1,0.8,1.2);
+  f_epar->SetParLimits(4,2,4);
+  m_positronModuleSumLikelihood->Fit(f_epar);
 
 }
 
@@ -297,6 +347,12 @@ void TRDLikelihood::saveLikelihoodHistos(){
     m_positronLikelihood->Sumw2();
     m_positronLikelihood->Scale(1.0 / m_positronLikelihood->Integral());
     m_positronLikelihood->SaveAs("positronLikelihoodHisto.root");
+
+    qDebug() << m_protonCorrect <<  m_protonFalse << m_positronCorrect << m_positronFalse;
+    qDebug() << "for likelihood cut = " << m_likelihoodCut;
+    qDebug() << "positron efficiency = " << (double)(m_positronCorrect) / (m_positronCorrect + m_positronFalse);
+    qDebug() << "proton rejection = " << (double)(m_protonCorrect + m_protonFalse) / m_protonFalse;
+
     return;
   }
 
@@ -306,11 +362,15 @@ void TRDLikelihood::saveLikelihoodHistos(){
   foreach (TH1D* histo, m_protonModuleLikelihood){
     histo->SaveAs(qPrintable(m_pathToLikelihoodHistos + QString(histo->GetTitle()).replace(" ", "_") + ".root"));
   }
+  m_protonModuleSumLikelihood->SaveAs(qPrintable(m_pathToLikelihoodHistos + QString(m_protonModuleSumLikelihood->GetTitle()).replace(" ", "_") + ".root"));
 
   //save positron likelihoods
   foreach (TH1D* histo, m_positronModuleLikelihood){
     histo->SaveAs(qPrintable(m_pathToLikelihoodHistos + QString(histo->GetTitle()).replace(" ", "_") + ".root"));
   }
+  m_positronModuleSumLikelihood->SaveAs(qPrintable(m_pathToLikelihoodHistos + QString(m_positronModuleSumLikelihood->GetTitle()).replace(" ", "_") + ".root"));
+
+  qDebug() << m_noTrackfit << m_notAllTrackerLayers << m_notInMagnet << m_pNotInRange << m_notEnoughTRDCluster;
 
   m_saved = true;
 
