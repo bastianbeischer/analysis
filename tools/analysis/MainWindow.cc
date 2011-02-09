@@ -67,6 +67,10 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.setFileListAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListActionTriggered()));
   connect(m_ui.addFileListAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListActionTriggered()));
   
+  connect(m_ui.plotter, SIGNAL(numberOfEventsChanged(int)), this, SLOT(numberOfEventsChanged(int)));
+  connect(m_ui.firstEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
+  connect(m_ui.lastEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
+
   connect(m_ui.toggleSelectionButton, SIGNAL(clicked()), this, SLOT(toggleSelectionButtonClicked()));
   connect(m_ui.toggleGridButton, SIGNAL(clicked()), this, SLOT(toggleGridButtonClicked()));
   connect(m_ui.listWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(listWidgetItemChanged(QListWidgetItem*)));
@@ -554,4 +558,21 @@ void MainWindow::toggleGridButtonClicked()
     m_ui.plotter->setGrid(false);
     m_ui.toggleGridButton->setText("show grid");
   }
+}
+
+void MainWindow::firstOrLastEventChanged(int)
+{
+  double firstEvent = m_ui.firstEventSpinBox->value();
+  double lastEvent = m_ui.lastEventSpinBox->value();
+  m_ui.lastEventSpinBox->setMinimum(firstEvent);
+  m_ui.firstEventSpinBox->setMaximum(lastEvent);
+  m_ui.plotter->setFirstEvent(firstEvent);
+  m_ui.plotter->setLastEvent(lastEvent);
+}
+
+void MainWindow::numberOfEventsChanged(int nEvents)
+{
+  m_ui.firstEventSpinBox->setValue(0);
+  m_ui.lastEventSpinBox->setValue(nEvents-1);
+  firstOrLastEventChanged();
 }

@@ -29,6 +29,8 @@ private slots:
   void toggleGridButtonClicked();
   void showButtonsClicked();
   void analyzeButtonClicked();
+  void firstOrLastEventChanged(int = 0);
+  void numberOfEventsChanged(int);
 private:
   void setupPlots();
   void setupAnalysis(Track::Type& type, Corrections::Flags& flags);
