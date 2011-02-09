@@ -81,7 +81,7 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>0</y>
+            <y>-61</y>
             <width>175</width>
             <height>489</height>
            </rect>
@@ -89,18 +89,23 @@
           <layout class="QGridLayout" name="gridLayout">
            <item row="0" column="0">
             <widget class="QCheckBox" name="signalHeightTrackerCheckBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="font">
               <font>
                <family>DejaVu Sans</family>
               </font>
              </property>
              <property name="text">
-              <string>signal height
-tracker</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="0" column="1">
+           <item row="0" column="4">
             <widget class="QPushButton" name="signalHeightTrackerButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -126,18 +131,23 @@ tracker</string>
            </item>
            <item row="1" column="0">
             <widget class="QCheckBox" name="signalHeightTRDCheckBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="font">
               <font>
                <family>DejaVu Sans</family>
               </font>
              </property>
              <property name="text">
-              <string>signal height
-TRD</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="1" column="1">
+           <item row="1" column="4">
             <widget class="QPushButton" name="signalHeightTRDButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -163,18 +173,23 @@ TRD</string>
            </item>
            <item row="4" column="0">
             <widget class="QCheckBox" name="timeOverThresholdCheckBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="font">
               <font>
                <family>DejaVu Sans</family>
               </font>
              </property>
              <property name="text">
-              <string>time over
-threshold</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="4" column="1">
+           <item row="4" column="4">
             <widget class="QPushButton" name="timeOverThresholdButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -200,17 +215,23 @@ threshold</string>
            </item>
            <item row="5" column="0">
             <widget class="QCheckBox" name="trackingCheckBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="font">
               <font>
                <family>DejaVu Sans</family>
               </font>
              </property>
              <property name="text">
-              <string>tracking</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="5" column="1">
+           <item row="5" column="4">
             <widget class="QPushButton" name="trackingButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -236,17 +257,23 @@ threshold</string>
            </item>
            <item row="6" column="0">
             <widget class="QCheckBox" name="occupancyCheckBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="font">
               <font>
                <family>DejaVu Sans</family>
               </font>
              </property>
              <property name="text">
-              <string>occupancy</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="6" column="1">
+           <item row="6" column="4">
             <widget class="QPushButton" name="occupancyButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -272,18 +299,23 @@ threshold</string>
            </item>
            <item row="7" column="0">
             <widget class="QCheckBox" name="residualsTrackerCheckBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="font">
               <font>
                <family>DejaVu Sans</family>
               </font>
              </property>
              <property name="text">
-              <string>residuals
-tracker</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="7" column="1">
+           <item row="7" column="4">
             <widget class="QPushButton" name="residualsTrackerButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -309,18 +341,23 @@ tracker</string>
            </item>
            <item row="8" column="0">
             <widget class="QCheckBox" name="residualsTRDCheckBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="font">
               <font>
                <family>DejaVu Sans</family>
               </font>
              </property>
              <property name="text">
-              <string>residuals
-TRD</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="8" column="1">
+           <item row="8" column="4">
             <widget class="QPushButton" name="residualsTRDButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -346,18 +383,23 @@ TRD</string>
            </item>
            <item row="9" column="0">
             <widget class="QCheckBox" name="momentumReconstructionCheckBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="font">
               <font>
                <family>DejaVu Sans</family>
               </font>
              </property>
              <property name="text">
-              <string>momentum
-reconstruction</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="9" column="1">
+           <item row="9" column="4">
             <widget class="QPushButton" name="momentumReconstructionButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -383,18 +425,23 @@ reconstruction</string>
            </item>
            <item row="12" column="0">
             <widget class="QCheckBox" name="miscellaneousTrackerCheckBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="font">
               <font>
                <family>DejaVu Sans</family>
               </font>
              </property>
              <property name="text">
-              <string>miscellaneous
-tracker</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="12" column="1">
+           <item row="12" column="4">
             <widget class="QPushButton" name="miscellaneousTrackerButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -420,18 +467,23 @@ tracker</string>
            </item>
            <item row="13" column="0">
             <widget class="QCheckBox" name="miscellaneousTRDCheckBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="font">
               <font>
                <family>DejaVu Sans</family>
               </font>
              </property>
              <property name="text">
-              <string>miscellaneous
-TRD</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="13" column="1">
+           <item row="13" column="4">
             <widget class="QPushButton" name="miscellaneousTRDButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -457,18 +509,23 @@ TRD</string>
            </item>
            <item row="14" column="0">
             <widget class="QCheckBox" name="miscellaneousTOFCheckBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="font">
               <font>
                <family>DejaVu Sans</family>
               </font>
              </property>
              <property name="text">
-              <string>miscellaneous
-TOF</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="14" column="1">
+           <item row="14" column="4">
             <widget class="QPushButton" name="miscellaneousTOFButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -494,21 +551,31 @@ TOF</string>
            </item>
            <item row="2" column="0">
             <widget class="QCheckBox" name="clusterShapeTrackerCheckBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
-              <string>cluster shape
-tracker</string>
+              <string/>
              </property>
             </widget>
            </item>
            <item row="3" column="0">
             <widget class="QCheckBox" name="clusterShapeTRDCheckBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
-              <string>cluster shape
-TRD</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="2" column="1">
+           <item row="2" column="4">
             <widget class="QPushButton" name="clusterShapeTrackerButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -532,7 +599,7 @@ TRD</string>
              </property>
             </widget>
            </item>
-           <item row="3" column="1">
+           <item row="3" column="4">
             <widget class="QPushButton" name="clusterShapeTRDButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -558,13 +625,18 @@ TRD</string>
            </item>
            <item row="10" column="0">
             <widget class="QCheckBox" name="efficiencyTofCheckBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
-              <string>efficiency
-TOF</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="10" column="1">
+           <item row="10" column="4">
             <widget class="QPushButton" name="efficiencyTofButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -585,13 +657,18 @@ TOF</string>
            </item>
            <item row="11" column="0">
             <widget class="QCheckBox" name="resolutionTofCheckBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
-              <string>resolution
-TOF</string>
+              <string/>
              </property>
             </widget>
            </item>
-           <item row="11" column="1">
+           <item row="11" column="4">
             <widget class="QPushButton" name="resolutionTofButton">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -607,6 +684,124 @@ TOF</string>
              </property>
              <property name="text">
               <string>+</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="signalHeightTrackerLabel">
+             <property name="text">
+              <string>signal height
+tracker</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QLabel" name="signalHeightTRDLabel">
+             <property name="text">
+              <string>signal height
+TRD</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QLabel" name="clusterShapeTrackerLabel">
+             <property name="text">
+              <string>cluster shape
+tracker</string>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="1">
+            <widget class="QLabel" name="clusterShapeTRDLabel">
+             <property name="text">
+              <string>cluster shape
+TRD</string>
+             </property>
+            </widget>
+           </item>
+           <item row="4" column="1">
+            <widget class="QLabel" name="timeOverThresholdLabel">
+             <property name="text">
+              <string>time over
+threshold</string>
+             </property>
+            </widget>
+           </item>
+           <item row="5" column="1">
+            <widget class="QLabel" name="trackingLabel">
+             <property name="text">
+              <string>tracking</string>
+             </property>
+            </widget>
+           </item>
+           <item row="6" column="1">
+            <widget class="QLabel" name="occupancyLabel">
+             <property name="text">
+              <string>occupancy</string>
+             </property>
+            </widget>
+           </item>
+           <item row="7" column="1">
+            <widget class="QLabel" name="residualsTrackerLabel">
+             <property name="text">
+              <string>residuals
+tracker</string>
+             </property>
+            </widget>
+           </item>
+           <item row="8" column="1">
+            <widget class="QLabel" name="residualsTRDLabel">
+             <property name="text">
+              <string>residuals
+TRD</string>
+             </property>
+            </widget>
+           </item>
+           <item row="9" column="1">
+            <widget class="QLabel" name="momentumReconstructionLabel">
+             <property name="text">
+              <string>momentum
+reconstruction</string>
+             </property>
+            </widget>
+           </item>
+           <item row="10" column="1">
+            <widget class="QLabel" name="efficiencyTofLabel">
+             <property name="text">
+              <string>efficiency
+TOF</string>
+             </property>
+            </widget>
+           </item>
+           <item row="11" column="1">
+            <widget class="QLabel" name="resolutionTofLabel">
+             <property name="text">
+              <string>resolution
+TOF</string>
+             </property>
+            </widget>
+           </item>
+           <item row="12" column="1">
+            <widget class="QLabel" name="miscellaneousTrackerLabel">
+             <property name="text">
+              <string>miscellaneous
+tracker</string>
+             </property>
+            </widget>
+           </item>
+           <item row="13" column="1">
+            <widget class="QLabel" name="miscellaneousTRDLabel">
+             <property name="text">
+              <string>miscellaneous
+TRD</string>
+             </property>
+            </widget>
+           </item>
+           <item row="14" column="1">
+            <widget class="QLabel" name="miscellaneousTOFLabel">
+             <property name="text">
+              <string>miscellaneous
+TOF</string>
              </property>
             </widget>
            </item>

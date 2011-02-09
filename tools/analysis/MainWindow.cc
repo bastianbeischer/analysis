@@ -92,6 +92,34 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.miscellaneousTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTOFButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
 
+  m_topicCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
+  m_topicCheckBoxes.append(m_ui.signalHeightTRDCheckBox);
+  m_topicCheckBoxes.append(m_ui.clusterShapeTrackerCheckBox);
+  m_topicCheckBoxes.append(m_ui.clusterShapeTRDCheckBox);
+  m_topicCheckBoxes.append(m_ui.timeOverThresholdCheckBox);
+  m_topicCheckBoxes.append(m_ui.trackingCheckBox);
+  m_topicCheckBoxes.append(m_ui.occupancyCheckBox);
+  m_topicCheckBoxes.append(m_ui.residualsTrackerCheckBox);
+  m_topicCheckBoxes.append(m_ui.residualsTRDCheckBox);
+  m_topicCheckBoxes.append(m_ui.momentumReconstructionCheckBox);
+  m_topicCheckBoxes.append(m_ui.efficiencyTofCheckBox);
+  m_topicCheckBoxes.append(m_ui.resolutionTofCheckBox);
+  m_topicCheckBoxes.append(m_ui.miscellaneousTrackerCheckBox);
+  m_topicCheckBoxes.append(m_ui.miscellaneousTRDCheckBox);
+  m_topicCheckBoxes.append(m_ui.miscellaneousTOFCheckBox);
+
+  foreach(QCheckBox* checkBox, m_topicCheckBoxes)
+    m_controlWidgets.append(checkBox);
+  m_controlWidgets.append(m_ui.trackComboBox);
+  m_controlWidgets.append(m_ui.firstEventSpinBox);
+  m_controlWidgets.append(m_ui.lastEventSpinBox);
+  m_controlWidgets.append(m_ui.numberOfThreadsSpinBox);
+  m_controlWidgets.append(m_ui.alignmentCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.timeShiftCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.trdMopValueCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.timeOverThresholdCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.photonTravelTimeCorrectionCheckBox);
+
   setupPlots();
 }
 
@@ -431,7 +459,7 @@ void MainWindow::analyzeButtonClicked()
 {
   if (m_ui.analyzeButton->text() == "start") {
     m_ui.analyzeButton->setText("abort");
-    m_ui.trackComboBox->setEnabled(false);
+    changeControlWidgetsStatus(false);
     Track::Type type;
     Corrections::Flags flags;
     setupAnalysis(type, flags);
@@ -439,7 +467,7 @@ void MainWindow::analyzeButtonClicked()
     m_ui.plotter->startAnalysis(type, flags, m_ui.numberOfThreadsSpinBox->value());
   } else {
     m_ui.plotter->abortAnalysis();
-    m_ui.trackComboBox->setEnabled(true);
+    changeControlWidgetsStatus(true);
     m_ui.analyzeButton->setText("start");
   }
 }
@@ -526,21 +554,8 @@ void MainWindow::toggleSelectionButtonClicked()
 {
   bool b = m_ui.toggleSelectionButton->text() == "select all";
   m_ui.toggleSelectionButton->setText(b ? "deselect all" : "select all");
-  m_ui.signalHeightTrackerCheckBox->setChecked(b);
-  m_ui.signalHeightTRDCheckBox->setChecked(b);
-  m_ui.clusterShapeTrackerCheckBox->setChecked(b);
-  m_ui.clusterShapeTRDCheckBox->setChecked(b);
-  m_ui.timeOverThresholdCheckBox->setChecked(b);
-  m_ui.trackingCheckBox->setChecked(b);
-  m_ui.occupancyCheckBox->setChecked(b);
-  m_ui.residualsTrackerCheckBox->setChecked(b);
-  m_ui.residualsTRDCheckBox->setChecked(b);
-  m_ui.momentumReconstructionCheckBox->setChecked(b);
-  m_ui.efficiencyTofCheckBox->setChecked(b);
-  m_ui.resolutionTofCheckBox->setChecked(b);
-  m_ui.miscellaneousTrackerCheckBox->setChecked(b);
-  m_ui.miscellaneousTRDCheckBox->setChecked(b);
-  m_ui.miscellaneousTOFCheckBox->setChecked(b);
+  foreach(QCheckBox* checkBox, m_topicCheckBoxes)
+    checkBox->setChecked(b);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -575,4 +590,10 @@ void MainWindow::numberOfEventsChanged(int nEvents)
   m_ui.firstEventSpinBox->setValue(0);
   m_ui.lastEventSpinBox->setValue(nEvents-1);
   firstOrLastEventChanged();
+}
+
+void MainWindow::changeControlWidgetsStatus(bool status)
+{
+  foreach(QWidget* widget, m_controlWidgets)
+    widget->setEnabled(status);
 }
