@@ -59,27 +59,27 @@ void TOFTimeDifferencePlot::processEvent(const QVector<Hit*>& clusters, Track* t
         if (hit->position().y() < 0) {
           if (hit->position().x() < cluster->position().x()) {
             Q_ASSERT(t[0] < 0);
-            t[0] = hit->startTime();
+            t[0] = hit->startTime() - hit->photonTravelTime();
           } else {
             Q_ASSERT(t[1] < 0);
-            t[1] = hit->startTime();
+            t[1] = hit->startTime() - hit->photonTravelTime();
           }
         } else {
           if (hit->position().x() < cluster->position().x()) {
             Q_ASSERT(t[2] < 0);
-            t[2] = hit->startTime();
+            t[2] = hit->startTime() - hit->photonTravelTime();
           } else {
             Q_ASSERT(t[3] < 0);
-            t[3] = hit->startTime();
+            t[3] = hit->startTime() - hit->photonTravelTime();
           }
         }
       }
-      double x = track->x(cluster->position().z()) - cluster->position().x();
-      double y = track->y(cluster->position().z());
       double dt = (t[0]+t[1])/2. - (t[2]+t[3])/2.;
       if (qAbs(dt) < 10) {
-        m_normalizationHistogram->Fill(y, x);
-        histogram()->Fill(y, x, dt);
+        double bending = track->x(cluster->position().z()) - cluster->position().x();
+        double nonBending = track->y(cluster->position().z());
+        m_normalizationHistogram->Fill(nonBending, bending);
+        histogram()->Fill(nonBending, bending, dt);
       }
       return;
     }

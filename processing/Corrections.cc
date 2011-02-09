@@ -95,18 +95,18 @@ void Corrections::trdMopv(Hit* hit)
     return;
 
   if (strcmp(hit->ClassName(), "Hit") == 0) {
-    double trdScalingFactor = this->trdScalingFactor(hit->detId()) ;
-    hit->setSignalHeight(hit->signalHeight() * trdScalingFactor) ;
+    double trdScalingFactor = this->trdScalingFactor(hit->detId());
+    hit->setSignalHeight(hit->signalHeight() * trdScalingFactor);
   }
   else if (strcmp(hit->ClassName(), "Cluster") == 0) {
-    Cluster* cluster = static_cast<Cluster*>(hit) ;
+    Cluster* cluster = static_cast<Cluster*>(hit);
     double clusterAmplitude = 0;
     for (std::vector<Hit*>::iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
       Hit* trdHit = *it;
-      double trdScalingFactor = this->trdScalingFactor(trdHit->detId()) ;
-      double newHitAmplitude = trdHit->signalHeight() * trdScalingFactor ;
-      trdHit->setSignalHeight(newHitAmplitude) ;
-      clusterAmplitude += newHitAmplitude ;
+      double trdScalingFactor = this->trdScalingFactor(trdHit->detId());
+      double newHitAmplitude = trdHit->signalHeight() * trdScalingFactor;
+      trdHit->setSignalHeight(newHitAmplitude);
+      clusterAmplitude += newHitAmplitude;
     }
     cluster->setSignalHeight(clusterAmplitude);
   }
@@ -118,13 +118,28 @@ void Corrections::tofTimeOverThreshold(Hit*)
 
 double Corrections::trdScalingFactor(unsigned int channel)
 {
-  return m_trdSettings->value( "ConstScaleFactor/" + QString::number(channel,16) , 1.).toDouble() ;
+  return m_trdSettings->value( "ConstScaleFactor/" + QString::number(channel,16) , 1.).toDouble();
 }
 
 void Corrections::setTrdScalingFactor(unsigned int channel, double value)
 {
-  m_trdSettings->setValue( "ConstScaleFactor/" + QString::number(channel,16), value) ;
+  m_trdSettings->setValue( "ConstScaleFactor/" + QString::number(channel,16), value);
   m_trdSettings->sync();
+}
+
+double Corrections::photonTravelTime(double bending, double nonBending, double* p)
+{
+  double a = nonBending * 2. / Constants::tofBarLength;
+  double b = bending * 2. / Constants::tofBarWidth;
+  Q_ASSERT(qAbs(a) <= 1.);
+  Q_ASSERT(qAbs(b) <= 1.);
+  double s = (nonBending < 0) ? 1 : 0;
+  return p[0] + p[1] * a + p[2] * s * pow(qAbs(a), 6) * (1 - cos(M_PI*b));
+}
+
+double Corrections::photonTravelTimeDifference(double bending, double nonBending, double* p)
+{
+  return photonTravelTime(bending, nonBending, p) - photonTravelTime(bending, -nonBending, p);
 }
 
 void Corrections::photonTravelTime(Track* track)
@@ -135,20 +150,17 @@ void Corrections::photonTravelTime(Track* track)
     if (!strcmp(cluster->ClassName(), "TOFCluster")) {
       TOFCluster* tofCluster = static_cast<TOFCluster*>(cluster);
       int id = tofCluster->detId();
-      double c0 = m_tofSettings->value(QString("PhotonTravelTimeConstants/%1_c0").arg(id, 0, 16)).toDouble();
-      double c1 = m_tofSettings->value(QString("PhotonTravelTimeConstants/%1_c1").arg(id, 0, 16)).toDouble();
-      double c2 = m_tofSettings->value(QString("PhotonTravelTimeConstants/%1_c2").arg(id, 0, 16)).toDouble();
+      double p[Corrections::numberOfPhotonTravelTimeParameters];
+      for (int i = 0; i < Corrections::numberOfPhotonTravelTimeParameters; ++i)
+        p[i] = m_tofSettings->value(QString("PhotonTravelTimeConstants/%1_c%2").arg(id, 0, 16).arg(i)).toDouble();
       for (unsigned int i = 0; i < tofCluster->hits().size(); ++i) {
         TOFSipmHit* hit = static_cast<TOFSipmHit*>(tofCluster->hits()[i]);
-        double x = (track->x(cluster->position().z()) - cluster->position().x()) / (Constants::tofBarWidth/2.);
-        double y = track->y(cluster->position().z()) / (Constants::tofBarLength/2.);
-        double s = x < 0 ? 1 : -1;
-        double dt = c0 + c1* y + c2 * s * pow(abs(y), 6) * (1 - cos(3.14*x));
-        if (qAbs(x) < 1 && qAbs(y) < 1 && hit->position().y() < 0) {
-          hit->applyTimeShift(-dt);
+        double bending = (track->x(cluster->position().z()) - cluster->position().x());
+        double nonBending = track->y(cluster->position().z());
+        if (qAbs(bending) <= Constants::tofBarWidth / 2. && qAbs(nonBending) <= Constants::tofBarLength / 2. ) {
+          hit->setPhotonTravelTime(photonTravelTime(bending, (hit->position().y() < 0 ? 1 : -1) * nonBending, p));
         }
       }
-      tofCluster->processHits();
     }
   }
 }

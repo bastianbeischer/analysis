@@ -13,14 +13,16 @@ INCLUDEPATH += \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/tracking \
-  $$TOPLEVEL/global
+  $$TOPLEVEL/global \
+  $$TOPLEVEL/processing
 
 LIBS += \
   -L$$TOPLEVEL/lib \
   -lSimpleEvent \
   -ltracking \
   -lrootplot \
-  -lsetup
+  -lsetup \
+  -lprocessing
 
 CLASSES = \
   MainWindow \
