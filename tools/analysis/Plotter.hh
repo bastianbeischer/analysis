@@ -39,6 +39,9 @@ public:
   void setFileList(const QString& fileName);
   void addFileList(const QString& fileName);
   void addRootFile(const QString& file);
+signals:
+  void firstEventChanged(int);
+  void lastEventChanged(int);
 public slots:
   void setFirstEvent(int);
   void setLastEvent(int);

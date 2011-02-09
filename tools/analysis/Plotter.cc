@@ -245,19 +245,19 @@ void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numb
 void Plotter::setFileList(const QString& fileName)
 {
   m_chain->setFileList(qPrintable(fileName));
-  m_lastEvent = m_chain->nEntries();
+  setLastEvent(m_chain->nEntries());
 }
 
 void Plotter::addFileList(const QString& fileName)
 {
   m_chain->addFileList(qPrintable(fileName));
-  m_lastEvent = m_chain->nEntries();
+  setLastEvent(m_chain->nEntries());
 }
 
 void Plotter::addRootFile(const QString& file)
 {
   m_chain->addRootFile(qPrintable(file));
-  m_lastEvent = m_chain->nEntries();
+  setLastEvent(m_chain->nEntries());
 }
 
 void Plotter::setTimeLabel(QLabel* label)
@@ -279,9 +279,11 @@ void Plotter::setGrid(bool b)
 void Plotter::setFirstEvent(int event)
 {
   m_firstEvent = event;
+  emit(firstEventChanged(m_firstEvent));
 }
 
 void Plotter::setLastEvent(int event)
 {
   m_lastEvent = event;
+  emit(lastEventChanged(m_lastEvent));
 }
