@@ -22,16 +22,16 @@ private slots:
   void setFileList(const QString&);
   void addFileList(const QString&);
   void addRootFile(const QString&);
-  void setOrAddFileListButtonClicked();
-  void analyzeButtonClicked();
-  void saveCanvasButtonClicked();
-  void saveAllCanvasButtonClicked();
-  void saveForPostAnalysisButtonClicked();
-  void toggleSelectionButtonClicked();
+  void setOrAddFileListActionTriggered();
+  void saveCanvasActionTriggered();
+  void saveAllCanvasActionTriggered();
+  void saveForPostAnalysisActionTriggered();
   void listWidgetItemChanged(QListWidgetItem*);
   void listWidgetCurrentRowChanged(int);
-  void showButtonsClicked();
+  void toggleSelectionButtonClicked();
   void toggleGridButtonClicked();
+  void showButtonsClicked();
+  void analyzeButtonClicked();
 private:
   void setupPlots();
   void setupAnalysis(Track::Type& type, Corrections::Flags& flags);

@@ -60,12 +60,14 @@ MainWindow::MainWindow(QWidget* parent)
   m_ui.plotter->setEventQueueProgressBar(m_ui.eventQueueProgressBar);
 
   connect(m_ui.analyzeButton, SIGNAL(clicked()), this, SLOT(analyzeButtonClicked()));
-  connect(m_ui.saveCanvasButton, SIGNAL(clicked()), this, SLOT(saveCanvasButtonClicked()));
-  connect(m_ui.saveAllCanvasesButton, SIGNAL(clicked()), this, SLOT(saveAllCanvasButtonClicked()));
-  connect(m_ui.saveForPostAnalysisButton, SIGNAL(clicked()), this, SLOT(saveForPostAnalysisButtonClicked()));
+  
+  connect(m_ui.saveCanvasAction, SIGNAL(triggered()), this, SLOT(saveCanvasActionTriggered()));
+  connect(m_ui.saveAllCanvasesAction, SIGNAL(triggered()), this, SLOT(saveAllCanvasActionTriggered()));
+  connect(m_ui.saveForPostAnalysisAction, SIGNAL(triggered()), this, SLOT(saveForPostAnalysisActionTriggered()));
+  connect(m_ui.setFileListAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListActionTriggered()));
+  connect(m_ui.addFileListAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListActionTriggered()));
+  
   connect(m_ui.toggleSelectionButton, SIGNAL(clicked()), this, SLOT(toggleSelectionButtonClicked()));
-  connect(m_ui.setFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
-  connect(m_ui.addFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
   connect(m_ui.toggleGridButton, SIGNAL(clicked()), this, SLOT(toggleGridButtonClicked()));
   connect(m_ui.listWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(listWidgetItemChanged(QListWidgetItem*)));
   connect(m_ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(listWidgetCurrentRowChanged(int)));
@@ -412,8 +414,8 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
 
 void MainWindow::analyzeButtonClicked()
 {
-  if (m_ui.analyzeButton->text() == "start analysis") {
-    m_ui.analyzeButton->setText("abort analysis");
+  if (m_ui.analyzeButton->text() == "start") {
+    m_ui.analyzeButton->setText("abort");
     m_ui.trackComboBox->setEnabled(false);
     Track::Type type;
     Corrections::Flags flags;
@@ -423,18 +425,18 @@ void MainWindow::analyzeButtonClicked()
   } else {
     m_ui.plotter->abortAnalysis();
     m_ui.trackComboBox->setEnabled(true);
-    m_ui.analyzeButton->setText("start analysis");
+    m_ui.analyzeButton->setText("start");
   }
 }
 
-void MainWindow::setOrAddFileListButtonClicked()
+void MainWindow::setOrAddFileListActionTriggered()
 {
   QStringList files = QFileDialog::getOpenFileNames(this,
     "Select one or more file lists to open", "", "*.txt;;*.*;;*");
-  if (sender() == m_ui.setFileListButton) {
+  if (sender() == m_ui.setFileListAction) {
     foreach(QString file, files)
       setFileList(file);
-  } else if (sender() == m_ui.addFileListButton) {
+  } else if (sender() == m_ui.addFileListAction) {
     foreach(QString file, files)
       addFileList(file);
   }
@@ -455,7 +457,7 @@ void MainWindow::addRootFile(const QString& file)
   m_ui.plotter->addRootFile(file);
 }
 
-void MainWindow::saveCanvasButtonClicked()
+void MainWindow::saveCanvasActionTriggered()
 {
   QStringList fileFormatEndings;
   fileFormatEndings << "svg" << "pdf" << "eps" << "root" << "png";
@@ -493,7 +495,7 @@ void MainWindow::saveCanvasButtonClicked()
   }
 }
 
-void MainWindow::saveAllCanvasButtonClicked()
+void MainWindow::saveAllCanvasActionTriggered()
 {
   QFileDialog dialog(this, "save all canvases displayed", ".");
   dialog.setFileMode(QFileDialog::DirectoryOnly);
@@ -508,7 +510,7 @@ void MainWindow::saveAllCanvasButtonClicked()
     }
 }
 
-void MainWindow::saveForPostAnalysisButtonClicked()
+void MainWindow::saveForPostAnalysisActionTriggered()
 {
   QString fileEnding;
   QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "*.root", &fileEnding);
