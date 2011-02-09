@@ -239,6 +239,7 @@ void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numb
   qDeleteAll(threads);
   qDeleteAll(queues);
   finalizeAnalysis();
+  emit(analysisFinished());
   m_eventLoopOff = true;
 }
 
