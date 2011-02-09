@@ -10,6 +10,7 @@
 #include <QDebug>
 
 #include "TF1.h"
+#include "TMath.h"
 
 #include "Track.hh"
 #include "TrackInformation.hh"
@@ -314,15 +315,15 @@ void TRDLikelihood::normalizeLikelihoodHistos(){
   //normalize proton likelihoods
   foreach (TH1D* histo, m_protonModuleLikelihood){
     histo->Sumw2();
-    histo->Scale(1.0 / histo->Integral());
-    TF1 *f_ppar= new TF1("f_epar","(landau(0))");
-    f_ppar->SetParameters(0.533941,1.04519,0.90618);
+    histo->Scale(1.0 / histo->Integral("width"));
+    TF1 *f_ppar= new TF1("f_ppar","landau(0)");
+    f_ppar->SetParameters(0.533941,1.5,0.90618);
     histo->Fit(f_ppar);
   }
 
   m_protonModuleSumLikelihood->Sumw2();
-  m_protonModuleSumLikelihood->Scale(1.0 / m_protonModuleSumLikelihood->Integral());
-  TF1 *f_ppar= new TF1("f_epar","(landau(0))");
+  m_protonModuleSumLikelihood->Scale(1.0 / m_protonModuleSumLikelihood->Integral("width"));
+  TF1 *f_ppar= new TF1("f_ppar","(landau(0))");
   f_ppar->SetParameters(0.533941,1.04519,0.90618);
   m_protonModuleSumLikelihood->Fit(f_ppar);
 
@@ -330,7 +331,7 @@ void TRDLikelihood::normalizeLikelihoodHistos(){
   //normalize positron likelihoods
   foreach (TH1D* histo, m_positronModuleLikelihood){
     histo->Sumw2();
-    histo->Scale(1.0 / histo->Integral());
+    histo->Scale(1.0 / histo->Integral("width"));
     TF1 *f_epar= new TF1("f_epar","(landau(0)+landau(3))");
     f_epar->SetParameters(0.533941,1.04519,0.90618,0.177358,3.7248,4.80789);
     f_epar->SetParLimits(1,0.8,1.2);
@@ -339,11 +340,11 @@ void TRDLikelihood::normalizeLikelihoodHistos(){
   }
 
   m_positronModuleSumLikelihood->Sumw2();
-  m_positronModuleSumLikelihood->Scale(1.0 / m_positronModuleSumLikelihood->Integral());
-  TF1 *f_epar= new TF1("f_epar","(landau(0)+landau(3))");
-  f_epar->SetParameters(0.533941,1.04519,0.90618,0.177358,3.7248,4.80789);
-  f_epar->SetParLimits(1,0.8,1.2);
-  f_epar->SetParLimits(4,2,4);
+  m_positronModuleSumLikelihood->Scale(1.0 / m_positronModuleSumLikelihood->Integral("width"));
+  TF1 *f_epar= new TF1("f_epar","(landau(0)+landau(3))*expo(6)");
+  f_epar->SetParameters(1.5,2.24519,0.4,0.3,6.5,1.10789,0.312408,-0.012751);
+  for (int i = 0; i < 6; i++)
+    f_epar->SetParLimits(i,f_epar->GetParameter(i),f_epar->GetParameter(i));
   m_positronModuleSumLikelihood->Fit(f_epar);
 
 }
