@@ -32,8 +32,6 @@ public:
   void setPositionLabel(QLabel*);
   void setTimeLabel(QLabel*);
   void setGrid(bool);
-  void setFirstEvent(int);
-  void setLastEvent(int);
   void setDataChainProgressBar(QProgressBar*);
   void setEventQueueProgressBar(QProgressBar*);
   void saveCanvas(const QString& fileName);
@@ -42,6 +40,8 @@ public:
   void addFileList(const QString& fileName);
   void addRootFile(const QString& file);
 public slots:
+  void setFirstEvent(int);
+  void setLastEvent(int);
   void startAnalysis(Track::Type, Corrections::Flags, int numberOfThreads);
   void abortAnalysis();
   void finalizeAnalysis();
