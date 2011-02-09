@@ -28,10 +28,12 @@ TRDLikelihood::TRDLikelihood():
     m_saved(false),
     m_likelihoodCut(0.5),
     m_noTrackfit(0),
-    m_notAllTrackerLayers(0),
+    m_notGoodChi2(0),
     m_notInMagnet(0),
+    m_albedo(0),
     m_pNotInRange(0),
     m_notEnoughTRDCluster(0),
+    m_eventsOK(0),
     m_protonCorrect(0),
     m_protonFalse(0),
     m_positronCorrect(0),
@@ -231,18 +233,25 @@ void TRDLikelihood::addLearnEvent(const QVector<Hit*>& hits, const Track* track,
     return;
   }
 
-  //check if all tracker layers have a hit
   TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers)){
-    m_notAllTrackerLayers++;
-    return;
-  }
-
   //check if track was inside of magnet
   if (!(flags & TrackInformation::InsideMagnet)){
     m_notInMagnet++;
     return;
   }
+
+  //check if good fit
+  if ( track->chi2() / track->ndf() > 4.){
+    m_notGoodChi2++;
+    return;
+  }
+
+  //check albedo
+  if ((flags & TrackInformation::Albedo)){
+    m_albedo++;
+    return;
+  }
+
 
   //get the reconstructed momentum
   double p = track->p(); //GeV
@@ -271,6 +280,8 @@ void TRDLikelihood::addLearnEvent(const QVector<Hit*>& hits, const Track* track,
     m_notEnoughTRDCluster++;
     return;
   }
+
+  m_eventsOK++;
 
 
   foreach(Hit* clusterHit, trdClusterHitsOnTrack){
@@ -370,7 +381,15 @@ void TRDLikelihood::saveLikelihoodHistos(){
   }
   m_positronModuleSumLikelihood->SaveAs(qPrintable(m_pathToLikelihoodHistos + QString(m_positronModuleSumLikelihood->GetTitle()).replace(" ", "_") + ".root"));
 
-  qDebug() << m_noTrackfit << m_notAllTrackerLayers << m_notInMagnet << m_pNotInRange << m_notEnoughTRDCluster;
+  int totalEvents = m_noTrackfit + m_notInMagnet + m_notGoodChi2 + m_albedo + m_pNotInRange + m_notEnoughTRDCluster + m_eventsOK;
+
+  qDebug() << "total: " << totalEvents;
+  qDebug() << "after trackfit: " << (totalEvents-=m_noTrackfit);
+  qDebug() << "after magnet cut: " << (totalEvents-=m_notInMagnet);
+  qDebug() << "after chi2 cut: " << (totalEvents-=m_notGoodChi2);
+  qDebug() << "after albedo cut: " << (totalEvents-=m_albedo);
+  qDebug() << "after p cut: " << (totalEvents-=m_pNotInRange);
+  qDebug() << "after trd cut: " << (totalEvents-=m_notEnoughTRDCluster);
 
   m_saved = true;
 

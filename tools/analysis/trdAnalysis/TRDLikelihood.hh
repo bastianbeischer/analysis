@@ -41,10 +41,12 @@ private:
   double m_likelihoodCut;
 
   int m_noTrackfit;
-  int m_notAllTrackerLayers;
+  int m_notGoodChi2;
   int m_notInMagnet;
+  int m_albedo;
   int m_pNotInRange;
   int m_notEnoughTRDCluster;
+  int m_eventsOK;
 
 
   int m_protonCorrect;
