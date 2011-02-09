@@ -115,9 +115,9 @@ void MainWindow::processArguments(QStringList arguments)
   if (eventRange.size() == 2) {
     int firstEvent = eventRange.at(0).toInt();
     int lastEvent = eventRange.at(1).toInt();
-    m_ui.plotter->setFirstEvent(firstEvent);
-    m_ui.plotter->setLastEvent(lastEvent);
-    qDebug() << firstEvent << " " << lastEvent;
+    m_ui.firstEventSpinBox->setValue(firstEvent);
+    m_ui.lastEventSpinBox->setValue(lastEvent);
+    firstOrLastEventChanged();
   }
 }
 
