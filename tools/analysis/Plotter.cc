@@ -275,3 +275,13 @@ void Plotter::setGrid(bool b)
     gPad->SetGridy(false);
   }
 }
+
+void Plotter::setFirstEvent(int event)
+{
+  m_firstEvent = event;
+}
+
+void Plotter::setLastEvent(int event)
+{
+  m_lastEvent = event;
+}
