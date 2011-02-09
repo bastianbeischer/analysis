@@ -19,9 +19,6 @@ class MainWindow : public QMainWindow {
   ~MainWindow();
   void processArguments(QStringList);
 private slots:
-  void setFileList(const QString&);
-  void addFileList(const QString&);
-  void addRootFile(const QString&);
   void setOrAddFileListButtonClicked();
   void analyzeButtonClicked();
   void saveCanvasButtonClicked();

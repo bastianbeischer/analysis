@@ -98,9 +98,9 @@ void MainWindow::processArguments(QStringList arguments)
   arguments.removeFirst();
   foreach(QString argument, arguments) {
     if (argument.endsWith(".root"))
-      addRootFile(argument);
+      m_ui.plotter->addRootFile(argument);
     else
-      addFileList(argument);
+      m_ui.plotter->addFileList(argument);
   }
 }
 
@@ -433,26 +433,11 @@ void MainWindow::setOrAddFileListButtonClicked()
     "Select one or more file lists to open", "", "*.txt;;*.*;;*");
   if (sender() == m_ui.setFileListButton) {
     foreach(QString file, files)
-      setFileList(file);
+      m_ui.plotter->setFileList(file);
   } else if (sender() == m_ui.addFileListButton) {
     foreach(QString file, files)
-      addFileList(file);
+      m_ui.plotter->addFileList(file);
   }
-}
-
-void MainWindow::setFileList(const QString& fileName)
-{
-  m_ui.plotter->setFileList(fileName);
-}
-
-void MainWindow::addFileList(const QString& fileName)
-{
-  m_ui.plotter->addFileList(fileName);
-}
-
-void MainWindow::addRootFile(const QString& file)
-{
-  m_ui.plotter->addRootFile(file);
 }
 
 void MainWindow::saveCanvasButtonClicked()
