@@ -112,10 +112,12 @@ void Plotter::saveForPostAnalysis(const QString& fileName)
 
 void Plotter::update()
 {
-  if (!m_eventLoopOff && m_timeLabel)
-    m_timeLabel->setText(QString("%1s").arg(m_time.elapsed()/1000));
-  if (0 <= m_selectedPlot && m_selectedPlot < m_plots.size())
-    m_plots[m_selectedPlot]->update();
+  if (!m_eventLoopOff) {
+    if (m_timeLabel)
+      m_timeLabel->setText(QString("%1s").arg(m_time.elapsed()/1000));
+    if (0 <= m_selectedPlot && m_selectedPlot < m_plots.size())
+      m_plots[m_selectedPlot]->update();
+  }
   gPad->Modified();
   gPad->Update();
 }
@@ -203,7 +205,8 @@ void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numb
 
   int freeSpace = 0;
   int queuedEvents = 0;
-  for (unsigned int i = 0; i < nEvents;) {
+  unsigned int i = 0;
+  for (i = 0; i < nEvents;) {
     queuedEvents = 0;
     foreach(EventQueue* queue, queues)
       queuedEvents+= queue->numberOfEvents();
@@ -226,6 +229,8 @@ void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numb
         break;
     qApp->processEvents();
   }
+  if (m_firstEvent+i-1 == m_lastEvent)
+    emit(analysisCompleted());
 
   do {
     queuedEvents = 0;
@@ -239,7 +244,6 @@ void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numb
   qDeleteAll(threads);
   qDeleteAll(queues);
   finalizeAnalysis();
-  emit(analysisFinished());
   m_eventLoopOff = true;
 }
 

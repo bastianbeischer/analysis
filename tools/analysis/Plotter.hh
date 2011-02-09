@@ -43,7 +43,7 @@ public:
   void setLastEvent(int);
 signals:
   void numberOfEventsChanged(int);
-  void analysisFinished();
+  void analysisCompleted();
 public slots:
   void startAnalysis(Track::Type, Corrections::Flags, int numberOfThreads);
   void abortAnalysis();

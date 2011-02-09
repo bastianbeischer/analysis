@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget* parent)
   m_ui.plotter->setEventQueueProgressBar(m_ui.eventQueueProgressBar);
 
   connect(m_ui.analyzeButton, SIGNAL(clicked()), this, SLOT(analyzeButtonClicked()));
-  connect(m_ui.plotter, SIGNAL(analysisFinished()), this, SLOT(analyzeButtonClicked()));
+  connect(m_ui.plotter, SIGNAL(analysisCompleted()), this, SLOT(analyzeButtonClicked()));
   
   connect(m_ui.saveCanvasAction, SIGNAL(triggered()), this, SLOT(saveCanvasActionTriggered()));
   connect(m_ui.saveAllCanvasesAction, SIGNAL(triggered()), this, SLOT(saveAllCanvasActionTriggered()));
