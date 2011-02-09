@@ -96,11 +96,22 @@ MainWindow::~MainWindow()
 void MainWindow::processArguments(QStringList arguments)
 {
   arguments.removeFirst();
+  QRegExp onlyDigits("^\\d+$");
   foreach(QString argument, arguments) {
-    if (argument.endsWith(".root"))
-      m_ui.plotter->addRootFile(argument);
-    else
-      m_ui.plotter->addFileList(argument);
+    if (!onlyDigits.exactMatch(argument)) {
+      if (argument.endsWith(".root"))
+        m_ui.plotter->addRootFile(argument);
+      else
+        m_ui.plotter->addFileList(argument);
+    }
+  }
+  QStringList eventRange = arguments.filter(onlyDigits);
+  if (eventRange.size() == 2) {
+    int firstEvent = eventRange.at(0).toInt();
+    int lastEvent = eventRange.at(1).toInt();
+    m_ui.plotter->setFirstEvent(firstEvent);
+    m_ui.plotter->setLastEvent(lastEvent);
+    qDebug() << firstEvent << " " << lastEvent;
   }
 }
 
