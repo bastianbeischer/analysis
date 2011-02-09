@@ -39,6 +39,11 @@ public:
   void setFileList(const QString& fileName);
   void addFileList(const QString& fileName);
   void addRootFile(const QString& file);
+  void setFirstEvent(int);
+  void setLastEvent(int);
+signals:
+  void numberOfEventsChanged(int);
+  void analysisCompleted();
 public slots:
   void startAnalysis(Track::Type, Corrections::Flags, int numberOfThreads);
   void abortAnalysis();
@@ -58,8 +63,8 @@ private:
   QProgressBar* m_eventQueueProgressBar;
   QVector<AnalysisPlot*> m_plots;
   DataChain* m_chain;
-  int m_firstEvent;
-  int m_lastEvent;
+  unsigned int m_firstEvent;
+  unsigned int m_lastEvent;
   bool m_eventLoopOff;
   int m_selectedPlot;
 };

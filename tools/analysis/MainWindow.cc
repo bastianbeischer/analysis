@@ -60,13 +60,19 @@ MainWindow::MainWindow(QWidget* parent)
   m_ui.plotter->setEventQueueProgressBar(m_ui.eventQueueProgressBar);
 
   connect(m_ui.analyzeButton, SIGNAL(clicked()), this, SLOT(analyzeButtonClicked()));
+  connect(m_ui.plotter, SIGNAL(analysisCompleted()), this, SLOT(analyzeButtonClicked()));
   
   connect(m_ui.saveCanvasAction, SIGNAL(triggered()), this, SLOT(saveCanvasActionTriggered()));
   connect(m_ui.saveAllCanvasesAction, SIGNAL(triggered()), this, SLOT(saveAllCanvasActionTriggered()));
   connect(m_ui.saveForPostAnalysisAction, SIGNAL(triggered()), this, SLOT(saveForPostAnalysisActionTriggered()));
   connect(m_ui.setFileListAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListActionTriggered()));
   connect(m_ui.addFileListAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListActionTriggered()));
+  connect(m_ui.quitAction, SIGNAL(triggered()), this, SLOT(close()));
   
+  connect(m_ui.plotter, SIGNAL(numberOfEventsChanged(int)), this, SLOT(numberOfEventsChanged(int)));
+  connect(m_ui.firstEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
+  connect(m_ui.lastEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
+
   connect(m_ui.toggleSelectionButton, SIGNAL(clicked()), this, SLOT(toggleSelectionButtonClicked()));
   connect(m_ui.toggleGridButton, SIGNAL(clicked()), this, SLOT(toggleGridButtonClicked()));
   connect(m_ui.listWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(listWidgetItemChanged(QListWidgetItem*)));
@@ -88,6 +94,34 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.miscellaneousTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTOFButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
 
+  m_topicCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
+  m_topicCheckBoxes.append(m_ui.signalHeightTRDCheckBox);
+  m_topicCheckBoxes.append(m_ui.clusterShapeTrackerCheckBox);
+  m_topicCheckBoxes.append(m_ui.clusterShapeTRDCheckBox);
+  m_topicCheckBoxes.append(m_ui.timeOverThresholdCheckBox);
+  m_topicCheckBoxes.append(m_ui.trackingCheckBox);
+  m_topicCheckBoxes.append(m_ui.occupancyCheckBox);
+  m_topicCheckBoxes.append(m_ui.residualsTrackerCheckBox);
+  m_topicCheckBoxes.append(m_ui.residualsTRDCheckBox);
+  m_topicCheckBoxes.append(m_ui.momentumReconstructionCheckBox);
+  m_topicCheckBoxes.append(m_ui.efficiencyTofCheckBox);
+  m_topicCheckBoxes.append(m_ui.resolutionTofCheckBox);
+  m_topicCheckBoxes.append(m_ui.miscellaneousTrackerCheckBox);
+  m_topicCheckBoxes.append(m_ui.miscellaneousTRDCheckBox);
+  m_topicCheckBoxes.append(m_ui.miscellaneousTOFCheckBox);
+
+  foreach(QCheckBox* checkBox, m_topicCheckBoxes)
+    m_controlWidgets.append(checkBox);
+  m_controlWidgets.append(m_ui.trackComboBox);
+  m_controlWidgets.append(m_ui.firstEventSpinBox);
+  m_controlWidgets.append(m_ui.lastEventSpinBox);
+  m_controlWidgets.append(m_ui.numberOfThreadsSpinBox);
+  m_controlWidgets.append(m_ui.alignmentCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.timeShiftCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.trdMopValueCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.timeOverThresholdCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.photonTravelTimeCorrectionCheckBox);
+
   setupPlots();
 }
 
@@ -98,11 +132,22 @@ MainWindow::~MainWindow()
 void MainWindow::processArguments(QStringList arguments)
 {
   arguments.removeFirst();
+  QRegExp onlyDigits("^\\d+$");
   foreach(QString argument, arguments) {
-    if (argument.endsWith(".root"))
-      addRootFile(argument);
-    else
-      addFileList(argument);
+    if (!onlyDigits.exactMatch(argument)) {
+      if (argument.endsWith(".root"))
+        m_ui.plotter->addRootFile(argument);
+      else
+        m_ui.plotter->addFileList(argument);
+    }
+  }
+  QStringList eventRange = arguments.filter(onlyDigits);
+  if (eventRange.size() == 2) {
+    int firstEvent = eventRange.at(0).toInt();
+    int lastEvent = eventRange.at(1).toInt();
+    m_ui.firstEventSpinBox->setValue(firstEvent);
+    m_ui.lastEventSpinBox->setValue(lastEvent);
+    firstOrLastEventChanged();
   }
 }
 
@@ -416,7 +461,7 @@ void MainWindow::analyzeButtonClicked()
 {
   if (m_ui.analyzeButton->text() == "start") {
     m_ui.analyzeButton->setText("abort");
-    m_ui.trackComboBox->setEnabled(false);
+    changeControlWidgetsStatus(false);
     Track::Type type;
     Corrections::Flags flags;
     setupAnalysis(type, flags);
@@ -424,7 +469,7 @@ void MainWindow::analyzeButtonClicked()
     m_ui.plotter->startAnalysis(type, flags, m_ui.numberOfThreadsSpinBox->value());
   } else {
     m_ui.plotter->abortAnalysis();
-    m_ui.trackComboBox->setEnabled(true);
+    changeControlWidgetsStatus(true);
     m_ui.analyzeButton->setText("start");
   }
 }
@@ -435,26 +480,11 @@ void MainWindow::setOrAddFileListActionTriggered()
     "Select one or more file lists to open", "", "*.txt;;*.*;;*");
   if (sender() == m_ui.setFileListAction) {
     foreach(QString file, files)
-      setFileList(file);
+      m_ui.plotter->setFileList(file);
   } else if (sender() == m_ui.addFileListAction) {
     foreach(QString file, files)
-      addFileList(file);
+      m_ui.plotter->addFileList(file);
   }
-}
-
-void MainWindow::setFileList(const QString& fileName)
-{
-  m_ui.plotter->setFileList(fileName);
-}
-
-void MainWindow::addFileList(const QString& fileName)
-{
-  m_ui.plotter->addFileList(fileName);
-}
-
-void MainWindow::addRootFile(const QString& file)
-{
-  m_ui.plotter->addRootFile(file);
 }
 
 void MainWindow::saveCanvasActionTriggered()
@@ -526,21 +556,8 @@ void MainWindow::toggleSelectionButtonClicked()
 {
   bool b = m_ui.toggleSelectionButton->text() == "select all";
   m_ui.toggleSelectionButton->setText(b ? "deselect all" : "select all");
-  m_ui.signalHeightTrackerCheckBox->setChecked(b);
-  m_ui.signalHeightTRDCheckBox->setChecked(b);
-  m_ui.clusterShapeTrackerCheckBox->setChecked(b);
-  m_ui.clusterShapeTRDCheckBox->setChecked(b);
-  m_ui.timeOverThresholdCheckBox->setChecked(b);
-  m_ui.trackingCheckBox->setChecked(b);
-  m_ui.occupancyCheckBox->setChecked(b);
-  m_ui.residualsTrackerCheckBox->setChecked(b);
-  m_ui.residualsTRDCheckBox->setChecked(b);
-  m_ui.momentumReconstructionCheckBox->setChecked(b);
-  m_ui.efficiencyTofCheckBox->setChecked(b);
-  m_ui.resolutionTofCheckBox->setChecked(b);
-  m_ui.miscellaneousTrackerCheckBox->setChecked(b);
-  m_ui.miscellaneousTRDCheckBox->setChecked(b);
-  m_ui.miscellaneousTOFCheckBox->setChecked(b);
+  foreach(QCheckBox* checkBox, m_topicCheckBoxes)
+    checkBox->setChecked(b);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -558,4 +575,27 @@ void MainWindow::toggleGridButtonClicked()
     m_ui.plotter->setGrid(false);
     m_ui.toggleGridButton->setText("show grid");
   }
+}
+
+void MainWindow::firstOrLastEventChanged(int)
+{
+  double firstEvent = m_ui.firstEventSpinBox->value();
+  double lastEvent = m_ui.lastEventSpinBox->value();
+  m_ui.lastEventSpinBox->setMinimum(firstEvent);
+  m_ui.firstEventSpinBox->setMaximum(lastEvent);
+  m_ui.plotter->setFirstEvent(firstEvent);
+  m_ui.plotter->setLastEvent(lastEvent);
+}
+
+void MainWindow::numberOfEventsChanged(int nEvents)
+{
+  m_ui.firstEventSpinBox->setValue(0);
+  m_ui.lastEventSpinBox->setValue(nEvents-1);
+  firstOrLastEventChanged();
+}
+
+void MainWindow::changeControlWidgetsStatus(bool status)
+{
+  foreach(QWidget* widget, m_controlWidgets)
+    widget->setEnabled(status);
 }

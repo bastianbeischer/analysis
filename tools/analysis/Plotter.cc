@@ -198,12 +198,13 @@ void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numb
   if (m_dataChainProgressBar)
     m_dataChainProgressBar->reset();
 
-  Q_ASSERT(m_firstEvent < m_lastEvent);
-  int nEvents = m_lastEvent - m_firstEvent;
+  Q_ASSERT(m_firstEvent <= m_lastEvent && m_lastEvent < m_chain->nEntries());
+  unsigned int nEvents = m_lastEvent - m_firstEvent + 1;
 
   int freeSpace = 0;
   int queuedEvents = 0;
-  for (int i = m_firstEvent; i < m_lastEvent;) {
+  unsigned int i = 0;
+  for (i = 0; i < nEvents;) {
     queuedEvents = 0;
     foreach(EventQueue* queue, queues)
       queuedEvents+= queue->numberOfEvents();
@@ -211,13 +212,13 @@ void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numb
       freeSpace = queue->freeSpace();
       if (freeSpace > .2 * EventQueue::s_bufferSize) {
         for (int j = 0; j < freeSpace && i < nEvents; ++j) {
-          SimpleEvent* event = m_chain->event(i);
+          SimpleEvent* event = m_chain->event(m_firstEvent + i);
           queue->enqueue(new SimpleEvent(*event));
-          ++i;
           if (m_dataChainProgressBar)
             m_dataChainProgressBar->setValue(100 * (i + 1) / nEvents);
           if (m_eventQueueProgressBar)
             m_eventQueueProgressBar->setValue(100 * queuedEvents / EventQueue::s_bufferSize);
+          ++i;
           qApp->processEvents();
         }
       }
@@ -226,6 +227,8 @@ void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numb
         break;
     qApp->processEvents();
   }
+  if (m_firstEvent+i-1 == m_lastEvent)
+    emit(analysisCompleted());
 
   do {
     queuedEvents = 0;
@@ -245,19 +248,19 @@ void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numb
 void Plotter::setFileList(const QString& fileName)
 {
   m_chain->setFileList(qPrintable(fileName));
-  m_lastEvent = m_chain->nEntries();
+  emit(numberOfEventsChanged(m_chain->nEntries()));
 }
 
 void Plotter::addFileList(const QString& fileName)
 {
   m_chain->addFileList(qPrintable(fileName));
-  m_lastEvent = m_chain->nEntries();
+  emit(numberOfEventsChanged(m_chain->nEntries()));
 }
 
 void Plotter::addRootFile(const QString& file)
 {
   m_chain->addRootFile(qPrintable(file));
-  m_lastEvent = m_chain->nEntries();
+  emit(numberOfEventsChanged(m_chain->nEntries()));
 }
 
 void Plotter::setTimeLabel(QLabel* label)
@@ -274,4 +277,14 @@ void Plotter::setGrid(bool b)
     gPad->SetGridx(false);
     gPad->SetGridy(false);
   }
+}
+
+void Plotter::setFirstEvent(int event)
+{
+  m_firstEvent = event;
+}
+
+void Plotter::setLastEvent(int event)
+{
+  m_lastEvent = event;
 }

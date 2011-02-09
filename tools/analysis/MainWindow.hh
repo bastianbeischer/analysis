@@ -19,9 +19,6 @@ class MainWindow : public QMainWindow {
   ~MainWindow();
   void processArguments(QStringList);
 private slots:
-  void setFileList(const QString&);
-  void addFileList(const QString&);
-  void addRootFile(const QString&);
   void setOrAddFileListActionTriggered();
   void saveCanvasActionTriggered();
   void saveAllCanvasActionTriggered();
@@ -32,6 +29,9 @@ private slots:
   void toggleGridButtonClicked();
   void showButtonsClicked();
   void analyzeButtonClicked();
+  void firstOrLastEventChanged(int = 0);
+  void numberOfEventsChanged(int);
+  void changeControlWidgetsStatus(bool);
 private:
   void setupPlots();
   void setupAnalysis(Track::Type& type, Corrections::Flags& flags);
@@ -41,6 +41,8 @@ private:
 
   Ui_mainWindow m_ui;
   QVector<unsigned int> m_activePlots;
+  QVector<QCheckBox*> m_topicCheckBoxes;
+  QVector<QWidget*> m_controlWidgets;
 };
 
 #endif
