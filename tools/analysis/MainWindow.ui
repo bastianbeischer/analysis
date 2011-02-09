@@ -40,62 +40,7 @@
         <family>DejaVu Sans</family>
        </font>
       </property>
-      <layout class="QVBoxLayout" name="leftWidgetVerticalLayout">
-       <item>
-        <widget class="QPushButton" name="addFileListButton">
-         <property name="font">
-          <font>
-           <family>DejaVu Sans</family>
-          </font>
-         </property>
-         <property name="text">
-          <string>add file list</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="setFileListButton">
-         <property name="font">
-          <font>
-           <family>DejaVu Sans</family>
-          </font>
-         </property>
-         <property name="text">
-          <string>set file list</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="saveCanvasButton">
-         <property name="font">
-          <font>
-           <family>DejaVu Sans</family>
-          </font>
-         </property>
-         <property name="text">
-          <string>save canvas</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="saveAllCanvasesButton">
-         <property name="font">
-          <font>
-           <family>DejaVu Sans</family>
-          </font>
-         </property>
-         <property name="text">
-          <string>save all canvases</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="saveForPostAnalysisButton">
-         <property name="text">
-          <string>save for post analysis</string>
-         </property>
-        </widget>
-       </item>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
         <widget class="QPushButton" name="toggleGridButton">
          <property name="text">
@@ -136,7 +81,7 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-395</y>
+            <y>0</y>
             <width>173</width>
             <height>650</height>
            </rect>
@@ -670,49 +615,40 @@ TOF</string>
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="trackComboBox">
-         <property name="font">
-          <font>
-           <family>DejaVu Sans</family>
-          </font>
-         </property>
-         <item>
-          <property name="text">
-           <string>centered broken line</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>centered broken line 2D</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>broken line</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>straight line</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>none</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="startAnalysisHorizontalLayout">
-         <item>
-          <widget class="QSpinBox" name="numberOfThreadsSpinBox">
-           <property name="maximumSize">
-            <size>
-             <width>40</width>
-             <height>16777215</height>
-            </size>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <item row="5" column="0" colspan="2">
+          <widget class="QProgressBar" name="dataChainProgressBar">
+           <property name="font">
+            <font>
+             <family>DejaVu Sans</family>
+            </font>
            </property>
+           <property name="value">
+            <number>0</number>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0" colspan="2">
+          <widget class="QProgressBar" name="eventQueueProgressBar">
+           <property name="value">
+            <number>0</number>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QPushButton" name="analyzeButton">
+           <property name="font">
+            <font>
+             <family>DejaVu Sans</family>
+            </font>
+           </property>
+           <property name="text">
+            <string>start</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QSpinBox" name="numberOfThreadsSpinBox">
            <property name="minimum">
             <number>1</number>
            </property>
@@ -724,38 +660,47 @@ TOF</string>
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QPushButton" name="analyzeButton">
+         <item row="2" column="0" colspan="2">
+          <widget class="QComboBox" name="trackComboBox">
            <property name="font">
             <font>
              <family>DejaVu Sans</family>
             </font>
            </property>
-           <property name="text">
-            <string>start analysis</string>
-           </property>
+           <item>
+            <property name="text">
+             <string>centered broken line</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>centered broken line 2D</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>broken line</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>straight line</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>none</string>
+            </property>
+           </item>
           </widget>
          </item>
+         <item row="3" column="0">
+          <widget class="QSpinBox" name="spinBox"/>
+         </item>
+         <item row="3" column="1">
+          <widget class="QSpinBox" name="spinBox_2"/>
+         </item>
         </layout>
-       </item>
-       <item>
-        <widget class="QProgressBar" name="dataChainProgressBar">
-         <property name="font">
-          <font>
-           <family>DejaVu Sans</family>
-          </font>
-         </property>
-         <property name="value">
-          <number>0</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QProgressBar" name="eventQueueProgressBar">
-         <property name="value">
-          <number>0</number>
-         </property>
-        </widget>
        </item>
        <item>
         <widget class="QLabel" name="timeLabel">
@@ -833,6 +778,9 @@ TOF</string>
        </size>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <property name="margin">
+        <number>0</number>
+       </property>
        <item>
         <widget class="QScrollArea" name="correctionsScrollArea">
          <property name="sizePolicy">
@@ -860,8 +808,8 @@ TOF</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>182</width>
-            <height>184</height>
+            <width>200</width>
+            <height>193</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -886,13 +834,6 @@ TOF</string>
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="photonTravelTimeCorrectionCheckBox">
-             <property name="text">
-              <string>photon travel time</string>
-             </property>
-            </widget>
-           </item>
-           <item>
             <widget class="QCheckBox" name="trdMopValueCorrectionCheckBox">
              <property name="text">
               <string>constant TRD
@@ -911,6 +852,20 @@ over threshold</string>
              </property>
              <property name="checked">
               <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="photonTravelTimeCorrectionCheckBox">
+             <property name="text">
+              <string>photon travel time</string>
              </property>
             </widget>
            </item>
@@ -944,6 +899,64 @@ over threshold</string>
     </item>
    </layout>
   </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1097</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile_list">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="setFileListAction"/>
+    <addaction name="addFileListAction"/>
+   </widget>
+   <widget class="QMenu" name="menuSave">
+    <property name="title">
+     <string>Save</string>
+    </property>
+    <addaction name="saveCanvasAction"/>
+    <addaction name="saveAllCanvasesAction"/>
+    <addaction name="saveForPostAnalysisAction"/>
+   </widget>
+   <addaction name="menuFile_list"/>
+   <addaction name="menuSave"/>
+  </widget>
+  <action name="addFileListAction">
+   <property name="text">
+    <string>Add file list...</string>
+   </property>
+  </action>
+  <action name="setFileListAction">
+   <property name="text">
+    <string>Set file list...</string>
+   </property>
+  </action>
+  <action name="saveCanvasAction">
+   <property name="text">
+    <string>Save canvas...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="saveAllCanvasesAction">
+   <property name="text">
+    <string>Save all canvases...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="saveForPostAnalysisAction">
+   <property name="text">
+    <string>Save for post analysis...</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
