@@ -58,6 +58,8 @@ private:
   QProgressBar* m_eventQueueProgressBar;
   QVector<AnalysisPlot*> m_plots;
   DataChain* m_chain;
+  int m_firstEvent;
+  int m_lastEvent;
   bool m_eventLoopOff;
   int m_selectedPlot;
 };

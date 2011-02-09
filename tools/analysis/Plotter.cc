@@ -27,6 +27,8 @@ Plotter::Plotter(QWidget* parent)
   , m_dataChainProgressBar(0)
   , m_eventQueueProgressBar(0)
   , m_chain(new DataChain())
+  , m_firstEvent(0)
+  , m_lastEvent(0)
   , m_eventLoopOff(true)
   , m_selectedPlot(-1)
 {
@@ -196,22 +198,24 @@ void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numb
   if (m_dataChainProgressBar)
     m_dataChainProgressBar->reset();
 
-  unsigned int nEntries = m_chain->nEntries();
+  Q_ASSERT(m_firstEvent < m_lastEvent);
+  int nEvents = m_lastEvent - m_firstEvent;
+
   int freeSpace = 0;
   int queuedEvents = 0;
-  for (unsigned int i = 0; i < nEntries;) {
+  for (int i = m_firstEvent; i < m_lastEvent;) {
     queuedEvents = 0;
     foreach(EventQueue* queue, queues)
       queuedEvents+= queue->numberOfEvents();
     foreach(EventQueue* queue, queues) {
       freeSpace = queue->freeSpace();
       if (freeSpace > .2 * EventQueue::s_bufferSize) {
-        for (int j = 0; j < freeSpace && i < nEntries; ++j) {
+        for (int j = 0; j < freeSpace && i < nEvents; ++j) {
           SimpleEvent* event = m_chain->event(i);
           queue->enqueue(new SimpleEvent(*event));
           ++i;
           if (m_dataChainProgressBar)
-            m_dataChainProgressBar->setValue(100 * (i + 1) / nEntries);
+            m_dataChainProgressBar->setValue(100 * (i + 1) / nEvents);
           if (m_eventQueueProgressBar)
             m_eventQueueProgressBar->setValue(100 * queuedEvents / EventQueue::s_bufferSize);
           qApp->processEvents();
@@ -241,16 +245,19 @@ void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numb
 void Plotter::setFileList(const QString& fileName)
 {
   m_chain->setFileList(qPrintable(fileName));
+  m_lastEvent = m_chain->nEntries();
 }
 
 void Plotter::addFileList(const QString& fileName)
 {
   m_chain->addFileList(qPrintable(fileName));
+  m_lastEvent = m_chain->nEntries();
 }
 
 void Plotter::addRootFile(const QString& file)
 {
   m_chain->addRootFile(qPrintable(file));
+  m_lastEvent = m_chain->nEntries();
 }
 
 void Plotter::setTimeLabel(QLabel* label)
