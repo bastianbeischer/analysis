@@ -81,7 +81,7 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-61</y>
+            <y>0</y>
             <width>175</width>
             <height>489</height>
            </rect>
@@ -1111,37 +1111,39 @@ over threshold</string>
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile_list">
+   <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="setFileListAction"/>
     <addaction name="addFileListAction"/>
+    <addaction name="separator"/>
+    <addaction name="quitAction"/>
    </widget>
    <widget class="QMenu" name="menuSave">
     <property name="title">
-     <string>Save</string>
+     <string>&amp;Save</string>
     </property>
     <addaction name="saveCanvasAction"/>
     <addaction name="saveAllCanvasesAction"/>
     <addaction name="saveForPostAnalysisAction"/>
    </widget>
-   <addaction name="menuFile_list"/>
+   <addaction name="menuFile"/>
    <addaction name="menuSave"/>
   </widget>
   <action name="addFileListAction">
    <property name="text">
-    <string>Add file list...</string>
+    <string>&amp;Add file list...</string>
    </property>
   </action>
   <action name="setFileListAction">
    <property name="text">
-    <string>Set file list...</string>
+    <string>&amp;Set file list...</string>
    </property>
   </action>
   <action name="saveCanvasAction">
    <property name="text">
-    <string>Save canvas...</string>
+    <string>&amp;Save canvas...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -1149,7 +1151,7 @@ over threshold</string>
   </action>
   <action name="saveAllCanvasesAction">
    <property name="text">
-    <string>Save all canvases...</string>
+    <string>Save &amp;all canvases...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
@@ -1157,7 +1159,12 @@ over threshold</string>
   </action>
   <action name="saveForPostAnalysisAction">
    <property name="text">
-    <string>Save for post analysis...</string>
+    <string>Save for &amp;post analysis...</string>
+   </property>
+  </action>
+  <action name="quitAction">
+   <property name="text">
+    <string>&amp;Quit</string>
    </property>
   </action>
  </widget>

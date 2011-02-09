@@ -66,6 +66,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.saveForPostAnalysisAction, SIGNAL(triggered()), this, SLOT(saveForPostAnalysisActionTriggered()));
   connect(m_ui.setFileListAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListActionTriggered()));
   connect(m_ui.addFileListAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListActionTriggered()));
+  connect(m_ui.quitAction, SIGNAL(triggered()), this, SLOT(close()));
   
   connect(m_ui.plotter, SIGNAL(numberOfEventsChanged(int)), this, SLOT(numberOfEventsChanged(int)));
   connect(m_ui.firstEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
