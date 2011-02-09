@@ -12,6 +12,9 @@ void plot_PDFs(){
   f_ppar->SetLineColor(4);
   f_ppar->SetRange(0,80);
   f_epar->SetRange(0,80);
+
+	f_ppar->SetNpx(1000);
+	f_epar->SetNpx(1000);
   f_ppar->Draw();
   f_epar->Draw("same");
   f_ppar->GetXaxis()->SetTitle("amplitude [keV]");
