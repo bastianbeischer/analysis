@@ -14,8 +14,8 @@
    <string>PERDaix analysis</string>
   </property>
   <widget class="QWidget" name="mainWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
+   <layout class="QGridLayout" name="gridLayout_4">
+    <item row="0" column="0">
      <widget class="QWidget" name="leftWidget" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
@@ -42,18 +42,39 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QPushButton" name="toggleGridButton">
-         <property name="text">
-          <string>hide grid</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="toggleSelectionButton">
-         <property name="text">
-          <string>select all</string>
-         </property>
-        </widget>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="gridCheckBox">
+           <property name="text">
+            <string>grid</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="logXCheckBox">
+           <property name="text">
+            <string>log x</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QCheckBox" name="logYCheckBox">
+           <property name="text">
+            <string>log y</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="3">
+          <widget class="QPushButton" name="toggleSelectionButton">
+           <property name="text">
+            <string>select all</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QScrollArea" name="plotTypeScrollArea">
@@ -918,7 +939,7 @@ TOF</string>
       </layout>
      </widget>
     </item>
-    <item>
+    <item row="0" column="1">
      <layout class="QVBoxLayout" name="centralVerticalLayout">
       <item>
        <widget class="QLabel" name="titleLabel">
@@ -966,7 +987,7 @@ TOF</string>
       </item>
      </layout>
     </item>
-    <item>
+    <item row="0" column="2">
      <widget class="QWidget" name="widget" native="true">
       <property name="minimumSize">
        <size>

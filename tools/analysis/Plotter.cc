@@ -277,13 +277,18 @@ void Plotter::setTimeLabel(QLabel* label)
 
 void Plotter::setGrid(bool b)
 {
-  if (b) {
-    gPad->SetGridx(true);
-    gPad->SetGridy(true);
-  } else {
-    gPad->SetGridx(false);
-    gPad->SetGridy(false);
-  }
+  gPad->SetGridx(b);
+  gPad->SetGridy(b);
+}
+
+void Plotter::setLogX(bool b)
+{
+  gPad->SetLogx(b);
+}
+
+void Plotter::setLogY(bool b)
+{
+  gPad->SetLogy(b);
 }
 
 void Plotter::setFirstEvent(int event)

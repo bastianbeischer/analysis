@@ -26,7 +26,9 @@ private slots:
   void listWidgetItemChanged(QListWidgetItem*);
   void listWidgetCurrentRowChanged(int);
   void toggleSelectionButtonClicked();
-  void toggleGridButtonClicked();
+  void gridCheckBoxChanged(int);
+  void logXCheckBoxChanged(int);
+  void logYCheckBoxChanged(int);
   void showButtonsClicked();
   void analyzeButtonClicked();
   void firstOrLastEventChanged(int = 0);

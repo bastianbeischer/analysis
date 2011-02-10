@@ -76,7 +76,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.lastEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
 
   connect(m_ui.toggleSelectionButton, SIGNAL(clicked()), this, SLOT(toggleSelectionButtonClicked()));
-  connect(m_ui.toggleGridButton, SIGNAL(clicked()), this, SLOT(toggleGridButtonClicked()));
+  connect(m_ui.gridCheckBox, SIGNAL(stateChanged(int)), this, SLOT(gridCheckBoxChanged(int)));
+  connect(m_ui.logXCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logXCheckBoxChanged(int)));
+  connect(m_ui.logYCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logYCheckBoxChanged(int)));
   connect(m_ui.listWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(listWidgetItemChanged(QListWidgetItem*)));
   connect(m_ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(listWidgetCurrentRowChanged(int)));
 
@@ -576,15 +578,19 @@ void MainWindow::closeEvent(QCloseEvent* event)
   event->accept();
 }
 
-void MainWindow::toggleGridButtonClicked()
+void MainWindow::gridCheckBoxChanged(int value)
 {
-  if (m_ui.toggleGridButton->text() == "show grid") {
-    m_ui.plotter->setGrid(true);
-    m_ui.toggleGridButton->setText("hide grid");
-  } else {
-    m_ui.plotter->setGrid(false);
-    m_ui.toggleGridButton->setText("show grid");
-  }
+  m_ui.plotter->setGrid(value);
+}
+
+void MainWindow::logXCheckBoxChanged(int value)
+{
+  m_ui.plotter->setLogX(value);
+}
+
+void MainWindow::logYCheckBoxChanged(int value)
+{
+  m_ui.plotter->setLogY(value);
 }
 
 void MainWindow::firstOrLastEventChanged(int)
