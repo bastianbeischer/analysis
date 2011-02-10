@@ -60,6 +60,7 @@ MainWindow::MainWindow(QWidget* parent)
   m_ui.plotter->setEventQueueProgressBar(m_ui.eventQueueProgressBar);
 
   connect(m_ui.analyzeButton, SIGNAL(clicked()), this, SLOT(analyzeButtonClicked()));
+  connect(m_ui.plotter, SIGNAL(analysisStarted()), this, SLOT(toggleControlWidgetsStatus()));
   connect(m_ui.plotter, SIGNAL(analysisCompleted()), this, SLOT(toggleControlWidgetsStatus()));
   
   connect(m_ui.saveCanvasAction, SIGNAL(triggered()), this, SLOT(saveCanvasActionTriggered()));
@@ -461,7 +462,6 @@ void MainWindow::analyzeButtonClicked()
 {
   if (m_ui.analyzeButton->text() == "start") {
     m_ui.analyzeButton->setText("abort");
-    toggleControlWidgetsStatus();
     Track::Type type;
     Corrections::Flags flags;
     setupAnalysis(type, flags);
