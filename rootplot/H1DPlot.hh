@@ -12,7 +12,7 @@ class H1DPlot : virtual public RootPlot {
 public:
   H1DPlot();
   virtual ~H1DPlot();
-  void draw(TCanvas*);
+  virtual void draw(TCanvas*);
   void clear();
   virtual void clear(int);
   int numberOfHistograms();
