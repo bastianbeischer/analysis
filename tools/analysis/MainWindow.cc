@@ -116,6 +116,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   foreach(QCheckBox* checkBox, m_topicCheckBoxes)
     m_controlWidgets.append(checkBox);
+  m_controlWidgets.append(m_ui.toggleSelectionButton);
   m_controlWidgets.append(m_ui.trackComboBox);
   m_controlWidgets.append(m_ui.firstEventSpinBox);
   m_controlWidgets.append(m_ui.lastEventSpinBox);
@@ -210,10 +211,11 @@ void MainWindow::showButtonsClicked()
     if (matchingItems.size() > 0)
       m_inhibitDraw = true;
     foreach(int i, matchingItems) {
-      if (i == matchingItems.last())
-        m_inhibitDraw = false;
       removeListWidgetItem(i);
-      listWidgetCurrentRowChanged(m_ui.listWidget->currentRow());
+      if (i == matchingItems.last()) {
+        m_inhibitDraw = false;
+        listWidgetCurrentRowChanged(m_ui.listWidget->currentRow());
+      }
     }
   }
 }
@@ -473,8 +475,7 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
 
 void MainWindow::analyzeButtonClicked()
 {
-  if (m_ui.analyzeButton->text() == "start") {
-    m_ui.analyzeButton->setText("abort");
+  if (m_ui.analyzeButton->text() == "&start") {
     Track::Type type;
     Corrections::Flags flags;
     setupAnalysis(type, flags);
@@ -482,7 +483,6 @@ void MainWindow::analyzeButtonClicked()
     m_ui.plotter->startAnalysis(type, flags, m_ui.numberOfThreadsSpinBox->value());
   } else {
     m_ui.plotter->abortAnalysis();
-    m_ui.analyzeButton->setText("start");
   }
 }
 
@@ -566,8 +566,8 @@ void MainWindow::saveForPostAnalysisActionTriggered()
 
 void MainWindow::toggleSelectionButtonClicked()
 {
-  bool b = m_ui.toggleSelectionButton->text() == "select all";
-  m_ui.toggleSelectionButton->setText(b ? "deselect all" : "select all");
+  bool b = m_ui.toggleSelectionButton->text() == "select &all";
+  m_ui.toggleSelectionButton->setText(b ? "deselect &all" : "select &all");
   foreach(QCheckBox* checkBox, m_topicCheckBoxes)
     checkBox->setChecked(b);
 }
@@ -616,4 +616,9 @@ void MainWindow::toggleControlWidgetsStatus()
 {
   foreach(QWidget* widget, m_controlWidgets)
     widget->setEnabled(!widget->isEnabled());
+
+  if (m_ui.analyzeButton->text() == "&start")
+    m_ui.analyzeButton->setText("&stop");
+  else
+    m_ui.analyzeButton->setText("&start");
 }
