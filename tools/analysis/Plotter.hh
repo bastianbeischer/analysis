@@ -16,7 +16,8 @@ class QProgressBar;
 class AnalysisPlot;
 class DataChain;
 
-class Plotter : public TQtWidget {
+class Plotter : public TQtWidget
+{
 Q_OBJECT
 public:
   Plotter(QWidget* parent = 0);
@@ -43,19 +44,21 @@ public:
   void addRootFile(const QString& file);
   void setFirstEvent(int);
   void setLastEvent(int);
-signals:
-  void numberOfEventsChanged(int);
-  void analysisStarted();
-  void analysisCompleted();
 public slots:
   void startAnalysis(Track::Type, Corrections::Flags, int numberOfThreads);
   void abortAnalysis();
-  void finalizeAnalysis();
-  void update();
 protected:
   void mousePressEvent(QMouseEvent *event);
   void mouseMoveEvent(QMouseEvent* event);
   void mouseReleaseEvent(QMouseEvent *event);
+  void updateCanvas();
+  void finalizeAnalysis();
+protected slots:
+  void update();
+signals:
+  void numberOfEventsChanged(int);
+  void analysisStarted();
+  void analysisCompleted();
 private:
   QLabel* m_titleLabel;
   QLabel* m_positionLabel;

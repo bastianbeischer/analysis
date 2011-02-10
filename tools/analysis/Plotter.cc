@@ -121,6 +121,12 @@ void Plotter::update()
   gPad->Update();
 }
 
+void Plotter::updateCanvas()
+{
+  gPad->Modified();
+  gPad->Update();
+}
+
 void Plotter::addPlot(AnalysisPlot* plot)
 {
   m_plots.append(plot);
@@ -160,8 +166,7 @@ void Plotter::selectPlot(int i)
     if (m_titleLabel)
       m_titleLabel->setText(m_plots[i]->title());
     m_plots[i]->draw(GetCanvas());
-    gPad->Modified();
-    gPad->Update();
+    updateCanvas();
   }
   m_selectedPlot = i;
 }
@@ -178,8 +183,7 @@ void Plotter::finalizeAnalysis()
     plot->finalize();
     plot->update();
   }
-  gPad->Modified();
-  gPad->Update();
+  updateCanvas();
 }
 
 void Plotter::abortAnalysis()
@@ -279,16 +283,19 @@ void Plotter::setGrid(bool b)
 {
   gPad->SetGridx(b);
   gPad->SetGridy(b);
+  updateCanvas();
 }
 
 void Plotter::setLogX(bool b)
 {
   gPad->SetLogx(b);
+  updateCanvas();
 }
 
 void Plotter::setLogY(bool b)
 {
   gPad->SetLogy(b);
+  updateCanvas();
 }
 
 void Plotter::setFirstEvent(int event)
