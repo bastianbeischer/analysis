@@ -5,6 +5,7 @@
 #include "Hit.hh"
 #include "TOFCluster.hh"
 #include "TOFSipmHit.hh"
+#include "Constants.hh"
 
 #include <TH2.h>
 #include <TAxis.h>
@@ -51,30 +52,32 @@ void TOFTimeDifferencePlot::processEvent(const QVector<Hit*>& clusters, Track* t
       TOFCluster* tofCluster= static_cast<TOFCluster*>(cluster);
       double t[4];
       for (int i = 0; i < 4; ++i)
-        t[i] = -1;
-      if (tofCluster->hits().size() != 4)
-        return;
+        t[i] = -2e6;
+      Q_ASSERT(tofCluster->hits().size() >=  3);
       for (unsigned int i = 0; i < tofCluster->hits().size(); ++i) {
         TOFSipmHit* hit = static_cast<TOFSipmHit*>(tofCluster->hits()[i]);
         if (hit->position().y() < 0) {
           if (hit->position().x() < cluster->position().x()) {
-            Q_ASSERT(t[0] < 0);
+            Q_ASSERT(t[0] < -1e6);
             t[0] = hit->startTime() - hit->photonTravelTime();
           } else {
-            Q_ASSERT(t[1] < 0);
+            Q_ASSERT(t[1] < -1e6);
             t[1] = hit->startTime() - hit->photonTravelTime();
           }
         } else {
           if (hit->position().x() < cluster->position().x()) {
-            Q_ASSERT(t[2] < 0);
+            Q_ASSERT(t[2] < -1e6);
             t[2] = hit->startTime() - hit->photonTravelTime();
           } else {
-            Q_ASSERT(t[3] < 0);
+            Q_ASSERT(t[3] < -1e6);
             t[3] = hit->startTime() - hit->photonTravelTime();
           }
         }
       }
-      double dt = (t[0]+t[1])/2. - (t[2]+t[3])/2.;
+      for (int i = 0; i < 4; ++i)
+        if (t[i] < -1e6)
+          t[i] = 2e6;
+      double dt = (t[0] < t[1] ? t[0] : t[1]) - (t[2] < t[3] ? t[2] : t[3]);
       if (qAbs(dt) < 10) {
         double bending = track->x(cluster->position().z()) - cluster->position().x();
         double nonBending = track->y(cluster->position().z());
@@ -98,11 +101,16 @@ void TOFTimeDifferencePlot::update()
 void TOFTimeDifferencePlot::draw(TCanvas* canvas)
 {
   H2DPlot::draw(canvas);
-  histogram()->Draw("lego2");
+  histogram()->Draw("SURF1");
 }
 
 void TOFTimeDifferencePlot::finalize()
 {
   histogram()->GetZaxis()->SetRangeUser(-3, 3);
+  for (int binX = 1; binX < m_normalizationHistogram->GetXaxis()->GetNbins(); ++binX)
+    for (int binY = 1; binY < m_normalizationHistogram->GetYaxis()->GetNbins(); ++binY) {
+      double value = Constants::sigmaSipm / sqrt(m_normalizationHistogram->GetBinContent(binX, binY));
+      histogram()->SetBinError(binX, binY, value);
+    }
   histogram()->Divide(m_normalizationHistogram);
 }
