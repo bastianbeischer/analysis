@@ -35,7 +35,9 @@ Plotter::Plotter(QWidget* parent)
   gROOT->cd();
   setMouseTracking(true);
   connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
-  m_updateTimer.start(500);
+  connect(this, SIGNAL(analysisStarted()), &m_updateTimer, SLOT(start()));
+  connect(this, SIGNAL(analysisCompleted()), &m_updateTimer, SLOT(stop()));
+  m_updateTimer.setInterval(500);
 }
 
 Plotter::~Plotter()
@@ -112,8 +114,7 @@ void Plotter::saveForPostAnalysis(const QString& fileName)
 
 void Plotter::update()
 {
-  if (!m_eventLoopOff && m_timeLabel)
-    m_timeLabel->setText(QString("%1s").arg(m_time.elapsed()/1000));
+  m_timeLabel->setText(QString("%1s").arg(m_time.elapsed()/1000));
   if (0 <= m_selectedPlot && m_selectedPlot < m_plots.size())
     m_plots[m_selectedPlot]->update();
   gPad->Modified();
@@ -159,6 +160,8 @@ void Plotter::selectPlot(int i)
     if (m_titleLabel)
       m_titleLabel->setText(m_plots[i]->title());
     m_plots[i]->draw(GetCanvas());
+    gPad->Modified();
+    gPad->Update();
   }
   m_selectedPlot = i;
 }
@@ -171,8 +174,12 @@ void Plotter::clearPlots()
 
 void Plotter::finalizeAnalysis()
 {
-  foreach(AnalysisPlot* plot, m_plots)
+  foreach(AnalysisPlot* plot, m_plots) {
     plot->finalize();
+    plot->update();
+  }
+  gPad->Modified();
+  gPad->Update();
 }
 
 void Plotter::abortAnalysis()
@@ -182,6 +189,7 @@ void Plotter::abortAnalysis()
 
 void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numberOfThreads)
 {
+  emit(analysisStarted());
   m_eventLoopOff = false;
 
   QVector<EventQueue*> queues;
@@ -224,7 +232,7 @@ void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numb
       }
     }
     if (m_eventLoopOff)
-        break;
+      break;
     qApp->processEvents();
   }
 
