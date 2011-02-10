@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget* parent)
   m_ui.plotter->setEventQueueProgressBar(m_ui.eventQueueProgressBar);
 
   connect(m_ui.analyzeButton, SIGNAL(clicked()), this, SLOT(analyzeButtonClicked()));
-  connect(m_ui.plotter, SIGNAL(analysisCompleted()), this, SLOT(analyzeButtonClicked()));
+  connect(m_ui.plotter, SIGNAL(analysisCompleted()), this, SLOT(toggleControlWidgetsStatus()));
   
   connect(m_ui.saveCanvasAction, SIGNAL(triggered()), this, SLOT(saveCanvasActionTriggered()));
   connect(m_ui.saveAllCanvasesAction, SIGNAL(triggered()), this, SLOT(saveAllCanvasActionTriggered()));
@@ -461,7 +461,7 @@ void MainWindow::analyzeButtonClicked()
 {
   if (m_ui.analyzeButton->text() == "start") {
     m_ui.analyzeButton->setText("abort");
-    changeControlWidgetsStatus(false);
+    toggleControlWidgetsStatus();
     Track::Type type;
     Corrections::Flags flags;
     setupAnalysis(type, flags);
@@ -469,7 +469,6 @@ void MainWindow::analyzeButtonClicked()
     m_ui.plotter->startAnalysis(type, flags, m_ui.numberOfThreadsSpinBox->value());
   } else {
     m_ui.plotter->abortAnalysis();
-    changeControlWidgetsStatus(true);
     m_ui.analyzeButton->setText("start");
   }
 }
@@ -594,8 +593,8 @@ void MainWindow::numberOfEventsChanged(int nEvents)
   firstOrLastEventChanged();
 }
 
-void MainWindow::changeControlWidgetsStatus(bool status)
+void MainWindow::toggleControlWidgetsStatus()
 {
   foreach(QWidget* widget, m_controlWidgets)
-    widget->setEnabled(status);
+    widget->setEnabled(!widget->isEnabled());
 }

@@ -227,8 +227,6 @@ void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numb
         break;
     qApp->processEvents();
   }
-  if (m_firstEvent+i-1 == m_lastEvent)
-    emit(analysisCompleted());
 
   do {
     queuedEvents = 0;
@@ -242,6 +240,7 @@ void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numb
   qDeleteAll(threads);
   qDeleteAll(queues);
   finalizeAnalysis();
+  emit(analysisCompleted());
   m_eventLoopOff = true;
 }
 

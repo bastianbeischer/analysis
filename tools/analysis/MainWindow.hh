@@ -31,7 +31,7 @@ private slots:
   void analyzeButtonClicked();
   void firstOrLastEventChanged(int = 0);
   void numberOfEventsChanged(int);
-  void changeControlWidgetsStatus(bool);
+  void toggleControlWidgetsStatus();
 private:
   void setupPlots();
   void setupAnalysis(Track::Type& type, Corrections::Flags& flags);
