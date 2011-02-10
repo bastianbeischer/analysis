@@ -205,7 +205,8 @@ void MainWindow::showButtonsClicked()
       if (m_ui.plotter->plotTopic(m_activePlots[i]) == topic)
         matchingItems << i;
     }
-    m_inhibitDraw = true;
+    if (matchingItems.size() > 0)
+      m_inhibitDraw = true;
     foreach(int i, matchingItems) {
       if (i == matchingItems.last())
         m_inhibitDraw = false;
