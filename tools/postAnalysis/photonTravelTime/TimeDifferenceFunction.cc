@@ -39,7 +39,8 @@ TimeDifferenceFunction::TimeDifferenceFunction(TCanvas* canvas)
   double minY = histogram->GetYaxis()->GetXmin();
   double maxY = histogram->GetYaxis()->GetXmax();
   m_function = new TF2(qPrintable(title), photonTime, minX, maxX, minY, maxY, Corrections::numberOfPhotonTravelTimeParameters);
-  m_function->SetParameters(0, 1.5, 2);
+  m_function->SetParameters(1.5, 2, 6, 0.6);
+  //m_function->FixParameter(0, 0);
   histogram->Fit(m_function, "QN0 WW");
   for (int i = 0; i < Corrections::numberOfPhotonTravelTimeParameters; ++i)
     qDebug() << QString("%1_c%2=%3").arg(title).arg(i).arg(m_function->GetParameter(i));

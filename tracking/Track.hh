@@ -41,6 +41,8 @@ public:
   double           p()                const;
   double           beta()             const;
 
+  static double bestTime(QVector<double>&);
+
 public:
   int fit(const QVector<Hit*>& hits);
   void process();

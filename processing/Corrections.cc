@@ -134,7 +134,7 @@ double Corrections::photonTravelTime(double bending, double nonBending, double* 
   Q_ASSERT(qAbs(a) <= 1.);
   Q_ASSERT(qAbs(b) <= 1.);
   double s = (nonBending < 0) ? 1 : 0;
-  return p[0] + p[1] * a + p[2] * s * pow(qAbs(a), 6) * (1 - cos(M_PI*b));
+  return p[0] * a + p[1] * s * pow(qAbs(a), p[2]) * (1-cos(M_PI * pow(qAbs(b), p[3])));
 }
 
 double Corrections::photonTravelTimeDifference(double bending, double nonBending, double* p)
