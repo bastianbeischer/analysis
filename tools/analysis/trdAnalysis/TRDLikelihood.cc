@@ -21,6 +21,8 @@
 #include "DetectorElement.hh"
 #include "TRDCalculations.hh"
 
+#include "AMS_PDFs/pfun.C"
+
 
 TRDLikelihood* TRDLikelihood::m_instance = 0;
 QMutex TRDLikelihood::m_mutex;
@@ -90,18 +92,18 @@ void TRDLikelihood::initializeModuleLikelihoods(){
     if (element->type() == DetectorElement::trd){
       unsigned int detID = element->id();
       QString titlePositronHisto = "Positron Likelihood for module 0x" + QString::number(detID, 16) ;
-      TH1D* positronLikelihoodHisto = new TH1D(qPrintable(titlePositronHisto), qPrintable(titlePositronHisto + ";TRD Signal;Likelihood"), 100, 0, 25);
+      TH1D* positronLikelihoodHisto = new TH1D(qPrintable(titlePositronHisto), qPrintable(titlePositronHisto + ";TRD Signal;probability"), 100, 0, 25);
       m_positronModuleLikelihood.insert(detID, positronLikelihoodHisto);
 
       QString titleProtonHisto = "Proton Likelihood for module 0x" + QString::number(detID, 16) ;
-      TH1D* protonLikelihoodHisto = new TH1D(qPrintable(titleProtonHisto), qPrintable(titleProtonHisto + ";TRD Signal;Likelihood"), 100, 0, 25);
+      TH1D* protonLikelihoodHisto = new TH1D(qPrintable(titleProtonHisto), qPrintable(titleProtonHisto + ";TRD Signal;probability"), 100, 0, 25);
       m_protonModuleLikelihood.insert(detID, protonLikelihoodHisto);
     }
     element = setup->nextElement();
   }
 
-  m_positronModuleSumLikelihood = new TH1D("Positron Likelihood for Sum of Modules", "Positron Likelihood for Sum of Modules;TRD Signal;Likelihood", 250, 0, 25);
-  m_protonModuleSumLikelihood = new TH1D("Proton Likelihood for Sum of Modules", "Proton Likelihood for Sum of Modules;TRD Signal;Likelihood", 250, 0, 25);
+  m_positronModuleSumLikelihood = new TH1D("Positron Likelihood for Sum of Modules", "Positron Likelihood for Sum of Modules;TRD Signal;probability", 250, 0, 25);
+  m_protonModuleSumLikelihood = new TH1D("Proton Likelihood for Sum of Modules", "Proton Likelihood for Sum of Modules;TRD Signal;probability", 250, 0, 25);
 
 }
 
@@ -124,7 +126,7 @@ bool TRDLikelihood::analyzeEvent(const QVector<Hit*>& hits, const Track* track, 
 
   //only use following momenta 0.5 < |p| < 5
   double pAbs = qAbs(p);
-  if(pAbs < 0.5 || pAbs > 5)
+  if(pAbs < 1 || pAbs > 6)
     return false;
 
   //loop over all hits and count tracker hits
@@ -259,7 +261,7 @@ void TRDLikelihood::addLearnEvent(const QVector<Hit*>& hits, const Track* track,
 
   //only use following momenta 0.5 < |p| < 5
   double pAbs = qAbs(p);
-  if(pAbs < 0.5 || pAbs > 5){
+  if(pAbs < 1 || pAbs > 6){
     m_pNotInRange++;
     return;
   }
@@ -341,8 +343,8 @@ void TRDLikelihood::normalizeLikelihoodHistos(){
 
   m_positronModuleSumLikelihood->Sumw2();
   m_positronModuleSumLikelihood->Scale(1.0 / m_positronModuleSumLikelihood->Integral("width"));
-  TF1 *f_epar= new TF1("f_epar","(landau(0)+landau(3))*expo(6)");
-  f_epar->SetParameters(1.5,2.24519,0.4,0.3,6.5,1.10789,0.312408,-0.012751);
+  TF1 *f_epar= new TF1("f_epar","(landau(0)+landau(3))");
+  f_epar->SetParameters(1.2,1.5,0.4,0.3,6.5,3);
   for (int i = 0; i < 6; i++)
     f_epar->SetParLimits(i,f_epar->GetParameter(i),f_epar->GetParameter(i));
   m_positronModuleSumLikelihood->Fit(f_epar);
