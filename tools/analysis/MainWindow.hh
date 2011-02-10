@@ -43,6 +43,7 @@ private:
   QVector<unsigned int> m_activePlots;
   QVector<QCheckBox*> m_topicCheckBoxes;
   QVector<QWidget*> m_controlWidgets;
+  bool m_inhibitDraw;
 };
 
 #endif

@@ -50,6 +50,7 @@
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
   , m_activePlots()
+  , m_inhibitDraw(false)
 {
   m_ui.setupUi(this);
   
@@ -199,9 +200,17 @@ void MainWindow::showButtonsClicked()
     }
   } else {
     b->setText("+");
+    QVector<int> matchingItems;
     for (int i = m_ui.listWidget->count() - 1; i >= 0; --i) {
       if (m_ui.plotter->plotTopic(m_activePlots[i]) == topic)
-        removeListWidgetItem(i);
+        matchingItems << i;
+    }
+    m_inhibitDraw = true;
+    foreach(int i, matchingItems) {
+      if (i == matchingItems.last())
+        m_inhibitDraw = false;
+      removeListWidgetItem(i);
+      listWidgetCurrentRowChanged(m_ui.listWidget->currentRow());
     }
   }
 }
@@ -225,7 +234,8 @@ void MainWindow::listWidgetCurrentRowChanged(int i)
     m_ui.plotter->selectPlot(-1);
     return;
   }
-  m_ui.plotter->selectPlot(m_activePlots[i]);
+  if (!m_inhibitDraw)
+    m_ui.plotter->selectPlot(m_activePlots[i]);
 }
 
 void MainWindow::setupPlots()
