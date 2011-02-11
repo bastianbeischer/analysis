@@ -28,7 +28,7 @@ public:
   QVector<unsigned int> plotIndices(AnalysisPlot::Topic topic);
   const QString& plotTitle(unsigned int);
   AnalysisPlot::Topic plotTopic(unsigned int);
-  void selectPlot(int);
+  void selectPlot(int, bool = false);
   void setTitleLabel(QLabel*);
   void setPositionLabel(QLabel*);
   void setTimeLabel(QLabel*);
