@@ -16,7 +16,6 @@ private:
   unsigned short m_idTop2;
   unsigned short m_idBottom1;
   unsigned short m_idBottom2;
-  double m_y;
 };
 
 #endif

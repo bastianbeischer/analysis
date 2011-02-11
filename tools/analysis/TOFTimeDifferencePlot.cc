@@ -106,7 +106,7 @@ void TOFTimeDifferencePlot::draw(TCanvas* canvas)
 
 void TOFTimeDifferencePlot::finalize()
 {
-  histogram()->GetZaxis()->SetRangeUser(-3, 3);
+  histogram()->GetZaxis()->SetRangeUser(-1, 1);
   for (int binX = 1; binX < m_normalizationHistogram->GetXaxis()->GetNbins(); ++binX)
     for (int binY = 1; binY < m_normalizationHistogram->GetYaxis()->GetNbins(); ++binY) {
       double value = Constants::sigmaSipm / sqrt(m_normalizationHistogram->GetBinContent(binX, binY));
