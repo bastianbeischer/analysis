@@ -335,6 +335,16 @@ void TRDLikelihood::normalizeLikelihoodHistos(){
     f_ppar->SetParLimits(i,f_ppar->GetParameter(i),f_ppar->GetParameter(i));
   m_protonModuleSumLikelihood->Fit(f_ppar);
 
+  double integral = f_ppar->Integral(0,100);
+  qDebug() << "integral of proton fit = " << integral;
+  f_ppar->SetParameter(0, f_ppar->GetParameter(0) / integral);
+  integral = f_ppar->Integral(0,100);
+  qDebug() << "integral of proton fit after factor set to " << f_ppar->GetParameter(0) << " = " << integral;
+  QVector<double> paramters;
+  for(int i = 0; i < f_ppar->GetNpar(); ++i)
+    paramters << f_ppar->GetParameter(i) ;
+  qDebug() << "proton fit parameters: " << paramters;
+
 
 
 
