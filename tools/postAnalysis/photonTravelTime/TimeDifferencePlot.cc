@@ -44,3 +44,9 @@ TimeDifferencePlot::TimeDifferencePlot(TCanvas* canvas, TimeDifferenceFunction* 
 
 TimeDifferencePlot::~TimeDifferencePlot()
 {}
+
+void TimeDifferencePlot::draw(TCanvas* canvas)
+{
+  H2DPlot::draw(canvas);
+  histogram()->GetZaxis()->SetRangeUser(-1, 1);
+}

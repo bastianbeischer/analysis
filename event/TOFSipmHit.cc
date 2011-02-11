@@ -10,6 +10,7 @@ ClassImp( TOFSipmHit );
 TOFSipmHit::TOFSipmHit()
   : Hit()
   , m_startTime(0)
+  , m_photonTravelTime(0)
   , m_timeOverThreshold(0)
   , m_levelChanges()
 {}
@@ -17,6 +18,7 @@ TOFSipmHit::TOFSipmHit()
 TOFSipmHit::TOFSipmHit(unsigned short detId, TVector3 position, TVector3 counterPosition)
   : Hit(Hit::tof, detId, 0, position, counterPosition)
   , m_startTime(0)
+  , m_photonTravelTime(0)
   , m_timeOverThreshold(0)
   , m_levelChanges()
 {}
@@ -25,6 +27,7 @@ TOFSipmHit::TOFSipmHit(const TOFSipmHit& other)
   : Hit(other)
   , m_channel(other.m_channel)
   , m_startTime(other.m_startTime)
+  , m_photonTravelTime(other.m_photonTravelTime)
   , m_timeOverThreshold(other.m_timeOverThreshold)
   , m_levelChanges(other.m_levelChanges)
 {
@@ -36,6 +39,11 @@ TOFSipmHit::~TOFSipmHit()
 void TOFSipmHit::applyTimeShift(double shift)
 {
   m_startTime += shift;
+}
+
+void TOFSipmHit::setPhotonTravelTime(double t)
+{
+  m_photonTravelTime = t;
 }
 
 void TOFSipmHit::processTDCHits()

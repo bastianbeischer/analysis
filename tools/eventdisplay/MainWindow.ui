@@ -78,17 +78,17 @@
            </property>
            <item>
             <property name="text">
+             <string>Centered Broken Line</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
              <string>Straight Line</string>
             </property>
            </item>
            <item>
             <property name="text">
              <string>Broken Line</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>Centered Broken Line</string>
             </property>
            </item>
           </widget>

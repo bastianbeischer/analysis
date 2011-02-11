@@ -217,16 +217,15 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
       height = 0.5*heightModule;
     }
     else if (type == Hit::tof) {
-      width = 6.0;
-      height = 3.0;
+      width = 5.;
+      height = 6.;
       unsigned short channel = hit->channel();
-      double offset = 10.0;
       DetectorElement* element = Setup::instance()->element(hit->detId() - channel);
-      x = element->position().x() + (channel-1.5) * offset + 0.5*width;
+      x = element->position().x() + (2*(channel-2)+0.5) * width;
+      color = palette->GetValueColor(amplitude*5);
     }
 
     TBox* box = new TBox(x-0.5*width, z-0.5*height, x+0.5*width, z+0.5*height);
-    //    std::cout << "adding box at " << position.z()  << std::endl;
     box->SetFillStyle(1001);
     box->SetFillColor(color);
     box->Draw("SAME");

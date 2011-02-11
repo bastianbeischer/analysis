@@ -10,6 +10,7 @@ class TimeDifferenceFunction : public PostAnalysisPlot, public H2DPlot {
 public:
   TimeDifferenceFunction(TCanvas*);
   virtual ~TimeDifferenceFunction();
+  virtual void draw(TCanvas*);
   TF2* function();
 private:
   TF2* m_function;

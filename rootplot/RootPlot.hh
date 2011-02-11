@@ -28,6 +28,8 @@ public:
   TLegend* legend(int i = 0);
   void addFunction(TF1*);
   TF1* function(int i = 0);
+  virtual void finalize() {}
+  virtual void update() {}
 private:
   QString m_title;
   unsigned long m_id;

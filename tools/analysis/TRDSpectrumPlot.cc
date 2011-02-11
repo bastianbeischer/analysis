@@ -113,7 +113,13 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simp
 
 void TRDSpectrumPlot::finalize()
 {
-  //  update();
+  histogram(0)->Fit(m_landauFit,"Q0","",m_landauFitRange_lower,m_landauFitRange_upper);
+
+  m_fitRangeMarker_lower->SetX(m_landauFitRange_lower);
+  m_fitRangeMarker_lower->SetY(m_landauFit->Eval(m_landauFitRange_lower));
+
+  m_fitRangeMarker_upper->SetX(m_landauFitRange_upper);
+  m_fitRangeMarker_upper->SetY(m_landauFit->Eval(m_landauFitRange_upper));
 
   //  if (false) {
   //    //write fit results:
@@ -132,16 +138,14 @@ void TRDSpectrumPlot::finalize()
   // }
 }
 
-void TRDSpectrumPlot::update(){
-  histogram(0)->Fit(m_landauFit,"Q","",m_landauFitRange_lower,m_landauFitRange_upper);
-  m_landauFit->Draw("same");
-
-  m_fitRangeMarker_lower->SetX(m_landauFitRange_lower);
-  m_fitRangeMarker_lower->SetY(m_landauFit->Eval(m_landauFitRange_lower));
-  m_fitRangeMarker_lower->Draw("same");
-
-  m_fitRangeMarker_upper->SetX(m_landauFitRange_upper);
-  m_fitRangeMarker_upper->SetY(m_landauFit->Eval(m_landauFitRange_upper));
-  m_fitRangeMarker_upper->Draw("same");
+void TRDSpectrumPlot::update()
+{
 }
 
+void TRDSpectrumPlot::draw(TCanvas* canvas)
+{
+  H1DPlot::draw(canvas);
+  m_landauFit->Draw("same");
+  m_fitRangeMarker_lower->Draw("same");
+  m_fitRangeMarker_upper->Draw("same");
+}

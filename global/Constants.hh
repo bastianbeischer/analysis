@@ -17,8 +17,10 @@ namespace Constants
   const double tofRefractiveIndex = 1.58;
   const double upperTofPosition = 281.55;  // mm
   const double lowerTofPosition = -531.55; // mm
+  const double sigmaSipm = 0.6;            // ns
+  const double tofClusterSignalCut = 600;  // ns
 
-  const double TRDTubeRadius = 3.0; //mm
+  const double TRDTubeRadius = 3.0;        //mm
 
 }
 

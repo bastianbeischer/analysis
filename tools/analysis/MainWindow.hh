@@ -19,19 +19,21 @@ class MainWindow : public QMainWindow {
   ~MainWindow();
   void processArguments(QStringList);
 private slots:
-  void setFileList(const QString&);
-  void addFileList(const QString&);
-  void addRootFile(const QString&);
-  void setOrAddFileListButtonClicked();
-  void analyzeButtonClicked();
-  void saveCanvasButtonClicked();
-  void saveAllCanvasButtonClicked();
-  void saveForPostAnalysisButtonClicked();
-  void toggleSelectionButtonClicked();
+  void setOrAddFileListActionTriggered();
+  void saveCanvasActionTriggered();
+  void saveAllCanvasActionTriggered();
+  void saveForPostAnalysisActionTriggered();
   void listWidgetItemChanged(QListWidgetItem*);
   void listWidgetCurrentRowChanged(int);
+  void toggleSelectionButtonClicked();
+  void gridCheckBoxChanged(int);
+  void logXCheckBoxChanged(int);
+  void logYCheckBoxChanged(int);
   void showButtonsClicked();
-  void toggleGridButtonClicked();
+  void analyzeButtonClicked();
+  void firstOrLastEventChanged(int = 0);
+  void numberOfEventsChanged(int);
+  void toggleControlWidgetsStatus();
 private:
   void setupPlots();
   void setupAnalysis(Track::Type& type, Corrections::Flags& flags);
@@ -41,6 +43,9 @@ private:
 
   Ui_mainWindow m_ui;
   QVector<unsigned int> m_activePlots;
+  QVector<QCheckBox*> m_topicCheckBoxes;
+  QVector<QWidget*> m_controlWidgets;
+  bool m_inhibitDraw;
 };
 
 #endif
