@@ -14,8 +14,8 @@
    <string>PERDaix analysis</string>
   </property>
   <widget class="QWidget" name="mainWidget">
-   <layout class="QGridLayout" name="gridLayout_4">
-    <item row="0" column="0">
+   <layout class="QHBoxLayout" name="h">
+    <item>
      <widget class="QWidget" name="leftWidget" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
@@ -46,41 +46,10 @@
        </property>
        <item>
         <layout class="QGridLayout" name="gridLayout_2">
-         <item row="0" column="1">
-          <widget class="QCheckBox" name="gridCheckBox">
-           <property name="text">
-            <string>&amp;grid</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2">
-          <widget class="QCheckBox" name="logXCheckBox">
-           <property name="text">
-            <string>log &amp;x</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="3">
-          <widget class="QCheckBox" name="logYCheckBox">
-           <property name="text">
-            <string>log &amp;y</string>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="1" colspan="3">
           <widget class="QPushButton" name="selectAllButton">
            <property name="text">
             <string>select &amp;all</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1" colspan="3">
-          <widget class="QPushButton" name="unzoomButton">
-           <property name="text">
-            <string>&amp;unzoom</string>
            </property>
           </widget>
          </item>
@@ -1179,23 +1148,82 @@ reconstruction</string>
       </layout>
      </widget>
     </item>
-    <item row="0" column="1">
-     <layout class="QVBoxLayout" name="centralVerticalLayout">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
-       <widget class="QLabel" name="titleLabel">
-        <property name="font">
-         <font>
-          <family>DejaVu Sans Mono</family>
-          <pointsize>12</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontalLayout_6">
+        <item>
+         <widget class="QPushButton" name="unzoomButton">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>&amp;unzoom</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="gridCheckBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>&amp;grid</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="titleLabel">
+          <property name="font">
+           <font>
+            <family>DejaVu Sans Mono</family>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="logXCheckBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>log &amp;x</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="logYCheckBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>log &amp;y</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
        <widget class="Plotter" name="plotter" native="true">
@@ -1210,6 +1238,7 @@ reconstruction</string>
           <family>DejaVu Sans</family>
          </font>
         </property>
+        <zorder>horizontalLayoutWidget</zorder>
        </widget>
       </item>
       <item>
@@ -1227,7 +1256,7 @@ reconstruction</string>
       </item>
      </layout>
     </item>
-    <item row="0" column="2">
+    <item>
      <widget class="QWidget" name="widget" native="true">
       <property name="minimumSize">
        <size>
