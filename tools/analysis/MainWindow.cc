@@ -76,6 +76,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.lastEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
 
   connect(m_ui.toggleSelectionButton, SIGNAL(clicked()), this, SLOT(toggleSelectionButtonClicked()));
+  connect(m_ui.unzoomButton, SIGNAL(clicked()), this, SLOT(unzoomButtonClicked()));
   connect(m_ui.gridCheckBox, SIGNAL(stateChanged(int)), this, SLOT(gridCheckBoxChanged(int)));
   connect(m_ui.logXCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logXCheckBoxChanged(int)));
   connect(m_ui.logYCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logYCheckBoxChanged(int)));
@@ -562,6 +563,11 @@ void MainWindow::saveForPostAnalysisActionTriggered()
   if (!fileName.endsWith(fileEnding))
     fileName.append(fileEnding);
   m_ui.plotter->saveForPostAnalysis(fileName);
+}
+
+void MainWindow::unzoomButtonClicked()
+{
+  m_ui.plotter->unzoom();
 }
 
 void MainWindow::toggleSelectionButtonClicked()

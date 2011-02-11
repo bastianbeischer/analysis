@@ -13,6 +13,7 @@ public:
   H1DPlot();
   virtual ~H1DPlot();
   virtual void draw(TCanvas*);
+  virtual void unzoom();
   void clear();
   virtual void clear(int);
   int numberOfHistograms();

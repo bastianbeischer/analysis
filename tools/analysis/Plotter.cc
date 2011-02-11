@@ -279,6 +279,14 @@ void Plotter::setTimeLabel(QLabel* label)
   m_timeLabel = label;
 }
 
+void Plotter::unzoom()
+{
+  if (m_selectedPlot < 0)
+    return;
+  m_plots[m_selectedPlot]->unzoom();
+  updateCanvas();
+}
+
 void Plotter::setGrid(bool b)
 {
   gPad->SetGridx(b);

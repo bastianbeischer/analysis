@@ -29,6 +29,14 @@ void H1DPlot::draw(TCanvas* canvas)
   RootPlot::draw(canvas);
 }
 
+void H1DPlot::unzoom()
+{
+  if (m_histograms.size()) {
+    m_histograms[0]->GetXaxis()->UnZoom();
+    m_histograms[0]->GetYaxis()->UnZoom();
+  }
+}
+
 void H1DPlot::clear()
 {
   foreach (TH1D* h, m_histograms)

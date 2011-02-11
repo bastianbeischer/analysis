@@ -25,6 +25,7 @@ private slots:
   void saveForPostAnalysisActionTriggered();
   void listWidgetItemChanged(QListWidgetItem*);
   void listWidgetCurrentRowChanged(int);
+  void unzoomButtonClicked();
   void toggleSelectionButtonClicked();
   void gridCheckBoxChanged(int);
   void logXCheckBoxChanged(int);

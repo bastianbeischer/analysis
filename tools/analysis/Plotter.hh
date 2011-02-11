@@ -32,6 +32,7 @@ public:
   void setTitleLabel(QLabel*);
   void setPositionLabel(QLabel*);
   void setTimeLabel(QLabel*);
+  void unzoom();
   void setGrid(bool);
   void setLogX(bool);
   void setLogY(bool);

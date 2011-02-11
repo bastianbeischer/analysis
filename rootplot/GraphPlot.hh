@@ -15,10 +15,10 @@ public:
   GraphPlot();
   virtual ~GraphPlot();
   virtual void draw(TCanvas*);
+  virtual void unzoom();
   virtual void clear();
   virtual void clear(int);
-  void addGraph(TGraph*, const char* ="");
-  void setMultiGraphTitle(const QString&);
+  void addGraph(TGraph*, const char* = "");
   int numberOfGraphs() const;
   TGraph* graph(int i = 0);
   TMultiGraph* multiGraph();
