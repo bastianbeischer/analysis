@@ -71,7 +71,7 @@
           </widget>
          </item>
          <item row="2" column="1" colspan="3">
-          <widget class="QPushButton" name="toggleSelectionButton">
+          <widget class="QPushButton" name="selectAllButton">
            <property name="text">
             <string>select &amp;all</string>
            </property>

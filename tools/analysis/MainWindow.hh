@@ -26,10 +26,10 @@ private slots:
   void listWidgetItemChanged(QListWidgetItem*);
   void listWidgetCurrentRowChanged(int);
   void unzoomButtonClicked();
-  void toggleSelectionButtonClicked();
-  void selectTofButtonClicked();
-  void selectTrdButtonClicked();
+  void selectAllButtonClicked();
   void selectTrackerButtonClicked();
+  void selectTrdButtonClicked();
+  void selectTofButtonClicked();
   void gridCheckBoxChanged(int);
   void logXCheckBoxChanged(int);
   void logYCheckBoxChanged(int);
@@ -38,10 +38,13 @@ private slots:
   void firstOrLastEventChanged(int = 0);
   void numberOfEventsChanged(int);
   void toggleControlWidgetsStatus();
+  void checkBoxChanged();
+  void checkSelectAll();
 private:
   void setupPlots();
   void setupAnalysis(Track::Type& type, Corrections::Flags& flags);
   void startAnalysis();
+  void changeTopicGroupStatus(QVector<QCheckBox*>&);
   void removeListWidgetItem(int);
   void closeEvent(QCloseEvent*);
 

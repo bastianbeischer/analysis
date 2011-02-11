@@ -60,6 +60,58 @@ MainWindow::MainWindow(QWidget* parent)
   m_ui.plotter->setDataChainProgressBar(m_ui.dataChainProgressBar);
   m_ui.plotter->setEventQueueProgressBar(m_ui.eventQueueProgressBar);
 
+  m_topicCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
+  m_topicCheckBoxes.append(m_ui.signalHeightTRDCheckBox);
+  m_topicCheckBoxes.append(m_ui.clusterShapeTrackerCheckBox);
+  m_topicCheckBoxes.append(m_ui.clusterShapeTRDCheckBox);
+  m_topicCheckBoxes.append(m_ui.timeOverThresholdCheckBox);
+  m_topicCheckBoxes.append(m_ui.trackingCheckBox);
+  m_topicCheckBoxes.append(m_ui.occupancyCheckBox);
+  m_topicCheckBoxes.append(m_ui.residualsTrackerCheckBox);
+  m_topicCheckBoxes.append(m_ui.residualsTRDCheckBox);
+  m_topicCheckBoxes.append(m_ui.momentumReconstructionCheckBox);
+  m_topicCheckBoxes.append(m_ui.efficiencyTofCheckBox);
+  m_topicCheckBoxes.append(m_ui.resolutionTofCheckBox);
+  m_topicCheckBoxes.append(m_ui.calibrationTofCheckBox);
+  m_topicCheckBoxes.append(m_ui.miscellaneousTrackerCheckBox);
+  m_topicCheckBoxes.append(m_ui.miscellaneousTRDCheckBox);
+  m_topicCheckBoxes.append(m_ui.miscellaneousTOFCheckBox);
+
+  m_trackerCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
+  m_trackerCheckBoxes.append(m_ui.clusterShapeTrackerCheckBox);
+  m_trackerCheckBoxes.append(m_ui.trackingCheckBox);
+  m_trackerCheckBoxes.append(m_ui.residualsTrackerCheckBox);
+  m_trackerCheckBoxes.append(m_ui.momentumReconstructionCheckBox);
+  m_trackerCheckBoxes.append(m_ui.miscellaneousTrackerCheckBox);
+
+  m_trdCheckBoxes.append(m_ui.signalHeightTRDCheckBox);
+  m_trdCheckBoxes.append(m_ui.clusterShapeTRDCheckBox);
+  m_trdCheckBoxes.append(m_ui.residualsTRDCheckBox);
+  m_trdCheckBoxes.append(m_ui.miscellaneousTRDCheckBox);
+
+  m_tofCheckBoxes.append(m_ui.timeOverThresholdCheckBox);
+  m_tofCheckBoxes.append(m_ui.momentumReconstructionCheckBox);
+  m_tofCheckBoxes.append(m_ui.efficiencyTofCheckBox);
+  m_tofCheckBoxes.append(m_ui.resolutionTofCheckBox);
+  m_tofCheckBoxes.append(m_ui.calibrationTofCheckBox);
+  m_tofCheckBoxes.append(m_ui.miscellaneousTOFCheckBox);
+  
+  foreach(QCheckBox* checkBox, m_topicCheckBoxes)
+    m_controlWidgets.append(checkBox);
+  m_controlWidgets.append(m_ui.selectAllButton);
+  m_controlWidgets.append(m_ui.selectTrackerButton);
+  m_controlWidgets.append(m_ui.selectTrdButton);
+  m_controlWidgets.append(m_ui.selectTofButton);
+  m_controlWidgets.append(m_ui.trackComboBox);
+  m_controlWidgets.append(m_ui.firstEventSpinBox);
+  m_controlWidgets.append(m_ui.lastEventSpinBox);
+  m_controlWidgets.append(m_ui.numberOfThreadsSpinBox);
+  m_controlWidgets.append(m_ui.alignmentCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.timeShiftCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.trdMopValueCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.timeOverThresholdCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.photonTravelTimeCorrectionCheckBox);
+
   connect(m_ui.analyzeButton, SIGNAL(clicked()), this, SLOT(analyzeButtonClicked()));
   connect(m_ui.plotter, SIGNAL(analysisStarted()), this, SLOT(toggleControlWidgetsStatus()));
   connect(m_ui.plotter, SIGNAL(analysisCompleted()), this, SLOT(toggleControlWidgetsStatus()));
@@ -75,10 +127,10 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.firstEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
   connect(m_ui.lastEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
 
-  connect(m_ui.toggleSelectionButton, SIGNAL(clicked()), this, SLOT(toggleSelectionButtonClicked()));
-  connect(m_ui.selectTofButton, SIGNAL(clicked()), this, SLOT(selectTofButtonClicked()));
-  connect(m_ui.selectTrdButton, SIGNAL(clicked()), this, SLOT(selectTrdButtonClicked()));
+  connect(m_ui.selectAllButton, SIGNAL(clicked()), this, SLOT(selectAllButtonClicked()));
   connect(m_ui.selectTrackerButton, SIGNAL(clicked()), this, SLOT(selectTrackerButtonClicked()));
+  connect(m_ui.selectTrdButton, SIGNAL(clicked()), this, SLOT(selectTrdButtonClicked()));
+  connect(m_ui.selectTofButton, SIGNAL(clicked()), this, SLOT(selectTofButtonClicked()));
   connect(m_ui.unzoomButton, SIGNAL(clicked()), this, SLOT(unzoomButtonClicked()));
   connect(m_ui.gridCheckBox, SIGNAL(stateChanged(int)), this, SLOT(gridCheckBoxChanged(int)));
   connect(m_ui.logXCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logXCheckBoxChanged(int)));
@@ -102,54 +154,8 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.miscellaneousTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTOFButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
 
-  m_topicCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
-  m_topicCheckBoxes.append(m_ui.signalHeightTRDCheckBox);
-  m_topicCheckBoxes.append(m_ui.clusterShapeTrackerCheckBox);
-  m_topicCheckBoxes.append(m_ui.clusterShapeTRDCheckBox);
-  m_topicCheckBoxes.append(m_ui.timeOverThresholdCheckBox);
-  m_topicCheckBoxes.append(m_ui.trackingCheckBox);
-  m_topicCheckBoxes.append(m_ui.occupancyCheckBox);
-  m_topicCheckBoxes.append(m_ui.residualsTrackerCheckBox);
-  m_topicCheckBoxes.append(m_ui.residualsTRDCheckBox);
-  m_topicCheckBoxes.append(m_ui.momentumReconstructionCheckBox);
-  m_topicCheckBoxes.append(m_ui.efficiencyTofCheckBox);
-  m_topicCheckBoxes.append(m_ui.resolutionTofCheckBox);
-  m_topicCheckBoxes.append(m_ui.calibrationTofCheckBox);
-  m_topicCheckBoxes.append(m_ui.miscellaneousTrackerCheckBox);
-  m_topicCheckBoxes.append(m_ui.miscellaneousTRDCheckBox);
-  m_topicCheckBoxes.append(m_ui.miscellaneousTOFCheckBox);
-
-  m_tofCheckBoxes.append(m_ui.timeOverThresholdCheckBox);
-  m_tofCheckBoxes.append(m_ui.momentumReconstructionCheckBox);
-  m_tofCheckBoxes.append(m_ui.efficiencyTofCheckBox);
-  m_tofCheckBoxes.append(m_ui.resolutionTofCheckBox);
-  m_tofCheckBoxes.append(m_ui.calibrationTofCheckBox);
-  m_tofCheckBoxes.append(m_ui.miscellaneousTOFCheckBox);
-
-  m_trdCheckBoxes.append(m_ui.signalHeightTRDCheckBox);
-  m_trdCheckBoxes.append(m_ui.clusterShapeTRDCheckBox);
-  m_trdCheckBoxes.append(m_ui.residualsTRDCheckBox);
-  m_trdCheckBoxes.append(m_ui.miscellaneousTRDCheckBox);
-
-  m_trackerCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
-  m_trackerCheckBoxes.append(m_ui.clusterShapeTrackerCheckBox);
-  m_trackerCheckBoxes.append(m_ui.trackingCheckBox);
-  m_trackerCheckBoxes.append(m_ui.residualsTrackerCheckBox);
-  m_trackerCheckBoxes.append(m_ui.momentumReconstructionCheckBox);
-  m_trackerCheckBoxes.append(m_ui.miscellaneousTrackerCheckBox);
-  
   foreach(QCheckBox* checkBox, m_topicCheckBoxes)
-    m_controlWidgets.append(checkBox);
-  m_controlWidgets.append(m_ui.toggleSelectionButton);
-  m_controlWidgets.append(m_ui.trackComboBox);
-  m_controlWidgets.append(m_ui.firstEventSpinBox);
-  m_controlWidgets.append(m_ui.lastEventSpinBox);
-  m_controlWidgets.append(m_ui.numberOfThreadsSpinBox);
-  m_controlWidgets.append(m_ui.alignmentCorrectionCheckBox);
-  m_controlWidgets.append(m_ui.timeShiftCorrectionCheckBox);
-  m_controlWidgets.append(m_ui.trdMopValueCorrectionCheckBox);
-  m_controlWidgets.append(m_ui.timeOverThresholdCorrectionCheckBox);
-  m_controlWidgets.append(m_ui.photonTravelTimeCorrectionCheckBox);
+    connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged()));
 
   setupPlots();
 }
@@ -591,33 +597,51 @@ void MainWindow::unzoomButtonClicked()
   m_ui.plotter->unzoom();
 }
 
-void MainWindow::toggleSelectionButtonClicked()
+void MainWindow::checkBoxChanged()
 {
-  bool b = m_ui.toggleSelectionButton->text() == "select &all";
-  m_ui.toggleSelectionButton->setText(b ? "deselect &all" : "select &all");
-  foreach(QCheckBox* checkBox, m_topicCheckBoxes)
-    checkBox->setChecked(b);
-}
-  
-void MainWindow::selectTofButtonClicked()
-{
-  foreach(QCheckBox* checkBox, m_tofCheckBoxes)
-    if (checkBox->isEnabled())
-      checkBox->setChecked(true);
+  checkSelectAll();
 }
 
-void MainWindow::selectTrdButtonClicked()
+void MainWindow::changeTopicGroupStatus(QVector<QCheckBox*>& group)
 {
-  foreach(QCheckBox* checkBox, m_trdCheckBoxes)
-    if (checkBox->isEnabled())
-      checkBox->setChecked(true);
+  bool groupAlreadyChecked = true;
+  foreach(QCheckBox* checkBox, group)
+    groupAlreadyChecked = groupAlreadyChecked && checkBox->isChecked();
+
+  bool newState = groupAlreadyChecked ? false : true;
+  foreach(QCheckBox* checkBox, group)
+    checkBox->setChecked(newState);
+
+  checkSelectAll();
+}
+ 
+void MainWindow::checkSelectAll()
+{
+  bool allTopicsChecked = true;
+  foreach(QCheckBox* checkBox, m_topicCheckBoxes)
+    allTopicsChecked = allTopicsChecked && checkBox->isChecked();
+
+  m_ui.selectAllButton->setText(allTopicsChecked ? "deselect &all" : "select &all");
+}
+
+void MainWindow::selectAllButtonClicked()
+{
+  changeTopicGroupStatus(m_topicCheckBoxes);
 }
 
 void MainWindow::selectTrackerButtonClicked()
 {
-  foreach(QCheckBox* checkBox, m_trackerCheckBoxes)
-    if (checkBox->isEnabled())
-      checkBox->setChecked(true);
+  changeTopicGroupStatus(m_trackerCheckBoxes);
+}
+
+void MainWindow::selectTrdButtonClicked()
+{
+  changeTopicGroupStatus(m_trdCheckBoxes);
+}
+ 
+void MainWindow::selectTofButtonClicked()
+{
+  changeTopicGroupStatus(m_tofCheckBoxes);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
