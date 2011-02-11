@@ -14,7 +14,6 @@
 #include <QVector>
 
 #include <cmath>
-#include <iostream>
 
 ClusterShapePlot::ClusterShapePlot(unsigned short id) :
   AnalysisPlot(AnalysisPlot::ClusterShapeTracker),
@@ -102,8 +101,10 @@ void ClusterShapePlot::draw(TCanvas* can)
 void ClusterShapePlot::update()
 {
   latex(0)->SetTitle(qPrintable(QString("events = %1").arg(m_eventCounter)));
-  m_eventCountAxis->SetY1(gPad->GetUymin());
-  m_eventCountAxis->SetY2(gPad->GetUymax());
+  double min = histogram(0)->GetMinimum();
+  double max = 1.05*histogram(0)->GetMaximum();
+  m_eventCountAxis->SetY1(min);
+  m_eventCountAxis->SetY2(max);
   m_eventCountAxis->SetWmax((1.05/0.9)*m_eventCounter);
 }
 
