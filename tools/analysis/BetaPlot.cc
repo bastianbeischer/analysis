@@ -24,6 +24,9 @@ BetaPlot::BetaPlot()
   addHistogram(histogram);
   addLatex(RootPlot::newLatex(.15, .85));
   addLatex(RootPlot::newLatex(.15, .82));
+  addLatex(RootPlot::newLatex(.15, .79));
+  addLatex(RootPlot::newLatex(.15, .76));
+  addLatex(RootPlot::newLatex(.15, .73));
 }
 
 BetaPlot::~BetaPlot()
@@ -42,6 +45,10 @@ void BetaPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
 
 void BetaPlot::update()
 {
-  latex(0)->SetTitle(qPrintable(QString("mean = %1").arg(histogram()->GetMean())));
-  latex(1)->SetTitle(qPrintable(QString("RMS  = %1").arg(histogram()->GetRMS())));
+  latex(0)->SetTitle(qPrintable(QString("entries = %1").arg(histogram()->GetEntries())));
+  latex(1)->SetTitle(qPrintable(QString("mean    = %1").arg(histogram()->GetMean())));
+  latex(2)->SetTitle(qPrintable(QString("RMS     = %1").arg(histogram()->GetRMS())));
+  latex(3)->SetTitle(qPrintable(QString("uflow   = %1").arg(histogram()->GetBinContent(0))));
+  int nBins = histogram()->GetXaxis()->GetNbins();
+  latex(4)->SetTitle(qPrintable(QString("oflow   = %1").arg(histogram()->GetBinContent(nBins+1))));
 }

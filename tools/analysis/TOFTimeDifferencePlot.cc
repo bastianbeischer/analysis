@@ -16,7 +16,7 @@
 #include <QDebug>
 
 TOFTimeDifferencePlot::TOFTimeDifferencePlot(unsigned short id)
-  : AnalysisPlot(AnalysisPlot::MiscellaneousTOF)
+  : AnalysisPlot(AnalysisPlot::CalibrationTOF)
   , H2DPlot()
   , m_id(id)
   , m_updateCounter(0)

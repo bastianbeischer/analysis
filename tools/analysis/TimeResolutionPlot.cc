@@ -16,7 +16,7 @@
 #include <QDebug>
 
 TimeResolutionPlot::TimeResolutionPlot(unsigned short idTop1, unsigned short idTop2, unsigned short idBottom1, unsigned short idBottom2)
-  : AnalysisPlot(AnalysisPlot::MiscellaneousTOF)
+  : AnalysisPlot(AnalysisPlot::ResolutionTOF)
   , H1DPlot()
   , m_idTop1(idTop1)
   , m_idTop2(idTop2)

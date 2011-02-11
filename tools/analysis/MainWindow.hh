@@ -27,6 +27,9 @@ private slots:
   void listWidgetCurrentRowChanged(int);
   void unzoomButtonClicked();
   void toggleSelectionButtonClicked();
+  void selectTofButtonClicked();
+  void selectTrdButtonClicked();
+  void selectTrackerButtonClicked();
   void gridCheckBoxChanged(int);
   void logXCheckBoxChanged(int);
   void logYCheckBoxChanged(int);
@@ -45,6 +48,9 @@ private:
   Ui_mainWindow m_ui;
   QVector<unsigned int> m_activePlots;
   QVector<QCheckBox*> m_topicCheckBoxes;
+  QVector<QCheckBox*> m_tofCheckBoxes;
+  QVector<QCheckBox*> m_trdCheckBoxes;
+  QVector<QCheckBox*> m_trackerCheckBoxes;
   QVector<QWidget*> m_controlWidgets;
   bool m_inhibitDraw;
 };

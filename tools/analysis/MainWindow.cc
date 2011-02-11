@@ -76,6 +76,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.lastEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
 
   connect(m_ui.toggleSelectionButton, SIGNAL(clicked()), this, SLOT(toggleSelectionButtonClicked()));
+  connect(m_ui.selectTofButton, SIGNAL(clicked()), this, SLOT(selectTofButtonClicked()));
+  connect(m_ui.selectTrdButton, SIGNAL(clicked()), this, SLOT(selectTrdButtonClicked()));
+  connect(m_ui.selectTrackerButton, SIGNAL(clicked()), this, SLOT(selectTrackerButtonClicked()));
   connect(m_ui.unzoomButton, SIGNAL(clicked()), this, SLOT(unzoomButtonClicked()));
   connect(m_ui.gridCheckBox, SIGNAL(stateChanged(int)), this, SLOT(gridCheckBoxChanged(int)));
   connect(m_ui.logXCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logXCheckBoxChanged(int)));
@@ -111,10 +114,30 @@ MainWindow::MainWindow(QWidget* parent)
   m_topicCheckBoxes.append(m_ui.momentumReconstructionCheckBox);
   m_topicCheckBoxes.append(m_ui.efficiencyTofCheckBox);
   m_topicCheckBoxes.append(m_ui.resolutionTofCheckBox);
+  m_topicCheckBoxes.append(m_ui.calibrationTofCheckBox);
   m_topicCheckBoxes.append(m_ui.miscellaneousTrackerCheckBox);
   m_topicCheckBoxes.append(m_ui.miscellaneousTRDCheckBox);
   m_topicCheckBoxes.append(m_ui.miscellaneousTOFCheckBox);
 
+  m_tofCheckBoxes.append(m_ui.timeOverThresholdCheckBox);
+  m_tofCheckBoxes.append(m_ui.momentumReconstructionCheckBox);
+  m_tofCheckBoxes.append(m_ui.efficiencyTofCheckBox);
+  m_tofCheckBoxes.append(m_ui.resolutionTofCheckBox);
+  m_tofCheckBoxes.append(m_ui.calibrationTofCheckBox);
+  m_tofCheckBoxes.append(m_ui.miscellaneousTOFCheckBox);
+
+  m_trdCheckBoxes.append(m_ui.signalHeightTRDCheckBox);
+  m_trdCheckBoxes.append(m_ui.clusterShapeTRDCheckBox);
+  m_trdCheckBoxes.append(m_ui.residualsTRDCheckBox);
+  m_trdCheckBoxes.append(m_ui.miscellaneousTRDCheckBox);
+
+  m_trackerCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
+  m_trackerCheckBoxes.append(m_ui.clusterShapeTrackerCheckBox);
+  m_trackerCheckBoxes.append(m_ui.trackingCheckBox);
+  m_trackerCheckBoxes.append(m_ui.residualsTrackerCheckBox);
+  m_trackerCheckBoxes.append(m_ui.momentumReconstructionCheckBox);
+  m_trackerCheckBoxes.append(m_ui.miscellaneousTrackerCheckBox);
+  
   foreach(QCheckBox* checkBox, m_topicCheckBoxes)
     m_controlWidgets.append(checkBox);
   m_controlWidgets.append(m_ui.toggleSelectionButton);
@@ -344,6 +367,7 @@ void MainWindow::setupPlots()
     }
   }
   if (m_ui.momentumReconstructionCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new BetaMomentumCorrelationPlot());
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::All));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Positive));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Negative));
@@ -360,6 +384,28 @@ void MainWindow::setupPlots()
       }
       element = setup->nextElement();
     }
+  }
+  if (m_ui.resolutionTofCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x8020, 0x8030));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8024, 0x8034));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8028, 0x8038));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x802c, 0x803c));
+  }
+  if (m_ui.calibrationTofCheckBox->isChecked()) {
+    DetectorElement* element = setup->firstElement();
+    while (element) {
+      if (element->type() == DetectorElement::tof)
+        m_ui.plotter->addPlot(new TOFTimeDifferencePlot(element->id()));
+      element = setup->nextElement();
+    }
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8000, 0x8010));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8004, 0x8014));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8008, 0x8018));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x800c, 0x801c));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8020, 0x8030));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8024, 0x8034));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8028, 0x8038));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x802c, 0x803c));
   }
   if (m_ui.miscellaneousTrackerCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TotalSignalHeightPlot);
@@ -382,37 +428,12 @@ void MainWindow::setupPlots()
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BetaPlot());
-    m_ui.plotter->addPlot(new BetaMomentumCorrelationPlot());
-
-    DetectorElement* element = 0;
-    
-    element = setup->firstElement();
+    DetectorElement* element = setup->firstElement();
     while (element) {
       if (element->type() == DetectorElement::tof)
         m_ui.plotter->addPlot(new TOFPositionCorrelationPlot(element->id()));
       element = setup->nextElement();
     }
-
-    element = setup->firstElement();
-    while (element) {
-      if (element->type() == DetectorElement::tof)
-        m_ui.plotter->addPlot(new TOFTimeDifferencePlot(element->id()));
-      element = setup->nextElement();
-    }
-
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8000, 0x8010));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8004, 0x8014));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8008, 0x8018));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x800c, 0x801c));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x802c, 0x803c));
-
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x802c, 0x803c));
   }
 }
 
@@ -576,6 +597,27 @@ void MainWindow::toggleSelectionButtonClicked()
   m_ui.toggleSelectionButton->setText(b ? "deselect &all" : "select &all");
   foreach(QCheckBox* checkBox, m_topicCheckBoxes)
     checkBox->setChecked(b);
+}
+  
+void MainWindow::selectTofButtonClicked()
+{
+  foreach(QCheckBox* checkBox, m_tofCheckBoxes)
+    if (checkBox->isEnabled())
+      checkBox->setChecked(true);
+}
+
+void MainWindow::selectTrdButtonClicked()
+{
+  foreach(QCheckBox* checkBox, m_trdCheckBoxes)
+    if (checkBox->isEnabled())
+      checkBox->setChecked(true);
+}
+
+void MainWindow::selectTrackerButtonClicked()
+{
+  foreach(QCheckBox* checkBox, m_trackerCheckBoxes)
+    if (checkBox->isEnabled())
+      checkBox->setChecked(true);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)

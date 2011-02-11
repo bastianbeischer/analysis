@@ -14,7 +14,7 @@
 #include <QDebug>
 
 TOFTimeShiftPlot::TOFTimeShiftPlot(unsigned short topBarId, unsigned short bottomBarId)
-  : AnalysisPlot(AnalysisPlot::MiscellaneousTOF)
+  : AnalysisPlot(AnalysisPlot::CalibrationTOF)
   , H2DPlot()
   , m_topBarId(topBarId)
   , m_bottomBarId(bottomBarId)
