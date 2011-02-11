@@ -43,6 +43,7 @@
 #include "TotalSignalHeightPlot.hh"
 #include "TOFEfficiencyPlot.hh"
 
+#include <QProcess>
 #include <QFileDialog>
 #include <QVBoxLayout>
 #include <QDebug>
@@ -53,7 +54,17 @@ MainWindow::MainWindow(QWidget* parent)
   , m_inhibitDraw(false)
 {
   m_ui.setupUi(this);
-  
+ 
+  QStringList envVariables = QProcess::systemEnvironment();
+  QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
+  QString path = "";
+  if (filteredVars.size() != 0) {
+    QString entry = filteredVars.first();
+    m_topLevelPath = entry.split("=").at(1);
+  } else {
+    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
+  }
+ 
   m_ui.plotter->setTitleLabel(m_ui.titleLabel);
   m_ui.plotter->setPositionLabel(m_ui.positionLabel);
   m_ui.plotter->setTimeLabel(m_ui.timeLabel);
@@ -115,6 +126,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.analyzeButton, SIGNAL(clicked()), this, SLOT(analyzeButtonClicked()));
   connect(m_ui.plotter, SIGNAL(analysisStarted()), this, SLOT(toggleControlWidgetsStatus()));
   connect(m_ui.plotter, SIGNAL(analysisCompleted()), this, SLOT(toggleControlWidgetsStatus()));
+  connect(m_ui.savePdfButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
+  connect(m_ui.savePngButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
+  connect(m_ui.saveRootButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
   
   connect(m_ui.saveCanvasAction, SIGNAL(triggered()), this, SLOT(saveCanvasActionTriggered()));
   connect(m_ui.saveAllCanvasesAction, SIGNAL(triggered()), this, SLOT(saveAllCanvasActionTriggered()));
@@ -131,7 +145,6 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.selectTrackerButton, SIGNAL(clicked()), this, SLOT(selectTrackerButtonClicked()));
   connect(m_ui.selectTrdButton, SIGNAL(clicked()), this, SLOT(selectTrdButtonClicked()));
   connect(m_ui.selectTofButton, SIGNAL(clicked()), this, SLOT(selectTofButtonClicked()));
-  connect(m_ui.unzoomButton, SIGNAL(clicked()), this, SLOT(unzoomButtonClicked()));
   connect(m_ui.gridCheckBox, SIGNAL(stateChanged(int)), this, SLOT(gridCheckBoxChanged(int)));
   connect(m_ui.logXCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logXCheckBoxChanged(int)));
   connect(m_ui.logYCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logYCheckBoxChanged(int)));
@@ -532,6 +545,25 @@ void MainWindow::setOrAddFileListActionTriggered()
   }
 }
 
+void MainWindow::saveButtonsClicked()
+{
+  QString fileName = m_topLevelPath + "/plots/" + m_ui.titleLabel->text();
+  QPushButton* b = static_cast<QPushButton*>(sender());
+  if (b == m_ui.savePdfButton) {
+    fileName+= ".pdf";
+  } else if (b == m_ui.savePngButton) {
+    fileName+= ".png";
+  } else if (b == m_ui.saveRootButton) {
+    fileName+= ".root";
+  } else {
+    return;
+  }
+  QDir dir(m_topLevelPath);
+  if (!dir.exists("plots"))
+    dir.mkdir("plots");
+  m_ui.plotter->saveCanvas(fileName);
+}
+
 void MainWindow::saveCanvasActionTriggered()
 {
   QStringList fileFormatEndings;
@@ -595,11 +627,6 @@ void MainWindow::saveForPostAnalysisActionTriggered()
   if (!fileName.endsWith(fileEnding))
     fileName.append(fileEnding);
   m_ui.plotter->saveForPostAnalysis(fileName);
-}
-
-void MainWindow::unzoomButtonClicked()
-{
-  m_ui.plotter->unzoom();
 }
 
 void MainWindow::checkBoxChanged()

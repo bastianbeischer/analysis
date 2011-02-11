@@ -73,12 +73,9 @@ void Plotter::setEventQueueProgressBar(QProgressBar* bar)
 
 void Plotter::mousePressEvent(QMouseEvent* event)
 {
+  if (event->button() == Qt::MidButton)
+    unzoom();
   TQtWidget::mousePressEvent(event);
-}
-
-void Plotter::mouseReleaseEvent(QMouseEvent* event)
-{
-  TQtWidget::mouseReleaseEvent(event);
 }
 
 void Plotter::mouseMoveEvent(QMouseEvent* event)

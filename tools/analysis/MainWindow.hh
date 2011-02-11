@@ -7,6 +7,7 @@
 #include "Corrections.hh"
 
 #include <QMainWindow>
+#include <QString>
 
 class QTabBar;
 
@@ -25,7 +26,6 @@ private slots:
   void saveForPostAnalysisActionTriggered();
   void listWidgetItemChanged(QListWidgetItem*);
   void listWidgetCurrentRowChanged(int);
-  void unzoomButtonClicked();
   void selectAllButtonClicked();
   void selectTrackerButtonClicked();
   void selectTrdButtonClicked();
@@ -35,6 +35,7 @@ private slots:
   void logYCheckBoxChanged(int);
   void showButtonsClicked();
   void analyzeButtonClicked();
+  void saveButtonsClicked();
   void firstOrLastEventChanged(int = 0);
   void numberOfEventsChanged(int);
   void toggleControlWidgetsStatus();
@@ -49,6 +50,7 @@ private:
   void closeEvent(QCloseEvent*);
 
   Ui_mainWindow m_ui;
+  QString m_topLevelPath;
   QVector<unsigned int> m_activePlots;
   QVector<QCheckBox*> m_topicCheckBoxes;
   QVector<QCheckBox*> m_tofCheckBoxes;
