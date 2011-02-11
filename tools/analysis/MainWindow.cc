@@ -150,6 +150,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.momentumReconstructionButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.efficiencyTofButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.resolutionTofButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.calibrationTofButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTOFButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
@@ -214,6 +215,8 @@ void MainWindow::showButtonsClicked()
     topic = AnalysisPlot::EfficiencyTOF;
   } else if (b == m_ui.resolutionTofButton) {
     topic = AnalysisPlot::ResolutionTOF;
+  } else if (b == m_ui.calibrationTofButton) {
+    topic = AnalysisPlot::CalibrationTOF;
   } else if (b == m_ui.miscellaneousTrackerButton) {
     topic = AnalysisPlot::MiscellaneousTracker;
   } else if (b == m_ui.miscellaneousTRDButton) {
@@ -480,6 +483,7 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
   m_ui.momentumReconstructionButton->setText("+");
   m_ui.efficiencyTofButton->setText("+");
   m_ui.resolutionTofButton->setText("+");
+  m_ui.calibrationTofButton->setText("+");
   m_ui.miscellaneousTrackerButton->setText("+");
   m_ui.miscellaneousTRDButton->setText("+");
   m_ui.miscellaneousTOFButton->setText("+");
@@ -496,6 +500,7 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
   m_ui.momentumReconstructionButton->setEnabled(m_ui.momentumReconstructionCheckBox->isChecked());
   m_ui.efficiencyTofButton->setEnabled(m_ui.efficiencyTofCheckBox->isChecked());
   m_ui.resolutionTofButton->setEnabled(m_ui.resolutionTofCheckBox->isChecked());
+  m_ui.calibrationTofButton->setEnabled(m_ui.calibrationTofCheckBox->isChecked());
   m_ui.miscellaneousTrackerButton->setEnabled(m_ui.miscellaneousTrackerCheckBox->isChecked());
   m_ui.miscellaneousTRDButton->setEnabled(m_ui.miscellaneousTRDCheckBox->isChecked());
   m_ui.miscellaneousTOFButton->setEnabled(m_ui.miscellaneousTOFCheckBox->isChecked());
