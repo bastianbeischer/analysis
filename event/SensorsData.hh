@@ -1,40 +1,41 @@
 #ifndef SensorsData_hh
 #define SensorsData_hh
 
-#include <TFile.h>
-#include <TTree.h>
-#include <map>
-#include <math.h>
-#include <iostream>
+#include <ctime>
 
-class SensorsData {
+class TFile;
+class TTree;
+
+class SensorsData
+{
 public:
-  enum DataType { SENSORS, ATC /*,EBASS*/ };
+  enum DataType { SENSORS, ATC, EBASS };
   
 public:
-  SensorsData();
-  bool setFile(const char* file);
-  float getPrevious(DataType type, const char* id, time_t time, unsigned int *diff);
-  float getNext(DataType type, const char* id, time_t time, unsigned int *diff);
-  float getAverage(DataType type, const char* id, time_t time); // Will return NaN if out of bounds.
-  std::map<unsigned int,float> getValues(DataType type, const char* id);
+  explicit SensorsData(DataType type, const char* file);
+  ~SensorsData();
+
+  int entryForTime(unsigned int time) const;
+  float previousValue(const char* id, unsigned int time, int& diff);
+  float nextValue(const char* id, unsigned int time, int& diff);
+  float averageValue(const char* id, unsigned int time); // Will return NaN if out of bounds.
+
+  char** keys() const;
+  int numberOfKeys() const;
+  TTree* tree() {return m_tree;}
+  bool good() const {return m_good;}
   
-  
-  char** getKeys(DataType type);
-  int getNumberOfKeys(DataType type);
-  
+public:
+  bool addRootFile(const char* file);
+
 private:
-  std::map<unsigned int,unsigned int> m_sensorstimes;
-  std::map<unsigned int,unsigned int> m_atctimes;
-  std::map<unsigned int,unsigned int> m_ebasstimes;
-  TTree* m_sensorstree;
-  TTree* m_atctree;
-  TTree* m_ebasstree;
+  DataType m_type;
+
   TFile* m_file;
-  bool m_init;
-  
-  TTree* getTree(DataType type);
-  std::map<unsigned int, unsigned int> getMap(DataType type);
+  TTree* m_tree;
+
+  unsigned int m_firstTime;
+  bool m_good;
   
 };
 

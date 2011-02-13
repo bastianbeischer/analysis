@@ -1,220 +1,151 @@
 #include "SensorsData.hh"
 
-SensorsData::SensorsData() {
-  m_file = NULL;
-  m_sensorstree = NULL;
-  m_ebasstree = NULL;
-  m_atctree = NULL;
-  m_init = false;
+#include <TFile.h>
+#include <TTree.h>
+
+#include <cmath>
+#include <iostream>
+
+SensorsData::SensorsData(DataType type, const char* filename) :
+  m_type(type),
+  m_file(0),
+  m_tree(0),
+  m_firstTime(0),
+  m_good(false)
+{
+  m_good = addRootFile(filename);
 }
 
-bool SensorsData::setFile(const char* file) {
-  m_file = new TFile(file);
+SensorsData::~SensorsData()
+{
+  delete m_file;
+}
+
+bool SensorsData::addRootFile(const char* filename)
+{
+  TFile* m_file = new TFile(filename);
   if (m_file->IsZombie()) {
     delete m_file;
-    m_file = NULL;
+    m_file = 0;
     return false;
   } 
-  m_sensorstree = (TTree*)m_file->Get("sensors");
-  m_atctree = (TTree*)m_file->Get("ATC");
-#ifdef EBASS
-  m_ebasstree = (TTree*)m_file->Get("EBASS");
-#endif
-  if ((m_sensorstree == NULL || m_atctree == NULL /*|| m_ebasstree == NULL*/)) {
-    delete m_sensorstree;
-    delete m_atctree;
-#ifdef EBASS
-    delete m_ebasstree;
-#endif
-    m_sensorstree = NULL;
-    m_atctree = NULL;
-    m_ebasstree = NULL;
+
+  switch (m_type) {
+  case SENSORS:
+    m_tree = static_cast<TTree*>(m_file->Get("sensors"));
+    break;
+  case ATC:
+    m_tree = static_cast<TTree*>(m_file->Get("ATC"));
+    break;
+  case EBASS:
+    m_tree = static_cast<TTree*>(m_file->Get("EBASS"));
+    break;
+  }
+
+  if (m_tree == 0) {
     return false;
   }
-  unsigned int atctime;
-  unsigned int sensortime;
-  m_atctree->SetBranchAddress("time",&atctime);
-  for (int i = 0;i<m_atctree->GetEntries();i++) {
-    m_atctree->GetEntry(i);
-    m_atctimes[atctime] = i;
-  }
-  m_sensorstree->SetBranchAddress("time",&sensortime);
-  for (int i = 0;i<m_sensorstree->GetEntries();i++) {
-    m_sensorstree->GetEntry(i);
-    m_sensorstimes[sensortime] = i;
-  }
-#ifdef EBASS
-  unsigned int ebasstime;
-  m_ebasstree->SetBranchAddress("time",&ebasstime);
-  for (int i = 0;i<m_ebasstree->GetEntries();i++) {
-    m_ebasstree->GetEntry(i);
-    m_ebasstimes[ebasstime] = i;
-  }
-#endif
-  m_init = true;
+
+  unsigned int time;
+  m_tree->SetBranchAddress("time",&time);
+  m_tree->GetEntry(0);
+  m_firstTime = time;
+
   return true;
 }
 
-float SensorsData::getPrevious(DataType type, const char* id, time_t time, unsigned int *diff) {
-  TTree* tree = this->getTree(type);
-  std::map<unsigned int,unsigned int> map = this->getMap(type);
-  float var = sqrt(-1);
-  if (!tree->GetBranch(id)) {
+int SensorsData::entryForTime(unsigned int time) const
+{
+  if (time < m_firstTime || time > m_firstTime + m_tree->GetEntries()) {
+    std::cerr << "Tree does not contain the requested time " << time 
+              << " (first time = " << m_firstTime << ", entries = " << m_tree->GetEntries() << ")" << std::endl;
+    return 0;
+  }
+
+  return time - m_firstTime;
+}
+
+
+float SensorsData::previousValue(const char* id, unsigned int time, int& diff)
+{
+  if (!m_tree->GetBranch(id)) {
     std::cerr << "Branch " << id << "not found.";
     return sqrt(-1);
   }
-  tree->SetBranchAddress(id,&var);
-  std::map<unsigned int,unsigned int>::iterator it = map.find(time);
-  if (it == map.end()) {
-    it = map.lower_bound(time);
-    if ((*it).first > (unsigned long)time) {
-      it--;
-    };
-  }
-  if (it == map.end() || it == map.begin()) {
-    return sqrt(-1);
-  } else {
-    tree->GetEntry((*it).second);
-    while ((!(var == var)) && (it != map.begin())) {
-      it--;
-      tree->GetEntry((*it).second);
-    }
-    if (it == map.begin()) {
-      return sqrt(-1);
-    } else {
-      *diff = time-(*it).first;
-      return var;
-    }
-  }
+
+  int exactEntry = entryForTime(time);
   
-}
-
-
-float SensorsData::getNext(DataType type, const char* id, time_t time, unsigned int *diff) {
-  TTree* tree = this->getTree(type);
-  std::map<unsigned int,unsigned int> map = this->getMap(type);
   float var = sqrt(-1);
-  if (!tree->GetBranch(id)) {
-    std::cerr << "Branch " << id << " not found.";
+  m_tree->SetBranchAddress(id,&var);
+  m_tree->GetEntry(exactEntry);
+  int entry = exactEntry;
+  while(!(var == var) && entry >= 0 && entry < m_tree->GetEntries()) {
+    m_tree->GetEntry(entry);
+    entry--;
+  }
+  diff = entry - exactEntry;
+
+  return var;
+}
+
+float SensorsData::nextValue(const char* id, unsigned int time, int& diff)
+{
+  if (!m_tree->GetBranch(id)) {
+    std::cerr << "Branch " << id << "not found.";
     return sqrt(-1);
   }
-  tree->SetBranchAddress(id,&var);
-  std::map<unsigned int,unsigned int>::iterator it = map.find(time);
-  if (it == map.end() || it == map.begin()) {
-    it = map.lower_bound(time);
-  }
-  if (it == map.end()) {
+
+  if (time < m_firstTime || time > m_firstTime + m_tree->GetEntries()) {
+    std::cerr << "Tree does not contain the requested time " << time 
+              << " (first time = " << m_firstTime << ", entries = " << m_tree->GetEntries() << ")" << std::endl;
     return sqrt(-1);
-  } else {
-    tree->GetEntry((*it).second);
-    while ((!(var == var)) && (it != map.end())) {
-      it++;
-      tree->GetEntry((*it).second);
-    }
-    if (it == map.end()) {
-      return sqrt(-1);
-    } else {
-      *diff = (*it).first - time;
-      return var;
-    }
   }
+
+  int exactEntry = entryForTime(time);
+
+  float var = sqrt(-1);
+  m_tree->SetBranchAddress(id,&var);
+  m_tree->GetEntry(exactEntry);
+  int entry = exactEntry;
+  while(!(var == var) && entry >= 0 && entry < m_tree->GetEntries()) {
+    m_tree->GetEntry(entry);
+    entry++;
+  }
+  diff = entry - exactEntry;
+
+  return var;
 }
 
-float SensorsData::getAverage(DataType type, const char* id, time_t time) {
-  unsigned int diff1 = 0;
-  unsigned int diff2 = 0;
-  float first = this->getNext(type, id, time, &diff1);
-  float second = this->getPrevious(type, id, time, &diff2);
-  std::cout << "";
-  if (diff2 == 0) {
-    return second;
-  } else {
-    float value = (((float)(diff2)*first + (float)(diff1)*second))/((double)(diff1+diff2));
-    value++;
-    value--;
-    return value;
-  }
+float SensorsData::averageValue(const char* id, unsigned int time)
+{
+  // int prevDiff = 0;
+  // float prevValue = previousValue(id, time, prevDiff);
+  // int nextDiff = 0;
+  // float nextValue = nextValue(id, time, nextDiff);
+
+  // float distance = fabs(nextDiff - prevDiff);
+  return 0.;
 }
 
-std::map<unsigned int,float> SensorsData::getValues(DataType type, const char* id) {
-  TTree* tree = getTree(type);
-  std::map<unsigned int,float> map;
-  float var;
-  unsigned int time;
-  if (!tree->GetBranch(id)) {
-    std::cerr << "Branch " << id << " not found.";
-    return map;
-  }
-  tree->SetBranchAddress(id,&var);
-  tree->SetBranchAddress("time",&time);
-  for (int i = 0; i<tree->GetEntries();i++) {
-    tree->GetEntry(i);
-    if (var==var) {
-      map[time] = var;
-    }
-  }
-  return map;
-}
-
-TTree* SensorsData::getTree(DataType type) {
-  switch (type) {
-  case ATC:
-    return m_atctree;
-    break;
-#ifdef EBASS
-  case EBASS:
-    return m_ebasstree;
-    break;
-#endif
-  case SENSORS:
-    return m_sensorstree;
-    break;
-  default:
-    return NULL;
-    break;
-  }
-}
-
-std::map<unsigned int,unsigned int> SensorsData::getMap(DataType type) {
-  switch (type) {
-  case ATC:
-    return m_atctimes;
-    break;
-#ifdef EBASS
-  case EBASS:
-    return m_ebasstimes;
-    break;
-#endif
-  case SENSORS:
-    return m_sensorstimes;
-    break;
-  default:
-    std::map<unsigned int, unsigned int> emptymap;
-    return emptymap;
-    break;
-  }
-}
-
-char** SensorsData::getKeys(DataType type) {
-  TTree* tree = getTree(type);
-  TObjArray* array = tree->GetListOfBranches();
-  char** array2 = new char*[array->GetEntries()];
-  
+char** SensorsData::keys() const
+{
+  TObjArray* branches = m_tree->GetListOfBranches();
+  char** keys = new char*[branches->GetEntries()];
   
   int i = 0;
   int k = 0;
-  while (k<array->GetEntries()) {
-    if (strcmp(array->At(i)->GetName(),"time") != 0) {
-      array2[i] = const_cast<char*>(array->At(k)->GetName());
+  while (k < branches->GetEntries()) {
+    if (strcmp(branches->At(i)->GetName(),"time") != 0) {
+      keys[i] = const_cast<char*>(branches->At(k)->GetName());
       i++;
     }
     k++;
   }
-  return array2;
+  return keys;
 }
 
-int SensorsData::getNumberOfKeys(DataType type) {
-  TTree* tree = getTree(type);
-  TObjArray* array = tree->GetListOfBranches();
-  return array->GetEntries()-1;
+int SensorsData::numberOfKeys() const
+{
+  TObjArray* branches = m_tree->GetListOfBranches();
+  return branches->GetEntries()-1;
 }
