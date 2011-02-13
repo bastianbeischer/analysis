@@ -8,4 +8,5 @@ SUBDIRS  = \
   parser \
   preAnalysis \
   analysis \
-  postAnalysis
+  postAnalysis \
+  pdf
