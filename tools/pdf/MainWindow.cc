@@ -8,6 +8,28 @@ MainWindow::MainWindow(QWidget* parent)
   : QDialog(parent)
 {
   m_ui.setupUi(this);
+
+  QStringList envVariables = QProcess::systemEnvironment();
+  QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
+  QString topLevelPath = "";
+  if (filteredVars.size() != 0) {
+    QString entry = filteredVars.first();
+    topLevelPath = entry.split("=").at(1);
+  } else {
+    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
+  }
+
+  QFile file(topLevelPath + "/tools/pdf/" + "template.tex");
+  if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    qFatal("Couldn't open template file!");
+  }
+
+  QTextStream in(&file);
+  while (!in.atEnd()) {
+    QString line = in.readLine();
+    m_ui.texTextEdit->appendPlainText(line);
+  }
+
   connect(m_ui.addFilesButton, SIGNAL(clicked()), this, SLOT(addFilesButtonClicked()));
   connect(m_ui.createButton, SIGNAL(clicked()), this, SLOT(createButtonClicked()));
   connect(m_ui.upButton, SIGNAL(clicked()), this, SLOT(upButtonClicked()));
