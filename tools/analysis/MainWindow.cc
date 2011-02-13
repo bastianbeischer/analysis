@@ -57,7 +57,6 @@ MainWindow::MainWindow(QWidget* parent)
  
   QStringList envVariables = QProcess::systemEnvironment();
   QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
-  QString path = "";
   if (filteredVars.size() != 0) {
     QString entry = filteredVars.first();
     m_topLevelPath = entry.split("=").at(1);
