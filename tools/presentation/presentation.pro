@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = pdf
+TARGET = presentation
 
 TOPLEVEL = ../..
 

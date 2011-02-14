@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget* parent)
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
 
-  QFile file(topLevelPath + "/tools/pdf/" + "template.tex");
+  QFile file(topLevelPath + "/tools/presentation/" + "template.tex");
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
     qFatal("Couldn't open template file!");
   }
@@ -52,19 +52,17 @@ void MainWindow::createTexFile()
         QTableWidgetItem* titleItem = m_ui.tableWidget->item(i, 0);
         QTableWidgetItem* fileItem = m_ui.tableWidget->item(i, 1);
         if (titleItem && fileItem) {
-          QString title = titleItem->text();
-          QString fileName = fileItem->text();
-          QString linkName = fileName.right(fileName.size() - fileName.lastIndexOf("/"));
-          linkName.remove(' ');
           QDir dir(QDir::tempPath());
-          if (!dir.exists("pdf"))
-            dir.mkdir("pdf");
-          linkName.prepend(QDir::tempPath()+"/pdf");
+          if (!dir.exists("presentation"))
+            dir.mkdir("presentation");
+          QString fileName = fileItem->text();
+          QString fileEnding = fileName.right(fileName.size() - fileName.lastIndexOf(".") - 1);
+          QString linkName = QString("%1/presentation/slide%2.%3").arg(QDir::tempPath()).arg(i+1).arg(fileEnding);
           if (QFile::exists(linkName))
             QFile::remove(linkName);
-          QFile::link(fileName, linkName);
+          QFile::link(fileItem->text(), linkName);
           qDebug() << linkName;
-          m_ui.texTextEdit->appendPlainText(QString("\\addSlide{%1}{%2}").arg(title).arg(linkName));
+          m_ui.texTextEdit->appendPlainText(QString("\\addSlide{%1}{%2}").arg(titleItem->text()).arg(linkName));
         }
       }
       m_ui.texTextEdit->appendPlainText("\\end{document}");
