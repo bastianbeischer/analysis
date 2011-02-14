@@ -36,13 +36,12 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.insertButton, SIGNAL(clicked()), this, SLOT(insertButtonClicked()));
   connect(m_ui.removeButton, SIGNAL(clicked()), this, SLOT(removeButtonClicked()));
   connect(m_ui.downButton, SIGNAL(clicked()), this, SLOT(downButtonClicked()));
-  connect(m_ui.tableWidget, SIGNAL(itemChanged(QTableWidgetItem*)), this, SLOT(tableWidgetItemChanged()));
 }
 
 MainWindow::~MainWindow()
 {}
 
-void MainWindow::tableWidgetItemChanged()
+void MainWindow::createTexFile()
 {
   QStringList tex = m_ui.texTextEdit->toPlainText().split('\n');
   m_ui.texTextEdit->clear();
@@ -50,10 +49,23 @@ void MainWindow::tableWidgetItemChanged()
     if (line == "\\begin{document}") {
       m_ui.texTextEdit->appendPlainText(line);
       for (int i = 0; i < m_ui.tableWidget->rowCount(); ++i) {
-        QTableWidgetItem* title = m_ui.tableWidget->item(i, 0);
-        QTableWidgetItem* file = m_ui.tableWidget->item(i, 1);
-        if (title && file)
-          m_ui.texTextEdit->appendPlainText(QString("\\addSlide{%1}{%2}").arg(title->text()).arg(file->text()));
+        QTableWidgetItem* titleItem = m_ui.tableWidget->item(i, 0);
+        QTableWidgetItem* fileItem = m_ui.tableWidget->item(i, 1);
+        if (titleItem && fileItem) {
+          QString title = titleItem->text();
+          QString fileName = fileItem->text();
+          QString linkName = fileName.right(fileName.size() - fileName.lastIndexOf("/"));
+          linkName.remove(' ');
+          QDir dir(QDir::tempPath());
+          if (!dir.exists("pdf"))
+            dir.mkdir("pdf");
+          linkName.prepend(QDir::tempPath()+"/pdf");
+          if (QFile::exists(linkName))
+            QFile::remove(linkName);
+          QFile::link(fileName, linkName);
+          qDebug() << linkName;
+          m_ui.texTextEdit->appendPlainText(QString("\\addSlide{%1}{%2}").arg(title).arg(linkName));
+        }
       }
       m_ui.texTextEdit->appendPlainText("\\end{document}");
       break;
@@ -85,6 +97,7 @@ void MainWindow::addFilesButtonClicked()
 
 void MainWindow::createButtonClicked()
 {
+  createTexFile();
   QProcess process(this);
   QStringList arguments;
   arguments.append("-halt-on-error");
@@ -119,7 +132,6 @@ int MainWindow::insertButtonClicked()
   if (cr < 0) cr = 0;
   m_ui.tableWidget->insertRow(cr);
   m_ui.tableWidget->setCurrentCell(cr, 0);
-  tableWidgetItemChanged();
   return cr;
 }
 
@@ -127,7 +139,6 @@ void MainWindow::removeButtonClicked()
 {
   int cr = m_ui.tableWidget->currentRow();
   m_ui.tableWidget->removeRow(cr);
-  tableWidgetItemChanged();
 }
 
 void MainWindow::downButtonClicked()

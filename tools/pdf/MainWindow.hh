@@ -13,13 +13,13 @@ public:
   ~MainWindow();
   void addFile(const QString& = QString());
 private slots:
+  void createTexFile();
   void addFilesButtonClicked();
   void createButtonClicked();
   void upButtonClicked();
   int insertButtonClicked();
   void removeButtonClicked();
   void downButtonClicked();
-  void tableWidgetItemChanged();
 private:
   Ui_mainWindow m_ui;
 };
