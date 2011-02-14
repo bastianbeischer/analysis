@@ -61,7 +61,6 @@ void MainWindow::createTexFile()
           if (QFile::exists(linkName))
             QFile::remove(linkName);
           QFile::link(fileItem->text(), linkName);
-          qDebug() << linkName;
           m_ui.texTextEdit->appendPlainText(QString("\\addSlide{%1}{%2}").arg(titleItem->text()).arg(linkName));
         }
       }
