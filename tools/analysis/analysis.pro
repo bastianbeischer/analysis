@@ -63,6 +63,7 @@ CLASSES = \
   TRDSpectrumPlot \
   TimeResolutionPlot \
   TotalEnergyDepositionPlot \
+  TotalEnergyDepositionTRDvsTrackerPlot \
   TOFEfficiencyPlot
 
 SOURCES += \
