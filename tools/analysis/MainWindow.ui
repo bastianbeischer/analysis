@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>PERDaix analysis</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/graphics/logo/Logo.svg</normaloff>:/graphics/logo/Logo.svg</iconset>
+  </property>
   <widget class="QWidget" name="mainWidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
@@ -1748,6 +1752,8 @@ over threshold</string>
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

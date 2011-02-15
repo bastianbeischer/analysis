@@ -71,3 +71,6 @@ SOURCES += \
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
 include($$TOPLEVEL/common.pri)
+
+RESOURCES += \
+    resources.qrc
