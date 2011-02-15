@@ -26,7 +26,7 @@ TotalEnergyDepositionTRDvsTrackerPlot::~TotalEnergyDepositionTRDvsTrackerPlot()
 {
 }
 
-void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* event)
+void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
 {
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
