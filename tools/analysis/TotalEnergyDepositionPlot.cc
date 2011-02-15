@@ -27,7 +27,7 @@ TotalEnergyDepositionPlot::~TotalEnergyDepositionPlot()
 {
 }
 
-void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* event)
+void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent* event)
 {
 
   /*
@@ -56,7 +56,7 @@ void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>& hits, Track* t
     return;
 
   double signalSum = 0;
-  double distanceSum = 0;
+  // double distanceSum = 0;
 
   int trdCluster = 0;
 
