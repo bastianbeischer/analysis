@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="resources.qrc">
-    <normaloff>:/graphics/logo/Logo.svg</normaloff>:/graphics/logo/Logo.svg</iconset>
+    <normaloff>:/graphics/logo/windowLogo</normaloff>:/graphics/logo/windowLogo</iconset>
   </property>
   <widget class="QWidget" name="mainWidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -115,9 +115,9 @@
           <property name="geometry">
            <rect>
             <x>0</x>
-            <y>-39</y>
-            <width>183</width>
-            <height>546</height>
+            <y>0</y>
+            <width>194</width>
+            <height>674</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -1345,7 +1345,7 @@ reconstruction</string>
            </property>
            <property name="maximumSize">
             <size>
-             <width>220</width>
+             <width>350</width>
              <height>16777215</height>
             </size>
            </property>
@@ -1504,7 +1504,7 @@ reconstruction</string>
             <x>0</x>
             <y>0</y>
             <width>200</width>
-            <height>145</height>
+            <height>191</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1639,7 +1639,7 @@ over threshold</string>
      <x>0</x>
      <y>0</y>
      <width>1122</width>
-     <height>21</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="font">

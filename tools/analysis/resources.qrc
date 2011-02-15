@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/graphics/logo">
-        <file>Logo.svg</file>
+        <file alias="windowLogo">Logo.svg</file>
     </qresource>
 </RCC>
