@@ -25,7 +25,7 @@ LIBS += \
 CLASSES = \
   MainWindow \
   PostAnalysisPlot \
-  TimeDifferenceHistogram
+  TimeShiftHistogram
 
 SOURCES = \
   main.cc
