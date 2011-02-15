@@ -140,6 +140,9 @@
            </item>
            <item row="1" column="5">
             <widget class="QPushButton" name="signalHeightTrackerButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -185,6 +188,9 @@
            </item>
            <item row="7" column="5">
             <widget class="QPushButton" name="signalHeightTRDButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -230,6 +236,9 @@
            </item>
            <item row="28" column="5">
             <widget class="QPushButton" name="miscellaneousTOFButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -270,6 +279,9 @@
            </item>
            <item row="9" column="5">
             <widget class="QPushButton" name="clusterShapeTRDButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -310,6 +322,9 @@
            </item>
            <item row="20" column="5">
             <widget class="QPushButton" name="efficiencyTofButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -345,6 +360,9 @@
            </item>
            <item row="22" column="5">
             <widget class="QPushButton" name="resolutionTofButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -429,6 +447,9 @@
            </item>
            <item row="23" column="5">
             <widget class="QPushButton" name="calibrationTofButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -471,6 +492,9 @@
            </item>
            <item row="2" column="5">
             <widget class="QPushButton" name="clusterShapeTrackerButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -523,6 +547,9 @@
            </item>
            <item row="3" column="5">
             <widget class="QPushButton" name="trackingButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -575,6 +602,9 @@
            </item>
            <item row="4" column="5">
             <widget class="QPushButton" name="residualsTrackerButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -720,6 +750,9 @@
            </item>
            <item row="11" column="5">
             <widget class="QPushButton" name="residualsTRDButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -773,6 +806,9 @@ threshold</string>
            </item>
            <item row="18" column="5">
             <widget class="QPushButton" name="timeOverThresholdButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -857,6 +893,9 @@ reconstruction</string>
            </item>
            <item row="30" column="5">
             <widget class="QPushButton" name="momentumReconstructionButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -909,6 +948,9 @@ reconstruction</string>
            </item>
            <item row="31" column="5">
             <widget class="QPushButton" name="occupancyButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -961,6 +1003,9 @@ reconstruction</string>
            </item>
            <item row="12" column="5">
             <widget class="QPushButton" name="miscellaneousTRDButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -1013,6 +1058,9 @@ reconstruction</string>
            </item>
            <item row="5" column="5">
             <widget class="QPushButton" name="miscellaneousTrackerButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                <horstretch>0</horstretch>
