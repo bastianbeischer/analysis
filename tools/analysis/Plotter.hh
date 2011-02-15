@@ -36,6 +36,7 @@ public:
   void setGrid(bool);
   void setLogX(bool);
   void setLogY(bool);
+  void setLogZ(bool);
   void setDataChainProgressBar(QProgressBar*);
   void setEventQueueProgressBar(QProgressBar*);
   void saveCanvas(const QString& fileName);

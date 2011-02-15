@@ -33,6 +33,7 @@ private slots:
   void gridCheckBoxChanged(int);
   void logXCheckBoxChanged(int);
   void logYCheckBoxChanged(int);
+  void logZCheckBoxChanged(int);
   void showButtonsClicked();
   void analyzeButtonClicked();
   void saveButtonsClicked();

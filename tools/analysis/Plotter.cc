@@ -304,6 +304,12 @@ void Plotter::setLogY(bool b)
   updateCanvas();
 }
 
+void Plotter::setLogZ(bool b)
+{
+  gPad->SetLogz(b);
+  updateCanvas();
+}
+
 void Plotter::setFirstEvent(int event)
 {
   m_firstEvent = event;

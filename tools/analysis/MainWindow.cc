@@ -147,6 +147,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.gridCheckBox, SIGNAL(stateChanged(int)), this, SLOT(gridCheckBoxChanged(int)));
   connect(m_ui.logXCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logXCheckBoxChanged(int)));
   connect(m_ui.logYCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logYCheckBoxChanged(int)));
+  connect(m_ui.logZCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logZCheckBoxChanged(int)));
   connect(m_ui.listWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(listWidgetItemChanged(QListWidgetItem*)));
   connect(m_ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(listWidgetCurrentRowChanged(int)));
 
@@ -702,6 +703,11 @@ void MainWindow::logXCheckBoxChanged(int value)
 void MainWindow::logYCheckBoxChanged(int value)
 {
   m_ui.plotter->setLogY(value);
+}
+
+void MainWindow::logZCheckBoxChanged(int value)
+{
+  m_ui.plotter->setLogZ(value);
 }
 
 void MainWindow::firstOrLastEventChanged(int)
