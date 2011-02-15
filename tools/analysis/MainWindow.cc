@@ -723,10 +723,9 @@ void MainWindow::firstOrLastEventChanged(int)
 void MainWindow::numberOfEventsChanged(int nEvents)
 {
   m_ui.firstEventSpinBox->setMinimum(0);
+  m_ui.lastEventSpinBox->setMaximum(nEvents-1);
   m_ui.firstEventSpinBox->setValue(0);
   m_ui.lastEventSpinBox->setValue(nEvents-1);
-  m_ui.lastEventSpinBox->setMaximum(nEvents-1);
-  firstOrLastEventChanged();
 }
 
 void MainWindow::toggleControlWidgetsStatus()
