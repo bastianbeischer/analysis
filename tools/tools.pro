@@ -10,3 +10,8 @@ SUBDIRS  = \
   analysis \
   postAnalysis \
   presentation
+
+macx {
+  message("skipping parser on MacOS X")
+  SUBDIRS-=parser
+}

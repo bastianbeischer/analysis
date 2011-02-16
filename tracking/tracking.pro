@@ -23,6 +23,10 @@ INCLUDEPATH += \
   $$TOPLEVEL/event \
   $$TOPLEVEL/global
 
+DEPENDPATH += $$INCLUDEPATH
+
+LIBS += -L$$TOPLEVEL/lib -lSimpleEvent
+
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
 include($$TOPLEVEL/common.pri)
