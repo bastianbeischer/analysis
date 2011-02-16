@@ -43,6 +43,7 @@
 #include "TOFTimeDifferencePlot.hh"
 #include "TotalSignalHeightPlot.hh"
 #include "TOFEfficiencyPlot.hh"
+#include "TimeOverThresholdMomentumCorrelation.hh"
 
 #include <QProcess>
 #include <QFileDialog>
@@ -355,6 +356,13 @@ void MainWindow::setupPlots()
     }
   }
   if (m_ui.timeOverThresholdCheckBox->isChecked()) {
+    DetectorElement* element = setup->firstElement();
+    while (element) {
+      if (element->type() == DetectorElement::tof)
+        for (int ch = 0; ch < 4; ++ch)
+          m_ui.plotter->addPlot(new TimeOverThresholdMomentumCorrelation(element->id() | ch));
+      element = setup->nextElement();
+    }
   }
   if (m_ui.trackingCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BendingPositionPlot);
