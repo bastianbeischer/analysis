@@ -65,7 +65,8 @@ CLASSES = \
   TotalEnergyDepositionPlot \
   TotalEnergyDepositionTRDvsTrackerPlot \
   TOFEfficiencyPlot \
-  TimeOverThresholdMomentumCorrelation
+  TimeOverThresholdMomentumCorrelation \
+  TimeOverThresholdPlot
 
 SOURCES += \
   main.cc

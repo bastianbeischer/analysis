@@ -44,6 +44,7 @@
 #include "TotalSignalHeightPlot.hh"
 #include "TOFEfficiencyPlot.hh"
 #include "TimeOverThresholdMomentumCorrelation.hh"
+#include "TimeOverThresholdPlot.hh"
 
 #include <QProcess>
 #include <QFileDialog>
@@ -356,6 +357,7 @@ void MainWindow::setupPlots()
     }
   }
   if (m_ui.timeOverThresholdCheckBox->isChecked()) {
+     m_ui.plotter->addPlot(new TimeOverThresholdPlot);
     DetectorElement* element = setup->firstElement();
     while (element) {
       if (element->type() == DetectorElement::tof)
