@@ -65,6 +65,7 @@ CLASSES = \
   TotalEnergyDepositionPlot \
   TotalEnergyDepositionTRDvsTrackerPlot \
   TOFEfficiencyPlot \
+  TrackingEfficiencyVsMomentumPlot \
   TimeOverThresholdMomentumCorrelation \
   TimeOverThresholdPlot
 

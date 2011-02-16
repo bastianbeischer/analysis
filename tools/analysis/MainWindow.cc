@@ -28,6 +28,7 @@
 #include "BetaMomentumCorrelationPlot.hh"
 #include "CutStatisticsPlot.hh"
 #include "TrackerLayerStatisticsPlot.hh"
+#include "TrackingEfficiencyVsMomentumPlot.hh"
 #include "TRDClustersOnTrackPlot.hh"
 #include "TRDDistanceWireToTrackPlot.hh"
 #include "TRDDistanceInTube.hh"
@@ -452,6 +453,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TotalSignalHeightPlot);
     m_ui.plotter->addPlot(new CutStatisticsPlot);
     m_ui.plotter->addPlot(new TrackerLayerStatisticsPlot);
+    m_ui.plotter->addPlot(new TrackingEfficiencyVsMomentumPlot);
   }
   if (m_ui.miscellaneousTRDCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisPlot::MiscellaneousTRD));
