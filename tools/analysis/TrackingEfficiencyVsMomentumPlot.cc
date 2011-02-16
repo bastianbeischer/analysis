@@ -31,7 +31,7 @@ void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, Track*
   const TrackInformation* info = track->information();
 
   TrackInformation::Flags flags = info->flags();
-  if ( !(flags & TrackInformation::InsideMagnet) || (flags & TrackInformation::Albedo) )
+  if ( !(flags & TrackInformation::InsideMagnet) || !(flags & TrackInformation::Chi2Good) )
     return;
 
   QMap<double, int> hitsInLayers = info->hitsInLayers();

@@ -57,7 +57,7 @@ void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, 
     return;
 
   TrackInformation::Flags flags = track->information()->flags();
-  if ( !(flags & TrackInformation::InsideMagnet) || (flags & TrackInformation::Albedo) )
+  if ( !(flags & TrackInformation::InsideMagnet) || !(flags & TrackInformation::Chi2Good) )
     return;
 
   for (int i = 0; i < m_nLayers; i++) {
