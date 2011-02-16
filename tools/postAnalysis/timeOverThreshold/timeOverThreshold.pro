@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = timeShift
+TARGET = timeOverThreshold
 
 CONFIG += debug
 
@@ -25,7 +25,7 @@ LIBS += \
 CLASSES = \
   MainWindow \
   PostAnalysisPlot \
-  TimeShiftHistogram
+  timeOverThresholdProjection
 
 SOURCES = \
   main.cc

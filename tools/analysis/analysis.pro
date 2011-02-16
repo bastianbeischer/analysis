@@ -67,7 +67,10 @@ CLASSES = \
   TRDSpectrumPlot \
   TimeResolutionPlot \
   TotalEnergyDepositionPlot \
-  TOFEfficiencyPlot
+  TotalEnergyDepositionTRDvsTrackerPlot \
+  TOFEfficiencyPlot \
+  TimeOverThresholdMomentumCorrelation \
+  TimeOverThresholdPlot
 
 
 SOURCES += \
@@ -77,3 +80,6 @@ SOURCES += \
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
 include($$TOPLEVEL/common.pri)
+
+RESOURCES += \
+    resources.qrc

@@ -133,13 +133,21 @@ double Corrections::photonTravelTime(double bending, double nonBending, double* 
   double b = bending * 2. / Constants::tofBarWidth;
   Q_ASSERT(qAbs(a) <= 1.);
   Q_ASSERT(qAbs(b) <= 1.);
-  double s = (nonBending < 0) ? 1 : 0;
-  return p[0] * a + p[1] * s * pow(qAbs(a), p[2]) * (1-cos(M_PI * pow(qAbs(b), p[3])));
+  if (a > 0) return p[0] * a;
+  double c = (b < 0) ? p[1] : p[2];
+  return p[0] * a + c * pow(qAbs(a), 8) * (1-cos(M_PI * b));
 }
 
 double Corrections::photonTravelTimeDifference(double bending, double nonBending, double* p)
 {
-  return photonTravelTime(bending, nonBending, p) - photonTravelTime(bending, -nonBending, p);
+  double p1[numberOfPhotonTravelTimeParameters];
+  double p2[numberOfPhotonTravelTimeParameters];
+  p1[0] = p2[0] = p[1];
+  for (int i = 1; i < numberOfPhotonTravelTimeParameters; ++i) {
+    p1[i] = p[i+1];
+    p2[i] = p[i+numberOfPhotonTravelTimeParameters];
+  }
+  return p[0] + photonTravelTime(bending, nonBending, p1) - photonTravelTime(bending, -nonBending, p2);
 }
 
 void Corrections::photonTravelTime(Track* track)
@@ -150,15 +158,29 @@ void Corrections::photonTravelTime(Track* track)
     if (!strcmp(cluster->ClassName(), "TOFCluster")) {
       TOFCluster* tofCluster = static_cast<TOFCluster*>(cluster);
       int id = tofCluster->detId();
-      double p[Corrections::numberOfPhotonTravelTimeParameters];
-      for (int i = 0; i < Corrections::numberOfPhotonTravelTimeParameters; ++i)
+      double p[numberOfPhotonTravelTimeDifferenceParameters];
+      for (int i = 0; i < numberOfPhotonTravelTimeDifferenceParameters; ++i) {
         p[i] = m_tofSettings->value(QString("PhotonTravelTimeConstants/%1_c%2").arg(id, 0, 16).arg(i)).toDouble();
+        //qDebug() << p[i];
+      }
+      double p1[numberOfPhotonTravelTimeParameters];
+      double p2[numberOfPhotonTravelTimeParameters];
+      p1[0] = p2[0] = p[1];
+      for (int i = 1; i < numberOfPhotonTravelTimeParameters; ++i) {
+        p1[i] = p[i+1];
+        p2[i] = p[i+numberOfPhotonTravelTimeParameters];
+        //qDebug() << i << p1[i] << p2[i];
+      }
       for (unsigned int i = 0; i < tofCluster->hits().size(); ++i) {
         TOFSipmHit* hit = static_cast<TOFSipmHit*>(tofCluster->hits()[i]);
         double bending = (track->x(cluster->position().z()) - cluster->position().x());
         double nonBending = track->y(cluster->position().z());
-        if (qAbs(bending) <= Constants::tofBarWidth / 2. && qAbs(nonBending) <= Constants::tofBarLength / 2. ) {
-          hit->setPhotonTravelTime(photonTravelTime(bending, (hit->position().y() < 0 ? 1 : -1) * nonBending, p));
+        if (qAbs(bending) <= Constants::tofBarWidth / 2. && qAbs(nonBending) <= Constants::tofBarLength / 2.) {
+          if (hit->position().y() < 0) {
+            hit->setPhotonTravelTime(photonTravelTime(bending, nonBending, p1) + p[0]);
+          } else {
+            hit->setPhotonTravelTime(photonTravelTime(bending, -nonBending, p2));
+          }
         }
       }
     }

@@ -6,8 +6,10 @@
 /lists
 /test
 /TAGS
+/plots
 perdaix.log
 *.png
 *.pdf
 *.dat
 *.root
+texput.*

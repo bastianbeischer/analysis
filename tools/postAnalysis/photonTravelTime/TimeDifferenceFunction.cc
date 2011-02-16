@@ -38,11 +38,10 @@ TimeDifferenceFunction::TimeDifferenceFunction(TCanvas* canvas)
   double maxX = histogram->GetXaxis()->GetXmax();
   double minY = histogram->GetYaxis()->GetXmin();
   double maxY = histogram->GetYaxis()->GetXmax();
-  m_function = new TF2(qPrintable(title), photonTime, minX, maxX, minY, maxY, Corrections::numberOfPhotonTravelTimeParameters);
-  m_function->SetParameters(1.5, 2, 6, 0.6);
-  //m_function->FixParameter(0, 0);
+  m_function = new TF2(qPrintable(title), photonTime, minX, maxX, minY, maxY, Corrections::numberOfPhotonTravelTimeDifferenceParameters);
+  m_function->SetParameters(0, 1.5, 2.5, 2.5, 2.5, 2.5);
   histogram->Fit(m_function, "QN0 WW");
-  for (int i = 0; i < Corrections::numberOfPhotonTravelTimeParameters; ++i)
+  for (int i = 0; i < Corrections::numberOfPhotonTravelTimeDifferenceParameters; ++i)
     qDebug() << QString("%1_c%2=%3").arg(title).arg(i).arg(m_function->GetParameter(i));
   title = QString("%1 histogram").arg(canvas->GetName());
   setTitle(title);
@@ -65,7 +64,7 @@ TimeDifferenceFunction::~TimeDifferenceFunction()
 void TimeDifferenceFunction::draw(TCanvas* canvas)
 {
   H2DPlot::draw(canvas);
-  histogram()->GetZaxis()->SetRangeUser(-5, 5);
+  //histogram()->GetZaxis()->SetRangeUser(-5, 5);
 }
 TF2* TimeDifferenceFunction::function()
 {

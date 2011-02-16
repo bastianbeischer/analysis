@@ -28,13 +28,15 @@ public:
   QVector<unsigned int> plotIndices(AnalysisPlot::Topic topic);
   const QString& plotTitle(unsigned int);
   AnalysisPlot::Topic plotTopic(unsigned int);
-  void selectPlot(int);
+  void selectPlot(int, bool = false);
   void setTitleLabel(QLabel*);
   void setPositionLabel(QLabel*);
   void setTimeLabel(QLabel*);
+  void unzoom();
   void setGrid(bool);
   void setLogX(bool);
   void setLogY(bool);
+  void setLogZ(bool);
   void setDataChainProgressBar(QProgressBar*);
   void setEventQueueProgressBar(QProgressBar*);
   void saveCanvas(const QString& fileName);
@@ -50,7 +52,6 @@ public slots:
 protected:
   void mousePressEvent(QMouseEvent *event);
   void mouseMoveEvent(QMouseEvent* event);
-  void mouseReleaseEvent(QMouseEvent *event);
   void updateCanvas();
   void finalizeAnalysis();
 protected slots:

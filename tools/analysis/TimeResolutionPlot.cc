@@ -16,13 +16,12 @@
 #include <QDebug>
 
 TimeResolutionPlot::TimeResolutionPlot(unsigned short idTop1, unsigned short idTop2, unsigned short idBottom1, unsigned short idBottom2)
-  : AnalysisPlot(AnalysisPlot::MiscellaneousTOF)
+  : AnalysisPlot(AnalysisPlot::ResolutionTOF)
   , H1DPlot()
   , m_idTop1(idTop1)
   , m_idTop2(idTop2)
   , m_idBottom1(idBottom1)
   , m_idBottom2(idBottom2)
-  , m_y(0)
 {
   QString title = QString("time resolution 0x%1 0x%2 0x%3 0x%4")
     .arg(m_idTop1, 0, 16)
@@ -79,9 +78,9 @@ void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Track* track, S
   TrackInformation::Flags flags = track->information()->flags();
   if (!(flags & TrackInformation::AllTrackerLayers))
     return;
-  if (track->p() < 2)
+  if (track->p() < 1.5)
     return;
-  if (qAbs(track->y(Constants::upperTofPosition)-m_y) < 100. && qAbs(track->y(Constants::lowerTofPosition)-m_y) < 100.) {
+  if (qAbs(track->y(Constants::upperTofPosition)) < 150. && qAbs(track->y(Constants::lowerTofPosition)) < 150.) {
     histogram(0)->Fill(track->timeOfFlight());
     bool idTop1 = false, idTop2 = false, idBottom1 = false, idBottom2 = false;
     foreach (Hit* hit, hits) {

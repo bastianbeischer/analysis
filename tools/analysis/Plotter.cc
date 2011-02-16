@@ -73,12 +73,9 @@ void Plotter::setEventQueueProgressBar(QProgressBar* bar)
 
 void Plotter::mousePressEvent(QMouseEvent* event)
 {
+  if (event->button() == Qt::MidButton)
+    unzoom();
   TQtWidget::mousePressEvent(event);
-}
-
-void Plotter::mouseReleaseEvent(QMouseEvent* event)
-{
-  TQtWidget::mouseReleaseEvent(event);
 }
 
 void Plotter::mouseMoveEvent(QMouseEvent* event)
@@ -103,7 +100,7 @@ void Plotter::saveForPostAnalysis(const QString& fileName)
   int savedSelectedPlot = m_selectedPlot;
   TFile file(qPrintable(fileName), "RECREATE");
   for (unsigned int i = 0; i < numberOfPlots(); ++i) {
-    selectPlot(i);
+    selectPlot(i, true);
     GetCanvas()->SetName(qPrintable(plotTitle(i) + " canvas"));
     GetCanvas()->Write();
   }
@@ -153,7 +150,7 @@ AnalysisPlot::Topic Plotter::plotTopic(unsigned int i)
   return m_plots[i]->topic();
 }
 
-void Plotter::selectPlot(int i)
+void Plotter::selectPlot(int i, bool inhibitDraw)
 {
   Q_ASSERT(i < int(numberOfPlots()));
   if (i < 0) {
@@ -166,7 +163,8 @@ void Plotter::selectPlot(int i)
     if (m_titleLabel)
       m_titleLabel->setText(m_plots[i]->title());
     m_plots[i]->draw(GetCanvas());
-    updateCanvas();
+    if (!inhibitDraw)
+      updateCanvas();
   }
   m_selectedPlot = i;
 }
@@ -279,6 +277,14 @@ void Plotter::setTimeLabel(QLabel* label)
   m_timeLabel = label;
 }
 
+void Plotter::unzoom()
+{
+  if (m_selectedPlot < 0)
+    return;
+  m_plots[m_selectedPlot]->unzoom();
+  updateCanvas();
+}
+
 void Plotter::setGrid(bool b)
 {
   gPad->SetGridx(b);
@@ -295,6 +301,12 @@ void Plotter::setLogX(bool b)
 void Plotter::setLogY(bool b)
 {
   gPad->SetLogy(b);
+  updateCanvas();
+}
+
+void Plotter::setLogZ(bool b)
+{
+  gPad->SetLogz(b);
   updateCanvas();
 }
 
