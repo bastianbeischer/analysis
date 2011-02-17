@@ -8,8 +8,14 @@ MCSimpleEvent::MCSimpleEvent():
 
 
 MCSimpleEvent::MCSimpleEvent(const MCSimpleEvent& other):
-      SimpleEvent(other)
-  {
-    MCEventInformation* mcInfo = new MCEventInformation();
-    *mcInfo = *other.MCInformation();
-  }
+    SimpleEvent(other)
+{
+  MCEventInformation* mcInfo = new MCEventInformation();
+  *mcInfo = *other.MCInformation();
+}
+
+
+MCSimpleEvent::~MCSimpleEvent()
+{
+  delete m_mcEventInformation;
+}
