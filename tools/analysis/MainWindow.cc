@@ -481,7 +481,7 @@ void MainWindow::setupPlots()
         m_ui.plotter->addPlot(new TOFPositionCorrelationPlot(element->id()));
       element = setup->nextElement();
     }
-    m_ui.plotter->addPlot(new TOFAlignment);
+    //m_ui.plotter->addPlot(new TOFAlignment);
   }
 }
 
