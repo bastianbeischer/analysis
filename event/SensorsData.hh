@@ -24,6 +24,7 @@ public:
   int numberOfKeys() const;
   TTree* tree() {return m_tree;}
   bool good() const {return m_good;}
+  unsigned int firstTime() const {return m_firstTime;}
   
 public:
   bool addRootFile(const char* file);
@@ -37,6 +38,9 @@ private:
   unsigned int m_firstTime;
   bool m_good;
   
+  unsigned int m_time;
+  float        m_var;
+
 };
 
 #endif /* SensorsData_hh */

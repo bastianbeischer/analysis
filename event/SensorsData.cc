@@ -11,7 +11,9 @@ SensorsData::SensorsData(DataType type, const char* filename) :
   m_file(0),
   m_tree(0),
   m_firstTime(0),
-  m_good(false)
+  m_good(false),
+  m_time(0),
+  m_var(sqrt(-1))
 {
   m_good = addRootFile(filename);
 }
@@ -23,7 +25,7 @@ SensorsData::~SensorsData()
 
 bool SensorsData::addRootFile(const char* filename)
 {
-  TFile* m_file = new TFile(filename);
+  m_file = new TFile(filename);
   if (m_file->IsZombie()) {
     delete m_file;
     m_file = 0;
@@ -46,10 +48,15 @@ bool SensorsData::addRootFile(const char* filename)
     return false;
   }
 
-  unsigned int time;
-  m_tree->SetBranchAddress("time",&time);
+  // m_tree->SetCacheSize(1e3);
+  // m_tree->AddBranchToCache("*");
+  //  m_tree->SetMaxVirtualSize(1e3);
+  m_tree->SetBranchStatus("*", 0);
+  m_tree->SetBranchStatus("time", 1);
+  m_tree->SetBranchAddress("time",&m_time);
   m_tree->GetEntry(0);
-  m_firstTime = time;
+  m_tree->SetBranchStatus("time", 0);
+  m_firstTime = m_time;
 
   return true;
 }
@@ -73,19 +80,28 @@ float SensorsData::previousValue(const char* id, unsigned int time, int& diff)
     return sqrt(-1);
   }
 
-  int exactEntry = entryForTime(time);
+  long exactEntry = entryForTime(time);
   
-  float var = sqrt(-1);
-  m_tree->SetBranchAddress(id,&var);
-  m_tree->GetEntry(exactEntry);
-  int entry = exactEntry;
-  while(!(var == var) && entry >= 0 && entry < m_tree->GetEntries()) {
+  int N = m_tree->GetEntries();
+  m_var = sqrt(-1);
+
+  m_tree->SetBranchStatus(id, 1);
+  m_tree->SetBranchAddress(id,&m_var);
+
+  long entry = exactEntry;
+  m_tree->GetEntry(entry);
+  while(entry >= 0 && entry < N && isnan(m_var)) {
     m_tree->GetEntry(entry);
     entry--;
   }
-  diff = entry - exactEntry;
+  m_tree->SetBranchStatus(id, 0);
 
-  return var;
+  if (entry == exactEntry)
+    diff = 0;
+  else
+    diff = entry - exactEntry + 1;
+
+  return m_var;
 }
 
 float SensorsData::nextValue(const char* id, unsigned int time, int& diff)
@@ -95,25 +111,28 @@ float SensorsData::nextValue(const char* id, unsigned int time, int& diff)
     return sqrt(-1);
   }
 
-  if (time < m_firstTime || time > m_firstTime + m_tree->GetEntries()) {
-    std::cerr << "Tree does not contain the requested time " << time 
-              << " (first time = " << m_firstTime << ", entries = " << m_tree->GetEntries() << ")" << std::endl;
-    return sqrt(-1);
-  }
-
   int exactEntry = entryForTime(time);
 
-  float var = sqrt(-1);
-  m_tree->SetBranchAddress(id,&var);
-  m_tree->GetEntry(exactEntry);
-  int entry = exactEntry;
-  while(!(var == var) && entry >= 0 && entry < m_tree->GetEntries()) {
+  int N = m_tree->GetEntries();
+  m_var = sqrt(-1);
+
+  m_tree->SetBranchStatus(id, 1);
+  m_tree->SetBranchAddress(id,&m_var);
+
+  long entry = exactEntry;
+  m_tree->GetEntry();
+  while(entry >= 0 && entry < N && isnan(m_var)) {
     m_tree->GetEntry(entry);
     entry++;
   }
-  diff = entry - exactEntry;
+  m_tree->SetBranchStatus(id, 0);
 
-  return var;
+  if (entry == exactEntry)
+    diff = 0;
+  else
+    diff = entry - exactEntry - 1;
+
+  return m_var;
 }
 
 float SensorsData::averageValue(const char* id, unsigned int time)
