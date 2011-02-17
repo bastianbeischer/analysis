@@ -39,7 +39,7 @@ void MCSingleFile::open(QString fileName)
   qDebug("opening MC file %s", qPrintable(fileName));
   m_runFile = new RunFile(fileName, RunFile::MODE_READING);
   //  m_runId = m_runFile->GetRunId();
-  qDebug() << m_runFile->IsGood();
+  //qDebug() << m_runFile->IsGood();
 
   int nCalibrationEvents = m_runFile->GetNumberOfCalibrationEvents();
   int nEvents = m_runFile->GetNumberOfEvents() - nCalibrationEvents;
@@ -55,8 +55,6 @@ void MCSingleFile::open(QString fileName)
 
   for (int i=0; i<nEvents; ++i)
     m_MCEvents << static_cast<MCEvent*> (m_runFile->ReadNextEvent());
-
-
 
 
 }

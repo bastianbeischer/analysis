@@ -72,8 +72,6 @@ MCSimpleEvent* Converter::generateMCSimpleEvent(const SingleFile* file, const MC
   //MCEventInformation is now owned by MCSimpleEvent:
   mcSimpleEvent->MCInformation(mcEventInfo);
 
-  qDebug() << mcEventInfo->InitialMom().x() << mcEventInfo->InitialMom().y() << mcEventInfo->InitialMom().z();
-
   return mcSimpleEvent;
 }
 
@@ -190,8 +188,6 @@ MCEventInformation* Converter::generateMCEventInformation(const MCSingleFile* mc
   //get MCEvent
   const MCEvent* mcEvent = mcFile->getMCEvent(eventNo) ;
 
-  qDebug() << mcEvent;
-
   //read MC data
   QVector<MCParticle*> particles = mcEvent->GetParticles();
 
@@ -203,14 +199,7 @@ MCEventInformation* Converter::generateMCEventInformation(const MCSingleFile* mc
 
   HepGeom::Vector3D<double> primaryMom = primaryHits.at(0).preStep.momentum;
 
-  foreach (HepGeom::Point3D<double> point, primary->GetTrajectory())
-    qDebug() << "\t" << point.x() << point.y() << point.z();
-
   QVector<HepGeom::Point3D<double> > mcTrajectory = primary->GetTrajectory();
-
-
-
-
   //convert into data structures used by SimpleEvents
   TVector3 mc_primaryMomentum(primaryMom.x(), primaryMom.y(), primaryMom.z())  ;
 
