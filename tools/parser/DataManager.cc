@@ -140,8 +140,7 @@ void DataManager::addSensorData(SimpleEvent* event)
   int nKeys = m_sensorsData->numberOfKeys();
   char** keys = m_sensorsData->keys();
   for (int iKey = 0; iKey < nKeys; iKey++) {
-    int diff;
-    float value = m_sensorsData->previousValue(keys[iKey], event->time(), diff);
+    float value = m_sensorsData->averageValue(keys[iKey], event->time());
     event->setSensorData(SensorTypes::convertFromString(keys[iKey]), value);
   }
 }
