@@ -50,21 +50,13 @@ void MCSingleFile::open(QString fileName)
   }
 
   //skip calis
-  for (int i=0; i!=10; ++i)
-    qDebug() << m_runFile->ReadNextEvent();
+  for (int i=0; i<nCalibrationEvents; ++i)
+    m_runFile->ReadNextEvent();
+
+  for (int i=0; i<nEvents; ++i)
+    m_MCEvents << static_cast<MCEvent*> (m_runFile->ReadNextEvent());
 
 
-  qDebug() << m_runFile->ReadNextEvent();
-  qDebug() << m_runFile->ReadNextEvent();
-
-  const MCEvent* mcEvent = static_cast<MCEvent*>( m_runFile->ReadNextEvent() );
-
-  int i = 0;
-  while (i < nEvents ||  mcEvent != NULL) {
-    qDebug() << mcEvent;
-    mcEvent = static_cast<MCEvent*>( m_runFile->ReadNextEvent() );
-    i++;
-  }
 
 
 }
