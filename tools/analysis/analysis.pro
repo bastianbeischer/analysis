@@ -45,6 +45,7 @@ CLASSES = \
   Plotter \
   ResidualPlot \
   SignalHeightPlot \
+  SingleLayerTrackingEfficiencyPlot \
   CutStatisticsPlot \
   TOFPositionCorrelationPlot \
   TOFTimeDifferencePlot \
@@ -63,7 +64,11 @@ CLASSES = \
   TRDSpectrumPlot \
   TimeResolutionPlot \
   TotalEnergyDepositionPlot \
-  TOFEfficiencyPlot
+  TotalEnergyDepositionTRDvsTrackerPlot \
+  TOFEfficiencyPlot \
+  TrackingEfficiencyVsMomentumPlot \
+  TimeOverThresholdMomentumCorrelation \
+  TimeOverThresholdPlot
 
 SOURCES += \
   main.cc
@@ -71,3 +76,6 @@ SOURCES += \
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
 include($$TOPLEVEL/common.pri)
+
+RESOURCES += \
+    resources.qrc

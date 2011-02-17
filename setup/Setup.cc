@@ -127,7 +127,6 @@ Layer* Setup::layer(double z)
 
 DetectorElement* Setup::element(unsigned short id)
 {
-  // this should differentiate between types of detector elements according to the QSettings file soon
   unsigned short usbBoard = (id >> 8) << 8;
   
   if (!m_elements[id]) {

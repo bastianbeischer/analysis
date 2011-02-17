@@ -2,6 +2,7 @@
 
 #include <TCanvas.h>
 #include <TGraph.h>
+#include <TAxis.h>
 #include <TList.h>
 #include <TMultiGraph.h>
 
@@ -12,7 +13,7 @@ GraphPlot::GraphPlot() :
 
 GraphPlot::~GraphPlot()
 {
-  delete m_multiGraph; // deletes all others...
+  delete m_multiGraph;
 }
 
 void GraphPlot::draw(TCanvas* canvas)
@@ -21,6 +22,14 @@ void GraphPlot::draw(TCanvas* canvas)
   canvas->Clear();
   m_multiGraph->Draw("A");
   RootPlot::draw(canvas);
+}
+
+void GraphPlot::unzoom()
+{
+  if (m_multiGraph->GetXaxis() && m_multiGraph->GetYaxis()) {
+    m_multiGraph->GetXaxis()->UnZoom();
+    m_multiGraph->GetYaxis()->UnZoom();
+  }
 }
 
 void GraphPlot::clear()
@@ -32,20 +41,13 @@ void GraphPlot::clear()
 void GraphPlot::clear(int i)
 {
   Q_ASSERT(0 <= i && i < numberOfGraphs());
-  TList* graphs = m_multiGraph->GetListOfGraphs();
-  TGraph* graph = static_cast<TGraph*>(graphs->At(i));
+  TGraph* graph = static_cast<TGraph*>(m_multiGraph->GetListOfGraphs()->At(i));
   graph->Clear();
 }
 
 void GraphPlot::addGraph(TGraph* g, const char* options)
 {
   m_multiGraph->Add(g, options);
-}
-
-void GraphPlot::setMultiGraphTitle(const QString& title)
-{
-  setTitle(title);
-  m_multiGraph->SetTitle(qPrintable(title));
 }
 
 int GraphPlot::numberOfGraphs() const

@@ -13,16 +13,14 @@ class AnalysisPlot : virtual public RootPlot {
 public:
   enum Topic {TopicBegin, SignalHeightTracker = TopicBegin, SignalHeightTRD,
               ClusterShapeTracker, ClusterShapeTRD, TimeOverThreshold, Tracking, Occupancy,
-              ResidualsTracker, ResidualsTRD, MomentumReconstruction,
-              EfficiencyTOF, ResolutionTOF, MiscellaneousTracker, MiscellaneousTRD,
+              ResidualsTracker, ResidualsTRD, MomentumReconstruction, EfficiencyTOF,
+              ResolutionTOF, CalibrationTOF, MiscellaneousTracker, MiscellaneousTRD,
               MiscellaneousTOF, TopicEnd};
 public:
   AnalysisPlot(Topic);
   virtual ~AnalysisPlot();
   Topic topic() const;
   virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0) = 0;
-  virtual void finalize() {}
-  virtual void update() {}
 protected:
   QMutex m_mutex;
 private:

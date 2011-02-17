@@ -79,7 +79,15 @@ QVector<Hit*> TrackFinding::findTrack(const QVector<Hit*>& hits)
   CenteredBrokenLine cbl;
   if (cbl.fit(hitsForFit)) {
     foreach(Hit* hit, hits) {
-      if (isInCorridor(&cbl, hit))
+      double maxPull = 0.;
+      if (hit->type() == Hit::tracker)
+        maxPull = m_trackerPull;
+      if (hit->type() == Hit::trd)
+        maxPull = m_trdPull;
+      if (hit->type() == Hit::tof)
+        maxPull = m_tofPull;
+
+      if (isInCorridor(&cbl, hit, maxPull))
         hitsOnTrack.push_back(hit);
     }
   }
@@ -91,7 +99,7 @@ QVector<Hit*> TrackFinding::findTrack(const QVector<Hit*>& hits)
 }
 
 
-bool TrackFinding::isInCorridor(Track* track, Hit* hit, double pullOverRide) const
+bool TrackFinding::isInCorridor(Track* track, Hit* hit, double maxPull)
 {
   Q_ASSERT(track);
 
@@ -109,18 +117,6 @@ bool TrackFinding::isInCorridor(Track* track, Hit* hit, double pullOverRide) con
 
   double res = hitU - trackU;
   double resolution = hit->resolutionEstimate();
-
-  double maxPull = 0;
-  if (pullOverRide > 0)
-    maxPull = pullOverRide;
-  else {
-    if (hit->type() == Hit::tracker)
-      maxPull = m_trackerPull;
-    if (hit->type() == Hit::trd)
-      maxPull = m_trdPull;
-    if (hit->type() == Hit::tof)
-      maxPull = m_tofPull;
-  }
 
   return (fabs(res/resolution) < maxPull);
 }

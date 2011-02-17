@@ -116,11 +116,11 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QPlainTex
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
     if (fitMethod == 0)
-      track = new StraightLine;
-    else if (fitMethod == 1)
-      track = new BrokenLine;
-    else if (fitMethod == 2)
       track = new CenteredBrokenLine;
+    else if (fitMethod == 1)
+      track = new StraightLine;
+    else if (fitMethod == 2)
+      track = new BrokenLine;
     track->fit(clusters);
     m_corrections->postFitCorrections(track);
     track->process();

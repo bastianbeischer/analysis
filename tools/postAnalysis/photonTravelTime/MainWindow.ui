@@ -122,7 +122,12 @@
            </property>
            <item>
             <property name="text">
-             <string>LEGO2</string>
+             <string>SURF1</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>LEGO E</string>
             </property>
            </item>
            <item>
@@ -133,6 +138,11 @@
            <item>
             <property name="text">
              <string>COL Z</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>LEGO2</string>
             </property>
            </item>
           </widget>

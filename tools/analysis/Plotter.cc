@@ -27,13 +27,17 @@ Plotter::Plotter(QWidget* parent)
   , m_dataChainProgressBar(0)
   , m_eventQueueProgressBar(0)
   , m_chain(new DataChain())
+  , m_firstEvent(0)
+  , m_lastEvent(0)
   , m_eventLoopOff(true)
   , m_selectedPlot(-1)
 {
   gROOT->cd();
   setMouseTracking(true);
   connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
-  m_updateTimer.start(500);
+  connect(this, SIGNAL(analysisStarted()), &m_updateTimer, SLOT(start()));
+  connect(this, SIGNAL(analysisCompleted()), &m_updateTimer, SLOT(stop()));
+  m_updateTimer.setInterval(500);
 }
 
 Plotter::~Plotter()
@@ -69,12 +73,9 @@ void Plotter::setEventQueueProgressBar(QProgressBar* bar)
 
 void Plotter::mousePressEvent(QMouseEvent* event)
 {
+  if (event->button() == Qt::MidButton)
+    unzoom();
   TQtWidget::mousePressEvent(event);
-}
-
-void Plotter::mouseReleaseEvent(QMouseEvent* event)
-{
-  TQtWidget::mouseReleaseEvent(event);
 }
 
 void Plotter::mouseMoveEvent(QMouseEvent* event)
@@ -99,7 +100,7 @@ void Plotter::saveForPostAnalysis(const QString& fileName)
   int savedSelectedPlot = m_selectedPlot;
   TFile file(qPrintable(fileName), "RECREATE");
   for (unsigned int i = 0; i < numberOfPlots(); ++i) {
-    selectPlot(i);
+    selectPlot(i, true);
     GetCanvas()->SetName(qPrintable(plotTitle(i) + " canvas"));
     GetCanvas()->Write();
   }
@@ -110,10 +111,15 @@ void Plotter::saveForPostAnalysis(const QString& fileName)
 
 void Plotter::update()
 {
-  if (!m_eventLoopOff && m_timeLabel)
-    m_timeLabel->setText(QString("%1s").arg(m_time.elapsed()/1000));
+  m_timeLabel->setText(QString("%1s").arg(m_time.elapsed()/1000));
   if (0 <= m_selectedPlot && m_selectedPlot < m_plots.size())
     m_plots[m_selectedPlot]->update();
+  gPad->Modified();
+  gPad->Update();
+}
+
+void Plotter::updateCanvas()
+{
   gPad->Modified();
   gPad->Update();
 }
@@ -144,7 +150,7 @@ AnalysisPlot::Topic Plotter::plotTopic(unsigned int i)
   return m_plots[i]->topic();
 }
 
-void Plotter::selectPlot(int i)
+void Plotter::selectPlot(int i, bool inhibitDraw)
 {
   Q_ASSERT(i < int(numberOfPlots()));
   if (i < 0) {
@@ -157,6 +163,8 @@ void Plotter::selectPlot(int i)
     if (m_titleLabel)
       m_titleLabel->setText(m_plots[i]->title());
     m_plots[i]->draw(GetCanvas());
+    if (!inhibitDraw)
+      updateCanvas();
   }
   m_selectedPlot = i;
 }
@@ -169,8 +177,11 @@ void Plotter::clearPlots()
 
 void Plotter::finalizeAnalysis()
 {
-  foreach(AnalysisPlot* plot, m_plots)
+  foreach(AnalysisPlot* plot, m_plots) {
     plot->finalize();
+    plot->update();
+  }
+  updateCanvas();
 }
 
 void Plotter::abortAnalysis()
@@ -180,6 +191,7 @@ void Plotter::abortAnalysis()
 
 void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numberOfThreads)
 {
+  emit(analysisStarted());
   m_eventLoopOff = false;
 
   QVector<EventQueue*> queues;
@@ -196,30 +208,33 @@ void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numb
   if (m_dataChainProgressBar)
     m_dataChainProgressBar->reset();
 
-  unsigned int nEntries = m_chain->nEntries();
+  Q_ASSERT(m_firstEvent <= m_lastEvent && m_lastEvent < m_chain->nEntries());
+  unsigned int nEvents = m_lastEvent - m_firstEvent + 1;
+
   int freeSpace = 0;
   int queuedEvents = 0;
-  for (unsigned int i = 0; i < nEntries;) {
+  unsigned int i = 0;
+  for (i = 0; i < nEvents;) {
     queuedEvents = 0;
     foreach(EventQueue* queue, queues)
       queuedEvents+= queue->numberOfEvents();
     foreach(EventQueue* queue, queues) {
       freeSpace = queue->freeSpace();
       if (freeSpace > .2 * EventQueue::s_bufferSize) {
-        for (int j = 0; j < freeSpace && i < nEntries; ++j) {
-          SimpleEvent* event = m_chain->event(i);
+        for (int j = 0; j < freeSpace && i < nEvents; ++j) {
+          SimpleEvent* event = m_chain->event(m_firstEvent + i);
           queue->enqueue(new SimpleEvent(*event));
-          ++i;
           if (m_dataChainProgressBar)
-            m_dataChainProgressBar->setValue(100 * (i + 1) / nEntries);
+            m_dataChainProgressBar->setValue(100 * (i + 1) / nEvents);
           if (m_eventQueueProgressBar)
             m_eventQueueProgressBar->setValue(100 * queuedEvents / EventQueue::s_bufferSize);
+          ++i;
           qApp->processEvents();
         }
       }
     }
     if (m_eventLoopOff)
-        break;
+      break;
     qApp->processEvents();
   }
 
@@ -235,22 +250,26 @@ void Plotter::startAnalysis(Track::Type type, Corrections::Flags flags, int numb
   qDeleteAll(threads);
   qDeleteAll(queues);
   finalizeAnalysis();
+  emit(analysisCompleted());
   m_eventLoopOff = true;
 }
 
 void Plotter::setFileList(const QString& fileName)
 {
   m_chain->setFileList(qPrintable(fileName));
+  emit(numberOfEventsChanged(m_chain->nEntries()));
 }
 
 void Plotter::addFileList(const QString& fileName)
 {
   m_chain->addFileList(qPrintable(fileName));
+  emit(numberOfEventsChanged(m_chain->nEntries()));
 }
 
 void Plotter::addRootFile(const QString& file)
 {
   m_chain->addRootFile(qPrintable(file));
+  emit(numberOfEventsChanged(m_chain->nEntries()));
 }
 
 void Plotter::setTimeLabel(QLabel* label)
@@ -258,13 +277,45 @@ void Plotter::setTimeLabel(QLabel* label)
   m_timeLabel = label;
 }
 
+void Plotter::unzoom()
+{
+  if (m_selectedPlot < 0)
+    return;
+  m_plots[m_selectedPlot]->unzoom();
+  updateCanvas();
+}
+
 void Plotter::setGrid(bool b)
 {
-  if (b) {
-    gPad->SetGridx(true);
-    gPad->SetGridy(true);
-  } else {
-    gPad->SetGridx(false);
-    gPad->SetGridy(false);
-  }
+  gPad->SetGridx(b);
+  gPad->SetGridy(b);
+  updateCanvas();
+}
+
+void Plotter::setLogX(bool b)
+{
+  gPad->SetLogx(b);
+  updateCanvas();
+}
+
+void Plotter::setLogY(bool b)
+{
+  gPad->SetLogy(b);
+  updateCanvas();
+}
+
+void Plotter::setLogZ(bool b)
+{
+  gPad->SetLogz(b);
+  updateCanvas();
+}
+
+void Plotter::setFirstEvent(int event)
+{
+  m_firstEvent = event;
+}
+
+void Plotter::setLastEvent(int event)
+{
+  m_lastEvent = event;
 }

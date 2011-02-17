@@ -27,6 +27,11 @@ public:
   void preFitCorrections(QVector<Hit*>&);
   void postFitCorrections(Track*);
 
+  static const int numberOfPhotonTravelTimeParameters = 3;
+  static const int numberOfPhotonTravelTimeDifferenceParameters = 6;
+  static double photonTravelTime(double bending, double nonBending, double* p);
+  static double photonTravelTimeDifference(double bending, double nonBending, double* p);
+
 private:
   void alignment(Hit*);
   void timeShift(Hit*);

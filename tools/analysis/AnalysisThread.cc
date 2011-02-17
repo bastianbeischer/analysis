@@ -78,7 +78,7 @@ void AnalysisThread::run()
         m_track->process();
       }
       foreach (AnalysisPlot* plot, m_plots)
-        plot->processEvent(trackClusters, m_track, event);
+        plot->processEvent(clusters, m_track, event);
       if (event->contentType() == SimpleEvent::RawData)
         qDeleteAll(clusters);
       delete event;

@@ -16,13 +16,26 @@ H2DPlot::~H2DPlot()
     
 void H2DPlot::draw(TCanvas* canvas)
 {
+  if (!m_histogram)
+    return;
   canvas->cd();
   m_histogram->Draw("COLZ");
   RootPlot::draw(canvas);
 }
 
+void H2DPlot::unzoom()
+{
+  if (!m_histogram)
+    return;
+  m_histogram->GetXaxis()->UnZoom();
+  m_histogram->GetYaxis()->UnZoom();
+  m_histogram->GetZaxis()->UnZoom();
+}
+
 void H2DPlot::clear()
 {
+  if (!m_histogram)
+    return;
   m_histogram->Clear();
 }
 

@@ -13,6 +13,7 @@ public:
   H2DPlot();
   virtual ~H2DPlot();
   virtual void draw(TCanvas*);
+  virtual void unzoom();
   virtual void clear();
   TH2D* histogram();
   void setHistogram(TH2D*);
