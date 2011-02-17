@@ -3,6 +3,7 @@
 
 #include <TObject.h>
 #include <TVector3.h>
+#include <vector>
 
 class MCEventInformation  :
     public TObject
@@ -10,15 +11,19 @@ class MCEventInformation  :
 public:
   MCEventInformation();
 
-  int PDGid() const                             { return m_pdgID; }
-  void PDGid(int pdgID)                         { m_pdgID = pdgID; }
+  int PDGid() const                                 { return m_pdgID; }
+  void PDGid(int pdgID)                             { m_pdgID = pdgID; }
 
-  const TVector3& InitialMom() const            { return m_initialMomentum; }
-  void InitialMom(const TVector3& initialMom)   { m_initialMomentum = initialMom; }
+  TVector3 InitialMom() const                       { return m_initialMomentum; }
+  void InitialMom(const TVector3& initialMom)       { m_initialMomentum = initialMom; }
+
+  std::vector<TVector3> Trajectory() const          { return m_trajectory; }
+  void Trajectory(const std::vector<TVector3> traj)  { m_trajectory = traj; }
 
 private:
   int m_pdgID;
   TVector3 m_initialMomentum;
+  std::vector<TVector3> m_trajectory;
 
   ClassDef( MCEventInformation, 1 );
 
