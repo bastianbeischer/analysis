@@ -68,7 +68,8 @@ CLASSES = \
   TOFEfficiencyPlot \
   TrackingEfficiencyVsMomentumPlot \
   TimeOverThresholdMomentumCorrelation \
-  TimeOverThresholdPlot
+  TimeOverThresholdPlot \
+  TOFAlignment
 
 SOURCES += \
   main.cc

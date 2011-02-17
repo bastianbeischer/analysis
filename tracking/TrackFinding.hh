@@ -7,9 +7,7 @@ class Hit;
 class TH2I;
 class Track;
 
-class TrackFinding
-{
-  
+class TrackFinding {
 public:
   TrackFinding();
   virtual ~TrackFinding();
@@ -25,18 +23,18 @@ public:
   static bool isInCorridor(Track* track, Hit* hit, double maxPull);
 
 private:
-  double            m_maxSlope;
-  double            m_maxOffset;
-  int               m_slopeBins;
-  int               m_offsetBins;
+  double m_maxSlope;
+  double m_maxOffset;
+  int m_slopeBins;
+  int m_offsetBins;
 
-  double            m_trackerPull;
-  double            m_trdPull;
-  double            m_tofPull;
+  double m_trackerPull;
+  double m_trdPull;
+  double m_tofPull;
 
-  TH2I*             m_trackFindingHist;
-  static int        s_histCounter;
-  
+  TH2I* m_trackFindingHist;
+  static int s_histCounter;
+
 };
 
 #endif /* TrackFinding_hh */

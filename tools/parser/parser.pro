@@ -18,7 +18,8 @@ CLASSES = \
   Converter \
   DataManager \
   SingleFile \
-  MCSingleFile
+  MCSingleFile \
+  SensorsData
 
 SOURCES += \
   main.cc

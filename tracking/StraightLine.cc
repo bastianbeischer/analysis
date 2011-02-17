@@ -3,6 +3,7 @@
 #include "StraightLineMatrix.hh"
 #include "TrackInformation.hh"
 #include "Hit.hh"
+#include "Constants.hh"
 
 #include <TGraphErrors.h>
 #include <TF1.h>
@@ -49,3 +50,11 @@ void StraightLine::retrieveFitResults()
     std::cout << "--------------------------------------------------------------------------------------------------" << std::endl;
   }
 }
+
+double StraightLine::trackLength() const
+{
+  const TVector3& upperPoint = position(Constants::upperTofPosition);
+  const TVector3& lowerPoint = position(Constants::lowerTofPosition);
+  return (upperPoint-lowerPoint).Mag();
+}
+

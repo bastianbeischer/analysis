@@ -174,9 +174,5 @@ double Track::p() const
 
 double Track::beta() const
 {
-  const TVector3& upperPoint = position(Constants::upperTofPosition);
-  const TVector3& middlePoint = position(0);
-  const TVector3& lowerPoint = position(Constants::lowerTofPosition);
-  double trackLength = (upperPoint-middlePoint).Mag() + (middlePoint-lowerPoint).Mag();
-  return trackLength / (timeOfFlight() * Constants::speedOfLight);
+  return trackLength() / (timeOfFlight() * Constants::speedOfLight);
 }

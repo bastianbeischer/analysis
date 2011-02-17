@@ -5,6 +5,7 @@
 #include <QString>
 
 class DataDescription;
+class SensorsData;
 class SingleFile;
 class MCSingleFile;
 class SimpleEvent;
@@ -29,6 +30,7 @@ private:
   void addSingleFile(QString fileName);
   void initializeOutput();
   void processFiles();
+  void addSensorData(SimpleEvent*);
   void saveAndCloseOutput();
 
 private:
@@ -36,6 +38,7 @@ private:
   QList<MCSingleFile*> m_inputMCFiles;
   
   DataDescription*   m_description;
+  SensorsData*       m_sensorsData;
   QString            m_outputFileName;
   SimpleEvent*       m_currentEvent;
   TFile*             m_outputFile;
