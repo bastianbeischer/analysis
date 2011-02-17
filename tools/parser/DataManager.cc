@@ -117,7 +117,7 @@ void DataManager::processFiles()
 
   foreach(SingleFile* inputFile, m_inputFiles) {
     for (unsigned int iEvent = 0; iEvent < inputFile->getNumberOfEvents(); iEvent++) {
-      m_currentEvent = converter.generateSimpleEvent(inputFile, iEvent);
+      m_currentEvent = converter.generateNextSimpleEvent(inputFile);
       addSensorData(m_currentEvent);
       m_outputTree->Fill();
       delete m_currentEvent;

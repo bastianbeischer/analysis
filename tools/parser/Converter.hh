@@ -12,7 +12,7 @@ public:
   ~Converter();
   
 public:
-  SimpleEvent* generateSimpleEvent(const SingleFile* file, unsigned int eventNo);
+  SimpleEvent* generateNextSimpleEvent(const SingleFile* file);
   
 };
 

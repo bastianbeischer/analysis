@@ -40,9 +40,9 @@ Converter::~Converter()
 {
 }
 
-SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int eventNo)
+SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file)
 {
-  const RawEvent* event = file->getRawEvent(eventNo);
+  const RawEvent* event = file->getNextRawEvent();
 
   // construct new simple event
   unsigned int eventId = event->GetEventID();
@@ -140,5 +140,6 @@ SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int
       tofHitIt->second->processTDCHits();
   } // foreach(DetectorID...)
 
+  delete event;
   return simpleEvent;
 }
