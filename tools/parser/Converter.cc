@@ -22,6 +22,7 @@
 #include <CLHEP/Geometry/Point3D.h>
 #include <CLHEP/Geometry/Vector3D.h>
 
+
 #include <TVector3.h>
 #include <QDebug>
 
@@ -49,15 +50,47 @@ Converter::~Converter()
 {
 }
 
+
 SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int eventNo)
 {
+  SimpleEvent* simpleEvent = new SimpleEvent();
+  simpleEvent->contentType(SimpleEvent::RawData);
+  fillSimpleEvent(simpleEvent, file, eventNo);
+  return simpleEvent;
+}
+
+
+MCSimpleEvent* Converter::generateMCSimpleEvent(const SingleFile* file, const MCSingleFile* mcFile, unsigned int eventNo){
+
+  //generate MCSimpleEvent and fill it with data:
+  MCSimpleEvent* mcSimpleEvent = new MCSimpleEvent();
+  mcSimpleEvent->contentType(SimpleEvent::MCRawData);
+  fillSimpleEvent(mcSimpleEvent, file, eventNo);
+
+  //get MCEventInformation
+  MCEventInformation* mcEventInfo = generateMCEventInformation(mcFile, eventNo);
+  //MCEventInformation is now owned by MCSimpleEvent:
+  mcSimpleEvent->MCInformation(mcEventInfo);
+
+  qDebug() << mcEventInfo->InitialMom().x() << mcEventInfo->InitialMom().y() << mcEventInfo->InitialMom().z();
+
+  return mcSimpleEvent;
+}
+
+
+
+void Converter::fillSimpleEvent(SimpleEvent* simpleEvent, const SingleFile* file, unsigned int eventNo){
+
   const RawEvent* event = file->getRawEvent(eventNo);
 
-  // construct new simple event
+  // fill simple event basics
   unsigned int eventId = event->GetEventID();
-  unsigned int runStartTime = file->getStartTime(); // convert ms to s for 
+  unsigned int runStartTime = file->getStartTime(); // convert ms to s for
   unsigned int eventTime = event->GetTime();
-  SimpleEvent* simpleEvent = new SimpleEvent(eventId, runStartTime, eventTime, SimpleEvent::RawData);
+
+  simpleEvent->eventId(eventId);
+  simpleEvent->runStartTime(runStartTime);
+  simpleEvent->eventTime(eventTime);
 
   // loop over all present detector IDs
   QList<DetectorID*> detIDs = event->GetIDs();
@@ -149,7 +182,6 @@ SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int
       tofHitIt->second->processTDCHits();
   } // foreach(DetectorID...)
 
-  return simpleEvent;
 }
 
 
@@ -158,43 +190,45 @@ MCEventInformation* Converter::generateMCEventInformation(const MCSingleFile* mc
   //get MCEvent
   const MCEvent* mcEvent = mcFile->getMCEvent(eventNo) ;
 
+  qDebug() << mcEvent;
+
   //read MC data
   QVector<MCParticle*> particles = mcEvent->GetParticles();
-  QVector<MCDigi*> digis = mcEvent->GetDigis();
 
   //get info on primary
   MCParticle* primary = particles.at(0);
+  int pdgID = primary->GetPDGID();
+
   QVector<MCParticle::DetectorHit> primaryHits = primary->GetHits();
 
   HepGeom::Vector3D<double> primaryMom = primaryHits.at(0).preStep.momentum;
 
+  foreach (HepGeom::Point3D<double> point, primary->GetTrajectory())
+    qDebug() << "\t" << point.x() << point.y() << point.z();
+
+  QVector<HepGeom::Point3D<double> > mcTrajectory = primary->GetTrajectory();
+
+
+
 
   //convert into data structures used by SimpleEvents
-  TVector3 mcI_primaryMomentum(primaryMom.x(), primaryMom.y(), primaryMom.z())  ;
+  TVector3 mc_primaryMomentum(primaryMom.x(), primaryMom.y(), primaryMom.z())  ;
+
+  std::vector<TVector3> traj;
+  for (int i = 0; i < mcTrajectory.size(); ++i){
+    const HepGeom::Point3D<double>& point = mcTrajectory.at(i);
+    traj.push_back( TVector3(point.x(), point.y(), point.z()) );
+  }
 
   //create MC Information Object
   MCEventInformation* mcEventInfo = new MCEventInformation();
 
   //fill it with data
-  mcEventInfo->InitialMom(mcI_primaryMomentum);
+  mcEventInfo->PDGid(pdgID);
+  mcEventInfo->InitialMom(mc_primaryMomentum);
+  mcEventInfo->Trajectory(traj);
 
   return mcEventInfo;
 }
 
 
-MCSimpleEvent* Converter::generateMCSimpleEvent(const SingleFile* file, const MCSingleFile* mcFile, unsigned int eventNo){
-
-  SimpleEvent* simpleEvent = generateSimpleEvent(file, eventNo);
-  MCEventInformation* mcEventInfo = generateMCEventInformation(mcFile, eventNo);
-
-  //TODO maybe find a better solution:
-  MCSimpleEvent* mcSimpleEvent = new MCSimpleEvent(*simpleEvent);
-  delete simpleEvent;
-
-  //MCEventInformation is now owned by MCSimpleEvent:
-  mcSimpleEvent->MCInformation(mcEventInfo);
-
-  qDebug() << mcEventInfo->InitialMom().x() << mcEventInfo->InitialMom().y() << mcEventInfo->InitialMom().z();
-
-  return mcSimpleEvent;
-}
