@@ -47,6 +47,7 @@
 #include "TOFEfficiencyPlot.hh"
 #include "TimeOverThresholdMomentumCorrelation.hh"
 #include "TimeOverThresholdPlot.hh"
+#include "TOFAlignment.hh"
 
 #include <QProcess>
 #include <QFileDialog>
@@ -480,6 +481,7 @@ void MainWindow::setupPlots()
         m_ui.plotter->addPlot(new TOFPositionCorrelationPlot(element->id()));
       element = setup->nextElement();
     }
+    m_ui.plotter->addPlot(new TOFAlignment);
   }
 }
 
