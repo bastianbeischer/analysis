@@ -1,11 +1,12 @@
 #include "CenteredBrokenLine2D.hh"
 
-#include <TVectorD.h>
-#include <TMatrixD.h>
-
 #include "CenteredBrokenLineMatrix2D.hh"
 #include "TrackInformation.hh"
 #include "Hit.hh"
+#include "Constants.hh"
+
+#include <TVectorD.h>
+#include <TMatrixD.h>
 
 #include <cmath>
 #include <iostream>
@@ -82,4 +83,12 @@ double CenteredBrokenLine2D::slopeY(double z) const
   if (z > m_zIntersection)
     return m_upperSlopeY;
   return m_lowerSlopeY;
+}
+
+double CenteredBrokenLine2D::trackLength() const
+{
+  const TVector3& upperPoint = position(Constants::upperTofPosition);
+  const TVector3& middlePoint = position(0);
+  const TVector3& lowerPoint = position(Constants::lowerTofPosition);
+  return (upperPoint-middlePoint).Mag() + (middlePoint-lowerPoint).Mag();
 }

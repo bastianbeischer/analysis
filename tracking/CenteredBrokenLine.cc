@@ -1,11 +1,12 @@
 #include "CenteredBrokenLine.hh"
 
-#include <TVectorD.h>
-#include <TMatrixD.h>
-
 #include "CenteredBrokenLineMatrix.hh"
 #include "TrackInformation.hh"
 #include "Hit.hh"
+#include "Constants.hh"
+
+#include <TVectorD.h>
+#include <TMatrixD.h>
 
 #include <cmath>
 #include <iostream>
@@ -75,4 +76,12 @@ double CenteredBrokenLine::slopeX(double z) const
 double CenteredBrokenLine::slopeY(double) const
 {
   return m_slopeY;
+}
+
+double CenteredBrokenLine::trackLength() const
+{
+  const TVector3& upperPoint = position(Constants::upperTofPosition);
+  const TVector3& middlePoint = position(0);
+  const TVector3& lowerPoint = position(Constants::lowerTofPosition);
+  return (upperPoint-middlePoint).Mag() + (middlePoint-lowerPoint).Mag();
 }
