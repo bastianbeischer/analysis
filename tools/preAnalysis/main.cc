@@ -95,7 +95,7 @@ int main(int argc, char** argv)
         destinationEvent->addHit(cluster);
       
       // copy sensor  data
-      for (unsigned int i = 0; i < SensorTypes::nSensorTypes; i++) {
+      for (unsigned int i = SensorTypes::START; i < SensorTypes::END; i++) {
         destinationEvent->setSensorData((SensorTypes::Type)i, sourceEvent->sensorData((SensorTypes::Type)i) );
       }
 
