@@ -15,11 +15,6 @@ StraightLineMatrix::~StraightLineMatrix()
 {
 }
 
-// bool StraightLineMatrix::checkInvertability(const QVector<Hit*>& hits) const
-// {
-//   return Matrix::checkInvertability(hits);
-// }
-
 void StraightLineMatrix::fillMatrixFromHit(TMatrixD& A, unsigned int i, bool useTangens, float k, float xi) const
 {
   if (useTangens) {
