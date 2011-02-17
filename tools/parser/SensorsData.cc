@@ -135,7 +135,7 @@ float SensorsData::nextValue(const char* id, unsigned int time, int& diff)
   return m_var;
 }
 
-float SensorsData::averageValue(const char* id, unsigned int time)
+float SensorsData::averageValue(const char* /*id*/, unsigned int /*time*/)
 {
   // int prevDiff = 0;
   // float prevValue = previousValue(id, time, prevDiff);
