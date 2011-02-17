@@ -1,11 +1,13 @@
 #include "SensorTypes.hh"
 
-#include "cstring"
+#include <cstring>
+#include <cassert>
 
 namespace SensorTypes {
 
   Type convertFromString(char* string)
   {
+    // Our own sensors
     if (strcmp(string, "TRD_PRESSURE") == 0) return TRD_PRESSURE;
     else if (strcmp(string, "TOF_VOLTAGE") == 0) return TOF_VOLTAGE;
     else if (strcmp(string, "HPE_0x3000_TEMP") == 0) return HPE_0x3000_TEMP;
@@ -87,7 +89,17 @@ namespace SensorTypes {
     else if (strcmp(string, "INLET_TEMP") == 0) return INLET_TEMP;
     else if (strcmp(string, "BAT_BOTTOM_TEMP") == 0) return BAT_BOTTOM_TEMP;
     else if (strcmp(string, "BAT_TOP_TEMP") == 0) return BAT_TOP_TEMP;
-    return START;
+
+    // ATC
+    else if (strcmp(string, "ATC_LATITUDE") == 0) return ATC_LATITUDE;
+    else if (strcmp(string, "ATC_LONGITUDE") == 0) return ATC_LONGITUDE;
+    else if (strcmp(string, "ATC_HEIGHT") == 0) return ATC_HEIGHT;
+    else if (strcmp(string, "ATC_HORIZONTAL_SPEED") == 0) return ATC_HORIZONTAL_SPEED;
+    else if (strcmp(string, "ATC_HEADING") == 0) return ATC_HEADING;
+
+    // we should never come to this point -> assert
+    assert(false);
+    return END;
   }
 
 }

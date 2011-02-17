@@ -5,6 +5,8 @@ namespace SensorTypes
 {
 
   enum Type {
+
+    // Our own sensors
     START = 0,
     TRD_PRESSURE = START,
     TOF_VOLTAGE,
@@ -87,7 +89,17 @@ namespace SensorTypes
     INLET_TEMP,
     BAT_BOTTOM_TEMP,
     BAT_TOP_TEMP,
-    N_SENSOR_TYPES = BAT_TOP_TEMP + 1,
+
+    // ATC sensors
+    ATC_LATITUDE,
+    ATC_LONGITUDE,
+    ATC_HEIGHT,
+    ATC_HORIZONTAL_SPEED,
+    ATC_HEADING,
+
+    // EBASS sensors
+
+    N_SENSOR_TYPES = ATC_HEADING + 1,
     END = N_SENSOR_TYPES
   };
 
