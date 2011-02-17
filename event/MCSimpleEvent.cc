@@ -7,11 +7,6 @@ MCSimpleEvent::MCSimpleEvent():
 }
 
 
-MCSimpleEvent::MCSimpleEvent(const SimpleEvent& other):
-      SimpleEvent(other)
-  {
-  }
-
 MCSimpleEvent::MCSimpleEvent(const MCSimpleEvent& other):
       SimpleEvent(other)
   {
