@@ -22,9 +22,14 @@
 #include "MomentumSpectrumPlot.hh"
 #include "SignalHeightPlot.hh"
 #include "ClusterLengthPlot.hh"
-#include "TimeOfFlightPlot.hh"
-#include "TimeDifferencePlot.hh"
-#include "TimeOfFlightMomentumCorrelationPlot.hh"
+#include "ClusterShapePlot.hh"
+#include "BetaPlot.hh"
+#include "TOFTimeShiftPlot.hh"
+#include "BetaMomentumCorrelationPlot.hh"
+#include "CutStatisticsPlot.hh"
+#include "TrackerLayerStatisticsPlot.hh"
+#include "TrackingEfficiencyVsMomentumPlot.hh"
+#include "SingleLayerTrackingEfficiencyPlot.hh"
 #include "TRDClustersOnTrackPlot.hh"
 #include "TRDDistanceWireToTrackPlot.hh"
 #include "TRDDistanceInTube.hh"
@@ -35,8 +40,16 @@
 #include "TRDOccupancyPlot.hh"
 #include "TRDEfficiencyPlot.hh"
 #include "TotalEnergyDepositionPlot.hh"
+#include "TotalEnergyDepositionTRDvsTrackerPlot.hh"
 #include "TimeResolutionPlot.hh"
+#include "TOFTimeDifferencePlot.hh"
+#include "TotalSignalHeightPlot.hh"
+#include "TOFEfficiencyPlot.hh"
+#include "TimeOverThresholdMomentumCorrelation.hh"
+#include "TimeOverThresholdPlot.hh"
+#include "TOFAlignment.hh"
 
+#include <QProcess>
 #include <QFileDialog>
 #include <QVBoxLayout>
 #include <QDebug>
@@ -44,42 +57,125 @@
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
   , m_activePlots()
+  , m_inhibitDraw(false)
 {
   m_ui.setupUi(this);
-  
+ 
+  QStringList envVariables = QProcess::systemEnvironment();
+  QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
+  if (filteredVars.size() != 0) {
+    QString entry = filteredVars.first();
+    m_topLevelPath = entry.split("=").at(1);
+  } else {
+    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
+  }
+ 
   m_ui.plotter->setTitleLabel(m_ui.titleLabel);
   m_ui.plotter->setPositionLabel(m_ui.positionLabel);
   m_ui.plotter->setTimeLabel(m_ui.timeLabel);
   m_ui.plotter->setDataChainProgressBar(m_ui.dataChainProgressBar);
   m_ui.plotter->setEventQueueProgressBar(m_ui.eventQueueProgressBar);
 
+  m_topicCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
+  m_topicCheckBoxes.append(m_ui.signalHeightTRDCheckBox);
+  m_topicCheckBoxes.append(m_ui.clusterShapeTrackerCheckBox);
+  m_topicCheckBoxes.append(m_ui.clusterShapeTRDCheckBox);
+  m_topicCheckBoxes.append(m_ui.timeOverThresholdCheckBox);
+  m_topicCheckBoxes.append(m_ui.trackingCheckBox);
+  m_topicCheckBoxes.append(m_ui.occupancyCheckBox);
+  m_topicCheckBoxes.append(m_ui.residualsTrackerCheckBox);
+  m_topicCheckBoxes.append(m_ui.residualsTRDCheckBox);
+  m_topicCheckBoxes.append(m_ui.momentumReconstructionCheckBox);
+  m_topicCheckBoxes.append(m_ui.efficiencyTofCheckBox);
+  m_topicCheckBoxes.append(m_ui.resolutionTofCheckBox);
+  m_topicCheckBoxes.append(m_ui.calibrationTofCheckBox);
+  m_topicCheckBoxes.append(m_ui.miscellaneousTrackerCheckBox);
+  m_topicCheckBoxes.append(m_ui.miscellaneousTRDCheckBox);
+  m_topicCheckBoxes.append(m_ui.miscellaneousTOFCheckBox);
+
+  m_trackerCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
+  m_trackerCheckBoxes.append(m_ui.clusterShapeTrackerCheckBox);
+  m_trackerCheckBoxes.append(m_ui.trackingCheckBox);
+  m_trackerCheckBoxes.append(m_ui.residualsTrackerCheckBox);
+  m_trackerCheckBoxes.append(m_ui.momentumReconstructionCheckBox);
+  m_trackerCheckBoxes.append(m_ui.miscellaneousTrackerCheckBox);
+
+  m_trdCheckBoxes.append(m_ui.signalHeightTRDCheckBox);
+  m_trdCheckBoxes.append(m_ui.clusterShapeTRDCheckBox);
+  m_trdCheckBoxes.append(m_ui.residualsTRDCheckBox);
+  m_trdCheckBoxes.append(m_ui.miscellaneousTRDCheckBox);
+
+  m_tofCheckBoxes.append(m_ui.timeOverThresholdCheckBox);
+  m_tofCheckBoxes.append(m_ui.momentumReconstructionCheckBox);
+  m_tofCheckBoxes.append(m_ui.efficiencyTofCheckBox);
+  m_tofCheckBoxes.append(m_ui.resolutionTofCheckBox);
+  m_tofCheckBoxes.append(m_ui.calibrationTofCheckBox);
+  m_tofCheckBoxes.append(m_ui.miscellaneousTOFCheckBox);
+  
+  foreach(QCheckBox* checkBox, m_topicCheckBoxes)
+    m_controlWidgets.append(checkBox);
+  m_controlWidgets.append(m_ui.selectAllButton);
+  m_controlWidgets.append(m_ui.selectTrackerButton);
+  m_controlWidgets.append(m_ui.selectTrdButton);
+  m_controlWidgets.append(m_ui.selectTofButton);
+  m_controlWidgets.append(m_ui.trackComboBox);
+  m_controlWidgets.append(m_ui.firstEventSpinBox);
+  m_controlWidgets.append(m_ui.lastEventSpinBox);
+  m_controlWidgets.append(m_ui.numberOfThreadsSpinBox);
+  m_controlWidgets.append(m_ui.alignmentCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.timeShiftCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.trdMopValueCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.timeOverThresholdCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.photonTravelTimeCorrectionCheckBox);
+
   connect(m_ui.analyzeButton, SIGNAL(clicked()), this, SLOT(analyzeButtonClicked()));
-  connect(m_ui.saveCanvasButton, SIGNAL(clicked()), this, SLOT(saveCanvasButtonClicked()));
-  connect(m_ui.saveAllCanvasesButton, SIGNAL(clicked()), this, SLOT(saveAllCanvasButtonClicked()));
-  connect(m_ui.saveForPostAnalysisButton, SIGNAL(clicked()), this, SLOT(saveForPostAnalysisButtonClicked()));
-  connect(m_ui.toggleSelectionButton, SIGNAL(clicked()), this, SLOT(toggleSelectionButtonClicked()));
-  connect(m_ui.setFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
-  connect(m_ui.addFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
-  connect(m_ui.toggleGridButton, SIGNAL(clicked()), this, SLOT(toggleGridButtonClicked()));
+  connect(m_ui.plotter, SIGNAL(analysisStarted()), this, SLOT(toggleControlWidgetsStatus()));
+  connect(m_ui.plotter, SIGNAL(analysisCompleted()), this, SLOT(toggleControlWidgetsStatus()));
+  connect(m_ui.savePdfButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
+  connect(m_ui.savePngButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
+  connect(m_ui.saveRootButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
+  
+  connect(m_ui.saveCanvasAction, SIGNAL(triggered()), this, SLOT(saveCanvasActionTriggered()));
+  connect(m_ui.saveAllCanvasesAction, SIGNAL(triggered()), this, SLOT(saveAllCanvasActionTriggered()));
+  connect(m_ui.saveForPostAnalysisAction, SIGNAL(triggered()), this, SLOT(saveForPostAnalysisActionTriggered()));
+  connect(m_ui.setFileListAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListActionTriggered()));
+  connect(m_ui.addFileListAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListActionTriggered()));
+  connect(m_ui.quitAction, SIGNAL(triggered()), this, SLOT(close()));
+  
+  connect(m_ui.plotter, SIGNAL(numberOfEventsChanged(int)), this, SLOT(numberOfEventsChanged(int)));
+  connect(m_ui.firstEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
+  connect(m_ui.lastEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
+
+  connect(m_ui.selectAllButton, SIGNAL(clicked()), this, SLOT(selectAllButtonClicked()));
+  connect(m_ui.selectTrackerButton, SIGNAL(clicked()), this, SLOT(selectTrackerButtonClicked()));
+  connect(m_ui.selectTrdButton, SIGNAL(clicked()), this, SLOT(selectTrdButtonClicked()));
+  connect(m_ui.selectTofButton, SIGNAL(clicked()), this, SLOT(selectTofButtonClicked()));
+  connect(m_ui.gridCheckBox, SIGNAL(stateChanged(int)), this, SLOT(gridCheckBoxChanged(int)));
+  connect(m_ui.logXCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logXCheckBoxChanged(int)));
+  connect(m_ui.logYCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logYCheckBoxChanged(int)));
+  connect(m_ui.logZCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logZCheckBoxChanged(int)));
   connect(m_ui.listWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(listWidgetItemChanged(QListWidgetItem*)));
   connect(m_ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(listWidgetCurrentRowChanged(int)));
 
-  connect(m_ui.signalHeightUpperTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.signalHeightLowerTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.signalHeightTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.signalHeightTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.clusterLengthUpperTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.clusterLengthLowerTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.clusterLengthTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.clusterShapeTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.clusterShapeTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.timeOverThresholdButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.trackingButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.occupancyButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.residualsUpperTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.residualsLowerTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.residualsTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.residualsTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.momentumReconstructionButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.efficiencyTofButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.resolutionTofButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.calibrationTofButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTOFButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+
+  foreach(QCheckBox* checkBox, m_topicCheckBoxes)
+    connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged()));
 
   setupPlots();
 }
@@ -88,36 +184,58 @@ MainWindow::~MainWindow()
 {
 }
 
+void MainWindow::processArguments(QStringList arguments)
+{
+  arguments.removeFirst();
+  QRegExp onlyDigits("^\\d+$");
+  foreach(QString argument, arguments) {
+    if (!onlyDigits.exactMatch(argument)) {
+      if (argument.endsWith(".root"))
+        m_ui.plotter->addRootFile(argument);
+      else
+        m_ui.plotter->addFileList(argument);
+    }
+  }
+  QStringList eventRange = arguments.filter(onlyDigits);
+  if (eventRange.size() == 2) {
+    int firstEvent = eventRange.at(0).toInt();
+    int lastEvent = eventRange.at(1).toInt();
+    m_ui.firstEventSpinBox->setValue(firstEvent);
+    m_ui.lastEventSpinBox->setValue(lastEvent);
+    firstOrLastEventChanged();
+  }
+}
+
 void MainWindow::showButtonsClicked()
 {
   QPushButton* b = static_cast<QPushButton*>(sender());
   AnalysisPlot::Topic topic = AnalysisPlot::TopicEnd;
-  if (b == m_ui.signalHeightUpperTrackerButton) {
-    topic = AnalysisPlot::SignalHeightUpperTracker;
-  } else if (b == m_ui.signalHeightLowerTrackerButton) {
-    topic = AnalysisPlot::SignalHeightLowerTracker;
+  if (b == m_ui.signalHeightTrackerButton) {
+    topic = AnalysisPlot::SignalHeightTracker;
   } else if (b == m_ui.signalHeightTRDButton) {
     topic = AnalysisPlot::SignalHeightTRD;
-  } else if (b == m_ui.clusterLengthUpperTrackerButton) {
-    topic = AnalysisPlot::ClusterLengthUpperTracker;
-  } else if (b == m_ui.clusterLengthLowerTrackerButton) {
-    topic = AnalysisPlot::ClusterLengthLowerTracker;
-  } else if (b == m_ui.clusterLengthTRDButton) {
-    topic = AnalysisPlot::ClusterLengthTRD;
+  } else if (b == m_ui.clusterShapeTrackerButton) {
+    topic = AnalysisPlot::ClusterShapeTracker;
+  } else if (b == m_ui.clusterShapeTRDButton) {
+    topic = AnalysisPlot::ClusterShapeTRD;
   } else if (b == m_ui.timeOverThresholdButton) {
     topic = AnalysisPlot::TimeOverThreshold;
   } else if (b == m_ui.trackingButton) {
     topic = AnalysisPlot::Tracking;
   } else if (b == m_ui.occupancyButton) {
     topic = AnalysisPlot::Occupancy;
-  } else if (b == m_ui.residualsUpperTrackerButton) {
-    topic = AnalysisPlot::ResidualsUpperTracker;
-  } else if (b == m_ui.residualsLowerTrackerButton) {
-    topic = AnalysisPlot::ResidualsLowerTracker;
+  } else if (b == m_ui.residualsTrackerButton) {
+    topic = AnalysisPlot::ResidualsTracker;
   } else if (b == m_ui.residualsTRDButton) {
     topic = AnalysisPlot::ResidualsTRD;
   } else if (b == m_ui.momentumReconstructionButton) {
     topic = AnalysisPlot::MomentumReconstruction;
+  } else if (b == m_ui.efficiencyTofButton) {
+    topic = AnalysisPlot::EfficiencyTOF;
+  } else if (b == m_ui.resolutionTofButton) {
+    topic = AnalysisPlot::ResolutionTOF;
+  } else if (b == m_ui.calibrationTofButton) {
+    topic = AnalysisPlot::CalibrationTOF;
   } else if (b == m_ui.miscellaneousTrackerButton) {
     topic = AnalysisPlot::MiscellaneousTracker;
   } else if (b == m_ui.miscellaneousTRDButton) {
@@ -137,9 +255,19 @@ void MainWindow::showButtonsClicked()
     }
   } else {
     b->setText("+");
+    QVector<int> matchingItems;
     for (int i = m_ui.listWidget->count() - 1; i >= 0; --i) {
       if (m_ui.plotter->plotTopic(m_activePlots[i]) == topic)
-        removeListWidgetItem(i);
+        matchingItems << i;
+    }
+    if (matchingItems.size() > 0)
+      m_inhibitDraw = true;
+    foreach(int i, matchingItems) {
+      removeListWidgetItem(i);
+      if (i == matchingItems.last()) {
+        m_inhibitDraw = false;
+        listWidgetCurrentRowChanged(m_ui.listWidget->currentRow());
+      }
     }
   }
 }
@@ -163,7 +291,8 @@ void MainWindow::listWidgetCurrentRowChanged(int i)
     m_ui.plotter->selectPlot(-1);
     return;
   }
-  m_ui.plotter->selectPlot(m_activePlots[i]);
+  if (!m_inhibitDraw)
+    m_ui.plotter->selectPlot(m_activePlots[i]);
 }
 
 void MainWindow::setupPlots()
@@ -173,27 +302,15 @@ void MainWindow::setupPlots()
   m_ui.plotter->clearPlots();
   m_activePlots.clear();
   m_ui.listWidget->clear();
-  if (m_ui.signalHeightUpperTrackerCheckBox->isChecked()) {
+  if (m_ui.signalHeightTrackerCheckBox->isChecked()) {
     DetectorElement* element = setup->firstElement();
     while(element) {
-      if (element->type() == DetectorElement::tracker && element->position().z() > 0)
-        m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightUpperTracker, element->id()));
-      element = setup->nextElement();
-    }
-  }
-  if (m_ui.signalHeightLowerTrackerCheckBox->isChecked()) {
-    DetectorElement* element = setup->firstElement();
-    while(element) {
-      if (element->type() == DetectorElement::tracker && element->position().z() < 0)
-        m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightLowerTracker, element->id()));
+      if (element->type() == DetectorElement::tracker)
+        m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightTracker, element->id()));
       element = setup->nextElement();
     }
   }
   if (m_ui.signalHeightTRDCheckBox->isChecked()) {
-
-     m_ui.plotter->addPlot( new TotalEnergyDepositionPlot(2,10) );
-
-
     DetectorElement* element = setup->firstElement();
     while(element) {
       if (element->type() == DetectorElement::trd)
@@ -201,40 +318,18 @@ void MainWindow::setupPlots()
       element = setup->nextElement();
     }
 
-    //add time evolution plot of trd module MoPV
-    m_ui.plotter->addPlot( new TRDMoPVTimeEvolutionPlot(AnalysisPlot::SignalHeightTRD) );
-
-    //add trd spectrum for whole trd
     m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
-
-    //add trd spectrum for whole trd in rigidity range -1.5 GeV +- 20%
     m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, -3, -1.5));
-
-    //add trd spectrum for whole trd in rigidity range 2.5 GeV +- 20%
     m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, 1.5, 3));
     
-    //add the MPV distribution plot for modules
     TRDFitPlot* mpvModuleTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD, "MPVs of TRD Modules");
-
-    //add trd spectra normalized to distance in tube:
+    TRDFitPlot* mpvChannelTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD, "MPVs of TRD Channels");
     element = setup->firstElement();
     while(element) {
       if (element->type() == DetectorElement::trd){
         TRDSpectrumPlot* trdModuleSpectrumPlot = new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, element->id(),TRDSpectrumPlot::module);
         m_ui.plotter->addPlot(trdModuleSpectrumPlot);
         mpvModuleTRDPlot->addLandauFit(trdModuleSpectrumPlot->landauFit());
-      }
-      element = setup->nextElement();
-    }
-    m_ui.plotter->addPlot(mpvModuleTRDPlot);
-
-    // add the MPV distribution plot for channels
-    TRDFitPlot* mpvChannelTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD, "MPVs of TRD Channels");
-
-    //add trd spectra normalized to distance in tube:
-    element = setup->firstElement();
-    while(element) {
-      if (element->type() == DetectorElement::trd){
         for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++){
           TRDSpectrumPlot* trdChannelSpectrumPlot = new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, element->id() | tubeNo,TRDSpectrumPlot::channel);
           m_ui.plotter->addPlot(trdChannelSpectrumPlot);
@@ -243,36 +338,36 @@ void MainWindow::setupPlots()
       }
       element = setup->nextElement();
     }
+    m_ui.plotter->addPlot(mpvModuleTRDPlot);
     m_ui.plotter->addPlot(mpvChannelTRDPlot);
-
-    //add energy over momentum plot
-    m_ui.plotter->addPlot(new TRDEnergyDepositionOverMomentumPlot(AnalysisPlot::SignalHeightTRD));
   }
-  if (m_ui.clusterLengthUpperTrackerCheckBox->isChecked()) {
+  if (m_ui.clusterShapeTrackerCheckBox->isChecked()) {
     DetectorElement* element = setup->firstElement();
     while(element) {
-      if (element->type() == DetectorElement::tracker && element->position().z() > 0)
-        m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterLengthUpperTracker, element->id()));
+      if (element->type() == DetectorElement::tracker) {
+        m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterShapeTracker, element->id()));
+        m_ui.plotter->addPlot(new ClusterShapePlot(element->id()));
+      }
       element = setup->nextElement();
     }
   }
-  if (m_ui.clusterLengthLowerTrackerCheckBox->isChecked()) {
-    DetectorElement* element = setup->firstElement();
-    while(element) {
-      if (element->type() == DetectorElement::tracker && element->position().z() < 0)
-        m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterLengthLowerTracker, element->id()));
-      element = setup->nextElement();
-    }
-  }
-  if (m_ui.clusterLengthTRDCheckBox->isChecked()) {
+  if (m_ui.clusterShapeTRDCheckBox->isChecked()) {
     DetectorElement* element = setup->firstElement();
     while(element) {
       if (element->type() == DetectorElement::trd)
-        m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterLengthTRD, element->id()));
+        m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterShapeTRD, element->id()));
       element = setup->nextElement();
     }
   }
   if (m_ui.timeOverThresholdCheckBox->isChecked()) {
+     m_ui.plotter->addPlot(new TimeOverThresholdPlot);
+    DetectorElement* element = setup->firstElement();
+    while (element) {
+      if (element->type() == DetectorElement::tof)
+        for (int ch = 0; ch < 4; ++ch)
+          m_ui.plotter->addPlot(new TimeOverThresholdMomentumCorrelation(element->id() | ch));
+      element = setup->nextElement();
+    }
   }
   if (m_ui.trackingCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BendingPositionPlot);
@@ -284,13 +379,6 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new Chi2PerNdfPlot);
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
-    m_ui.plotter->addPlot(new TRDEfficiencyPlot());
-    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::numberOfHits));
-    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::numberOfHits, true));
-    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeights));
-    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeights, true));
-    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits));
-    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits, true));
     Layer* layer = setup->firstLayer();
     while(layer) {
       m_ui.plotter->addPlot(new GeometricOccupancyPlot(layer->z()));
@@ -298,19 +386,11 @@ void MainWindow::setupPlots()
       layer = setup->nextLayer();
     }
   }
-  if (m_ui.residualsUpperTrackerCheckBox->isChecked()) {
+  if (m_ui.residualsTrackerCheckBox->isChecked()) {
     Layer* layer = setup->firstLayer();
     while(layer) {
-      if (layer->z() > 0 && layer->z() < 240)
-        m_ui.plotter->addPlot(new ResidualPlot(AnalysisPlot::ResidualsUpperTracker, layer));
-      layer = setup->nextLayer();
-    }
-  }
-  if (m_ui.residualsLowerTrackerCheckBox->isChecked()) {
-    Layer* layer = setup->firstLayer();
-    while(layer) {
-      if (layer->z() > -240 && layer->z() < 0)
-        m_ui.plotter->addPlot(new ResidualPlot(AnalysisPlot::ResidualsLowerTracker, layer));
+      if (layer->z() > -240 && layer->z() < 240)
+        m_ui.plotter->addPlot(new ResidualPlot(AnalysisPlot::ResidualsTracker, layer));
       layer = setup->nextLayer();
     }
   }
@@ -323,41 +403,85 @@ void MainWindow::setupPlots()
     }
   }
   if (m_ui.momentumReconstructionCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new BetaMomentumCorrelationPlot());
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::All));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Positive));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Negative));
-    m_ui.plotter->addPlot(new TimeOfFlightMomentumCorrelationPlot());
+    m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Inverted));
     m_ui.plotter->addPlot(new AlbedosVsMomentumPlot());
   }
+  if (m_ui.efficiencyTofCheckBox->isChecked()) {
+    DetectorElement* element = setup->firstElement();
+    while (element) {
+      if (element->type() == DetectorElement::tof) {
+        for (int ch = 0; ch < 4; ++ch) {
+          m_ui.plotter->addPlot(new TOFEfficiencyPlot(element->id() | ch));
+        }
+      }
+      element = setup->nextElement();
+    }
+  }
+  if (m_ui.resolutionTofCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x8020, 0x8030));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8024, 0x8034));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8028, 0x8038));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x802c, 0x803c));
+  }
+  if (m_ui.calibrationTofCheckBox->isChecked()) {
+    DetectorElement* element = setup->firstElement();
+    while (element) {
+      if (element->type() == DetectorElement::tof)
+        m_ui.plotter->addPlot(new TOFTimeDifferencePlot(element->id()));
+      element = setup->nextElement();
+    }
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8000, 0x8010, true));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8000, 0x8010, false));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8004, 0x8014, true));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8004, 0x8014, false));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8008, 0x8018, true));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8008, 0x8018, false));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x800c, 0x801c, true));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x800c, 0x801c, false));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8020, 0x8030, true));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8020, 0x8030, false));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8024, 0x8034, true));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8024, 0x8034, false));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8028, 0x8038, true));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8028, 0x8038, false));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x802c, 0x803c, true));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x802c, 0x803c, false));
+  }
   if (m_ui.miscellaneousTrackerCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new TotalSignalHeightPlot);
+    m_ui.plotter->addPlot(new CutStatisticsPlot);
+    m_ui.plotter->addPlot(new TrackerLayerStatisticsPlot);
+    m_ui.plotter->addPlot(new TrackingEfficiencyVsMomentumPlot);
+    m_ui.plotter->addPlot(new SingleLayerTrackingEfficiencyPlot);
   }
   if (m_ui.miscellaneousTRDCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisPlot::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TRDDistanceWireToTrackPlot(AnalysisPlot::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TRDDistanceInTube(AnalysisPlot::MiscellaneousTRD));
+    m_ui.plotter->addPlot(new TotalEnergyDepositionPlot(-100,100));
+    m_ui.plotter->addPlot(new TRDEnergyDepositionOverMomentumPlot(AnalysisPlot::MiscellaneousTRD));
+    m_ui.plotter->addPlot(new TotalEnergyDepositionTRDvsTrackerPlot());
+    m_ui.plotter->addPlot(new TRDEfficiencyPlot());
+    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::numberOfHits));
+    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::numberOfHits, true));
+    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeights));
+    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeights, true));
+    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits));
+    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits, true));
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
-    m_ui.plotter->addPlot(new TimeOfFlightPlot());
+    m_ui.plotter->addPlot(new BetaPlot());
     DetectorElement* element = setup->firstElement();
     while (element) {
       if (element->type() == DetectorElement::tof)
         m_ui.plotter->addPlot(new TOFPositionCorrelationPlot(element->id()));
       element = setup->nextElement();
     }
-
-    m_ui.plotter->addPlot(new TimeDifferencePlot(0x8000, 0x8010));
-    m_ui.plotter->addPlot(new TimeDifferencePlot(0x8004, 0x8014));
-    m_ui.plotter->addPlot(new TimeDifferencePlot(0x8008, 0x8018));
-    m_ui.plotter->addPlot(new TimeDifferencePlot(0x800c, 0x801c));
-    m_ui.plotter->addPlot(new TimeDifferencePlot(0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TimeDifferencePlot(0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TimeDifferencePlot(0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TimeDifferencePlot(0x802c, 0x803c));
-
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x802c, 0x803c));
+    //m_ui.plotter->addPlot(new TOFAlignment);
   }
 }
 
@@ -367,6 +491,8 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
     flags|= Corrections::Alignment;
   if (m_ui.timeShiftCorrectionCheckBox->isChecked())
     flags|= Corrections::TimeShifts;
+  if (m_ui.photonTravelTimeCorrectionCheckBox->isChecked())
+    flags|= Corrections::PhotonTravelTime;
   if (m_ui.trdMopValueCorrectionCheckBox->isChecked())
     flags|= Corrections::TrdMopv;
   if (m_ui.timeOverThresholdCorrectionCheckBox->isChecked())
@@ -384,36 +510,36 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
     type = Track::None;
   }
  
-  m_ui.signalHeightUpperTrackerButton->setText("+");
-  m_ui.signalHeightLowerTrackerButton->setText("+");
+  m_ui.signalHeightTrackerButton->setText("+");
   m_ui.signalHeightTRDButton->setText("+");
-  m_ui.clusterLengthUpperTrackerButton->setText("+");
-  m_ui.clusterLengthLowerTrackerButton->setText("+");
-  m_ui.clusterLengthTRDButton->setText("+");
+  m_ui.clusterShapeTrackerButton->setText("+");
+  m_ui.clusterShapeTRDButton->setText("+");
   m_ui.timeOverThresholdButton->setText("+");
   m_ui.trackingButton->setText("+");
   m_ui.occupancyButton->setText("+");
-  m_ui.residualsUpperTrackerButton->setText("+");
-  m_ui.residualsLowerTrackerButton->setText("+");
+  m_ui.residualsTrackerButton->setText("+");
   m_ui.residualsTRDButton->setText("+");
   m_ui.momentumReconstructionButton->setText("+");
+  m_ui.efficiencyTofButton->setText("+");
+  m_ui.resolutionTofButton->setText("+");
+  m_ui.calibrationTofButton->setText("+");
   m_ui.miscellaneousTrackerButton->setText("+");
   m_ui.miscellaneousTRDButton->setText("+");
   m_ui.miscellaneousTOFButton->setText("+");
 
-  m_ui.signalHeightUpperTrackerButton->setEnabled(m_ui.signalHeightUpperTrackerCheckBox->isChecked());
-  m_ui.signalHeightLowerTrackerButton->setEnabled(m_ui.signalHeightLowerTrackerCheckBox->isChecked());
+  m_ui.signalHeightTrackerButton->setEnabled(m_ui.signalHeightTrackerCheckBox->isChecked());
   m_ui.signalHeightTRDButton->setEnabled(m_ui.signalHeightTRDCheckBox->isChecked());
-  m_ui.clusterLengthUpperTrackerButton->setEnabled(m_ui.clusterLengthUpperTrackerCheckBox->isChecked());
-  m_ui.clusterLengthLowerTrackerButton->setEnabled(m_ui.clusterLengthLowerTrackerCheckBox->isChecked());
-  m_ui.clusterLengthTRDButton->setEnabled(m_ui.clusterLengthTRDCheckBox->isChecked());
+  m_ui.clusterShapeTrackerButton->setEnabled(m_ui.clusterShapeTrackerCheckBox->isChecked());
+  m_ui.clusterShapeTRDButton->setEnabled(m_ui.clusterShapeTRDCheckBox->isChecked());
   m_ui.timeOverThresholdButton->setEnabled(m_ui.timeOverThresholdCheckBox->isChecked());
   m_ui.trackingButton->setEnabled(m_ui.trackingCheckBox->isChecked());
   m_ui.occupancyButton->setEnabled(m_ui.occupancyCheckBox->isChecked());
-  m_ui.residualsUpperTrackerButton->setEnabled(m_ui.residualsUpperTrackerCheckBox->isChecked());
-  m_ui.residualsLowerTrackerButton->setEnabled(m_ui.residualsLowerTrackerCheckBox->isChecked());
+  m_ui.residualsTrackerButton->setEnabled(m_ui.residualsTrackerCheckBox->isChecked());
   m_ui.residualsTRDButton->setEnabled(m_ui.residualsTRDCheckBox->isChecked());
   m_ui.momentumReconstructionButton->setEnabled(m_ui.momentumReconstructionCheckBox->isChecked());
+  m_ui.efficiencyTofButton->setEnabled(m_ui.efficiencyTofCheckBox->isChecked());
+  m_ui.resolutionTofButton->setEnabled(m_ui.resolutionTofCheckBox->isChecked());
+  m_ui.calibrationTofButton->setEnabled(m_ui.calibrationTofCheckBox->isChecked());
   m_ui.miscellaneousTrackerButton->setEnabled(m_ui.miscellaneousTrackerCheckBox->isChecked());
   m_ui.miscellaneousTRDButton->setEnabled(m_ui.miscellaneousTRDCheckBox->isChecked());
   m_ui.miscellaneousTOFButton->setEnabled(m_ui.miscellaneousTOFCheckBox->isChecked());
@@ -421,9 +547,7 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
 
 void MainWindow::analyzeButtonClicked()
 {
-  if (m_ui.analyzeButton->text() == "start analysis") {
-    m_ui.analyzeButton->setText("abort analysis");
-    m_ui.trackComboBox->setEnabled(false);
+  if (m_ui.analyzeButton->text() == "&start") {
     Track::Type type;
     Corrections::Flags flags;
     setupAnalysis(type, flags);
@@ -431,35 +555,42 @@ void MainWindow::analyzeButtonClicked()
     m_ui.plotter->startAnalysis(type, flags, m_ui.numberOfThreadsSpinBox->value());
   } else {
     m_ui.plotter->abortAnalysis();
-    m_ui.trackComboBox->setEnabled(true);
-    m_ui.analyzeButton->setText("start analysis");
   }
 }
 
-void MainWindow::setOrAddFileListButtonClicked()
+void MainWindow::setOrAddFileListActionTriggered()
 {
   QStringList files = QFileDialog::getOpenFileNames(this,
     "Select one or more file lists to open", "", "*.txt;;*.*;;*");
-  if (sender() == m_ui.setFileListButton) {
+  if (sender() == m_ui.setFileListAction) {
     foreach(QString file, files)
-      setFileList(file);
-  } else if (sender() == m_ui.addFileListButton) {
+      m_ui.plotter->setFileList(file);
+  } else if (sender() == m_ui.addFileListAction) {
     foreach(QString file, files)
-      addFileList(file);
+      m_ui.plotter->addFileList(file);
   }
 }
 
-void MainWindow::addFileList(const QString& fileName)
+void MainWindow::saveButtonsClicked()
 {
-  m_ui.plotter->addFileList(fileName);
+  QString fileName = m_topLevelPath + "/plots/" + m_ui.titleLabel->text();
+  QPushButton* b = static_cast<QPushButton*>(sender());
+  if (b == m_ui.savePdfButton) {
+    fileName+= ".pdf";
+  } else if (b == m_ui.savePngButton) {
+    fileName+= ".png";
+  } else if (b == m_ui.saveRootButton) {
+    fileName+= ".root";
+  } else {
+    return;
+  }
+  QDir dir(m_topLevelPath);
+  if (!dir.exists("plots"))
+    dir.mkdir("plots");
+  m_ui.plotter->saveCanvas(fileName);
 }
 
-void MainWindow::setFileList(const QString& fileName)
-{
-  m_ui.plotter->setFileList(fileName);
-}
-
-void MainWindow::saveCanvasButtonClicked()
+void MainWindow::saveCanvasActionTriggered()
 {
   QStringList fileFormatEndings;
   fileFormatEndings << "svg" << "pdf" << "eps" << "root" << "png";
@@ -497,7 +628,7 @@ void MainWindow::saveCanvasButtonClicked()
   }
 }
 
-void MainWindow::saveAllCanvasButtonClicked()
+void MainWindow::saveAllCanvasActionTriggered()
 {
   QFileDialog dialog(this, "save all canvases displayed", ".");
   dialog.setFileMode(QFileDialog::DirectoryOnly);
@@ -512,7 +643,7 @@ void MainWindow::saveAllCanvasButtonClicked()
     }
 }
 
-void MainWindow::saveForPostAnalysisButtonClicked()
+void MainWindow::saveForPostAnalysisActionTriggered()
 {
   QString fileEnding;
   QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "*.root", &fileEnding);
@@ -524,26 +655,51 @@ void MainWindow::saveForPostAnalysisButtonClicked()
   m_ui.plotter->saveForPostAnalysis(fileName);
 }
 
-void MainWindow::toggleSelectionButtonClicked()
+void MainWindow::checkBoxChanged()
 {
-  bool b = m_ui.toggleSelectionButton->text() == "select all";
-  m_ui.toggleSelectionButton->setText(b ? "deselect all" : "select all");
-  m_ui.signalHeightUpperTrackerCheckBox->setChecked(b);
-  m_ui.signalHeightLowerTrackerCheckBox->setChecked(b);
-  m_ui.signalHeightTRDCheckBox->setChecked(b);
-  m_ui.clusterLengthUpperTrackerCheckBox->setChecked(b);
-  m_ui.clusterLengthLowerTrackerCheckBox->setChecked(b);
-  m_ui.clusterLengthTRDCheckBox->setChecked(b);
-  m_ui.timeOverThresholdCheckBox->setChecked(b);
-  m_ui.trackingCheckBox->setChecked(b);
-  m_ui.occupancyCheckBox->setChecked(b);
-  m_ui.residualsUpperTrackerCheckBox->setChecked(b);
-  m_ui.residualsLowerTrackerCheckBox->setChecked(b);
-  m_ui.residualsTRDCheckBox->setChecked(b);
-  m_ui.momentumReconstructionCheckBox->setChecked(b);
-  m_ui.miscellaneousTrackerCheckBox->setChecked(b);
-  m_ui.miscellaneousTRDCheckBox->setChecked(b);
-  m_ui.miscellaneousTOFCheckBox->setChecked(b);
+  checkSelectAll();
+}
+
+void MainWindow::changeTopicGroupStatus(QVector<QCheckBox*>& group)
+{
+  bool groupAlreadyChecked = true;
+  foreach(QCheckBox* checkBox, group)
+    groupAlreadyChecked = groupAlreadyChecked && checkBox->isChecked();
+
+  bool newState = groupAlreadyChecked ? false : true;
+  foreach(QCheckBox* checkBox, group)
+    checkBox->setChecked(newState);
+
+  checkSelectAll();
+}
+ 
+void MainWindow::checkSelectAll()
+{
+  bool allTopicsChecked = true;
+  foreach(QCheckBox* checkBox, m_topicCheckBoxes)
+    allTopicsChecked = allTopicsChecked && checkBox->isChecked();
+
+  m_ui.selectAllButton->setText(allTopicsChecked ? "deselect &all" : "select &all");
+}
+
+void MainWindow::selectAllButtonClicked()
+{
+  changeTopicGroupStatus(m_topicCheckBoxes);
+}
+
+void MainWindow::selectTrackerButtonClicked()
+{
+  changeTopicGroupStatus(m_trackerCheckBoxes);
+}
+
+void MainWindow::selectTrdButtonClicked()
+{
+  changeTopicGroupStatus(m_trdCheckBoxes);
+}
+ 
+void MainWindow::selectTofButtonClicked()
+{
+  changeTopicGroupStatus(m_tofCheckBoxes);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -552,13 +708,52 @@ void MainWindow::closeEvent(QCloseEvent* event)
   event->accept();
 }
 
-void MainWindow::toggleGridButtonClicked()
+void MainWindow::gridCheckBoxChanged(int value)
 {
-  if (m_ui.toggleGridButton->text() == "show grid") {
-    m_ui.plotter->setGrid(true);
-    m_ui.toggleGridButton->setText("hide grid");
-  } else {
-    m_ui.plotter->setGrid(false);
-    m_ui.toggleGridButton->setText("show grid");
-  }
+  m_ui.plotter->setGrid(value);
+}
+
+void MainWindow::logXCheckBoxChanged(int value)
+{
+  m_ui.plotter->setLogX(value);
+}
+
+void MainWindow::logYCheckBoxChanged(int value)
+{
+  m_ui.plotter->setLogY(value);
+}
+
+void MainWindow::logZCheckBoxChanged(int value)
+{
+  m_ui.plotter->setLogZ(value);
+}
+
+void MainWindow::firstOrLastEventChanged(int)
+{
+  double firstEvent = m_ui.firstEventSpinBox->value();
+  double lastEvent = m_ui.lastEventSpinBox->value();
+  m_ui.lastEventSpinBox->setMinimum(firstEvent);
+  m_ui.firstEventSpinBox->setMaximum(lastEvent);
+  m_ui.plotter->setFirstEvent(firstEvent);
+  m_ui.plotter->setLastEvent(lastEvent);
+}
+
+void MainWindow::numberOfEventsChanged(int nEvents)
+{
+  m_ui.firstEventSpinBox->setMinimum(0);
+  m_ui.lastEventSpinBox->setMaximum(nEvents-1);
+  m_ui.firstEventSpinBox->setValue(0);
+  m_ui.lastEventSpinBox->setValue(nEvents-1);
+  firstOrLastEventChanged();
+}
+
+void MainWindow::toggleControlWidgetsStatus()
+{
+  foreach(QWidget* widget, m_controlWidgets)
+    widget->setEnabled(!widget->isEnabled());
+
+  if (m_ui.analyzeButton->text() == "&start")
+    m_ui.analyzeButton->setText("&stop");
+  else
+    m_ui.analyzeButton->setText("&start");
 }

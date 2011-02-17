@@ -26,6 +26,7 @@ void TrackInformation::process()
     return;
 
   checkAllTrackerLayers();
+  checkChi2Good();
   checkInsideMagnet();
   checkOutsideMagnet();
   checkHighPt();
@@ -33,24 +34,37 @@ void TrackInformation::process()
   checkAlbedo();
 }
 
+void TrackInformation::reset()
+{
+  m_flags = Flags(0);
+  m_hitsInLayers.clear();
+}
+
 void TrackInformation::checkAllTrackerLayers()
 {
   // count hits in each tracker layer
-  QMap<double, int> counts;
   foreach(Hit* hit, m_track->hits()) {
     if (hit->type() == Hit::tracker) {
       double z = round(hit->position().z()*100.)/100.;
-      counts[z]++;
+      m_hitsInLayers[z]++;
     }
   }
+
   // exactly 8 layers
-  if (counts.size() != 8)
+  if (m_hitsInLayers.size() != 8)
     return;
   // exactly 1 count in each layer
-  foreach(int count, counts)
+  foreach(int count, m_hitsInLayers)
     if (count != 1)
       return;
   m_flags |= AllTrackerLayers;
+}
+
+void TrackInformation::checkChi2Good()
+{
+  if (m_track->chi2() / m_track->ndf() > 5)
+    return;
+  m_flags |= Chi2Good;
 }
 
 void TrackInformation::checkInsideMagnet()

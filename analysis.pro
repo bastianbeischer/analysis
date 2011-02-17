@@ -1,11 +1,16 @@
+!exists($(PERDAIXANA_PATH)) {
+  error(Please set PERDAIXANA_PATH environment variable!)
+}
+
 TEMPLATE = subdirs
 
-CONFIG  += ordered
+CONFIG += ordered
 
-SUBDIRS  = event \
-           setup \
-           tracking \
-           processing \
-           alignment \
-           rootplot \
-           tools
+SUBDIRS = \
+  event \
+  tracking \
+  setup \
+  processing \
+  alignment \
+  rootplot \
+  tools

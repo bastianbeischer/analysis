@@ -5,28 +5,18 @@ CONFIG += debug
 
 TOPLEVEL = ../..
 
-# Seperate source & build dirs
-DESTDIR     = $$TOPLEVEL/bin
-OBJECTS_DIR = ./.tmp
-MOC_DIR     = ./.tmp
-UI_DIR      = ./.tmp
-RCC_DIR     = ./.tmp
+INCLUDEPATH += \
+  $$TOPLEVEL/event \
+  $$TOPLEVEL/setup
 
-INCLUDEPATH += $$TOPLEVEL/event \
-               $$TOPLEVEL/setup
+LIBS += \
+  -L$$TOPLEVEL/lib \
+  -lSimpleEvent \
+  -lsetup
 
-DEPENDPATH += $$INCLUDEPATH
-
-LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
-                         -lsetup
-
-# Headers
-HEADERS = 
-
-# Sources
-SOURCES = main.cc
+SOURCES = \
+  main.cc
                   
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
-
-QMAKE_LFLAGS -= -Wl,--as-needed
+include($$TOPLEVEL/common.pri)

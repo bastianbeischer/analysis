@@ -16,7 +16,8 @@ class QProgressBar;
 class AnalysisPlot;
 class DataChain;
 
-class Plotter : public TQtWidget {
+class Plotter : public TQtWidget
+{
 Q_OBJECT
 public:
   Plotter(QWidget* parent = 0);
@@ -27,26 +28,38 @@ public:
   QVector<unsigned int> plotIndices(AnalysisPlot::Topic topic);
   const QString& plotTitle(unsigned int);
   AnalysisPlot::Topic plotTopic(unsigned int);
-  void selectPlot(int);
+  void selectPlot(int, bool = false);
   void setTitleLabel(QLabel*);
   void setPositionLabel(QLabel*);
   void setTimeLabel(QLabel*);
+  void unzoom();
   void setGrid(bool);
+  void setLogX(bool);
+  void setLogY(bool);
+  void setLogZ(bool);
   void setDataChainProgressBar(QProgressBar*);
   void setEventQueueProgressBar(QProgressBar*);
   void saveCanvas(const QString& fileName);
   void saveForPostAnalysis(const QString&);
-  void addFileList(const QString& fileName);
   void setFileList(const QString& fileName);
+  void addFileList(const QString& fileName);
+  void addRootFile(const QString& file);
+  void setFirstEvent(int);
+  void setLastEvent(int);
 public slots:
   void startAnalysis(Track::Type, Corrections::Flags, int numberOfThreads);
   void abortAnalysis();
-  void finalizeAnalysis();
-  void update();
 protected:
   void mousePressEvent(QMouseEvent *event);
   void mouseMoveEvent(QMouseEvent* event);
-  void mouseReleaseEvent(QMouseEvent *event);
+  void updateCanvas();
+  void finalizeAnalysis();
+protected slots:
+  void update();
+signals:
+  void numberOfEventsChanged(int);
+  void analysisStarted();
+  void analysisCompleted();
 private:
   QLabel* m_titleLabel;
   QLabel* m_positionLabel;
@@ -57,6 +70,8 @@ private:
   QProgressBar* m_eventQueueProgressBar;
   QVector<AnalysisPlot*> m_plots;
   DataChain* m_chain;
+  unsigned int m_firstEvent;
+  unsigned int m_lastEvent;
   bool m_eventLoopOff;
   int m_selectedPlot;
 };

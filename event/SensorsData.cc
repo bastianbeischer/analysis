@@ -86,7 +86,7 @@ float SensorsData::getPrevious(DataType type, const char* id, time_t time, unsig
       return var;
     }
   }
-	
+  
 }
 
 
@@ -199,8 +199,8 @@ char** SensorsData::getKeys(DataType type) {
   TTree* tree = getTree(type);
   TObjArray* array = tree->GetListOfBranches();
   char** array2 = new char*[array->GetEntries()];
-	
-	
+  
+  
   int i = 0;
   int k = 0;
   while (k<array->GetEntries()) {

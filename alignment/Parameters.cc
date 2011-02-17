@@ -2,8 +2,7 @@
 
 #include "millepede.h"
 
-#include "Setup.hh"
-#include "DetectorElement.hh"
+#include <iostream>
 
 Parameters::Parameters() :
   m_nPar(0),
@@ -49,71 +48,34 @@ void Parameters::reInitParameterArrays(unsigned int nPar)
 
 unsigned int Parameters::indexForDetId(unsigned short detId) const
 {
-  detId &= 0xFF80;
+  unsigned short connection = detId & 0xFF00;
+  unsigned short hpo = (detId & 0x80) >> 7;
+  unsigned short sipm = (detId & 0x60) >> 5;
+  unsigned short module = (detId & 0x30) >> 4;
 
-  int index = 0;
+  unsigned short firstTrdIndex = 1;
+  unsigned short numberOfUFEs = 4;
+  unsigned short modulesPerUFE = 4;
+
+  unsigned short firstTrackerIndex = firstTrdIndex + numberOfUFEs*modulesPerUFE;
+  unsigned short numberOfHPEs = 20;
+  unsigned short hposPerHPE = 2;
+  unsigned short sipmsPerHpo = 4;
+
+  unsigned short tofConnections[1]      = {0x8000};
+  unsigned short trdConnections[4]      = {0x3200, 0x3600, 0x3400, 0x3500};
+  unsigned short trackerConnections[20] = {0x6100, 0x6400, 0x6000, 0x6200, 0x6500, 0x6700, 0x6600, 0x3300, 0x3700, 0x6300,
+                                           0x7B00, 0x7F00, 0x7A00, 0x7E00, 0x7900, 0x7D00, 0x7800, 0x7C00, 0x3100, 0x3000};
 
   // TOF
-  if (detId == 0x8000) index = 0;
+  if (connection == tofConnections[0]) return 0;
 
-  // Tracker e-side
-  if (detId == 0x6100) index = 1;
-  if (detId == 0x6180) index = 2;
-  if (detId == 0x6400) index = 3;
-  if (detId == 0x6480) index = 4;
-  if (detId == 0x6000) index = 5;
-  if (detId == 0x6080) index = 6;
-  if (detId == 0x6200) index = 7;
-  if (detId == 0x6280) index = 8;
-  if (detId == 0x6500) index = 9;
-  if (detId == 0x6580) index = 10;
-  if (detId == 0x6700) index = 11;
-  if (detId == 0x6780) index = 12;
-  if (detId == 0x6600) index = 13;
-  if (detId == 0x6680) index = 14;
-  if (detId == 0x3300) index = 15;
-  if (detId == 0x3380) index = 16;
-  if (detId == 0x3700) index = 17;
-  if (detId == 0x3780) index = 18;
-  if (detId == 0x6300) index = 19;
-  if (detId == 0x6380) index = 20;
+  for (int i = 0; i < numberOfUFEs; i++)
+    if (connection == trdConnections[i]) return firstTrdIndex + i*modulesPerUFE + module;
 
-  // Tracker g-side
-  if (detId == 0x7B00) index = 21;
-  if (detId == 0x7B80) index = 22;
-  if (detId == 0x7F00) index = 23;
-  if (detId == 0x7F80) index = 24;
-  if (detId == 0x7A00) index = 25;
-  if (detId == 0x7A80) index = 26;
-  if (detId == 0x7E00) index = 27;
-  if (detId == 0x7E80) index = 28;
-  if (detId == 0x7900) index = 29;
-  if (detId == 0x7980) index = 30;
-  if (detId == 0x7D00) index = 31;
-  if (detId == 0x7D80) index = 32;
-  if (detId == 0x7800) index = 33;
-  if (detId == 0x7880) index = 34;
-  if (detId == 0x7C00) index = 35;
-  if (detId == 0x7C80) index = 36;
-  if (detId == 0x3100) index = 37;
-  if (detId == 0x3180) index = 38;
-  if (detId == 0x3000) index = 39;
-  if (detId == 0x3080) index = 40;
+  for (int i = 0; i < numberOfHPEs; i++)
+    if (connection == trackerConnections[i]) return firstTrackerIndex + i*hposPerHPE*sipmsPerHpo + hpo*sipmsPerHpo + sipm;
 
-  // TRD
-  if (detId == 0x3200) index = 41;
-  if (detId == 0x3600) index = 42;
-  if (detId == 0x3400) index = 43;
-  if (detId == 0x3500) index = 44;
-
-  // // very lol.
-  // Setup* setup = Setup::instance();
-  // DetectorElement* element = setup->firstElement();
-  // while(element) {
-  //   if (element->id() == detId) break;
-  //   element = setup->nextElement();
-  //   index++;
-  // }
-
-  return index;
+  Q_ASSERT(false);
+  return 0;
 }

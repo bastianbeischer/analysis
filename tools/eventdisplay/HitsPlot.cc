@@ -144,7 +144,32 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
   }
 
   QVector<Hit*> hitsToPlot;
+
   foreach(Hit* hit, hits) {
+    // draw TOF yEstimates
+    if (strcmp(hit->ClassName(), "TOFCluster") == 0) {
+      TOFCluster* tofCluster = static_cast<TOFCluster*>(hit);
+      if (tofCluster->signalHeight() > 4*200) {
+        TMarker* marker = new TMarker(m_yStretchFactor * tofCluster->yEstimate(), tofCluster->position().z(), 20);
+        marker->SetMarkerSize(.5);
+        marker->Draw("SAME");
+        m_markers.push_back(marker);
+      }
+    }
+    /*
+      TLine* y_tofErrorLine = new TLine(
+      m_yStretchFactor * (tofCluster->yEstimate() - tofCluster->yResolutionEstimate()),
+      tofCluster->position().z(),
+      m_yStretchFactor * (tofCluster->yEstimate() + tofCluster->yResolutionEstimate()),
+      tofCluster->position().z()
+      );
+      y_tofErrorLine->SetLineColor(kRed);
+      y_tofErrorLine->SetLineWidth(1);
+      y_tofErrorLine->SetLineStyle(1);
+      y_tofErrorLine->Draw("SAME");
+      m_lines.push_back(y_tofErrorLine); */
+
+    // draw the raw the the rest
     if ( (strcmp(hit->ClassName(), "Hit") == 0) || (strcmp(hit->ClassName(), "TOFSipmHit") == 0) ) {
       hitsToPlot.push_back(hit);
     }
@@ -174,29 +199,6 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
       position = calculatedPos;
     }
 
-    if (strcmp(hit->ClassName(), "TOFCluster") == 0) {
-      TOFCluster* tofCluster = static_cast<TOFCluster*>(hit);
-      if (tofCluster->signalHeight() > 4*200) {
-        TMarker* marker = new TMarker(m_yStretchFactor * tofCluster->yEstimate(), tofCluster->position().z(), 20);
-        marker->SetMarkerSize(.5);
-        marker->Draw("SAME");
-        m_markers.push_back(marker);
-      }
-
-      /*
-        TLine* y_tofErrorLine = new TLine(
-        m_yStretchFactor * (tofCluster->yEstimate() - tofCluster->yResolutionEstimate()),
-        tofCluster->position().z(),
-        m_yStretchFactor * (tofCluster->yEstimate() + tofCluster->yResolutionEstimate()),
-        tofCluster->position().z()
-        );
-        y_tofErrorLine->SetLineColor(kRed);
-        y_tofErrorLine->SetLineWidth(1);
-        y_tofErrorLine->SetLineStyle(1);
-        y_tofErrorLine->Draw("SAME");
-        m_lines.push_back(y_tofErrorLine); */
-    }
-
     int amplitude = hit->signalHeight();
     Hit::ModuleType type = hit->type();
     double x = position.x();
@@ -215,16 +217,15 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
       height = 0.5*heightModule;
     }
     else if (type == Hit::tof) {
-      width = 6.0;
-      height = 3.0;
+      width = 5.;
+      height = 6.;
       unsigned short channel = hit->channel();
-      double offset = 10.0;
       DetectorElement* element = Setup::instance()->element(hit->detId() - channel);
-      x = element->position().x() + (channel-1.5) * offset + 0.5*width;
+      x = element->position().x() + (2*(channel-2)+0.5) * width;
+      color = palette->GetValueColor(amplitude*5);
     }
 
     TBox* box = new TBox(x-0.5*width, z-0.5*height, x+0.5*width, z+0.5*height);
-    //    std::cout << "adding box at " << position.z()  << std::endl;
     box->SetFillStyle(1001);
     box->SetFillColor(color);
     box->Draw("SAME");

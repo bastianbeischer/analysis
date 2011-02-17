@@ -22,7 +22,7 @@
 #include <TList.h>
 #include <TPad.h>
 
-#include <QTextBrowser>
+#include <QPlainTextEdit>
 #include <QLabel>
 #include <QVector>
 #include <QDateTime>
@@ -65,6 +65,11 @@ void Plotter::addFileList(const QString& listName)
   m_chain->addFileList(qPrintable(listName));
 }
 
+void Plotter::addRootFile(const QString& file)
+{
+  m_chain->addRootFile(qPrintable(file));
+}
+
 unsigned int Plotter::numberOfEvents()
 {
   return m_chain->nEntries();
@@ -88,7 +93,7 @@ void Plotter::mouseMoveEvent(QMouseEvent* event)
   }
 }
 
-void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QTextBrowser& infoTextBrowser)
+void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QPlainTextEdit& infoTextEdit)
 {
   if (m_track) {
     delete m_track;
@@ -104,19 +109,21 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QTextBrow
   else
     clusters = Setup::instance()->generateClusters(hits);
 
-  m_corrections->apply(clusters);
+  m_corrections->preFitCorrections(clusters);
 
   Track* track = 0;
   if (drawTrack) {
     // track finding
     clusters = m_trackFinding->findTrack(clusters);
     if (fitMethod == 0)
-      track = new StraightLine;
-    else if (fitMethod == 1)
-      track = new BrokenLine;
-    else if (fitMethod == 2)
       track = new CenteredBrokenLine;
-    track->process(clusters);
+    else if (fitMethod == 1)
+      track = new StraightLine;
+    else if (fitMethod == 2)
+      track = new BrokenLine;
+    track->fit(clusters);
+    m_corrections->postFitCorrections(track);
+    track->process();
   }
   m_hitsPlot->drawEvent(GetCanvas(), clusters, track);
 
@@ -130,15 +137,15 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QTextBrow
   QDateTime timeOfRun = QDateTime::fromTime_t(event->runStartTime());
   QDateTime timeOfEvent = timeOfRun.addMSecs(event->eventTime());
 
-  infoTextBrowser.clear();
-  infoTextBrowser.append("time of event:\n" + timeOfEvent.toString("dd.MM.yyyy hh:mm:ss.zzz"));
-  infoTextBrowser.append("\n root file:\n " +  rootFileName);
-  infoTextBrowser.append("\n event in root file:\n " +  QString::number(eventNumberInRootFile));
-  infoTextBrowser.append("\n  runfile:\n  " +  QString::number(runFileNo));
-  infoTextBrowser.append("\n  run start:\n  " +  timeOfRun.toString("dd.MM.yyyy hh:mm:ss.zzz"));
-  infoTextBrowser.append("\n  runfilename:\n  " +  runfileName);
-  infoTextBrowser.append("\n  event in runfile:\n  " +  QString::number(eventInRunFile));
-  //infoTextBrowser.append("\n  ms in runfile:\n  " + QString::number(msOfEventInRun));
+  infoTextEdit.clear();
+  infoTextEdit.appendPlainText("time of event:\n" + timeOfEvent.toString("dd.MM.yyyy hh:mm:ss.zzz"));
+  infoTextEdit.appendPlainText("\n root file:\n " +  rootFileName);
+  infoTextEdit.appendPlainText("\n event in root file:\n " +  QString::number(eventNumberInRootFile));
+  infoTextEdit.appendPlainText("\n  runfile:\n  " +  QString::number(runFileNo));
+  infoTextEdit.appendPlainText("\n  run start:\n  " +  timeOfRun.toString("dd.MM.yyyy hh:mm:ss.zzz"));
+  infoTextEdit.appendPlainText("\n  runfilename:\n  " +  runfileName);
+  infoTextEdit.appendPlainText("\n  event in runfile:\n  " +  QString::number(eventInRunFile));
+  //infoTextEdit.append("\n  ms in runfile:\n  " + QString::number(msOfEventInRun));
 
   if (event->contentType() == SimpleEvent::RawData)
     qDeleteAll(clusters);

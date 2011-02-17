@@ -5,103 +5,78 @@ CONFIG += debug
 
 TOPLEVEL = ../..
 
-# Seperate source & build dirs
-DESTDIR     = $$TOPLEVEL/bin
-OBJECTS_DIR = ./.tmp
-MOC_DIR     = ./.tmp
-UI_DIR      = ./.tmp
-RCC_DIR     = ./.tmp
+FORMS += \
+  MainWindow.ui
 
-# Forms
-FORMS+= MainWindow.ui
+INCLUDEPATH += \
+  $$TOPLEVEL/event \
+  $$TOPLEVEL/global \
+  $$TOPLEVEL/processing \
+  $$TOPLEVEL/rootplot \
+  $$TOPLEVEL/setup \
+  $$TOPLEVEL/tracking
 
-INCLUDEPATH += $$TOPLEVEL/event \
-               $$TOPLEVEL/global \
-               $$TOPLEVEL/processing \
-               $$TOPLEVEL/rootplot \
-               $$TOPLEVEL/setup \
-               $$TOPLEVEL/tracking
+LIBS += \
+  -L$$TOPLEVEL/lib \
+  -lSimpleEvent \
+  -lprocessing \
+  -ltracking \
+  -lrootplot \
+  -lsetup
 
-DEPENDPATH += $$INCLUDEPATH
+CLASSES = \
+  AlbedosVsMomentumPlot \
+  AnalysisPlot \
+  AnalysisThread \
+  BendingAnglePlot \
+  BendingAnglePositionPlot \
+  BendingPositionPlot \
+  BetaMomentumCorrelationPlot \
+  BetaPlot \
+  Chi2PerNdfPlot \
+  Chi2Plot \
+  ClusterLengthPlot \
+  ClusterShapePlot \
+  EventQueue \
+  GeometricOccupancyPlot \
+  GeometricOccupancyProjectionPlot \
+  MainWindow \
+  MomentumSpectrumPlot \
+  Plotter \
+  ResidualPlot \
+  SignalHeightPlot \
+  SingleLayerTrackingEfficiencyPlot \
+  CutStatisticsPlot \
+  TOFPositionCorrelationPlot \
+  TOFTimeDifferencePlot \
+  TOFTimeShiftPlot \
+  TotalSignalHeightPlot \
+  TrackerLayerStatisticsPlot \
+  TRDCalculations \
+  TRDClustersOnTrackPlot \
+  TRDDistanceInTube \
+  TRDDistanceWireToTrackPlot \
+  TRDEfficiencyPlot \
+  TRDEnergyDepositionOverMomentumPlot \
+  TRDFitPlot \
+  TRDMoPVTimeEvolutionPlot \
+  TRDOccupancyPlot \
+  TRDSpectrumPlot \
+  TimeResolutionPlot \
+  TotalEnergyDepositionPlot \
+  TotalEnergyDepositionTRDvsTrackerPlot \
+  TOFEfficiencyPlot \
+  TrackingEfficiencyVsMomentumPlot \
+  TimeOverThresholdMomentumCorrelation \
+  TimeOverThresholdPlot \
+  TOFAlignment
 
-LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
-                         -lprocessing \
-                         -ltracking \
-                         -lrootplot \
-                         -lsetup
-
-# Headers
-HEADERS = MainWindow.hh \
-          Plotter.hh \
-          EventQueue.hh \
-          AnalysisThread.hh \
-          AnalysisPlot.hh \
-          BendingPositionPlot.hh \
-          GeometricOccupancyPlot.hh \
-          ResidualPlot.hh \
-          BendingAnglePlot.hh \
-          BendingAnglePositionPlot.hh \
-          Chi2Plot.hh \
-          Chi2PerNdfPlot.hh \
-          TOFPositionCorrelationPlot.hh \
-          AlbedosVsMomentumPlot.hh \
-          MomentumSpectrumPlot.hh \
-          TimeOfFlightPlot.hh \
-          GeometricOccupancyProjectionPlot.hh \
-          SignalHeightPlot.hh \
-          ClusterLengthPlot.hh \
-          TimeDifferencePlot.hh \
-          TimeOfFlightMomentumCorrelationPlot.hh \
-          TRDCalculations.hh \
-          TRDClustersOnTrackPlot.hh \
-          TRDDistanceInTube.hh \
-          TRDDistanceWireToTrackPlot.hh \
-          TRDEnergyDepositionOverMomentumPlot.hh \
-          TRDSpectrumPlot.hh \
-          TRDFitPlot.hh \
-          TRDOccupancyPlot.hh \
-          TRDEfficiencyPlot.hh \
-          TRDMoPVTimeEvolutionPlot.hh \
-          TotalEnergyDepositionPlot.hh \
-          TimeResolutionPlot.hh
-
-# Sources
-SOURCES = main.cc \
-          MainWindow.cc \
-          Plotter.cc \
-          EventQueue.cc \
-          AnalysisThread.cc \
-          AnalysisPlot.cc \
-          BendingPositionPlot.cc \
-          GeometricOccupancyPlot.cc \
-          ResidualPlot.cc \
-          BendingAnglePlot.cc \
-          BendingAnglePositionPlot.cc \
-          Chi2Plot.cc \
-          Chi2PerNdfPlot.cc \
-          TOFPositionCorrelationPlot.cc \
-          AlbedosVsMomentumPlot.cc \
-          MomentumSpectrumPlot.cc \
-          TimeOfFlightPlot.cc \
-          GeometricOccupancyProjectionPlot.cc \
-          SignalHeightPlot.cc \
-          ClusterLengthPlot.cc \
-          TimeDifferencePlot.cc \
-          TimeOfFlightMomentumCorrelationPlot.cc \
-          TRDCalculations.cc \
-          TRDClustersOnTrackPlot.cc \
-          TRDDistanceInTube.cc \
-          TRDDistanceWireToTrackPlot.cc \
-          TRDEnergyDepositionOverMomentumPlot.cc \
-          TRDSpectrumPlot.cc \
-          TRDFitPlot.cc \
-          TRDOccupancyPlot.cc \
-          TRDEfficiencyPlot.cc \
-          TRDMoPVTimeEvolutionPlot.cc \
-          TotalEnergyDepositionPlot.cc \
-          TimeResolutionPlot.cc
+SOURCES += \
+  main.cc
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
+include($$TOPLEVEL/common.pri)
 
-QMAKE_LFLAGS -= -Wl,--as-needed
+RESOURCES += \
+    resources.qrc

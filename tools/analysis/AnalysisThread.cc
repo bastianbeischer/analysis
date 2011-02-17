@@ -69,14 +69,16 @@ void AnalysisThread::run()
       else
         clusters = Setup::instance()->generateClusters(hits);
 
-      m_corrections->apply(clusters);
+      m_corrections->preFitCorrections(clusters);
 
       QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
       if (m_track) {
-        m_track->process(trackClusters);
+        m_track->fit(trackClusters);
+        m_corrections->postFitCorrections(m_track);
+        m_track->process();
       }
       foreach (AnalysisPlot* plot, m_plots)
-        plot->processEvent(trackClusters, m_track, event);
+        plot->processEvent(clusters, m_track, event);
       if (event->contentType() == SimpleEvent::RawData)
         qDeleteAll(clusters);
       delete event;

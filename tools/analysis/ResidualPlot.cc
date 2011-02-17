@@ -26,7 +26,7 @@ ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer)
   setTitle(QString("Residuals layer at %1").arg(layer->z()));
 
   double max = 0.;
-  if (topic == AnalysisPlot::ResidualsUpperTracker || AnalysisPlot::ResidualsLowerTracker)
+  if (topic == AnalysisPlot::ResidualsTracker)
     max = 3.;
   if (topic == AnalysisPlot::ResidualsTRD)
     max = 10.;
@@ -84,7 +84,8 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleE
   else mytrack = 0;
 
   // fit and fill histograms
-  if (mytrack->process(hitsForFit)) {
+  if (mytrack->fit(hitsForFit)) {
+    mytrack->process();
     foreach(Hit* hit, hitsInThisLayer) {
       double z = m_layer->z();
       double hitX = hit->position().x();

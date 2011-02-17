@@ -5,7 +5,6 @@
 #include "Setup.hh"
 
 #include <QString>
-#include <cassert>
 
 TOFBar::TOFBar(unsigned short detId)
   : DetectorElement(tof, detId, 4)
@@ -36,7 +35,7 @@ QVector<Hit*> TOFBar::findClusters()
 
 double TOFBar::timeShift(unsigned short channel)
 {
-  assert(channel < m_nChannels);
+  Q_ASSERT(channel < m_nChannels);
   return m_timeShifts[channel];
 }
 

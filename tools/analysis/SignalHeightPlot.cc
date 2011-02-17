@@ -12,9 +12,9 @@ SignalHeightPlot::SignalHeightPlot(AnalysisPlot::Topic topic, unsigned short id)
   m_id(id)
 {
   int maximum = 0, bins = 0;
-  if (topic == AnalysisPlot::SignalHeightUpperTracker || topic == AnalysisPlot::SignalHeightLowerTracker) {
+  if (topic == AnalysisPlot::SignalHeightTracker) {
     maximum = 4096;
-    bins = 1024;
+    bins = 100;
   }
   else if (topic == AnalysisPlot::SignalHeightTRD) {
     maximum = 1500;
@@ -23,6 +23,8 @@ SignalHeightPlot::SignalHeightPlot(AnalysisPlot::Topic topic, unsigned short id)
 
   setTitle(QString("signal height 0x%1").arg(m_id,0,16));
   TH1D* histogram = new TH1D(qPrintable(title()), "", bins, 0, maximum);
+  histogram->GetXaxis()->SetTitle("signal height / adc counts");
+  histogram->GetYaxis()->SetTitle("entries");
   addHistogram(histogram);
 }
 

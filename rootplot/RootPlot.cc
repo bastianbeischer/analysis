@@ -29,9 +29,9 @@ void RootPlot::draw(TCanvas* canvas)
 {
   canvas->cd();
   foreach(TLatex* latex, m_latex)
-    latex->Draw();
+    latex->Draw("SAME");
   foreach(TLegend* legend, m_legend)
-    legend->Draw();
+    legend->Draw("SAME");
   foreach(TF1* function, m_function)
     function->Draw("SAME");
 }

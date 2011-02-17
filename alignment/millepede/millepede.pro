@@ -1,17 +1,10 @@
 TEMPLATE = lib
 TARGET = millepede
-QT -= core gui
 
+CONFIG -= qt
 CONFIG += debug
 
-TOPLEVEL    = ../..
-
-# Seperate source & build dirs
-DESTDIR     = $$TOPLEVEL/lib
-OBJECTS_DIR = ./.tmp
-MOC_DIR     = ./.tmp
-UI_DIR      = ./.tmp
-RCC_DIR     = ./.tmp
+TOPLEVEL = ../..
 
 F90_SOURCES += millepede.f
 HEADERS += millepede.h
@@ -25,7 +18,8 @@ f90.input = F90_SOURCES
 QMAKE_EXTRA_COMPILERS += f90
 
 macx: {
-      LIBS += -lgfortran
+  LIBS += -lgfortran
 }
 
 include($$TOPLEVEL/macx.pri)
+include($$TOPLEVEL/common.pri)

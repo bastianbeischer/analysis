@@ -23,31 +23,29 @@ QVector<Hit*> TRDModule::findClusters()
   const int neighbourThreshold = 10;
 
   for (unsigned short channel = 0; channel < m_nChannels; ++channel) {
-    if (m_hits[channel]) {
-      Hit* hit = m_hits[channel];
+    Hit* hit = m_hits[channel];
+    Q_ASSERT(hit);
       
-      if (hit->signalHeight() > seedThreshold) {
-        Cluster* cluster = new Cluster;
-        cluster->addHit(new Hit(*hit));
+    if (hit->signalHeight() > seedThreshold) {
+      Cluster* cluster = new Cluster;
 
-        // look to the right
-        short rightCursor = channel+1;
-        while(rightCursor < m_nChannels && m_hits[rightCursor] && m_hits[rightCursor]->signalHeight() > neighbourThreshold) {
-          cluster->addHit(new Hit(*m_hits[rightCursor]));
-          ++rightCursor;
-        }
-        // look to the left
-        short leftCursor = channel-1;
-        while(leftCursor >=0 && m_hits[leftCursor] && m_hits[leftCursor]->signalHeight() > neighbourThreshold) {
-          cluster->addHit(new Hit(*m_hits[leftCursor]));
-          --leftCursor;
-        }
+      // look to the right
+      short rightCursor = channel+1;
+      while(rightCursor < m_nChannels && m_hits[rightCursor]->signalHeight() > neighbourThreshold)
+        ++rightCursor;
 
-        cluster->processHits();
-        clusters.push_back(cluster);
+      // look to the left
+      short leftCursor = channel-1;
+      while(leftCursor >=0 && m_hits[leftCursor]->signalHeight() > neighbourThreshold)
+        --leftCursor;
 
-        channel = rightCursor + 1;
-      }
+      for (int channelToBeAdded = leftCursor+1; channelToBeAdded < rightCursor; channelToBeAdded++)
+        cluster->addHit(new Hit(*m_hits[channelToBeAdded]));
+
+      cluster->processHits();
+      clusters.push_back(cluster);
+
+      channel = rightCursor + 1;
     }
   }
 

@@ -12,12 +12,10 @@
 #include <QStringList>
 #include <QSettings>
 #include <QProcess>
-#include <QDebug>
 
 #include <TVector3.h>
 
 #include <iostream>
-#include <cassert>
 #include <cmath>
 
 Setup* Setup::m_instance = 0;
@@ -66,25 +64,24 @@ Setup* Setup::instance()
 
 void Setup::construct()
 {
-  if (m_settings) {
-    foreach(QString key, m_settings->allKeys()) {
-      QStringList list = key.split("/");
-      if (list[0] == "layer") {
-        double z = list[1].toDouble();
-        Layer* layer = this->layer(z);
-        QStringList detIds = m_settings->value(key).toStringList();
-        foreach(QString detId, detIds) {
-          bool ok;
-          unsigned short id = detId.toUShort(&ok, 16);
-          if (ok) {
-            DetectorElement* element = this->element(id);
-            layer->addElement(element);
-          }
-        } // elements
-        layer->sortIdsByPosition();
-      }
-    } // layers
-  } // settings
+  Q_ASSERT(m_settings);
+  foreach(QString key, m_settings->allKeys()) {
+    QStringList list = key.split("/");
+    if (list[0] == "layer") {
+      double z = list[1].toDouble();
+      Layer* layer = this->layer(z);
+      QStringList detIds = m_settings->value(key).toStringList();
+      foreach(QString detId, detIds) {
+        bool ok;
+        unsigned short id = detId.toUShort(&ok, 16);
+        if (ok) {
+          DetectorElement* element = this->element(id);
+          layer->addElement(element);
+        }
+      } // elements
+      layer->sortIdsByPosition();
+    }
+  } // layers
 }
 
 Layer* Setup::firstLayer()
@@ -130,7 +127,6 @@ Layer* Setup::layer(double z)
 
 DetectorElement* Setup::element(unsigned short id)
 {
-  // this should differentiate between types of detector elements according to the QSettings file soon
   unsigned short usbBoard = (id >> 8) << 8;
   
   if (!m_elements[id]) {
@@ -185,61 +181,60 @@ void Setup::clearHitsFromLayers()
 
 TVector3 Setup::configFilePosition(QString group, unsigned short detId) const
 {
-  assert(m_coordinates);
+  Q_ASSERT(m_coordinates);
   QList<QVariant> list = m_coordinates->value(group+"/"+QString::number(detId,16)).toList();
   return TVector3(list[0].toDouble(), list[1].toDouble(), list[2].toDouble());
 }
 
 double Setup::configFileAlignmentShift(QString group, unsigned short detId) const
 {
-  assert(m_settings);
+  Q_ASSERT(m_settings);
   return m_settings->value(group+"/0x"+QString::number(detId,16)).toDouble();
 }
 
 double Setup::configFileTimeShift(unsigned short detId) const
 {
-  assert(m_settings);
+  Q_ASSERT(m_settings);
   return m_settings->value("tofTimeShift/0x"+QString::number(detId,16), 1).toDouble();
 }
 
 void Setup::writeSettings()
 {
-  if (m_settings) {
-    // layer section
-    m_settings->beginGroup("layer");
-    foreach(Layer* layer, m_layers) {
-      double z = layer->z();
-      QList<unsigned short> detIds = layer->detIds();
-      QStringList stringList;
-      foreach(unsigned short detId, detIds)
-        stringList.push_back(QString("0x%1").arg(detId,0,16));
-      QString key = QString("%1").arg(z);
+  Q_ASSERT(m_settings);
+  // layer section
+  m_settings->beginGroup("layer");
+  foreach(Layer* layer, m_layers) {
+    double z = layer->z();
+    QList<unsigned short> detIds = layer->detIds();
+    QStringList stringList;
+    foreach(unsigned short detId, detIds)
+      stringList.push_back(QString("0x%1").arg(detId,0,16));
+    QString key = QString("%1").arg(z);
 
-      m_settings->setValue(key, QVariant(stringList));
-    }
-    m_settings->endGroup();
+    m_settings->setValue(key, QVariant(stringList));
+  }
+  m_settings->endGroup();
 
-    // tracker, trd and tof sections
-    foreach(DetectorElement* element, m_elements) {
-      QString typeString;
-      unsigned short type = element->type();
-      if (type == DetectorElement::tracker) typeString = "tracker";
-      if (type == DetectorElement::trd)     typeString = "trd";
-      if (type == DetectorElement::tof)     typeString = "tof";
+  // tracker, trd and tof sections
+  foreach(DetectorElement* element, m_elements) {
+    QString typeString;
+    unsigned short type = element->type();
+    if (type == DetectorElement::tracker) typeString = "tracker";
+    if (type == DetectorElement::trd)     typeString = "trd";
+    if (type == DetectorElement::tof)     typeString = "tof";
 
-      m_settings->setValue(typeString + "/" + QString("0x%1").arg(element->id(), 0, 16), element->alignmentShift());
+    m_settings->setValue(typeString + "/" + QString("0x%1").arg(element->id(), 0, 16), element->alignmentShift());
 
-      if (type == DetectorElement::tof) {
-        for (unsigned short channel = 0; channel < element->nChannels(); channel++) {
-          unsigned short channelID = element->id() | channel;
-          double timeShift = static_cast<TOFBar*>(element)->timeShift(channel);
-          m_settings->setValue(typeString + "tofTimeShift/" + QString("0x%1").arg(channelID, 0, 16), timeShift);
-        }
+    if (type == DetectorElement::tof) {
+      for (unsigned short channel = 0; channel < element->nChannels(); channel++) {
+        unsigned short channelID = element->id() | channel;
+        double timeShift = static_cast<TOFBar*>(element)->timeShift(channel);
+        m_settings->setValue(typeString + "tofTimeShift/" + QString("0x%1").arg(channelID, 0, 16), timeShift);
       }
     }
-
-    // in order for the file to end up on disk we need to call "sync" here
-    m_settings->sync();
   }
+
+  // in order for the file to end up on disk we need to call "sync" here
+  m_settings->sync();
 }
 

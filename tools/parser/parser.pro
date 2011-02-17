@@ -5,43 +5,31 @@ CONFIG += debug
 
 TOPLEVEL = ../..
 
-# Seperate source & build dirs
-DESTDIR     = $$TOPLEVEL/bin
-OBJECTS_DIR = ./.tmp
-MOC_DIR     = ./.tmp
-UI_DIR      = ./.tmp
-RCC_DIR     = ./.tmp
+INCLUDEPATH += \
+  $$TOPLEVEL/event \
+  $$TOPLEVEL/setup
 
-# Forms
-FORMS =
+LIBS += \
+  -L$$TOPLEVEL/lib \
+  -lSimpleEvent \
+  -lsetup
 
-INCLUDEPATH += $$TOPLEVEL/event \
-               $$TOPLEVEL/setup
-DEPENDPATH += $$INCLUDEPATH
+CLASSES = \
+  Converter \
+  DataManager \
+  SingleFile
 
-LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
-                         -lsetup
-
-# Headers
-HEADERS = Converter.hh \
-          DataManager.hh \
-          SingleFile.hh
-
-# Sources
-SOURCES = main.cc \
-          Converter.cc \
-          DataManager.cc \
-          SingleFile.cc
-                  
-include($$TOPLEVEL/root.pri)
-include($$TOPLEVEL/macx.pri)
-include(perdaix.pri)
+SOURCES += \
+  main.cc
 
 macx {
-     QMAKE_CXXFLAGS += -DNO_QUICKUSB
-     QMAKE_CXXFLAGS += -D__macx__
-     QMAKE_CFLAGS += -DNO_QUICKUSB
-     QMAKE_CFLAGS += -D__macx__
+  QMAKE_CXXFLAGS += -DNO_QUICKUSB
+  QMAKE_CXXFLAGS += -D__macx__
+  QMAKE_CFLAGS += -DNO_QUICKUSB
+  QMAKE_CFLAGS += -D__macx__
 }
 
-QMAKE_LFLAGS -= -Wl,--as-needed
+include(perdaix.pri)
+include($$TOPLEVEL/root.pri)
+include($$TOPLEVEL/macx.pri)
+include($$TOPLEVEL/common.pri)

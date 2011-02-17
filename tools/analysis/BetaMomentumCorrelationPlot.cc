@@ -1,4 +1,4 @@
-#include "TimeOfFlightMomentumCorrelationPlot.hh"
+#include "BetaMomentumCorrelationPlot.hh"
 #include "BrokenLine.hh"
 #include "Constants.hh"
 
@@ -15,18 +15,18 @@
 
 #include <QDebug>
 
-double timeOfFlightMomentumCorrelationFunction(double x[], double p[])
+double betaMomentumCorrelationFunction(double x[], double p[])
 {
   double rigidity = qAbs(x[0]) < 0.01 ? 0.01 : qAbs(x[0]);
   double momentum = rigidity*p[1] ;
   return sqrt(momentum*momentum+p[0]*p[0])/momentum;
 }
 
-TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
+BetaMomentumCorrelationPlot::BetaMomentumCorrelationPlot()
   : AnalysisPlot(AnalysisPlot::MomentumReconstruction)
   , H2DPlot()
 {
-  setTitle(QString("tof momentum correlation"));
+  setTitle(QString("1 / beta vs momentum"));
   int nBinsX = 120;
   double xMin = -6;
   double xMax = 6;
@@ -41,7 +41,7 @@ TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
   TLegend* legend = new TLegend(.12, .72, .23, .88);
   legend->SetMargin(.7);
 
-  function = new TF1("electronCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 2);
+  function = new TF1("electronCorrelation", betaMomentumCorrelationFunction, xMin, xMax, 2);
   function->SetParameter(0, Constants::electronMass);
   function->SetParameter(1, 1);
   function->SetNpx(1000);
@@ -50,7 +50,7 @@ TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
   legend->AddEntry(function, "e^{#pm}", "l");
   addFunction(function);
 
-  function = new TF1("muonCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 2);
+  function = new TF1("muonCorrelation", betaMomentumCorrelationFunction, xMin, xMax, 2);
   function->SetParameter(0, Constants::muonMass);
   function->SetParameter(1, 1);
   function->SetNpx(1000);
@@ -59,7 +59,7 @@ TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
   legend->AddEntry(function, "#mu^{#pm}", "l");
   addFunction(function);
 
-  function = new TF1("pionCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 2);
+  function = new TF1("pionCorrelation", betaMomentumCorrelationFunction, xMin, xMax, 2);
   function->SetParameter(0, Constants::pionMass);
   function->SetParameter(1, 1);
   function->SetNpx(1000);
@@ -68,7 +68,7 @@ TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
   legend->AddEntry(function, "#pi^{#pm}", "l");
   addFunction(function);
 
-  function = new TF1("protonCorrelation", timeOfFlightMomentumCorrelationFunction, xMin, xMax, 2);
+  function = new TF1("protonCorrelation", betaMomentumCorrelationFunction, xMin, xMax, 2);
   function->SetParameter(0, Constants::protonMass);
   function->SetParameter(1, 1);
   function->SetLineColor(kMagenta);
@@ -77,7 +77,7 @@ TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
   legend->AddEntry(function, "p^{#pm}", "l");
   addFunction(function);
 
-  function = new TF1("He", timeOfFlightMomentumCorrelationFunction, 0.01, xMax, 2);
+  function = new TF1("He", betaMomentumCorrelationFunction, 0.01, xMax, 2);
   function->SetParameter(0, Constants::heliumMass);
   function->SetParameter(1, 2);
   function->SetLineColor(kRed);
@@ -89,11 +89,11 @@ TimeOfFlightMomentumCorrelationPlot::TimeOfFlightMomentumCorrelationPlot()
   addLegend(legend);
 }
 
-TimeOfFlightMomentumCorrelationPlot::~TimeOfFlightMomentumCorrelationPlot()
+BetaMomentumCorrelationPlot::~BetaMomentumCorrelationPlot()
 {
 }
 
-void TimeOfFlightMomentumCorrelationPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
+void BetaMomentumCorrelationPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
 {
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())

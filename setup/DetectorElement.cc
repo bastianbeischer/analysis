@@ -7,7 +7,6 @@
 #include "Cluster.hh"
 
 #include <cmath>
-#include <cassert>
 #include <iostream>
 
 DetectorElement::DetectorElement(Type type, unsigned short id, unsigned short nChannels) :
@@ -35,7 +34,7 @@ DetectorElement::DetectorElement(Type type, unsigned short id, unsigned short nC
     for (int i = 0; i < m_nChannels; i++) {
       m_channelMap.push_back(i);
     }
-  }
+  } 
 }
 
 DetectorElement::~DetectorElement()
@@ -102,6 +101,7 @@ TVector3 DetectorElement::positionForHit(const Hit* hit) const
 
 unsigned short DetectorElement::sortedChannel(const unsigned short channel) const
 {
-  Q_ASSERT(channel < m_channelMap.size());
+  Q_ASSERT
+(channel < m_channelMap.size());
   return m_channelMap.at(channel);
 }

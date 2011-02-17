@@ -10,24 +10,26 @@
 #include <iostream>
 #include <cmath>
 
-MomentumSpectrumPlot::MomentumSpectrumPlot(Range range) :
+MomentumSpectrumPlot::MomentumSpectrumPlot(Type type) :
   AnalysisPlot(AnalysisPlot::MomentumReconstruction),
   H1DPlot(),
-  m_range(range)
+  m_type(type)
 {
   setTitle("Momentum Spectrum");
 
   int nBins = 100;
   TH1D* histogram = 0;
-  if (m_range == All) {
+  if (m_type == All) {
     double lowerBound = -20.;
     double upperBound = 20.;
     setTitle(title() + " - All");
     histogram = new TH1D(qPrintable(title()), "", nBins, lowerBound, upperBound);
+    histogram->GetXaxis()->SetTitle("R / GV");
+    histogram->GetYaxis()->SetTitle("particles / GV");
   }
-  else {
-    if (m_range == Negative) setTitle(title() + " - Negative");
-    if (m_range == Positive) setTitle(title() + " - Positive");
+  else if (m_type == Negative || m_type == Positive){
+    if (m_type == Negative) setTitle(title() + " - Negative");
+    if (m_type == Positive) setTitle(title() + " - Positive");
     double lowerBound = 1e-1;
     double upperBound = 20.;
     double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
@@ -36,9 +38,19 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Range range) :
       p[i] = pow(lowerBound, delta*i+1);
     }
     histogram = new TH1D(qPrintable(title()), "", nBins, p);
+    histogram->GetXaxis()->SetTitle("R / GV");
+    histogram->GetYaxis()->SetTitle("particles / GV");
   }
-  histogram->GetXaxis()->SetTitle("R / GV");
-  histogram->GetYaxis()->SetTitle("particles / GV");
+  else if(m_type == Inverted) {
+    setTitle(title() + " - Inverted");
+    nBins = 300;
+    double lowerBound = -10;
+    double upperBound = 10;
+    histogram = new TH1D(qPrintable(title()), "", nBins, lowerBound, upperBound);
+    histogram->GetXaxis()->SetTitle("1/R / 1/GV");
+    histogram->GetYaxis()->SetTitle("particles / bin");
+  }
+  
   histogram->GetYaxis()->SetTitleOffset(1.3);
   histogram->SetLineColor(kBlack);
   addHistogram(histogram);
@@ -60,17 +72,27 @@ void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Track* track, Simp
     return;
 
   double pt = track->pt();
-  if (m_range == Negative && pt >= 0)
+  if (m_type == Negative && pt >= 0)
     return;
-  if (m_range == Positive && pt <= 0)
+  if (m_type == Positive && pt <= 0)
     return;
 
-  if (m_range == Negative)
-    pt = -pt;
+  double value = pt;
+  if (m_type == Negative) {
+    value = -pt;
+  }
+  else if (m_type == Inverted) {
+    value = 1./pt;
+  }
 
-  int iBin = histogram()->FindBin(pt);
+  int iBin = histogram()->FindBin(value);
   double width = histogram()->GetBinWidth(iBin);
-  histogram()->Fill(pt, 1./width);
+  double weight = 1./width;
+  if (m_type == Inverted) {
+    weight = 1.;
+  }
+
+  histogram()->Fill(value, weight);
 }
 
 void MomentumSpectrumPlot::update()

@@ -5,39 +5,31 @@ CONFIG += debug
 
 TOPLEVEL = ../../..
 
-# Seperate source & build dirs
-DESTDIR     = $$TOPLEVEL/bin
-OBJECTS_DIR = ./.tmp
-MOC_DIR     = ./.tmp
-UI_DIR      = ./.tmp
-RCC_DIR     = ./.tmp
+FORMS+= \
+  MainWindow.ui
 
-FORMS+= MainWindow.ui
+INCLUDEPATH += \
+  $$TOPLEVEL/event \
+  $$TOPLEVEL/rootplot \
+  $$TOPLEVEL/setup \
+  $$TOPLEVEL/tracking \
+  $$TOPLEVEL/global
 
-INCLUDEPATH += $$TOPLEVEL/event \
-               $$TOPLEVEL/rootplot \
-               $$TOPLEVEL/setup \
-               $$TOPLEVEL/tracking
+LIBS += \
+  -L$$TOPLEVEL/lib \
+  -lSimpleEvent \
+  -ltracking \
+  -lrootplot \
+  -lsetup
 
-DEPENDPATH += $$INCLUDEPATH
-
-LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
-                         -ltracking \
-                         -lrootplot \
-                         -lsetup
-
-HEADERS = \
-  MainWindow.hh \
-  PostAnalysisPlot.hh \
-  TimeDifferenceHistogram.hh
+CLASSES = \
+  MainWindow \
+  PostAnalysisPlot \
+  TimeShiftHistogram
 
 SOURCES = \
-  main.cc \
-  MainWindow.cc \
-  PostAnalysisPlot.cc \
-  TimeDifferenceHistogram.cc
+  main.cc
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
-
-QMAKE_LFLAGS -= -Wl,--as-needed
+include($$TOPLEVEL/common.pri)

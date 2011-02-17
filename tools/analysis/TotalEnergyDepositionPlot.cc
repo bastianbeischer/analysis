@@ -4,13 +4,14 @@
 
 #include "Track.hh"
 #include "TrackInformation.hh"
+#include "SimpleEvent.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
 
 #include "TRDCalculations.hh"
 
 TotalEnergyDepositionPlot::TotalEnergyDepositionPlot(double lowerMom, double upperMom) :
-    AnalysisPlot(AnalysisPlot::SignalHeightTRD),
+    AnalysisPlot(AnalysisPlot::MiscellaneousTRD),
   H1DPlot(),
   m_lowerMomentum(lowerMom),
   m_upperMomentum(upperMom)
@@ -18,7 +19,7 @@ TotalEnergyDepositionPlot::TotalEnergyDepositionPlot(double lowerMom, double upp
 
   setTitle(QString("Total Signal Sum (%1 GV to %2 GV)").arg(m_lowerMomentum).arg(m_upperMomentum));
 
-  TH1D* histogram = new TH1D(qPrintable(title()), qPrintable(title() + ";dE/dx ;entries"), 100, 0, 30);
+  TH1D* histogram = new TH1D(qPrintable(title()), qPrintable(title() + ";dE/dx ;entries"), 300, 0, 1000);
   addHistogram(histogram);
 }
 
@@ -26,57 +27,49 @@ TotalEnergyDepositionPlot::~TotalEnergyDepositionPlot()
 {
 }
 
-void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
+void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent* event)
 {
+
+  /*
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;
 
-  //check if all tracker layers have a hit
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  if (track->chi2() / track->ndf() > 3)
     return;
 
   //check if track was inside of magnet
-  if (!(flags & TrackInformation::InsideMagnet))
+  if (!(track->information()->flags() & TrackInformation::InsideMagnet))
     return;
+
+
 
   //get the reconstructed momentum
   double p = track->p(); //GeV
 
-  if(p < m_lowerMomentum || p > m_upperMomentum)
+  if( p < m_lowerMomentum || p > m_upperMomentum)
     return;
+    */
 
-  //loop over all hits and count tracker hits
-  //also find all clusters on track
-  QVector<Hit*> trdClusterHitsOnTrack;
 
-  //TODO: check for off track hits ?!?
-  foreach(Hit* clusterHit, hits){
-    if (clusterHit->type() == Hit::trd)
-      trdClusterHitsOnTrack.push_back(clusterHit);
-  }
-
-  if(trdClusterHitsOnTrack.size() != 8)
+  if (track->beta() < 1.5 || track->beta() < 0)
     return;
-
 
   double signalSum = 0;
-  double distanceSum = 0;
+  // double distanceSum = 0;
 
-  foreach(Hit* clusterHit, trdClusterHitsOnTrack){
+  int trdCluster = 0;
+
+  foreach(Hit* clusterHit, event->hits()){
     Cluster* cluster = static_cast<Cluster*>(clusterHit);
-    foreach(Hit* hit, cluster->hits()){
-      double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
-      if(distanceInTube > 0){
-        signalSum += hit->signalHeight() ;
-        distanceSum += distanceInTube ;
-      }
+    if (cluster->type() == Hit::trd){
+      signalSum += cluster->signalHeight();
+      trdCluster++;
     }
   }
 
 
-
-  histogram(0)->Fill(signalSum / distanceSum);
+  if (trdCluster >= 8)
+    histogram(0)->Fill(signalSum);
 
 }

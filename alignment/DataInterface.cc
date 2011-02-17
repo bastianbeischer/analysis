@@ -59,14 +59,16 @@ void DataInterface::process(AlignmentMatrix* matrix)
       clusters = Setup::instance()->generateClusters(hits);
 
     // corrections (previous alignment, time shift, ...)
-    m_corrections->apply(clusters);
+    m_corrections->preFitCorrections(clusters);
 
     // track finding
     QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
 
     // fit in millepede
     CenteredBrokenLine track;
-    if (track.process(trackClusters)) {
+    if (track.fit(trackClusters)) {
+      m_corrections->postFitCorrections(&track);
+      track.process();
       TrackInformation::Flags flags = track.information()->flags();
       if ( (flags & TrackInformation::AllTrackerLayers) &&
           !(flags & TrackInformation::MagnetCollision) ) {
