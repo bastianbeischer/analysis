@@ -17,7 +17,8 @@ LIBS += \
 CLASSES = \
   Converter \
   DataManager \
-  SingleFile
+  SingleFile \
+  SensorsData
 
 SOURCES += \
   main.cc

@@ -5,6 +5,9 @@
 #include "TOFSipmHit.hh"
 #include "TOFCluster.hh"
 
+#include <cmath>
+#include <cassert>
+
 ClassImp( SimpleEvent );
 
 SimpleEvent::SimpleEvent() :
@@ -15,6 +18,8 @@ SimpleEvent::SimpleEvent() :
   m_contentType(None),
   m_hits()
 {
+  for (unsigned int i = 0; i < SensorTypes::nSensorTypes; i++)
+    m_sensorSet[i] = sqrt(-1);
 }
 
 SimpleEvent::SimpleEvent(unsigned int id, unsigned int runStartTime, unsigned int eventTime, ContentType type) :
@@ -25,6 +30,8 @@ SimpleEvent::SimpleEvent(unsigned int id, unsigned int runStartTime, unsigned in
   m_contentType(type),
   m_hits()
 {
+  for (unsigned int i = 0; i < SensorTypes::nSensorTypes; i++)
+    m_sensorSet[i] = sqrt(-1);
 }
 
 SimpleEvent::SimpleEvent(const SimpleEvent& other) :
@@ -51,6 +58,9 @@ SimpleEvent::SimpleEvent(const SimpleEvent& other) :
       m_hits.push_back(new TOFCluster(*cluster));
     }
   }
+  for (unsigned int i = 0; i < SensorTypes::nSensorTypes; i++) {
+    m_sensorSet[i] = other.m_sensorSet[i];
+  }
 }
 
 SimpleEvent::~SimpleEvent()
@@ -60,3 +70,14 @@ SimpleEvent::~SimpleEvent()
   }
 }
 
+void SimpleEvent::setSensorData(SensorTypes::Type type, float data)
+{
+  assert(type < SensorTypes::nSensorTypes);
+  m_sensorSet[type] = data;
+}
+
+float SimpleEvent::sensorData(SensorTypes::Type type)
+{
+  assert(type < SensorTypes::nSensorTypes);
+  return m_sensorSet[type];
+}
