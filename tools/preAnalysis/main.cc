@@ -94,6 +94,11 @@ int main(int argc, char** argv)
       foreach(Hit* cluster, Setup::instance()->generateClusters(hits))
         destinationEvent->addHit(cluster);
       
+      // copy sensor  data
+      for (unsigned int i = 0; i < SensorTypes::nSensorTypes; i++) {
+        destinationEvent->setSensorData((SensorTypes::Type)i, sourceEvent->sensorData((SensorTypes::Type)i) );
+      }
+
       destinationTree.Fill();
       delete destinationEvent;
 
