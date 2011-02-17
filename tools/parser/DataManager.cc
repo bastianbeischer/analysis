@@ -82,14 +82,12 @@ void DataManager::addSingleFile(QString fileName)
   m_description->addRunFile(qPrintable(fileName), hash, file->getNumberOfEvents());
 
   //try to open a matching mc file:
-  qDebug("looking for MC file");
   QString mcFileName = fileName.replace(".dat", "_MC.dat");
   MCSingleFile* mcFile = new MCSingleFile(qPrintable(mcFileName));
   if (mcFile->IsGood()) {
     qDebug("found MC file");
     m_inputMCFiles.push_back(mcFile);
   } else {
-    qDebug("didnt find MC file");
     m_inputMCFiles.push_back(NULL);
   }
 }
@@ -135,13 +133,12 @@ void DataManager::processFiles()
     MCSingleFile* mcInputFile = m_inputMCFiles.at(i) ;
 
     for (unsigned int iEvent = 0; iEvent < inputFile->getNumberOfEvents(); iEvent++) {
-      if(mcInputFile == NULL)
+      if(mcInputFile == NULL){
         m_currentEvent = converter.generateSimpleEvent(inputFile, iEvent);
-      else
+        addSensorData(m_currentEvent);
+      } else {
         m_currentEvent = dynamic_cast<SimpleEvent*>( converter.generateMCSimpleEvent(inputFile, mcInputFile, iEvent) );
-
-      m_currentEvent = converter.generateSimpleEvent(inputFile, iEvent);
-      addSensorData(m_currentEvent);
+      }
 
       m_outputTree->Fill();
       delete m_currentEvent;
