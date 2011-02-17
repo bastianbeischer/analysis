@@ -13,7 +13,7 @@ class SimpleEvent :
 {
 
 public:
-  enum ContentType {None = -1, RawData, Clusters};
+  enum ContentType {None = -1, RawData, Clusters, MCRawData, MCClusters};
 
 public:
   SimpleEvent();
@@ -30,6 +30,11 @@ public:
   ContentType        contentType() const  {return m_contentType;}
 
   void               addHit(Hit* hit) {m_hits.push_back(hit);}
+
+  void               eventId(unsigned int id)          {m_eventId = id;}
+  void               runStartTime(unsigned int time)   {m_runStartTime = time;}
+  void               eventTime(unsigned int time)      {m_eventTime = time;}
+  void               contentType(ContentType type)     {m_contentType = type;}
 
   void setSensorData(SensorTypes::Type type, float data);
   float sensorData(SensorTypes::Type type);
