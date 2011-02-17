@@ -11,11 +11,6 @@ CenteredBrokenLineMatrix2D::~CenteredBrokenLineMatrix2D()
 {
 }
 
-// bool CenteredBrokenLineMatrix2D::checkInvertability(const QVector<Hit*>& hits) const
-// {
-//   return Matrix::checkInvertability(hits);
-// }
-
 void CenteredBrokenLineMatrix2D::fillMatrixFromHit(TMatrixD& A, unsigned int i, bool useTangens, float k, float xi) const
 {
   int slopeXindex = k > 0. ? 2 : 3;
