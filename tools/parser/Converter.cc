@@ -217,6 +217,9 @@ MCEventInformation* Converter::generateMCEventInformation(const MCSingleFile* mc
   mcEventInfo->InitialMom(mc_primaryMomentum);
   mcEventInfo->Trajectory(traj);
 
+  //clean up:
+  qDeleteAll(particles);
+
   return mcEventInfo;
 }
 
