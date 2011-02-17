@@ -4,7 +4,6 @@
 
 #include "AnalysisPlot.hh"
 #include "GraphPlot.hh"
-#include "SensorsData.hh"
 
 #include <TGraphErrors.h>
 #include <TH1.h>
@@ -39,7 +38,7 @@ private:
   QMap < unsigned int, TGraphErrors* > m_mopvGraphs;
 
   //SensorsData* m_SensorsData;
-  QStringList m_TrdTemperatureSensorNames;
+  //QStringList m_TrdTemperatureSensorNames;
 
   QVector < QMap<unsigned int, float> > m_TRDTempMaps;
 
