@@ -5,7 +5,7 @@ namespace SensorTypes
 {
 
   const unsigned int nSensorTypes = 81;
-
+  
   enum Type {
     START = 0,
     TRD_PRESSURE = START,
@@ -89,8 +89,10 @@ namespace SensorTypes
     INLET_TEMP,
     BAT_BOTTOM_TEMP,
     BAT_TOP_TEMP,
-    END = BAT_TOP_TEMP
+    END = BAT_TOP_TEMP + 1
   };
+
+  Type convertFromString(char* string);
 
 }
 
