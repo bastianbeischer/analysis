@@ -15,17 +15,17 @@
 #include <QDebug>
 
 TimeOverThresholdMomentumCorrelation::TimeOverThresholdMomentumCorrelation(unsigned int id)
-	: AnalysisPlot(AnalysisPlot::TimeOverThreshold)
+  : AnalysisPlot(AnalysisPlot::TimeOverThreshold)
   , H2DPlot()
   , m_id(id)
 {
-	
-	QString htitle =QString("time over threshold momentum correlation 0x%1").arg(m_id, 0, 16);
-	setTitle(htitle);
-	TH2D* histogram = new TH2D(qPrintable(title()), "", 50, 0, 5, 75, 0, 75);
-	histogram->GetXaxis()->SetTitle("rigidity / GV");
-	histogram->GetYaxis()->SetTitle("time over threshold / ns");
-	setHistogram(histogram);
+  
+  QString htitle =QString("time over threshold momentum correlation 0x%1").arg(m_id, 0, 16);
+  setTitle(htitle);
+  TH2D* histogram = new TH2D(qPrintable(title()), "", 50, 0, 5, 75, 0, 75);
+  histogram->GetXaxis()->SetTitle("rigidity / GV");
+  histogram->GetYaxis()->SetTitle("time over threshold / ns");
+  setHistogram(histogram);
   addLatex(RootPlot::newLatex(.15, .85));
 }
 
