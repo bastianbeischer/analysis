@@ -9,6 +9,8 @@ class MCSimpleEvent : public SimpleEvent
 {
 public:
     MCSimpleEvent();
+    MCSimpleEvent(const SimpleEvent& other);
+    MCSimpleEvent(const MCSimpleEvent& other);
 
     MCEventInformation* MCInformation() const         {return m_mcEventInformation;}
     void MCInformation(MCEventInformation* mcInfo)    {m_mcEventInformation = mcInfo;}
