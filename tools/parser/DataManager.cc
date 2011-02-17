@@ -10,12 +10,14 @@
 #include <TROOT.h>
 
 #include "Converter.hh"
+#include "SensorsData.hh"
 #include "SimpleEvent.hh"
 #include "SingleFile.hh"
 #include "DataDescription.hh"
 
 DataManager::DataManager() :
   m_description(0),
+  m_sensorsData(new SensorsData(SensorsData::SENSORS, "sensors.root")),
   m_outputFileName("output.root"),
   m_currentEvent(0),
   m_outputFile(0),
@@ -29,6 +31,7 @@ DataManager::~DataManager()
     delete file;
   m_inputFiles.clear();
 
+  delete m_sensorsData;
   delete m_outputFile;
 }
 
@@ -115,6 +118,7 @@ void DataManager::processFiles()
   foreach(SingleFile* inputFile, m_inputFiles) {
     for (unsigned int iEvent = 0; iEvent < inputFile->getNumberOfEvents(); iEvent++) {
       m_currentEvent = converter.generateSimpleEvent(inputFile, iEvent);
+      addSensorData(m_currentEvent);
       m_outputTree->Fill();
       delete m_currentEvent;
 
@@ -129,4 +133,15 @@ void DataManager::processFiles()
   std::cout << "|" << std::endl;
   std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
   std::cout << "Finished conversion." << std::endl;
+}
+
+void DataManager::addSensorData(SimpleEvent* event)
+{
+  int nKeys = m_sensorsData->numberOfKeys();
+  char** keys = m_sensorsData->keys();
+  for (int iKey = 0; iKey < nKeys; iKey++) {
+    int diff;
+    float value = m_sensorsData->previousValue(keys[iKey], event->time(), diff);
+    event->setSensorData((SensorTypes::Type)iKey, value);
+  }
 }
