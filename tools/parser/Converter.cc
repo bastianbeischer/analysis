@@ -187,7 +187,12 @@ MCSimpleEvent* Converter::generateMCSimpleEvent(const SingleFile* file, const MC
   SimpleEvent* simpleEvent = generateSimpleEvent(file, eventNo);
   MCEventInformation* mcEventInfo = generateMCEventInformation(mcFile, eventNo);
 
-  MCSimpleEvent* mcSimpleEvent = new MCSimpleEvent();
+  //TODO maybe find a better solution:
+  MCSimpleEvent* mcSimpleEvent = new MCSimpleEvent(*simpleEvent);
+  delete simpleEvent;
+
+  //MCEventInformation is now owned by MCSimpleEvent:
+  mcSimpleEvent->MCInformation(mcEventInfo);
 
   qDebug() << mcEventInfo->InitialMom().x() << mcEventInfo->InitialMom().y() << mcEventInfo->InitialMom().z();
 
