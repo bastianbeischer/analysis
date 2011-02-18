@@ -137,7 +137,7 @@ void DataManager::processFiles()
         m_currentEvent = converter.generateSimpleEvent(inputFile, iEvent);
         addSensorData(m_currentEvent);
       } else {
-        m_currentEvent = dynamic_cast<SimpleEvent*>( converter.generateMCSimpleEvent(inputFile, mcInputFile, iEvent) );
+        m_currentEvent = converter.generateMCSimpleEvent(inputFile, mcInputFile, iEvent);
       }
 
       m_outputTree->Fill();
