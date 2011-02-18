@@ -44,7 +44,7 @@ public:
   double beta() const;
 
   static double lastGoodTime(QVector<double>&);
-  static double bestTime(QVector<double>&, double lastGoodTime);
+  static double bestTime(QVector<double>&);
 
 public:
   int fit(const QVector<Hit*>& hits);
@@ -73,7 +73,6 @@ protected:
   double m_timeOfFlight;
 
   QVector<Hit*> m_hits;
-
 };
 
 #endif /* Track_hh */

@@ -7,11 +7,11 @@
 #include "TOFCluster.hh"
 #include "TOFSipmHit.hh"
 
+#include <TMath.h>
+
 #include <iostream>
 #include <cmath>
 #include <cfloat>
-
-#include <QDebug>
 
 Track::Track() :
   m_type(None),
@@ -67,7 +67,6 @@ void Track::calculatePt()
 
 void Track::calculateTimeOfFlight()
 {
-  QVector<double> allTimes;
   QVector<double> t[2][2];
   foreach (Hit* cluster, m_hits) {
     if (!strcmp(cluster->ClassName(), "TOFCluster")) {
@@ -90,7 +89,6 @@ void Track::calculateTimeOfFlight()
           else
             t[1][1].append(startTime);
         }
-        allTimes.append(startTime);
       }
     }
   }
@@ -98,34 +96,36 @@ void Track::calculateTimeOfFlight()
   if (t[0][0].size() < 3 || t[0][1].size() < 3 || t[1][0].size() < 3 || t[1][1].size() < 3)
     return;
 
-  qSort(allTimes);
   qSort(t[0][0]);
   qSort(t[0][1]);
   qSort(t[1][0]);
   qSort(t[1][1]);
 
-  double lastTime = lastGoodTime(allTimes);
-  double leftStartTime = bestTime(t[0][0], lastTime);
-  double rightStartTime = bestTime(t[0][1], lastTime);
-  double leftStopTime = bestTime(t[1][0], lastTime);
-  double rightStopTime = bestTime(t[1][1], lastTime);
+  double leftStartTime = bestTime(t[0][0]);
+  double rightStartTime = bestTime(t[0][1]);
+  double leftStopTime = bestTime(t[1][0]);
+  double rightStopTime = bestTime(t[1][1]);
+
+  double* values = new double[4];
+  values[0] = leftStartTime;
+  values[1] = rightStartTime;
+  values[2] = leftStopTime;
+  values[3] = rightStopTime;
+  double median = TMath::Median(4, values);
+  delete[] values;
+  if (qAbs(leftStartTime - median) > 10) leftStartTime = DBL_MAX;
+  if (qAbs(rightStartTime - median) > 10) rightStartTime = DBL_MAX;
+  if (qAbs(leftStartTime - median) > 10) leftStartTime = DBL_MAX;
+  if (qAbs(leftStartTime - median) > 10) leftStartTime = DBL_MAX;
 
   m_timeOfFlight =
     (leftStopTime < rightStopTime ? leftStopTime : rightStopTime) -
     (leftStartTime < rightStartTime ? leftStartTime : rightStartTime);
-  if (qAbs(1./beta()) > 10) {
-    qDebug()
-      << lastTime << '\n'
-      << t[0][0] << " => " << leftStartTime << '\n'
-      << t[0][1] << " => " << rightStartTime << '\n'
-      << t[1][0] << " => " << leftStopTime << '\n'
-      << t[1][1] << " => " << rightStopTime << '\n';
-  }
 }
 
 double Track::lastGoodTime(QVector<double>& times)
 {
-  const double dt = 10;
+  const double dt = 5;
   int n = 0;
   
   QVector<int> first;
@@ -150,18 +150,18 @@ double Track::lastGoodTime(QVector<double>& times)
   for (int i = 0; i < n; ++i)
     if (last[i] - first[i] > last[max] - first[max])
       max = i;
-  
+
   return times[last[max]];
 }
 
-double Track::bestTime(QVector<double>& times, double lastTime)
+double Track::bestTime(QVector<double>& times)
 {
-  double lgt = lastGoodTime(times);
+  double lastTime = lastGoodTime(times);
   int i = times.size() - 1;
-  while (i >= 0 && times[i] > qMin(lgt, lastTime)) --i;
-  while (i >= 1 && times[i] - times[i-1] < 1) --i;
-  if (i < 0)// || !times.size())
-    return 0;
+  while (i >= 0 && times[i] > lastTime) --i;
+  while (i >= 1 && times[i] - times[i-1] < 5) --i;
+  //if (i < 0)
+    //return DBL_MAX;
   Q_ASSERT(i >= 0 && times.size());
   return times[i];
 }
