@@ -42,20 +42,33 @@ void SingleFile::init()
   m_hpePairs[0x3300]=0x3000;
   m_hpePairs[0x3700]=0x3100;
   m_hpePairs[0x6300]=0x7C00;
+
+  m_trdIds.append(0x3200);
+  m_trdIds.append(0x3400);
+  m_trdIds.append(0x3500);
+  m_trdIds.append(0x3600);
+
+  m_tofIds.append(0x8000);
 }
 
 void SingleFile::cleanupLists()
 {
-  foreach(const RawEvent* event, m_calibrationEvents) delete event;
-  foreach(const RawEvent* event, m_rawEvents)         delete event;
   foreach(PERDaixFiberModule* module, m_fiberModules) delete module;
   foreach(PERDaixTRDModule* module, m_trdModules)     delete module;
   foreach(PERDaixTOFModule* module, m_tofModules)     delete module;
-  m_calibrationEvents.clear();
-  m_rawEvents.clear();
   m_fiberModules.clear();
   m_trdModules.clear();
   m_tofModules.clear();
+}
+
+unsigned int SingleFile::getNumberOfEvents() const
+{
+  return m_runFile->GetNumberOfEvents() - m_runFile->GetNumberOfCalibrationEvents();
+}
+
+const RawEvent* SingleFile::getNextRawEvent() const
+{
+  return (const RawEvent*) m_runFile->ReadNextEvent();
 }
 
 void SingleFile::open(QString fileName)
@@ -71,18 +84,6 @@ void SingleFile::open(QString fileName)
     return;
   }
 
-  const RawEvent* event = (const RawEvent*) m_runFile->ReadNextEvent();
-  
-  unsigned int i = 0;
-  while (event != 0) {
-    if (i < m_runFile->GetNumberOfCalibrationEvents())
-      m_calibrationEvents.push_back(event);
-    else
-      m_rawEvents.push_back(event);
-    event = (RawEvent*) m_runFile->ReadNextEvent();
-    i++;
-  }
-
   for (QMap<quint16, quint16>::iterator iter = m_hpePairs.begin(); iter != m_hpePairs.end(); iter++) {
     quint16 value1 = iter.key();
     quint16 value2 = iter.value();
@@ -91,27 +92,20 @@ void SingleFile::open(QString fileName)
     m_fiberModules.push_back(new PERDaixFiberModule(id1,id2));
   }
 
-  if (!m_rawEvents.size()) {
-      qDebug() << "m_rawEvents.size() == 0" << "SKIPPING FILE";
-      return;
-  }
+  foreach(quint16 id, m_trdIds)
+    m_trdModules.push_back(new PERDaixTRDModule(DetectorID::Get(id, DetectorID::TYPE_TRD_MODULE)));
 
-  Q_ASSERT(m_rawEvents.size());
-  foreach(DetectorID* id, m_rawEvents.first()->GetIDs()) {
-    if (id->IsTRD())
-      m_trdModules.push_back(new PERDaixTRDModule(id));
-    else if (id->IsTOF())
-      m_tofModules.push_back(new PERDaixTOFModule(id));
-  }
-  
+  foreach(quint16 id, m_tofIds)
+    m_tofModules.push_back(new PERDaixTOFModule(DetectorID::Get(id, DetectorID::TYPE_TOF_MODULE)));
+
   calibrate();
 }
 
 
 void SingleFile::calibrate()
 {
-  for (int i = 0; i < m_calibrationEvents.size(); i++) {
-    const RawEvent* event = m_calibrationEvents.at(i);
+  for (unsigned int i = 0; i < m_runFile->GetNumberOfCalibrationEvents(); i++) {
+    const RawEvent* event = (const RawEvent*) m_runFile->ReadNextEvent();
     QList<DetectorID*> detIDs = event->GetIDs();
 
     QMap<DetectorID*, DataBlock*> dataBlockMap;
@@ -125,6 +119,7 @@ void SingleFile::calibrate()
     foreach(PERDaixTRDModule* module, m_trdModules) {
       module->ProcessCalibrationEvent((TRDDataBlock*) dataBlockMap[module->GetBoardID()]);
     }
+    delete event;
   }
 
   foreach(PERDaixFiberModule* module, m_fiberModules)  module->ProcessCalibrationData();

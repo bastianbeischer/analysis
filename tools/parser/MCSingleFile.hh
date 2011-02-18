@@ -14,24 +14,19 @@ class MCSingleFile
 {
 public:
   MCSingleFile();
-  MCSingleFile(QString fileName);
+  MCSingleFile(const QString& fileName);
   ~MCSingleFile();
 
 public:
-  unsigned int getNumberOfEvents() const {return m_MCEvents.size();}
-  const MCEvent* getMCEvent(unsigned int eventNo) const {return m_MCEvents.at(eventNo);}
+  unsigned int getNumberOfEvents() const;
+  const MCEvent* getNextMCEvent() const;
   bool isGood();
 
 private:
-  void init();
-  void open(QString fileName);
-  void cleanupLists();
+  void open(const QString& fileName);
 
 private:
   RunFile* m_runFile;
-
-private:
-  QList<const MCEvent*> m_MCEvents;
 
 };
 

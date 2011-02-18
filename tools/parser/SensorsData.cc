@@ -4,6 +4,7 @@
 #include <TTree.h>
 
 #include <cmath>
+#include <cassert>
 #include <iostream>
 
 SensorsData::SensorsData(DataType type, const char* filename) :
@@ -135,15 +136,25 @@ float SensorsData::nextValue(const char* id, unsigned int time, int& diff)
   return m_var;
 }
 
-float SensorsData::averageValue(const char* /*id*/, unsigned int /*time*/)
+float SensorsData::averageValue(const char* id, unsigned int time)
 {
-  // int prevDiff = 0;
-  // float prevValue = previousValue(id, time, prevDiff);
-  // int nextDiff = 0;
-  // float nextValue = nextValue(id, time, nextDiff);
+  int prevDiff = 0;
+  float prevVal = previousValue(id, time, prevDiff);
+  int nextDiff = 0;
+  float nextVal = nextValue(id, time, nextDiff);
 
-  // float distance = fabs(nextDiff - prevDiff);
-  return 0.;
+  if (prevDiff == 0) {
+    // by the way the algorithm works, nextDiff should now also be 0!
+    assert(nextDiff == prevDiff);
+    return prevVal;
+  }
+
+  float dy = nextVal - prevVal;
+  int dx = fabs(nextDiff - prevDiff);
+
+  float average = prevVal + fabs(prevDiff)*dy/dx;
+
+  return average;
 }
 
 char** SensorsData::keys() const

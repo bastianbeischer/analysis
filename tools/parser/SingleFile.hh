@@ -23,8 +23,8 @@ public:
   ~SingleFile();
   
 public:
-  unsigned int    getNumberOfEvents()                                      const {return m_rawEvents.size();}
-  const RawEvent* getRawEvent(unsigned int eventNo)                        const {return m_rawEvents.at(eventNo);}
+  unsigned int    getNumberOfEvents() const;
+  const RawEvent* getNextRawEvent() const;
   Calibration*    getCalibrationForDetector(DetectorID* id, int whichCali) const;
   unsigned int    getStartTime() const;
   unsigned int    getStopTime() const;
@@ -39,9 +39,8 @@ private:
   RunFile*                      m_runFile;
 
   QMap<quint16, quint16>        m_hpePairs;
-
-  QList<const RawEvent*>        m_calibrationEvents;
-  QList<const RawEvent*>        m_rawEvents;
+  QList<quint16>                m_trdIds;
+  QList<quint16>                m_tofIds;
 
   QList<PERDaixFiberModule*>    m_fiberModules;
   QList<PERDaixTRDModule*>      m_trdModules;

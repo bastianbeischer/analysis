@@ -6,35 +6,23 @@
 
 #include <QDebug>
 
-MCSingleFile::MCSingleFile()
+MCSingleFile::MCSingleFile() :
+  m_runFile(0)
 {
-  init();
 }
 
-MCSingleFile::MCSingleFile(QString fileName)
+MCSingleFile::MCSingleFile(const QString& fileName) :
+  m_runFile(0)
 {
-  init();
   open(fileName);
 }
 
 MCSingleFile::~MCSingleFile()
 {
   delete m_runFile;
-  cleanupLists();
 }
 
-void MCSingleFile::init()
-{
-  m_runFile = 0;
-}
-
-void MCSingleFile::cleanupLists()
-{
-  foreach(const MCEvent* mcEvent, m_MCEvents) delete mcEvent;
-  m_MCEvents.clear();
-}
-
-void MCSingleFile::open(QString fileName)
+void MCSingleFile::open(const QString& fileName)
 {
   qDebug("opening MC file %s", qPrintable(fileName));
   m_runFile = new RunFile(fileName, RunFile::MODE_READING);
@@ -52,9 +40,6 @@ void MCSingleFile::open(QString fileName)
   //skip calis
   for (int i=0; i<nCalibrationEvents; ++i)
     m_runFile->ReadNextEvent();
-
-  for (int i=0; i<nEvents; ++i)
-    m_MCEvents << static_cast<MCEvent*> (m_runFile->ReadNextEvent());
 }
 
 bool MCSingleFile::isGood(){
@@ -62,4 +47,14 @@ bool MCSingleFile::isGood(){
     return false;
 
   return m_runFile->IsGood();
+}
+
+unsigned int MCSingleFile::getNumberOfEvents() const
+{
+  return m_runFile->GetNumberOfEvents() - m_runFile->GetNumberOfCalibrationEvents();
+}
+
+const MCEvent* MCSingleFile::getNextMCEvent() const
+{
+  return (const MCEvent*) m_runFile->ReadNextEvent();
 }

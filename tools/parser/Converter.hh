@@ -17,12 +17,12 @@ public:
   ~Converter();
   
 public:
-  SimpleEvent* generateSimpleEvent(const SingleFile* file, unsigned int eventNo);
-  MCSimpleEvent* generateMCSimpleEvent(const SingleFile* file, const MCSingleFile* mcFile, unsigned int eventNo);
+  SimpleEvent* generateNextSimpleEvent(const SingleFile* file);
+  MCSimpleEvent* generateNextMCSimpleEvent(const SingleFile* file, const MCSingleFile* mcFile);
 
 private:
-  void fillSimpleEvent(SimpleEvent* simpleevent, const SingleFile* file, unsigned int eventNo);
-  MCEventInformation* generateMCEventInformation(const MCSingleFile* mcFile, unsigned int eventNo);
+  void fillSimpleEvent(SimpleEvent* simpleEvent, const SingleFile* file);
+  MCEventInformation* generateMCEventInformation(const MCSingleFile* mcFile);
   
 };
 

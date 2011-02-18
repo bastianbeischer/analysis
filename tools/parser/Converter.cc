@@ -50,25 +50,24 @@ Converter::~Converter()
 {
 }
 
-
-SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int eventNo)
+SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file)
 {
   SimpleEvent* simpleEvent = new SimpleEvent();
   simpleEvent->setContentType(SimpleEvent::RawData);
-  fillSimpleEvent(simpleEvent, file, eventNo);
+  fillSimpleEvent(simpleEvent, file);
   return simpleEvent;
 }
 
 
-MCSimpleEvent* Converter::generateMCSimpleEvent(const SingleFile* file, const MCSingleFile* mcFile, unsigned int eventNo){
-
+MCSimpleEvent* Converter::generateNextMCSimpleEvent(const SingleFile* file, const MCSingleFile* mcFile)
+{
   //generate MCSimpleEvent and fill it with data:
   MCSimpleEvent* mcSimpleEvent = new MCSimpleEvent();
   mcSimpleEvent->setContentType(SimpleEvent::MCRawData);
-  fillSimpleEvent(mcSimpleEvent, file, eventNo);
+  fillSimpleEvent(mcSimpleEvent, file);
 
   //get MCEventInformation
-  MCEventInformation* mcEventInfo = generateMCEventInformation(mcFile, eventNo);
+  MCEventInformation* mcEventInfo = generateMCEventInformation(mcFile);
   //MCEventInformation is now owned by MCSimpleEvent:
   mcSimpleEvent->setMCInformation(mcEventInfo);
 
@@ -76,9 +75,9 @@ MCSimpleEvent* Converter::generateMCSimpleEvent(const SingleFile* file, const MC
 }
 
 
-void Converter::fillSimpleEvent(SimpleEvent* simpleEvent, const SingleFile* file, unsigned int eventNo){
-
-  const RawEvent* event = file->getRawEvent(eventNo);
+void Converter::fillSimpleEvent(SimpleEvent* simpleEvent, const SingleFile* file)
+{
+  const RawEvent* event = file->getNextRawEvent();
 
   // fill simple event basics
   unsigned int eventId = event->GetEventID();
@@ -179,13 +178,14 @@ void Converter::fillSimpleEvent(SimpleEvent* simpleEvent, const SingleFile* file
       tofHitIt->second->processTDCHits();
   } // foreach(DetectorID...)
 
+  delete event;
 }
 
 
-MCEventInformation* Converter::generateMCEventInformation(const MCSingleFile* mcFile, unsigned int eventNo){
-
+MCEventInformation* Converter::generateMCEventInformation(const MCSingleFile* mcFile)
+{
   //get MCEvent
-  const MCEvent* mcEvent = mcFile->getMCEvent(eventNo) ;
+  const MCEvent* mcEvent = mcFile->getNextMCEvent() ;
 
   //read MC data
   QVector<MCParticle*> particles = mcEvent->GetParticles();
@@ -218,6 +218,8 @@ MCEventInformation* Converter::generateMCEventInformation(const MCSingleFile* mc
 
   //clean up:
   qDeleteAll(particles);
+
+  delete mcEvent;
 
   return mcEventInfo;
 }

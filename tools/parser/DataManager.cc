@@ -134,10 +134,10 @@ void DataManager::processFiles()
 
     for (unsigned int iEvent = 0; iEvent < inputFile->getNumberOfEvents(); iEvent++) {
       if(mcInputFile == 0){
-        m_currentEvent = converter.generateSimpleEvent(inputFile, iEvent);
+        m_currentEvent = converter.generateNextSimpleEvent(inputFile);
         addSensorData(m_currentEvent);
       } else {
-        m_currentEvent = converter.generateMCSimpleEvent(inputFile, mcInputFile, iEvent);
+        m_currentEvent = converter.generateNextMCSimpleEvent(inputFile, mcInputFile);
       }
 
       m_outputTree->Fill();
@@ -161,8 +161,7 @@ void DataManager::addSensorData(SimpleEvent* event)
   int nKeys = m_sensorsData->numberOfKeys();
   char** keys = m_sensorsData->keys();
   for (int iKey = 0; iKey < nKeys; iKey++) {
-    int diff;
-    float value = m_sensorsData->previousValue(keys[iKey], event->time(), diff);
+    float value = m_sensorsData->averageValue(keys[iKey], event->time());
     event->setSensorData(SensorTypes::convertFromString(keys[iKey]), value);
   }
 }
