@@ -6,30 +6,27 @@
 #include <vector>
 
 class MCEventInformation  :
-    public TObject
+  public TObject
 {
 public:
   MCEventInformation();
-  MCEventInformation(const MCEventInformation& other):TObject()
-  {
-    *this = other;
-  }
+  MCEventInformation(const MCEventInformation& other);
 
-  int PDGid() const                                 { return m_pdgID; }
-  void PDGid(int pdgID)                             { m_pdgID = pdgID; }
+  int pdgId() const {return m_pdgId;}
+  void setPdgId(int pdgId) {m_pdgId = pdgId;}
 
-  TVector3 InitialMom() const                       { return m_initialMomentum; }
-  void InitialMom(const TVector3& initialMom)       { m_initialMomentum = initialMom; }
+  TVector3 initialMomentum() const {return m_initialMomentum;}
+  void setInitialMomentum(const TVector3& initialMomentum) {m_initialMomentum = initialMomentum;}
 
-  std::vector<TVector3> Trajectory() const          { return m_trajectory; }
-  void Trajectory(const std::vector<TVector3> traj)  { m_trajectory = traj; }
+  std::vector<TVector3> trajectory() const {return m_trajectory;}
+  void setTrajectory(const std::vector<TVector3> traj) {m_trajectory = traj;}
 
 private:
-  int m_pdgID;
+  int m_pdgId;
   TVector3 m_initialMomentum;
   std::vector<TVector3> m_trajectory;
 
-  ClassDef( MCEventInformation, 1 );
+  ClassDef(MCEventInformation, 1);
 
 };
 

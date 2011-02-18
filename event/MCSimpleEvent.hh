@@ -8,23 +8,19 @@
 class MCSimpleEvent : public SimpleEvent
 {
 public:
-    MCSimpleEvent();
-    MCSimpleEvent(const MCSimpleEvent& other);
-    MCSimpleEvent(unsigned int id, unsigned int runStartTime, unsigned int eventTime, const MCEventInformation* mcInfo, ContentType type);
-    ~MCSimpleEvent();
+  MCSimpleEvent();
+  MCSimpleEvent(const MCSimpleEvent& other);
+  MCSimpleEvent(unsigned int id, unsigned int runStartTime, unsigned int eventTime, ContentType type, const MCEventInformation* mcInfo);
+  ~MCSimpleEvent();
 
-    const MCEventInformation* MCInformation() const   {return m_mcEventInformation;}
-    void MCInformation(const MCEventInformation* mcInfo)
-    {
-      if (m_mcEventInformation) delete m_mcEventInformation;
-      m_mcEventInformation = mcInfo;
-    }
+  const MCEventInformation* MCInformation() const {return m_mcEventInformation;}
+  void setMCInformation(const MCEventInformation* mcInfo);
 
 private:
-    const MCEventInformation* m_mcEventInformation;
+  const MCEventInformation* m_mcEventInformation;
 
 
-    ClassDef( MCSimpleEvent, 1 );
+  ClassDef( MCSimpleEvent, 1 );
 
 };
 
