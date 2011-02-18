@@ -12,7 +12,6 @@
 #include "Converter.hh"
 #include "SensorsData.hh"
 #include "SimpleEvent.hh"
-#include "MCSimpleEvent.hh"
 #include "SingleFile.hh"
 #include "MCSingleFile.hh"
 #include "DataDescription.hh"
@@ -132,13 +131,11 @@ void DataManager::processFiles()
     //TODO not very nice to have 2 lists
     MCSingleFile* mcInputFile = m_inputMCFiles.at(i) ;
 
-    for (unsigned int iEvent = 0; iEvent < inputFile->getNumberOfEvents(); iEvent++) {
-      if(mcInputFile == 0){
-        m_currentEvent = converter.generateNextSimpleEvent(inputFile);
+    int Nevents = inputFile->getNumberOfEvents();
+    for (unsigned int iEvent = 0; iEvent < Nevents; iEvent++) {
+      m_currentEvent = converter.generateNextSimpleEvent(inputFile, mcInputFile);
+      if (!mcInputFile)
         addSensorData(m_currentEvent);
-      } else {
-        m_currentEvent = converter.generateNextMCSimpleEvent(inputFile, mcInputFile);
-      }
 
       m_outputTree->Fill();
       delete m_currentEvent;

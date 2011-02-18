@@ -12,7 +12,6 @@
 #include "Setup.hh"
 
 #include "MCSingleFile.hh"
-#include "MCSimpleEvent.hh"
 #include "MCEventInformation.hh"
 #include "MCEvent.h"
 #include "MCParticle.h"
@@ -50,32 +49,7 @@ Converter::~Converter()
 {
 }
 
-SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file)
-{
-  SimpleEvent* simpleEvent = new SimpleEvent();
-  simpleEvent->setContentType(SimpleEvent::RawData);
-  fillSimpleEvent(simpleEvent, file);
-  return simpleEvent;
-}
-
-
-MCSimpleEvent* Converter::generateNextMCSimpleEvent(const SingleFile* file, const MCSingleFile* mcFile)
-{
-  //generate MCSimpleEvent and fill it with data:
-  MCSimpleEvent* mcSimpleEvent = new MCSimpleEvent();
-  mcSimpleEvent->setContentType(SimpleEvent::MCRawData);
-  fillSimpleEvent(mcSimpleEvent, file);
-
-  //get MCEventInformation
-  MCEventInformation* mcEventInfo = generateMCEventInformation(mcFile);
-  //MCEventInformation is now owned by MCSimpleEvent:
-  mcSimpleEvent->setMCInformation(mcEventInfo);
-
-  return mcSimpleEvent;
-}
-
-
-void Converter::fillSimpleEvent(SimpleEvent* simpleEvent, const SingleFile* file)
+SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MCSingleFile* mcFile)
 {
   const RawEvent* event = file->getNextRawEvent();
 
@@ -84,9 +58,7 @@ void Converter::fillSimpleEvent(SimpleEvent* simpleEvent, const SingleFile* file
   unsigned int runStartTime = file->getStartTime(); // convert ms to s for
   unsigned int eventTime = event->GetTime();
 
-  simpleEvent->setEventId(eventId);
-  simpleEvent->setRunStartTime(runStartTime);
-  simpleEvent->setEventTime(eventTime);
+  SimpleEvent* simpleEvent = new SimpleEvent(eventId, runStartTime, eventTime, mcFile? SimpleEvent::MCRawData : SimpleEvent::RawData);
 
   // loop over all present detector IDs
   QList<DetectorID*> detIDs = event->GetIDs();
@@ -179,10 +151,17 @@ void Converter::fillSimpleEvent(SimpleEvent* simpleEvent, const SingleFile* file
   } // foreach(DetectorID...)
 
   delete event;
+
+  if (mcFile) {
+    MCEventInformation* mcInfo = generateNextMCEventInformation(mcFile);
+    simpleEvent->setMCInformation(mcInfo);
+  }
+
+  return simpleEvent;
 }
 
 
-MCEventInformation* Converter::generateMCEventInformation(const MCSingleFile* mcFile)
+MCEventInformation* Converter::generateNextMCEventInformation(const MCSingleFile* mcFile)
 {
   //get MCEvent
   const MCEvent* mcEvent = mcFile->getNextMCEvent() ;
