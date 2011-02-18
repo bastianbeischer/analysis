@@ -1,6 +1,11 @@
 #include "MCSimpleEvent.hh"
 
+#include "MCEventInformation.hh"
+
+ClassImp(MCSimpleEvent);
+
 MCSimpleEvent::MCSimpleEvent():
+  SimpleEvent(),
   m_mcEventInformation(0)
 {
 }

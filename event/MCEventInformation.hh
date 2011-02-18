@@ -1,12 +1,10 @@
 #ifndef MCEVENTINFORMATION_HH
 #define MCEVENTINFORMATION_HH
 
-#include <TObject.h>
 #include <TVector3.h>
 #include <vector>
 
-class MCEventInformation  :
-  public TObject
+class MCEventInformation
 {
 public:
   MCEventInformation();
@@ -19,14 +17,12 @@ public:
   void setInitialMomentum(const TVector3& initialMomentum) {m_initialMomentum = initialMomentum;}
 
   std::vector<TVector3> trajectory() const {return m_trajectory;}
-  void setTrajectory(const std::vector<TVector3> traj) {m_trajectory = traj;}
+  void setTrajectory(const std::vector<TVector3>& traj) {m_trajectory = traj;}
 
 private:
   int m_pdgId;
   TVector3 m_initialMomentum;
   std::vector<TVector3> m_trajectory;
-
-  ClassDef(MCEventInformation, 1);
 
 };
 

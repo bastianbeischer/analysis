@@ -19,8 +19,7 @@ public:
 private:
   const MCEventInformation* m_mcEventInformation;
 
-
-  ClassDef( MCSimpleEvent, 1 );
+  ClassDef(MCSimpleEvent, 1);
 
 };
 

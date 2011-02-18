@@ -8,7 +8,7 @@
 #include <cmath>
 #include <cassert>
 
-ClassImp( SimpleEvent );
+ClassImp(SimpleEvent);
 
 SimpleEvent::SimpleEvent() :
   TObject(),
