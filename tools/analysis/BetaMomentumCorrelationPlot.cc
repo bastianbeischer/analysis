@@ -26,7 +26,7 @@ BetaMomentumCorrelationPlot::BetaMomentumCorrelationPlot()
   : AnalysisPlot(AnalysisPlot::MomentumReconstruction)
   , H2DPlot()
 {
-  setTitle(QString("1 / beta vs momentum"));
+  setTitle(QString("beta vs momentum"));
   int nBinsX = 120;
   double xMin = -6;
   double xMax = 6;
