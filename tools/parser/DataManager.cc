@@ -84,11 +84,11 @@ void DataManager::addSingleFile(QString fileName)
   //try to open a matching mc file:
   QString mcFileName = fileName.replace(".dat", "_MC.dat");
   MCSingleFile* mcFile = new MCSingleFile(qPrintable(mcFileName));
-  if (mcFile->IsGood()) {
+  if (mcFile->isGood()) {
     qDebug("found MC file");
     m_inputMCFiles.push_back(mcFile);
   } else {
-    m_inputMCFiles.push_back(NULL);
+    m_inputMCFiles.push_back(0);
   }
 }
 
@@ -133,7 +133,7 @@ void DataManager::processFiles()
     MCSingleFile* mcInputFile = m_inputMCFiles.at(i) ;
 
     for (unsigned int iEvent = 0; iEvent < inputFile->getNumberOfEvents(); iEvent++) {
-      if(mcInputFile == NULL){
+      if(mcInputFile == 0){
         m_currentEvent = converter.generateSimpleEvent(inputFile, iEvent);
         addSensorData(m_currentEvent);
       } else {

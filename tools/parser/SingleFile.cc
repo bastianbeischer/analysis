@@ -74,7 +74,7 @@ void SingleFile::open(QString fileName)
   const RawEvent* event = (const RawEvent*) m_runFile->ReadNextEvent();
   
   unsigned int i = 0;
-  while (event != NULL) {
+  while (event != 0) {
     if (i < m_runFile->GetNumberOfCalibrationEvents())
       m_calibrationEvents.push_back(event);
     else

@@ -18,9 +18,9 @@ public:
   ~MCSingleFile();
 
 public:
-  unsigned int    getNumberOfEvents()                                    const {return m_MCEvents.size();}
-  const MCEvent*  getMCEvent(unsigned int eventNo)                       const {return m_MCEvents.at(eventNo);}
-  bool            IsGood();
+  unsigned int getNumberOfEvents() const {return m_MCEvents.size();}
+  const MCEvent* getMCEvent(unsigned int eventNo) const {return m_MCEvents.at(eventNo);}
+  bool isGood();
 
 private:
   void init();
@@ -28,10 +28,10 @@ private:
   void cleanupLists();
 
 private:
-  RunFile*                      m_runFile;
+  RunFile* m_runFile;
 
 private:
-  QList<const MCEvent*>         m_MCEvents;
+  QList<const MCEvent*> m_MCEvents;
 
 };
 

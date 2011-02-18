@@ -54,7 +54,7 @@ Converter::~Converter()
 SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int eventNo)
 {
   SimpleEvent* simpleEvent = new SimpleEvent();
-  simpleEvent->contentType(SimpleEvent::RawData);
+  simpleEvent->setContentType(SimpleEvent::RawData);
   fillSimpleEvent(simpleEvent, file, eventNo);
   return simpleEvent;
 }
@@ -64,17 +64,16 @@ MCSimpleEvent* Converter::generateMCSimpleEvent(const SingleFile* file, const MC
 
   //generate MCSimpleEvent and fill it with data:
   MCSimpleEvent* mcSimpleEvent = new MCSimpleEvent();
-  mcSimpleEvent->contentType(SimpleEvent::MCRawData);
+  mcSimpleEvent->setContentType(SimpleEvent::MCRawData);
   fillSimpleEvent(mcSimpleEvent, file, eventNo);
 
   //get MCEventInformation
   MCEventInformation* mcEventInfo = generateMCEventInformation(mcFile, eventNo);
   //MCEventInformation is now owned by MCSimpleEvent:
-  mcSimpleEvent->MCInformation(mcEventInfo);
+  mcSimpleEvent->setMCInformation(mcEventInfo);
 
   return mcSimpleEvent;
 }
-
 
 
 void Converter::fillSimpleEvent(SimpleEvent* simpleEvent, const SingleFile* file, unsigned int eventNo){
@@ -86,9 +85,9 @@ void Converter::fillSimpleEvent(SimpleEvent* simpleEvent, const SingleFile* file
   unsigned int runStartTime = file->getStartTime(); // convert ms to s for
   unsigned int eventTime = event->GetTime();
 
-  simpleEvent->eventId(eventId);
-  simpleEvent->runStartTime(runStartTime);
-  simpleEvent->eventTime(eventTime);
+  simpleEvent->setEventId(eventId);
+  simpleEvent->setRunStartTime(runStartTime);
+  simpleEvent->setEventTime(eventTime);
 
   // loop over all present detector IDs
   QList<DetectorID*> detIDs = event->GetIDs();
@@ -213,9 +212,9 @@ MCEventInformation* Converter::generateMCEventInformation(const MCSingleFile* mc
   MCEventInformation* mcEventInfo = new MCEventInformation();
 
   //fill it with data
-  mcEventInfo->PDGid(pdgID);
-  mcEventInfo->InitialMom(mc_primaryMomentum);
-  mcEventInfo->Trajectory(traj);
+  mcEventInfo->setPdgId(pdgID);
+  mcEventInfo->setInitialMomentum(mc_primaryMomentum);
+  mcEventInfo->setTrajectory(traj);
 
   //clean up:
   qDeleteAll(particles);

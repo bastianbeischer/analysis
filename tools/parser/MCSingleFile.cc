@@ -55,11 +55,9 @@ void MCSingleFile::open(QString fileName)
 
   for (int i=0; i<nEvents; ++i)
     m_MCEvents << static_cast<MCEvent*> (m_runFile->ReadNextEvent());
-
-
 }
 
-bool MCSingleFile::IsGood(){
+bool MCSingleFile::isGood(){
   if (m_runFile == 0)
     return false;
 
