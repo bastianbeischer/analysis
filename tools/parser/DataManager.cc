@@ -131,7 +131,7 @@ void DataManager::processFiles()
     //TODO not very nice to have 2 lists
     MCSingleFile* mcInputFile = m_inputMCFiles.at(i) ;
 
-    int Nevents = inputFile->getNumberOfEvents();
+    unsigned int Nevents = inputFile->getNumberOfEvents();
     for (unsigned int iEvent = 0; iEvent < Nevents; iEvent++) {
       m_currentEvent = converter.generateNextSimpleEvent(inputFile, mcInputFile);
       if (!mcInputFile)
