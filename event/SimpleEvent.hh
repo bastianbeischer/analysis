@@ -51,7 +51,7 @@ private:
   std::vector<Hit*> m_hits;
   float m_sensorSet[SensorTypes::N_SENSOR_TYPES]; //!
 
-  const MCEventInformation* m_mcEventInformation;
+  const MCEventInformation* m_mcEventInformation; //!
 
   ClassDef( SimpleEvent, 1 );
  
