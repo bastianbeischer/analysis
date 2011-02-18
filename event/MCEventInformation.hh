@@ -10,6 +10,10 @@ class MCEventInformation  :
 {
 public:
   MCEventInformation();
+  MCEventInformation(const MCEventInformation& other):TObject()
+  {
+    *this = other;
+  }
 
   int PDGid() const                                 { return m_pdgID; }
   void PDGid(int pdgID)                             { m_pdgID = pdgID; }

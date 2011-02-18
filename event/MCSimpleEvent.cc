@@ -3,17 +3,19 @@
 MCSimpleEvent::MCSimpleEvent():
     m_mcEventInformation(NULL)
 {
-
 }
-
 
 MCSimpleEvent::MCSimpleEvent(const MCSimpleEvent& other):
-    SimpleEvent(other)
+    SimpleEvent(other),
+    m_mcEventInformation(new MCEventInformation(other))
 {
-  MCEventInformation* mcInfo = new MCEventInformation();
-  *mcInfo = *other.MCInformation();
 }
 
+MCSimpleEvent::MCSimpleEvent(unsigned int id, unsigned int runStartTime, unsigned int eventTime, const MCEventInformation* mcInfo, ContentType type):
+    SimpleEvent(id, runStartTime, eventTime, type),
+    m_mcEventInformation(new MCEventInformation(mcInfo))
+{
+}
 
 MCSimpleEvent::~MCSimpleEvent()
 {

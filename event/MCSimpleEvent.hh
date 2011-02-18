@@ -10,13 +10,18 @@ class MCSimpleEvent : public SimpleEvent
 public:
     MCSimpleEvent();
     MCSimpleEvent(const MCSimpleEvent& other);
+    MCSimpleEvent(unsigned int id, unsigned int runStartTime, unsigned int eventTime, const MCEventInformation* mcInfo, ContentType type);
     ~MCSimpleEvent();
 
     const MCEventInformation* MCInformation() const   {return m_mcEventInformation;}
-    void MCInformation(MCEventInformation* mcInfo)    {m_mcEventInformation = mcInfo;}
+    void MCInformation(const MCEventInformation* mcInfo)
+    {
+      if (m_mcEventInformation) delete m_mcEventInformation;
+      m_mcEventInformation = mcInfo;
+    }
 
 private:
-    MCEventInformation* m_mcEventInformation;
+    const MCEventInformation* m_mcEventInformation;
 
 
     ClassDef( MCSimpleEvent, 1 );
