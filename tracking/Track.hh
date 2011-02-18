@@ -1,9 +1,12 @@
 #ifndef Track_hh
 #define Track_hh
 
-#include <QVector>
 #include "Matrix.hh"
+
 #include <TVector3.h>
+
+#include <QVector>
+#include <QMap>
 
 class TrackInformation;
 class Hit;
@@ -40,7 +43,8 @@ public:
   double p() const;
   double beta() const;
 
-  static double bestTime(QVector<double>&);
+  static double lastGoodTime(QVector<double>&);
+  static double bestTime(QVector<double>&, double lastGoodTime);
 
 public:
   int fit(const QVector<Hit*>& hits);
