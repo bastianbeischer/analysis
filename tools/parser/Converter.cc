@@ -11,7 +11,16 @@
 #include "TOFDataBlock.h"
 #include "Setup.hh"
 
+#include "MCSingleFile.hh"
+#include "MCEventInformation.hh"
+#include "MCEvent.h"
+#include "MCParticle.h"
+#include "MCDigi.h"
+
 #include "CLHEP/Units/SystemOfUnits.h"
+#include <CLHEP/Geometry/Point3D.h>
+#include <CLHEP/Geometry/Vector3D.h>
+
 
 #include <TVector3.h>
 #include <QDebug>
@@ -40,15 +49,16 @@ Converter::~Converter()
 {
 }
 
-SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file)
+SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MCSingleFile* mcFile)
 {
   const RawEvent* event = file->getNextRawEvent();
 
-  // construct new simple event
+  // fill simple event basics
   unsigned int eventId = event->GetEventID();
-  unsigned int runStartTime = file->getStartTime(); // convert ms to s for 
+  unsigned int runStartTime = file->getStartTime(); // convert ms to s for
   unsigned int eventTime = event->GetTime();
-  SimpleEvent* simpleEvent = new SimpleEvent(eventId, runStartTime, eventTime, SimpleEvent::RawData);
+
+  SimpleEvent* simpleEvent = new SimpleEvent(eventId, runStartTime, eventTime, mcFile? SimpleEvent::MCRawData : SimpleEvent::RawData);
 
   // loop over all present detector IDs
   QList<DetectorID*> detIDs = event->GetIDs();
@@ -141,5 +151,52 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file)
   } // foreach(DetectorID...)
 
   delete event;
+
+  if (mcFile) {
+    MCEventInformation* mcInfo = generateNextMCEventInformation(mcFile);
+    simpleEvent->setMCInformation(mcInfo);
+  }
+
   return simpleEvent;
 }
+
+
+MCEventInformation* Converter::generateNextMCEventInformation(const MCSingleFile* mcFile)
+{
+  //get MCEvent
+  const MCEvent* mcEvent = mcFile->getNextMCEvent() ;
+
+  //read MC data
+  QVector<MCParticle*> particles = mcEvent->GetParticles();
+
+  //get info on primary
+  MCParticle* primary = particles.at(0);
+  int pdgID = primary->GetPDGID();
+
+  QVector<MCParticle::DetectorHit> primaryHits = primary->GetHits();
+
+  HepGeom::Vector3D<double> primaryMom = primaryHits.at(0).preStep.momentum;
+
+  QVector<HepGeom::Point3D<double> > mcTrajectory = primary->GetTrajectory();
+  //convert into data structures used by SimpleEvents
+  TVector3 mc_primaryMomentum(primaryMom.x(), primaryMom.y(), primaryMom.z())  ;
+
+  std::vector<TVector3> traj;
+  for (int i = 0; i < mcTrajectory.size(); ++i){
+    const HepGeom::Point3D<double>& point = mcTrajectory.at(i);
+    traj.push_back( TVector3(point.x(), point.y(), point.z()) );
+  }
+
+  //create MC Information Object
+  MCEventInformation* mcEventInfo = new MCEventInformation();
+
+  //fill it with data
+  mcEventInfo->setPdgId(pdgID);
+  mcEventInfo->setInitialMomentum(mc_primaryMomentum);
+  mcEventInfo->setTrajectory(traj);
+
+  delete mcEvent;
+  return mcEventInfo;
+}
+
+

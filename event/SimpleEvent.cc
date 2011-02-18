@@ -8,7 +8,7 @@
 #include <cmath>
 #include <cassert>
 
-ClassImp( SimpleEvent );
+ClassImp(SimpleEvent);
 
 SimpleEvent::SimpleEvent() :
   TObject(),
@@ -16,7 +16,8 @@ SimpleEvent::SimpleEvent() :
   m_runStartTime(0),
   m_eventTime(0),
   m_contentType(None),
-  m_hits()
+  m_hits(),
+  m_mcEventInformation(0)
 {
   for (unsigned int i = 0; i < SensorTypes::N_SENSOR_TYPES; i++)
     m_sensorSet[i] = sqrt(-1);
@@ -28,7 +29,8 @@ SimpleEvent::SimpleEvent(unsigned int id, unsigned int runStartTime, unsigned in
   m_runStartTime(runStartTime),
   m_eventTime(eventTime),
   m_contentType(type),
-  m_hits()
+  m_hits(),
+  m_mcEventInformation(0)
 {
   for (unsigned int i = 0; i < SensorTypes::N_SENSOR_TYPES; i++)
     m_sensorSet[i] = sqrt(-1);
@@ -39,7 +41,8 @@ SimpleEvent::SimpleEvent(const SimpleEvent& other) :
   m_eventId(other.m_eventId),
   m_runStartTime(other.m_runStartTime),
   m_eventTime(other.m_eventTime),
-  m_contentType(other.m_contentType)
+  m_contentType(other.m_contentType),
+  m_mcEventInformation(new MCEventInformation(*other.m_mcEventInformation))
 {
   for (std::vector<Hit*>::const_iterator it = other.m_hits.begin(); it != other.m_hits.end(); it++) {
     Hit* hit = *it;
@@ -68,6 +71,7 @@ SimpleEvent::~SimpleEvent()
   for (std::vector<Hit*>::iterator it = m_hits.begin(); it != m_hits.end(); it++) {
     delete *it;
   }
+  delete m_mcEventInformation;
 }
 
 void SimpleEvent::setSensorData(SensorTypes::Type type, float data)
@@ -80,4 +84,10 @@ float SimpleEvent::sensorData(SensorTypes::Type type)
 {
   assert(type >= SensorTypes::START && type < SensorTypes::N_SENSOR_TYPES);
   return m_sensorSet[type];
+}
+
+void SimpleEvent::setMCInformation(const MCEventInformation* mcInfo)
+{
+  if (m_mcEventInformation) delete m_mcEventInformation;
+  m_mcEventInformation = mcInfo;
 }

@@ -13,6 +13,7 @@
 #include "SensorsData.hh"
 #include "SimpleEvent.hh"
 #include "SingleFile.hh"
+#include "MCSingleFile.hh"
 #include "DataDescription.hh"
 
 DataManager::DataManager() :
@@ -78,6 +79,16 @@ void DataManager::addSingleFile(QString fileName)
   SingleFile* file = new SingleFile(qPrintable(fileName));
   m_inputFiles.push_back(file);
   m_description->addRunFile(qPrintable(fileName), hash, file->getNumberOfEvents());
+
+  //try to open a matching mc file:
+  QString mcFileName = fileName.replace(".dat", "_MC.dat");
+  MCSingleFile* mcFile = new MCSingleFile(qPrintable(mcFileName));
+  if (mcFile->isGood()) {
+    qDebug("found MC file");
+    m_inputMCFiles.push_back(mcFile);
+  } else {
+    m_inputMCFiles.push_back(0);
+  }
 }
 
 void DataManager::initializeOutput()
@@ -115,10 +126,17 @@ void DataManager::processFiles()
   std::cout << "|" << std::flush;
   int iFactors = 0;
 
-  foreach(SingleFile* inputFile, m_inputFiles) {
-    for (unsigned int iEvent = 0; iEvent < inputFile->getNumberOfEvents(); iEvent++) {
-      m_currentEvent = converter.generateNextSimpleEvent(inputFile);
-      addSensorData(m_currentEvent);
+  for (int i = 0; i < m_inputFiles.size(); ++i) {
+    SingleFile* inputFile = m_inputFiles.at(i) ;
+    //TODO not very nice to have 2 lists
+    MCSingleFile* mcInputFile = m_inputMCFiles.at(i) ;
+
+    unsigned int Nevents = inputFile->getNumberOfEvents();
+    for (unsigned int iEvent = 0; iEvent < Nevents; iEvent++) {
+      m_currentEvent = converter.generateNextSimpleEvent(inputFile, mcInputFile);
+      if (!mcInputFile)
+        addSensorData(m_currentEvent);
+
       m_outputTree->Fill();
       delete m_currentEvent;
 
