@@ -1,10 +1,12 @@
 #ifndef MCEVENTINFORMATION_HH
 #define MCEVENTINFORMATION_HH
 
+#include <TObject.h>
 #include <TVector3.h>
 #include <vector>
 
-class MCEventInformation
+class MCEventInformation :
+  public TObject
 {
 public:
   MCEventInformation();
@@ -23,6 +25,8 @@ private:
   int m_pdgId;
   TVector3 m_initialMomentum;
   std::vector<TVector3> m_trajectory;
+
+  ClassDef(MCEventInformation,1);
 
 };
 

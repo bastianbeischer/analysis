@@ -4,6 +4,7 @@
 #include <TObject.h>
 
 #include "Hit.hh"
+#include "MCEventInformation.hh"
 #include "SensorTypes.hh"
 
 #include <map>
@@ -36,6 +37,9 @@ public:
   void setEventTime(unsigned int time) {m_eventTime = time;}
   void setContentType(ContentType type) {m_contentType = type;}
 
+  const MCEventInformation* MCInformation() const {return m_mcEventInformation;}
+  void setMCInformation(const MCEventInformation* mcInfo);
+
   void setSensorData(SensorTypes::Type type, float data);
   float sensorData(SensorTypes::Type type);
 
@@ -46,6 +50,8 @@ private:
   ContentType m_contentType;
   std::vector<Hit*> m_hits;
   float m_sensorSet[SensorTypes::N_SENSOR_TYPES]; //!
+
+  const MCEventInformation* m_mcEventInformation;
 
   ClassDef( SimpleEvent, 1 );
  

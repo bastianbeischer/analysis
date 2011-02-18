@@ -1,6 +1,9 @@
 #include "MCEventInformation.hh"
 
-MCEventInformation::MCEventInformation()
+ClassImp(MCEventInformation);
+
+MCEventInformation::MCEventInformation() :
+  TObject()
 {
 }
 
