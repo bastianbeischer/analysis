@@ -20,7 +20,7 @@ public:
   SimpleEvent* generateNextSimpleEvent(const SingleFile* file, const MCSingleFile* mcFile);
 
 private:
-  MCEventInformation* generateNextMCEventInformation(const MCSingleFile* mcFile);
+  const MCEventInformation* generateNextMCEventInformation(const MCSingleFile* mcFile);
   
 };
 
