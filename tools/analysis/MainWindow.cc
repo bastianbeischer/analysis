@@ -8,6 +8,7 @@
 #include "BrokenLine.hh"
 #include "StraightLine.hh"
 #include "Corrections.hh"
+#include "EventReader.hh"
 
 #include "BendingPositionPlot.hh"
 #include "BendingAnglePlot.hh"
@@ -56,8 +57,11 @@
 
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
+  , m_reader(new EventReader(this))
   , m_activePlots()
   , m_inhibitDraw(false)
+  , m_time()
+  , m_updateTimer()
 {
   m_ui.setupUi(this);
  
@@ -69,9 +73,6 @@ MainWindow::MainWindow(QWidget* parent)
   } else {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
- 
-  m_ui.plotter->setDataChainProgressBar(m_ui.dataChainProgressBar);
-  m_ui.plotter->setEventQueueProgressBar(m_ui.eventQueueProgressBar);
 
   m_topicCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
   m_topicCheckBoxes.append(m_ui.signalHeightTRDCheckBox);
@@ -125,9 +126,16 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.timeOverThresholdCorrectionCheckBox);
   m_controlWidgets.append(m_ui.photonTravelTimeCorrectionCheckBox);
 
+  connect(m_reader, SIGNAL(eventLoopStarted()), this, SLOT(toggleControlWidgetsStatus()));
+  connect(m_reader, SIGNAL(eventLoopStopped()), this, SLOT(toggleControlWidgetsStatus()));
+  connect(m_reader, SIGNAL(numberOfEventsChanged(int)), this, SLOT(numberOfEventsChanged(int)));
+  connect(m_reader, SIGNAL(numberOfEventsChanged(int)), this, SLOT(numberOfEventsChanged(int)));
+  connect(m_reader, SIGNAL(eventLoopStarted()), &m_updateTimer, SLOT(start()));
+  connect(m_reader, SIGNAL(eventLoopStopped()), &m_updateTimer, SLOT(stop()));
+
+  connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
+
   connect(m_ui.analyzeButton, SIGNAL(clicked()), this, SLOT(analyzeButtonClicked()));
-  connect(m_ui.plotter, SIGNAL(analysisStarted()), this, SLOT(toggleControlWidgetsStatus()));
-  connect(m_ui.plotter, SIGNAL(analysisCompleted()), this, SLOT(toggleControlWidgetsStatus()));
   connect(m_ui.savePdfButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
   connect(m_ui.savePngButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
   connect(m_ui.saveRootButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
@@ -139,10 +147,8 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.addFileListAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListActionTriggered()));
   connect(m_ui.quitAction, SIGNAL(triggered()), this, SLOT(close()));
   
-  connect(m_ui.plotter, SIGNAL(numberOfEventsChanged(int)), this, SLOT(numberOfEventsChanged(int)));
   connect(m_ui.plotter, SIGNAL(titleChanged(const QString&)), this, SLOT(plotterTitleChanged(const QString&)));
   connect(m_ui.plotter, SIGNAL(positionChanged(double, double)), this, SLOT(plotterPositionChanged(double, double)));
-  connect(m_ui.plotter, SIGNAL(numberOfEventsChanged(int)), this, SLOT(numberOfEventsChanged(int)));
   connect(m_ui.firstEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
   connect(m_ui.lastEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
 
@@ -178,6 +184,8 @@ MainWindow::MainWindow(QWidget* parent)
     connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged()));
 
   setupPlots();
+
+  m_updateTimer.setInterval(50);
 }
 
 MainWindow::~MainWindow()
@@ -191,9 +199,9 @@ void MainWindow::processArguments(QStringList arguments)
   foreach(QString argument, arguments) {
     if (!onlyDigits.exactMatch(argument)) {
       if (argument.endsWith(".root"))
-        m_ui.plotter->addRootFile(argument);
+        m_reader->addRootFile(argument);
       else
-        m_ui.plotter->addFileList(argument);
+        m_reader->addFileList(argument);
     }
   }
   QStringList eventRange = arguments.filter(onlyDigits);
@@ -552,9 +560,12 @@ void MainWindow::analyzeButtonClicked()
     Corrections::Flags flags;
     setupAnalysis(type, flags);
     setupPlots();
-    m_ui.plotter->startAnalysis(type, flags, m_ui.numberOfThreadsSpinBox->value());
+    foreach(AnalysisPlot* plot, m_ui.plotter->plots())
+      m_reader->addDestination(plot);
+    m_reader->start(type, flags, m_ui.numberOfThreadsSpinBox->value(), m_ui.firstEventSpinBox->value(), m_ui.lastEventSpinBox->value());
   } else {
-    m_ui.plotter->abortAnalysis();
+    m_reader->stop();
+    m_reader->clearDestinations();
   }
 }
 
@@ -564,10 +575,10 @@ void MainWindow::setOrAddFileListActionTriggered()
     "Select one or more file lists to open", "", "*.txt;;*.*;;*");
   if (sender() == m_ui.setFileListAction) {
     foreach(QString file, files)
-      m_ui.plotter->setFileList(file);
+      m_reader->setFileList(file);
   } else if (sender() == m_ui.addFileListAction) {
     foreach(QString file, files)
-      m_ui.plotter->addFileList(file);
+      m_reader->addFileList(file);
   }
 }
 
@@ -704,7 +715,7 @@ void MainWindow::selectTofButtonClicked()
 
 void MainWindow::closeEvent(QCloseEvent* event)
 {
-  m_ui.plotter->abortAnalysis();
+  m_reader->stop();
   event->accept();
 }
 
@@ -734,8 +745,6 @@ void MainWindow::firstOrLastEventChanged(int)
   double lastEvent = m_ui.lastEventSpinBox->value();
   m_ui.lastEventSpinBox->setMinimum(firstEvent);
   m_ui.firstEventSpinBox->setMaximum(lastEvent);
-  m_ui.plotter->setFirstEvent(firstEvent);
-  m_ui.plotter->setLastEvent(lastEvent);
 }
 
 void MainWindow::numberOfEventsChanged(int nEvents)
@@ -751,11 +760,13 @@ void MainWindow::toggleControlWidgetsStatus()
 {
   foreach(QWidget* widget, m_controlWidgets)
     widget->setEnabled(!widget->isEnabled());
-
-  if (m_ui.analyzeButton->text() == "&start")
+  if (m_ui.analyzeButton->text() == "&start") {
     m_ui.analyzeButton->setText("&stop");
-  else
+    m_time.restart();
+  } else {
     m_ui.analyzeButton->setText("&start");
+  }
+  m_ui.plotter->toggleUpdateTimer();
 }
 
 void MainWindow::plotterTitleChanged(const QString& title)
@@ -768,4 +779,11 @@ void MainWindow::plotterPositionChanged(double x, double y)
   m_ui.positionLabel->setText(QString("%1%2  %3%4")
     .arg(x < 0 ? '-' : '+').arg(qAbs(x), 7, 'f', 3, '0')
     .arg(y < 0 ? '-' : '+').arg(qAbs(y), 7, 'f', 3, '0'));
+}
+
+void MainWindow::update()
+{
+  m_ui.dataChainProgressBar->setValue(m_reader->progress());
+  m_ui.eventQueueProgressBar->setValue(m_reader->buffer());
+  m_ui.timeLabel->setText(QString("%1s").arg(m_time.elapsed()/1000));
 }

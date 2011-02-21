@@ -5,9 +5,12 @@
 
 #include "Track.hh"
 #include "Corrections.hh"
+#include "EventReader.hh"
 
 #include <QMainWindow>
 #include <QString>
+#include <QTime>
+#include <QTimer>
 
 class QTabBar;
 
@@ -44,6 +47,7 @@ private slots:
   void checkSelectAll();
   void plotterTitleChanged(const QString&);
   void plotterPositionChanged(double, double);
+  void update();
 private:
   void setupPlots();
   void setupAnalysis(Track::Type& type, Corrections::Flags& flags);
@@ -53,6 +57,7 @@ private:
   void closeEvent(QCloseEvent*);
 
   Ui_mainWindow m_ui;
+  EventReader* m_reader;
   QString m_topLevelPath;
   QVector<unsigned int> m_activePlots;
   QVector<QCheckBox*> m_topicCheckBoxes;
@@ -61,6 +66,8 @@ private:
   QVector<QCheckBox*> m_trackerCheckBoxes;
   QVector<QWidget*> m_controlWidgets;
   bool m_inhibitDraw;
+  QTime m_time;
+  QTimer m_updateTimer;
 };
 
 #endif

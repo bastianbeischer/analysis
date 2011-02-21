@@ -15,7 +15,7 @@ class EventDestination;
 class EventProcessor : public QThread {
 Q_OBJECT
 public:
-  EventProcessor(Track::Type track, Corrections::Flags flags, QObject* parent = 0);
+  EventProcessor(Track::Type track, Corrections::Flags flags, QVector<EventDestination*>, QObject* parent = 0);
   ~EventProcessor();
   EventQueue* queue();
   void start();

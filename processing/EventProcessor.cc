@@ -15,12 +15,13 @@
 #include "EventQueue.hh"
 #include "EventDestination.hh"
 
-EventProcessor::EventProcessor(Track::Type track, Corrections::Flags flags, QObject* parent)
+EventProcessor::EventProcessor(Track::Type track, Corrections::Flags flags, QVector<EventDestination*> destinations, QObject* parent)
   : QThread(parent)
   , m_queue(new EventQueue)
   , m_track(0)
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections(flags))
+  , m_destinations(destinations)
   , m_abort(true)
   , m_mutex()
 {
