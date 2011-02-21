@@ -15,7 +15,7 @@ INCLUDEPATH += \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/tracking \
-  ./trdAnalysis
+  $$TOPLEVEL/trdAnalysis
 
 DEPENDPATH += $$INCLUDEPATH
 
@@ -56,7 +56,6 @@ CLASSES = \
   TOFTimeShiftPlot \
   TotalSignalHeightPlot \
   TrackerLayerStatisticsPlot \
-  TRDCalculations \
   TRDClustersOnTrackPlot \
   TRDDistanceInTube \
   TRDDistanceWireToTrackPlot \

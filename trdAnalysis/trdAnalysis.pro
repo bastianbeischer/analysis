@@ -3,7 +3,7 @@ TARGET = trdAnalysis
 
 CONFIG += debug
 
-TOPLEVEL    = ../../../
+TOPLEVEL    = ../
 
 # Seperate source & build dirs
 DESTDIR     = $$TOPLEVEL/lib
