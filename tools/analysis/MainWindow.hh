@@ -42,6 +42,8 @@ private slots:
   void toggleControlWidgetsStatus();
   void checkBoxChanged();
   void checkSelectAll();
+  void plotterTitleChanged(const QString&);
+  void plotterPositionChanged(double, double);
 private:
   void setupPlots();
   void setupAnalysis(Track::Type& type, Corrections::Flags& flags);

@@ -70,9 +70,6 @@ MainWindow::MainWindow(QWidget* parent)
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
  
-  m_ui.plotter->setTitleLabel(m_ui.titleLabel);
-  m_ui.plotter->setPositionLabel(m_ui.positionLabel);
-  m_ui.plotter->setTimeLabel(m_ui.timeLabel);
   m_ui.plotter->setDataChainProgressBar(m_ui.dataChainProgressBar);
   m_ui.plotter->setEventQueueProgressBar(m_ui.eventQueueProgressBar);
 
@@ -142,6 +139,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.addFileListAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListActionTriggered()));
   connect(m_ui.quitAction, SIGNAL(triggered()), this, SLOT(close()));
   
+  connect(m_ui.plotter, SIGNAL(numberOfEventsChanged(int)), this, SLOT(numberOfEventsChanged(int)));
+  connect(m_ui.plotter, SIGNAL(titleChanged(const QString&)), this, SLOT(plotterTitleChanged(const QString&)));
+  connect(m_ui.plotter, SIGNAL(positionChanged(double, double)), this, SLOT(plotterPositionChanged(double, double)));
   connect(m_ui.plotter, SIGNAL(numberOfEventsChanged(int)), this, SLOT(numberOfEventsChanged(int)));
   connect(m_ui.firstEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
   connect(m_ui.lastEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
@@ -756,4 +756,16 @@ void MainWindow::toggleControlWidgetsStatus()
     m_ui.analyzeButton->setText("&stop");
   else
     m_ui.analyzeButton->setText("&start");
+}
+
+void MainWindow::plotterTitleChanged(const QString& title)
+{
+  m_ui.titleLabel->setText(title);
+}
+
+void MainWindow::plotterPositionChanged(double x, double y)
+{
+  m_ui.positionLabel->setText(QString("%1%2  %3%4")
+    .arg(x < 0 ? '-' : '+').arg(qAbs(x), 7, 'f', 3, '0')
+    .arg(y < 0 ? '-' : '+').arg(qAbs(y), 7, 'f', 3, '0'));
 }

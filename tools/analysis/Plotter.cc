@@ -7,7 +7,6 @@
 #include "AnalysisThread.hh"
 
 #include <QApplication>
-#include <QLabel>
 #include <QProgressBar>
 #include <QDebug>
 
@@ -19,9 +18,6 @@
 
 Plotter::Plotter(QWidget* parent)
   : TQtWidget(parent)
-  , m_titleLabel(0)
-  , m_positionLabel(0)
-  , m_timeLabel(0)
   , m_time()
   , m_updateTimer(this)
   , m_dataChainProgressBar(0)
@@ -51,16 +47,6 @@ unsigned int Plotter::numberOfPlots()
   return m_plots.size();
 }
 
-void Plotter::setTitleLabel(QLabel* label)
-{
-  m_titleLabel = label;
-}
-
-void Plotter::setPositionLabel(QLabel* label)
-{
-  m_positionLabel = label;
-}
-
 void Plotter::setDataChainProgressBar(QProgressBar* bar)
 {
   m_dataChainProgressBar = bar;
@@ -80,13 +66,11 @@ void Plotter::mousePressEvent(QMouseEvent* event)
 
 void Plotter::mouseMoveEvent(QMouseEvent* event)
 {
-  if (!m_positionLabel || m_selectedPlot < 0)
+  if (m_selectedPlot < 0)
     return;
   double x = gPad->AbsPixeltoX(event->x());
   double y = gPad->AbsPixeltoY(event->y());
-  m_positionLabel->setText(QString("%1%2  %3%4")
-    .arg(x < 0 ? '-' : '+').arg(qAbs(x), 7, 'f', 3, '0')
-    .arg(y < 0 ? '-' : '+').arg(qAbs(y), 7, 'f', 3, '0'));
+  emit(positionChanged(x, y));
   TQtWidget::mouseMoveEvent(event);
 }
 
@@ -111,7 +95,6 @@ void Plotter::saveForPostAnalysis(const QString& fileName)
 
 void Plotter::update()
 {
-  m_timeLabel->setText(QString("%1s").arg(m_time.elapsed()/1000));
   if (0 <= m_selectedPlot && m_selectedPlot < m_plots.size())
     m_plots[m_selectedPlot]->update();
   gPad->Modified();
@@ -154,14 +137,11 @@ void Plotter::selectPlot(int i, bool inhibitDraw)
 {
   Q_ASSERT(i < int(numberOfPlots()));
   if (i < 0) {
-    if (m_titleLabel)
-      m_titleLabel->clear();
-    if (m_positionLabel)
-      m_positionLabel->clear();
+    emit(titleChanged(QString()));
+    emit(positionChanged(0, 0));
     gPad->Clear();
   } else {
-    if (m_titleLabel)
-      m_titleLabel->setText(m_plots[i]->title());
+    emit(titleChanged(m_plots[i]->title()));
     m_plots[i]->draw(GetCanvas());
     if (!inhibitDraw)
       updateCanvas();
@@ -270,11 +250,6 @@ void Plotter::addRootFile(const QString& file)
 {
   m_chain->addRootFile(qPrintable(file));
   emit(numberOfEventsChanged(m_chain->nEntries()));
-}
-
-void Plotter::setTimeLabel(QLabel* label)
-{
-  m_timeLabel = label;
 }
 
 void Plotter::unzoom()

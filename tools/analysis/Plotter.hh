@@ -11,7 +11,6 @@
 #include <QTime>
 #include <QTimer>
 
-class QLabel;
 class QProgressBar;
 class AnalysisPlot;
 class DataChain;
@@ -29,9 +28,6 @@ public:
   const QString& plotTitle(unsigned int);
   AnalysisPlot::Topic plotTopic(unsigned int);
   void selectPlot(int, bool = false);
-  void setTitleLabel(QLabel*);
-  void setPositionLabel(QLabel*);
-  void setTimeLabel(QLabel*);
   void unzoom();
   void setGrid(bool);
   void setLogX(bool);
@@ -49,6 +45,9 @@ public:
 public slots:
   void startAnalysis(Track::Type, Corrections::Flags, int numberOfThreads);
   void abortAnalysis();
+signals:
+  void titleChanged(const QString&);
+  void positionChanged(double, double);
 protected:
   void mousePressEvent(QMouseEvent *event);
   void mouseMoveEvent(QMouseEvent* event);
@@ -61,9 +60,6 @@ signals:
   void analysisStarted();
   void analysisCompleted();
 private:
-  QLabel* m_titleLabel;
-  QLabel* m_positionLabel;
-  QLabel* m_timeLabel;
   QTime m_time;
   QTimer m_updateTimer;
   QProgressBar* m_dataChainProgressBar;
