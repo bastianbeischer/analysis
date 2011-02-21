@@ -13,3 +13,4 @@ perdaix.log
 *.dat
 *.root
 texput.*
+*.xcodeproj
