@@ -6,8 +6,8 @@ TARGET      := $(LIBDIR)/libSimpleEvent.so
 INCLUDEDIRS := . $(shell root-config --incdir)
 TEMPDIR     := .tmp
 
-SOURCES = SimpleEvent.cc MCEventInformation.cc Hit.cc Cluster.cc DataDescription.cc DataChain.cc TOFSipmHit.cc TOFCluster.cc SensorTypes.cc
-HEADERS = SimpleEvent.hh MCEventInformation.hh Hit.hh Cluster.hh DataDescription.hh DataChain.hh TOFSipmHit.hh TOFCluser.hh SensorTypes.hh
+SOURCES = SimpleEvent.cc MCEventInformation.cc Hit.cc Cluster.cc DataDescription.cc TOFSipmHit.cc TOFCluster.cc SensorTypes.cc
+HEADERS = SimpleEvent.hh MCEventInformation.hh Hit.hh Cluster.hh DataDescription.hh TOFSipmHit.hh TOFCluser.hh SensorTypes.hh
 
 DICTS   = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=Dict.cc))
 OBJECTS = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=.o)) $(DICTS:.cc=.o)

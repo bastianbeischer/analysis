@@ -7,12 +7,14 @@ TOPLEVEL = ../..
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \
-  $$TOPLEVEL/setup
+  $$TOPLEVEL/setup \
+  $$TOPLEVEL/processing
 
 LIBS += \
   -L$$TOPLEVEL/lib \
   -lSimpleEvent \
-  -lsetup
+  -lsetup \
+  -lprocessing
 
 SOURCES = \
   main.cc

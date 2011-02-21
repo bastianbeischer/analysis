@@ -10,7 +10,8 @@ CLASSES += \
   EventReader \
   EventProcessor \
   EventQueue \
-  EventDestination
+  EventDestination \
+  DataChain
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \

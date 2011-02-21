@@ -8,7 +8,8 @@ TOPLEVEL = ../..
 INCLUDEPATH += \
   $$TOPLEVEL/alignment \
   $$TOPLEVEL/alignment/millepede \
-  $$TOPLEVEL/event
+  $$TOPLEVEL/event \
+  $$TOPLEVEL/processing
 
 LIBS += \
   -lgfortran \
@@ -17,6 +18,7 @@ LIBS += \
   -lSimpleEvent \
   -lsetup \
   -ltracking \
+  -lprocessing \
   -lmillepede
 
 SOURCES = \
