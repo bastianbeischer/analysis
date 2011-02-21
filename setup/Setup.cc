@@ -19,8 +19,8 @@
 #include <iostream>
 #include <cmath>
 
-Setup* Setup::m_instance = 0;
-QMutex Setup::m_mutex;
+Setup* Setup::s_instance = 0;
+QMutex Setup::s_mutex;
 
 Setup::Setup() :
   m_coordinates(0),
@@ -28,7 +28,7 @@ Setup::Setup() :
   m_layerIt(0),
   m_elementIt(0)
 {
-  m_instance = this; // this has to be set before construct()!
+  s_instance = this; // this has to be set before construct()!
 
   QStringList envVariables = QProcess::systemEnvironment();
   QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
@@ -60,12 +60,12 @@ Setup::~Setup()
 
 Setup* Setup::instance()
 {
-  if (!m_instance){
-    Setup::m_mutex.lock();
-    if (!m_instance) new Setup();
-    Setup::m_mutex.unlock();
+  if (!s_instance){
+    Setup::s_mutex.lock();
+    if (!s_instance) new Setup();
+    Setup::s_mutex.unlock();
   }
-  return m_instance;
+  return s_instance;
 }
 
 void Setup::construct()

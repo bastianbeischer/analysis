@@ -3,6 +3,7 @@
 
 #include <QMap>
 #include <QVector>
+#include <QMutex>
 
 #include <TVector3.h>
 
@@ -11,8 +12,6 @@ class Hit;
 class Layer;
 class DetectorElement;
 class QSettings;
-
-#include <QMutex>
 
 typedef QMap<double,Layer*>::iterator LayerIterator;
 typedef QMap<unsigned short,DetectorElement*>::iterator ElementIterator;
@@ -55,7 +54,8 @@ private:
   void              construct();
 
 private:
-  static Setup*                          m_instance;
+  static Setup*                          s_instance;
+  static QMutex                          s_mutex;
 
   QSettings*                             m_coordinates;
   QSettings*                             m_settings;
@@ -65,9 +65,6 @@ private:
 
   QMap<double, Layer*>                   m_layers;
   QMap<unsigned short, DetectorElement*> m_elements;
-
-public:
-  static QMutex m_mutex;
 
 };
 
