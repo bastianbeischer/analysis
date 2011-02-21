@@ -6,6 +6,7 @@
 #include "BrokenLineMatrix.hh"
 #include "TrackInformation.hh"
 #include "Hit.hh"
+#include "Constants.hh"
 
 #include <cmath>
 #include <iostream>
@@ -79,4 +80,12 @@ double BrokenLine::slopeX(double z) const
 double BrokenLine::slopeY(double) const
 {
   return m_slopeY;
+}
+
+double BrokenLine::trackLength() const
+{
+  const TVector3& upperPoint = position(Constants::upperTofPosition);
+  const TVector3& middlePoint = position(m_zIntersection);
+  const TVector3& lowerPoint = position(Constants::lowerTofPosition);
+  return (upperPoint-middlePoint).Mag() + (middlePoint-lowerPoint).Mag();
 }

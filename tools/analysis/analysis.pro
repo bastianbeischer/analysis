@@ -49,6 +49,7 @@ CLASSES = \
   Plotter \
   ResidualPlot \
   SignalHeightPlot \
+  SingleLayerTrackingEfficiencyPlot \
   CutStatisticsPlot \
   TOFPositionCorrelationPlot \
   TOFTimeDifferencePlot \
@@ -69,8 +70,10 @@ CLASSES = \
   TotalEnergyDepositionPlot \
   TotalEnergyDepositionTRDvsTrackerPlot \
   TOFEfficiencyPlot \
+  TrackingEfficiencyVsMomentumPlot \
   TimeOverThresholdMomentumCorrelation \
-  TimeOverThresholdPlot
+  TimeOverThresholdPlot \
+  TOFAlignment
 
 
 SOURCES += \

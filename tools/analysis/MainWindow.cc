@@ -28,6 +28,8 @@
 #include "BetaMomentumCorrelationPlot.hh"
 #include "CutStatisticsPlot.hh"
 #include "TrackerLayerStatisticsPlot.hh"
+#include "TrackingEfficiencyVsMomentumPlot.hh"
+#include "SingleLayerTrackingEfficiencyPlot.hh"
 #include "TRDClustersOnTrackPlot.hh"
 #include "TRDDistanceWireToTrackPlot.hh"
 #include "TRDDistanceInTube.hh"
@@ -45,6 +47,7 @@
 #include "TOFEfficiencyPlot.hh"
 #include "TimeOverThresholdMomentumCorrelation.hh"
 #include "TimeOverThresholdPlot.hh"
+#include "TOFAlignment.hh"
 
 #include <QProcess>
 #include <QFileDialog>
@@ -452,6 +455,8 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TotalSignalHeightPlot);
     m_ui.plotter->addPlot(new CutStatisticsPlot);
     m_ui.plotter->addPlot(new TrackerLayerStatisticsPlot);
+    m_ui.plotter->addPlot(new TrackingEfficiencyVsMomentumPlot);
+    m_ui.plotter->addPlot(new SingleLayerTrackingEfficiencyPlot);
   }
   if (m_ui.miscellaneousTRDCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisPlot::MiscellaneousTRD));
@@ -476,6 +481,7 @@ void MainWindow::setupPlots()
         m_ui.plotter->addPlot(new TOFPositionCorrelationPlot(element->id()));
       element = setup->nextElement();
     }
+    //m_ui.plotter->addPlot(new TOFAlignment);
   }
 }
 

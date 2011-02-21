@@ -43,6 +43,7 @@ RootStyle::RootStyle()
   SetPadGridX(1);
   SetPadGridY(1);
   SetMarkerStyle(20);
+  SetPaintTextFormat(".2f");
 }
 
 RootStyle* RootStyle::s_instance = 0;

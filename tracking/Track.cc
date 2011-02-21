@@ -7,6 +7,8 @@
 #include "TOFCluster.hh"
 #include "TOFSipmHit.hh"
 
+#include <TMath.h>
+
 #include <iostream>
 #include <cmath>
 #include <cfloat>
@@ -65,102 +67,103 @@ void Track::calculatePt()
 
 void Track::calculateTimeOfFlight()
 {
-  double t[4][4];
-  for (int i = 0; i < 4; ++i)
-    for (int j = 0; j < 4; ++j)
-      t[i][j] = -2e10;
-
-  foreach (Hit* hit, m_hits) {
-    if (!strcmp(hit->ClassName(), "TOFCluster")) {
-      TOFCluster* cluster = static_cast<TOFCluster*>(hit);
-      Q_ASSERT(cluster->hits().size() <= 4);
-
-      // if cluster is on track, TODO: provide some contingency because the cluster->position().x() is not at the nominal place
-      if (qAbs(x(hit->position().z()) - cluster->position().x()) <= Constants::tofBarWidth / 2.) {
-        int layer = -1;
-        double z = cluster->position().z();
-        if (Constants::upperTofPosition < z && z < Constants::upperTofPosition + Constants::tofBarHeight)
-          layer = 0;
-        else if (Constants::upperTofPosition - Constants::tofBarHeight < z && z < Constants::upperTofPosition)
-          layer = 1;
-        else if (Constants::lowerTofPosition < z && z < Constants::lowerTofPosition + Constants::tofBarHeight)
-          layer = 2;
-        else if (Constants::lowerTofPosition - Constants::tofBarHeight < z && z < Constants::lowerTofPosition)
-          layer = 3;
-
-        Q_ASSERT(layer > -1);
-        for (unsigned int i = 0; i < cluster->hits().size(); ++i) {
-          TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(cluster->hits()[i]);
-          if (tofHit->position().y() < 0) {
-            if (tofHit->position().x() < cluster->position().x()) {
-              Q_ASSERT(t[layer][0] < -1e10);
-              t[layer][0] = tofHit->startTime() - tofHit->photonTravelTime();
-            }
-            if (tofHit->position().x() > cluster->position().x()) {
-              Q_ASSERT(t[layer][1] < -1e10);
-              t[layer][1] = tofHit->startTime() - tofHit->photonTravelTime();
-            }
-          }
-          if (tofHit->position().y() > 0) {
-            if (tofHit->position().x() < cluster->position().x()) {
-              Q_ASSERT(t[layer][2] < -1e10);
-              t[layer][2] = tofHit->startTime() - tofHit->photonTravelTime();
-            }
-            if (tofHit->position().x() > cluster->position().x()) {
-              Q_ASSERT(t[layer][3] < -1e10);
-              t[layer][3] = tofHit->startTime() - tofHit->photonTravelTime();
-            }
-          }
+  QVector<double> t[2][2];
+  foreach (Hit* cluster, m_hits) {
+    if (!strcmp(cluster->ClassName(), "TOFCluster")) {
+      TOFCluster* tofCluster = static_cast<TOFCluster*>(cluster);
+      Q_ASSERT(tofCluster->hits().size() <= 4);
+      double z = cluster->position().z();
+      if (qAbs(x(z) - tofCluster->position().x()) > 1.2 * Constants::tofBarWidth / 2.)
+        continue;
+      foreach(Hit* hit, tofCluster->hits()) {
+        TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
+        double startTime = tofHit->startTime() - tofHit->photonTravelTime();
+        if (z > 0) {
+          if (tofHit->position().y() < 0)
+            t[0][0].append(startTime);
+          else
+            t[0][1].append(startTime);
+        } else {
+          if (tofHit->position().y() < 0)
+            t[1][0].append(startTime);
+          else
+            t[1][1].append(startTime);
         }
       }
     }
   }
 
-  QVector<double> leftStartTimes;
-  if (t[0][0] >= -1e10) leftStartTimes.append(t[0][0]);
-  if (t[0][1] >= -1e10) leftStartTimes.append(t[0][1]);
-  if (t[1][0] >= -1e10) leftStartTimes.append(t[1][0]);
-  if (t[1][1] >= -1e10) leftStartTimes.append(t[1][1]);
-  double leftStartTime = bestTime(leftStartTimes);
+  if (t[0][0].size() < 3 || t[0][1].size() < 3 || t[1][0].size() < 3 || t[1][1].size() < 3)
+    return;
 
-  QVector<double> rightStartTimes;
-  if (t[0][2] >= -1e10) rightStartTimes.append(t[0][2]);
-  if (t[0][3] >= -1e10) rightStartTimes.append(t[0][3]);
-  if (t[1][2] >= -1e10) rightStartTimes.append(t[1][2]);
-  if (t[1][3] >= -1e10) rightStartTimes.append(t[1][3]);
-  double rightStartTime = bestTime(rightStartTimes);
+  qSort(t[0][0]);
+  qSort(t[0][1]);
+  qSort(t[1][0]);
+  qSort(t[1][1]);
 
-  QVector<double> leftStopTimes;
-  if (t[2][0] >= -1e10) leftStopTimes.append(t[2][0]);
-  if (t[2][1] >= -1e10) leftStopTimes.append(t[2][1]);
-  if (t[3][0] >= -1e10) leftStopTimes.append(t[3][0]);
-  if (t[3][1] >= -1e10) leftStopTimes.append(t[3][1]);
-  double leftStopTime = bestTime(leftStopTimes);
+  double leftStartTime = bestTime(t[0][0]);
+  double rightStartTime = bestTime(t[0][1]);
+  double leftStopTime = bestTime(t[1][0]);
+  double rightStopTime = bestTime(t[1][1]);
 
-  QVector<double> rightStopTimes;
-  if (t[2][2] >= -1e10) rightStopTimes.append(t[2][2]);
-  if (t[2][3] >= -1e10) rightStopTimes.append(t[2][3]);
-  if (t[3][2] >= -1e10) rightStopTimes.append(t[3][2]);
-  if (t[3][3] >= -1e10) rightStopTimes.append(t[3][3]);
-  double rightStopTime = bestTime(rightStopTimes);
+  double* values = new double[4];
+  values[0] = leftStartTime;
+  values[1] = rightStartTime;
+  values[2] = leftStopTime;
+  values[3] = rightStopTime;
+  double median = TMath::Median(4, values);
+  delete[] values;
+  if (qAbs(leftStartTime - median) > 10) leftStartTime = DBL_MAX;
+  if (qAbs(rightStartTime - median) > 10) rightStartTime = DBL_MAX;
+  if (qAbs(leftStartTime - median) > 10) leftStartTime = DBL_MAX;
+  if (qAbs(leftStartTime - median) > 10) leftStartTime = DBL_MAX;
 
   m_timeOfFlight =
     (leftStopTime < rightStopTime ? leftStopTime : rightStopTime) -
     (leftStartTime < rightStartTime ? leftStartTime : rightStartTime);
 }
 
-double Track::bestTime(QVector<double>& t)
+double Track::lastGoodTime(QVector<double>& times)
 {
-  QVector<double> times = t;
-  qSort(times);
-  for (int i = 1; i <= 2 && i < times.size();) {
-    if (times[i] - times[i-1] > 7.5)
-      times.remove(i-1);
-    else {
-      ++i;
-    }
+  const double dt = 5;
+  int n = 0;
+  
+  QVector<int> first;
+  QVector<int> last;
+  n = times.size();
+  Q_ASSERT(n);
+  for (int i = 0; i < n-1; ++i) {
+    if (times[i+1] - times[i] < dt && last.size() == first.size())
+      first.append(i);
+    if (times[i+1] - times[i] > dt && last.size() < first.size())
+      last.append(i);
   }
-  return times.size() ? times[0] : 0;
+  if (last.size() < first.size())
+    last.append(n-1);
+  Q_ASSERT(first.size() == last.size());
+
+  int max = 0;
+  n = first.size();
+  if (n <= 0)
+    return DBL_MAX;
+  Q_ASSERT(n > 0);
+  for (int i = 0; i < n; ++i)
+    if (last[i] - first[i] > last[max] - first[max])
+      max = i;
+
+  return times[last[max]];
+}
+
+double Track::bestTime(QVector<double>& times)
+{
+  double lastTime = lastGoodTime(times);
+  int i = times.size() - 1;
+  while (i >= 0 && times[i] > lastTime) --i;
+  while (i >= 1 && times[i] - times[i-1] < 5) --i;
+  //if (i < 0)
+    //return DBL_MAX;
+  Q_ASSERT(i >= 0 && times.size());
+  return times[i];
 }
 
 double Track::p() const
@@ -174,9 +177,5 @@ double Track::p() const
 
 double Track::beta() const
 {
-  const TVector3& upperPoint = position(Constants::upperTofPosition);
-  const TVector3& middlePoint = position(0);
-  const TVector3& lowerPoint = position(Constants::lowerTofPosition);
-  double trackLength = (upperPoint-middlePoint).Mag() + (middlePoint-lowerPoint).Mag();
-  return trackLength / (timeOfFlight() * Constants::speedOfLight);
+  return trackLength() / (timeOfFlight() * Constants::speedOfLight);
 }

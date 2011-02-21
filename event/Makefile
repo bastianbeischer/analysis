@@ -1,17 +1,20 @@
-LIBDIR     := ../lib
-TARGET     := $(LIBDIR)/libSimpleEvent.so
+TOPLEVEL    := ..
 
-INCLUDEDIR := .
-TEMPDIR    := .tmp
+LIBDIR      := $(TOPLEVEL)/lib
+TARGET      := $(LIBDIR)/libSimpleEvent.so
 
-SOURCES = SimpleEvent.cc Hit.cc Cluster.cc DataDescription.cc DataChain.cc TOFSipmHit.cc TOFCluster.cc SensorsData.cc
-HEADERS = SimpleEvent.hh Hit.hh Cluster.hh DataDescription.hh DataChain.hh TOFSipmHit.hh TOFCluser.hh SensorsData.hh
+INCLUDEDIRS := . $(shell root-config --incdir)
+TEMPDIR     := .tmp
+
+SOURCES = SimpleEvent.cc MCEventInformation.cc Hit.cc Cluster.cc DataDescription.cc DataChain.cc TOFSipmHit.cc TOFCluster.cc SensorTypes.cc
+HEADERS = SimpleEvent.hh MCEventInformation.hh Hit.hh Cluster.hh DataDescription.hh DataChain.hh TOFSipmHit.hh TOFCluser.hh SensorTypes.hh
+
 DICTS   = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=Dict.cc))
 OBJECTS = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=.o)) $(DICTS:.cc=.o)
 
 # Compilers and Flags
 CXX          := g++
-INCLUDEFLAGS := -I$(INCLUDEDIR) -I$(shell root-config --incdir)
+INCLUDEFLAGS := $(addprefix -I, $(INCLUDEDIRS))
 LIBS         := $(shell root-config --libs)
 CXXFLAGS     := -g -O2 -Wall -fPIC $(INCLUDEFLAGS) -MMD
 LFLAGS       := $(shell if [ `uname` = "Darwin" ]; then echo "-install_name @rpath/libSimpleEvent.so"; fi)
@@ -46,7 +49,7 @@ $(TEMPDIR)/%.o: %.cc
 $(TEMPDIR)/%Dict.o: $(TEMPDIR)/%Dict.cc
 
 $(TEMPDIR)/%Dict.cc: %.hh %.cc
-	rootcint -f $@ -c -p $<
+	rootcint -f $@ -c $(INCLUDEFLAGS) -p $<
 
 # Include automatically regenerated dependency files, if they exist
 -include $(OBJECTS:.o=.d)

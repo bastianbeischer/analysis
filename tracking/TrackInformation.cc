@@ -26,6 +26,7 @@ void TrackInformation::process()
     return;
 
   checkAllTrackerLayers();
+  checkChi2Good();
   checkInsideMagnet();
   checkOutsideMagnet();
   checkHighPt();
@@ -57,6 +58,13 @@ void TrackInformation::checkAllTrackerLayers()
     if (count != 1)
       return;
   m_flags |= AllTrackerLayers;
+}
+
+void TrackInformation::checkChi2Good()
+{
+  if (m_track->chi2() / m_track->ndf() > 5)
+    return;
+  m_flags |= Chi2Good;
 }
 
 void TrackInformation::checkInsideMagnet()
