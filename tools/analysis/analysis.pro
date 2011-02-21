@@ -37,7 +37,6 @@ CLASSES = \
   Chi2Plot \
   ClusterLengthPlot \
   ClusterShapePlot \
-  EventQueue \
   GeometricOccupancyPlot \
   GeometricOccupancyProjectionPlot \
   MainWindow \

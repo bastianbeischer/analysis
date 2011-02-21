@@ -6,7 +6,11 @@ CONFIG += debug
 TOPLEVEL = ..
 
 CLASSES += \
-  Corrections
+  Corrections \
+  EventReader \
+  EventProcessor \
+  EventQueue \
+  EventDestination
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \
