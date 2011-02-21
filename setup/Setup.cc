@@ -12,6 +12,7 @@
 #include <QStringList>
 #include <QSettings>
 #include <QProcess>
+#include <QMutex>
 
 #include <TVector3.h>
 
@@ -19,6 +20,7 @@
 #include <cmath>
 
 Setup* Setup::m_instance = 0;
+QMutex Setup::m_mutex;
 
 Setup::Setup() :
   m_coordinates(0),
@@ -58,7 +60,11 @@ Setup::~Setup()
 
 Setup* Setup::instance()
 {
-  if (!m_instance) new Setup;
+  if (!m_instance){
+    Setup::m_mutex.lock();
+    if (!m_instance) new Setup();
+    Setup::m_mutex.unlock();
+  }
   return m_instance;
 }
 

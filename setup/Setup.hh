@@ -12,6 +12,8 @@ class Layer;
 class DetectorElement;
 class QSettings;
 
+#include <QMutex>
+
 typedef QMap<double,Layer*>::iterator LayerIterator;
 typedef QMap<unsigned short,DetectorElement*>::iterator ElementIterator;
 
@@ -63,6 +65,9 @@ private:
 
   QMap<double, Layer*>                   m_layers;
   QMap<unsigned short, DetectorElement*> m_elements;
+
+public:
+  static QMutex m_mutex;
 
 };
 
