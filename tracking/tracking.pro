@@ -25,12 +25,7 @@ INCLUDEPATH += \
 
 DEPENDPATH += $$INCLUDEPATH
 
-macx {
-  message("explicit linking needed for MacOS X")
-  LIBS += \
-    -L$$TOPLEVEL/lib \
-    -lSimpleEvent
-}
+LIBS += -L$$TOPLEVEL/lib -lSimpleEvent
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
