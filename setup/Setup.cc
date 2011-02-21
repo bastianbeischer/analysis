@@ -131,11 +131,11 @@ DetectorElement* Setup::element(unsigned short id)
   
   if (!m_elements[id]) {
     if (usbBoard == 0x3200 || usbBoard == 0x3600 || usbBoard == 0x3400 || usbBoard == 0x3500)
-      m_elements[id] = new TRDModule(id);
+      m_elements[id] = new TRDModule(id, this);
     else if (usbBoard == 0x8000)
-      m_elements[id] = new TOFBar(id);
+      m_elements[id] = new TOFBar(id, this);
     else
-      m_elements[id] = new SipmArray(id);
+      m_elements[id] = new SipmArray(id, this);
   }
 
   return m_elements[id];
