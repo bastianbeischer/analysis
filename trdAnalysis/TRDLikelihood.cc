@@ -78,8 +78,10 @@ TRDLikelihood::~TRDLikelihood(){
 
 TRDLikelihood* TRDLikelihood::instance()
 {
-  QMutexLocker locker(&m_mutex);
-  if (!m_instance) m_instance = new TRDLikelihood;
+  if (!m_instance) {
+    QMutexLocker locker(&m_mutex);
+    m_instance = new TRDLikelihood;
+  }
   return m_instance;
 }
 
@@ -161,8 +163,8 @@ bool TRDLikelihood::analyzeEvent(const QVector<Hit*>& hits, const Track* track, 
     foreach(Hit* hit, cluster->hits()){
       double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
       if(distanceInTube > 0){
-        unsigned int tubeID = hit->detId();
-        unsigned int moduleID = 0xFFF0 & tubeID;
+        //unsigned int tubeID = hit->detId();
+        //unsigned int moduleID = 0xFFF0 & tubeID;
         double signal = (hit->signalHeight() / distanceInTube) ;
 
         //get likelihoods:
@@ -171,7 +173,7 @@ bool TRDLikelihood::analyzeEvent(const QVector<Hit*>& hits, const Track* track, 
         TH1D* protonHisto = m_protonModuleSumLikelihood;
         double protonLH = protonHisto->GetBinContent( protonHisto->FindBin(signal) );
         if(protonLH > 0)
-          protonLikelihoods <<  protonLH;
+          protonLikelihoods << protonLH;
 
         //TH1D* positronHisto = m_positronModuleLikelihood.value(moduleID);
         TH1D* positronHisto = m_positronModuleSumLikelihood;
@@ -229,7 +231,20 @@ bool TRDLikelihood::analyzeEvent(const QVector<Hit*>& hits, const Track* track, 
 }
 
 
-void TRDLikelihood::addLearnEvent(const QVector<Hit*>& hits, const Track* track, const SimpleEvent*, bool isProton){
+void TRDLikelihood::addLearnEvent(const QVector<Hit*>&, const Track* track, const SimpleEvent* event){
+
+  //check event:
+  if ( event->MCInformation() == 0 )
+    return;
+
+  //get particle info:
+  int pdgId = event->MCInformation()->pdgId();
+
+  if (qAbs(pdgId) != 2212 || qAbs(pdgId) != 11)
+    return;
+
+  bool isProton = (pdgId == 2212);
+
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood()){
     m_noTrackfit++;
@@ -272,7 +287,7 @@ void TRDLikelihood::addLearnEvent(const QVector<Hit*>& hits, const Track* track,
 
 
   //TODO: check for off track hits ?!?
-  foreach(Hit* clusterHit, hits){
+  foreach(Hit* clusterHit, track->hits()){
     if (clusterHit->type() == Hit::trd)
       trdClusterHitsOnTrack.push_back(clusterHit);
   }
@@ -295,6 +310,7 @@ void TRDLikelihood::addLearnEvent(const QVector<Hit*>& hits, const Track* track,
         unsigned int tubeID = hit->detId();
         unsigned int moduleID = 0xFFF0 & tubeID;
         double signal = (hit->signalHeight() / distanceInTube) ;
+
 
         //now fill into correct histo
         if (isProton) {
@@ -328,7 +344,7 @@ void TRDLikelihood::normalizeLikelihoodHistos(){
   //TF1 *f_ppar= new TF1("f_ppar","(landau(0))");
   //f_ppar->SetParameters(0.533941,1.04519,0.90618);
 
-  TF1 *f_ppar = new TF1("fit_p",pfunperdaix,0.,100,7);
+  TF1 *f_ppar = new TF1("fit_p",pfunperdaix,0.,100,6);
   f_ppar->SetNpx(1000);
   f_ppar->SetParameters(4.32391,2.23676,1.02281,0.788797,10,-0.1);
   for (int i = 4; i < 5; i++)

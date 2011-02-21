@@ -21,7 +21,7 @@ public:
 
     bool analyzeEvent(const QVector<Hit*>& hits, const Track* track, const SimpleEvent*, bool& isPositronish);
 
-    void addLearnEvent(const QVector<Hit*>& hits, const Track* track, const SimpleEvent*, bool isProton);
+    void addLearnEvent(const QVector<Hit*>& hits, const Track* track, const SimpleEvent*);
 
     TH1D* protonModuleLikelihoodHisto(unsigned int moduleID)    {return m_protonModuleLikelihood.value(moduleID) ;}
     TH1D* positronModuleLikelihoodHisto(unsigned int moduleID)  {return m_positronModuleLikelihood.value(moduleID) ;}
