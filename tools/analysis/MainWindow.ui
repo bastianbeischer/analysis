@@ -116,8 +116,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>183</width>
-            <height>546</height>
+            <width>184</width>
+            <height>652</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -1219,14 +1219,20 @@ reconstruction</string>
          <item>
           <widget class="QWidget" name="saveWidget" native="true">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>250</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>220</width>
+             <width>250</width>
              <height>16777215</height>
             </size>
            </property>
@@ -1324,6 +1330,12 @@ reconstruction</string>
          </item>
          <item>
           <widget class="QLabel" name="positionLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="font">
             <font>
              <family>DejaVu Sans Mono</family>
@@ -1338,14 +1350,20 @@ reconstruction</string>
          <item>
           <widget class="QWidget" name="axisWidget" native="true">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>250</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>350</width>
+             <width>250</width>
              <height>16777215</height>
             </size>
            </property>
@@ -1353,19 +1371,6 @@ reconstruction</string>
             <property name="margin">
              <number>0</number>
             </property>
-            <item>
-             <spacer name="axisHorizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
             <item>
              <widget class="QCheckBox" name="gridCheckBox">
               <property name="sizePolicy">
@@ -1504,7 +1509,7 @@ reconstruction</string>
             <x>0</x>
             <y>0</y>
             <width>200</width>
-            <height>145</height>
+            <height>184</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1639,7 +1644,7 @@ over threshold</string>
      <x>0</x>
      <y>0</y>
      <width>1122</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <property name="font">
