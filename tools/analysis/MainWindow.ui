@@ -116,8 +116,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>194</width>
-            <height>674</height>
+            <width>183</width>
+            <height>546</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -1376,7 +1376,7 @@ reconstruction</string>
               </property>
               <property name="font">
                <font>
-                <family>DejaVu LGC Sans</family>
+                <family>DejaVu Sans</family>
                </font>
               </property>
               <property name="text">
@@ -1397,7 +1397,7 @@ reconstruction</string>
               </property>
               <property name="font">
                <font>
-                <family>DejaVu LGC Sans</family>
+                <family>DejaVu Sans</family>
                </font>
               </property>
               <property name="text">
@@ -1415,7 +1415,7 @@ reconstruction</string>
               </property>
               <property name="font">
                <font>
-                <family>DejaVu LGC Sans</family>
+                <family>DejaVu Sans</family>
                </font>
               </property>
               <property name="text">
@@ -1504,7 +1504,7 @@ reconstruction</string>
             <x>0</x>
             <y>0</y>
             <width>200</width>
-            <height>191</height>
+            <height>145</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1639,7 +1639,7 @@ over threshold</string>
      <x>0</x>
      <y>0</y>
      <width>1122</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="font">
@@ -1682,9 +1682,7 @@ over threshold</string>
     <string>&amp;Add file list...</string>
    </property>
    <property name="font">
-    <font>
-     <family>DejaVu Sans</family>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="setFileListAction">
@@ -1692,9 +1690,7 @@ over threshold</string>
     <string>&amp;Set file list...</string>
    </property>
    <property name="font">
-    <font>
-     <family>DejaVu Sans</family>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="saveCanvasAction">
@@ -1702,9 +1698,7 @@ over threshold</string>
     <string>&amp;Save canvas...</string>
    </property>
    <property name="font">
-    <font>
-     <family>DejaVu Sans</family>
-    </font>
+    <font/>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -1715,9 +1709,7 @@ over threshold</string>
     <string>Save &amp;all canvases...</string>
    </property>
    <property name="font">
-    <font>
-     <family>DejaVu Sans</family>
-    </font>
+    <font/>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
@@ -1728,9 +1720,7 @@ over threshold</string>
     <string>Save for &amp;post analysis...</string>
    </property>
    <property name="font">
-    <font>
-     <family>DejaVu Sans</family>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="quitAction">
@@ -1738,9 +1728,7 @@ over threshold</string>
     <string>&amp;Quit</string>
    </property>
    <property name="font">
-    <font>
-     <family>DejaVu Sans</family>
-    </font>
+    <font/>
    </property>
   </action>
  </widget>
