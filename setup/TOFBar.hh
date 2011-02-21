@@ -12,7 +12,7 @@ class TOFBar :
 {
   
 public:
-  explicit TOFBar(unsigned short detId, Setup*);
+  explicit TOFBar(unsigned short detId, const Setup* setup);
   ~TOFBar();
 public:
   QVector<Hit*> findClusters();

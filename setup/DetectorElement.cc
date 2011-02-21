@@ -9,7 +9,7 @@
 #include <cmath>
 #include <iostream>
 
-DetectorElement::DetectorElement(Type type, unsigned short id, unsigned short nChannels, Setup* setup) :
+DetectorElement::DetectorElement(Type type, unsigned short id, unsigned short nChannels, const Setup* setup) :
   m_type(type),
   m_id(id),
   m_nChannels(nChannels),

@@ -18,7 +18,7 @@ public:
   enum Type {none=-1, tracker, trd, tof};
 
 public:
-  explicit DetectorElement(Type type, unsigned short id, unsigned short nChannels, Setup*);
+  explicit DetectorElement(Type type, unsigned short id, unsigned short nChannels, const Setup* setup);
   virtual ~DetectorElement();
   
 public:

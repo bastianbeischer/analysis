@@ -8,7 +8,7 @@ class SipmArray :
 {
   
 public:
-  explicit SipmArray(unsigned short detId, Setup* setup);
+  explicit SipmArray(unsigned short detId, const Setup* setup);
   ~SipmArray();
   
 public:

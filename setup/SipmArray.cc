@@ -6,7 +6,7 @@
 
 #include <QString>
 
-SipmArray::SipmArray(unsigned short detId, Setup* setup) :
+SipmArray::SipmArray(unsigned short detId, const Setup* setup) :
   DetectorElement(tracker, detId, 32, setup)
 {
 }

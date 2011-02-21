@@ -6,7 +6,7 @@
 
 #include <QString>
 
-TOFBar::TOFBar(unsigned short detId, Setup* setup)
+TOFBar::TOFBar(unsigned short detId, const Setup* setup)
   : DetectorElement(tof, detId, 4, setup)
 {
   m_timeShifts = QVector<double>(m_nChannels, 0);
