@@ -765,6 +765,7 @@ void MainWindow::toggleControlWidgetsStatus()
     m_time.restart();
   } else {
     m_ui.analyzeButton->setText("&start");
+    update();
   }
   m_ui.plotter->toggleUpdateTimer();
 }
