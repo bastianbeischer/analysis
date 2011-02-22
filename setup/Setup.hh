@@ -36,12 +36,12 @@ public:
   double configFileAlignmentShift(QString group, unsigned short detId) const;
   double configFileTimeShift(unsigned short detId) const;
   void writeSettings();
-  SensorTypes::Type idToSensor(unsigned short id);
+  SensorTypes::Type sensorForId(unsigned short id);
 
 private:
   Setup();
   void construct();
-  SensorTypes::Type tofIdToSensor(unsigned short id);
+  SensorTypes::Type tofSensorForId(unsigned short id);
 
   static Setup* s_instance;
   static QMutex s_mutex;

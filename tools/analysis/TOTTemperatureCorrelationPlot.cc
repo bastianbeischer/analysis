@@ -51,7 +51,7 @@ void TOTTemperatureCorrelationPlot::processEvent(const QVector<Hit*>& hits, Trac
         continue;
       foreach(Hit* tofHit, cluster->hits()) {
         if (tofHit->detId() == m_id) {
-          double temperature = event->sensorData(Setup::instance()->idToSensor(m_id));
+          double temperature = event->sensorData(Setup::instance()->sensorForId(m_id));
           TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
           histogram()->Fill(temperature, tofSipmHit->timeOverThreshold());
         }

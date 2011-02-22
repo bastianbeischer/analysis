@@ -126,7 +126,7 @@ void Corrections::tofTimeOverThreshold(Hit* hit, SimpleEvent* event)
   if (hit->type() == Hit::tof) {
     TOFCluster* cluster = static_cast<TOFCluster*> (hit);
     foreach(Hit* tofHit, cluster->hits()) {
-      double temperature = event->sensorData(Setup::instance()->idToSensor(tofHit->detId()));
+      double temperature = event->sensorData(Setup::instance()->sensorForId(tofHit->detId()));
       double scalingFactor = timeOverThresholdScalingFactor(tofHit->detId(), temperature);
       TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
       tofSipmHit->setTimeOverThreshold(tofSipmHit->timeOverThreshold() * scalingFactor);
