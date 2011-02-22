@@ -46,7 +46,9 @@ Corrections::~Corrections()
 
 void Corrections::preFitCorrections(SimpleEvent* event)
 {
-  foreach(Hit* hit, event->hits()) {
+  const std::vector<Hit*>::const_iterator hitsEnd = event->hits().end();
+  for (std::vector<Hit*>::const_iterator it = event->hits().begin(); it != hitsEnd; ++it) {
+    Hit* hit = *it;
     if (m_flags & Alignment) alignment(hit);
     if (m_flags & TimeShifts) timeShift(hit);
     if (m_flags & TrdMopv) trdMopv(hit);
@@ -155,7 +157,10 @@ void Corrections::photonTravelTime(Track* track)
 {
   if (!track || !track->fitGood())
     return;
-  foreach (Hit* cluster, track->hits()) {
+
+  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+    Hit* cluster = *it;
     if (!strcmp(cluster->ClassName(), "TOFCluster")) {
       TOFCluster* tofCluster = static_cast<TOFCluster*>(cluster);
       int id = tofCluster->detId();
