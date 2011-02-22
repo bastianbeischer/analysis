@@ -88,7 +88,8 @@ int main(int argc, char** argv)
 
       if (sourceEvent->contentType() == SimpleEvent::MCRawData){
         destinationEvent = new SimpleEvent(sourceEvent->eventId(), sourceEvent->runStartTime(), sourceEvent->eventTime(), SimpleEvent::MCClusters);
-        destinationEvent->setMCInformation(sourceEvent->MCInformation());
+        MCEventInformation* info = new MCEventInformation(*sourceEvent->MCInformation());
+        destinationEvent->setMCInformation(info);
       } else {
         destinationEvent = new SimpleEvent(sourceEvent->eventId(), sourceEvent->runStartTime(), sourceEvent->eventTime(), SimpleEvent::Clusters);
       }
