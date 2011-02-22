@@ -85,7 +85,14 @@ int main(int argc, char** argv)
     // loop over all events in this root file
     for (unsigned long eventIt = 0; eventIt < nEvents; ++eventIt) {
       sourceTree->GetEntry(eventIt);
-      destinationEvent = new SimpleEvent(sourceEvent->eventId(), sourceEvent->runStartTime(), sourceEvent->eventTime(), SimpleEvent::Clusters);
+
+      if (sourceEvent->contentType() == SimpleEvent::MCRawData){
+        destinationEvent = new SimpleEvent(sourceEvent->eventId(), sourceEvent->runStartTime(), sourceEvent->eventTime(), SimpleEvent::MCClusters);
+        MCEventInformation* info = new MCEventInformation(*sourceEvent->MCInformation());
+        destinationEvent->setMCInformation(info);
+      } else {
+        destinationEvent = new SimpleEvent(sourceEvent->eventId(), sourceEvent->runStartTime(), sourceEvent->eventTime(), SimpleEvent::Clusters);
+      }
 
       // vector of all hits in this event
       QVector<Hit*> hits = QVector<Hit*>::fromStdVector(sourceEvent->hits());
