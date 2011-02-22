@@ -37,11 +37,12 @@ public:
   static int channelFromData(uint32_t);
 
   void dump();
-  
   void setTimeOverThreshold(double timeOverThreshold);
   
-pri  tic bool earlierThan(uint32_t, uint32_t);
-
+private:
+  static double timeFromData(uint32_t);
+  static bool earlierThan(uint32_t, uint32_t);
+  
   int m_channel;
   double m_startTime;
   double m_photonTravelTime; //! TODO: remove this comment line next time the data is processed!
