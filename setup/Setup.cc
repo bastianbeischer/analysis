@@ -244,7 +244,7 @@ void Setup::writeSettings()
   m_settings->sync();
 }
 
-SensorTypes::Type tofSensorForId(unsigned short id)
+SensorTypes::Type Setup::sensorForId(unsigned short id)
 {
   if (0x8000 <= id && id < 0x8040)
     return tofSensorForId(id);
@@ -253,10 +253,10 @@ SensorTypes::Type tofSensorForId(unsigned short id)
   return SensorTypes::END;
 }
 
-SensorTypes::Type Setup::sensorForId(unsigned short id)
+SensorTypes::Type Setup::tofSensorForId(unsigned short id)
 {
   int channel = id - 0x8000;
-  const SensorTypes::Type map[] = {
+  static const SensorTypes::Type map[] = {
     SensorTypes::TOF_2_TEMP, SensorTypes::TOF_2_TEMP, SensorTypes::TOF_4_TEMP, SensorTypes::TOF_4_TEMP,
     SensorTypes::TOF_2_TEMP, SensorTypes::TOF_2_TEMP, SensorTypes::TOF_4_TEMP, SensorTypes::TOF_4_TEMP,
     SensorTypes::TOF_1_TEMP, SensorTypes::TOF_1_TEMP, SensorTypes::TOF_3_TEMP, SensorTypes::TOF_3_TEMP,
