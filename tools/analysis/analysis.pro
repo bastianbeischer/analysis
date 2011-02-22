@@ -67,6 +67,7 @@ CLASSES = \
   TrackingEfficiencyVsMomentumPlot \
   TimeOverThresholdMomentumCorrelation \
   TimeOverThresholdPlot \
+  TimeOverThresholdVariationWithTemperature \
   TOFAlignment
 
 SOURCES += \
