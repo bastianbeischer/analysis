@@ -69,14 +69,14 @@ void EventProcessor::run()
   forever {
     SimpleEvent* event = m_queue->dequeue();
     if (event) {
+      m_corrections->preFitCorrections(event);
+
       QVector<Hit*> clusters;
       QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
       if (event->contentType() == SimpleEvent::Clusters)
         clusters = hits;
       else
         clusters = Setup::instance()->generateClusters(hits);
-
-      m_corrections->preFitCorrections(clusters);
 
       QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
       if (m_track) {

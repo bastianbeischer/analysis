@@ -1,5 +1,6 @@
 #include "Corrections.hh"
 
+#include "SimpleEvent.hh"
 #include "Hit.hh"
 #include "TOFSipmHit.hh"
 #include "TOFCluster.hh"
@@ -43,9 +44,9 @@ Corrections::~Corrections()
   delete m_tofSettings;
 }
 
-void Corrections::preFitCorrections(QVector<Hit*>& hits)
+void Corrections::preFitCorrections(SimpleEvent* event)
 {
-  foreach(Hit* hit, hits) {
+  foreach(Hit* hit, event->hits()) {
     if (m_flags & Alignment) alignment(hit);
     if (m_flags & TimeShifts) timeShift(hit);
     if (m_flags & TrdMopv) trdMopv(hit);

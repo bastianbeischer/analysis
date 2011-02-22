@@ -5,6 +5,7 @@
 #include <QVector>
 
 class QSettings;
+class SimpleEvent;
 class Hit;
 class Track;
 
@@ -24,7 +25,7 @@ public:
   Flags flags() const {return m_flags;}
 
 public:
-  void preFitCorrections(QVector<Hit*>&);
+  void preFitCorrections(SimpleEvent*);
   void postFitCorrections(Track*);
 
   static const int numberOfPhotonTravelTimeParameters = 3;

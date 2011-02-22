@@ -50,6 +50,9 @@ void DataInterface::process(AlignmentMatrix* matrix)
   for (unsigned int i = 0; i < nEntries; i++) {
     SimpleEvent* event = m_chain->event(i);
     
+    // corrections (previous alignment, time shift, ...)
+    m_corrections->preFitCorrections(event);
+
     // retrieve data
     QVector<Hit*> clusters;
     QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
@@ -57,9 +60,6 @@ void DataInterface::process(AlignmentMatrix* matrix)
       clusters = hits;
     else
       clusters = Setup::instance()->generateClusters(hits);
-
-    // corrections (previous alignment, time shift, ...)
-    m_corrections->preFitCorrections(clusters);
 
     // track finding
     QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);

@@ -102,14 +102,14 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QPlainTex
   Q_ASSERT(i < numberOfEvents());
   SimpleEvent* event = m_chain->event(i);
 
+  m_corrections->preFitCorrections(event);
+
   QVector<Hit*> clusters;
   QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
   if (event->contentType() == SimpleEvent::Clusters)
     clusters = hits;
   else
     clusters = Setup::instance()->generateClusters(hits);
-
-  m_corrections->preFitCorrections(clusters);
 
   Track* track = 0;
   if (drawTrack) {
