@@ -62,7 +62,9 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleE
   QVector<Hit*> hitsForFit;
   QVector<Hit*> hitsInThisLayer;
 
-  foreach(Hit* hit, hits) {
+  const QVector<Hit*>::const_iterator endIt = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+    Hit* hit = *it;
     double z = round(hit->position().z()*100)/100.;
     if (fabs(z - m_layer->z()) > 5) {
       hitsForFit.push_back(hit);
@@ -86,7 +88,9 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleE
   // fit and fill histograms
   if (mytrack->fit(hitsForFit)) {
     mytrack->process();
-    foreach(Hit* hit, hitsInThisLayer) {
+    QVector<Hit*>::const_iterator layerEndIt = hitsInThisLayer.end();
+    for (QVector<Hit*>::const_iterator it = hitsInThisLayer.begin(); it != layerEndIt; ++it) {
+      Hit* hit = *it;
       double z = m_layer->z();
       double hitX = hit->position().x();
       double hitY = hit->position().y();

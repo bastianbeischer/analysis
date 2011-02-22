@@ -60,7 +60,10 @@ void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, Track* track,
 
   int trdCluster = 0;
 
-  foreach(Hit* clusterHit, event->hits()){
+  std::vector<Hit*>& eventHits = event->hits();
+  std::vector<Hit*>::const_iterator endIt = eventHits.end();
+  for (std::vector<Hit*>::const_iterator it = eventHits.begin(); it != endIt; ++it) {
+    Hit* clusterHit = *it;
     Cluster* cluster = static_cast<Cluster*>(clusterHit);
     if (cluster->type() == Hit::trd){
       signalSum += cluster->signalHeight();

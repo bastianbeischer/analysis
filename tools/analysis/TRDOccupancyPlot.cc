@@ -44,9 +44,6 @@ TRDOccupancyPlot::TRDOccupancyPlot(TrdOccupancyType occupancyType, bool onlyOnTr
 
   //initialize all needed ellipses
   initializeEllipses();
-
-  //connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
-  //m_updateTimer.start(3000);
 }
 
 TRDOccupancyPlot::~TRDOccupancyPlot()
@@ -57,25 +54,22 @@ TRDOccupancyPlot::~TRDOccupancyPlot()
 
 void TRDOccupancyPlot::processEvent(const QVector<Hit*>& clustersOnTrack, Track*, SimpleEvent* event)
 {
+  const QVector<Hit*>& clustersToAnalyze = m_onlyOnTrack ? clustersOnTrack : QVector<Hit*>::fromStdVector(event->hits());
 
-  QVector<Hit*> clustersToAnalyze;
+  const QVector<Hit*>::const_iterator endIt = clustersToAnalyze.end();
+  for (QVector<Hit*>::const_iterator it = clustersToAnalyze.begin(); it != endIt; ++it) {
+    Hit* clusterHit = *it;
 
-  if (m_onlyOnTrack){
-    //only use clusters on track
-    clustersToAnalyze = clustersOnTrack;
-  }else{
-    //use all clusters of the event
-    clustersToAnalyze = QVector<Hit*>::fromStdVector(event->hits());
-  }
-
-
-  foreach(Hit* clusterHit, clustersToAnalyze){
     //only trd:
     if(clusterHit->type() != Hit::trd)
       continue;
 
     Cluster* cluster = static_cast<Cluster*>(clusterHit);
-    foreach(Hit* hit, cluster->hits()){
+
+    std::vector<Hit*>& subHits = cluster->hits();
+    const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+    for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
+      Hit* hit = *it;
       m_hits[hit->detId()]++;
       m_signalHeightSum[hit->detId()] += hit->signalHeight();
     

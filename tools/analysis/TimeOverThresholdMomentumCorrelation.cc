@@ -41,12 +41,17 @@ void TimeOverThresholdMomentumCorrelation::processEvent(const QVector<Hit*>& clu
   if (!(flags & (TrackInformation::AllTrackerLayers | TrackInformation::InsideMagnet)))
     return;
 
-  foreach(Hit* hit, clusters) {
+  const QVector<Hit*>::const_iterator endIt = clusters.end();
+  for (QVector<Hit*>::const_iterator it = clusters.begin(); it != endIt; ++it) {
+    Hit* hit = *it;
     if (hit->type() == Hit::tof) {
       TOFCluster* cluster = static_cast<TOFCluster*> (hit);
       if (qAbs(track->x(cluster->position().z()) - cluster->position().x()) > Constants::tofBarWidth)
         continue;
-      foreach(Hit* tofHit, cluster->hits()) {
+      std::vector<Hit*>& subHits = cluster->hits();
+      std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+      for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
+        Hit* tofHit = *it;
         if (tofHit->detId() == m_id) {
           TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*> (tofHit);
           histogram()->Fill(track->pt(), tofSipmHit->timeOverThreshold());

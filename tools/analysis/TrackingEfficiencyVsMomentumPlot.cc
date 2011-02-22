@@ -34,10 +34,12 @@ void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, Track*
   if ( !(flags & TrackInformation::InsideMagnet) || !(flags & TrackInformation::Chi2Good) )
     return;
 
-  QMap<double, int> hitsInLayers = info->hitsInLayers();
+  const QMap<double,int>& hitsInLayers = info->hitsInLayers();
   unsigned short nLayers = info->numberOfTrackerLayers();
 
-  foreach(int count, hitsInLayers) {
+  const QMap<double,int>::const_iterator endIt = hitsInLayers.end();
+  for(QMap<double,int>::const_iterator it = hitsInLayers.begin(); it != endIt; ++it) {
+    int count = it.value();
     if (count != 1)
       return;
   }

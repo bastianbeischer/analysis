@@ -47,9 +47,12 @@ void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, Tra
   if (!(flags & TrackInformation::AllTrackerLayers))
     return;
 
-  foreach(Hit* hit, clusters)
+  const QVector<Hit*>::const_iterator endIt = clusters.end();
+  for (QVector<Hit*>::const_iterator it = clusters.begin(); it != endIt; ++it) {
+    Hit* hit = *it;
     if (hit->type() == Hit::tof && (hit->detId()-hit->channel()) == m_id)
       histogram()->Fill(track->y(hit->position().z()), static_cast<TOFCluster*>(hit)->yEstimate(false));
+  }
 }
 
 void TOFPositionCorrelationPlot::draw(TCanvas* canvas)

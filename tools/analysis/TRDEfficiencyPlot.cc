@@ -70,18 +70,15 @@ void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& clustersOnTrack, Track
   if (!(flags & TrackInformation::AllTrackerLayers))
     return;
 
-  //loop over all hits and find all clusters on track
-  QVector<Cluster*> trdClustersOnTrack;
-
   //TODO: check for off track hits, atm this is Bastians criteria for on track
-  foreach(Hit* clusterHit, clustersOnTrack){
-    if (clusterHit->type() == Hit::trd){
-      Cluster* cluster = static_cast<Cluster*>(clusterHit);
+  const QVector<Hit*>::const_iterator hitsEnd = clustersOnTrack.end();
+  for (QVector<Hit*>::const_iterator it = clustersOnTrack.begin(); it != hitsEnd; ++it) {
+    Hit* hit = *it;
+    if (hit->type() == Hit::trd) {
+      Cluster* cluster = static_cast<Cluster*>(hit);
       //check if event contains trd clusters with more than 2 sub hits
       if (cluster->hits().size() > 2)
         return;
-
-      trdClustersOnTrack << cluster;
     }
   }
 
@@ -101,9 +98,16 @@ void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& clustersOnTrack, Track
       //was on track +1
       m_wasOnTrack[i.key()]++;
       //now check wheter the tube has seen a signal:
-      foreach(Cluster* cluster, trdClustersOnTrack){
-        foreach(Hit* hit, cluster->hits()){
-          if ( i.key() == hit->detId()) {
+      for (QVector<Hit*>::const_iterator it = clustersOnTrack.begin(); it != hitsEnd; ++it) {
+        Cluster* cluster = static_cast<Cluster*>(*it);
+        if (cluster->type() != Hit::trd)
+          continue;
+
+        std::vector<Hit*>& subHits = cluster->hits();
+        const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+        for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
+          Hit* subHit = *it;
+          if ( i.key() == subHit->detId()) {
             //tube did see a signal +1
             m_hits[i.key()]++;
           }

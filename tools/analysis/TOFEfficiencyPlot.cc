@@ -47,7 +47,9 @@ void TOFEfficiencyPlot::processEvent(const QVector<Hit*>& clusters, Track* track
   if (!(flags & TrackInformation::AllTrackerLayers))
     return;
 
-  foreach(Hit* cluster, clusters) {
+  const QVector<Hit*>::const_iterator endIt = clusters.end();
+  for (QVector<Hit*>::const_iterator it = clusters.begin(); it != endIt; ++it) {
+    Hit* cluster = *it;
     if (cluster->type() == Hit::tof && (m_id & 0xFFFC) == cluster->detId()) {
       TOFCluster* tofCluster= static_cast<TOFCluster*>(cluster);
       double x = track->x(cluster->position().z()) - cluster->position().x();
