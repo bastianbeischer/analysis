@@ -60,11 +60,11 @@ Setup::~Setup()
 
 Setup* Setup::instance()
 {
+  Setup::s_mutex.lock();
   if (!s_instance){
-    Setup::s_mutex.lock();
     if (!s_instance) new Setup();
-    Setup::s_mutex.unlock();
   }
+  Setup::s_mutex.unlock();
   return s_instance;
 }
 
