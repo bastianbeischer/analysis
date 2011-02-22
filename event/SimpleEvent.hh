@@ -47,8 +47,8 @@ private:
   unsigned int m_eventTime; // in ms since the start of the run
   ContentType m_contentType;
   std::vector<Hit*> m_hits;
-  float m_sensorSet[SensorTypes::N_SENSOR_TYPES]; //!
-  const MCEventInformation* m_mcEventInformation; //!
+  float m_sensorSet[SensorTypes::N_SENSOR_TYPES];
+  const MCEventInformation* m_mcEventInformation;
 
   ClassDef( SimpleEvent, 1 );
  
