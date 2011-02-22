@@ -39,7 +39,9 @@ void TOFAlignment::processEvent(const QVector<Hit*>& clusters, Track* track, Sim
 
   QString output;
   int counter = 0;
-  foreach(Hit* cluster, clusters) {
+  const QVector<Hit*>::const_iterator endIt = clusters.end();
+  for (QVector<Hit*>::const_iterator it = clusters.begin(); it != endIt; ++it) {
+    Hit* cluster = *it;
     if (cluster->type() == Hit::tof) {
       TOFCluster* tofCluster= static_cast<TOFCluster*>(cluster);
       for (unsigned int i = 0; i < tofCluster->hits().size(); ++i) {

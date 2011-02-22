@@ -94,21 +94,23 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simp
 
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != hitsEnd; ++it) {
     Hit* hit = *it;
-    if (hit->type() == Hit::trd) {
-      Cluster* cluster = static_cast<Cluster*>(hit);
-      std::vector<Hit*>& subHits = cluster->hits();
-      for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHits.end(); ++it) {
-        Hit* subHit = *it;
-        //check if the id of the plot has been hit (difference between module mode and channel mode
-        if(m_spectrumType == TRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
-           (m_spectrumType == TRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
-           (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
-          double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
-          if(distanceInTube > 0)
-            histogram(0)->Fill(subHit->signalHeight() / (distanceInTube));
-        }
-      } // subhits in cluster
-    } // if trd
+    if (hit->type() != Hit::trd)
+      continue;
+
+    Cluster* cluster = static_cast<Cluster*>(hit);
+    std::vector<Hit*>& subHits = cluster->hits();
+    const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+    for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
+      Hit* subHit = *it;
+      //check if the id of the plot has been hit (difference between module mode and channel mode
+      if(m_spectrumType == TRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
+         (m_spectrumType == TRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
+         (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
+        double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
+        if(distanceInTube > 0)
+          histogram(0)->Fill(subHit->signalHeight() / (distanceInTube));
+      } // fits into category
+    } // subhits in cluster
   } // all hits
 }
 

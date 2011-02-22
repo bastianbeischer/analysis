@@ -63,7 +63,9 @@ void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, 
   for (int i = 0; i < m_nLayers; i++) {
     // determine if the layer has a hit matching the track
     bool beenHit = false;
-    foreach(Hit* hit, hits) {
+    const QVector<Hit*>::const_iterator endIt = hits.end();
+    for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+      Hit* hit = *it;
       if (floor(hit->position().z()) == m_layerZ[i]) {
         if (TrackFinding::isInCorridor(track, hit, 10.)) {
           beenHit = true;

@@ -34,7 +34,10 @@ void TotalSignalHeightPlot::processEvent(const QVector<Hit*>& hits, Track* track
     return;
 
   double sum = 0;
-  foreach(Hit* hit, hits) {
+
+  const QVector<Hit*>::const_iterator endIt = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+    Hit* hit = *it;
     if (hit->type() == Hit::tracker) {
       Cluster* cluster = static_cast<Cluster*>(hit);
       sum += cluster->signalHeight();

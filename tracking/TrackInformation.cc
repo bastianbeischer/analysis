@@ -43,7 +43,9 @@ void TrackInformation::reset()
 void TrackInformation::checkAllTrackerLayers()
 {
   // count hits in each tracker layer
-  foreach(Hit* hit, m_track->hits()) {
+  const QVector<Hit*>::const_iterator hitsEnd = m_track->hits().end();
+  for (QVector<Hit*>::const_iterator it = m_track->hits().begin(); it != hitsEnd; ++it) {
+    Hit* hit = *it;
     if (hit->type() == Hit::tracker) {
       double z = round(hit->position().z()*100.)/100.;
       m_hitsInLayers[z]++;
@@ -53,10 +55,15 @@ void TrackInformation::checkAllTrackerLayers()
   // exactly 8 layers
   if (m_hitsInLayers.size() != 8)
     return;
+
   // exactly 1 count in each layer
-  foreach(int count, m_hitsInLayers)
+  const QMap<double,int>::const_iterator endIt = m_hitsInLayers.end();
+  for(QMap<double,int>::const_iterator it = m_hitsInLayers.begin(); it != endIt; ++it) {
+    int count = it.value();
     if (count != 1)
       return;
+  }
+
   m_flags |= AllTrackerLayers;
 }
 

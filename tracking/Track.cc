@@ -68,15 +68,19 @@ void Track::calculatePt()
 void Track::calculateTimeOfFlight()
 {
   QVector<double> t[2][2];
-  foreach (Hit* cluster, m_hits) {
+  const QVector<Hit*>::const_iterator hitsEnd = m_hits.end();
+  for (QVector<Hit*>::const_iterator it = m_hits.begin(); it != hitsEnd; ++it) {
+    Hit* cluster = *it;
     if (!strcmp(cluster->ClassName(), "TOFCluster")) {
       TOFCluster* tofCluster = static_cast<TOFCluster*>(cluster);
       Q_ASSERT(tofCluster->hits().size() <= 4);
       double z = cluster->position().z();
       if (qAbs(x(z) - tofCluster->position().x()) > 1.2 * Constants::tofBarWidth / 2.)
         continue;
-      foreach(Hit* hit, tofCluster->hits()) {
-        TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
+      std::vector<Hit*>& subHits = tofCluster->hits();
+      const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+      for (std::vector<Hit*>::const_iterator subHitsIt = subHits.begin(); subHitsIt != subHitsEndIt; ++subHitsIt) {
+        TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(*subHitsIt);
         double startTime = tofHit->startTime() - tofHit->photonTravelTime();
         if (z > 0) {
           if (tofHit->position().y() < 0)

@@ -35,8 +35,9 @@ void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& hits,Track* track
     return;
 
   int nTRDHits = 0;
-  foreach(Hit* hit, hits){
-    if (hit->type() == Hit::trd)
+  QVector<Hit*>::const_iterator endIt = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+    if ((*it)->type() == Hit::trd)
       ++nTRDHits;
   }
 

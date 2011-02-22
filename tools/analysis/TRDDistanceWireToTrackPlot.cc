@@ -24,7 +24,7 @@ TRDDistanceWireToTrackPlot::~TRDDistanceWireToTrackPlot()
 {
 }
 
-void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& hits,Track* track, SimpleEvent* /*event*/)
+void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* /*event*/)
 {
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
@@ -35,33 +35,30 @@ void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& hits,Track* t
   if (!(flags & TrackInformation::AllTrackerLayers))
     return;
 
-  //loop over all hits and count tracker hits
-  //also find all clusters on track
-  QVector<Cluster*> trdClustersOnTrack;
-
-  //TODO: check for off track hits, atm this is Bastians criteria for on track
-  foreach(Hit* clusterHit, hits){
-    if (clusterHit->type() == Hit::trd){
-      Cluster* cluster = static_cast<Cluster*>(clusterHit);
+  //TODO: check for off track hits ?!?
+  unsigned int nTrdHits = 0;
+  const QVector<Hit*>::const_iterator hitsEnd = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != hitsEnd; ++it) {
+    Hit* hit = *it;
+    if (hit->type() == Hit::trd) {
+      Cluster* cluster = static_cast<Cluster*>(hit);
       //check if event contains trd clusters with more than 2 sub hits
       if (cluster->hits().size() > 2)
         return;
 
-      trdClustersOnTrack << cluster;
+      nTrdHits++;
     }
   }
 
-  // cut on number of trd hits
-  if (trdClustersOnTrack.size() < 6)
+  if (nTrdHits < 6)
     return;
 
-  foreach(Cluster* cluster, trdClustersOnTrack){
-    //foreach(Hit* hit, cluster->hits()){
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != hitsEnd; ++it) {
+    Cluster* cluster = static_cast<Cluster*>(*it);
+    if (cluster->type() == Hit::trd) {
       double distanceWireToTrack = TRDCalculations::distanceTrackToWire(cluster, track);
-      //if(fabs(distanceWireToTrack) > 10)
-
-        histogram(0)->Fill(distanceWireToTrack);
-    //}
+      histogram(0)->Fill(distanceWireToTrack);
+    }
   }
 }
 
