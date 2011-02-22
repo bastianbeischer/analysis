@@ -37,6 +37,9 @@ public:
   static int channelFromData(uint32_t);
 
   void dump();
+	
+	void setTimeOverThreshold(double timeOverThreshold);
+	
 private:
   static double timeFromData(uint32_t);
   static bool earlierThan(uint32_t, uint32_t);

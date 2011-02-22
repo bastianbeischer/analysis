@@ -146,3 +146,8 @@ void TOFSipmHit::dump()
   }
   std::cout << std::endl << std::flush;
 }
+
+void TOFSipmHit::setTimeOverThreshold(double timeOverThreshold) 
+{
+	m_timeOverThreshold = timeOverThreshold;
+}
