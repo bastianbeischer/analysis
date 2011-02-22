@@ -1,29 +1,55 @@
-#include "DataChain.hh"
-#include "SimpleEvent.hh"
-
 #include "millepede.h"
+
+#include "Constants.hh"
 
 #include <iostream>
 
+#include <QDebug>
 #include <QtGlobal>
+#include <QFile>
+#include <QString>
+#include <QStringList>
+#include <QTextStream>
+#include <QRegExp>
+#include <QPointF>
+
+unsigned int nGlobal = 3;
+unsigned int nLocal = 1;
+unsigned int nStandardDeviations = 3;
+int verboseLevel = 1;
+int sigmaSipm = 0.6;
 
 int main(int argc, char** argv)
 {
   if (argc != 2)
     qFatal("Wrong number of arguments!");
-  DataChain* chain = new DataChain;
-  chain->addFileList(argv[1]);
+  QFile file(argv[1]);
+  if (!file.exists() || !file.open(QIODevice::ReadOnly | QIODevice::Text))
+    qFatal("Could not open file!");
+  QTextStream stream(&file);
 
-  int entries = chain->nEntries();
-  for (int it = 0; it < entries; ++it) {
-    SimpleEvent* event = chain->event(it);
-    event->eventTime();
+  INITGL(nGlobal, nLocal, nStandardDeviations, verboseLevel);
+
+  while (!stream.atEnd()) {
+    QString line = stream.readLine();
+    line.remove("\"");
+    line.replace(QRegExp("  *"), " ");
+    line.remove(QRegExp(" *$"));
+    QStringList list = line.split(' ');
+    int n = list.count();
+    QMap<int, double> times;
+    for (int i = 0; i < (n - 5) / 2; ++i) {
+      int ch = list[2*i].toInt(0, 16) - 0x8000;
+      double t = list[2*i+1].toDouble();
+      times.insert(ch, t);
+    }
+    QPointF upperPoint(list[n-5].toDouble(), list[n-4].toDouble());
+    QPointF lowerPoint(list[n-3].toDouble(), list[n-2].toDouble());
+    double trackLength = list[n-1].toDouble();
+    //qDebug() << '\n' << list << '\n' << times << upperPoint << ' ' << lowerPoint << ' ' << trackLength;
     
-    if (it % 10000 == 0)
-      std::cerr << '.' << std::flush;
-    //if (it == 20000) break;
+
   }
-  std::cerr << std::endl;
 
   return 0;
 }
