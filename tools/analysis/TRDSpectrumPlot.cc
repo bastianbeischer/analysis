@@ -83,7 +83,8 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simp
 
   //TODO: check for off track hits ?!?
   unsigned int nTrdHits = 0;
-  for (QVector<Hit*>::const_iterator it = hits.begin(); it != hits.end(); ++it) {
+  const QVector<Hit*>::const_iterator hitsEnd = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != hitsEnd; ++it) {
     if ((*it)->type() == Hit::trd)
       nTrdHits++;
   }
@@ -91,7 +92,7 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simp
   if (nTrdHits < 6)
     return;
 
-  for (QVector<Hit*>::const_iterator it = hits.begin(); it != hits.end(); ++it) {
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != hitsEnd; ++it) {
     Hit* hit = *it;
     if (hit->type() == Hit::trd) {
       Cluster* cluster = static_cast<Cluster*>(hit);
