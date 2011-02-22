@@ -1,6 +1,6 @@
 #include "TOFSensorTypeAssignment.hh"
 
-#include <qdebug.h>
+#include <QDebug>
 
 TOFSensorTypeAssignment::TOFSensorTypeAssignment() {
   QList<unsigned int> tof1;

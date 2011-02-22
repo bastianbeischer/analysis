@@ -3,7 +3,7 @@
 
 #include <QFlags>
 #include <QVector>
-#include <Qstring>
+#include <QString>
 #include <QVariant>
 #include <QMap>
 

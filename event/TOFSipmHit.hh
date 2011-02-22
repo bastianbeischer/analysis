@@ -17,6 +17,7 @@ public:
 
   virtual ~TOFSipmHit();
 
+  void setTimeOverThreshold(double);
   void setPhotonTravelTime(double);
   void applyTimeShift(double);
   void processTDCHits();
@@ -37,7 +38,6 @@ public:
   static int channelFromData(uint32_t);
 
   void dump();
-  void setTimeOverThreshold(double timeOverThreshold);
   
 private:
   static double timeFromData(uint32_t);
