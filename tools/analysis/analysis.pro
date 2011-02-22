@@ -27,7 +27,6 @@ LIBS += \
 CLASSES = \
   AlbedosVsMomentumPlot \
   AnalysisPlot \
-  AnalysisThread \
   BendingAnglePlot \
   BendingAnglePositionPlot \
   BendingPositionPlot \
