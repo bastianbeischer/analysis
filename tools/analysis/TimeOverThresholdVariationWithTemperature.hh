@@ -17,15 +17,15 @@ class TimeOverThresholdVariationWithTemperature : public AnalysisPlot, public H2
 public:
   TimeOverThresholdVariationWithTemperature(unsigned int tofChannel);
   ~TimeOverThresholdVariationWithTemperature();
-	
+  
   virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
-	virtual void finalize();
-	
+  virtual void finalize();
+  
 private:
-	void saveCalibrationData();
-	TOFSensorTypeAssignment* m_sensorAssignment;
-	unsigned int m_tofChannel;
-	
+  void saveCalibrationData();
+  TOFSensorTypeAssignment* m_sensorAssignment;
+  unsigned int m_tofChannel;
+  
 };
 
 #endif /* TimeOverThresholdVariationWithTemperature_hh */

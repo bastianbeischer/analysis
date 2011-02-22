@@ -55,9 +55,9 @@ void Corrections::preFitCorrections(SimpleEvent* event)
     if (m_flags & TimeShifts) timeShift(hit);
     if (m_flags & TrdMopv) trdMopv(hit);
     if (m_flags & TofTimeOverThreshold) {
-			loadTimeOverThresholdScaling();
-			tofTimeOverThreshold(hit, event);
-		}
+      loadTimeOverThresholdScaling();
+      tofTimeOverThreshold(hit, event);
+    }
   }
 }
 
@@ -122,18 +122,18 @@ void Corrections::trdMopv(Hit* hit)
 
 void Corrections::tofTimeOverThreshold(Hit* hit, SimpleEvent* event)
 {
-	if (hit->type() == Hit::tof) {
-		TOFSensorTypeAssignment* sensorAssignment = new TOFSensorTypeAssignment();
-		TOFCluster* cluster = static_cast<TOFCluster*> (hit);
-		foreach(Hit* tofHit, cluster->hits()) {
-			double temperature = event->sensorData(sensorAssignment->tofSensorType(tofHit->detId()));
-			double scalingFactor = timeOverThresholdScalingFactor(tofHit->detId(), temperature);
-			TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
-			tofSipmHit->setTimeOverThreshold(tofSipmHit->timeOverThreshold() * scalingFactor);
-		}
-		delete sensorAssignment;
-		sensorAssignment = NULL;
-	}
+  if (hit->type() == Hit::tof) {
+    TOFSensorTypeAssignment* sensorAssignment = new TOFSensorTypeAssignment();
+    TOFCluster* cluster = static_cast<TOFCluster*> (hit);
+    foreach(Hit* tofHit, cluster->hits()) {
+      double temperature = event->sensorData(sensorAssignment->tofSensorType(tofHit->detId()));
+      double scalingFactor = timeOverThresholdScalingFactor(tofHit->detId(), temperature);
+      TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
+      tofSipmHit->setTimeOverThreshold(tofSipmHit->timeOverThreshold() * scalingFactor);
+    }
+    delete sensorAssignment;
+    sensorAssignment = NULL;
+  }
 }
 
 double Corrections::trdScalingFactor(unsigned int channel)
@@ -209,8 +209,8 @@ void Corrections::photonTravelTime(Track* track)
 
 void Corrections::setTimeOverThresholdScaling(const unsigned int tofChannel, const QMap<QString, QVariant> temperatureMap)
 {
-		m_tofSettings->setValue(m_tofTimeOverThresholdPrefix+QString::number(tofChannel,16), temperatureMap);
-		m_tofSettings->sync();
+    m_tofSettings->setValue(m_tofTimeOverThresholdPrefix+QString::number(tofChannel,16), temperatureMap);
+    m_tofSettings->sync();
 }
 
 bool Corrections::totGraphsLoaded = false;
@@ -221,89 +221,89 @@ QMap<unsigned int , double> Corrections::maxTofTemps;
 
 void Corrections::loadTimeOverThresholdScaling() 
 {
-	if ( !Corrections::totGraphsLoaded ) {
-		
-		QString prefix = m_tofTimeOverThresholdPrefix;
-		prefix.remove("/");
-		if ( !m_tofSettings->childGroups().contains(prefix) ) {
-			const QString fileName =  m_tofSettings->fileName();
-			qDebug() << QString("ERROR: %1 does not contain any %2").arg(fileName, prefix);
-		}
-		
-		for (unsigned int tofChannel = 0x8000; tofChannel <= 0x803f; tofChannel++) {
-			
-			QMap<QString, QVariant> tempMap = m_tofSettings->value(QString(m_tofTimeOverThresholdPrefix+"%1").arg(tofChannel,0,16)).toMap();
-			
-			double min = tempMap.keys()[0].toDouble();
-			double max = min;
-			
-			QMap<double, double> scalingMap;
-			foreach(QString tempString, tempMap.keys()) {
-				double temp = tempString.toDouble();
-				double scalingFactor = tempMap[tempString].toDouble();
-				scalingMap.insert(temp, scalingFactor);
-				
-				if (temp < min) {
-					min = temp;
-				}
-				if (temp > max) {
-					max = temp;
-				}
-			}
-			
-			double binSize;
-			if (scalingMap.keys().size() > 1) {
-				binSize = scalingMap.values()[1] - scalingMap.values()[0];
-			}
-			else {
-				//if the map contains only one temperature value the binSize is arbitrarily set
-				binSize = 2;
-			}
+  if ( !Corrections::totGraphsLoaded ) {
+    
+    QString prefix = m_tofTimeOverThresholdPrefix;
+    prefix.remove("/");
+    if ( !m_tofSettings->childGroups().contains(prefix) ) {
+      const QString fileName =  m_tofSettings->fileName();
+      qDebug() << QString("ERROR: %1 does not contain any %2").arg(fileName, prefix);
+    }
+    
+    for (unsigned int tofChannel = 0x8000; tofChannel <= 0x803f; tofChannel++) {
+      
+      QMap<QString, QVariant> tempMap = m_tofSettings->value(QString(m_tofTimeOverThresholdPrefix+"%1").arg(tofChannel,0,16)).toMap();
+      
+      double min = tempMap.keys()[0].toDouble();
+      double max = min;
+      
+      QMap<double, double> scalingMap;
+      foreach(QString tempString, tempMap.keys()) {
+        double temp = tempString.toDouble();
+        double scalingFactor = tempMap[tempString].toDouble();
+        scalingMap.insert(temp, scalingFactor);
+        
+        if (temp < min) {
+          min = temp;
+        }
+        if (temp > max) {
+          max = temp;
+        }
+      }
+      
+      double binSize;
+      if (scalingMap.keys().size() > 1) {
+        binSize = scalingMap.values()[1] - scalingMap.values()[0];
+      }
+      else {
+        //if the map contains only one temperature value the binSize is arbitrarily set
+        binSize = 2;
+      }
 
-			Corrections::minTofTemps.insert(tofChannel, min-binSize/2);
-			Corrections::maxTofTemps.insert(tofChannel, max+binSize/2);
-			
-			
-			TGraph graph;
-			foreach(double temp, scalingMap.keys()) {
-				int nPoints = graph.GetN();
-				graph.SetPoint(nPoints, temp, scalingMap[temp]);
-			}
-			
-			Corrections::timeOverThresholdScalingGraphs.insert(tofChannel, graph);
-			
-			//Linear fit
-			QString htitle =QString("Fit time over threshold temperature dependent 0x%1").arg(tofChannel,0,16);
-			TF1 f(qPrintable(htitle), "pol1");
-			f.SetLineColor(kRed);
-			f.SetLineWidth(1);
-			f.SetLineStyle(2);
-			graph.Fit(&f, "EQN0");
-			Corrections::timeOverThresholdScalingFits.insert(tofChannel, f);
-		}
-		Corrections::totGraphsLoaded = true;
-	}
-	
+      Corrections::minTofTemps.insert(tofChannel, min-binSize/2);
+      Corrections::maxTofTemps.insert(tofChannel, max+binSize/2);
+      
+      
+      TGraph graph;
+      foreach(double temp, scalingMap.keys()) {
+        int nPoints = graph.GetN();
+        graph.SetPoint(nPoints, temp, scalingMap[temp]);
+      }
+      
+      Corrections::timeOverThresholdScalingGraphs.insert(tofChannel, graph);
+      
+      //Linear fit
+      QString htitle =QString("Fit time over threshold temperature dependent 0x%1").arg(tofChannel,0,16);
+      TF1 f(qPrintable(htitle), "pol1");
+      f.SetLineColor(kRed);
+      f.SetLineWidth(1);
+      f.SetLineStyle(2);
+      graph.Fit(&f, "EQN0");
+      Corrections::timeOverThresholdScalingFits.insert(tofChannel, f);
+    }
+    Corrections::totGraphsLoaded = true;
+  }
+  
 }
 
 double Corrections::timeOverThresholdScalingFactor(const unsigned int tofChannel, const double temperature)
 {
-	if (Corrections::minTofTemps[tofChannel] <= temperature && temperature <= Corrections::maxTofTemps[tofChannel]) {
-		return Corrections::timeOverThresholdScalingFits[tofChannel].Eval(temperature);
-	}
-	//todo if temperature not in intervall
-	else if(temperature > Corrections::maxTofTemps[tofChannel]) {
-		qDebug() << QString("ERROR: temperature over scaling range, temperature = %1").arg(temperature);
-		qDebug() << QString("0x%1").arg(tofChannel,0,16);
-		qDebug() << Corrections::minTofTemps[tofChannel];
-		qDebug() << Corrections::maxTofTemps[tofChannel];
-		return 0;
-	}
-	else {
-		qDebug() << QString("ERROR: temperature under scaling range, temperature = %1").arg(temperature);
-		qDebug() << QString("0x%1").arg(tofChannel,0,16);
-		qDebug() << Corrections::minTofTemps[tofChannel];
-		qDebug() << Corrections::maxTofTemps[tofChannel];
-		return 0;
-	}
+  if (Corrections::minTofTemps[tofChannel] <= temperature && temperature <= Corrections::maxTofTemps[tofChannel]) {
+    return Corrections::timeOverThresholdScalingFits[tofChannel].Eval(temperature);
+  }
+  //todo if temperature not in intervall
+  else if(temperature > Corrections::maxTofTemps[tofChannel]) {
+    qDebug() << QString("ERROR: temperature over scaling range, temperature = %1").arg(temperature);
+    qDebug() << QString("0x%1").arg(tofChannel,0,16);
+    qDebug() << Corrections::minTofTemps[tofChannel];
+    qDebug() << Corrections::maxTofTemps[tofChannel];
+    return 0;
+  }
+  else {
+    qDebug() << QString("ERROR: temperature under scaling range, temperature = %1").arg(temperature);
+    qDebug() << QString("0x%1").arg(tofChannel,0,16);
+    qDebug() << Corrections::minTofTemps[tofChannel];
+    qDebug() << Corrections::maxTofTemps[tofChannel];
+    return 0;
+  }
 }

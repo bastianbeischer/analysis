@@ -370,14 +370,14 @@ void MainWindow::setupPlots()
     }
   }
   if (m_ui.timeOverThresholdCheckBox->isChecked()) {
-		m_ui.plotter->addPlot(new TimeOverThresholdPlot);
+    m_ui.plotter->addPlot(new TimeOverThresholdPlot);
     DetectorElement* element = setup->firstElement();
     while (element) {
       if (element->type() == DetectorElement::tof)
         for (int ch = 0; ch < 4; ++ch) {
           m_ui.plotter->addPlot(new TimeOverThresholdMomentumCorrelation(element->id() | ch));
-					m_ui.plotter->addPlot(new TimeOverThresholdVariationWithTemperature(element->id() | ch));
-				}
+          m_ui.plotter->addPlot(new TimeOverThresholdVariationWithTemperature(element->id() | ch));
+        }
       element = setup->nextElement();
     }
   }

@@ -8,14 +8,14 @@
 
 class TOFSensorTypeAssignment {
 public:
-	TOFSensorTypeAssignment();
-	~TOFSensorTypeAssignment();
-	
-	SensorTypes::Type tofSensorType(unsigned int tofChannel);
-	
+  TOFSensorTypeAssignment();
+  ~TOFSensorTypeAssignment();
+  
+  SensorTypes::Type tofSensorType(unsigned int tofChannel);
+  
 private:
-	QMap<SensorTypes::Type, QList<unsigned int> > m_sensorTypeTofChannelAssignment;
-	
+  QMap<SensorTypes::Type, QList<unsigned int> > m_sensorTypeTofChannelAssignment;
+  
 };
 
 #endif /* TOFSensorTypeAssignment_hh */

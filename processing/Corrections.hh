@@ -50,20 +50,20 @@ private:
 public:
   double trdScalingFactor(unsigned int);
   void setTrdScalingFactor(unsigned int, double);
-	void setTimeOverThresholdScaling(const unsigned int tofChannel, const QMap<QString, QVariant> temperatureMap);
+  void setTimeOverThresholdScaling(const unsigned int tofChannel, const QMap<QString, QVariant> temperatureMap);
 
 public:
-	static QMap<unsigned int, TGraph> timeOverThresholdScalingGraphs;
-	static QMap<unsigned int, TF1> timeOverThresholdScalingFits;
-	static bool totGraphsLoaded;
-	static QMap<unsigned int, double> minTofTemps;
-	static QMap<unsigned int , double> maxTofTemps;
-	
+  static QMap<unsigned int, TGraph> timeOverThresholdScalingGraphs;
+  static QMap<unsigned int, TF1> timeOverThresholdScalingFits;
+  static bool totGraphsLoaded;
+  static QMap<unsigned int, double> minTofTemps;
+  static QMap<unsigned int , double> maxTofTemps;
+  
 private:
-	QString m_tofTimeOverThresholdPrefix;
-	void loadTimeOverThresholdScaling();
-	double timeOverThresholdScalingFactor(const unsigned int tofChannel, const double temperature);
-	
+  QString m_tofTimeOverThresholdPrefix;
+  void loadTimeOverThresholdScaling();
+  double timeOverThresholdScalingFactor(const unsigned int tofChannel, const double temperature);
+  
 private:
   QSettings* m_trdSettings;
   QSettings* m_tofSettings;

@@ -149,5 +149,5 @@ void TOFSipmHit::dump()
 
 void TOFSipmHit::setTimeOverThreshold(double timeOverThreshold) 
 {
-	m_timeOverThreshold = timeOverThreshold;
+  m_timeOverThreshold = timeOverThreshold;
 }
