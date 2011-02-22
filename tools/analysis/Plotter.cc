@@ -134,7 +134,6 @@ void Plotter::clearPlots()
   m_plots.clear();
 }
 
-/* TODO
 void Plotter::finalizeAnalysis()
 {
   foreach(AnalysisPlot* plot, m_plots) {
@@ -142,7 +141,7 @@ void Plotter::finalizeAnalysis()
     plot->update();
   }
   updateCanvas();
-}*/
+}
 
 void Plotter::toggleUpdateTimer()
 {

@@ -132,6 +132,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_reader, SIGNAL(numberOfEventsChanged(int)), this, SLOT(numberOfEventsChanged(int)));
   connect(m_reader, SIGNAL(eventLoopStarted()), &m_updateTimer, SLOT(start()));
   connect(m_reader, SIGNAL(eventLoopStopped()), &m_updateTimer, SLOT(stop()));
+  connect(m_reader, SIGNAL(eventLoopStopped()), m_ui.plotter, SLOT(finalizeAnalysis()));
 
   connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
 

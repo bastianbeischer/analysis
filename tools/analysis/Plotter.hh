@@ -33,6 +33,7 @@ public:
   void saveForPostAnalysis(const QString&);
 public slots:
   void update();
+  void finalizeAnalysis();
   void toggleUpdateTimer();
 signals:
   void titleChanged(const QString&);
