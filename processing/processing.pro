@@ -11,8 +11,7 @@ CLASSES += \
   EventProcessor \
   EventQueue \
   EventDestination \
-  DataChain \
-  TOFSensorTypeAssignment
+  DataChain
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \

@@ -11,7 +11,6 @@
 #include "TrackInformation.hh"
 #include "Constants.hh"
 #include "SensorTypes.hh"
-#include "TOFSensorTypeAssignment.hh"
 #include "SimpleEvent.hh"
 
 #include <QProcess>
@@ -125,16 +124,13 @@ void Corrections::trdMopv(Hit* hit)
 void Corrections::tofTimeOverThreshold(Hit* hit, SimpleEvent* event)
 {
   if (hit->type() == Hit::tof) {
-    TOFSensorTypeAssignment* sensorAssignment = new TOFSensorTypeAssignment();
     TOFCluster* cluster = static_cast<TOFCluster*> (hit);
     foreach(Hit* tofHit, cluster->hits()) {
-      double temperature = event->sensorData(sensorAssignment->tofSensorType(tofHit->detId()));
+      double temperature = event->sensorData(Setup::instance()->idToSensor(tofHit->detId()));
       double scalingFactor = timeOverThresholdScalingFactor(tofHit->detId(), temperature);
       TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
       tofSipmHit->setTimeOverThreshold(tofSipmHit->timeOverThreshold() * scalingFactor);
     }
-    delete sensorAssignment;
-    sensorAssignment = NULL;
   }
 }
 

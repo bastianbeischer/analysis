@@ -371,13 +371,19 @@ void MainWindow::setupPlots()
   }
   if (m_ui.timeOverThresholdCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TOTPlot);
-    DetectorElement* element = setup->firstElement();
+    DetectorElement* element = 0;
+    element = setup->firstElement();
     while (element) {
       if (element->type() == DetectorElement::tof)
-        for (int ch = 0; ch < 4; ++ch) {
+        for (int ch = 0; ch < 4; ++ch)
           m_ui.plotter->addPlot(new TOTMomentumCorrelation(element->id() | ch));
+      element = setup->nextElement();
+    }
+    element = setup->firstElement();
+    while (element) {
+      if (element->type() == DetectorElement::tof)
+        for (int ch = 0; ch < 4; ++ch)
           m_ui.plotter->addPlot(new TOTTemperatureCorrelationPlot(element->id() | ch));
-        }
       element = setup->nextElement();
     }
   }

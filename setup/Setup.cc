@@ -244,3 +244,37 @@ void Setup::writeSettings()
   m_settings->sync();
 }
 
+SensorTypes::Type tofIdToSensor(unsigned short id)
+{
+  if (0x8000 <= id && id < 0x8040)
+    return tofIdToSensor(id);
+  Q_ASSERT(false);
+  return SensorTypes::END;
+}
+
+SensorTypes::Type Setup::idToSensor(unsigned short id)
+{
+  int channel = id - 0x8000;
+  const SensorTypes::Type map[] = {
+    SensorTypes::TOF_2_TEMP, SensorTypes::TOF_2_TEMP, SensorTypes::TOF_4_TEMP, SensorTypes::TOF_4_TEMP,
+    SensorTypes::TOF_2_TEMP, SensorTypes::TOF_2_TEMP, SensorTypes::TOF_4_TEMP, SensorTypes::TOF_4_TEMP,
+    SensorTypes::TOF_1_TEMP, SensorTypes::TOF_1_TEMP, SensorTypes::TOF_3_TEMP, SensorTypes::TOF_3_TEMP,
+    SensorTypes::TOF_1_TEMP, SensorTypes::TOF_1_TEMP, SensorTypes::TOF_3_TEMP, SensorTypes::TOF_3_TEMP,
+    
+    SensorTypes::TOF_2_TEMP, SensorTypes::TOF_2_TEMP, SensorTypes::TOF_4_TEMP, SensorTypes::TOF_4_TEMP,
+    SensorTypes::TOF_2_TEMP, SensorTypes::TOF_2_TEMP, SensorTypes::TOF_4_TEMP, SensorTypes::TOF_4_TEMP,
+    SensorTypes::TOF_1_TEMP, SensorTypes::TOF_1_TEMP, SensorTypes::TOF_3_TEMP, SensorTypes::TOF_3_TEMP,
+    SensorTypes::TOF_1_TEMP, SensorTypes::TOF_1_TEMP, SensorTypes::TOF_3_TEMP, SensorTypes::TOF_3_TEMP,
+    
+    SensorTypes::TOF_6_TEMP, SensorTypes::TOF_6_TEMP, SensorTypes::TOF_8_TEMP, SensorTypes::TOF_8_TEMP,
+    SensorTypes::TOF_6_TEMP, SensorTypes::TOF_6_TEMP, SensorTypes::TOF_8_TEMP, SensorTypes::TOF_8_TEMP,
+    SensorTypes::TOF_5_TEMP, SensorTypes::TOF_5_TEMP, SensorTypes::TOF_7_TEMP, SensorTypes::TOF_7_TEMP,
+    SensorTypes::TOF_5_TEMP, SensorTypes::TOF_5_TEMP, SensorTypes::TOF_7_TEMP, SensorTypes::TOF_7_TEMP,
+    
+    SensorTypes::TOF_6_TEMP, SensorTypes::TOF_6_TEMP, SensorTypes::TOF_8_TEMP, SensorTypes::TOF_8_TEMP,
+    SensorTypes::TOF_6_TEMP, SensorTypes::TOF_6_TEMP, SensorTypes::TOF_8_TEMP, SensorTypes::TOF_8_TEMP,
+    SensorTypes::TOF_5_TEMP, SensorTypes::TOF_5_TEMP, SensorTypes::TOF_7_TEMP, SensorTypes::TOF_7_TEMP,
+    SensorTypes::TOF_5_TEMP, SensorTypes::TOF_5_TEMP, SensorTypes::TOF_7_TEMP, SensorTypes::TOF_7_TEMP
+  };
+  return map[channel];
+}
