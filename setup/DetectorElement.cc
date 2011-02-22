@@ -9,7 +9,7 @@
 #include <cmath>
 #include <iostream>
 
-DetectorElement::DetectorElement(Type type, unsigned short id, unsigned short nChannels) :
+DetectorElement::DetectorElement(Type type, unsigned short id, unsigned short nChannels, const Setup* setup) :
   m_type(type),
   m_id(id),
   m_nChannels(nChannels),
@@ -21,13 +21,13 @@ DetectorElement::DetectorElement(Type type, unsigned short id, unsigned short nC
   if (m_type == trd) configGroup = "trd";
   if (m_type == tof) configGroup = "tof";
 
-  m_position = Setup::instance()->configFilePosition(configGroup, m_id | (m_nChannels/2));
-  m_alignmentShift = Setup::instance()->configFileAlignmentShift(configGroup, m_id);
+  m_position = setup->configFilePosition(configGroup, m_id | (m_nChannels/2));
+  m_alignmentShift = setup->configFileAlignmentShift(configGroup, m_id);
 
   if (m_type != tof) {
     QMap<double, unsigned short> temporaryMap;
     for (int channel = 0; channel < m_nChannels; channel++)
-      temporaryMap[Setup::instance()->configFilePosition(configGroup, m_id | channel).x()] = channel;
+      temporaryMap[setup->configFilePosition(configGroup, m_id | channel).x()] = channel;
     m_channelMap = temporaryMap.values().toVector();
   }
   else {

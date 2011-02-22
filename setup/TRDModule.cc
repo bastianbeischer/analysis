@@ -6,8 +6,8 @@
 
 #include <QString>
 
-TRDModule::TRDModule(unsigned short detId) :
-  DetectorElement(trd, detId, 16)
+TRDModule::TRDModule(unsigned short detId, const Setup* setup) :
+  DetectorElement(trd, detId, 16, setup)
 {
 }
 

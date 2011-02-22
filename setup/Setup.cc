@@ -12,13 +12,15 @@
 #include <QStringList>
 #include <QSettings>
 #include <QProcess>
+#include <QMutex>
 
 #include <TVector3.h>
 
 #include <iostream>
 #include <cmath>
 
-Setup* Setup::m_instance = 0;
+Setup* Setup::s_instance = 0;
+QMutex Setup::s_mutex;
 
 Setup::Setup() :
   m_coordinates(0),
@@ -26,7 +28,7 @@ Setup::Setup() :
   m_layerIt(0),
   m_elementIt(0)
 {
-  m_instance = this; // this has to be set before construct()!
+  s_instance = this; // this has to be set before construct()!
 
   QStringList envVariables = QProcess::systemEnvironment();
   QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
@@ -58,8 +60,12 @@ Setup::~Setup()
 
 Setup* Setup::instance()
 {
-  if (!m_instance) new Setup;
-  return m_instance;
+  Setup::s_mutex.lock();
+  if (!s_instance){
+    if (!s_instance) new Setup();
+  }
+  Setup::s_mutex.unlock();
+  return s_instance;
 }
 
 void Setup::construct()
@@ -131,11 +137,11 @@ DetectorElement* Setup::element(unsigned short id)
   
   if (!m_elements[id]) {
     if (usbBoard == 0x3200 || usbBoard == 0x3600 || usbBoard == 0x3400 || usbBoard == 0x3500)
-      m_elements[id] = new TRDModule(id);
+      m_elements[id] = new TRDModule(id, this);
     else if (usbBoard == 0x8000)
-      m_elements[id] = new TOFBar(id);
+      m_elements[id] = new TOFBar(id, this);
     else
-      m_elements[id] = new SipmArray(id);
+      m_elements[id] = new SipmArray(id, this);
   }
 
   return m_elements[id];

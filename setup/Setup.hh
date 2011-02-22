@@ -3,6 +3,7 @@
 
 #include <QMap>
 #include <QVector>
+#include <QMutex>
 
 #include <TVector3.h>
 
@@ -53,7 +54,8 @@ private:
   void              construct();
 
 private:
-  static Setup*                          m_instance;
+  static Setup*                          s_instance;
+  static QMutex                          s_mutex;
 
   QSettings*                             m_coordinates;
   QSettings*                             m_settings;

@@ -6,12 +6,12 @@
 
 #include <QString>
 
-TOFBar::TOFBar(unsigned short detId)
-  : DetectorElement(tof, detId, 4)
+TOFBar::TOFBar(unsigned short detId, const Setup* setup)
+  : DetectorElement(tof, detId, 4, setup)
 {
   m_timeShifts = QVector<double>(m_nChannels, 0);
   for(unsigned short channel = 0; channel < m_nChannels; ++channel)
-    m_timeShifts[channel] = Setup::instance()->configFileTimeShift(m_id | channel);
+    m_timeShifts[channel] = setup->configFileTimeShift(m_id | channel);
 }
 
 TOFBar::~TOFBar()
