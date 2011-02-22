@@ -1,4 +1,4 @@
-#include "TimeOverThresholdVariationWithTemperature.hh"
+#include "TOTTemperatureCorrelationPlot.hh"
 
 #include "SimpleEvent.hh"
 #include "Hit.hh"
@@ -18,12 +18,12 @@
 #include <QSettings>
 #include <math.h>
 
-TimeOverThresholdVariationWithTemperature::TimeOverThresholdVariationWithTemperature(unsigned int tofChannel)
+TOTTemperatureCorrelationPlot::TOTTemperatureCorrelationPlot(unsigned int tofChannel)
   : AnalysisPlot(TimeOverThreshold)
   , H2DPlot()
   , m_tofChannel(tofChannel)
 {
-  QString title = QString("time over threshold temperature variation 0x%1").arg(0x8000 | tofChannel, 0, 16);
+  QString title = QString("time over threshold temperature correlation 0x%1").arg(0x8000 | tofChannel, 0, 16);
   setTitle(title);
   const unsigned int nTemperatureBins = 100;
   const double minTemperature = -25;
@@ -40,14 +40,14 @@ TimeOverThresholdVariationWithTemperature::TimeOverThresholdVariationWithTempera
   m_sensorAssignment = new TOFSensorTypeAssignment();
 }
 
-TimeOverThresholdVariationWithTemperature::~TimeOverThresholdVariationWithTemperature() {
+TOTTemperatureCorrelationPlot::~TOTTemperatureCorrelationPlot() {
   delete m_sensorAssignment;
   m_sensorAssignment = NULL;
 }
 
 SensorTypes::Type findTofSensorType(unsigned int tofChannel);
 
-void TimeOverThresholdVariationWithTemperature::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* event) {
+void TOTTemperatureCorrelationPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* event) {
   double temperature = event->sensorData(m_sensorAssignment->tofSensorType(m_tofChannel));
   foreach(Hit* hit, hits) {
     if (hit->type() == Hit::tof) {
@@ -64,11 +64,11 @@ void TimeOverThresholdVariationWithTemperature::processEvent(const QVector<Hit*>
   }
 }
 
-void TimeOverThresholdVariationWithTemperature::finalize() {
+void TOTTemperatureCorrelationPlot::finalize() {
   //saveCalibrationData(); //uncomment if you want to save new calibraion data
 }
 
-void TimeOverThresholdVariationWithTemperature::saveCalibrationData() {
+void TOTTemperatureCorrelationPlot::saveCalibrationData() {
   const double timeOverThresholdReference = 30;
   const double minTot = 20;
   

@@ -46,9 +46,9 @@
 #include "TOFTimeDifferencePlot.hh"
 #include "TotalSignalHeightPlot.hh"
 #include "TOFEfficiencyPlot.hh"
-#include "TimeOverThresholdMomentumCorrelation.hh"
-#include "TimeOverThresholdPlot.hh"
-#include "TimeOverThresholdVariationWithTemperature.hh"
+#include "TOTMomentumCorrelation.hh"
+#include "TOTPlot.hh"
+#include "TOTTemperatureCorrelationPlot.hh"
 #include "TOFAlignment.hh"
 
 #include <QProcess>
@@ -370,13 +370,13 @@ void MainWindow::setupPlots()
     }
   }
   if (m_ui.timeOverThresholdCheckBox->isChecked()) {
-    m_ui.plotter->addPlot(new TimeOverThresholdPlot);
+    m_ui.plotter->addPlot(new TOTPlot);
     DetectorElement* element = setup->firstElement();
     while (element) {
       if (element->type() == DetectorElement::tof)
         for (int ch = 0; ch < 4; ++ch) {
-          m_ui.plotter->addPlot(new TimeOverThresholdMomentumCorrelation(element->id() | ch));
-          m_ui.plotter->addPlot(new TimeOverThresholdVariationWithTemperature(element->id() | ch));
+          m_ui.plotter->addPlot(new TOTMomentumCorrelation(element->id() | ch));
+          m_ui.plotter->addPlot(new TOTTemperatureCorrelationPlot(element->id() | ch));
         }
       element = setup->nextElement();
     }

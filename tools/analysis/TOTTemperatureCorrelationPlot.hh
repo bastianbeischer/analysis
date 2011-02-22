@@ -1,5 +1,5 @@
-#ifndef TimeOverThresholdVariationWithTemperature_hh
-#define TimeOverThresholdVariationWithTemperature_hh
+#ifndef TOTTemperatureCorrelationPlot_hh
+#define TOTTemperatureCorrelationPlot_hh
 
 #include "AnalysisPlot.hh"
 #include "H2DPlot.hh"
@@ -13,10 +13,10 @@ class Hit;
 class Track;
 class SimpleEvent;
 
-class TimeOverThresholdVariationWithTemperature : public AnalysisPlot, public H2DPlot {
+class TOTTemperatureCorrelationPlot : public AnalysisPlot, public H2DPlot {
 public:
-  TimeOverThresholdVariationWithTemperature(unsigned int tofChannel);
-  ~TimeOverThresholdVariationWithTemperature();
+  TOTTemperatureCorrelationPlot(unsigned int tofChannel);
+  ~TOTTemperatureCorrelationPlot();
   
   virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
   virtual void finalize();
@@ -28,4 +28,4 @@ private:
   
 };
 
-#endif /* TimeOverThresholdVariationWithTemperature_hh */
+#endif /* TOTTemperatureCorrelationPlot_hh */

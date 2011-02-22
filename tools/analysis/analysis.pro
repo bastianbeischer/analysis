@@ -65,9 +65,9 @@ CLASSES = \
   TotalEnergyDepositionTRDvsTrackerPlot \
   TOFEfficiencyPlot \
   TrackingEfficiencyVsMomentumPlot \
-  TimeOverThresholdMomentumCorrelation \
-  TimeOverThresholdPlot \
-  TimeOverThresholdVariationWithTemperature \
+  TOTMomentumCorrelation \
+  TOTPlot \
+  TOTTemperatureCorrelationPlot \
   TOFAlignment
 
 SOURCES += \
