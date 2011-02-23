@@ -44,6 +44,7 @@ CLASSES = \
   ResidualPlot \
   SignalHeightPlot \
   SingleLayerTrackingEfficiencyPlot \
+  MultiLayerTrackingEfficiencyPlot \
   CutStatisticsPlot \
   TOFPositionCorrelationPlot \
   TOFTimeDifferencePlot \
