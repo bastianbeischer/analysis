@@ -668,6 +668,11 @@ void MainWindow::saveForPostAnalysisActionTriggered()
 {
   QString fileEnding;
   QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "*.root", &fileEnding);
+#ifdef Q_WS_MACX 
+  if (fileName.isEmpty()) {
+    fileName = m_topLevelPath+"/post_analysis.root";
+  }
+#endif
   if (fileName.isEmpty())
     return;
   fileEnding.remove(0, 1);
