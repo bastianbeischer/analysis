@@ -183,8 +183,9 @@ void Corrections::photonTravelTime(Track* track)
       TOFCluster* tofCluster = static_cast<TOFCluster*>(cluster);
       int id = tofCluster->detId();
       double p[numberOfPhotonTravelTimeDifferenceParameters];
+      QList<QVariant> plist = m_tofSettings->value(QString("PhotonTravelTimeConstants/%1").arg(id, 0, 16)).toList();
       for (int i = 0; i < numberOfPhotonTravelTimeDifferenceParameters; ++i) {
-        p[i] = m_tofSettings->value(QString("PhotonTravelTimeConstants/%1_c%2").arg(id, 0, 16).arg(i)).toDouble();
+        p[i] = plist[i].toDouble();
         //qDebug() << p[i];
       }
       double p1[numberOfPhotonTravelTimeParameters];
