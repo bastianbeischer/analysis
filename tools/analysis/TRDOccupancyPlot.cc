@@ -2,6 +2,7 @@
 
 #include "Setup.hh"
 #include "DetectorElement.hh"
+#include "Track.hh"
 #include "Hit.hh"
 #include "Cluster.hh"
 #include "SimpleEvent.hh"
@@ -52,9 +53,9 @@ TRDOccupancyPlot::~TRDOccupancyPlot()
   m_ellipses.clear();
 }
 
-void TRDOccupancyPlot::processEvent(const QVector<Hit*>& clustersOnTrack, Track*, SimpleEvent* event)
+void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
 {
-  const QVector<Hit*>& clustersToAnalyze = m_onlyOnTrack ? clustersOnTrack : QVector<Hit*>::fromStdVector(event->hits());
+  const QVector<Hit*>& clustersToAnalyze = m_onlyOnTrack ? track->hits() : hits;
 
   const QVector<Hit*>::const_iterator endIt = clustersToAnalyze.end();
   for (QVector<Hit*>::const_iterator it = clustersToAnalyze.begin(); it != endIt; ++it) {

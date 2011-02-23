@@ -60,7 +60,7 @@ TRDSpectrumPlot::~TRDSpectrumPlot()
   delete m_fitRangeMarker_upper;
 }
 
-void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
+void TRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent*)
 {
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
@@ -83,8 +83,8 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simp
 
   //TODO: check for off track hits ?!?
   unsigned int nTrdHits = 0;
-  const QVector<Hit*>::const_iterator hitsEnd = hits.end();
-  for (QVector<Hit*>::const_iterator it = hits.begin(); it != hitsEnd; ++it) {
+  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
     if ((*it)->type() == Hit::trd)
       nTrdHits++;
   }
@@ -92,7 +92,7 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simp
   if (nTrdHits < 6)
     return;
 
-  for (QVector<Hit*>::const_iterator it = hits.begin(); it != hitsEnd; ++it) {
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
     Hit* hit = *it;
     if (hit->type() != Hit::trd)
       continue;

@@ -24,7 +24,7 @@ TRDDistanceWireToTrackPlot::~TRDDistanceWireToTrackPlot()
 {
 }
 
-void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* /*event*/)
+void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent* /*event*/)
 {
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
@@ -37,8 +37,8 @@ void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& hits, Track* 
 
   //TODO: check for off track hits ?!?
   unsigned int nTrdHits = 0;
-  const QVector<Hit*>::const_iterator hitsEnd = hits.end();
-  for (QVector<Hit*>::const_iterator it = hits.begin(); it != hitsEnd; ++it) {
+  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
     Hit* hit = *it;
     if (hit->type() == Hit::trd) {
       Cluster* cluster = static_cast<Cluster*>(hit);
@@ -53,7 +53,7 @@ void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& hits, Track* 
   if (nTrdHits < 6)
     return;
 
-  for (QVector<Hit*>::const_iterator it = hits.begin(); it != hitsEnd; ++it) {
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
     Cluster* cluster = static_cast<Cluster*>(*it);
     if (cluster->type() == Hit::trd) {
       double distanceWireToTrack = TRDCalculations::distanceTrackToWire(cluster, track);
