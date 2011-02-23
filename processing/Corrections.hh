@@ -5,7 +5,9 @@
 #include <QVector>
 #include <QString>
 #include <QVariant>
+#include <QList>
 #include <QMap>
+#include <QList>
 
 #include <TGraph.h>
 #include <TF1.h>
@@ -50,17 +52,12 @@ private:
 public:
   double trdScalingFactor(unsigned int);
   void setTrdScalingFactor(unsigned int, double);
-  void setTimeOverThresholdScaling(const unsigned int tofChannel, const QMap<QString, QVariant> temperatureMap);
-
-public:
-  static QMap<unsigned int, TGraph> timeOverThresholdScalingGraphs;
-  static QMap<unsigned int, TF1> timeOverThresholdScalingFits;
-  static bool totGraphsLoaded;
-  static QMap<unsigned int, double> minTofTemps;
-  static QMap<unsigned int , double> maxTofTemps;
+  void setTimeOverThresholdScaling(const unsigned int tofChannel, const QList<QVariant> param);
+  static bool timeOverThresholdScalingLoaded;
+  static QMap<unsigned int, QList<double> >timeOverThresholdScalings;
   
 private:
-  QString m_tofTimeOverThresholdPrefix;
+  QString m_tofTimeOverThresholdScalingPrefix;
   void loadTimeOverThresholdScaling();
   double timeOverThresholdScalingFactor(const unsigned int tofChannel, const double temperature);
   
