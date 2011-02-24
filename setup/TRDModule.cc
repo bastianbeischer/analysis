@@ -15,7 +15,7 @@ TRDModule::~TRDModule()
 {
 }
 
-QVector<Hit*> TRDModule::findClusters(QVector<Hit*>& rawhits)
+QVector<Hit*> TRDModule::findClusters(const QVector<Hit*>& rawhits)
 {
   QVector<Hit*> clusters;
 

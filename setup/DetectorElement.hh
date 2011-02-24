@@ -22,7 +22,7 @@ public:
   virtual ~DetectorElement();
  
 public:
-  virtual QVector<Hit*> findClusters(QVector<Hit*>&) = 0;
+  virtual QVector<Hit*> findClusters(const QVector<Hit*>&) = 0;
 
 public:
   void setAlignmentShift(double shift) {m_alignmentShift = shift;}

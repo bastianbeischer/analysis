@@ -15,7 +15,7 @@ SipmArray::~SipmArray()
 {
 }
 
-QVector<Hit*> SipmArray::findClusters(QVector<Hit*>& rawhits)
+QVector<Hit*> SipmArray::findClusters(const QVector<Hit*>& rawhits)
 {
   QVector<Hit*> clusters;
 

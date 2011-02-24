@@ -18,7 +18,7 @@ TOFBar::~TOFBar()
 {
 }
 
-QVector<Hit*> TOFBar::findClusters(QVector<Hit*>& rawhits)
+QVector<Hit*> TOFBar::findClusters(const QVector<Hit*>& rawhits)
 {
   QVector<Hit*> clusters;
   if(rawhits.size() >= 3) {

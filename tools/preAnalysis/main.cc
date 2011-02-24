@@ -12,7 +12,7 @@
 #include <TTree.h>
 
 #include "DataChain.hh"
-#include "Setup.hh"
+#include "ClusterGenerator.hh"
 #include "Layer.hh"
 #include "SimpleEvent.hh"
 #include "DataDescription.hh"
@@ -58,6 +58,7 @@ int main(int argc, char** argv)
   DataDescription description;
   description.setSoftwareVersionHash();
 
+  ClusterGenerator generator;
   for (int i = 0; i < sourceFileNames.size(); i++) {
     QString fileName = sourceFileNames.at(i);
     gROOT->cd();
@@ -95,10 +96,9 @@ int main(int argc, char** argv)
       // vector of all hits in this event
       QVector<Hit*> hits = QVector<Hit*>::fromStdVector(sourceEvent->hits());
 
-      // TODO
-      // // do the zero compression
-      // foreach(Hit* cluster, Setup::instance()->generateClusters(hits))
-      //   destinationEvent->addHit(cluster);
+       // do the zero compression
+      foreach(Hit* cluster, generator.findClusters(hits))
+        destinationEvent->addHit(cluster);
       
       // copy sensor  data
       for (unsigned int i = SensorTypes::START; i < SensorTypes::END; i++) {
