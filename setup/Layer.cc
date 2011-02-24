@@ -11,7 +11,7 @@
 
 static bool compareDetectorPosition(const DetectorElement* element1, const DetectorElement* element2)
 {
-  return element1->position().x() < element2->position().x();
+  return element1->position().x() <= element2->position().x();
 }
 
 Layer::Layer() :
