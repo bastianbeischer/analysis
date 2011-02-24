@@ -47,9 +47,11 @@
 #include "TOFTimeDifferencePlot.hh"
 #include "TotalSignalHeightPlot.hh"
 #include "TOFEfficiencyPlot.hh"
-#include "TimeOverThresholdMomentumCorrelation.hh"
-#include "TimeOverThresholdPlot.hh"
+#include "TOTMomentumCorrelation.hh"
+#include "TOTPlot.hh"
+#include "TOTTemperatureCorrelationPlot.hh"
 #include "TOFAlignment.hh"
+#include "TOTTimeCorrelationPlot.hh"
 
 #include <QProcess>
 #include <QFileDialog>
@@ -142,11 +144,12 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.savePngButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
   connect(m_ui.saveRootButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
   
-  connect(m_ui.saveCanvasAction, SIGNAL(triggered()), this, SLOT(saveCanvasActionTriggered()));
-  connect(m_ui.saveAllCanvasesAction, SIGNAL(triggered()), this, SLOT(saveAllCanvasActionTriggered()));
+  connect(m_ui.saveCanvasDialogAction, SIGNAL(triggered()), this, SLOT(saveCanvasDialogActionTriggered()));
+  connect(m_ui.saveAllCanvasesDialogAction, SIGNAL(triggered()), this, SLOT(saveAllCanvasDialogActionTriggered()));
   connect(m_ui.saveForPostAnalysisAction, SIGNAL(triggered()), this, SLOT(saveForPostAnalysisActionTriggered()));
-  connect(m_ui.setFileListAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListActionTriggered()));
-  connect(m_ui.addFileListAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListActionTriggered()));
+  connect(m_ui.saveForPostAnalysisDialogAction, SIGNAL(triggered()), this, SLOT(saveForPostAnalysisDialogActionTriggered()));
+  connect(m_ui.setFileListDialogAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListDialogActionTriggered()));
+  connect(m_ui.addFileListDialogAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListDialogActionTriggered()));
   connect(m_ui.quitAction, SIGNAL(triggered()), this, SLOT(close()));
   
   connect(m_ui.plotter, SIGNAL(titleChanged(const QString&)), this, SLOT(plotterTitleChanged(const QString&)));
@@ -370,12 +373,27 @@ void MainWindow::setupPlots()
     }
   }
   if (m_ui.timeOverThresholdCheckBox->isChecked()) {
-     m_ui.plotter->addPlot(new TimeOverThresholdPlot);
-    DetectorElement* element = setup->firstElement();
+    m_ui.plotter->addPlot(new TOTPlot);
+    DetectorElement* element = 0;
+    element = setup->firstElement();
     while (element) {
       if (element->type() == DetectorElement::tof)
         for (int ch = 0; ch < 4; ++ch)
-          m_ui.plotter->addPlot(new TimeOverThresholdMomentumCorrelation(element->id() | ch));
+          m_ui.plotter->addPlot(new TOTMomentumCorrelation(element->id() | ch));
+      element = setup->nextElement();
+    }
+    element = setup->firstElement();
+    while (element) {
+      if (element->type() == DetectorElement::tof)
+        for (int ch = 0; ch < 4; ++ch)
+          m_ui.plotter->addPlot(new TOTTemperatureCorrelationPlot(element->id() | ch));
+      element = setup->nextElement();
+    }
+    element = setup->firstElement();
+    while (element) {
+      if (element->type() == DetectorElement::tof)
+        for (int ch = 0; ch < 4; ++ch)
+          m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch));
       element = setup->nextElement();
     }
   }
@@ -572,14 +590,14 @@ void MainWindow::analyzeButtonClicked()
   }
 }
 
-void MainWindow::setOrAddFileListActionTriggered()
+void MainWindow::setOrAddFileListDialogActionTriggered()
 {
   QStringList files = QFileDialog::getOpenFileNames(this,
     "Select one or more file lists to open", "", "*.txt;;*.*;;*");
-  if (sender() == m_ui.setFileListAction) {
+  if (sender() == m_ui.setFileListDialogAction) {
     foreach(QString file, files)
       m_reader->setFileList(file);
-  } else if (sender() == m_ui.addFileListAction) {
+  } else if (sender() == m_ui.addFileListDialogAction) {
     foreach(QString file, files)
       m_reader->addFileList(file);
   }
@@ -604,7 +622,7 @@ void MainWindow::saveButtonsClicked()
   m_ui.plotter->saveCanvas(fileName);
 }
 
-void MainWindow::saveCanvasActionTriggered()
+void MainWindow::saveCanvasDialogActionTriggered()
 {
   QStringList fileFormatEndings;
   fileFormatEndings << "svg" << "pdf" << "eps" << "root" << "png";
@@ -642,7 +660,7 @@ void MainWindow::saveCanvasActionTriggered()
   }
 }
 
-void MainWindow::saveAllCanvasActionTriggered()
+void MainWindow::saveAllCanvasDialogActionTriggered()
 {
   QFileDialog dialog(this, "save all canvases displayed", ".");
   dialog.setFileMode(QFileDialog::DirectoryOnly);
@@ -658,6 +676,14 @@ void MainWindow::saveAllCanvasActionTriggered()
 }
 
 void MainWindow::saveForPostAnalysisActionTriggered()
+{
+  QDir dir(m_topLevelPath);
+  if (!dir.exists("plots"))
+    dir.mkdir("plots");
+  m_ui.plotter->saveForPostAnalysis(m_topLevelPath + "/plots/postAnalysis.root");
+}
+
+void MainWindow::saveForPostAnalysisDialogActionTriggered()
 {
   QString fileEnding;
   QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "*.root", &fileEnding);
