@@ -145,7 +145,12 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QPlainTex
   infoTextEdit.appendPlainText("\n  run start:\n  " +  timeOfRun.toString("dd.MM.yyyy hh:mm:ss.zzz"));
   infoTextEdit.appendPlainText("\n  runfilename:\n  " +  runfileName);
   infoTextEdit.appendPlainText("\n  event in runfile:\n  " +  QString::number(eventInRunFile));
-  //infoTextEdit.append("\n  ms in runfile:\n  " + QString::number(msOfEventInRun));
+  if(event->contentType() == SimpleEvent::MCClusters || event->contentType() == SimpleEvent::MCRawData){
+    MCEventInformation* mcInfo = event->MCInformation();
+    infoTextEdit.appendPlainText("Monte-Carlo Information:\n");
+    infoTextEdit.appendPlainText("PDG ID =\t" + QString::number(mcInfo->pdgId()));
+    infoTextEdit.appendPlainText("momentum =\t" + QString::number(mcInfo->initialMomentum().Mag())) + "MeV";
+  }
 
   if (event->contentType() == SimpleEvent::RawData)
     qDeleteAll(clusters);
