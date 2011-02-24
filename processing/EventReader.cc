@@ -19,8 +19,7 @@ EventReader::EventReader(QObject* parent)
   , m_nThreads(0)
   , m_firstEvent(0)
   , m_lastEvent(0)
-  , m_progress(0)
-  , m_buffer(0)
+  , m_nEvents(0)
   , m_chain(new DataChain())
   , m_destinations()
 {
@@ -33,12 +32,35 @@ EventReader::~EventReader()
 
 int EventReader::progress() const
 {
-  return m_progress;
+  int queuedEvents = 0;
+  if(!m_abort)
+  {
+    foreach(EventProcessor* processor, m_processors)
+      queuedEvents+= processor->queue()->numberOfEvents();
+    return 100.* (m_readEvents - queuedEvents) / m_nEvents;
+  }
+  else
+  {
+    if (m_readEvents > 0)
+      return 100;
+    else
+      return 0;
+  }
 }
 
 int EventReader::buffer() const
 {
-  return m_buffer;
+  if(!m_abort)
+  {
+    int queuedEvents = 0;
+    foreach(EventProcessor* processor, m_processors)
+      queuedEvents+= processor->queue()->numberOfEvents();
+    return 100.* queuedEvents / (m_nThreads * EventQueue::s_bufferSize);
+  }
+  else
+  {
+    return 0;
+  }
 }
 
 void EventReader::addDestination(EventDestination* destination)
@@ -81,6 +103,7 @@ void EventReader::start(Track::Type trackType, Corrections::Flags flags, int nTh
   m_nThreads = nThreads;
   m_firstEvent = first;
   m_lastEvent = last;
+  m_nEvents = last - first + 1;
   m_abort = false;
   QThread::start();
 }
@@ -96,37 +119,26 @@ void EventReader::stop()
 void EventReader::run()
 {
   emit(eventLoopStarted());
-  QVector<EventProcessor*> processors;
   for (int thread = 0; thread < m_nThreads; ++thread) {
     EventProcessor* processor = new EventProcessor(m_trackType, m_correctionFlags, m_destinations);
-    processors.append(processor);
+    m_processors.append(processor);
     processor->start();
   }
 
   Q_ASSERT(m_firstEvent <= m_lastEvent && m_lastEvent < m_chain->nEntries());
   unsigned int nEvents = m_lastEvent - m_firstEvent + 1;
 
-  int freeSpace = 0;
-  int queuedEvents = 0;
-  unsigned int i = 0;
-  for (i = 0; i < nEvents;) {
-    queuedEvents = 0;
-    foreach(EventProcessor* processor, processors)
-      queuedEvents+= processor->queue()->numberOfEvents();
-    foreach(EventProcessor* processor, processors) {
-      freeSpace = processor->queue()->freeSpace();
-      if (freeSpace > .2 * EventQueue::s_bufferSize) {
-        for (int j = 0; j < freeSpace && i < nEvents; ++j) {
-          SimpleEvent* event = m_chain->event(m_firstEvent + i);
+  for (m_readEvents = 0; m_readEvents < nEvents;) {
+    foreach(EventProcessor* processor, m_processors) {
+      if (processor->queue()->freeSpace() > 0) {
+          SimpleEvent* event = m_chain->event(m_firstEvent + m_readEvents);
           processor->queue()->enqueue(new SimpleEvent(*event));
-          ++i;
-          ++queuedEvents;
-          m_progress = 100. * (i + 1) / nEvents;
-          m_buffer = 100. * queuedEvents / (m_nThreads * EventQueue::s_bufferSize);
-        }
-      }
-      m_buffer = 100. * queuedEvents / (m_nThreads * EventQueue::s_bufferSize);
+          m_mutex.lock();
+          ++m_readEvents;
+          m_mutex.unlock();
+       }
     }
+
     m_mutex.lock();
     if (m_abort) {
       m_mutex.unlock();
@@ -135,20 +147,22 @@ void EventReader::run()
     m_mutex.unlock();
   }
 
-  do {
-    queuedEvents = 0;
-    foreach(EventProcessor* processor, processors)
-      queuedEvents+= processor->queue()->numberOfEvents();
-    m_buffer = 100. * queuedEvents / (m_nThreads * EventQueue::s_bufferSize);
-  } while (queuedEvents);
+  //wait for buffers to be emptied
+  while (progress() < 100 && !m_abort)
+  {
+    //qDebug() << progress();
+    usleep (10000) ;
+  }
 
-  foreach (EventProcessor* processor, processors)
+  foreach (EventProcessor* processor, m_processors)
     processor->stop();
-  qDeleteAll(processors);
-  
+
   m_mutex.lock();
   m_abort = true;
   m_mutex.unlock();
+
+  qDeleteAll(m_processors);
+  m_processors.clear();
 
   emit(eventLoopStopped());
 }

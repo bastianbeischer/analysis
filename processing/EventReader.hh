@@ -10,6 +10,7 @@
 
 class DataChain;
 class EventDestination;
+class EventProcessor;
 class Corrections;
 
 class EventReader : public QThread {
@@ -43,10 +44,11 @@ private:
   int m_nThreads;
   unsigned int m_firstEvent;
   unsigned int m_lastEvent;
-  int m_progress;
-  int m_buffer;
+  unsigned int m_nEvents;
+  unsigned int m_readEvents;
   DataChain* m_chain;
   QVector<EventDestination*> m_destinations;
+  QVector<EventProcessor*> m_processors;
 };
 
 #endif
