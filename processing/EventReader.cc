@@ -69,6 +69,11 @@ void EventReader::addRootFile(const QString& file)
   emit(numberOfEventsChanged(m_chain->nEntries()));
 }
 
+void EventReader::start(Track::Type trackType, Corrections::Flags flags, int nThreads)
+{
+  start(trackType, flags, nThreads, 0, m_chain->nEntries() - 1);
+}
+
 void EventReader::start(Track::Type trackType, Corrections::Flags flags, int nThreads, unsigned int first, unsigned int last)
 {
   m_trackType = trackType;

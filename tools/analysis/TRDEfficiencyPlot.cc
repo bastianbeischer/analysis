@@ -59,7 +59,7 @@ TRDEfficiencyPlot::~TRDEfficiencyPlot()
   m_ellipses.clear();
 }
 
-void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& clustersOnTrack, Track* track, SimpleEvent*)
+void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent*)
 {
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
@@ -71,8 +71,8 @@ void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& clustersOnTrack, Track
     return;
 
   //TODO: check for off track hits, atm this is Bastians criteria for on track
-  const QVector<Hit*>::const_iterator hitsEnd = clustersOnTrack.end();
-  for (QVector<Hit*>::const_iterator it = clustersOnTrack.begin(); it != hitsEnd; ++it) {
+  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
     Hit* hit = *it;
     if (hit->type() == Hit::trd) {
       Cluster* cluster = static_cast<Cluster*>(hit);
@@ -98,7 +98,7 @@ void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& clustersOnTrack, Track
       //was on track +1
       m_wasOnTrack[i.key()]++;
       //now check wheter the tube has seen a signal:
-      for (QVector<Hit*>::const_iterator it = clustersOnTrack.begin(); it != hitsEnd; ++it) {
+      for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
         Cluster* cluster = static_cast<Cluster*>(*it);
         if (cluster->type() != Hit::trd)
           continue;

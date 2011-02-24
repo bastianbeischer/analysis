@@ -19,6 +19,7 @@ public:
   ~EventReader();
   void addDestination(EventDestination*);
   void clearDestinations();
+  void start(Track::Type, Corrections::Flags, int nThreads);
   void start(Track::Type, Corrections::Flags, int nThreads, unsigned int first, unsigned int last);
   void stop();
 

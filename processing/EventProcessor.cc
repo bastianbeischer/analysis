@@ -73,7 +73,7 @@ void EventProcessor::run()
 
       QVector<Hit*> clusters;
       QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
-      if (event->contentType() == SimpleEvent::Clusters)
+      if (event->contentType() == SimpleEvent::Clusters || event->contentType() == SimpleEvent::MCClusters)
         clusters = hits;
       else
         clusters = Setup::instance()->generateClusters(hits);

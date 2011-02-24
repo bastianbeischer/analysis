@@ -67,7 +67,7 @@ TRDMoPVTimeEvolutionPlot::~TRDMoPVTimeEvolutionPlot()
   //qDeleteAll(m_mopvGraphs);
 }
 
-void TRDMoPVTimeEvolutionPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* event)
+void TRDMoPVTimeEvolutionPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent* event)
 {
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
@@ -88,8 +88,8 @@ void TRDMoPVTimeEvolutionPlot::processEvent(const QVector<Hit*>& hits, Track* tr
 
   unsigned int binValue = eventTime.toTime_t() / (m_timeBinLength) * (m_timeBinLength) + (0.5*m_timeBinLength);
 
-  const QVector<Hit*>::const_iterator hitsEnd = hits.end();
-  for (QVector<Hit*>::const_iterator it = hits.begin(); it != hitsEnd; ++it) {
+  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
     Cluster* cluster = static_cast<Cluster*>(*it);
     if (cluster->type() != Hit::trd) 
       continue;
