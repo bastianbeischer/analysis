@@ -20,14 +20,23 @@ QVector<Hit*> ClusterGenerator::findClusters(const QVector<Hit*>& rawhits)
 
   HitStorage* hitStorage = new HitStorage;
 
+  const ElementIterator endIt = setup->lastElement();
+  for (ElementIterator it = setup->firstElement(); it != endIt; ++it) {
+    DetectorElement* element = *it;
+    for (int i = 0; i < element->nChannels(); i++) {
+      (*hitStorage)[element].append(0);
+    }
+  }
+
   foreach(Hit* rawhit, rawhits) {
     unsigned short id = rawhit->detId() - rawhit->channel();
     DetectorElement* element = setup->element(id);
-    (*hitStorage)[element].append(rawhit);
+    QVector<Hit*>& hitVector = (*hitStorage)[element];
+    hitVector[element->sortedChannel(rawhit->channel())] = rawhit;
   }
   
-  const HitStorageIterator endIt = hitStorage->end();
-  for (HitStorageIterator it = hitStorage->begin(); it != endIt; ++it) {
+  const HitStorageIterator hitEndIt = hitStorage->end();
+  for (HitStorageIterator it = hitStorage->begin(); it != hitEndIt; ++it) {
     DetectorElement* element = it.key();
     const QVector<Hit*>& hits = it.value();
     clusters += element->findClusters(hits);
