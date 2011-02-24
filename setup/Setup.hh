@@ -51,6 +51,8 @@ private:
   
 private:
   void construct();
+  Layer* constructLayer(double z);
+  DetectorElement* constructElement(unsigned short id);
 
 private:
   static Setup* s_instance;
