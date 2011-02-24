@@ -30,9 +30,7 @@ Layer::~Layer()
 
 bool Layer::contains(unsigned short detId) const
 {
-  if (m_elements[detId] != 0)
-    return true;
-  return false;
+  return (m_elements[detId] != 0);
 }
 
 void Layer::sortIdsByPosition()
