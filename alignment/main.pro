@@ -18,6 +18,7 @@ INCLUDEPATH += \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/tracking \
   $$TOPLEVEL/processing \
+  $$TOPLEVEL/global \
   ./millepede
 
 LIBS += \

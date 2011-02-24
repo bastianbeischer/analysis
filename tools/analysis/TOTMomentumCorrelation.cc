@@ -1,4 +1,4 @@
-#include "TimeOverThresholdMomentumCorrelation.hh"
+#include "TOTMomentumCorrelation.hh"
 
 #include "SimpleEvent.hh"
 #include "Hit.hh"
@@ -14,7 +14,7 @@
 
 #include <QDebug>
 
-TimeOverThresholdMomentumCorrelation::TimeOverThresholdMomentumCorrelation(unsigned int id)
+TOTMomentumCorrelation::TOTMomentumCorrelation(unsigned int id)
   : AnalysisPlot(AnalysisPlot::TimeOverThreshold)
   , H2DPlot()
   , m_id(id)
@@ -29,11 +29,11 @@ TimeOverThresholdMomentumCorrelation::TimeOverThresholdMomentumCorrelation(unsig
   addLatex(RootPlot::newLatex(.15, .85));
 }
 
-TimeOverThresholdMomentumCorrelation::~TimeOverThresholdMomentumCorrelation()
+TOTMomentumCorrelation::~TOTMomentumCorrelation()
 {}
 
 
-void TimeOverThresholdMomentumCorrelation::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void TOTMomentumCorrelation::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
 {
   if (!track || !track->fitGood())
     return;
@@ -61,6 +61,6 @@ void TimeOverThresholdMomentumCorrelation::processEvent(const QVector<Hit*>& clu
   }
 }
 
-void TimeOverThresholdMomentumCorrelation::update() {
+void TOTMomentumCorrelation::update() {
   latex()->SetTitle(qPrintable(QString("#rho = %1").arg(histogram()->GetCorrelationFactor())));
 }

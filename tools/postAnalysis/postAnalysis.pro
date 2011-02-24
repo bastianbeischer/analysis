@@ -6,4 +6,5 @@ SUBDIRS  = \
   timeShift \
   photonTravelTime \
   tofEfficiency \
-  timeOverThreshold
+  timeOverThreshold \
+  timeOverThresholdScaling

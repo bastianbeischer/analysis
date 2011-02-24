@@ -1,4 +1,4 @@
-#include "TimeOverThresholdPlot.hh"
+#include "TOTPlot.hh"
 
 #include "SimpleEvent.hh"
 #include "Hit.hh"
@@ -14,7 +14,7 @@
 #include <QString>
 #include <QDebug>
 
-TimeOverThresholdPlot::TimeOverThresholdPlot()
+TOTPlot::TOTPlot()
   : AnalysisPlot(TimeOverThreshold)
   , H2DPlot()
 {
@@ -29,10 +29,10 @@ TimeOverThresholdPlot::TimeOverThresholdPlot()
   setHistogram(histogram);
 }
 
-TimeOverThresholdPlot::~TimeOverThresholdPlot()
+TOTPlot::~TOTPlot()
 {}
 
-void TimeOverThresholdPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*) {
+void TOTPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*) {
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Hit* hit = *it;
