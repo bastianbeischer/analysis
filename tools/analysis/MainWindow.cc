@@ -50,6 +50,7 @@
 #include "TOTPlot.hh"
 #include "TOTTemperatureCorrelationPlot.hh"
 #include "TOFAlignment.hh"
+#include "TOTTimeCorrelationPlot.hh"
 
 #include <QProcess>
 #include <QFileDialog>
@@ -385,6 +386,13 @@ void MainWindow::setupPlots()
       if (element->type() == DetectorElement::tof)
         for (int ch = 0; ch < 4; ++ch)
           m_ui.plotter->addPlot(new TOTTemperatureCorrelationPlot(element->id() | ch));
+      element = setup->nextElement();
+    }
+    element = setup->firstElement();
+    while (element) {
+      if (element->type() == DetectorElement::tof)
+        for (int ch = 0; ch < 4; ++ch)
+          m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch));
       element = setup->nextElement();
     }
   }

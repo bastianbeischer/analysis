@@ -68,6 +68,7 @@ CLASSES = \
   TOTMomentumCorrelation \
   TOTPlot \
   TOTTemperatureCorrelationPlot \
+  TOTTimeCorrelationPlot \
   TOFAlignment
 
 SOURCES += \
