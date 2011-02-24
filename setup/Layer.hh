@@ -18,13 +18,7 @@ public:
   ~Layer();
   
 public:
-  QVector<Hit*>         clusters()    const;
-  Cluster*              bestCluster() const;
-
-public:
   void                  addElement(DetectorElement* element) {m_elements[element->id()] = element;}
-  void                  addHitToDetector(Hit* hit);
-  void                  clearHitsInDetectors();
 
 public:
   double                z()         const {return m_z;}
@@ -34,7 +28,6 @@ public:
 
   const QList<unsigned short>& detIds() const {return m_ids;};
   bool                  contains(unsigned short detId) const;
-  const char*           printInfo() const;
   void                  sortIdsByPosition();
 
 private:

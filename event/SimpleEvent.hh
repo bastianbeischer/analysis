@@ -14,7 +14,7 @@ class SimpleEvent :
 {
 
 public:
-  enum ContentType {None = -1, RawData, Clusters, MCRawData, MCClusters};
+  enum ContentType {None = -1, Data, MonteCarlo};
 
 public:
   SimpleEvent();

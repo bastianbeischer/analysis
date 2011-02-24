@@ -18,12 +18,12 @@ TOFBar::~TOFBar()
 {
 }
 
-QVector<Hit*> TOFBar::findClusters()
+QVector<Hit*> TOFBar::findClusters(QVector<Hit*>& rawhits)
 {
   QVector<Hit*> clusters;
-  if(m_hits.size() >= 3) {
+  if(rawhits.size() >= 3) {
     TOFCluster* tofCluster = new TOFCluster;
-    foreach(Hit* hit, m_hits) {
+    foreach(Hit* hit, rawhits) {
       TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
       tofCluster->addHit(new TOFSipmHit(*tofHit));
     }

@@ -41,45 +41,6 @@ DetectorElement::~DetectorElement()
 {
 }
 
-void DetectorElement::debug(const QVector<Hit*>& clusters)
-{
-  std::cout << "------------------------" << std::endl;
-  int i = 0;
-  std::cout << "Hits:" << std::endl;
-  foreach(Hit* hit, m_hits) {
-    if (hit) {
-      std::cout << i << " " << hit->position().x() << "     "  << hit->signalHeight() << std::endl;
-    }
-    ++i;
-  }
-  std::cout << "Clusters:" << std::endl;
-  int j = 0;
-  foreach(Hit* hit, clusters) {
-    i = 0;
-    std::cout << "No. " << j << ":" << std::endl;
-    Cluster* cluster = static_cast<Cluster*>(hit);
-    foreach(Hit* hit, cluster->hits()) {
-      std::cout << hit->channel() << " " << hit->signalHeight() << std::endl;
-      ++i;
-    }
-    ++j;
-  }
-  // std::vector<int> channels;
-  // foreach(Cluster* cluster, m_clusters) {
-  //   foreach(Hit* hit, cluster->hits()) {
-  //     int channel = hit->channel();
-  //     if (std::find(channels.begin(), channels.end(), channel) != channels.end()) {
-  //       std::cout << "BAD" << std::endl;
-  //       exit(-1);
-  //     }
-  //     else {
-  //       // std::cout << channel << std::endl;
-  //       channels.push_back(hit->channel());
-  //     }
-  //   }
-  // }
-}
-
 TVector3 DetectorElement::positionForHit(const Hit* hit) const
 {
   double posX = hit->position().x();

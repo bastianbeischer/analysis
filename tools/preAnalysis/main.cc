@@ -86,20 +86,19 @@ int main(int argc, char** argv)
     for (unsigned long eventIt = 0; eventIt < nEvents; ++eventIt) {
       sourceTree->GetEntry(eventIt);
 
-      if (sourceEvent->contentType() == SimpleEvent::MCRawData){
-        destinationEvent = new SimpleEvent(sourceEvent->eventId(), sourceEvent->runStartTime(), sourceEvent->eventTime(), SimpleEvent::MCClusters);
+      destinationEvent = new SimpleEvent(sourceEvent->eventId(), sourceEvent->runStartTime(), sourceEvent->eventTime(), sourceEvent->contentType());
+      if (sourceEvent->contentType() == SimpleEvent::MonteCarlo){
         MCEventInformation* info = new MCEventInformation(*sourceEvent->MCInformation());
         destinationEvent->setMCInformation(info);
-      } else {
-        destinationEvent = new SimpleEvent(sourceEvent->eventId(), sourceEvent->runStartTime(), sourceEvent->eventTime(), SimpleEvent::Clusters);
       }
 
       // vector of all hits in this event
       QVector<Hit*> hits = QVector<Hit*>::fromStdVector(sourceEvent->hits());
 
-      // do the zero compression
-      foreach(Hit* cluster, Setup::instance()->generateClusters(hits))
-        destinationEvent->addHit(cluster);
+      // TODO
+      // // do the zero compression
+      // foreach(Hit* cluster, Setup::instance()->generateClusters(hits))
+      //   destinationEvent->addHit(cluster);
       
       // copy sensor  data
       for (unsigned int i = SensorTypes::START; i < SensorTypes::END; i++) {

@@ -71,13 +71,7 @@ void EventProcessor::run()
     if (event) {
       m_corrections->preFitCorrections(event);
 
-      QVector<Hit*> clusters;
-      QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
-      if (event->contentType() == SimpleEvent::Clusters || event->contentType() == SimpleEvent::MCClusters)
-        clusters = hits;
-      else
-        clusters = Setup::instance()->generateClusters(hits);
-
+      QVector<Hit*> clusters = QVector<Hit*>::fromStdVector(event->hits());
       QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
       if (m_track) {
         m_track->fit(trackClusters);
@@ -86,9 +80,6 @@ void EventProcessor::run()
       }
       foreach (EventDestination* destination, m_destinations)
         destination->processEvent(clusters, m_track, event);
-      if (event->contentType() == SimpleEvent::RawData)
-        qDeleteAll(clusters);
-      delete event;
     } else {
       usleep(1000);
     }

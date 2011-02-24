@@ -36,10 +36,6 @@ public:
   unsigned short numberOfLayers() const {return m_layers.size();}
   unsigned short numberOfElements() const {return m_elements.size();}
 
-  QVector<Hit*> generateClusters(const QVector<Hit*>& hits);
-  void addHitsToLayers(const QVector<Hit*>& hits);
-  void clearHitsFromLayers();
-
   TVector3 configFilePosition(QString group, unsigned short detId) const;
   double configFileAlignmentShift(QString group, unsigned short detId) const;
   double configFileTimeShift(unsigned short detId) const;

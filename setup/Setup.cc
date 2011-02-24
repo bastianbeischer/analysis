@@ -132,44 +132,6 @@ DetectorElement* Setup::element(unsigned short id)
   return element;
 }
 
-QVector<Hit*> Setup::generateClusters(const QVector<Hit*>& hits)
-{
-  QVector<Hit*> clusters;
-
-  addHitsToLayers(hits);
-  const LayerIterator endIt = lastLayer();
-  for (LayerIterator it = firstLayer(); it != endIt; ++it) {
-    Layer* layer = *it;
-    clusters += layer->clusters();
-
-    // // alternative: use only the best cluster
-    // Cluster* cluster = layer->bestCluster();
-    // if (cluster)
-    //   clusters.push_back(cluster);
-
-    // update pointer
-  }
-
-  return clusters;
-}
-
-void Setup::addHitsToLayers(const QVector<Hit*>& hits)
-{
-  // remove old hits
-  clearHitsFromLayers();
-
-  foreach(Hit* hit, hits) {
-    double z = hit->position().z();
-    layer(z)->addHitToDetector(hit);
-  }
-}
-
-void Setup::clearHitsFromLayers()
-{
-  foreach(Layer* layer, m_layers)
-    layer->clearHitsInDetectors();
-}
-
 TVector3 Setup::configFilePosition(QString group, unsigned short detId) const
 {
   Q_ASSERT(m_coordinates);
