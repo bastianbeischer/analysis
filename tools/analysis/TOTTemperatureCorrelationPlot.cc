@@ -34,7 +34,7 @@ TOTTemperatureCorrelationPlot::TOTTemperatureCorrelationPlot(unsigned int id)
   const double maxTot = 75;
   TH2D* histogram = new TH2D(qPrintable(title), "", nTemperatureBins, minTemperature, maxTemperature, nTotBins, minTot, maxTot);
   histogram->GetXaxis()->SetTitleOffset(1.4);
-  histogram->GetXaxis()->SetTitle("#vartheta /  #circC");
+  histogram->GetXaxis()->SetTitle("temperature /  #circC");
   histogram->GetYaxis()->SetTitle("time over threshold / ns");
   setHistogram(histogram);
 }
@@ -44,12 +44,17 @@ TOTTemperatureCorrelationPlot::~TOTTemperatureCorrelationPlot()
 }
 
 void TOTTemperatureCorrelationPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* event) {
-  foreach(Hit* hit, hits) {
+  const QVector<Hit*>::const_iterator endIt = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+    Hit* hit = *it;
     if (hit->type() == Hit::tof) {
       TOFCluster* cluster = static_cast<TOFCluster*> (hit);
       if (qAbs(track->x(cluster->position().z()) - cluster->position().x()) > 1.2 * Constants::tofBarWidth / 2)
         continue;
-      foreach(Hit* tofHit, cluster->hits()) {
+      std::vector<Hit*>& subHits = cluster->hits();
+      std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+      for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
+        Hit* tofHit = *it;
         if (tofHit->detId() == m_id) {
           double temperature = event->sensorData(Setup::instance()->sensorForId(m_id));
           TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
