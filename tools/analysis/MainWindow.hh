@@ -23,10 +23,11 @@ class MainWindow : public QMainWindow {
   ~MainWindow();
   void processArguments(QStringList);
 private slots:
-  void setOrAddFileListActionTriggered();
-  void saveCanvasActionTriggered();
-  void saveAllCanvasActionTriggered();
+  void setOrAddFileListDialogActionTriggered();
+  void saveCanvasDialogActionTriggered();
+  void saveAllCanvasDialogActionTriggered();
   void saveForPostAnalysisActionTriggered();
+  void saveForPostAnalysisDialogActionTriggered();
   void listWidgetItemChanged(QListWidgetItem*);
   void listWidgetCurrentRowChanged(int);
   void selectAllButtonClicked();
