@@ -58,7 +58,7 @@ void MultiLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, T
     return;
 
   TrackInformation::Flags flags = track->information()->flags();
-  if ( !(flags & TrackInformation::InsideMagnet) || !(flags & TrackInformation::Chi2Good) )
+  if ( !(flags & TrackInformation::InsideMagnet) )
     return;
 
   int nbOfLayers = 0;
