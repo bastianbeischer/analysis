@@ -80,6 +80,7 @@ void EventProcessor::run()
       }
       foreach (EventDestination* destination, m_destinations)
         destination->processEvent(clusters, m_track, event);
+      delete event;
     } else {
       usleep(1000);
     }
