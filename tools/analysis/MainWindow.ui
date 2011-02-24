@@ -1550,9 +1550,6 @@ mop value</string>
               <string>constant time
 over threshold</string>
              </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
             </widget>
            </item>
            <item>

@@ -116,6 +116,6 @@ void TimeOverThresholdScaling::scaling(unsigned int tofId, TH2D* histogram)
   param.push_back( f.GetParameter(1) );
   
   Corrections* correction = new Corrections();
-  correction->setTimeOverThresholdScaling(tofId, param);
+  correction->setTotScaling(tofId, param);
   delete correction;
 }

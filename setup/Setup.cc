@@ -246,7 +246,7 @@ void Setup::writeSettings()
 
 SensorTypes::Type Setup::sensorForId(unsigned short id)
 {
-  if (0x8000 <= id && id < 0x8040)
+  if (0x8000 <= id && id <= 0x803f)
     return tofSensorForId(id);
   //TODO: Tracker, TRD
   Q_ASSERT(false);
