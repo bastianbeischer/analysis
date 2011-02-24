@@ -6,9 +6,10 @@ TARGET      := $(LIBDIR)/libSimpleEvent.so
 INCLUDEDIRS := . $(shell root-config --incdir)
 TEMPDIR     := .tmp
 
-SOURCES = SimpleEvent.cc MCEventInformation.cc Hit.cc Cluster.cc DataDescription.cc TOFSipmHit.cc TOFCluster.cc SensorTypes.cc
-HEADERS = SimpleEvent.hh MCEventInformation.hh Hit.hh Cluster.hh DataDescription.hh TOFSipmHit.hh TOFCluser.hh SensorTypes.hh
+CLASSES = SimpleEvent MCEventInformation Hit Cluster DataDescription TOFSipmHit TOFCluster SensorTypes
 
+SOURCES = $(addsuffix .cc, $(CLASSES))
+HEADERS = $(addsuffix .hh, $(CLASSES))
 DICTS   = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=Dict.cc))
 OBJECTS = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=.o)) $(DICTS:.cc=.o)
 
@@ -32,7 +33,6 @@ distclean:
 	@echo "Cleaning up everything ..."
 	@rm -fr $(TEMPDIR)
 	@rm -f $(TARGET)
-
 
 $(TARGET): $(OBJECTS)
 	$(CXX) $(LFLAGS) -o $(TARGET) $(OBJECTS) -shared $(LIBS)
