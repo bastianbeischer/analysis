@@ -21,7 +21,7 @@ QVector<Hit*> ClusterGenerator::findClusters(const QVector<Hit*>& rawhits)
   HitStorage* hitStorage = new HitStorage;
 
   foreach(Hit* rawhit, rawhits) {
-    unsigned short id = rawhit->detId();
+    unsigned short id = rawhit->detId() - rawhit->channel();
     DetectorElement* element = setup->element(id);
     (*hitStorage)[element].append(rawhit);
   }
