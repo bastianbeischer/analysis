@@ -52,14 +52,16 @@ private:
 public:
   double trdScalingFactor(unsigned int);
   void setTrdScalingFactor(unsigned int, double);
-  void setTimeOverThresholdScaling(const unsigned int tofChannel, const QList<QVariant> param);
-  static bool timeOverThresholdScalingLoaded;
-  static QMap<unsigned int, QList<double> >timeOverThresholdScalings;
+  void setTimeOverThresholdScaling(const unsigned int tofId, const QList<QVariant> param);
+  double timeOverThresholdReference();
   
 private:
   QString m_tofTimeOverThresholdScalingPrefix;
+  double m_timeOverThresholdScalings[64][2];
   void loadTimeOverThresholdScaling();
-  double timeOverThresholdScalingFactor(const unsigned int tofChannel, const double temperature);
+  double timeOverThresholdScalingFactor(const unsigned int tofId, const double temperature);
+  double m_timeOverThresholdReference;
+  unsigned int tofChannel(unsigned int);
   
 private:
   QSettings* m_trdSettings;

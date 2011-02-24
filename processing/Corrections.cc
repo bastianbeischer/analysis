@@ -20,11 +20,9 @@
 #include <cstring>
 #include <cmath>
 
-bool Corrections::timeOverThresholdScalingLoaded = false;
-QMap<unsigned int, QList<double> > Corrections::timeOverThresholdScalings;
-
 Corrections::Corrections(Flags flags)
   : m_tofTimeOverThresholdScalingPrefix("TimeOverThresholdScaling/")
+  , m_timeOverThresholdReference(30.)
   , m_trdSettings(0)
   , m_tofSettings(0)
   , m_flags(flags)
@@ -42,6 +40,8 @@ Corrections::Corrections(Flags flags)
   }
   m_trdSettings = new QSettings(path + "TRDCorrections.conf", QSettings::IniFormat);
   m_tofSettings = new QSettings(path + "TOFCorrections.conf", QSettings::IniFormat);
+  
+  loadTimeOverThresholdScaling();
 }
 
 Corrections::~Corrections()
@@ -59,7 +59,6 @@ void Corrections::preFitCorrections(SimpleEvent* event)
     if (m_flags & TimeShifts) timeShift(hit);
     if (m_flags & TrdMopv) trdMopv(hit);
     if (m_flags & TofTimeOverThreshold) {
-      loadTimeOverThresholdScaling();
       tofTimeOverThreshold(hit, event);
     }
   }
@@ -212,42 +211,46 @@ void Corrections::photonTravelTime(Track* track)
   }
 }
 
-void Corrections::setTimeOverThresholdScaling(const unsigned int tofChannel, const QList<QVariant> param)
+void Corrections::setTimeOverThresholdScaling(const unsigned int tofId, const QList<QVariant> param)
 {
-    m_tofSettings->setValue(m_tofTimeOverThresholdScalingPrefix+QString::number(tofChannel,16), param);
+    m_tofSettings->setValue(m_tofTimeOverThresholdScalingPrefix+QString::number(tofId,16), param);
     m_tofSettings->sync();
 }
 
 void Corrections::loadTimeOverThresholdScaling()
 {
-  if (!Corrections::timeOverThresholdScalingLoaded) {
-    QString prefix = m_tofTimeOverThresholdScalingPrefix;
-    prefix.remove("/");
-    if ( !m_tofSettings->childGroups().contains(prefix) ) {
-      const QString fileName =  m_tofSettings->fileName();
-      qDebug() << QString("ERROR: %1 does not contain any %2").arg(fileName, prefix);
-    }
-    for (unsigned int tofId = 0x8000; tofId <= 0x803f; tofId++) {
-      QList<QVariant> params= m_tofSettings->value(QString(m_tofTimeOverThresholdScalingPrefix+"%1").arg(tofId,0,16)).toList();
-      QList<double> paramsOutOfDoubles;
-      for (int i = 0; i < params.size(); i++) {
-        paramsOutOfDoubles.push_back(params[i].toDouble());
-      }
-      Corrections::timeOverThresholdScalings.insert(tofId, paramsOutOfDoubles);
-    }
-      
+  QString prefix = m_tofTimeOverThresholdScalingPrefix;
+  prefix.remove("/");
+  if ( !m_tofSettings->childGroups().contains(prefix) ) {
+    const QString fileName =  m_tofSettings->fileName();
+    qDebug() << QString("ERROR: %1 does not contain any %2").arg(fileName, prefix);
   }
-  Corrections::timeOverThresholdScalingLoaded = true;
+  for (unsigned int tofId = 0x8000; tofId <= 0x803f; tofId++) {
+    QList<QVariant> params= m_tofSettings->value(QString(m_tofTimeOverThresholdScalingPrefix+"%1").arg(tofId,0,16)).toList();
+    for (int i = 0; i < params.size(); i++) {
+      m_timeOverThresholdScalings[tofChannel(tofId)][i] = params[i].toDouble();
+    }
+  }
 }
 
-double Corrections::timeOverThresholdScalingFactor(const unsigned int tofChannel, const double temperature)
+double Corrections::timeOverThresholdScalingFactor(const unsigned int tofId, const double temperature)
 {
-  const double timeOverThresholdReference = 30.;
-  if (Corrections::timeOverThresholdScalings[tofChannel][0] == 0 && Corrections::timeOverThresholdScalings[tofChannel][1] == 0) {
+  if (m_timeOverThresholdScalings[tofChannel(tofId)][0] == 0 && m_timeOverThresholdScalings[tofChannel(tofId)][1] == 0) {
     return 0;
   }
   else {
-    return timeOverThresholdReference / (Corrections::timeOverThresholdScalings[tofChannel][0] + Corrections::timeOverThresholdScalings[tofChannel][1] *temperature);
+    return m_timeOverThresholdReference / (m_timeOverThresholdScalings[tofChannel(tofId)][0] + m_timeOverThresholdScalings[tofChannel(tofId)][1] *temperature);
   }
   //TODO: some kind of information if the temperature value is valid for this scaling
+}
+
+double Corrections::timeOverThresholdReference()
+{
+  return m_timeOverThresholdReference;
+}
+
+unsigned int Corrections::tofChannel(unsigned int tofId)
+{
+  const unsigned int firstTofId = 0x8000;
+  return tofId - firstTofId;
 }
