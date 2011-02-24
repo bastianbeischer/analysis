@@ -311,24 +311,29 @@ void MainWindow::listWidgetCurrentRowChanged(int i)
 void MainWindow::setupPlots()
 {
   Setup* setup = Setup::instance();
+  const ElementIterator elementStartIt = setup->firstElement();
+  const ElementIterator elementEndIt = setup->lastElement();
+  const LayerIterator layerStartIt = setup->firstLayer();
+  const LayerIterator layerEndIt = setup->lastLayer();
+  ElementIterator elementIt;
+  LayerIterator layerIt;
 
   m_ui.plotter->clearPlots();
   m_activePlots.clear();
   m_ui.listWidget->clear();
+
   if (m_ui.signalHeightTrackerCheckBox->isChecked()) {
-    DetectorElement* element = setup->firstElement();
-    while(element) {
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tracker)
         m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightTracker, element->id()));
-      element = setup->nextElement();
     }
   }
   if (m_ui.signalHeightTRDCheckBox->isChecked()) {
-    DetectorElement* element = setup->firstElement();
-    while(element) {
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::trd)
         m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightTRD, element->id()));
-      element = setup->nextElement();
     }
 
     m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
@@ -337,8 +342,9 @@ void MainWindow::setupPlots()
     
     TRDFitPlot* mpvModuleTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD, "MPVs of TRD Modules");
     TRDFitPlot* mpvChannelTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD, "MPVs of TRD Channels");
-    element = setup->firstElement();
-    while(element) {
+
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::trd){
         TRDSpectrumPlot* trdModuleSpectrumPlot = new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, element->id(),TRDSpectrumPlot::module);
         m_ui.plotter->addPlot(trdModuleSpectrumPlot);
@@ -349,52 +355,45 @@ void MainWindow::setupPlots()
           mpvChannelTRDPlot->addLandauFit(trdChannelSpectrumPlot->landauFit());
         }
       }
-      element = setup->nextElement();
     }
     m_ui.plotter->addPlot(mpvModuleTRDPlot);
     m_ui.plotter->addPlot(mpvChannelTRDPlot);
   }
   if (m_ui.clusterShapeTrackerCheckBox->isChecked()) {
-    DetectorElement* element = setup->firstElement();
-    while(element) {
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tracker) {
         m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterShapeTracker, element->id()));
         m_ui.plotter->addPlot(new ClusterShapePlot(element->id()));
       }
-      element = setup->nextElement();
     }
   }
   if (m_ui.clusterShapeTRDCheckBox->isChecked()) {
-    DetectorElement* element = setup->firstElement();
-    while(element) {
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::trd)
         m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterShapeTRD, element->id()));
-      element = setup->nextElement();
     }
   }
   if (m_ui.timeOverThresholdCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TOTPlot);
-    DetectorElement* element = 0;
-    element = setup->firstElement();
-    while (element) {
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)
         for (int ch = 0; ch < 4; ++ch)
           m_ui.plotter->addPlot(new TOTMomentumCorrelation(element->id() | ch));
-      element = setup->nextElement();
     }
-    element = setup->firstElement();
-    while (element) {
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)
         for (int ch = 0; ch < 4; ++ch)
           m_ui.plotter->addPlot(new TOTTemperatureCorrelationPlot(element->id() | ch));
-      element = setup->nextElement();
     }
-    element = setup->firstElement();
-    while (element) {
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)
         for (int ch = 0; ch < 4; ++ch)
           m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch));
-      element = setup->nextElement();
     }
   }
   if (m_ui.trackingCheckBox->isChecked()) {
@@ -407,27 +406,24 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new Chi2PerNdfPlot);
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
-    Layer* layer = setup->firstLayer();
-    while(layer) {
+    for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
+      Layer* layer = *layerIt;
       m_ui.plotter->addPlot(new GeometricOccupancyPlot(layer->z()));
       m_ui.plotter->addPlot(new GeometricOccupancyProjectionPlot(layer->z()));
-      layer = setup->nextLayer();
     }
   }
   if (m_ui.residualsTrackerCheckBox->isChecked()) {
-    Layer* layer = setup->firstLayer();
-    while(layer) {
+    for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
+      Layer* layer = *layerIt;
       if (layer->z() > -240 && layer->z() < 240)
         m_ui.plotter->addPlot(new ResidualPlot(AnalysisPlot::ResidualsTracker, layer));
-      layer = setup->nextLayer();
     }
   }
   if (m_ui.residualsTRDCheckBox->isChecked()) {
-    Layer* layer = setup->firstLayer();
-    while(layer) {
+    for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
+      Layer* layer = *layerIt;
       if (layer->z() > -520 && layer->z() < -240)
         m_ui.plotter->addPlot(new ResidualPlot(AnalysisPlot::ResidualsTRD, layer));
-      layer = setup->nextLayer();
     }
   }
   if (m_ui.momentumReconstructionCheckBox->isChecked()) {
@@ -439,14 +435,13 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new AlbedosVsMomentumPlot());
   }
   if (m_ui.efficiencyTofCheckBox->isChecked()) {
-    DetectorElement* element = setup->firstElement();
-    while (element) {
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof) {
         for (int ch = 0; ch < 4; ++ch) {
           m_ui.plotter->addPlot(new TOFEfficiencyPlot(element->id() | ch));
         }
       }
-      element = setup->nextElement();
     }
   }
   if (m_ui.resolutionTofCheckBox->isChecked()) {
@@ -456,11 +451,10 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x802c, 0x803c));
   }
   if (m_ui.calibrationTofCheckBox->isChecked()) {
-    DetectorElement* element = setup->firstElement();
-    while (element) {
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)
         m_ui.plotter->addPlot(new TOFTimeDifferencePlot(element->id()));
-      element = setup->nextElement();
     }
     m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8000, 0x8010, true));
     m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8000, 0x8010, false));
@@ -504,11 +498,10 @@ void MainWindow::setupPlots()
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BetaPlot());
-    DetectorElement* element = setup->firstElement();
-    while (element) {
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)
         m_ui.plotter->addPlot(new TOFPositionCorrelationPlot(element->id()));
-      element = setup->nextElement();
     }
     //m_ui.plotter->addPlot(new TOFAlignment);
   }

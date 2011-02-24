@@ -54,13 +54,7 @@ void DataInterface::process(AlignmentMatrix* matrix)
     m_corrections->preFitCorrections(event);
 
     // retrieve data
-    QVector<Hit*> clusters;
-    QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
-    if (event->contentType() == SimpleEvent::Clusters)
-      clusters = hits;
-    else
-      clusters = Setup::instance()->generateClusters(hits);
-
+    QVector<Hit*> clusters = QVector<Hit*>::fromStdVector(event->hits());
     // track finding
     QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
 
@@ -77,10 +71,6 @@ void DataInterface::process(AlignmentMatrix* matrix)
       }
     }
     
-    // delete clusters if necessary
-    if (event->contentType() == SimpleEvent::RawData)
-      qDeleteAll(clusters);
-
     if ( i > iFactors*nEntries/100. ) {
       std::cout << "#" << std::flush;
       iFactors++;

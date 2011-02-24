@@ -24,12 +24,8 @@ QMutex Setup::s_mutex;
 
 Setup::Setup() :
   m_coordinates(0),
-  m_settings(0),
-  m_layerIt(0),
-  m_elementIt(0)
+  m_settings(0)
 {
-  s_instance = this; // this has to be set before construct()!
-
   QStringList envVariables = QProcess::systemEnvironment();
   QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
   QString path = "";
@@ -61,9 +57,7 @@ Setup::~Setup()
 Setup* Setup::instance()
 {
   Setup::s_mutex.lock();
-  if (!s_instance){
-    if (!s_instance) new Setup();
-  }
+  if (!s_instance) s_instance = new Setup;
   Setup::s_mutex.unlock();
   return s_instance;
 }
@@ -75,13 +69,13 @@ void Setup::construct()
     QStringList list = key.split("/");
     if (list[0] == "layer") {
       double z = list[1].toDouble();
-      Layer* layer = this->layer(z);
+      Layer* layer = constructLayer(z);
       QStringList detIds = m_settings->value(key).toStringList();
       foreach(QString detId, detIds) {
         bool ok;
         unsigned short id = detId.toUShort(&ok, 16);
         if (ok) {
-          DetectorElement* element = this->element(id);
+          DetectorElement* element = constructElement(id);
           layer->addElement(element);
         }
       } // elements
@@ -90,99 +84,52 @@ void Setup::construct()
   } // layers
 }
 
-Layer* Setup::firstLayer()
+Layer* Setup::constructLayer(double z)
 {
-  if (m_layers.size() == 0) return 0;
-  m_layerIt = m_layers.begin();
-  return m_layerIt.value();
+  // round to two digits.
+  z = round(z*100.)/100.;
+
+  // should not exist already
+  Q_ASSERT(!m_layers[z]);
+
+  Layer* layer = new Layer(z);
+  m_layers[z] = layer;
+  return layer;
 }
 
-DetectorElement* Setup::firstElement()
+DetectorElement* Setup::constructElement(unsigned short id)
 {
-  if (m_elements.size() == 0) return 0;
-  m_elementIt = m_elements.begin();
-  return m_elementIt.value();
-}
+  unsigned short usbBoard = (id >> 8) << 8;
+  
+  // should not exist already
+  Q_ASSERT(!m_elements[id]);
 
-Layer* Setup::nextLayer()
-{
-  ++m_layerIt;
-  if (m_layerIt == m_layers.end())
-    return 0;
+  DetectorElement* element = 0;
+  if (usbBoard == 0x3200 || usbBoard == 0x3600 || usbBoard == 0x3400 || usbBoard == 0x3500)
+    element = new TRDModule(id, this);
+  else if (usbBoard == 0x8000)
+    element = new TOFBar(id, this);
+  else
+    element = new SipmArray(id, this);
 
-  return m_layerIt.value();
-}
-
-DetectorElement* Setup::nextElement()
-{
-  ++m_elementIt;
-  if (m_elementIt == m_elements.end())
-    return 0;
-
-  return m_elementIt.value();
+  m_elements[id] = element;
+  return element;
 }
 
 Layer* Setup::layer(double z)
 {
   // round to two digits.
   z = round(z*100.)/100.;
-
-  if (!m_layers[z]) m_layers[z] = new Layer(z);
-  return m_layers[z];
+  Layer* layer = m_layers[z];
+  Q_ASSERT(layer);
+  return layer;
 }
 
 DetectorElement* Setup::element(unsigned short id)
 {
-  unsigned short usbBoard = (id >> 8) << 8;
-  
-  if (!m_elements[id]) {
-    if (usbBoard == 0x3200 || usbBoard == 0x3600 || usbBoard == 0x3400 || usbBoard == 0x3500)
-      m_elements[id] = new TRDModule(id, this);
-    else if (usbBoard == 0x8000)
-      m_elements[id] = new TOFBar(id, this);
-    else
-      m_elements[id] = new SipmArray(id, this);
-  }
-
-  return m_elements[id];
-}
-
-QVector<Hit*> Setup::generateClusters(const QVector<Hit*>& hits)
-{
-  QVector<Hit*> clusters;
-
-  addHitsToLayers(hits);
-  Layer* layer = firstLayer();
-  while(layer) {
-    clusters += layer->clusters();
-
-    // // alternative: use only the best cluster
-    // Cluster* cluster = layer->bestCluster();
-    // if (cluster)
-    //   clusters.push_back(cluster);
-
-    // update pointer
-    layer = nextLayer();
-  }
-
-  return clusters;
-}
-
-void Setup::addHitsToLayers(const QVector<Hit*>& hits)
-{
-  // remove old hits
-  clearHitsFromLayers();
-
-  foreach(Hit* hit, hits) {
-    double z = hit->position().z();
-    layer(z)->addHitToDetector(hit);
-  }
-}
-
-void Setup::clearHitsFromLayers()
-{
-  foreach(Layer* layer, m_layers)
-    layer->clearHitsInDetectors();
+  DetectorElement* element = m_elements[id];
+  Q_ASSERT(element);
+  return element;
 }
 
 TVector3 Setup::configFilePosition(QString group, unsigned short detId) const

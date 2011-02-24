@@ -172,8 +172,9 @@ void TRDOccupancyPlot::initializeEllipses()
   //create for each trd channel an ellipses
   Setup* setup = Setup::instance();
 
-  DetectorElement* element = setup->firstElement();
-  while(element) {
+  const ElementIterator endIt = setup->lastElement();
+  for (ElementIterator it = setup->firstElement(); it != endIt; ++it) {
+    DetectorElement* element = *it;
     if (element->type() == DetectorElement::trd){
       for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++){
         unsigned short detID = element->id() | tubeNo;
@@ -181,6 +182,5 @@ void TRDOccupancyPlot::initializeEllipses()
         m_ellipses.insert(detID, new TEllipse(posTRDChan.x(),posTRDChan.z(), 3.0)) ;
       }
     }
-    element = setup->nextElement();
   }
 }

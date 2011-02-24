@@ -104,12 +104,7 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QPlainTex
 
   m_corrections->preFitCorrections(event);
 
-  QVector<Hit*> clusters;
-  QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
-  if (event->contentType() == SimpleEvent::Clusters)
-    clusters = hits;
-  else
-    clusters = Setup::instance()->generateClusters(hits);
+  QVector<Hit*> clusters = QVector<Hit*>::fromStdVector(event->hits());
 
   Track* track = 0;
   if (drawTrack) {
@@ -146,9 +141,6 @@ void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QPlainTex
   infoTextEdit.appendPlainText("\n  runfilename:\n  " +  runfileName);
   infoTextEdit.appendPlainText("\n  event in runfile:\n  " +  QString::number(eventInRunFile));
   //infoTextEdit.append("\n  ms in runfile:\n  " + QString::number(msOfEventInRun));
-
-  if (event->contentType() == SimpleEvent::RawData)
-    qDeleteAll(clusters);
 }
 
 void Plotter::saveCanvas(const QString& fileName)

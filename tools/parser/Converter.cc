@@ -58,7 +58,7 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
   unsigned int runStartTime = file->getStartTime(); // convert ms to s for
   unsigned int eventTime = event->GetTime();
 
-  SimpleEvent* simpleEvent = new SimpleEvent(eventId, runStartTime, eventTime, mcFile? SimpleEvent::MCRawData : SimpleEvent::RawData);
+  SimpleEvent* simpleEvent = new SimpleEvent(eventId, runStartTime, eventTime, mcFile? SimpleEvent::MonteCarlo : SimpleEvent::Data);
 
   // loop over all present detector IDs
   QList<DetectorID*> detIDs = event->GetIDs();
