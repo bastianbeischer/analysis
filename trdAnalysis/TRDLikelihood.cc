@@ -240,7 +240,7 @@ void TRDLikelihood::addLearnEvent(const QVector<Hit*>&, const Track* track, cons
   //get particle info:
   int pdgId = event->MCInformation()->pdgId();
 
-  if (qAbs(pdgId) != 2212 || qAbs(pdgId) != 11)
+  if ( !(qAbs(pdgId) == 2212 || qAbs(pdgId) == 11) )
     return;
 
   bool isProton = (pdgId == 2212);
@@ -276,7 +276,7 @@ void TRDLikelihood::addLearnEvent(const QVector<Hit*>&, const Track* track, cons
 
   //only use following momenta 0.5 < |p| < 5
   double pAbs = qAbs(p);
-  if(pAbs < 1 || pAbs > 6){
+  if(pAbs < 0.5 || pAbs > 10.5){
     m_pNotInRange++;
     return;
   }
@@ -346,7 +346,7 @@ void TRDLikelihood::normalizeLikelihoodHistos(){
 
   TF1 *f_ppar = new TF1("fit_p",pfunperdaix,0.,100,6);
   f_ppar->SetNpx(1000);
-  f_ppar->SetParameters(4.32391,2.23676,1.02281,0.788797,10,-0.1);
+  f_ppar->SetParameters(4.32391,2.23676,1.02281,0.788797,4,-0.1);
   for (int i = 4; i < 5; i++)
     f_ppar->SetParLimits(i,f_ppar->GetParameter(i),f_ppar->GetParameter(i));
   m_protonModuleSumLikelihood->Fit(f_ppar);
