@@ -31,8 +31,9 @@ TRDEfficiencyPlot::TRDEfficiencyPlot()
   //initialize the 2D positions of the trd tubes:
   Setup* setup = Setup::instance();
 
-  DetectorElement* element = setup->firstElement();
-  while(element) {
+  const ElementIterator endIt = setup->lastElement();
+  for (ElementIterator it = setup->firstElement(); it != endIt; ++it) {
+    DetectorElement* element = *it;
     if (element->type() == DetectorElement::trd){
       //loop over the 16 tubes
       for( int i = 0; i < 16; i++){
@@ -43,7 +44,6 @@ TRDEfficiencyPlot::TRDEfficiencyPlot()
         m_trdChanPositions.insert(detID, pos2D);
       }
     }
-    element = setup->nextElement();
   }
 
   //initialize all needed ellipses
@@ -181,8 +181,9 @@ void TRDEfficiencyPlot::initializeEllipses()
   //create for each trd channel an ellipses
   Setup* setup = Setup::instance();
 
-  DetectorElement* element = setup->firstElement();
-  while(element) {
+  const ElementIterator endIt = setup->lastElement();
+  for (ElementIterator it = setup->firstElement(); it != endIt; ++it) {
+    DetectorElement* element = *it;
     if (element->type() == DetectorElement::trd){
       for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++){
         unsigned short detID = element->id() | tubeNo;
@@ -192,6 +193,5 @@ void TRDEfficiencyPlot::initializeEllipses()
         ell->SetFillColor(kWhite);
       }
     }
-    element = setup->nextElement();
   }
 }

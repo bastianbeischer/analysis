@@ -34,15 +34,16 @@ MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot() :
 
   m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBinsX, x0, x1);
 
-  Layer* layer = Setup::instance()->firstLayer();
   int i = 0;
-  while (layer) {
+  Setup* setup = Setup::instance();
+  const LayerIterator endIt = setup->lastLayer();
+  for (LayerIterator it = setup->firstLayer(); it != endIt; ++it) {
+    Layer* layer = *it;
     double layerZ = floor(layer->z());
     if (layerZ > -240 && layerZ < 240) {
       m_layerZ[i] = layerZ;
       i++;
     }
-    layer = Setup::instance()->nextLayer();
   }
 }
 

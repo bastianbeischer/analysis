@@ -24,12 +24,8 @@ QMutex Setup::s_mutex;
 
 Setup::Setup() :
   m_coordinates(0),
-  m_settings(0),
-  m_layerIt(0),
-  m_elementIt(0)
+  m_settings(0)
 {
-  s_instance = this; // this has to be set before construct()!
-
   QStringList envVariables = QProcess::systemEnvironment();
   QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
   QString path = "";
@@ -61,9 +57,7 @@ Setup::~Setup()
 Setup* Setup::instance()
 {
   Setup::s_mutex.lock();
-  if (!s_instance){
-    if (!s_instance) new Setup();
-  }
+  if (!s_instance) s_instance = new Setup;
   Setup::s_mutex.unlock();
   return s_instance;
 }
@@ -88,38 +82,6 @@ void Setup::construct()
       layer->sortIdsByPosition();
     }
   } // layers
-}
-
-Layer* Setup::firstLayer()
-{
-  if (m_layers.size() == 0) return 0;
-  m_layerIt = m_layers.begin();
-  return m_layerIt.value();
-}
-
-DetectorElement* Setup::firstElement()
-{
-  if (m_elements.size() == 0) return 0;
-  m_elementIt = m_elements.begin();
-  return m_elementIt.value();
-}
-
-Layer* Setup::nextLayer()
-{
-  ++m_layerIt;
-  if (m_layerIt == m_layers.end())
-    return 0;
-
-  return m_layerIt.value();
-}
-
-DetectorElement* Setup::nextElement()
-{
-  ++m_elementIt;
-  if (m_elementIt == m_elements.end())
-    return 0;
-
-  return m_elementIt.value();
 }
 
 Layer* Setup::layer(double z)
@@ -152,8 +114,9 @@ QVector<Hit*> Setup::generateClusters(const QVector<Hit*>& hits)
   QVector<Hit*> clusters;
 
   addHitsToLayers(hits);
-  Layer* layer = firstLayer();
-  while(layer) {
+  const LayerIterator endIt = lastLayer();
+  for (LayerIterator it = firstLayer(); it != endIt; ++it) {
+    Layer* layer = *it;
     clusters += layer->clusters();
 
     // // alternative: use only the best cluster
@@ -162,7 +125,6 @@ QVector<Hit*> Setup::generateClusters(const QVector<Hit*>& hits)
     //   clusters.push_back(cluster);
 
     // update pointer
-    layer = nextLayer();
   }
 
   return clusters;
@@ -243,4 +205,3 @@ void Setup::writeSettings()
   // in order for the file to end up on disk we need to call "sync" here
   m_settings->sync();
 }
-

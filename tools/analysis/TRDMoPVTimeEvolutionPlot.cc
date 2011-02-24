@@ -33,14 +33,14 @@ TRDMoPVTimeEvolutionPlot::TRDMoPVTimeEvolutionPlot(AnalysisPlot::Topic topic) :
   setTitle("MoPV time evolution");
 
   //add a graph for each module:
-  Setup* setup = Setup::instance();
-
-  DetectorElement* element = setup->firstElement();
 
   TLegend* legend = new TLegend();
-
   int color = 0;
-  while(element) {
+
+  Setup* setup = Setup::instance();
+  const ElementIterator endIt = setup->lastElement();
+  for (ElementIterator it = setup->firstElement(); it != endIt; ++it) {
+    DetectorElement* element = *it;
     if (element->type() == DetectorElement::trd){
       TGraphErrors* g = new TGraphErrors();
 
@@ -52,7 +52,6 @@ TRDMoPVTimeEvolutionPlot::TRDMoPVTimeEvolutionPlot(AnalysisPlot::Topic topic) :
 
       m_mopvGraphs.insert(element->id(),g);
     }
-    element = setup->nextElement();
   }
   multiGraph()->SetTitle(qPrintable(title() + ";Run;MoPV"));
 
