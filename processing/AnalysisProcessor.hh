@@ -17,7 +17,7 @@ public:
   void setTrackType(Track::Type);
   void setCorrectionFlags(Corrections::Flags);
 
-  void process(SimpleEvent*) const;
+  void process(SimpleEvent*);
 
 private:
   Track* m_track;

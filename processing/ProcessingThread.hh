@@ -13,7 +13,7 @@ class ProcessingThread :
 {
   
 public:
-  ProcessingThread(const EventProcessor*, QObject* = 0);
+  ProcessingThread(EventProcessor*, QObject* = 0);
   ~ProcessingThread();
   
   EventQueue* queue();
@@ -27,7 +27,7 @@ protected:
 
 protected:
   EventQueue* m_queue;
-  const EventProcessor* m_processor;
+  EventProcessor* m_processor;
   bool m_abort;
   QMutex m_mutex;
   

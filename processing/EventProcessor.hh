@@ -17,7 +17,7 @@ public:
   void addDestination(EventDestination*);
   void clearDestinations();
 
-  virtual void process(SimpleEvent*) const = 0;
+  virtual void process(SimpleEvent*) = 0;
 
 protected:
   QVector<EventDestination*> m_destinations;

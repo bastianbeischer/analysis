@@ -60,7 +60,7 @@ void AnalysisProcessor::setCorrectionFlags(Corrections::Flags flags)
   m_corrections->setFlags(flags);
 }
 
-void AnalysisProcessor::process(SimpleEvent* event) const
+void AnalysisProcessor::process(SimpleEvent* event)
 {
   m_corrections->preFitCorrections(event);
 

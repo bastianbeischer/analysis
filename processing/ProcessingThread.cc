@@ -5,7 +5,7 @@
 #include "EventProcessor.hh"
 #include "SimpleEvent.hh"
 
-ProcessingThread::ProcessingThread(const EventProcessor* processor, QObject* parent) :
+ProcessingThread::ProcessingThread(EventProcessor* processor, QObject* parent) :
   QThread(parent),
   m_queue(new EventQueue),
   m_processor(processor),
