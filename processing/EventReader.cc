@@ -3,7 +3,8 @@
 #include "SimpleEvent.hh"
 #include "EventQueue.hh"
 #include "DataChain.hh"
-#include "EventProcessor.hh"
+#include "ProcessingThread.hh"
+#include "AnalysisProcessor.hh"
 #include "EventDestination.hh"
 #include "Track.hh"
 #include "Corrections.hh"
@@ -33,8 +34,8 @@ EventReader::~EventReader()
 int EventReader::queuedEvents() const
 {
   int queuedEvents = 0;
-  foreach(EventProcessor* processor, m_processors)
-    queuedEvents+= processor->queue()->numberOfEvents();
+  foreach(ProcessingThread* thread, m_threads)
+    queuedEvents += thread->queue()->numberOfEvents();
   return queuedEvents;
 }
 
@@ -105,23 +106,24 @@ void EventReader::run()
 {
   emit(eventLoopStarted());
   for (int thread = 0; thread < m_nThreads; ++thread) {
-    EventProcessor* processor = new EventProcessor(m_trackType, m_correctionFlags, m_destinations);
-    m_processors.append(processor);
-    processor->start();
+    AnalysisProcessor* processor = new AnalysisProcessor(m_destinations, m_trackType, m_correctionFlags);
+    ProcessingThread* thread = new ProcessingThread(processor);
+    m_threads.append(thread);
+    thread->start();
   }
 
   Q_ASSERT(m_firstEvent <= m_lastEvent && m_lastEvent < m_chain->nEntries());
   unsigned int nEvents = m_lastEvent - m_firstEvent + 1;
 
   for (m_readEvents = 0; m_readEvents < nEvents;) {
-    foreach(EventProcessor* processor, m_processors) {
-      if (processor->queue()->freeSpace() > 0) {
-          SimpleEvent* event = m_chain->event(m_firstEvent + m_readEvents);
-          processor->queue()->enqueue(new SimpleEvent(*event));
-          m_mutex.lock();
-          ++m_readEvents;
-          m_mutex.unlock();
-       }
+    foreach(ProcessingThread* thread, m_threads) {
+      if (thread->queue()->freeSpace() > 0) {
+        SimpleEvent* event = m_chain->event(m_firstEvent + m_readEvents);
+        thread->queue()->enqueue(new SimpleEvent(*event));
+        m_mutex.lock();
+        ++m_readEvents;
+        m_mutex.unlock();
+      }
     }
 
     m_mutex.lock();
@@ -136,15 +138,15 @@ void EventReader::run()
     usleep(10000);
   } while (queuedEvents());
 
-  foreach (EventProcessor* processor, m_processors)
-    processor->stop();
+  foreach (ProcessingThread* thread, m_threads)
+    thread->stop();
 
   m_mutex.lock();
   m_abort = true;
   m_mutex.unlock();
 
-  qDeleteAll(m_processors);
-  m_processors.clear();
+  qDeleteAll(m_threads);
+  m_threads.clear();
 
   emit(eventLoopStopped());
 }
