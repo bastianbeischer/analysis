@@ -570,6 +570,7 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
 void MainWindow::analyzeButtonClicked()
 {
   if (m_ui.analyzeButton->text() == "&start") {
+    m_reader->clearDestinations();
     Track::Type type;
     Corrections::Flags flags;
     setupAnalysis(type, flags);
