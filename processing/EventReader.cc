@@ -30,37 +30,22 @@ EventReader::~EventReader()
   delete m_chain;
 }
 
-int EventReader::progress() const
+int EventReader::queuedEvents() const
 {
   int queuedEvents = 0;
-  if(!m_abort)
-  {
-    foreach(EventProcessor* processor, m_processors)
-      queuedEvents+= processor->queue()->numberOfEvents();
-    return 100.* (m_readEvents - queuedEvents) / m_nEvents;
-  }
-  else
-  {
-    if (m_readEvents > 0)
-      return 100;
-    else
-      return 0;
-  }
+  foreach(EventProcessor* processor, m_processors)
+    queuedEvents+= processor->queue()->numberOfEvents();
+  return queuedEvents;
 }
 
-int EventReader::buffer() const
+double EventReader::progress() const
 {
-  if(!m_abort)
-  {
-    int queuedEvents = 0;
-    foreach(EventProcessor* processor, m_processors)
-      queuedEvents+= processor->queue()->numberOfEvents();
-    return 100.* queuedEvents / (m_nThreads * EventQueue::s_bufferSize);
-  }
-  else
-  {
-    return 0;
-  }
+  return 100. * (m_readEvents - queuedEvents()) / m_nEvents;
+}
+
+double EventReader::buffer() const
+{
+  return 100.* queuedEvents() / (m_nThreads * EventQueue::s_bufferSize);
 }
 
 void EventReader::addDestination(EventDestination* destination)
@@ -146,13 +131,10 @@ void EventReader::run()
     }
     m_mutex.unlock();
   }
-
-  //wait for buffers to be emptied
-  while (progress() < 100 && !m_abort)
-  {
-    //qDebug() << progress();
-    usleep (10000) ;
-  }
+  
+  do {
+    usleep(10000);
+  } while (queuedEvents());
 
   foreach (EventProcessor* processor, m_processors)
     processor->stop();

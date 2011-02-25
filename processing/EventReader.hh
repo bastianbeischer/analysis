@@ -24,8 +24,9 @@ public:
   void start(Track::Type, Corrections::Flags, int nThreads, unsigned int first, unsigned int last);
   void stop();
 
-  int progress() const;
-  int buffer() const;
+  int queuedEvents() const;
+  double progress() const;
+  double buffer() const;
 
   void setFileList(const QString& fileName);
   void addFileList(const QString& fileName);
