@@ -10,6 +10,7 @@
 
 class DataChain;
 class EventDestination;
+class EventProcessor;
 class ProcessingThread;
 class Corrections;
 
@@ -18,10 +19,8 @@ Q_OBJECT
 public:
   EventReader(QObject* parent = 0);
   ~EventReader();
-  void addDestination(EventDestination*);
-  void clearDestinations();
-  void start(Track::Type, Corrections::Flags, int nThreads);
-  void start(Track::Type, Corrections::Flags, int nThreads, unsigned int first, unsigned int last);
+  void start(QVector<EventProcessor*>&);
+  void start(QVector<EventProcessor*>&, unsigned int first, unsigned int last);
   void stop();
 
   int queuedEvents() const;
@@ -40,15 +39,12 @@ protected:
 private:
   QMutex m_mutex;
   bool m_abort;
-  Track::Type m_trackType;
-  Corrections::Flags m_correctionFlags;
-  int m_nThreads;
   unsigned int m_firstEvent;
   unsigned int m_lastEvent;
   unsigned int m_nEvents;
   unsigned int m_readEvents;
   DataChain* m_chain;
-  QVector<EventDestination*> m_destinations;
+  int m_nThreads;
   QVector<ProcessingThread*> m_threads;
 };
 

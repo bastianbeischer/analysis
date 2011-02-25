@@ -4,7 +4,7 @@
 #include "EventQueue.hh"
 #include "DataChain.hh"
 #include "ProcessingThread.hh"
-#include "AnalysisProcessor.hh"
+#include "EventProcessor.hh"
 #include "EventDestination.hh"
 #include "Track.hh"
 #include "Corrections.hh"
@@ -15,14 +15,12 @@ EventReader::EventReader(QObject* parent)
   : QThread(parent)
   , m_mutex()
   , m_abort(true)
-  , m_trackType(Track::None)
-  , m_correctionFlags(Corrections::None)
-  , m_nThreads(0)
   , m_firstEvent(0)
   , m_lastEvent(0)
   , m_nEvents(0)
+  , m_readEvents(0)
   , m_chain(new DataChain())
-  , m_destinations()
+  , m_threads()
 {
 }
 
@@ -49,16 +47,6 @@ double EventReader::buffer() const
   return 100.* queuedEvents() / (m_nThreads * EventQueue::s_bufferSize);
 }
 
-void EventReader::addDestination(EventDestination* destination)
-{
-  Q_ASSERT(m_abort);
-  m_destinations.append(destination);
-}
-
-void EventReader::clearDestinations()
-{
-  m_destinations.clear();
-}
 void EventReader::setFileList(const QString& fileName)
 {
   m_chain->setFileList(qPrintable(fileName));
@@ -77,16 +65,16 @@ void EventReader::addRootFile(const QString& file)
   emit(numberOfEventsChanged(m_chain->nEntries()));
 }
 
-void EventReader::start(Track::Type trackType, Corrections::Flags flags, int nThreads)
+void EventReader::start(QVector<EventProcessor*>& processors)
 {
-  start(trackType, flags, nThreads, 0, m_chain->nEntries() - 1);
+  start(processors, 0, m_chain->nEntries() - 1);
 }
 
-void EventReader::start(Track::Type trackType, Corrections::Flags flags, int nThreads, unsigned int first, unsigned int last)
+void EventReader::start(QVector<EventProcessor*>& processors, unsigned int first, unsigned int last)
 {
-  m_trackType = trackType;
-  m_correctionFlags = flags;
-  m_nThreads = nThreads;
+  m_nThreads = processors.size();;
+  for (int i = 0; i < m_nThreads; ++i)
+    m_threads.append(new ProcessingThread(processors.at(i)));
   m_firstEvent = first;
   m_lastEvent = last;
   m_nEvents = last - first + 1;
@@ -105,12 +93,8 @@ void EventReader::stop()
 void EventReader::run()
 {
   emit(eventLoopStarted());
-  for (int thread = 0; thread < m_nThreads; ++thread) {
-    AnalysisProcessor* processor = new AnalysisProcessor(m_destinations, m_trackType, m_correctionFlags);
-    ProcessingThread* thread = new ProcessingThread(processor);
-    m_threads.append(thread);
+  foreach(ProcessingThread* thread, m_threads)
     thread->start();
-  }
 
   Q_ASSERT(m_firstEvent <= m_lastEvent && m_lastEvent < m_chain->nEntries());
   unsigned int nEvents = m_lastEvent - m_firstEvent + 1;
