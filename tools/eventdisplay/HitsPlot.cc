@@ -26,6 +26,7 @@
 
 HitsPlot::HitsPlot()
   : PerdaixDisplay()
+  , EventDestination()
   , m_fitInfo(0)
 {
 }

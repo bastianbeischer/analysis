@@ -12,7 +12,7 @@ class EventProcessor
 public:
   EventProcessor();
   EventProcessor(QVector<EventDestination*>);
-  ~EventProcessor();
+  virtual ~EventProcessor();
   
   void addDestination(EventDestination*);
   void clearDestinations();

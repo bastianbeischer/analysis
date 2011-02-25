@@ -15,6 +15,7 @@
 #include <cmath>
 
 AlignmentMatrix::AlignmentMatrix() :
+  EventDestination(),
   m_nGlobal(0),
   m_nLocal(0),
   m_globalDerivatives(0),
