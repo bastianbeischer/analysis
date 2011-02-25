@@ -14,6 +14,7 @@
 #include "Corrections.hh"
 #include "DataDescription.hh"
 #include "HitsPlot.hh"
+#include "AnalysisProcessor.hh"
 
 #include <TCanvas.h>
 #include <TH2I.h>
@@ -37,9 +38,11 @@ Plotter::Plotter(QWidget* parent)
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections)
   , m_track(0)
+  , m_processor(new AnalysisProcessor)
   , m_hitsPlot(new HitsPlot)
   , m_positionLabel(0)
 {
+  m_processor->addDestination(m_hitsPlot);
   m_hitsPlot->draw(GetCanvas());
   gPad->Update();
   setMouseTracking(true);
@@ -93,34 +96,41 @@ void Plotter::mouseMoveEvent(QMouseEvent* event)
   }
 }
 
-void Plotter::drawEvent(unsigned int i, bool drawTrack, int fitMethod, QPlainTextEdit& infoTextEdit)
+void Plotter::drawEvent(unsigned int i, Track::Type type, QPlainTextEdit& infoTextEdit)
 {
+  TCanvas* canvas = GetCanvas();
+  canvas->cd();
+
   if (m_track) {
     delete m_track;
     m_track = 0;
   }
   Q_ASSERT(i < numberOfEvents());
   SimpleEvent* event = m_chain->event(i);
+  m_processor->setTrackType(type);
+  m_processor->process(event);
 
-  m_corrections->preFitCorrections(event);
+  // m_corrections->preFitCorrections(event);
 
-  QVector<Hit*> clusters = QVector<Hit*>::fromStdVector(event->hits());
+  // QVector<Hit*> clusters = QVector<Hit*>::fromStdVector(event->hits());
 
-  Track* track = 0;
-  if (drawTrack) {
-    // track finding
-    clusters = m_trackFinding->findTrack(clusters);
-    if (fitMethod == 0)
-      track = new CenteredBrokenLine;
-    else if (fitMethod == 1)
-      track = new StraightLine;
-    else if (fitMethod == 2)
-      track = new BrokenLine;
-    track->fit(clusters);
-    m_corrections->postFitCorrections(track);
-    track->process();
-  }
-  m_hitsPlot->drawEvent(GetCanvas(), clusters, track);
+  // Track* track = 0;
+  // if (drawTrack) {
+  //   // track finding
+  //   clusters = m_trackFinding->findTrack(clusters);
+  //   if (fitMethod == 0)
+  //     track = new CenteredBrokenLine;
+  //   else if (fitMethod == 1)
+  //     track = new StraightLine;
+  //   else if (fitMethod == 2)
+  //     track = new BrokenLine;
+  //   track->fit(clusters);
+  //   m_corrections->postFitCorrections(track);
+  //   track->process();
+  // }
+  //  m_hitsPlot->processEvent(clusters, track);
+  canvas->Modified();
+  canvas->Update();
 
   //show info for event
   const DataDescription* currentDesc = m_chain->currentDescription();

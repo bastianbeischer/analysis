@@ -47,9 +47,8 @@ void HitsPlot::clearHits()
   m_fitInfo = 0;
 }
 
-void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* track)
+void HitsPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
 {
-  canvas->cd();
   clearHits();
 
   TPaletteAxis* palette = (TPaletteAxis*) histogram()->GetListOfFunctions()->FindObject("palette");
@@ -231,7 +230,4 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
     box->Draw("SAME");
     m_hits.push_back(box);
   }
-
-  canvas->Modified();
-  canvas->Update();
 }
