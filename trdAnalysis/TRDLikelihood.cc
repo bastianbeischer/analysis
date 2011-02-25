@@ -89,8 +89,9 @@ TRDLikelihood* TRDLikelihood::instance()
 
 void TRDLikelihood::initializeModuleLikelihoods(){
   Setup* setup = Setup::instance();
-  DetectorElement* element = setup->firstElement();
-  while(element) {
+  const ElementIterator endIt = setup->lastElement();
+  for (ElementIterator it = setup->firstElement(); it != endIt; ++it) {
+    DetectorElement* element = *it;
     if (element->type() == DetectorElement::trd){
       unsigned int detID = element->id();
       QString titlePositronHisto = "Positron Likelihood for module 0x" + QString::number(detID, 16) ;
@@ -101,7 +102,6 @@ void TRDLikelihood::initializeModuleLikelihoods(){
       TH1D* protonLikelihoodHisto = new TH1D(qPrintable(titleProtonHisto), qPrintable(titleProtonHisto + ";TRD Signal;probability"), 400, 0, 25);
       m_protonModuleLikelihood.insert(detID, protonLikelihoodHisto);
     }
-    element = setup->nextElement();
   }
 
   m_positronModuleSumLikelihood = new TH1D("Positron Likelihood for Sum of Modules", "Positron Likelihood for Sum of Modules;TRD Signal;probability", 1000, 0, 100);
@@ -346,7 +346,7 @@ void TRDLikelihood::normalizeLikelihoodHistos(){
 
   TF1 *f_ppar = new TF1("fit_p",pfunperdaix,0.,100,6);
   f_ppar->SetNpx(1000);
-  f_ppar->SetParameters(4.32391,2.23676,1.02281,0.788797,4,-0.1);
+  f_ppar->SetParameters(4.32391,2.23676,1.02281,0.788797,8,-0.1);
   for (int i = 4; i < 5; i++)
     f_ppar->SetParLimits(i,f_ppar->GetParameter(i),f_ppar->GetParameter(i));
   m_protonModuleSumLikelihood->Fit(f_ppar);
