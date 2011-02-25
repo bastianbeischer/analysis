@@ -1,9 +1,6 @@
 #ifndef EventReader_hh
 #define EventReader_hh
 
-#include "Track.hh"
-#include "Corrections.hh"
-
 #include <QThread>
 #include <QVector>
 #include <QMutex>
