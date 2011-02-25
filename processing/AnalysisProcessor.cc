@@ -43,6 +43,8 @@ void AnalysisProcessor::setTrackType(Track::Type track)
   if (m_track)
     delete m_track;
 
+  if (track == Track::None)
+    m_track = 0;
   if (track == Track::CenteredBrokenLine)
     m_track = new CenteredBrokenLine;
   else if (track == Track::CenteredBrokenLine2D)
