@@ -115,7 +115,7 @@ void EventReader::run()
 
   for (m_readEvents = 0; m_readEvents < nEvents;) {
     foreach(EventProcessor* processor, m_processors) {
-      if (processor->queue()->freeSpace() > 0) {
+      if (processor->queue()->freeSpace() > 0 && m_readEvents < nEvents) {
           SimpleEvent* event = m_chain->event(m_firstEvent + m_readEvents);
           processor->queue()->enqueue(new SimpleEvent(*event));
           m_mutex.lock();
