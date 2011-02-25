@@ -20,6 +20,9 @@ public:
   
   QVector<Hit*> findClusters(const QVector<Hit*>&);
 
+private:
+  HitStorage m_hitStorage;
+
 };
 
 #endif /* ClusterGenerator_hh */
