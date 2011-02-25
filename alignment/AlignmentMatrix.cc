@@ -4,6 +4,7 @@
 #include "Strategy.hh"
 #include "Hit.hh"
 #include "Track.hh"
+#include "TrackInformation.hh"
 #include "Parameters.hh"
 #include "Setup.hh"
 #include "DetectorElement.hh"
@@ -51,9 +52,18 @@ void AlignmentMatrix::resetArrays()
     m_localDerivatives[i] = 0.;
 }
 
-void AlignmentMatrix::fillMatrixFromTrack(Track* track)
+void AlignmentMatrix::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
 {
-  QVector<Hit*> hits = track->hits();
+  if (!track || !track->fitGood())
+    return;
+
+  TrackInformation::Flags flags = track->information()->flags();
+  if ( !(flags & TrackInformation::AllTrackerLayers) ||
+       (flags & TrackInformation::MagnetCollision) ) {
+    return;
+  }
+
+  const QVector<Hit*>& hits = track->hits();
   
   foreach(Hit* hit, hits) {
     //resetArrays();
