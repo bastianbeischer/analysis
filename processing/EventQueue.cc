@@ -12,12 +12,6 @@ EventQueue::~EventQueue()
     delete event;
 }
 
-int EventQueue::freeSpace()
-{
-  QMutexLocker locker(&m_mutex);
-  return s_bufferSize - m_queue.size();
-}
-
 int EventQueue::numberOfEvents()
 {
   QMutexLocker locker(&m_mutex);

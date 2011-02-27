@@ -13,6 +13,7 @@ CLASSES += \
   EventQueue \
   EventDestination \
   DataChain \
+  LimitedEventQueue \
   ProcessingThread
 
 INCLUDEPATH += \

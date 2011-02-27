@@ -40,6 +40,7 @@ private:
   unsigned int m_readEvents;
   DataChain* m_chain;
   int m_nThreads;
+  int m_bufferSize;
   QVector<ProcessingThread*> m_threads;
 };
 

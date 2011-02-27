@@ -1,7 +1,7 @@
 #include "EventReader.hh"
 
 #include "SimpleEvent.hh"
-#include "EventQueue.hh"
+#include "LimitedEventQueue.hh"
 #include "DataChain.hh"
 #include "ProcessingThread.hh"
 #include "EventProcessor.hh"
@@ -20,6 +20,8 @@ EventReader::EventReader(QObject* parent)
   , m_nEvents(0)
   , m_readEvents(0)
   , m_chain(new DataChain())
+  , m_nThreads(0)
+  , m_bufferSize(1000)
   , m_threads()
 {
 }
@@ -44,7 +46,7 @@ double EventReader::progress() const
 
 double EventReader::buffer() const
 {
-  return 100.* queuedEvents() / (m_nThreads * EventQueue::s_bufferSize);
+  return 100.* queuedEvents() / (m_nThreads * m_bufferSize);
 }
 
 void EventReader::setFileList(const QString& fileName)
@@ -73,8 +75,10 @@ void EventReader::start(QVector<EventProcessor*>& processors)
 void EventReader::start(QVector<EventProcessor*>& processors, unsigned int first, unsigned int last)
 {
   m_nThreads = processors.size();;
-  for (int i = 0; i < m_nThreads; ++i)
+  for (int i = 0; i < m_nThreads; ++i) {
     m_threads.append(new ProcessingThread(processors.at(i)));
+    m_threads.at(i)->queue()->setBufferSize(m_bufferSize);
+  }
   m_firstEvent = first;
   m_lastEvent = last;
   m_nEvents = last - first + 1;
