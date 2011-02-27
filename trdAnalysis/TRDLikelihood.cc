@@ -330,59 +330,84 @@ void TRDLikelihood::normalizeLikelihoodHistos(){
 
   //TODO: prevent several normalizations or handle them correctly
 
+  m_protonModuleSumLikelihood->Sumw2();
+  m_protonModuleSumLikelihood->Scale(1.0 / m_protonModuleSumLikelihood->Integral("width"));
+
+  TF1 *f_ppar = new TF1("f_ppar",pfunperdaix,0.,100,6);
+  f_ppar->SetNpx(1000);
+  f_ppar->SetParameters(4.32391,2.23676,1.02281,0.788797,6,-0.1);
+  for (int i = 4; i < 5; i++)
+    f_ppar->SetParLimits(i,f_ppar->GetParameter(i),f_ppar->GetParameter(i));
+  m_protonModuleSumLikelihood->Fit(f_ppar, "Q");
+
+  double integral = f_ppar->Integral(0,100);
+  //qDebug() << "integral of proton fit = " << integral;
+  f_ppar->SetParameter(0, f_ppar->GetParameter(0) / integral);
+  //integral = f_ppar->Integral(0,100);
+  //qDebug() << "integral of proton fit after factor set to " << f_ppar->GetParameter(0) << " = " << integral;
+  QVector<double> paramters;
+  for(int i = 0; i < f_ppar->GetNpar(); ++i)
+    paramters << f_ppar->GetParameter(i) ;
+  qDebug() << "proton module sum parameters: " << paramters;
+
   //normalize proton likelihoods
   foreach (TH1D* histo, m_protonModuleLikelihood){
     histo->Sumw2();
     histo->Scale(1.0 / histo->Integral("width"));
-    TF1 *f_ppar= new TF1("f_ppar","landau(0)");
-    f_ppar->SetParameters(0.533941,1.5,0.90618);
-    histo->Fit(f_ppar);
+
+    TF1 *f_ppar = new TF1("f_ppar",pfunperdaix,0.,100,6);
+    f_ppar->SetNpx(1000);
+    f_ppar->SetParameters(4.32391,2.23676,1.02281,0.788797,6,-0.1);
+    for (int i = 4; i < 5; i++)
+      f_ppar->SetParLimits(i,f_ppar->GetParameter(i),f_ppar->GetParameter(i));
+    histo->Fit(f_ppar, "Q");
+
+    double integral = f_ppar->Integral(0,100);
+    //qDebug() << "integral of proton fit = " << integral;
+    f_ppar->SetParameter(0, f_ppar->GetParameter(0) / integral);
+    //integral = f_ppar->Integral(0,100);
+    //qDebug() << "integral of proton fit after factor set to " << f_ppar->GetParameter(0) << " = " << integral;
+    QVector<double> paramters;
+    for(int i = 0; i < f_ppar->GetNpar(); ++i)
+      paramters << f_ppar->GetParameter(i) ;
+    qDebug() << "proton module parameters: " << paramters;
   }
-
-  m_protonModuleSumLikelihood->Sumw2();
-  m_protonModuleSumLikelihood->Scale(1.0 / m_protonModuleSumLikelihood->Integral("width"));
-  //TF1 *f_ppar= new TF1("f_ppar","(landau(0))");
-  //f_ppar->SetParameters(0.533941,1.04519,0.90618);
-
-  TF1 *f_ppar = new TF1("fit_p",pfunperdaix,0.,100,6);
-  f_ppar->SetNpx(1000);
-  f_ppar->SetParameters(4.32391,2.23676,1.02281,0.788797,8,-0.1);
-  for (int i = 4; i < 5; i++)
-    f_ppar->SetParLimits(i,f_ppar->GetParameter(i),f_ppar->GetParameter(i));
-  m_protonModuleSumLikelihood->Fit(f_ppar);
-
-  double integral = f_ppar->Integral(0,100);
-  qDebug() << "integral of proton fit = " << integral;
-  f_ppar->SetParameter(0, f_ppar->GetParameter(0) / integral);
-  integral = f_ppar->Integral(0,100);
-  qDebug() << "integral of proton fit after factor set to " << f_ppar->GetParameter(0) << " = " << integral;
-  QVector<double> paramters;
-  for(int i = 0; i < f_ppar->GetNpar(); ++i)
-    paramters << f_ppar->GetParameter(i) ;
-  qDebug() << "proton fit parameters: " << paramters;
-
 
 
 
   //normalize positron likelihoods
-  foreach (TH1D* histo, m_positronModuleLikelihood){
-    histo->Sumw2();
-    histo->Scale(1.0 / histo->Integral("width"));
-    TF1 *f_epar= new TF1("f_epar","(landau(0)+landau(3))");
-    f_epar->SetParameters(0.533941,1.04519,0.90618,0.177358,3.7248,4.80789);
-    f_epar->SetParLimits(1,0.8,1.2);
-    f_epar->SetParLimits(4,2,4);
-    histo->Fit(f_epar);
-  }
-
   m_positronModuleSumLikelihood->Sumw2();
   m_positronModuleSumLikelihood->Scale(1.0 / m_positronModuleSumLikelihood->Integral("width"));
   TF1 *f_epar= new TF1("f_epar","(landau(0)+landau(3))");
   f_epar->SetNpx(1000);
-  f_epar->SetParameters(1.2,1.5,0.4,0.3,6.5,3);
-  for (int i = 0; i < 6; i++)
-    f_epar->SetParLimits(i,f_epar->GetParameter(i),f_epar->GetParameter(i));
-  m_positronModuleSumLikelihood->Fit(f_epar);
+  f_epar->SetParameters(0.533941,39,0.90618,0.177358,7,4.80789);
+  f_epar->SetParLimits(1,2,4);
+  f_epar->SetParLimits(4,7,12);
+  m_positronModuleSumLikelihood->Fit(f_epar, "Q");
+  f_epar->SetParameter(0, f_ppar->GetParameter(0) / integral);
+  paramters.clear();
+  for(int i = 0; i < f_epar->GetNpar(); ++i)
+    paramters << f_epar->GetParameter(i) ;
+  qDebug() << "electron module parameters: " << paramters;
+
+
+  foreach (TH1D* histo, m_positronModuleLikelihood){
+    histo->Sumw2();
+    histo->Scale(1.0 / histo->Integral("width"));
+    TF1 *f_epar= new TF1("f_epar","(landau(0)+landau(3))");
+    f_epar->SetParameters(0.533941,3,0.90618,0.177358,7,4.80789);
+    f_epar->SetParLimits(1,2,4);
+    f_epar->SetParLimits(4,5,10);
+    histo->Fit(f_epar, "Q");
+    double integral = f_epar->Integral(0,100);
+    f_epar->SetParameter(0, f_ppar->GetParameter(0) / integral);
+    QVector<double> paramters;
+    for(int i = 0; i < f_epar->GetNpar(); ++i)
+      paramters << f_epar->GetParameter(i) ;
+    qDebug() << "electron module parameters: " << paramters;
+  }
+
+
 
 }
 
