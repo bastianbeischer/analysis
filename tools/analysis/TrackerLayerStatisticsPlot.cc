@@ -46,7 +46,7 @@ void TrackerLayerStatisticsPlot::processEvent(const QVector<Hit*>& /*hits*/, Tra
     return;
 
   const TrackInformation* info = track->information();
-  QMap<double, int> hitsInLayers = info->hitsInLayers();
+  const QMap<double,int>& hitsInLayers = info->hitsInLayers();
   unsigned short nLayers = info->numberOfTrackerLayers();
 
   histogram(0)->Fill(0);
@@ -55,7 +55,9 @@ void TrackerLayerStatisticsPlot::processEvent(const QVector<Hit*>& /*hits*/, Tra
   }
   histogram(1)->Fill(nLayers);
 
-  foreach(int count, hitsInLayers) {
+  const QMap<double,int>::const_iterator endIt = hitsInLayers.end();
+  for(QMap<double,int>::const_iterator it = hitsInLayers.begin(); it != endIt; ++it) {
+    int count = it.value();
     if (count != 1)
       return;
   }

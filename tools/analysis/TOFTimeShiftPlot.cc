@@ -67,13 +67,18 @@ void TOFTimeShiftPlot::processEvent(const QVector<Hit*>& hits, Track* track, Sim
   double t[4];
   for (int i = 0; i < 4; ++i)
     t[i] = -2e6;
-  foreach (Hit* hit, hits) {
+  const QVector<Hit*>::const_iterator endIt = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+    Hit* hit = *it;
     if (hit->detId() == m_topBarId || hit->detId() == m_bottomBarId) {
       TOFCluster* cluster = static_cast<TOFCluster*>(hit);
       const TVector3& position = cluster->position();
       if (qAbs(track->x(position.z())-position.x()) > 10)
         continue;
-      foreach (Hit* sipmHit, cluster->hits()) {
+      std::vector<Hit*>& subHits = cluster->hits();
+      std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+      for (std::vector<Hit*>::const_iterator subHitsIt = subHits.begin(); subHitsIt != subHitsEndIt; ++subHitsIt) {
+        Hit* sipmHit = *subHitsIt;
         TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(sipmHit);
         if ((tofSipmHit->position().y() < 0) == m_negativeSide) {
           if (m_negativeSide && (track->y(position.z()) < -150 || track->y(position.z()) > 0))

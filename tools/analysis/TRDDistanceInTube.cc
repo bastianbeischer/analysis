@@ -21,7 +21,7 @@ TRDDistanceInTube::~TRDDistanceInTube()
 {
 }
 
-void TRDDistanceInTube::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* /*event*/)
+void TRDDistanceInTube::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent* /*event*/)
 {
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
@@ -32,23 +32,27 @@ void TRDDistanceInTube::processEvent(const QVector<Hit*>& hits, Track* track, Si
   if (!(flags & TrackInformation::AllTrackerLayers))
     return;
 
-  //loop over all hits and count tracker hits
-  //also find all clusters on track
-  QVector<Hit*> trdClusterHitsOnTrack;
-
   //TODO: check for off track hits ?!?
-  foreach(Hit* clusterHit, hits){
-    if (clusterHit->type() == Hit::trd)
-      trdClusterHitsOnTrack.push_back(clusterHit);
+  unsigned int nTrdHits = 0;
+  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+    if ((*it)->type() == Hit::trd)
+      nTrdHits++;
   }
 
-  if(trdClusterHitsOnTrack.size() < 6)
+  if (nTrdHits < 6)
     return;
 
-  foreach(Hit* clusterHit, trdClusterHitsOnTrack){
-    Cluster* cluster = static_cast<Cluster*>(clusterHit);
-    foreach(Hit* hit, cluster->hits()){
-      double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+    Cluster* cluster = static_cast<Cluster*>(*it);
+    if (cluster->type() != Hit::trd) 
+      continue;
+    
+    std::vector<Hit*>& subHits = cluster->hits();
+    const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+    for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
+      Hit* subHit = *it;
+      double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(subHit, track);
       if(distanceInTube > 0)
         histogram(0)->Fill(distanceInTube);
     }

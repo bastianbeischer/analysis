@@ -60,7 +60,7 @@ TRDSpectrumPlot::~TRDSpectrumPlot()
   delete m_fitRangeMarker_upper;
 }
 
-void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
+void TRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent*)
 {
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
@@ -81,34 +81,37 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simp
   if(p < m_lowerMomentum || p > m_upperMomentum)
     return;
 
-  //loop over all hits and count tracker hits
-  //also find all clusters on track
-  QVector<Hit*> trdClusterHitsOnTrack;
-
   //TODO: check for off track hits ?!?
-  foreach(Hit* clusterHit, hits){
-    if (clusterHit->type() == Hit::trd)
-      trdClusterHitsOnTrack.push_back(clusterHit);
+  unsigned int nTrdHits = 0;
+  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+    if ((*it)->type() == Hit::trd)
+      nTrdHits++;
   }
 
-  if(trdClusterHitsOnTrack.size() < 6)
+  if (nTrdHits < 6)
     return;
 
-  foreach(Hit* clusterHit, trdClusterHitsOnTrack){
-    Cluster* cluster = static_cast<Cluster*>(clusterHit);
-    foreach(Hit* hit, cluster->hits()){
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+    Hit* hit = *it;
+    if (hit->type() != Hit::trd)
+      continue;
+
+    Cluster* cluster = static_cast<Cluster*>(hit);
+    std::vector<Hit*>& subHits = cluster->hits();
+    const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+    for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
+      Hit* subHit = *it;
       //check if the id of the plot has been hit (difference between module mode and channel mode
       if(m_spectrumType == TRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
-         (m_spectrumType == TRDSpectrumPlot::module && (hit->detId() - hit->channel()) == m_id) ||  // spectrum per module
-         (m_spectrumType == TRDSpectrumPlot::channel && hit->detId() == m_id)){  //spectrum per channel
+         (m_spectrumType == TRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
+         (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
         double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
-        if(distanceInTube > 0){
-          histogram(0)->Fill(hit->signalHeight() / (distanceInTube));
-        }
-      }
-    }
-  }
-
+        if(distanceInTube > 0)
+          histogram(0)->Fill(subHit->signalHeight() / (distanceInTube));
+      } // fits into category
+    } // subhits in cluster
+  } // all hits
 }
 
 void TRDSpectrumPlot::finalize()

@@ -10,5 +10,5 @@ macx {
     LIBS += -Wl,-rpath,$${PWD}/lib
 
     CONFIG += x86_64
-    QMAKE_CXXFLAGS += -march=core2 -mtune=generic -O2 -pipe
+    QMAKE_CXXFLAGS += -march=core2 -mtune=core2 -O2 -pipe
 }

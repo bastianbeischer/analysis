@@ -58,7 +58,7 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
   unsigned int runStartTime = file->getStartTime(); // convert ms to s for
   unsigned int eventTime = event->GetTime();
 
-  SimpleEvent* simpleEvent = new SimpleEvent(eventId, runStartTime, eventTime, mcFile? SimpleEvent::MCRawData : SimpleEvent::RawData);
+  SimpleEvent* simpleEvent = new SimpleEvent(eventId, runStartTime, eventTime, mcFile? SimpleEvent::MonteCarlo : SimpleEvent::Data);
 
   // loop over all present detector IDs
   QList<DetectorID*> detIDs = event->GetIDs();
@@ -153,7 +153,7 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
   delete event;
 
   if (mcFile) {
-    MCEventInformation* mcInfo = generateNextMCEventInformation(mcFile);
+    const MCEventInformation* mcInfo = generateNextMCEventInformation(mcFile);
     simpleEvent->setMCInformation(mcInfo);
   }
 
@@ -161,7 +161,7 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
 }
 
 
-MCEventInformation* Converter::generateNextMCEventInformation(const MCSingleFile* mcFile)
+const MCEventInformation* Converter::generateNextMCEventInformation(const MCSingleFile* mcFile)
 {
   //get MCEvent
   const MCEvent* mcEvent = mcFile->getNextMCEvent() ;
@@ -196,6 +196,7 @@ MCEventInformation* Converter::generateNextMCEventInformation(const MCSingleFile
   mcEventInfo->setTrajectory(traj);
 
   delete mcEvent;
+
   return mcEventInfo;
 }
 

@@ -1,4 +1,4 @@
-#include "TimeOverThresholdMomentumCorrelation.hh"
+#include "TOTMomentumCorrelation.hh"
 
 #include "SimpleEvent.hh"
 #include "Hit.hh"
@@ -14,7 +14,7 @@
 
 #include <QDebug>
 
-TimeOverThresholdMomentumCorrelation::TimeOverThresholdMomentumCorrelation(unsigned int id)
+TOTMomentumCorrelation::TOTMomentumCorrelation(unsigned int id)
   : AnalysisPlot(AnalysisPlot::TimeOverThreshold)
   , H2DPlot()
   , m_id(id)
@@ -29,11 +29,11 @@ TimeOverThresholdMomentumCorrelation::TimeOverThresholdMomentumCorrelation(unsig
   addLatex(RootPlot::newLatex(.15, .85));
 }
 
-TimeOverThresholdMomentumCorrelation::~TimeOverThresholdMomentumCorrelation()
+TOTMomentumCorrelation::~TOTMomentumCorrelation()
 {}
 
 
-void TimeOverThresholdMomentumCorrelation::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void TOTMomentumCorrelation::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
 {
   if (!track || !track->fitGood())
     return;
@@ -41,12 +41,17 @@ void TimeOverThresholdMomentumCorrelation::processEvent(const QVector<Hit*>& clu
   if (!(flags & (TrackInformation::AllTrackerLayers | TrackInformation::InsideMagnet)))
     return;
 
-  foreach(Hit* hit, clusters) {
+  const QVector<Hit*>::const_iterator endIt = clusters.end();
+  for (QVector<Hit*>::const_iterator it = clusters.begin(); it != endIt; ++it) {
+    Hit* hit = *it;
     if (hit->type() == Hit::tof) {
       TOFCluster* cluster = static_cast<TOFCluster*> (hit);
       if (qAbs(track->x(cluster->position().z()) - cluster->position().x()) > Constants::tofBarWidth)
         continue;
-      foreach(Hit* tofHit, cluster->hits()) {
+      std::vector<Hit*>& subHits = cluster->hits();
+      std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+      for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
+        Hit* tofHit = *it;
         if (tofHit->detId() == m_id) {
           TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*> (tofHit);
           histogram()->Fill(track->pt(), tofSipmHit->timeOverThreshold());
@@ -56,6 +61,6 @@ void TimeOverThresholdMomentumCorrelation::processEvent(const QVector<Hit*>& clu
   }
 }
 
-void TimeOverThresholdMomentumCorrelation::update() {
+void TOTMomentumCorrelation::update() {
   latex()->SetTitle(qPrintable(QString("#rho = %1").arg(histogram()->GetCorrelationFactor())));
 }

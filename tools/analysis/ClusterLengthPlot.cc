@@ -38,9 +38,10 @@ void ClusterLengthPlot::processEvent(const QVector<Hit*>& hits, Track* track, Si
   if (!(flags & TrackInformation::AllTrackerLayers))
     return;
 
-  foreach(Hit* hit, hits) {
-    Cluster* cluster = static_cast<Cluster*>(hit);
-    if (hit->detId() - hit->channel() == m_id)
+  const QVector<Hit*>::const_iterator endIt = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+    Cluster* cluster = static_cast<Cluster*>(*it);
+    if (cluster->detId() - cluster->channel() == m_id)
       histogram()->Fill(cluster->hits().size());
   }
 }

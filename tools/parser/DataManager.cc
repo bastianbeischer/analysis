@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QFile>
 #include <QString>
+#include <QRegExp>
 #include <iostream>
 
 #include <TTree.h>
@@ -31,6 +32,10 @@ DataManager::~DataManager()
   foreach(SingleFile* file, m_inputFiles)
     delete file;
   m_inputFiles.clear();
+
+  foreach(MCSingleFile* file, m_inputMCFiles)
+    delete file;
+  m_inputMCFiles.clear();
 
   delete m_sensorsData;
   delete m_outputFile;
@@ -81,10 +86,10 @@ void DataManager::addSingleFile(QString fileName)
   m_description->addRunFile(qPrintable(fileName), hash, file->getNumberOfEvents());
 
   //try to open a matching mc file:
-  QString mcFileName = fileName.replace(".dat", "_MC.dat");
-  MCSingleFile* mcFile = new MCSingleFile(qPrintable(mcFileName));
-  if (mcFile->isGood()) {
+  QString mcFileName = fileName.replace(QRegExp("\\.dat$"), "_MC.dat");
+  if (QFile::exists(mcFileName)) {
     qDebug("found MC file");
+    MCSingleFile* mcFile = new MCSingleFile(qPrintable(mcFileName));
     m_inputMCFiles.push_back(mcFile);
   } else {
     m_inputMCFiles.push_back(0);

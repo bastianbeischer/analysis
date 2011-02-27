@@ -12,10 +12,10 @@ class TOFBar :
 {
   
 public:
-  explicit TOFBar(unsigned short detId);
+  explicit TOFBar(unsigned short detId, const Setup* setup);
   ~TOFBar();
 public:
-  QVector<Hit*> findClusters();
+  QVector<Hit*> findClusters(const QVector<Hit*>&); // these clusters have to be deleted by hand!
   void setTimeShifts(double ch0, double ch1, double ch2, double ch3);
   double timeShift(unsigned short channel);
 

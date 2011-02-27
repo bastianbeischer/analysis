@@ -15,19 +15,20 @@ CLASSES += \
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \
-  $$TOPLEVEL/processing \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/tracking \
+  $$TOPLEVEL/processing \
+  $$TOPLEVEL/global \
   ./millepede
 
 LIBS += \
   -L$$TOPLEVEL/lib \
   -lSimpleEvent \
-  -lprocessing \
   -lsetup \
   -ltracking \
   -L./millepede \
   -lmillepede \
+  -lprocessing \
   -lgfortran
 
 include($$TOPLEVEL/root.pri)

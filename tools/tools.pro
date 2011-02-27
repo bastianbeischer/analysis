@@ -9,4 +9,10 @@ SUBDIRS  = \
   preAnalysis \
   analysis \
   postAnalysis \
-  presentation
+  presentation \
+  tofAlignment
+
+macx {
+  message("skipping parser on MacOS X")
+  SUBDIRS-=parser
+}

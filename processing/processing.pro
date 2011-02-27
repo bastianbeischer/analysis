@@ -6,7 +6,14 @@ CONFIG += debug
 TOPLEVEL = ..
 
 CLASSES += \
-  Corrections
+  Corrections \
+  AnalysisProcessor \
+  EventReader \
+  EventProcessor \
+  EventQueue \
+  EventDestination \
+  DataChain \
+  ProcessingThread
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \

@@ -15,6 +15,7 @@ LIBS += \
   -lSimpleEvent \
   -lsetup \
   -ltracking \
+  -lprocessing \
   -lmillepede
 
 SOURCES = \

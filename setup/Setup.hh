@@ -1,8 +1,11 @@
 #ifndef Setup_hh
 #define Setup_hh
 
+#include "SensorTypes.hh"
+
 #include <QMap>
 #include <QVector>
+#include <QMutex>
 
 #include <TVector3.h>
 
@@ -12,58 +15,55 @@ class Layer;
 class DetectorElement;
 class QSettings;
 
-typedef QMap<double,Layer*>::iterator LayerIterator;
-typedef QMap<unsigned short,DetectorElement*>::iterator ElementIterator;
+typedef QMap<double,Layer*>::const_iterator LayerIterator ;
+typedef QMap<unsigned short,DetectorElement*>::const_iterator ElementIterator;
 
 class Setup
 {
-  
+ 
 public:
   ~Setup();
 
-  static Setup*     instance();
-  
+  static Setup* instance();
+ 
 public:
-  Layer*            layer(double z);
-  DetectorElement*  element(unsigned short id);
+  Layer* layer(double z);
+  DetectorElement* element(unsigned short id);
 
-public:
-  Layer*            firstLayer();
-  DetectorElement*  firstElement();
-  Layer*            nextLayer();
-  DetectorElement*  nextElement();
+  LayerIterator firstLayer() const {return m_layers.begin();}
+  LayerIterator lastLayer() const {return m_layers.end();}
+  ElementIterator firstElement() const {return m_elements.begin();}
+  ElementIterator lastElement() const {return m_elements.end();}
 
-public:
-  QVector<Hit*>     generateClusters(const QVector<Hit*>& hits);
-  void              addHitsToLayers(const QVector<Hit*>& hits);
-  void              clearHitsFromLayers();
+  unsigned short numberOfLayers() const {return m_layers.size();}
+  unsigned short numberOfElements() const {return m_elements.size();}
 
-public:
-  TVector3          configFilePosition(QString group, unsigned short detId) const;
-  double            configFileAlignmentShift(QString group, unsigned short detId) const;
-  double            configFileTimeShift(unsigned short detId) const;
+  TVector3 configFilePosition(QString group, unsigned short detId) const;
+  double configFileAlignmentShift(QString group, unsigned short detId) const;
+  double configFileTimeShift(unsigned short detId) const;
 
-public:
-  void              writeSettings();
+  void writeSettings();
+
+  SensorTypes::Type sensorForId(unsigned short id);
 
 private:
   Setup();
-  
-private:
-  void              construct();
+
+  void construct();
+  Layer* constructLayer(double z);
+  DetectorElement* constructElement(unsigned short id);
+
+  SensorTypes::Type tofSensorForId(unsigned short id);
 
 private:
-  static Setup*                          m_instance;
+  static Setup* s_instance;
+  static QMutex s_mutex;
 
-  QSettings*                             m_coordinates;
-  QSettings*                             m_settings;
+  QSettings* m_coordinates;
+  QSettings* m_settings;
 
-  LayerIterator                          m_layerIt;
-  ElementIterator                        m_elementIt;
-
-  QMap<double, Layer*>                   m_layers;
+  QMap<double, Layer*> m_layers;
   QMap<unsigned short, DetectorElement*> m_elements;
-
 };
 
 #endif /* Setup_hh */

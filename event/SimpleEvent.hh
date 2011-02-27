@@ -14,7 +14,7 @@ class SimpleEvent :
 {
 
 public:
-  enum ContentType {None = -1, RawData, Clusters, MCRawData, MCClusters};
+  enum ContentType {None = -1, Data, MonteCarlo};
 
 public:
   SimpleEvent();
@@ -29,19 +29,17 @@ public:
   unsigned int runStartTime() const {return m_runStartTime;}
   unsigned int eventTime() const {return m_eventTime;}
   ContentType contentType() const {return m_contentType;}
-
-  void addHit(Hit* hit) {m_hits.push_back(hit);}
+  float sensorData(SensorTypes::Type type);
+  const MCEventInformation* MCInformation() const {return m_mcEventInformation;}
 
   void setEventId(unsigned int id) {m_eventId = id;}
   void setRunStartTime(unsigned int time) {m_runStartTime = time;}
   void setEventTime(unsigned int time) {m_eventTime = time;}
   void setContentType(ContentType type) {m_contentType = type;}
-
-  const MCEventInformation* MCInformation() const {return m_mcEventInformation;}
+  void setSensorData(SensorTypes::Type type, float data);
   void setMCInformation(const MCEventInformation* mcInfo);
 
-  void setSensorData(SensorTypes::Type type, float data);
-  float sensorData(SensorTypes::Type type);
+  void addHit(Hit* hit) {m_hits.push_back(hit);}
 
 private:
   unsigned int m_eventId;
@@ -50,7 +48,6 @@ private:
   ContentType m_contentType;
   std::vector<Hit*> m_hits;
   float m_sensorSet[SensorTypes::N_SENSOR_TYPES]; //!
-
   const MCEventInformation* m_mcEventInformation; //!
 
   ClassDef( SimpleEvent, 1 );

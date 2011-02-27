@@ -41,7 +41,9 @@ void SignalHeightPlot::processEvent(const QVector<Hit*>& hits, Track* track, Sim
   if (!(flags & TrackInformation::AllTrackerLayers))
     return;
 
-  foreach(Hit* hit, hits) {
+  const QVector<Hit*>::const_iterator endIt = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+    Hit* hit = *it;
     if (hit->detId() - hit->channel() == m_id)
       histogram()->Fill(hit->signalHeight());
   }

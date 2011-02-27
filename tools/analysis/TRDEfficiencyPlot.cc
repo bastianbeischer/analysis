@@ -31,8 +31,9 @@ TRDEfficiencyPlot::TRDEfficiencyPlot()
   //initialize the 2D positions of the trd tubes:
   Setup* setup = Setup::instance();
 
-  DetectorElement* element = setup->firstElement();
-  while(element) {
+  const ElementIterator endIt = setup->lastElement();
+  for (ElementIterator it = setup->firstElement(); it != endIt; ++it) {
+    DetectorElement* element = *it;
     if (element->type() == DetectorElement::trd){
       //loop over the 16 tubes
       for( int i = 0; i < 16; i++){
@@ -43,7 +44,6 @@ TRDEfficiencyPlot::TRDEfficiencyPlot()
         m_trdChanPositions.insert(detID, pos2D);
       }
     }
-    element = setup->nextElement();
   }
 
   //initialize all needed ellipses
@@ -59,7 +59,7 @@ TRDEfficiencyPlot::~TRDEfficiencyPlot()
   m_ellipses.clear();
 }
 
-void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& clustersOnTrack, Track* track, SimpleEvent*)
+void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent*)
 {
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
@@ -70,18 +70,15 @@ void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& clustersOnTrack, Track
   if (!(flags & TrackInformation::AllTrackerLayers))
     return;
 
-  //loop over all hits and find all clusters on track
-  QVector<Cluster*> trdClustersOnTrack;
-
   //TODO: check for off track hits, atm this is Bastians criteria for on track
-  foreach(Hit* clusterHit, clustersOnTrack){
-    if (clusterHit->type() == Hit::trd){
-      Cluster* cluster = static_cast<Cluster*>(clusterHit);
+  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+    Hit* hit = *it;
+    if (hit->type() == Hit::trd) {
+      Cluster* cluster = static_cast<Cluster*>(hit);
       //check if event contains trd clusters with more than 2 sub hits
       if (cluster->hits().size() > 2)
         return;
-
-      trdClustersOnTrack << cluster;
     }
   }
 
@@ -101,9 +98,16 @@ void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& clustersOnTrack, Track
       //was on track +1
       m_wasOnTrack[i.key()]++;
       //now check wheter the tube has seen a signal:
-      foreach(Cluster* cluster, trdClustersOnTrack){
-        foreach(Hit* hit, cluster->hits()){
-          if ( i.key() == hit->detId()) {
+      for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+        Cluster* cluster = static_cast<Cluster*>(*it);
+        if (cluster->type() != Hit::trd)
+          continue;
+
+        std::vector<Hit*>& subHits = cluster->hits();
+        const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+        for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
+          Hit* subHit = *it;
+          if ( i.key() == subHit->detId()) {
             //tube did see a signal +1
             m_hits[i.key()]++;
           }
@@ -177,8 +181,9 @@ void TRDEfficiencyPlot::initializeEllipses()
   //create for each trd channel an ellipses
   Setup* setup = Setup::instance();
 
-  DetectorElement* element = setup->firstElement();
-  while(element) {
+  const ElementIterator endIt = setup->lastElement();
+  for (ElementIterator it = setup->firstElement(); it != endIt; ++it) {
+    DetectorElement* element = *it;
     if (element->type() == DetectorElement::trd){
       for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++){
         unsigned short detID = element->id() | tubeNo;
@@ -188,6 +193,5 @@ void TRDEfficiencyPlot::initializeEllipses()
         ell->SetFillColor(kWhite);
       }
     }
-    element = setup->nextElement();
   }
 }

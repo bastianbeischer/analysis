@@ -33,15 +33,16 @@ SingleLayerTrackingEfficiencyPlot::SingleLayerTrackingEfficiencyPlot() :
 
   m_normHisto = new TH2D(qPrintable(title() + "_norm"), "", nBinsX, x0, x1, nBinsY, y0, y1);
 
-  Layer* layer = Setup::instance()->firstLayer();
   int i = 0;
-  while (layer) {
+  Setup* setup = Setup::instance();
+  const LayerIterator endIt = setup->lastLayer();
+  for (LayerIterator it = setup->firstLayer(); it != endIt; ++it) {
+    Layer* layer = *it;
     double layerZ = floor(layer->z());
     if (layerZ > -240 && layerZ < 240) {
       m_layerZ[i] = layerZ;
       i++;
     }
-    layer = Setup::instance()->nextLayer();
   }
 }
 
@@ -57,13 +58,15 @@ void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, 
     return;
 
   TrackInformation::Flags flags = track->information()->flags();
-  if ( !(flags & TrackInformation::InsideMagnet) || !(flags & TrackInformation::Chi2Good) )
+  if ( !(flags & TrackInformation::InsideMagnet) )
     return;
 
   for (int i = 0; i < m_nLayers; i++) {
     // determine if the layer has a hit matching the track
     bool beenHit = false;
-    foreach(Hit* hit, hits) {
+    const QVector<Hit*>::const_iterator endIt = hits.end();
+    for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+      Hit* hit = *it;
       if (floor(hit->position().z()) == m_layerZ[i]) {
         if (TrackFinding::isInCorridor(track, hit, 10.)) {
           beenHit = true;

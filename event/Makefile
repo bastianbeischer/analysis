@@ -1,23 +1,25 @@
 TOPLEVEL    := ..
 
 LIBDIR      := $(TOPLEVEL)/lib
-TARGET      := $(LIBDIR)/libSimpleEvent.so
-
-INCLUDEDIRS := . $(shell root-config --incdir)
 TEMPDIR     := .tmp
 
-SOURCES = SimpleEvent.cc MCEventInformation.cc Hit.cc Cluster.cc DataDescription.cc DataChain.cc TOFSipmHit.cc TOFCluster.cc SensorTypes.cc
-HEADERS = SimpleEvent.hh MCEventInformation.hh Hit.hh Cluster.hh DataDescription.hh DataChain.hh TOFSipmHit.hh TOFCluser.hh SensorTypes.hh
+NAME        := SimpleEvent
+TARGET      := $(LIBDIR)/lib$(NAME).so
 
+CLASSES = SimpleEvent MCEventInformation Hit Cluster DataDescription TOFSipmHit TOFCluster SensorTypes
+
+SOURCES = $(addsuffix .cc, $(CLASSES))
+HEADERS = $(addsuffix .hh, $(CLASSES))
 DICTS   = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=Dict.cc))
 OBJECTS = $(addprefix $(TEMPDIR)/,$(SOURCES:.cc=.o)) $(DICTS:.cc=.o)
 
 # Compilers and Flags
 CXX          := g++
+INCLUDEDIRS  := . $(shell root-config --incdir)
 INCLUDEFLAGS := $(addprefix -I, $(INCLUDEDIRS))
 LIBS         := $(shell root-config --libs)
 CXXFLAGS     := -g -O2 -Wall -fPIC $(INCLUDEFLAGS) -MMD
-LFLAGS       := $(shell if [ `uname` = "Darwin" ]; then echo "-install_name @rpath/libSimpleEvent.so"; fi)
+LFLAGS       := $(shell if [ `uname` = "Darwin" ]; then echo "-install_name @rpath/lib$(NAME).so"; fi)
 
 .PHONY: all clean
 .SECONDARY: $(DICTS)
@@ -32,7 +34,6 @@ distclean:
 	@echo "Cleaning up everything ..."
 	@rm -fr $(TEMPDIR)
 	@rm -f $(TARGET)
-
 
 $(TARGET): $(OBJECTS)
 	$(CXX) $(LFLAGS) -o $(TARGET) $(OBJECTS) -shared $(LIBS)

@@ -116,8 +116,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>194</width>
-            <height>674</height>
+            <width>184</width>
+            <height>652</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -1219,14 +1219,20 @@ reconstruction</string>
          <item>
           <widget class="QWidget" name="saveWidget" native="true">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>250</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>220</width>
+             <width>250</width>
              <height>16777215</height>
             </size>
            </property>
@@ -1324,6 +1330,12 @@ reconstruction</string>
          </item>
          <item>
           <widget class="QLabel" name="positionLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="font">
             <font>
              <family>DejaVu Sans Mono</family>
@@ -1338,14 +1350,20 @@ reconstruction</string>
          <item>
           <widget class="QWidget" name="axisWidget" native="true">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+            <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="minimumSize">
+            <size>
+             <width>250</width>
+             <height>0</height>
+            </size>
+           </property>
            <property name="maximumSize">
             <size>
-             <width>350</width>
+             <width>250</width>
              <height>16777215</height>
             </size>
            </property>
@@ -1353,19 +1371,6 @@ reconstruction</string>
             <property name="margin">
              <number>0</number>
             </property>
-            <item>
-             <spacer name="axisHorizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>40</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
             <item>
              <widget class="QCheckBox" name="gridCheckBox">
               <property name="sizePolicy">
@@ -1376,7 +1381,7 @@ reconstruction</string>
               </property>
               <property name="font">
                <font>
-                <family>DejaVu LGC Sans</family>
+                <family>DejaVu Sans</family>
                </font>
               </property>
               <property name="text">
@@ -1397,7 +1402,7 @@ reconstruction</string>
               </property>
               <property name="font">
                <font>
-                <family>DejaVu LGC Sans</family>
+                <family>DejaVu Sans</family>
                </font>
               </property>
               <property name="text">
@@ -1415,7 +1420,7 @@ reconstruction</string>
               </property>
               <property name="font">
                <font>
-                <family>DejaVu LGC Sans</family>
+                <family>DejaVu Sans</family>
                </font>
               </property>
               <property name="text">
@@ -1504,7 +1509,7 @@ reconstruction</string>
             <x>0</x>
             <y>0</y>
             <width>200</width>
-            <height>191</height>
+            <height>184</height>
            </rect>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1544,9 +1549,6 @@ mop value</string>
              <property name="text">
               <string>constant time
 over threshold</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -1639,7 +1641,7 @@ over threshold</string>
      <x>0</x>
      <y>0</y>
      <width>1122</width>
-     <height>26</height>
+     <height>25</height>
     </rect>
    </property>
    <property name="font">
@@ -1656,8 +1658,8 @@ over threshold</string>
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="setFileListAction"/>
-    <addaction name="addFileListAction"/>
+    <addaction name="setFileListDialogAction"/>
+    <addaction name="addFileListDialogAction"/>
     <addaction name="separator"/>
     <addaction name="quitAction"/>
    </widget>
@@ -1670,67 +1672,58 @@ over threshold</string>
     <property name="title">
      <string>Sa&amp;ve</string>
     </property>
-    <addaction name="saveCanvasAction"/>
-    <addaction name="saveAllCanvasesAction"/>
+    <addaction name="saveCanvasDialogAction"/>
+    <addaction name="saveAllCanvasesDialogAction"/>
     <addaction name="saveForPostAnalysisAction"/>
+    <addaction name="saveForPostAnalysisDialogAction"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSave"/>
   </widget>
-  <action name="addFileListAction">
+  <action name="addFileListDialogAction">
    <property name="text">
     <string>&amp;Add file list...</string>
    </property>
    <property name="font">
-    <font>
-     <family>DejaVu Sans</family>
-    </font>
+    <font/>
    </property>
   </action>
-  <action name="setFileListAction">
+  <action name="setFileListDialogAction">
    <property name="text">
     <string>&amp;Set file list...</string>
    </property>
    <property name="font">
-    <font>
-     <family>DejaVu Sans</family>
-    </font>
+    <font/>
    </property>
   </action>
-  <action name="saveCanvasAction">
+  <action name="saveCanvasDialogAction">
    <property name="text">
     <string>&amp;Save canvas...</string>
    </property>
    <property name="font">
-    <font>
-     <family>DejaVu Sans</family>
-    </font>
+    <font/>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="saveAllCanvasesAction">
+  <action name="saveAllCanvasesDialogAction">
    <property name="text">
     <string>Save &amp;all canvases...</string>
    </property>
    <property name="font">
-    <font>
-     <family>DejaVu Sans</family>
-    </font>
+    <font/>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+S</string>
    </property>
   </action>
-  <action name="saveForPostAnalysisAction">
+  <action name="saveForPostAnalysisDialogAction">
    <property name="text">
     <string>Save for &amp;post analysis...</string>
    </property>
    <property name="font">
-    <font>
-     <family>DejaVu Sans</family>
-    </font>
+    <font/>
    </property>
   </action>
   <action name="quitAction">
@@ -1738,9 +1731,12 @@ over threshold</string>
     <string>&amp;Quit</string>
    </property>
    <property name="font">
-    <font>
-     <family>DejaVu Sans</family>
-    </font>
+    <font/>
+   </property>
+  </action>
+  <action name="saveForPostAnalysisAction">
+   <property name="text">
+    <string>Save for post analysis</string>
    </property>
   </action>
  </widget>

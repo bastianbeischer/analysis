@@ -5,4 +5,6 @@ CONFIG  += ordered
 SUBDIRS  = \
   timeShift \
   photonTravelTime \
-  tofEfficiency
+  tofEfficiency \
+  timeOverThreshold \
+  timeOverThresholdScaling

@@ -5,9 +5,12 @@
 
 #include "Track.hh"
 #include "Corrections.hh"
+#include "EventReader.hh"
 
 #include <QMainWindow>
 #include <QString>
+#include <QTime>
+#include <QTimer>
 
 class QTabBar;
 
@@ -20,10 +23,11 @@ class MainWindow : public QMainWindow {
   ~MainWindow();
   void processArguments(QStringList);
 private slots:
-  void setOrAddFileListActionTriggered();
-  void saveCanvasActionTriggered();
-  void saveAllCanvasActionTriggered();
+  void setOrAddFileListDialogActionTriggered();
+  void saveCanvasDialogActionTriggered();
+  void saveAllCanvasDialogActionTriggered();
   void saveForPostAnalysisActionTriggered();
+  void saveForPostAnalysisDialogActionTriggered();
   void listWidgetItemChanged(QListWidgetItem*);
   void listWidgetCurrentRowChanged(int);
   void selectAllButtonClicked();
@@ -42,6 +46,9 @@ private slots:
   void toggleControlWidgetsStatus();
   void checkBoxChanged();
   void checkSelectAll();
+  void plotterTitleChanged(const QString&);
+  void plotterPositionChanged(double, double);
+  void update();
 private:
   void setupPlots();
   void setupAnalysis(Track::Type& type, Corrections::Flags& flags);
@@ -51,6 +58,8 @@ private:
   void closeEvent(QCloseEvent*);
 
   Ui_mainWindow m_ui;
+  QVector<EventProcessor*> m_processors;
+  EventReader* m_reader;
   QString m_topLevelPath;
   QVector<unsigned int> m_activePlots;
   QVector<QCheckBox*> m_topicCheckBoxes;
@@ -59,6 +68,8 @@ private:
   QVector<QCheckBox*> m_trackerCheckBoxes;
   QVector<QWidget*> m_controlWidgets;
   bool m_inhibitDraw;
+  QTime m_time;
+  QTimer m_updateTimer;
 };
 
 #endif

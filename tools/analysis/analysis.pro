@@ -31,7 +31,6 @@ LIBS += \
 CLASSES = \
   AlbedosVsMomentumPlot \
   AnalysisPlot \
-  AnalysisThread \
   BendingAnglePlot \
   BendingAnglePositionPlot \
   BendingPositionPlot \
@@ -41,7 +40,6 @@ CLASSES = \
   Chi2Plot \
   ClusterLengthPlot \
   ClusterShapePlot \
-  EventQueue \
   GeometricOccupancyPlot \
   GeometricOccupancyProjectionPlot \
   MainWindow \
@@ -50,6 +48,7 @@ CLASSES = \
   ResidualPlot \
   SignalHeightPlot \
   SingleLayerTrackingEfficiencyPlot \
+  MultiLayerTrackingEfficiencyPlot \
   CutStatisticsPlot \
   TOFPositionCorrelationPlot \
   TOFTimeDifferencePlot \
@@ -70,8 +69,10 @@ CLASSES = \
   TotalEnergyDepositionTRDvsTrackerPlot \
   TOFEfficiencyPlot \
   TrackingEfficiencyVsMomentumPlot \
-  TimeOverThresholdMomentumCorrelation \
-  TimeOverThresholdPlot \
+  TOTMomentumCorrelation \
+  TOTPlot \
+  TOTTemperatureCorrelationPlot \
+  TOTTimeCorrelationPlot \
   TOFAlignment
 
 

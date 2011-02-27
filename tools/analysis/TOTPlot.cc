@@ -1,4 +1,4 @@
-#include "TimeOverThresholdPlot.hh"
+#include "TOTPlot.hh"
 
 #include "SimpleEvent.hh"
 #include "Hit.hh"
@@ -14,7 +14,7 @@
 #include <QString>
 #include <QDebug>
 
-TimeOverThresholdPlot::TimeOverThresholdPlot()
+TOTPlot::TOTPlot()
   : AnalysisPlot(TimeOverThreshold)
   , H2DPlot()
 {
@@ -29,16 +29,21 @@ TimeOverThresholdPlot::TimeOverThresholdPlot()
   setHistogram(histogram);
 }
 
-TimeOverThresholdPlot::~TimeOverThresholdPlot()
+TOTPlot::~TOTPlot()
 {}
 
-void TimeOverThresholdPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*) {
-  foreach(Hit* hit, hits) {
+void TOTPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*) {
+  const QVector<Hit*>::const_iterator endIt = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+    Hit* hit = *it;
     if (hit->type() == Hit::tof) {
       TOFCluster* cluster = static_cast<TOFCluster*> (hit);
       if (qAbs(track->x(cluster->position().z()) - cluster->position().x()) > Constants::tofBarWidth)
         continue;
-      foreach(Hit* tofHit, cluster->hits()) {
+      std::vector<Hit*>& subHits = cluster->hits();
+      std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+      for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
+        Hit* tofHit = *it;
         TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
         histogram()->Fill(tofHit->detId() - 0x8000, tofSipmHit->timeOverThreshold());
       }

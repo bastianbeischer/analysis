@@ -22,7 +22,7 @@ TRDClustersOnTrackPlot::~TRDClustersOnTrackPlot()
 {
 }
 
-void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& hits,Track* track ,SimpleEvent* /*event*/)
+void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/,Track* track ,SimpleEvent* /*event*/)
 {
 
   //check if everything worked and a track has been fit
@@ -35,8 +35,9 @@ void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& hits,Track* track
     return;
 
   int nTRDHits = 0;
-  foreach(Hit* hit, hits){
-    if (hit->type() == Hit::trd)
+  QVector<Hit*>::const_iterator endIt = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != endIt; ++it) {
+    if ((*it)->type() == Hit::trd)
       ++nTRDHits;
   }
 
