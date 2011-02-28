@@ -162,9 +162,10 @@ void DataManager::addSensorData(SimpleEvent* event)
 {
   int nKeys = m_sensorsData->numberOfKeys();
   char** keys = m_sensorsData->keys();
+  float* values = m_sensorsData->values(event->time());
   for (int iKey = 0; iKey < nKeys; iKey++) {
-    float value = m_sensorsData->averageValue(keys[iKey], event->time());
-    event->setSensorData(SensorTypes::convertFromString(keys[iKey]), value);
+    // if (strcmp(keys[iKey], "time") != 0)
+    event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
   }
   delete [] keys;
 }

@@ -11,17 +11,22 @@ SensorsData::SensorsData(DataType type, const char* filename) :
   m_type(type),
   m_file(0),
   m_tree(0),
+  m_nKeys(0),
+  m_keys(0),
   m_firstTime(0),
   m_good(false),
-  m_time(0),
-  m_var(sqrt(-1))
+  m_var(sqrt(-1)),
+  m_values(0)
 {
   m_good = addRootFile(filename);
+  if (m_good) init();
 }
 
 SensorsData::~SensorsData()
 {
   delete m_file;
+  delete [] m_keys;
+  delete [] m_values;
 }
 
 bool SensorsData::addRootFile(const char* filename)
@@ -48,16 +53,6 @@ bool SensorsData::addRootFile(const char* filename)
   if (m_tree == 0) {
     return false;
   }
-
-  // m_tree->SetCacheSize(1e3);
-  // m_tree->AddBranchToCache("*");
-  //  m_tree->SetMaxVirtualSize(1e3);
-  m_tree->SetBranchStatus("*", 0);
-  m_tree->SetBranchStatus("time", 1);
-  m_tree->SetBranchAddress("time",&m_time);
-  m_tree->GetEntry(0);
-  m_tree->SetBranchStatus("time", 0);
-  m_firstTime = m_time;
 
   return true;
 }
@@ -157,25 +152,39 @@ float SensorsData::averageValue(const char* id, unsigned int time)
   return average;
 }
 
-char** SensorsData::keys() const
+float* SensorsData::values(unsigned int time) const
 {
-  TObjArray* branches = m_tree->GetListOfBranches();
-  char** keys = new char*[branches->GetEntries()];
-  
-  int i = 0;
-  int k = 0;
-  while (k < branches->GetEntries()) {
-    if (strcmp(branches->At(i)->GetName(),"time") != 0) {
-      keys[i] = const_cast<char*>(branches->At(k)->GetName());
-      i++;
-    }
-    k++;
-  }
-  return keys;
+  int entry = entryForTime(time);
+  m_tree->GetEntry(entry);
+  return m_values;
 }
 
-int SensorsData::numberOfKeys() const
+void SensorsData::init()
 {
   TObjArray* branches = m_tree->GetListOfBranches();
-  return branches->GetEntries()-1;
+  m_nKeys = branches->GetEntries()-1;
+  m_keys = new char*[m_nKeys];
+  m_values = new float[m_nKeys];
+  
+  int i = 0;
+  while (i < m_nKeys) {
+    char* name = (char*)branches->At(i)->GetName();
+    if (strcmp(name, "time") != 0) {
+      m_keys[i] = name;
+      m_tree->SetBranchAddress(name, &m_values[i]);
+      i++;
+    }
+  }
+
+  // m_tree->SetCacheSize(1e3);
+  // m_tree->AddBranchToCache("*");
+  // m_tree->SetMaxVirtualSize(1e3);
+  // m_tree->SetBranchStatus("*", 0);
+  // m_tree->SetBranchStatus("time", 1);
+  // m_tree->SetBranchStatus("time", 0);
+  unsigned int time;
+  m_tree->SetBranchAddress("time",&time);
+  m_tree->GetEntry(0);
+  m_firstTime = time;
 }
+
