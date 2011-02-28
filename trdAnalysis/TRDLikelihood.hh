@@ -2,11 +2,14 @@
 #define TRDLIKELIHOOD_H
 
 #include <QMap>
+#include <QPair>
 #include <QVector>
 #include <QString>
 #include <QMutex>
 
 #include <TH1D.h>
+
+class QSettings;
 
 
 class Track;
@@ -28,6 +31,9 @@ public:
 
     void saveLikelihoodHistos();
     void loadLikelihoodHistos();
+
+    void saveFunParameters();
+    void loadFunParameters();
 
     bool saved() {return m_saved;}
 
@@ -69,6 +75,14 @@ private:
   void normalizeLikelihoodHistos() ;
 
   QString m_pathToLikelihoodHistos;
+
+  QMap < QPair<double,double> , QMap<unsigned int,QList<double> > > m_protonLHPars;
+  QMap < QPair<double,double> , QMap<unsigned int,QList<double> > > m_positronLHPars;
+
+  QMap < QPair<double,double> , QMap<unsigned int,TF1* > > m_protonLHFuns;
+  QMap < QPair<double,double> , QMap<unsigned int,TF1* > > m_positronLHPFuns;
+
+  QSettings* m_trdLikelihoodSettings;
 
   static QMutex m_mutex;
 };
