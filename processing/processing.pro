@@ -7,11 +7,13 @@ TOPLEVEL = ..
 
 CLASSES += \
   Corrections \
+  AnalysisProcessor \
   EventReader \
   EventProcessor \
   EventQueue \
   EventDestination \
-  DataChain
+  DataChain \
+  ProcessingThread
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \

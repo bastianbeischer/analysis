@@ -58,6 +58,7 @@ private:
   void closeEvent(QCloseEvent*);
 
   Ui_mainWindow m_ui;
+  QVector<EventProcessor*> m_processors;
   EventReader* m_reader;
   QString m_topLevelPath;
   QVector<unsigned int> m_activePlots;

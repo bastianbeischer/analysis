@@ -4,6 +4,7 @@
 #include <QVector>
 
 #include "PerdaixDisplay.hh"
+#include "EventDestination.hh"
 
 class Hit;
 class Track;
@@ -12,7 +13,8 @@ class TMarker;
 class TLatex;
 
 class HitsPlot :
-  public PerdaixDisplay
+  public PerdaixDisplay,
+  public EventDestination
 {
   
 public:
@@ -20,7 +22,7 @@ public:
   ~HitsPlot();
   
 public:
-  void drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* track = 0);
+  void processEvent(const QVector<Hit*>& hits, Track* track = 0, SimpleEvent* = 0);
 
 private:
   void drawHits();

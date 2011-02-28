@@ -1,6 +1,7 @@
 #ifndef DataInterface_hh
 #define DataInterface_hh
 
+class AnalysisProcessor;
 class AlignmentMatrix;
 class DataChain;
 class TrackFinding;
@@ -19,9 +20,8 @@ public:
 
 private:
   DataChain*      m_chain;
-  TrackFinding*   m_trackFinding;
-  Corrections*    m_corrections;
-  
+  AnalysisProcessor* m_processor;
+
 };
 
 #endif /* DataInterface_hh */

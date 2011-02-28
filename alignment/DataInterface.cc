@@ -12,6 +12,7 @@
 #include "Manager.hh"
 #include "Setup.hh"
 #include "Corrections.hh"
+#include "AnalysisProcessor.hh"
 
 #include "millepede.h"
 
@@ -19,16 +20,14 @@
 
 DataInterface::DataInterface() :
   m_chain(new DataChain),
-  m_trackFinding(new TrackFinding),
-  m_corrections(new Corrections())
+  m_processor(new AnalysisProcessor)
 {
+  m_processor->setTrackType(Track::CenteredBrokenLine);
 }
 
 DataInterface::~DataInterface()
 {
   delete m_chain;
-  delete m_trackFinding;
-  delete m_corrections;
 }
 
 void DataInterface::addFiles(const char* listName)
@@ -38,6 +37,9 @@ void DataInterface::addFiles(const char* listName)
 
 void DataInterface::process(AlignmentMatrix* matrix)
 {
+  m_processor->clearDestinations();
+  m_processor->addDestination(matrix);
+
   unsigned int nEntries = m_chain->nEntries();
   std::cout << std::endl;
   std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
@@ -49,27 +51,8 @@ void DataInterface::process(AlignmentMatrix* matrix)
 
   for (unsigned int i = 0; i < nEntries; i++) {
     SimpleEvent* event = m_chain->event(i);
-    
-    // corrections (previous alignment, time shift, ...)
-    m_corrections->preFitCorrections(event);
-
-    // retrieve data
-    QVector<Hit*> clusters = QVector<Hit*>::fromStdVector(event->hits());
-    // track finding
-    QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
-
-    // fit in millepede
-    CenteredBrokenLine track;
-    if (track.fit(trackClusters)) {
-      m_corrections->postFitCorrections(&track);
-      track.process();
-      TrackInformation::Flags flags = track.information()->flags();
-      if ( (flags & TrackInformation::AllTrackerLayers) &&
-          !(flags & TrackInformation::MagnetCollision) ) {
-        matrix->fillMatrixFromTrack(&track);
-        FITLOC();
-      }
-    }
+    m_processor->process(event);
+    FITLOC();
     
     if ( i > iFactors*nEntries/100. ) {
       std::cout << "#" << std::flush;
