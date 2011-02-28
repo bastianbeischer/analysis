@@ -1,24 +1,26 @@
 #ifndef ClusterGenerator_hh
 #define ClusterGenerator_hh
 
+#include "EventProcessor.hh"
+
 #include <QMap>
 #include <QVector>
 
 class DetectorElement;
 class Hit;
 
-typedef QMap< DetectorElement*,QVector<Hit*> > HitStorage;
-typedef QMap< DetectorElement*,QVector<Hit*> >::const_iterator HitStorageIterator;
+typedef QMap< DetectorElement*, QMap<unsigned short, Hit*> > HitStorage;
+typedef QMap< DetectorElement*, QMap<unsigned short, Hit*> >::iterator HitStorageIterator;
 
-
-class ClusterGenerator
+class ClusterGenerator :
+  public EventProcessor
 {
   
 public:
   ClusterGenerator();
   ~ClusterGenerator();
   
-  QVector<Hit*> findClusters(const QVector<Hit*>&);
+  void process(SimpleEvent*);
 
 private:
   HitStorage m_hitStorage;
