@@ -34,6 +34,7 @@ CLASSES = \
   BetaPlot \
   Chi2PerNdfPlot \
   Chi2Plot \
+  Chi2VsMomentumPlot \
   ClusterLengthPlot \
   ClusterShapePlot \
   GeometricOccupancyPlot \

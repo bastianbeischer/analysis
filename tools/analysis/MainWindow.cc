@@ -19,6 +19,7 @@
 #include "BendingAnglePositionPlot.hh"
 #include "Chi2Plot.hh"
 #include "Chi2PerNdfPlot.hh"
+#include "Chi2VsMomentumPlot.hh"
 #include "AlbedosVsMomentumPlot.hh"
 #include "TOFPositionCorrelationPlot.hh"
 #include "MomentumSpectrumPlot.hh"
@@ -409,6 +410,7 @@ void MainWindow::setupPlots()
     for (unsigned short ndf = 10; ndf <= 20; ndf++)
       m_ui.plotter->addPlot(new Chi2Plot(ndf));
     m_ui.plotter->addPlot(new Chi2PerNdfPlot);
+    m_ui.plotter->addPlot(new Chi2VsMomentumPlot);
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
