@@ -1,0 +1,25 @@
+#ifndef TOTDetectorIonisationCorrelation_hh
+#define TOTDetectorIonisationCorrelation_hh
+
+#include "AnalysisPlot.hh"
+#include "H2DPlot.hh"
+
+#include <QVector>
+#include <QString>
+
+class Hit;
+class Track;
+class SimpleEvent;
+
+class TOTDetectorIonisationCorrelation : public AnalysisPlot, public H2DPlot {
+public:
+  TOTDetectorIonisationCorrelation(QString layer);
+  ~TOTDetectorIonisationCorrelation();
+  virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
+private:
+  QString m_layer;
+  bool checkLayer(double z);
+  double sumOfNonTOFSignalHeights(Track* track, QVector<Hit*> clusters);
+};
+
+#endif /* TOTDetectorIonisationCorrelation_hh */
