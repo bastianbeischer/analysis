@@ -194,6 +194,7 @@ MainWindow::MainWindow(QWidget* parent)
   setupPlots();
 
   m_updateTimer.setInterval(50);
+  m_ui.numberOfThreadsSpinBox->setValue(QThread::idealThreadCount());
 }
 
 MainWindow::~MainWindow()
