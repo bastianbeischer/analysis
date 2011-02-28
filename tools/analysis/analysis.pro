@@ -68,6 +68,8 @@ CLASSES = \
   TrackingEfficiencyVsMomentumPlot \
   TOTMomentumCorrelation \
   TOTPlot \
+  TOTPerBarPlot \
+  TOTPerLayerPlot \
   TOTTemperatureCorrelationPlot \
   TOTTimeCorrelationPlot \
   TOFAlignment

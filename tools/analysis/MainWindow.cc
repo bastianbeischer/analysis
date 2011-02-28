@@ -50,6 +50,8 @@
 #include "TOFEfficiencyPlot.hh"
 #include "TOTMomentumCorrelation.hh"
 #include "TOTPlot.hh"
+#include "TOTPerBarPlot.hh"
+#include "TOTPerLayerPlot.hh"
 #include "TOTTemperatureCorrelationPlot.hh"
 #include "TOFAlignment.hh"
 #include "TOTTimeCorrelationPlot.hh"
@@ -382,6 +384,10 @@ void MainWindow::setupPlots()
   }
   if (m_ui.timeOverThresholdCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TOTPlot);
+    m_ui.plotter->addPlot(new TOTPerBarPlot);
+    m_ui.plotter->addPlot(new TOTPerLayerPlot("upper"));
+    m_ui.plotter->addPlot(new TOTPerLayerPlot("lower"));
+    m_ui.plotter->addPlot(new TOTPerLayerPlot("total"));
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)
