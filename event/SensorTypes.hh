@@ -111,7 +111,7 @@ namespace SensorTypes
     END = N_SENSOR_TYPES
   };
 
-  Type convertFromString(char* string);
+  Type convertFromString(const char* string);
 
 }
 

@@ -22,7 +22,7 @@ public:
   float* values(unsigned int time) const;
 
   int numberOfKeys() const {return m_nKeys;}
-  char** keys() const {return m_keys;}
+  const char** keys() const {return m_keys;}
   TTree* tree() {return m_tree;}
   bool good() const {return m_good;}
   unsigned int firstTime() const {return m_firstTime;}
@@ -40,7 +40,7 @@ private:
   TTree* m_tree;
 
   int m_nKeys;
-  char** m_keys;
+  const char** m_keys;
   unsigned int m_firstTime;
   bool m_good;
   

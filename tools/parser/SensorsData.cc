@@ -163,17 +163,20 @@ void SensorsData::init()
 {
   TObjArray* branches = m_tree->GetListOfBranches();
   m_nKeys = branches->GetEntries()-1;
-  m_keys = new char*[m_nKeys];
+  m_keys = new const char*[m_nKeys];
   m_values = new float[m_nKeys];
   
+  int k = 0;
   int i = 0;
-  while (i < m_nKeys) {
-    char* name = (char*)branches->At(i)->GetName();
+  while (k < branches->GetEntries()) {
+    const char* name = (const char*)branches->At(k)->GetName();
+    std::cout << name << std::endl;
     if (strcmp(name, "time") != 0) {
       m_keys[i] = name;
       m_tree->SetBranchAddress(name, &m_values[i]);
       i++;
     }
+    k++;
   }
 
   // m_tree->SetCacheSize(1e3);
