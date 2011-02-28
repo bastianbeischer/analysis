@@ -8,6 +8,7 @@
 #include "BrokenLine.hh"
 #include "StraightLine.hh"
 #include "Corrections.hh"
+#include "AnalysisProcessor.hh"
 #include "EventReader.hh"
 
 #include "BendingPositionPlot.hh"
@@ -60,6 +61,7 @@
 
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
+  , m_processors()
   , m_reader(new EventReader(this))
   , m_activePlots()
   , m_inhibitDraw(false)
@@ -195,6 +197,9 @@ MainWindow::MainWindow(QWidget* parent)
 
 MainWindow::~MainWindow()
 {
+  qDeleteAll(m_processors);
+  m_processors.clear();
+  delete m_reader;
 }
 
 void MainWindow::processArguments(QStringList arguments)
@@ -574,12 +579,20 @@ void MainWindow::analyzeButtonClicked()
     Corrections::Flags flags;
     setupAnalysis(type, flags);
     setupPlots();
-    foreach(AnalysisPlot* plot, m_ui.plotter->plots())
-      m_reader->addDestination(plot);
-    m_reader->start(type, flags, m_ui.numberOfThreadsSpinBox->value(), m_ui.firstEventSpinBox->value(), m_ui.lastEventSpinBox->value());
+
+    qDeleteAll(m_processors);
+    m_processors.clear();
+    for (int i = 0; i < m_ui.numberOfThreadsSpinBox->value(); i++) {
+      AnalysisProcessor* processor = new AnalysisProcessor;
+      foreach(AnalysisPlot* plot, m_ui.plotter->plots())
+        processor->addDestination(plot);
+      processor->setTrackType(type);
+      processor->setCorrectionFlags(flags);
+      m_processors.append(processor);
+    }      
+    m_reader->start(m_processors, m_ui.firstEventSpinBox->value(), m_ui.lastEventSpinBox->value());
   } else {
     m_reader->stop();
-    m_reader->clearDestinations();
   }
 }
 

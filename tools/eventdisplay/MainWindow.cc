@@ -3,6 +3,8 @@
 #include <QDebug>
 #include <QFileDialog>
 
+#include "Track.hh"
+
 MainWindow::MainWindow(QWidget* parent)
   : QDialog(parent)
 {
@@ -113,7 +115,14 @@ void MainWindow::update()
   
   bool drawTracks = m_ui.drawTrackCheckBox->isChecked();
   m_ui.fitMethodComboBox->setEnabled(drawTracks);
-  m_ui.plotter->drawEvent(m_ui.eventSpinBox->value(), drawTracks, m_ui.fitMethodComboBox->currentIndex(), *m_ui.textEdit);
+
+  Track::Type type;
+  int index = m_ui.fitMethodComboBox->currentIndex();
+  if (!drawTracks) type = Track::None;
+  else if (index == 0) type = Track::CenteredBrokenLine;
+  else if (index == 1) type = Track::StraightLine;
+  else if (index == 2) type = Track::BrokenLine;
+  m_ui.plotter->drawEvent(m_ui.eventSpinBox->value(), type, *m_ui.textEdit);
 }
 
 void MainWindow::saveButtonClicked()
