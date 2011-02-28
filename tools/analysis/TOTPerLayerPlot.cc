@@ -7,6 +7,7 @@
 #include "TOFCluster.hh"
 #include "Track.hh"
 #include "Constants.hh"
+#include "TrackInformation.hh"
 
 #include <TH1D.h>
 #include <TAxis.h>
@@ -26,7 +27,7 @@ TOTPerLayerPlot::TOTPerLayerPlot(QString layer)
   const double xMax = 300;
   TH1D* histogram = new TH1D(qPrintable(title), "", nBinsX, xMin, xMax);
   histogram->GetXaxis()->SetTitleOffset(1.4);
-  histogram->GetXaxis()->SetTitle("time over threshold / ns");
+  histogram->GetXaxis()->SetTitle("sum time over threshold / ns");
   addHistogram(histogram);
 }
 
@@ -34,6 +35,13 @@ TOTPerLayerPlot::~TOTPerLayerPlot()
 {}
 
 void TOTPerLayerPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*) {
+  
+//  if (!track || !track->fitGood())
+//    return;
+//  TrackInformation::Flags flags = track->information()->flags();
+//  if (!(flags & (TrackInformation::AllTrackerLayers | TrackInformation::InsideMagnet)))
+//    return;
+  
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Hit* hit = *it;

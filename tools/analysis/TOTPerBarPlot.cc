@@ -31,7 +31,7 @@ TOTPerBarPlot::TOTPerBarPlot()
     histogram->GetXaxis()->SetBinLabel(1 + ch, qPrintable(QString("%1").arg(0x8000 | ch, 0, 16)));
   histogram->GetXaxis()->SetTitleOffset(1.4);
   histogram->GetXaxis()->SetTitle("bar");
-  histogram->GetYaxis()->SetTitle("time over threshold / ns");
+  histogram->GetYaxis()->SetTitle("sum time over threshold / ns");
   setHistogram(histogram);
 }
 
