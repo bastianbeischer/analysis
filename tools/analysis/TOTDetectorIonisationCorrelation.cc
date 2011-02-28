@@ -38,10 +38,11 @@ TOTDetectorIonisationCorrelation::TOTDetectorIonisationCorrelation(QString layer
     xMin = 0;
     xMax = 7e4;
   }
-  QString title = QString("sum time over threshold "+typ+" signal hight correlation "+layer+" layer");
+  QString title = QString("time over threshold "+typ+" signal hight correlation "+layer+" layer");
   setTitle(title);
   TH2D* histogram = new TH2D(qPrintable(title), "", nBinsX, xMin, xMax, nBinsY, yMin, yMax);  histogram->GetXaxis()->SetTitleOffset(1.4);
-  histogram->GetYaxis()->SetTitle("time over threshold / ns");
+  histogram->GetYaxis()->SetTitle("sum time over threshold / ns");
+  histogram->GetYaxis()->SetTitleOffset(1.4);
   histogram->GetXaxis()->SetTitle("total signal height / ADC-Counts");
   setHistogram(histogram);
 }

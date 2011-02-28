@@ -32,6 +32,7 @@ TOTPerBarPlot::TOTPerBarPlot()
   histogram->GetXaxis()->SetTitleOffset(1.4);
   histogram->GetXaxis()->SetTitle("bar");
   histogram->GetYaxis()->SetTitle("sum time over threshold / ns");
+  histogram->GetYaxis()->SetTitleOffset(1.4);
   setHistogram(histogram);
 }
 

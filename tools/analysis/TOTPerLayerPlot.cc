@@ -28,6 +28,7 @@ TOTPerLayerPlot::TOTPerLayerPlot(QString layer)
   TH1D* histogram = new TH1D(qPrintable(title), "", nBinsX, xMin, xMax);
   histogram->GetXaxis()->SetTitleOffset(1.4);
   histogram->GetXaxis()->SetTitle("sum time over threshold / ns");
+  histogram->GetYaxis()->SetTitleOffset(1.4);
   addHistogram(histogram);
 }
 
