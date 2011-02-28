@@ -14,17 +14,40 @@
 
 #include <QDebug>
 
-TOTMomentumCorrelation::TOTMomentumCorrelation(unsigned int id)
-  : AnalysisPlot(AnalysisPlot::TimeOverThreshold)
-  , H2DPlot()
-  , m_id(id)
+//TOTMomentumCorrelation::TOTMomentumCorrelation(unsigned int id)
+//  : AnalysisPlot(AnalysisPlot::TimeOverThreshold)
+//  , H2DPlot()
+//  , m_id(id)
+//{
+//  
+//  QString htitle =QString("time over threshold momentum correlation 0x%1").arg(m_id, 0, 16);
+//  setTitle(htitle);
+//  TH2D* histogram = new TH2D(qPrintable(title()), "", 50, 0, 5, 75, 0, 75);
+//  histogram->GetXaxis()->SetTitle("rigidity / GV");
+//  histogram->GetYaxis()->SetTitle("time over threshold / ns");
+//  setHistogram(histogram);
+//  addLatex(RootPlot::newLatex(.15, .85));
+//}
+
+TOTMomentumCorrelation::TOTMomentumCorrelation(QString layer)
+: AnalysisPlot(AnalysisPlot::TimeOverThreshold)
+, H2DPlot()
+, m_layer(layer)
 {
   
-  QString htitle =QString("time over threshold momentum correlation 0x%1").arg(m_id, 0, 16);
+  QString htitle = "time over threshold momentum correlation "+layer+" tof";
   setTitle(htitle);
-  TH2D* histogram = new TH2D(qPrintable(title()), "", 50, 0, 5, 75, 0, 75);
+  const unsigned int nBinsX = 100;
+  const double xMin = 0;
+  const double xMax = 10;
+  const unsigned int nBinsY = 150;
+  const double yMin = 0;
+  const double yMax = 300;
+  TH2D* histogram = new TH2D(qPrintable(htitle), "", nBinsX, xMin, xMax, nBinsY, yMin, yMax);
+  
   histogram->GetXaxis()->SetTitle("rigidity / GV");
-  histogram->GetYaxis()->SetTitle("time over threshold / ns");
+  histogram->GetYaxis()->SetTitle("sum time over threshold / ns");
+  histogram->GetYaxis()->SetTitleOffset(1.4);
   setHistogram(histogram);
   addLatex(RootPlot::newLatex(.15, .85));
 }
@@ -48,19 +71,60 @@ void TOTMomentumCorrelation::processEvent(const QVector<Hit*>& clusters, Track* 
       TOFCluster* cluster = static_cast<TOFCluster*> (hit);
       if (qAbs(track->x(cluster->position().z()) - cluster->position().x()) > Constants::tofBarWidth)
         continue;
+      if ( !checkLayer( cluster->position().z() ))
+        continue;
       std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+      double totSum = 0;
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         Hit* tofHit = *it;
-        if (tofHit->detId() == m_id) {
-          TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*> (tofHit);
-          histogram()->Fill(track->pt(), tofSipmHit->timeOverThreshold());
+//        if (tofHit->detId() == m_id) {
+//          TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*> (tofHit);
+//          histogram()->Fill(track->pt(), tofSipmHit->timeOverThreshold());
+//        }
+        if (tofHit->detId() == 0x8034) {
+          continue;
         }
+        int tofBar = (int)((tofHit->detId() - 0x8000) / 4);
+        TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
+        double tot = tofSipmHit->timeOverThreshold();
+        if (tofBar == 13) {// bar with one sipm damaged
+          tot *= 4/3.;
+        }
+        totSum += tot;
       }
+      histogram()->Fill(track->pt(), totSum);      
     }
   }
 }
 
 void TOTMomentumCorrelation::update() {
   latex()->SetTitle(qPrintable(QString("#rho = %1").arg(histogram()->GetCorrelationFactor())));
+}
+
+bool TOTMomentumCorrelation::checkLayer(double z)
+{
+  if (m_layer == "upper") {
+    if (z > 0) {
+      return true;
+    }
+    else {
+      return false;
+    }      
+  }
+  else if (m_layer == "lower") {
+    if (z < 0) {
+      return true;
+    }
+    else {
+      return false;
+    }      
+  }
+  else if (m_layer == "total") {
+    return true;
+  }
+  else {
+    qFatal("Wrong argument passed to TOTPerLayer!");
+    return false;
+  }
 }
