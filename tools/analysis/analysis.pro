@@ -68,6 +68,7 @@ CLASSES = \
   TOFEfficiencyPlot \
   TrackingEfficiencyVsMomentumPlot \
   TOTMomentumCorrelation \
+  TOTBetaCorrelation \
   TOTPlot \
   TOTPerBarPlot \
   TOTPerLayerPlot \
