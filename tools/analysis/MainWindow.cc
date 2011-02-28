@@ -52,6 +52,7 @@
 #include "TOTPlot.hh"
 #include "TOTPerBarPlot.hh"
 #include "TOTPerLayerPlot.hh"
+#include "TOTDetectorIonisationCorrelation.hh"
 #include "TOTTemperatureCorrelationPlot.hh"
 #include "TOFAlignment.hh"
 #include "TOTTimeCorrelationPlot.hh"
@@ -388,6 +389,9 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TOTPerLayerPlot("upper"));
     m_ui.plotter->addPlot(new TOTPerLayerPlot("lower"));
     m_ui.plotter->addPlot(new TOTPerLayerPlot("total"));
+    m_ui.plotter->addPlot(new TOTDetectorIonisationCorrelation("upper"));
+    m_ui.plotter->addPlot(new TOTDetectorIonisationCorrelation("lower"));
+    m_ui.plotter->addPlot(new TOTDetectorIonisationCorrelation("total"));
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)

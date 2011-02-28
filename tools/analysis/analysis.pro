@@ -70,6 +70,7 @@ CLASSES = \
   TOTPlot \
   TOTPerBarPlot \
   TOTPerLayerPlot \
+  TOTDetectorIonisationCorrelation \
   TOTTemperatureCorrelationPlot \
   TOTTimeCorrelationPlot \
   TOFAlignment
