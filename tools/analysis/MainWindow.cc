@@ -132,13 +132,13 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.timeOverThresholdCorrectionCheckBox);
   m_controlWidgets.append(m_ui.photonTravelTimeCorrectionCheckBox);
 
-  connect(m_reader, SIGNAL(eventLoopStarted()), this, SLOT(toggleControlWidgetsStatus()));
-  connect(m_reader, SIGNAL(eventLoopStopped()), this, SLOT(toggleControlWidgetsStatus()));
+  connect(m_reader, SIGNAL(started()), this, SLOT(toggleControlWidgetsStatus()));
+  connect(m_reader, SIGNAL(finished()), this, SLOT(toggleControlWidgetsStatus()));
   connect(m_reader, SIGNAL(numberOfEventsChanged(int)), this, SLOT(numberOfEventsChanged(int)));
   connect(m_reader, SIGNAL(numberOfEventsChanged(int)), this, SLOT(numberOfEventsChanged(int)));
-  connect(m_reader, SIGNAL(eventLoopStarted()), &m_updateTimer, SLOT(start()));
-  connect(m_reader, SIGNAL(eventLoopStopped()), &m_updateTimer, SLOT(stop()));
-  connect(m_reader, SIGNAL(eventLoopStopped()), m_ui.plotter, SLOT(finalizeAnalysis()));
+  connect(m_reader, SIGNAL(started()), &m_updateTimer, SLOT(start()));
+  connect(m_reader, SIGNAL(finished()), &m_updateTimer, SLOT(stop()));
+  connect(m_reader, SIGNAL(finished()), m_ui.plotter, SLOT(finalizeAnalysis()));
 
   connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
 
