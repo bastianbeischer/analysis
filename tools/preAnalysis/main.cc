@@ -1,18 +1,7 @@
-#include <cstdlib>
-#include <iostream>
-
 #include <QCoreApplication>
 #include <QThread>
 
-#include <TROOT.h>
-#include <TFile.h>
-#include <TTree.h>
-
 #include "PreAnalysisManager.hh"
-
-// #include "DataChain.hh"
-// #include "SimpleEvent.hh"
-// #include "DataDescription.hh"
 
 int main(int argc, char** argv)
 {
