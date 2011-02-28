@@ -51,8 +51,13 @@ void TOTPerLayerPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simp
         if (tofHit->detId() == 0x8034) {
           continue;
         }
+        int tofBar = (int)((tofHit->detId() - 0x8000) / 4);
         TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
-        totSum += tofSipmHit->timeOverThreshold();
+        double tot = tofSipmHit->timeOverThreshold();
+        if (tofBar == 13) {// bar with one sipm damaged
+          tot *= 4/3.;
+        }
+        totSum += tot;
       }
       histogram()->Fill(totSum);
     }

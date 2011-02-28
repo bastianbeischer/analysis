@@ -63,6 +63,9 @@ void TOTPerBarPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simple
         TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
         totSum[tofBar] += tofSipmHit->timeOverThreshold();
       }
+      if (tofBar == 13) {// bar with one sipm damaged
+        totSum[tofBar] *= 4/3.;
+      }
       histogram()->Fill(tofBar, totSum[tofBar]);
     }
   }
