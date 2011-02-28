@@ -10,6 +10,7 @@
 #include "EventQueue.hh"
 #include "SimpleEvent.hh"
 #include "DataDescription.hh"
+#include "DataChain.hh"
 
 #include <iostream>
 
@@ -84,9 +85,10 @@ void OutputThread::processEvent(const QVector<Hit*>&, Track*, SimpleEvent* event
 void OutputThread::writeEvent(SimpleEvent* event)
 {
   if (event) {
+    DataChain::s_mutex.lock();
     m_event = event;
-    m_tree->SetDirectory(m_file);
     m_tree->Fill();
+    DataChain::s_mutex.unlock();
     delete m_event;
   }
 }
