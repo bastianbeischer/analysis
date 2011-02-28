@@ -8,6 +8,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
+#include <QCoreApplication>
 
 PreAnalysisManager::PreAnalysisManager(QObject* parent) :
   QObject(parent),
@@ -16,6 +17,7 @@ PreAnalysisManager::PreAnalysisManager(QObject* parent) :
   m_generators()
 {
   connect(m_reader, SIGNAL(eventLoopStopped()), m_outputThread, SLOT(readingFinished()));
+  connect(m_outputThread, SIGNAL(finished()), qApp, SLOT(quit()));
 }
 
 PreAnalysisManager::~PreAnalysisManager()

@@ -27,7 +27,6 @@ OutputThread::~OutputThread()
 {
   delete m_file;
   delete m_queue;
-  //  delete m_description;
 }
 
 void OutputThread::init(QString filename)
@@ -55,6 +54,7 @@ void OutputThread::readingFinished()
   m_mutex.lock();
   m_finished = true;
   m_mutex.unlock();
+  wait();
 }
 
 void OutputThread::run()
@@ -74,7 +74,6 @@ void OutputThread::run()
   m_file->cd();
   m_tree->Write();
   m_file->Close();
-  QCoreApplication::exit();
 }
 
 void OutputThread::processEvent(const QVector<Hit*>&, Track*, SimpleEvent* event)
