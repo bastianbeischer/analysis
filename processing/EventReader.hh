@@ -29,8 +29,6 @@ public:
   void addRootFile(const QString& file);
 signals:
   void numberOfEventsChanged(int);
-  void eventLoopStarted();
-  void eventLoopStopped();
 protected:
   void run();
 private:

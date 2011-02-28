@@ -166,4 +166,5 @@ void DataManager::addSensorData(SimpleEvent* event)
     float value = m_sensorsData->averageValue(keys[iKey], event->time());
     event->setSensorData(SensorTypes::convertFromString(keys[iKey]), value);
   }
+  delete [] keys;
 }

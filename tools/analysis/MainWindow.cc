@@ -19,6 +19,7 @@
 #include "BendingAnglePositionPlot.hh"
 #include "Chi2Plot.hh"
 #include "Chi2PerNdfPlot.hh"
+#include "Chi2VsMomentumPlot.hh"
 #include "AlbedosVsMomentumPlot.hh"
 #include "TOFPositionCorrelationPlot.hh"
 #include "MomentumSpectrumPlot.hh"
@@ -134,13 +135,13 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.timeOverThresholdCorrectionCheckBox);
   m_controlWidgets.append(m_ui.photonTravelTimeCorrectionCheckBox);
 
-  connect(m_reader, SIGNAL(eventLoopStarted()), this, SLOT(toggleControlWidgetsStatus()));
-  connect(m_reader, SIGNAL(eventLoopStopped()), this, SLOT(toggleControlWidgetsStatus()));
+  connect(m_reader, SIGNAL(started()), this, SLOT(toggleControlWidgetsStatus()));
+  connect(m_reader, SIGNAL(finished()), this, SLOT(toggleControlWidgetsStatus()));
   connect(m_reader, SIGNAL(numberOfEventsChanged(int)), this, SLOT(numberOfEventsChanged(int)));
   connect(m_reader, SIGNAL(numberOfEventsChanged(int)), this, SLOT(numberOfEventsChanged(int)));
-  connect(m_reader, SIGNAL(eventLoopStarted()), &m_updateTimer, SLOT(start()));
-  connect(m_reader, SIGNAL(eventLoopStopped()), &m_updateTimer, SLOT(stop()));
-  connect(m_reader, SIGNAL(eventLoopStopped()), m_ui.plotter, SLOT(finalizeAnalysis()));
+  connect(m_reader, SIGNAL(started()), &m_updateTimer, SLOT(start()));
+  connect(m_reader, SIGNAL(finished()), &m_updateTimer, SLOT(stop()));
+  connect(m_reader, SIGNAL(finished()), m_ui.plotter, SLOT(finalizeAnalysis()));
 
   connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
 
@@ -196,6 +197,7 @@ MainWindow::MainWindow(QWidget* parent)
   setupPlots();
 
   m_updateTimer.setInterval(50);
+  m_ui.numberOfThreadsSpinBox->setValue(QThread::idealThreadCount());
 }
 
 MainWindow::~MainWindow()
@@ -422,6 +424,7 @@ void MainWindow::setupPlots()
     for (unsigned short ndf = 10; ndf <= 20; ndf++)
       m_ui.plotter->addPlot(new Chi2Plot(ndf));
     m_ui.plotter->addPlot(new Chi2PerNdfPlot);
+    m_ui.plotter->addPlot(new Chi2VsMomentumPlot);
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
@@ -464,8 +467,23 @@ void MainWindow::setupPlots()
   }
   if (m_ui.resolutionTofCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x8020, 0x8030));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x8024, 0x8034));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x8028, 0x8038));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x802c, 0x803c));
+    
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8020, 0x8030));
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8024, 0x8034));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8028, 0x8038));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x802c, 0x803c));
+
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8020, 0x8030));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8024, 0x8034));
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8028, 0x8038));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x802c, 0x803c));
+    
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x8020, 0x8030));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x8024, 0x8034));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x8028, 0x8038));
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x802c, 0x803c));
   }
   if (m_ui.calibrationTofCheckBox->isChecked()) {

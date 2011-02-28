@@ -92,7 +92,6 @@ void EventReader::stop()
 
 void EventReader::run()
 {
-  emit(eventLoopStarted());
   foreach(ProcessingThread* thread, m_threads)
     thread->start();
 
@@ -131,6 +130,4 @@ void EventReader::run()
 
   qDeleteAll(m_threads);
   m_threads.clear();
-
-  emit(eventLoopStopped());
 }

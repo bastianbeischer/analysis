@@ -9,7 +9,8 @@ INCLUDEPATH += \
   $$TOPLEVEL/alignment \
   $$TOPLEVEL/alignment/millepede \
   $$TOPLEVEL/event \
-  $$TOPLEVEL/processing
+  $$TOPLEVEL/processing \
+  $$TOPLEVEL/global
 
 LIBS += \
   -lgfortran \
