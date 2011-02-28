@@ -50,6 +50,7 @@
 #include "TotalSignalHeightPlot.hh"
 #include "TOFEfficiencyPlot.hh"
 #include "TOTMomentumCorrelation.hh"
+#include "TOTBetaCorrelation.hh"
 #include "TOTPlot.hh"
 #include "TOTPerBarPlot.hh"
 #include "TOTPerLayerPlot.hh"
@@ -397,12 +398,18 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TOTDetectorIonisationCorrelation("upper","tracker"));
     m_ui.plotter->addPlot(new TOTDetectorIonisationCorrelation("lower","tracker"));
     m_ui.plotter->addPlot(new TOTDetectorIonisationCorrelation("total","tracker"));
-    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
-      DetectorElement* element = *elementIt;
-      if (element->type() == DetectorElement::tof)
-        for (int ch = 0; ch < 4; ++ch)
-          m_ui.plotter->addPlot(new TOTMomentumCorrelation(element->id() | ch));
-    }
+    m_ui.plotter->addPlot(new TOTMomentumCorrelation("upper"));
+    m_ui.plotter->addPlot(new TOTMomentumCorrelation("lower"));
+    m_ui.plotter->addPlot(new TOTMomentumCorrelation("total"));
+    m_ui.plotter->addPlot(new TOTBetaCorrelation("upper"));
+    m_ui.plotter->addPlot(new TOTBetaCorrelation("lower"));
+    m_ui.plotter->addPlot(new TOTBetaCorrelation("total"));
+//    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+//      DetectorElement* element = *elementIt;
+//      if (element->type() == DetectorElement::tof)
+//        for (int ch = 0; ch < 4; ++ch)
+//          m_ui.plotter->addPlot(new TOTMomentumCorrelation(element->id() | ch));
+//    }
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)
