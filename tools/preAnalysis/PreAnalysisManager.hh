@@ -7,7 +7,7 @@
 
 class EventReader;
 class EventProcessor;
-class OutputThread;
+class EventWriter;
 
 class PreAnalysisManager :
   public QObject
@@ -24,7 +24,7 @@ public:
 
 private:
   EventReader* m_reader;
-  OutputThread* m_outputThread;
+  EventWriter* m_outputThread;
   QVector<EventProcessor*> m_generators;
 
 };

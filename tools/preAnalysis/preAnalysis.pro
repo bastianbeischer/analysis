@@ -22,7 +22,7 @@ SOURCES = \
 CLASSES = \
   PreAnalysisManager \
   ClusterGenerator \
-  OutputThread
+  EventWriter
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

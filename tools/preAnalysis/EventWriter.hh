@@ -1,5 +1,5 @@
-#ifndef OutputThread_hh
-#define OutputThread_hh
+#ifndef EventWriter_hh
+#define EventWriter_hh
 
 #include <QThread>
 #include "EventDestination.hh"
@@ -14,7 +14,7 @@ class Track;
 class SimpleEvent;
 class DataDescription;
 
-class OutputThread :
+class EventWriter :
   public QThread,
   public EventDestination
 {
@@ -22,8 +22,8 @@ class OutputThread :
 Q_OBJECT
 
 public:
-  OutputThread(QObject* = 0);
-  ~OutputThread();
+  EventWriter(QObject* = 0);
+  ~EventWriter();
   
   void init(QString filename);
   DataDescription* description() {return m_description;}
@@ -49,4 +49,4 @@ private:
   
 };
 
-#endif /* OutputThread_hh */
+#endif /* EventWriter_hh */

@@ -2,7 +2,7 @@
 
 #include "ClusterGenerator.hh"
 #include "EventReader.hh"
-#include "OutputThread.hh"
+#include "EventWriter.hh"
 
 #include <QStringList>
 #include <QFile>
@@ -13,7 +13,7 @@
 PreAnalysisManager::PreAnalysisManager(QObject* parent) :
   QObject(parent),
   m_reader(new EventReader),
-  m_outputThread(new OutputThread),
+  m_outputThread(new EventWriter),
   m_generators()
 {
   connect(m_reader, SIGNAL(eventLoopStopped()), m_outputThread, SLOT(readingFinished()));

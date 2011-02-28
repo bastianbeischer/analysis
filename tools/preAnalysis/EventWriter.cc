@@ -1,4 +1,4 @@
-#include "OutputThread.hh"
+#include "EventWriter.hh"
 
 #include <QCoreApplication>
 
@@ -14,7 +14,7 @@
 
 #include <iostream>
 
-OutputThread::OutputThread(QObject* parent) :
+EventWriter::EventWriter(QObject* parent) :
   QThread(parent),
   EventDestination(),
   m_mutex(),
@@ -23,13 +23,13 @@ OutputThread::OutputThread(QObject* parent) :
 {
 }
 
-OutputThread::~OutputThread()
+EventWriter::~EventWriter()
 {
   delete m_file;
   delete m_queue;
 }
 
-void OutputThread::init(QString filename)
+void EventWriter::init(QString filename)
 {
   m_file = new TFile(qPrintable(filename), "RECREATE");
   m_tree = new TTree("SimpleEventTree", "tree with simple events");
@@ -41,7 +41,7 @@ void OutputThread::init(QString filename)
   m_description->setSoftwareVersionHash();
 }
 
-void OutputThread::start()
+void EventWriter::start()
 {
   m_mutex.lock();
   m_finished = false;
@@ -49,7 +49,7 @@ void OutputThread::start()
   QThread::start();
 }
 
-void OutputThread::readingFinished()
+void EventWriter::readingFinished()
 {
   m_mutex.lock();
   m_finished = true;
@@ -57,7 +57,7 @@ void OutputThread::readingFinished()
   wait();
 }
 
-void OutputThread::run()
+void EventWriter::run()
 {
   // continuously write events until reading is finished
   while(!m_finished) {
@@ -66,7 +66,6 @@ void OutputThread::run()
 
   // write the events still left in the queue
   while(m_queue->numberOfEvents() > 0) {
-    std::cout << m_queue->numberOfEvents() << std::endl;
     writeEvent(m_queue->dequeue());
   }
 
@@ -76,12 +75,12 @@ void OutputThread::run()
   m_file->Close();
 }
 
-void OutputThread::processEvent(const QVector<Hit*>&, Track*, SimpleEvent* event)
+void EventWriter::processEvent(const QVector<Hit*>&, Track*, SimpleEvent* event)
 {
   m_queue->enqueue(event);
 }
 
-void OutputThread::writeEvent(SimpleEvent* event)
+void EventWriter::writeEvent(SimpleEvent* event)
 {
   if (event) {
     DataChain::s_mutex.lock();
