@@ -164,9 +164,6 @@ void DataManager::addSensorData(SimpleEvent* event)
   const char** keys = m_sensorsData->keys();
   float* values = m_sensorsData->values(event->time());
   for (int iKey = 0; iKey < nKeys; iKey++) {
-    // if (strcmp(keys[iKey], "time") != 0)
-    // std::cout << keys[iKey] << std::endl;
     event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
   }
-  delete [] keys;
 }
