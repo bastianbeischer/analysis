@@ -44,8 +44,8 @@ private:
   unsigned int m_firstTime;
   bool m_good;
   
-  float        m_var;
-  float*       m_values;
+  float m_var;
+  float* m_values;
 
 };
 
