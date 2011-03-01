@@ -15,6 +15,7 @@ SensorsData::SensorsData(DataType type, const char* filename) :
   m_keys(0),
   m_firstTime(0),
   m_good(false),
+  m_time(0),
   m_var(sqrt(-1)),
   m_values(0)
 {
@@ -183,9 +184,8 @@ void SensorsData::init()
   // m_tree->SetBranchStatus("*", 0);
   // m_tree->SetBranchStatus("time", 1);
   // m_tree->SetBranchStatus("time", 0);
-  unsigned int time;
-  m_tree->SetBranchAddress("time",&time);
+  m_tree->SetBranchAddress("time",&m_time);
   m_tree->GetEntry(0);
-  m_firstTime = time;
+  m_firstTime = m_time;
 }
 
