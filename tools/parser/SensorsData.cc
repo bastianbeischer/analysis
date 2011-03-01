@@ -63,7 +63,7 @@ int SensorsData::entryForTime(unsigned int time) const
   if (time < m_firstTime || time > m_firstTime + m_tree->GetEntries()) {
     std::cerr << "Tree does not contain the requested time " << time 
               << " (first time = " << m_firstTime << ", entries = " << m_tree->GetEntries() << ")" << std::endl;
-    return 0;
+    return -1;
   }
 
   return time - m_firstTime;
@@ -156,7 +156,14 @@ float SensorsData::averageValue(const char* id, unsigned int time)
 float* SensorsData::values(unsigned int time) const
 {
   int entry = entryForTime(time);
-  m_tree->GetEntry(entry);
+  if (entry >= 0)
+    m_tree->GetEntry(entry);
+  else {
+    for (int i = 0; i < m_nKeys; i++) {
+      m_values[i] = sqrt(-1);
+    }
+  }
+
   return m_values;
 }
 
