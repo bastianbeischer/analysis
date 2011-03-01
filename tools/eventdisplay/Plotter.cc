@@ -151,6 +151,8 @@ void Plotter::drawEvent(unsigned int i, Track::Type type, QPlainTextEdit& infoTe
   infoTextEdit.appendPlainText("\n  runfilename:\n  " +  runfileName);
   infoTextEdit.appendPlainText("\n  event in runfile:\n  " +  QString::number(eventInRunFile));
   //infoTextEdit.append("\n  ms in runfile:\n  " + QString::number(msOfEventInRun));
+
+  delete event;
 }
 
 void Plotter::saveCanvas(const QString& fileName)
