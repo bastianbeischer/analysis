@@ -1550,9 +1550,6 @@ mop value</string>
               <string>constant time
 over threshold</string>
              </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
             </widget>
            </item>
            <item>
@@ -1661,8 +1658,8 @@ over threshold</string>
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="setFileListAction"/>
-    <addaction name="addFileListAction"/>
+    <addaction name="setFileListDialogAction"/>
+    <addaction name="addFileListDialogAction"/>
     <addaction name="separator"/>
     <addaction name="quitAction"/>
    </widget>
@@ -1675,14 +1672,15 @@ over threshold</string>
     <property name="title">
      <string>Sa&amp;ve</string>
     </property>
-    <addaction name="saveCanvasAction"/>
-    <addaction name="saveAllCanvasesAction"/>
+    <addaction name="saveCanvasDialogAction"/>
+    <addaction name="saveAllCanvasesDialogAction"/>
     <addaction name="saveForPostAnalysisAction"/>
+    <addaction name="saveForPostAnalysisDialogAction"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSave"/>
   </widget>
-  <action name="addFileListAction">
+  <action name="addFileListDialogAction">
    <property name="text">
     <string>&amp;Add file list...</string>
    </property>
@@ -1690,7 +1688,7 @@ over threshold</string>
     <font/>
    </property>
   </action>
-  <action name="setFileListAction">
+  <action name="setFileListDialogAction">
    <property name="text">
     <string>&amp;Set file list...</string>
    </property>
@@ -1698,7 +1696,7 @@ over threshold</string>
     <font/>
    </property>
   </action>
-  <action name="saveCanvasAction">
+  <action name="saveCanvasDialogAction">
    <property name="text">
     <string>&amp;Save canvas...</string>
    </property>
@@ -1709,7 +1707,7 @@ over threshold</string>
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="saveAllCanvasesAction">
+  <action name="saveAllCanvasesDialogAction">
    <property name="text">
     <string>Save &amp;all canvases...</string>
    </property>
@@ -1720,7 +1718,7 @@ over threshold</string>
     <string>Ctrl+Shift+S</string>
    </property>
   </action>
-  <action name="saveForPostAnalysisAction">
+  <action name="saveForPostAnalysisDialogAction">
    <property name="text">
     <string>Save for &amp;post analysis...</string>
    </property>
@@ -1734,6 +1732,11 @@ over threshold</string>
    </property>
    <property name="font">
     <font/>
+   </property>
+  </action>
+  <action name="saveForPostAnalysisAction">
+   <property name="text">
+    <string>Save for post analysis</string>
    </property>
   </action>
  </widget>

@@ -23,10 +23,11 @@ class MainWindow : public QMainWindow {
   ~MainWindow();
   void processArguments(QStringList);
 private slots:
-  void setOrAddFileListActionTriggered();
-  void saveCanvasActionTriggered();
-  void saveAllCanvasActionTriggered();
+  void setOrAddFileListDialogActionTriggered();
+  void saveCanvasDialogActionTriggered();
+  void saveAllCanvasDialogActionTriggered();
   void saveForPostAnalysisActionTriggered();
+  void saveForPostAnalysisDialogActionTriggered();
   void listWidgetItemChanged(QListWidgetItem*);
   void listWidgetCurrentRowChanged(int);
   void selectAllButtonClicked();
@@ -57,6 +58,7 @@ private:
   void closeEvent(QCloseEvent*);
 
   Ui_mainWindow m_ui;
+  QVector<EventProcessor*> m_processors;
   EventReader* m_reader;
   QString m_topLevelPath;
   QVector<unsigned int> m_activePlots;

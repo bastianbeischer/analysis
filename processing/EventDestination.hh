@@ -10,7 +10,7 @@ class SimpleEvent;
 class EventDestination {
 public:
   EventDestination();
-  ~EventDestination();
+  virtual ~EventDestination();
   virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0) = 0;
 };
 

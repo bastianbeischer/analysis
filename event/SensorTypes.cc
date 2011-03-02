@@ -97,6 +97,16 @@ namespace SensorTypes {
     else if (strcmp(string, "ATC_HORIZONTAL_SPEED") == 0) return ATC_HORIZONTAL_SPEED;
     else if (strcmp(string, "ATC_HEADING") == 0) return ATC_HEADING;
 
+    // EBASS
+    else if (strcmp(string, "EBASS_LATITUDE") == 0) return EBASS_LATITUDE;
+    else if (strcmp(string, "EBASS_LONGITUDE") == 0) return EBASS_LONGITUDE;
+    else if (strcmp(string, "EBASS_HEIGHT") == 0) return EBASS_HEIGHT;
+    else if (strcmp(string, "EBASS_HORIZONTAL_SPEED") == 0) return EBASS_HORIZONTAL_SPEED;
+    else if (strcmp(string, "EBASS_HEADING") == 0) return EBASS_HEADING;
+    else if (strcmp(string, "EBASS_TEMP_OUT") == 0) return EBASS_TEMP_OUT;
+    else if (strcmp(string, "EBASS_TEMP_GAS") == 0) return EBASS_TEMP_GAS;
+    else if (strcmp(string, "EBASS_PRESSURE") == 0) return EBASS_PRESSURE;
+
     // we should never come to this point -> assert
     assert(false);
     return END;

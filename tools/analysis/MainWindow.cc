@@ -8,6 +8,7 @@
 #include "BrokenLine.hh"
 #include "StraightLine.hh"
 #include "Corrections.hh"
+#include "AnalysisProcessor.hh"
 #include "EventReader.hh"
 
 #include "BendingPositionPlot.hh"
@@ -18,6 +19,7 @@
 #include "BendingAnglePositionPlot.hh"
 #include "Chi2Plot.hh"
 #include "Chi2PerNdfPlot.hh"
+#include "Chi2VsMomentumPlot.hh"
 #include "AlbedosVsMomentumPlot.hh"
 #include "TOFPositionCorrelationPlot.hh"
 #include "MomentumSpectrumPlot.hh"
@@ -47,9 +49,11 @@
 #include "TOFTimeDifferencePlot.hh"
 #include "TotalSignalHeightPlot.hh"
 #include "TOFEfficiencyPlot.hh"
-#include "TimeOverThresholdMomentumCorrelation.hh"
-#include "TimeOverThresholdPlot.hh"
+#include "TOTMomentumCorrelation.hh"
+#include "TOTPlot.hh"
+#include "TOTTemperatureCorrelationPlot.hh"
 #include "TOFAlignment.hh"
+#include "TOTTimeCorrelationPlot.hh"
 
 #include <QProcess>
 #include <QFileDialog>
@@ -58,6 +62,7 @@
 
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
+  , m_processors()
   , m_reader(new EventReader(this))
   , m_activePlots()
   , m_inhibitDraw(false)
@@ -127,13 +132,13 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.timeOverThresholdCorrectionCheckBox);
   m_controlWidgets.append(m_ui.photonTravelTimeCorrectionCheckBox);
 
-  connect(m_reader, SIGNAL(eventLoopStarted()), this, SLOT(toggleControlWidgetsStatus()));
-  connect(m_reader, SIGNAL(eventLoopStopped()), this, SLOT(toggleControlWidgetsStatus()));
+  connect(m_reader, SIGNAL(started()), this, SLOT(toggleControlWidgetsStatus()));
+  connect(m_reader, SIGNAL(finished()), this, SLOT(toggleControlWidgetsStatus()));
   connect(m_reader, SIGNAL(numberOfEventsChanged(int)), this, SLOT(numberOfEventsChanged(int)));
   connect(m_reader, SIGNAL(numberOfEventsChanged(int)), this, SLOT(numberOfEventsChanged(int)));
-  connect(m_reader, SIGNAL(eventLoopStarted()), &m_updateTimer, SLOT(start()));
-  connect(m_reader, SIGNAL(eventLoopStopped()), &m_updateTimer, SLOT(stop()));
-  connect(m_reader, SIGNAL(eventLoopStopped()), m_ui.plotter, SLOT(finalizeAnalysis()));
+  connect(m_reader, SIGNAL(started()), &m_updateTimer, SLOT(start()));
+  connect(m_reader, SIGNAL(finished()), &m_updateTimer, SLOT(stop()));
+  connect(m_reader, SIGNAL(finished()), m_ui.plotter, SLOT(finalizeAnalysis()));
 
   connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
 
@@ -142,11 +147,12 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.savePngButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
   connect(m_ui.saveRootButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
   
-  connect(m_ui.saveCanvasAction, SIGNAL(triggered()), this, SLOT(saveCanvasActionTriggered()));
-  connect(m_ui.saveAllCanvasesAction, SIGNAL(triggered()), this, SLOT(saveAllCanvasActionTriggered()));
+  connect(m_ui.saveCanvasDialogAction, SIGNAL(triggered()), this, SLOT(saveCanvasDialogActionTriggered()));
+  connect(m_ui.saveAllCanvasesDialogAction, SIGNAL(triggered()), this, SLOT(saveAllCanvasDialogActionTriggered()));
   connect(m_ui.saveForPostAnalysisAction, SIGNAL(triggered()), this, SLOT(saveForPostAnalysisActionTriggered()));
-  connect(m_ui.setFileListAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListActionTriggered()));
-  connect(m_ui.addFileListAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListActionTriggered()));
+  connect(m_ui.saveForPostAnalysisDialogAction, SIGNAL(triggered()), this, SLOT(saveForPostAnalysisDialogActionTriggered()));
+  connect(m_ui.setFileListDialogAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListDialogActionTriggered()));
+  connect(m_ui.addFileListDialogAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListDialogActionTriggered()));
   connect(m_ui.quitAction, SIGNAL(triggered()), this, SLOT(close()));
   
   connect(m_ui.plotter, SIGNAL(titleChanged(const QString&)), this, SLOT(plotterTitleChanged(const QString&)));
@@ -188,10 +194,14 @@ MainWindow::MainWindow(QWidget* parent)
   setupPlots();
 
   m_updateTimer.setInterval(50);
+  m_ui.numberOfThreadsSpinBox->setValue(QThread::idealThreadCount());
 }
 
 MainWindow::~MainWindow()
 {
+  qDeleteAll(m_processors);
+  m_processors.clear();
+  delete m_reader;
 }
 
 void MainWindow::processArguments(QStringList arguments)
@@ -308,24 +318,29 @@ void MainWindow::listWidgetCurrentRowChanged(int i)
 void MainWindow::setupPlots()
 {
   Setup* setup = Setup::instance();
+  const ElementIterator elementStartIt = setup->firstElement();
+  const ElementIterator elementEndIt = setup->lastElement();
+  const LayerIterator layerStartIt = setup->firstLayer();
+  const LayerIterator layerEndIt = setup->lastLayer();
+  ElementIterator elementIt;
+  LayerIterator layerIt;
 
   m_ui.plotter->clearPlots();
   m_activePlots.clear();
   m_ui.listWidget->clear();
+
   if (m_ui.signalHeightTrackerCheckBox->isChecked()) {
-    DetectorElement* element = setup->firstElement();
-    while(element) {
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tracker)
         m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightTracker, element->id()));
-      element = setup->nextElement();
     }
   }
   if (m_ui.signalHeightTRDCheckBox->isChecked()) {
-    DetectorElement* element = setup->firstElement();
-    while(element) {
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::trd)
         m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightTRD, element->id()));
-      element = setup->nextElement();
     }
 
     m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
@@ -334,8 +349,9 @@ void MainWindow::setupPlots()
     
     TRDFitPlot* mpvModuleTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD, "MPVs of TRD Modules");
     TRDFitPlot* mpvChannelTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD, "MPVs of TRD Channels");
-    element = setup->firstElement();
-    while(element) {
+
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::trd){
         TRDSpectrumPlot* trdModuleSpectrumPlot = new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, element->id(),TRDSpectrumPlot::module);
         m_ui.plotter->addPlot(trdModuleSpectrumPlot);
@@ -346,37 +362,45 @@ void MainWindow::setupPlots()
           mpvChannelTRDPlot->addLandauFit(trdChannelSpectrumPlot->landauFit());
         }
       }
-      element = setup->nextElement();
     }
     m_ui.plotter->addPlot(mpvModuleTRDPlot);
     m_ui.plotter->addPlot(mpvChannelTRDPlot);
   }
   if (m_ui.clusterShapeTrackerCheckBox->isChecked()) {
-    DetectorElement* element = setup->firstElement();
-    while(element) {
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tracker) {
         m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterShapeTracker, element->id()));
         m_ui.plotter->addPlot(new ClusterShapePlot(element->id()));
       }
-      element = setup->nextElement();
     }
   }
   if (m_ui.clusterShapeTRDCheckBox->isChecked()) {
-    DetectorElement* element = setup->firstElement();
-    while(element) {
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::trd)
         m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterShapeTRD, element->id()));
-      element = setup->nextElement();
     }
   }
   if (m_ui.timeOverThresholdCheckBox->isChecked()) {
-     m_ui.plotter->addPlot(new TimeOverThresholdPlot);
-    DetectorElement* element = setup->firstElement();
-    while (element) {
+    m_ui.plotter->addPlot(new TOTPlot);
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)
         for (int ch = 0; ch < 4; ++ch)
-          m_ui.plotter->addPlot(new TimeOverThresholdMomentumCorrelation(element->id() | ch));
-      element = setup->nextElement();
+          m_ui.plotter->addPlot(new TOTMomentumCorrelation(element->id() | ch));
+    }
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
+      if (element->type() == DetectorElement::tof)
+        for (int ch = 0; ch < 4; ++ch)
+          m_ui.plotter->addPlot(new TOTTemperatureCorrelationPlot(element->id() | ch));
+    }
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
+      if (element->type() == DetectorElement::tof)
+        for (int ch = 0; ch < 4; ++ch)
+          m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch));
     }
   }
   if (m_ui.trackingCheckBox->isChecked()) {
@@ -387,29 +411,27 @@ void MainWindow::setupPlots()
     for (unsigned short ndf = 10; ndf <= 20; ndf++)
       m_ui.plotter->addPlot(new Chi2Plot(ndf));
     m_ui.plotter->addPlot(new Chi2PerNdfPlot);
+    m_ui.plotter->addPlot(new Chi2VsMomentumPlot);
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
-    Layer* layer = setup->firstLayer();
-    while(layer) {
+    for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
+      Layer* layer = *layerIt;
       m_ui.plotter->addPlot(new GeometricOccupancyPlot(layer->z()));
       m_ui.plotter->addPlot(new GeometricOccupancyProjectionPlot(layer->z()));
-      layer = setup->nextLayer();
     }
   }
   if (m_ui.residualsTrackerCheckBox->isChecked()) {
-    Layer* layer = setup->firstLayer();
-    while(layer) {
+    for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
+      Layer* layer = *layerIt;
       if (layer->z() > -240 && layer->z() < 240)
         m_ui.plotter->addPlot(new ResidualPlot(AnalysisPlot::ResidualsTracker, layer));
-      layer = setup->nextLayer();
     }
   }
   if (m_ui.residualsTRDCheckBox->isChecked()) {
-    Layer* layer = setup->firstLayer();
-    while(layer) {
+    for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
+      Layer* layer = *layerIt;
       if (layer->z() > -520 && layer->z() < -240)
         m_ui.plotter->addPlot(new ResidualPlot(AnalysisPlot::ResidualsTRD, layer));
-      layer = setup->nextLayer();
     }
   }
   if (m_ui.momentumReconstructionCheckBox->isChecked()) {
@@ -421,28 +443,41 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new AlbedosVsMomentumPlot());
   }
   if (m_ui.efficiencyTofCheckBox->isChecked()) {
-    DetectorElement* element = setup->firstElement();
-    while (element) {
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof) {
         for (int ch = 0; ch < 4; ++ch) {
           m_ui.plotter->addPlot(new TOFEfficiencyPlot(element->id() | ch));
         }
       }
-      element = setup->nextElement();
     }
   }
   if (m_ui.resolutionTofCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x8020, 0x8030));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x8024, 0x8034));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x8028, 0x8038));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x802c, 0x803c));
+    
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8020, 0x8030));
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8024, 0x8034));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8028, 0x8038));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x802c, 0x803c));
+
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8020, 0x8030));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8024, 0x8034));
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8028, 0x8038));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x802c, 0x803c));
+    
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x8020, 0x8030));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x8024, 0x8034));
+    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x8028, 0x8038));
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x802c, 0x803c));
   }
   if (m_ui.calibrationTofCheckBox->isChecked()) {
-    DetectorElement* element = setup->firstElement();
-    while (element) {
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)
         m_ui.plotter->addPlot(new TOFTimeDifferencePlot(element->id()));
-      element = setup->nextElement();
     }
     m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8000, 0x8010, true));
     m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8000, 0x8010, false));
@@ -486,11 +521,10 @@ void MainWindow::setupPlots()
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BetaPlot());
-    DetectorElement* element = setup->firstElement();
-    while (element) {
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)
         m_ui.plotter->addPlot(new TOFPositionCorrelationPlot(element->id()));
-      element = setup->nextElement();
     }
     //m_ui.plotter->addPlot(new TOFAlignment);
   }
@@ -563,23 +597,31 @@ void MainWindow::analyzeButtonClicked()
     Corrections::Flags flags;
     setupAnalysis(type, flags);
     setupPlots();
-    foreach(AnalysisPlot* plot, m_ui.plotter->plots())
-      m_reader->addDestination(plot);
-    m_reader->start(type, flags, m_ui.numberOfThreadsSpinBox->value(), m_ui.firstEventSpinBox->value(), m_ui.lastEventSpinBox->value());
+
+    qDeleteAll(m_processors);
+    m_processors.clear();
+    for (int i = 0; i < m_ui.numberOfThreadsSpinBox->value(); i++) {
+      AnalysisProcessor* processor = new AnalysisProcessor;
+      foreach(AnalysisPlot* plot, m_ui.plotter->plots())
+        processor->addDestination(plot);
+      processor->setTrackType(type);
+      processor->setCorrectionFlags(flags);
+      m_processors.append(processor);
+    }      
+    m_reader->start(m_processors, m_ui.firstEventSpinBox->value(), m_ui.lastEventSpinBox->value());
   } else {
     m_reader->stop();
-    m_reader->clearDestinations();
   }
 }
 
-void MainWindow::setOrAddFileListActionTriggered()
+void MainWindow::setOrAddFileListDialogActionTriggered()
 {
   QStringList files = QFileDialog::getOpenFileNames(this,
     "Select one or more file lists to open", "", "*.txt;;*.*;;*");
-  if (sender() == m_ui.setFileListAction) {
+  if (sender() == m_ui.setFileListDialogAction) {
     foreach(QString file, files)
       m_reader->setFileList(file);
-  } else if (sender() == m_ui.addFileListAction) {
+  } else if (sender() == m_ui.addFileListDialogAction) {
     foreach(QString file, files)
       m_reader->addFileList(file);
   }
@@ -604,7 +646,7 @@ void MainWindow::saveButtonsClicked()
   m_ui.plotter->saveCanvas(fileName);
 }
 
-void MainWindow::saveCanvasActionTriggered()
+void MainWindow::saveCanvasDialogActionTriggered()
 {
   QStringList fileFormatEndings;
   fileFormatEndings << "svg" << "pdf" << "eps" << "root" << "png";
@@ -642,7 +684,7 @@ void MainWindow::saveCanvasActionTriggered()
   }
 }
 
-void MainWindow::saveAllCanvasActionTriggered()
+void MainWindow::saveAllCanvasDialogActionTriggered()
 {
   QFileDialog dialog(this, "save all canvases displayed", ".");
   dialog.setFileMode(QFileDialog::DirectoryOnly);
@@ -658,6 +700,14 @@ void MainWindow::saveAllCanvasActionTriggered()
 }
 
 void MainWindow::saveForPostAnalysisActionTriggered()
+{
+  QDir dir(m_topLevelPath);
+  if (!dir.exists("plots"))
+    dir.mkdir("plots");
+  m_ui.plotter->saveForPostAnalysis(m_topLevelPath + "/plots/postAnalysis.root");
+}
+
+void MainWindow::saveForPostAnalysisDialogActionTriggered()
 {
   QString fileEnding;
   QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "*.root", &fileEnding);

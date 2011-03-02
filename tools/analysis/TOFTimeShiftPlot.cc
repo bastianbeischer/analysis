@@ -112,7 +112,7 @@ void TOFTimeShiftPlot::update()
     double sigma = histogram(i)->GetRMS();
     function(i)->SetParameters(mean, sigma, 0.9*max, 3.*sigma, 0.1*max);
     histogram(i)->Fit(function(i), "QN0");
-    latex(3*i+2)->SetTitle(qPrintable(QString("#mu    = %1 ns").arg(function(i)->GetParameter(1), 0, 'f', 2, ' ')));
+    latex(3*i+2)->SetTitle(qPrintable(QString("#mu    = %1 ns").arg(function(i)->GetParameter(0), 0, 'f', 2, ' ')));
   }
   H1DPlot::update();
 }

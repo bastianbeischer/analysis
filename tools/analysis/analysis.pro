@@ -34,6 +34,7 @@ CLASSES = \
   BetaPlot \
   Chi2PerNdfPlot \
   Chi2Plot \
+  Chi2VsMomentumPlot \
   ClusterLengthPlot \
   ClusterShapePlot \
   GeometricOccupancyPlot \
@@ -66,8 +67,10 @@ CLASSES = \
   TotalEnergyDepositionTRDvsTrackerPlot \
   TOFEfficiencyPlot \
   TrackingEfficiencyVsMomentumPlot \
-  TimeOverThresholdMomentumCorrelation \
-  TimeOverThresholdPlot \
+  TOTMomentumCorrelation \
+  TOTPlot \
+  TOTTemperatureCorrelationPlot \
+  TOTTimeCorrelationPlot \
   TOFAlignment
 
 SOURCES += \

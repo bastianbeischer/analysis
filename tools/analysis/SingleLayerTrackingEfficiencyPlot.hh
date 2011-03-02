@@ -21,8 +21,8 @@ public:
 
 private:
   TH2D* m_normHisto;
-  int           m_nLayers;
-  double*       m_layerZ;
+  int m_nLayers;
+  double* m_layerZ;
   
 };
 
