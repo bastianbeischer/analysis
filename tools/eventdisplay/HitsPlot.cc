@@ -6,6 +6,7 @@
 #include "BrokenLine.hh"
 #include "CenteredBrokenLine.hh"
 #include "StraightLine.hh"
+#include "SimpleEvent.hh"
 #include "TOFCluster.hh"
 #include "DetectorElement.hh"
 #include "Setup.hh"
@@ -13,6 +14,8 @@
 #include <TCanvas.h>
 #include <TList.h>
 #include <TLine.h>
+#include <TVector3.h>
+#include <TPolyLine.h>
 #include <TLatex.h>
 #include <TH2D.h>
 #include <TBox.h>
@@ -28,7 +31,13 @@ HitsPlot::HitsPlot()
   : PerdaixDisplay()
   , EventDestination()
   , m_fitInfo(0)
+  , m_trajectoryXZ(new TPolyLine())
+  , m_trajectoryYZ(new TPolyLine())
 {
+  m_trajectoryXZ->SetLineColor(8);
+  m_trajectoryYZ->SetLineColor(46);
+  m_trajectoryXZ->SetLineStyle(5);;
+  m_trajectoryYZ->SetLineStyle(5);
 }
 
 HitsPlot::~HitsPlot()
@@ -48,7 +57,7 @@ void HitsPlot::clearHits()
   m_fitInfo = 0;
 }
 
-void HitsPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
+void HitsPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* event)
 {
   clearHits();
 
@@ -231,4 +240,26 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent
     box->Draw("SAME");
     m_hits.push_back(box);
   }
+
+  if( event->contentType() == 3){
+    const MCEventInformation* mcInfo = event->MCInformation();
+    std::vector<TVector3> trajectory = mcInfo->trajectory();
+    QVector<double> x,y,z;
+    for (unsigned int i = 0; i < trajectory.size(); ++i){
+      double zCoord = trajectory.at(i).Z();
+      //if (zCoord < 300 && zCoord > -600) {
+        x << trajectory.at(i).X();
+        y << 0.5*trajectory.at(i).Y();
+        z << zCoord;
+      //}
+    }
+
+
+    m_trajectoryXZ->SetPolyLine(x.size(),&*x.begin(), &*z.begin());
+    m_trajectoryXZ->Draw("same");
+
+    m_trajectoryYZ->SetPolyLine(y.size(),&*y.begin(), &*z.begin());
+    m_trajectoryYZ->Draw("same");
+  }
+
 }
