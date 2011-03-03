@@ -61,8 +61,8 @@ bool SensorsData::addRootFile(const char* filename)
 int SensorsData::entryForTime(unsigned int time) const
 {
   if (time < m_firstTime || time > m_firstTime + m_tree->GetEntries()) {
-    std::cerr << "Tree does not contain the requested time " << time 
-              << " (first time = " << m_firstTime << ", entries = " << m_tree->GetEntries() << ")" << std::endl;
+    // std::cerr << "Tree does not contain the requested time " << time 
+    //           << " (first time = " << m_firstTime << ", entries = " << m_tree->GetEntries() << ")" << std::endl;
     return -1;
   }
 
