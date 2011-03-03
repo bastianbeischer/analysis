@@ -171,19 +171,17 @@ void DataManager::addSensorData(SimpleEvent* event)
     event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
   }
 
-  nKeys = m_atcData->numberOfKeys();
-  keys = m_atcData->keys();
-  values = m_atcData->values(event->time());
-  for (int iKey = 0; iKey < nKeys; iKey++) {
-    std::cout << keys[iKey] << std::endl;
-    //event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
-  }
+  // nKeys = m_atcData->numberOfKeys();
+  // keys = m_atcData->keys();
+  // values = m_atcData->values(event->time());
+  // for (int iKey = 0; iKey < nKeys; iKey++) {
+  //   event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
+  // }
 
-  nKeys = m_ebassData->numberOfKeys();
-  keys = m_ebassData->keys();
-  values = m_ebassData->values(event->time());
-  for (int iKey = 0; iKey < nKeys; iKey++) {
-    std::cout << keys[iKey] << std::endl;
-    //event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
-  }
+  // nKeys = m_ebassData->numberOfKeys();
+  // keys = m_ebassData->keys();
+  // values = m_ebassData->values(event->time());
+  // for (int iKey = 0; iKey < nKeys; iKey++) {
+  //   event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
+  // }
 }

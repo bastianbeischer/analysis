@@ -184,12 +184,6 @@ void SensorsData::init()
     }
   }
 
-  // m_tree->SetCacheSize(1e3);
-  // m_tree->AddBranchToCache("*");
-  // m_tree->SetMaxVirtualSize(1e3);
-  // m_tree->SetBranchStatus("*", 0);
-  // m_tree->SetBranchStatus("time", 1);
-  // m_tree->SetBranchStatus("time", 0);
   m_tree->SetBranchAddress("time",&m_time);
   m_tree->GetEntry(0);
   m_firstTime = m_time;
