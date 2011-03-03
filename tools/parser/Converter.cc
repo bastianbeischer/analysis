@@ -10,6 +10,7 @@
 #include "TRDDataBlock.h"
 #include "TOFDataBlock.h"
 #include "Setup.hh"
+#include "DetectorElement.hh"
 
 #include "MCSingleFile.hh"
 #include "MCEventInformation.hh"
@@ -43,6 +44,26 @@ const int tdcChannelToSipm[64] = {
 
 Converter::Converter()
 {
+  Setup* setup = Setup::instance();
+  const ElementIterator elementStartIt = setup->firstElement();
+  const ElementIterator elementEndIt = setup->lastElement();
+  for (ElementIterator elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+    DetectorElement* element = *elementIt;
+    unsigned short elementId = element->id();
+    unsigned short nChannels = element->nChannels();
+    QString group;
+    if (element->type() == DetectorElement::tracker)
+      group = "tracker";
+    if (element->type() == DetectorElement::trd)
+      group = "trd";
+    if (element->type() == DetectorElement::tof)
+      group = "tof";
+    for (int i = 0; i < nChannels; i++) {
+      unsigned short id = elementId | i;
+      m_positions[id] = setup->configFilePosition(group, id);
+      m_counterPositions[id] = setup->configFilePosition(group+"back", id);
+    }
+  }
 }
 
 Converter::~Converter()
@@ -101,15 +122,14 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
     // process data
     unsigned short detId = id->GetID16();
     std::map<unsigned short, TOFSipmHit*> tofHitMap; // maps channel to sipm hits
-    Setup* setup = Setup::instance();
 
     for (int i = 0; i < nValues; i++) {
 
       if (id->IsTracker()) {
         int amplitude = static_cast<int>(temp[i]);
 
-        TVector3 pos = setup->configFilePosition("tracker", detId | i);
-        TVector3 counterPos = setup->configFilePosition("trackerback", detId | i);
+        TVector3& pos = m_positions[detId | i];
+        TVector3& counterPos = m_counterPositions[detId | i];
 
         simpleEvent->addHit(new Hit(Hit::tracker, detId | i, amplitude, pos, counterPos));
       } // tracker
@@ -117,8 +137,8 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
       else if (id->IsTRD()) {
         int amplitude = static_cast<int>(temp[i]);
 
-        TVector3 pos = setup->configFilePosition("trd", detId | i);
-        TVector3 counterPos = setup->configFilePosition("trdback", detId | i);
+        TVector3& pos = m_positions[detId | i];
+        TVector3& counterPos = m_counterPositions[detId | i];
 
         simpleEvent->addHit(new Hit(Hit::trd, detId | i, amplitude, pos, counterPos));
       } // trd
@@ -132,9 +152,8 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
 
         unsigned short fullDetId = detId | bar | sipm;
 
-        TVector3 pos = setup->configFilePosition("tof", fullDetId);
-        TVector3 counterPos = setup->configFilePosition("tofback", fullDetId);
-
+        TVector3& pos = m_positions[fullDetId];
+        TVector3& counterPos = m_counterPositions[fullDetId];
 
         if (!tofHitMap[channel]) {
           tofHitMap[channel] = new TOFSipmHit(fullDetId, pos, counterPos);
