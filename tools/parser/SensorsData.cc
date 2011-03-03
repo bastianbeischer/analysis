@@ -175,14 +175,13 @@ void SensorsData::init()
   m_values = new float[m_nKeys];
 
   int i = 0;
-  int k = 0;
-  while (k < branches->GetEntries()) {
-    if (strcmp(branches->At(i)->GetName(),"time") != 0) {
-      m_keys[i] = const_cast<char*>(branches->At(k)->GetName());
+  for (int k = 0; k < branches->GetEntries(); ++k) {
+    const char* key = const_cast<char*>(branches->At(k)->GetName());
+    if (strcmp(key, "time") != 0) {
+      m_keys[i] = key;
       m_tree->SetBranchAddress(m_keys[i], &m_values[i]);
       i++;
     }
-    k++;
   }
 
   // m_tree->SetCacheSize(1e3);
