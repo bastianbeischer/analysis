@@ -20,6 +20,8 @@
 DataManager::DataManager() :
   m_description(0),
   m_sensorsData(new SensorsData(SensorsData::SENSORS, "sensors.root")),
+  m_atcData(new SensorsData(SensorsData::ATC, "sensors.root")),
+  m_ebassData(new SensorsData(SensorsData::EBASS, "sensors.root")),
   m_outputFileName("output.root"),
   m_currentEvent(0),
   m_outputFile(0),
@@ -38,6 +40,8 @@ DataManager::~DataManager()
   m_inputMCFiles.clear();
 
   delete m_sensorsData;
+  delete m_atcData;
+  delete m_ebassData;
   delete m_outputFile;
 }
 
@@ -165,5 +169,21 @@ void DataManager::addSensorData(SimpleEvent* event)
   float* values = m_sensorsData->values(event->time());
   for (int iKey = 0; iKey < nKeys; iKey++) {
     event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
+  }
+
+  nKeys = m_atcData->numberOfKeys();
+  keys = m_atcData->keys();
+  values = m_atcData->values(event->time());
+  for (int iKey = 0; iKey < nKeys; iKey++) {
+    std::cout << keys[iKey] << std::endl;
+    //event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
+  }
+
+  nKeys = m_ebassData->numberOfKeys();
+  keys = m_ebassData->keys();
+  values = m_ebassData->values(event->time());
+  for (int iKey = 0; iKey < nKeys; iKey++) {
+    std::cout << keys[iKey] << std::endl;
+    //event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
   }
 }
