@@ -52,6 +52,7 @@ void DataInterface::process(AlignmentMatrix* matrix)
   for (unsigned int i = 0; i < nEntries; i++) {
     SimpleEvent* event = m_chain->event(i);
     m_processor->process(event);
+    delete event;
     FITLOC();
     
     if ( i > iFactors*nEntries/100. ) {

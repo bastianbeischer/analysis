@@ -93,6 +93,7 @@ SimpleEvent* DataChain::event(unsigned int i)
 {
   assert(i < m_chain->GetEntries());
   m_currentEntry = i;
+  m_event = 0;
   m_chain->GetEntry(i); 
   return m_event;
 }
