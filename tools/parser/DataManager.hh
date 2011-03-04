@@ -39,6 +39,8 @@ private:
   
   DataDescription*   m_description;
   SensorsData*       m_sensorsData;
+  SensorsData*       m_atcData;
+  SensorsData*       m_ebassData;
   QString            m_outputFileName;
   SimpleEvent*       m_currentEvent;
   TFile*             m_outputFile;
