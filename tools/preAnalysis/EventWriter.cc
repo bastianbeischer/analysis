@@ -41,6 +41,15 @@ void EventWriter::init(QString filename)
   m_description->setSoftwareVersionHash();
 }
 
+void EventWriter::addInputFileToDescription(QString filename)
+{
+  TFile file(qPrintable(filename), "READ");
+  TTree* tree = (TTree*) file.Get("SimpleEventTree");
+  int nEvents = tree->GetEntries();
+  DataDescription* inputDesc = (DataDescription*) tree->GetUserInfo()->At(0);
+  m_description->addRunFile(filename.toStdString(), inputDesc->softwareVersionHash(), nEvents);
+}
+
 void EventWriter::start()
 {
   m_mutex.lock();

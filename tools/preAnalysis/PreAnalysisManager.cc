@@ -13,17 +13,17 @@
 PreAnalysisManager::PreAnalysisManager(QObject* parent) :
   QObject(parent),
   m_reader(new EventReader),
-  m_outputThread(new EventWriter),
+  m_writer(new EventWriter),
   m_generators()
 {
-  connect(m_reader, SIGNAL(finished()), m_outputThread, SLOT(readingFinished()));
-  connect(m_outputThread, SIGNAL(finished()), qApp, SLOT(quit()));
+  connect(m_reader, SIGNAL(finished()), m_writer, SLOT(readingFinished()));
+  connect(m_writer, SIGNAL(finished()), qApp, SLOT(quit()));
 }
 
 PreAnalysisManager::~PreAnalysisManager()
 {
   delete m_reader;
-  delete m_outputThread;
+  delete m_writer;
   qDeleteAll(m_generators);
 }
 
@@ -54,11 +54,12 @@ void PreAnalysisManager::processArgument(QString argument)
     destinationFileName = argument + ".root";
   }
 
-  m_outputThread->init(destinationFileName);
+  m_writer->init(destinationFileName);
 
   for (int i = 0; i < sourceFileNames.size(); i++) {
     QString fileName = sourceFileNames.at(i);
     m_reader->addRootFile(fileName);
+    m_writer->addInputFileToDescription(fileName);
   }
 }
 
@@ -67,8 +68,8 @@ void PreAnalysisManager::start(int nThreads)
   for (int i = 0; i < nThreads; i++) {
     ClusterGenerator* clusterGen = new ClusterGenerator;
     m_generators.append(clusterGen);
-    clusterGen->addDestination(m_outputThread);
+    clusterGen->addDestination(m_writer);
   }
   m_reader->start(m_generators);
-  m_outputThread->start();
+  m_writer->start();
 }

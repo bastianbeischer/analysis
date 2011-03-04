@@ -24,7 +24,7 @@ public:
 
 private:
   EventReader* m_reader;
-  EventWriter* m_outputThread;
+  EventWriter* m_writer;
   QVector<EventProcessor*> m_generators;
 
 };

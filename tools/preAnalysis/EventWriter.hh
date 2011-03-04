@@ -26,10 +26,10 @@ public:
   ~EventWriter();
   
   void init(QString filename);
-  DataDescription* description() {return m_description;}
   void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
-
   void start();
+
+  void addInputFileToDescription(QString filename);
 
 public slots:
   void readingFinished();
