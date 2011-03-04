@@ -26,7 +26,6 @@ DataChain::DataChain(const char* listName)
 DataChain::~DataChain()
 {
   delete m_chain;
-  delete m_event;
 }
 
 void DataChain::init()
