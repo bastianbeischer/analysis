@@ -16,7 +16,7 @@ PreAnalysisManager::PreAnalysisManager(QObject* parent) :
   m_outputThread(new EventWriter),
   m_generators()
 {
-  connect(m_reader, SIGNAL(eventLoopStopped()), m_outputThread, SLOT(readingFinished()));
+  connect(m_reader, SIGNAL(finished()), m_outputThread, SLOT(readingFinished()));
   connect(m_outputThread, SIGNAL(finished()), qApp, SLOT(quit()));
 }
 
