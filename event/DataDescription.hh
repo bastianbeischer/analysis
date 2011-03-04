@@ -27,7 +27,6 @@ public:
   const std::string& runFileName(int i) {assert(i < m_numberOfRuns); return m_runFileNames[i];}
   const std::string& runFileSoftwareVersionHash(int i) {assert(i < m_numberOfRuns); return m_runFileSoftwareVersionHash[i];}
 
-  int timeOfRun(int) const;
   long numberOfEventsInRunFile(int i) const;
   long eventNumberInRunFile(long eventNumber) const;
   int runFileForEventNumber(long eventNumber) const;
