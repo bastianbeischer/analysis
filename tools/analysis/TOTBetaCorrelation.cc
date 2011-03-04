@@ -24,7 +24,7 @@ TOTBetaCorrelation::TOTBetaCorrelation(QString layer)
   setTitle(htitle);
   const unsigned int nBinsX = 100;
   const double xMin = 0;
-  const double xMax = 1.5;
+  const double xMax = 1.6;
   const unsigned int nBinsY = 150;
   const double yMin = 0;
   const double yMax = 300;
