@@ -16,20 +16,19 @@ public:
 
   static const std::string calculateSoftwareVersionHash();
 
-  const std::string& comment() const {return m_comment;}
   void setComment(const std::string& comment) {m_comment = comment;}
   void setSoftwareVersionHash();
   void setSoftwareVersionHash(const std::string& version) {m_softwareVersionHash = version;}
-  const std::string& softwareVersionHash() const {return m_softwareVersionHash;}
-  long numberOfEventsInRunFile(int i) const;
   void addRunFile(const std::string& fileName, const std::string& softwareVersionHash, const int nEvents);
-  const std::string& runFileName(int i) {assert(i < m_numberOfRuns); return m_runFileNames[i];}
-  const std::vector<std::string>& runFileNames() {return m_runFileNames;}
-  const std::string& runFileSoftwareVersionHash(int i) {assert(i < m_numberOfRuns); return m_runFileSoftwareVersionHash[i];}
-    
+
+  const std::string& comment() const {return m_comment;}
+  const std::string& softwareVersionHash() const {return m_softwareVersionHash;}
   long numberOfRuns() const {return m_numberOfRuns;}
+  const std::string& runFileName(int i) {assert(i < m_numberOfRuns); return m_runFileNames[i];}
+  const std::string& runFileSoftwareVersionHash(int i) {assert(i < m_numberOfRuns); return m_runFileSoftwareVersionHash[i];}
+
   int timeOfRun(int) const;
-    
+  long numberOfEventsInRunFile(int i) const;
   long eventNumberInRunFile(long eventNumber) const;
   int runFileForEventNumber(long eventNumber) const;
   const std::string& runFileNameForEventNumber(long eventNumber) const;
