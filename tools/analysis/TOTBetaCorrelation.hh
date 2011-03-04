@@ -16,6 +16,7 @@ public:
   ~TOTBetaCorrelation();
   virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
   virtual void update();
+  void draw(TCanvas* canvas);
 private:
   QString m_layer;
   bool checkLayer(double z);

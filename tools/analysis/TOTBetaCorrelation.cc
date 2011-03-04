@@ -83,6 +83,12 @@ void TOTBetaCorrelation::update() {
   latex()->SetTitle(qPrintable(QString("#rho = %1").arg(histogram()->GetCorrelationFactor())));
 }
 
+void TOTBetaCorrelation::draw(TCanvas* canvas)
+{
+  H2DPlot::draw(canvas);
+  histogram()->Draw("cont4z");
+}
+
 bool TOTBetaCorrelation::checkLayer(double z)
 {
   if (m_layer == "upper") {

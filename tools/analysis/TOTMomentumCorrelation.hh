@@ -17,6 +17,7 @@ public:
   ~TOTMomentumCorrelation();
   virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
   virtual void update();
+  virtual void draw(TCanvas*);
 private:
 //  unsigned int m_id;
   QString m_layer;

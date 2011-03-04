@@ -89,6 +89,12 @@ void TOTDetectorIonisationCorrelation::processEvent(const QVector<Hit*>& hits, T
   }
 }
 
+void TOTDetectorIonisationCorrelation::draw(TCanvas* canvas)
+{
+  H2DPlot::draw(canvas);
+  histogram()->Draw("cont4z");
+}
+
 double TOTDetectorIonisationCorrelation::sumOfNonTOFSignalHeights(Track* /*track*/, QVector<Hit*> clusters) {
 	double sumSignal = 0;
 	foreach(Hit* clusterHit, clusters) {
