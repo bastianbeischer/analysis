@@ -27,7 +27,7 @@ TOTBetaCorrelation::TOTBetaCorrelation(QString layer)
   const double xMax = 1.6;
   const unsigned int nBinsY = 150;
   const double yMin = 0;
-  const double yMax = 300;
+  const double yMax = 100;
   TH2D* histogram = new TH2D(qPrintable(htitle), "", nBinsX, xMin, xMax, nBinsY, yMin, yMax);
   
   histogram->GetXaxis()->SetTitle("beta");
@@ -61,6 +61,7 @@ void TOTBetaCorrelation::processEvent(const QVector<Hit*>& clusters, Track* trac
       std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       double totSum = 0;
+      int nTofHits = 0;
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         Hit* tofHit = *it;
         if (tofHit->detId() == 0x8034) {
@@ -73,8 +74,9 @@ void TOTBetaCorrelation::processEvent(const QVector<Hit*>& clusters, Track* trac
           tot *= 4/3.;
         }
         totSum += tot;
+        nTofHits++;
       }
-      histogram()->Fill(track->beta(), totSum);      
+      histogram()->Fill(track->beta(), totSum/nTofHits);      
     }
   }
 }

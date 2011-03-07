@@ -24,10 +24,10 @@ TOTPerLayerPlot::TOTPerLayerPlot(QString layer)
   setTitle(title);
   const unsigned int nBinsX = 150;
   const double xMin = 0;
-  const double xMax = 300;
+  const double xMax = 100;
   TH1D* histogram = new TH1D(qPrintable(title), "", nBinsX, xMin, xMax);
   histogram->GetXaxis()->SetTitleOffset(1.4);
-  histogram->GetXaxis()->SetTitle("sum time over threshold / ns");
+  histogram->GetXaxis()->SetTitle("mean time over threshold / ns");
   histogram->GetYaxis()->SetTitleOffset(1.4);
   addHistogram(histogram);
 }
@@ -55,20 +55,22 @@ void TOTPerLayerPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simp
       std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       double totSum = 0;
+      int nTofHits = 0;
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         Hit* tofHit = *it;
         if (tofHit->detId() == 0x8034) {
           continue;
         }
-        int tofBar = (int)((tofHit->detId() - 0x8000) / 4);
+//        int tofBar = (int)((tofHit->detId() - 0x8000) / 4);
         TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
         double tot = tofSipmHit->timeOverThreshold();
-        if (tofBar == 13) {// bar with one sipm damaged
-          tot *= 4/3.;
-        }
+//        if (tofBar == 13) {// bar with one sipm damaged
+//          tot *= 4/3.;
+//        }
         totSum += tot;
+        nTofHits++;
       }
-      histogram()->Fill(totSum);
+      histogram()->Fill(totSum/nTofHits);
     }
   }
 }

@@ -22,7 +22,7 @@ TOTDetectorIonisationCorrelation::TOTDetectorIonisationCorrelation(QString layer
 {
   const unsigned int nBinsY = 150;
   const double yMin = 0;
-  const double yMax = 300;
+  const double yMax = 100;
   unsigned int nBinsX = 150;
   double xMin = 0;
   double xMax = 1e5;
@@ -41,7 +41,7 @@ TOTDetectorIonisationCorrelation::TOTDetectorIonisationCorrelation(QString layer
   QString title = QString("time over threshold "+typ+" signal hight correlation "+layer+" layer");
   setTitle(title);
   TH2D* histogram = new TH2D(qPrintable(title), "", nBinsX, xMin, xMax, nBinsY, yMin, yMax);  histogram->GetXaxis()->SetTitleOffset(1.4);
-  histogram->GetYaxis()->SetTitle("sum time over threshold / ns");
+  histogram->GetYaxis()->SetTitle("mean time over threshold / ns");
   histogram->GetYaxis()->SetTitleOffset(1.4);
   histogram->GetXaxis()->SetTitle("total signal height / ADC-Counts");
   setHistogram(histogram);
@@ -70,21 +70,23 @@ void TOTDetectorIonisationCorrelation::processEvent(const QVector<Hit*>& hits, T
       std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       double totSum = 0;
+      int nTofHits = 0;
       double nonTofSignal = sumOfNonTOFSignalHeights(track, hits);
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         Hit* tofHit = *it;
         if (tofHit->detId() == 0x8034) {
           continue;
         }
-        int tofBar = (int)((tofHit->detId() - 0x8000) / 4);
+//        int tofBar = (int)((tofHit->detId() - 0x8000) / 4);
         TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
         double tot = tofSipmHit->timeOverThreshold();
-        if (tofBar == 13) {// bar with one sipm damaged
-          tot *= 4/3.;
-        }
+//        if (tofBar == 13) {// bar with one sipm damaged
+//          tot *= 4/3.;
+//        }
         totSum += tot;
+        nTofHits++;
       }
-      histogram()->Fill(nonTofSignal, totSum);
+      histogram()->Fill(nonTofSignal, totSum/nTofHits);
     }
   }
 }

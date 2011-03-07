@@ -42,11 +42,11 @@ TOTMomentumCorrelation::TOTMomentumCorrelation(QString layer)
   const double xMax = 10;
   const unsigned int nBinsY = 150;
   const double yMin = 0;
-  const double yMax = 300;
+  const double yMax = 100;
   TH2D* histogram = new TH2D(qPrintable(htitle), "", nBinsX, xMin, xMax, nBinsY, yMin, yMax);
   
   histogram->GetXaxis()->SetTitle("rigidity / GV");
-  histogram->GetYaxis()->SetTitle("sum time over threshold / ns");
+  histogram->GetYaxis()->SetTitle("mean time over threshold / ns");
   histogram->GetYaxis()->SetTitleOffset(1.4);
   setHistogram(histogram);
   addLatex(RootPlot::newLatex(.15, .85));
@@ -76,6 +76,7 @@ void TOTMomentumCorrelation::processEvent(const QVector<Hit*>& clusters, Track* 
       std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       double totSum = 0;
+      int nTofHits = 0;
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         Hit* tofHit = *it;
 //        if (tofHit->detId() == m_id) {
@@ -92,8 +93,9 @@ void TOTMomentumCorrelation::processEvent(const QVector<Hit*>& clusters, Track* 
           tot *= 4/3.;
         }
         totSum += tot;
+        nTofHits++;
       }
-      histogram()->Fill(track->pt(), totSum);      
+      histogram()->Fill(track->pt(), totSum/nTofHits);      
     }
   }
 }

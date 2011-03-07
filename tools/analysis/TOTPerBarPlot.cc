@@ -25,13 +25,13 @@ TOTPerBarPlot::TOTPerBarPlot()
   const double xMax = 15.5;
   const unsigned int nBinsY = 150;
   const double yMin = 0;
-  const double yMax = 300;
+  const double yMax = 100;
   TH2D* histogram = new TH2D(qPrintable(title), "", nBinsX, xMin, xMax, nBinsY, yMin, yMax);
   for (int ch = 0; ch < 64; ch += 4)
     histogram->GetXaxis()->SetBinLabel(1 + ch, qPrintable(QString("%1").arg(0x8000 | ch, 0, 16)));
   histogram->GetXaxis()->SetTitleOffset(1.4);
   histogram->GetXaxis()->SetTitle("bar");
-  histogram->GetYaxis()->SetTitle("sum time over threshold / ns");
+  histogram->GetYaxis()->SetTitle("mean time over threshold / ns");
   histogram->GetYaxis()->SetTitleOffset(1.4);
   setHistogram(histogram);
 }
@@ -51,8 +51,10 @@ void TOTPerBarPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simple
       std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       double totSum[TOTPerBarPlot::nTofBars];
+      int nTofHits[TOTPerBarPlot::nTofBars];
       for (unsigned int bar = 0; bar < TOTPerBarPlot::nTofBars; bar++) {
         totSum[bar] = 0;
+        nTofHits[bar] = 0;
       }
       int tofBar = -1;
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
@@ -63,11 +65,12 @@ void TOTPerBarPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simple
         tofBar = (int)((tofHit->detId() - 0x8000) / 4);
         TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
         totSum[tofBar] += tofSipmHit->timeOverThreshold();
+        nTofHits[tofBar]++;
       }
-      if (tofBar == 13) {// bar with one sipm damaged
-        totSum[tofBar] *= 4/3.;
-      }
-      histogram()->Fill(tofBar, totSum[tofBar]);
+//      if (tofBar == 13) {// bar with one sipm damaged
+//        totSum[tofBar] *= 4/3.;
+//      }
+      histogram()->Fill(tofBar, totSum[tofBar]/nTofHits[tofBar]);
     }
   }
 }
