@@ -8,6 +8,7 @@
 class EventReader;
 class EventProcessor;
 class EventWriter;
+class QTimer;
 
 class PreAnalysisManager :
   public QObject
@@ -22,7 +23,12 @@ public:
   void processArgument(QString);
   void start(int);
 
+private slots:
+  void updateStatus();
+  void finish();
+
 private:
+  QTimer*      m_timer;
   EventReader* m_reader;
   EventWriter* m_writer;
   QVector<EventProcessor*> m_generators;
