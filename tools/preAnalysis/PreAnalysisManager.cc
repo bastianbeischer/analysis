@@ -86,6 +86,7 @@ void PreAnalysisManager::start(int nThreads)
     m_generators.append(clusterGen);
     clusterGen->addDestination(m_writer);
   }
+  m_reader->setBufferSize(100);
   m_reader->start(m_generators);
   m_writer->start();
 }
