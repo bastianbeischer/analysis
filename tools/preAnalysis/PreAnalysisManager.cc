@@ -109,6 +109,6 @@ void PreAnalysisManager::finish()
   updateStatus();
   std::cout << "|" << std::endl;
   std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
-  std::cout << "Finished data reduction for!" << std::endl;
+  std::cout << "Finished data reduction!" << std::endl;
   qApp->quit();
 }
