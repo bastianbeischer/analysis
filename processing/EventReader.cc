@@ -49,6 +49,16 @@ double EventReader::buffer() const
   return 100.* queuedEvents() / (m_nThreads * m_bufferSize);
 }
 
+int EventReader::bufferSize() const
+{
+  return m_bufferSize;
+}
+
+void EventReader::setBufferSize(int size)
+{
+  m_bufferSize = size;
+}
+
 void EventReader::setFileList(const QString& fileName)
 {
   m_chain->setFileList(qPrintable(fileName));
