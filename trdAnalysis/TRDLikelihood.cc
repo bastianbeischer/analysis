@@ -104,10 +104,8 @@ void TRDLikelihood::initializeModuleLikelihoods(){
       unsigned int detID = element->id();
 
       for(int i = 0; i < momBins.size(); ++i){
-        QList <double> listProton;
-        QList <double> listPositron;
-        m_protonLHPars[momBins.at(i)].insert(detID, listProton);
-        m_positronLHPars[momBins.at(i)].insert(detID, listPositron);
+        m_protonLHPars[momBins.at(i)].insert(detID, new QList <double>);
+        m_positronLHPars[momBins.at(i)].insert(detID, new QList <double>);
       }
 
       QString titlePositronHisto = "Positron Likelihood for module 0x" + QString::number(detID, 16) ;
@@ -389,11 +387,17 @@ void TRDLikelihood::normalizeLikelihoodHistos(){
     //integral = f_ppar->Integral(0,100);
     //qDebug() << "integral of proton fit after factor set to " << f_ppar->GetParameter(0) << " = " << integral;
     qDebug() << "fitted " << QString::number(i.key(),16);
-    QList <double>& pars= m_protonLHPars.values()[0][i.key()];
+    qDebug() << "map contains par vector: " << m_protonLHPars.values()[0].contains(i.key());
+    QList <double>* pars= m_protonLHPars.values()[0][i.key()];
+    qDebug() << pars->size();
+    qDebug() << pars;
     qDebug() << "getting pars" << f_ppar->GetNpar();
-    for(int j = 0; j < f_ppar->GetNpar(); ++j)
-      pars << (f_ppar->GetParameter(j));
-    qDebug() << "proton module parameters: " << pars;
+    for(int j = 0; j < f_ppar->GetNpar(); ++j){
+      double par = f_ppar->GetParameter(j);
+      qDebug() << par;
+      pars->append(par);
+    }
+    qDebug() << "proton module 0x" << QString::number(i.key(),16) << " parameters: " << *pars;
 
     ++i;
   }
@@ -413,7 +417,7 @@ void TRDLikelihood::normalizeLikelihoodHistos(){
   paramters.clear();
   for(int i = 0; i < f_epar->GetNpar(); ++i)
     paramters << f_epar->GetParameter(i) ;
-  qDebug() << "electron module parameters: " << paramters;
+  qDebug() << "electron module sum parameters: " << paramters;
 
   i = m_positronModuleLikelihood.constBegin();
   while (i != m_positronModuleLikelihood.constEnd())
@@ -428,10 +432,10 @@ void TRDLikelihood::normalizeLikelihoodHistos(){
     histo->Fit(f_epar, "Q");
     double integral = f_epar->Integral(0,100);
     f_epar->SetParameter(0, f_ppar->GetParameter(0) / integral);
-    QList <double>& pars= m_positronLHPars.values()[0][i.key()];
+    QList <double>* pars= m_positronLHPars.values()[0][i.key()];
     for(int j = 0; j < f_ppar->GetNpar(); ++j)
-      pars << (f_epar->GetParameter(j));
-    qDebug() << "proton module parameters: " << pars;
+      pars->append(f_epar->GetParameter(j));
+    qDebug() << "electron module 0x" << QString::number(i.key(),16) << " parameters: " << *pars;
 
     ++i;
   }
@@ -492,63 +496,71 @@ void TRDLikelihood::saveLikelihoodHistos(){
 void TRDLikelihood::saveFunParameters()
 {
   m_trdLikelihoodSettings->beginGroup("protons");
-  QMap<unsigned int, QList<double> > protonPars = m_protonLHPars.values().at(0);
-  qDebug() << "proton pars for " << protonPars.size() << " modules";
-  QMap<unsigned int, QList<double> >::const_iterator i = protonPars.constBegin();
-  while (i != protonPars.constEnd())
+  QMap < QPair<double,double> , QMap<unsigned int,QList<double>* > >::const_iterator iMom
+      = m_protonLHPars.constBegin();
+  while (iMom != m_protonLHPars.constEnd())
   {
-    QList<QVariant> pars;
-    for(int j = 0; j < i.value().size(); ++i)
-      pars << (i.value().at(j));
-    qDebug() << "writing: " << pars;
-    m_trdLikelihoodSettings->setValue(QString::number(i.key(),16), pars);
+    QPair<QVariant, QVariant> momBin(iMom.key().first(), iMom.key().second());
+    m_trdLikelihoodSettings->beginGroup(QString::number(momBin.first()) + "," + QString::number(momBin.second()));
+    QMap<unsigned int, QList<double>* >::const_iterator iMod = iMom.value().constBegin();
+    while (iMod != iMom.value().constEnd())
+    {
+      QList<QVariant> pars;
+      for(int j = 0; j < (iMod.value())->size(); ++j)
+        pars << (iMod.value()->at(j));
+      m_trdLikelihoodSettings->setValue(QString::number(iMod.key(),16), pars);
 
-    ++i;
+      ++iMod;
+    }
+    m_trdLikelihoodSettings->endGroup();
+    ++iMom;
   }
   m_trdLikelihoodSettings->endGroup();
-
 
   m_trdLikelihoodSettings->beginGroup("positrons");
-  QMap<unsigned int, QList<double> > positronPars = m_positronLHPars.values().at(0);
-  i = positronPars.constBegin();
-  while (i != positronPars.constEnd())
+  iMom = m_positronLHPars.constBegin();
+  while (iMom != m_positronLHPars.constEnd())
   {
-    QList<QVariant> pars;
-    for(int j = 0; j < i.value().size(); ++i)
-      pars.append(i.value().at(j));
-    qDebug() << "writing: " << pars;
-    m_trdLikelihoodSettings->setValue(QString::number(i.key(),16), pars);
+    QMap<unsigned int, QList<double>* >::const_iterator iMod = iMom.value().constBegin();
+    while (iMod != iMom.value().constEnd())
+    {
+      QList<QVariant> pars;
+      for(int j = 0; j < (iMod.value())->size(); ++j)
+        pars << (iMod.value()->at(j));
+      m_trdLikelihoodSettings->setValue(QString::number(iMod.key(),16), pars);
 
-    ++i;
+      ++iMod;
+    }
+    ++iMom;
   }
-  m_trdLikelihoodSettings->endGroup();
-
   m_trdLikelihoodSettings->sync();
+
+  qDebug() << "done writing settings file.";
 }
 
 void TRDLikelihood::loadFunParameters()
 {
   m_trdLikelihoodSettings->beginGroup("protons");
-  QMap<unsigned int, QList<double> >& protonPars = m_protonLHPars.values()[0];
-  QMap<unsigned int, QList<double> >::iterator i = protonPars.begin();
+  QMap<unsigned int, QList<double>* >& protonPars = m_protonLHPars.values()[0];
+  QMap<unsigned int, QList<double>* >::iterator i = protonPars.begin();
   while (i != protonPars.end())
   {
     QList<QVariant> pars = m_trdLikelihoodSettings->value(QString::number(i.key(),16)).toList();
     for(int j = 0; j < pars.size(); ++i)
-      i.value() << pars.at(j).toDouble();
+      i.value()->append(pars.at(j).toDouble());
     ++i;
   }
   m_trdLikelihoodSettings->endGroup();
 
 
   m_trdLikelihoodSettings->beginGroup("positrons");
-  QMap<unsigned int, QList<double> >& positronPars = m_positronLHPars.values()[0];
+  QMap<unsigned int, QList<double>* >& positronPars = m_positronLHPars.values()[0];
   i = positronPars.begin();
   while (i != positronPars.end())
   {
     QList<QVariant> pars = m_trdLikelihoodSettings->value(QString::number(i.key(),16)).toList();
     for(int j = 0; j < pars.size(); ++i)
-      i.value() << pars.at(j).toDouble();
+      i.value()->append(pars.at(j).toDouble());
     ++i;
   }
   m_trdLikelihoodSettings->endGroup();
