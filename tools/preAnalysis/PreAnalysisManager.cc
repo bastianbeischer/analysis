@@ -55,7 +55,6 @@ void PreAnalysisManager::processArgument(QString argument)
     QTextStream inStream(&runFileListFile);
     QString line = inStream.readLine();
     while (!line.isNull()) {
-      qDebug() << line;
       sourceFileNames.append(line);
       line = inStream.readLine();
     }
