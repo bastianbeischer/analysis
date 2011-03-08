@@ -73,9 +73,6 @@ private:
   QMap < QPair<double,double> , TH1D* > m_positronLikelihood;
   QMap < QPair<double,double> , TH1D* > m_protonLikelihood;
 
-  QMap < QPair<double,double> , TH1D* > m_protonModuleSumLikelihood;
-  QMap < QPair<double,double> , TH1D* > m_positronModuleSumLikelihood;
-
   QMap < QPair<double,double> , QMap<unsigned int,TH1D* > > m_protonModuleLikelihood;
   QMap < QPair<double,double> , QMap<unsigned int,TH1D* > > m_positronModuleLikelihood;
 
