@@ -9,6 +9,8 @@
 #include <fstream>
 #include <iostream>
 
+QMutex DataChain::s_mutex;
+
 DataChain::DataChain()
   : m_chain(0)
   , m_event(0)
@@ -91,9 +93,11 @@ void DataChain::addRootFile(const char* filename)
 SimpleEvent* DataChain::event(unsigned int i)
 {
   assert(i < m_chain->GetEntries());
+  s_mutex.lock();
   m_currentEntry = i;
   m_event = 0;
   m_chain->GetEntry(i); 
+  s_mutex.unlock();
   return m_event;
 }
 

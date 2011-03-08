@@ -51,25 +51,13 @@ void DataDescription::setSoftwareVersionHash()
   assert(m_softwareVersionHash.length() == 40);
 }
 
-int DataDescription::timeOfRun(int run) const
+void DataDescription::addRunFile(const std::string& fileName, const std::string& softwareVersionHash, const int nEvents)
 {
-  assert(run < m_numberOfRuns);
-  std::string fileName = m_runFileNames[run];
-  int strSize = fileName.size();
-
-  //seek backwards for "_"
-  int i = fileName.rfind("_");
-
-  //get the runnumber
-  std::string numStr;
-  for (i += 1; i < strSize; i++)
-    if (isdigit(fileName[i]))
-      numStr.push_back(fileName[i]);
-    else
-      break;
-  return atoi(numStr.c_str());
+  m_runFileNames.push_back(fileName);
+  m_eventNumberOffset.push_back(m_numberOfRuns == 0 ? nEvents : nEvents + m_eventNumberOffset[m_numberOfRuns-1]);
+  m_runFileSoftwareVersionHash.push_back(softwareVersionHash);
+  ++m_numberOfRuns;
 }
-    
 
 long DataDescription::eventNumberInRunFile(long eventNumber) const
 {
@@ -103,14 +91,6 @@ const std::string& DataDescription::runFileNameForEventNumber(long eventNumber) 
 {
   int runNo = runFileForEventNumber(eventNumber);
   return m_runFileNames[runNo];
-}
-    
-void DataDescription::addRunFile(const std::string& fileName, const std::string& softwareVersionHash, const int nEvents)
-{
-  m_runFileNames.push_back(fileName);
-  m_eventNumberOffset.push_back(m_numberOfRuns == 0 ? nEvents : nEvents + m_eventNumberOffset[m_numberOfRuns-1]);
-  m_runFileSoftwareVersionHash.push_back(softwareVersionHash);
-  ++m_numberOfRuns;
 }
     
 long DataDescription::numberOfEventsInRunFile(int i) const

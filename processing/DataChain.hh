@@ -3,6 +3,8 @@
 
 #include <TChain.h>
 
+#include <QMutex>
+
 class SimpleEvent;
 class DataDescription;
 
@@ -36,6 +38,9 @@ public:
 
 private:
   void init();
+
+public:
+  static QMutex    s_mutex;
 
 private:
   TChain*          m_chain;

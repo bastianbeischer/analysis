@@ -1,13 +1,13 @@
 #include "ProcessingThread.hh"
 
 #include "EventDestination.hh"
-#include "EventQueue.hh"
+#include "LimitedEventQueue.hh"
 #include "EventProcessor.hh"
 #include "SimpleEvent.hh"
 
 ProcessingThread::ProcessingThread(EventProcessor* processor, QObject* parent) :
   QThread(parent),
-  m_queue(new EventQueue),
+  m_queue(new LimitedEventQueue),
   m_processor(processor),
   m_abort(true),
   m_mutex()
@@ -33,7 +33,7 @@ void ProcessingThread::stop()
   wait();
 }
 
-EventQueue* ProcessingThread::queue()
+LimitedEventQueue* ProcessingThread::queue()
 {
   QMutexLocker locker(&m_mutex);
   return m_queue;

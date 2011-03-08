@@ -1,47 +1,61 @@
 #include "ClusterGenerator.hh"
 
 #include "Setup.hh"
+#include "Cluster.hh"
+#include "TOFCluster.hh"
 #include "Hit.hh"
+#include "TOFSipmHit.hh"
+#include "SimpleEvent.hh"
+#include "EventDestination.hh"
 #include "DetectorElement.hh"
 
-ClusterGenerator::ClusterGenerator()
+#include <iostream>
+
+ClusterGenerator::ClusterGenerator() :
+  EventProcessor()
 {
-  // allocate QMap
-  Setup* setup = Setup::instance();
-  const ElementIterator endIt = setup->lastElement();
-  for (ElementIterator it = setup->firstElement(); it != endIt; ++it) {
-    DetectorElement* element = *it;
-    for (int i = 0; i < element->nChannels(); i++) {
-      m_hitStorage[element].append(0);
-    }
-  }
 }
 
 ClusterGenerator::~ClusterGenerator()
 {
 }
 
-QVector<Hit*> ClusterGenerator::findClusters(const QVector<Hit*>& rawhits)
+void ClusterGenerator::process(SimpleEvent* sourceEvent)
 {
-  QVector<Hit*> clusters;
+  SimpleEvent* destinationEvent = new SimpleEvent(sourceEvent->eventId(), sourceEvent->runStartTime(), sourceEvent->eventTime(), sourceEvent->contentType());
+  if (sourceEvent->contentType() == SimpleEvent::MonteCarlo){
+    MCEventInformation* info = new MCEventInformation(*sourceEvent->MCInformation());
+    destinationEvent->setMCInformation(info);
+  }
 
   Setup* setup = Setup::instance();
+
+  // vector of all hits in this event
+  QVector<Hit*> rawhits = QVector<Hit*>::fromStdVector(sourceEvent->hits());
 
   // distribute raw hits
   foreach(Hit* rawhit, rawhits) {
     unsigned short id = rawhit->detId() - rawhit->channel();
     DetectorElement* element = setup->element(id);
-    QVector<Hit*>& hitVector = m_hitStorage[element];
-    hitVector[element->sortedChannel(rawhit->channel())] = rawhit;
+    QMap<unsigned short, Hit*>& hitMap = m_hitStorage[element];
+    hitMap[element->sortedChannel(rawhit->channel())] = rawhit;
   }
-  
-  // process raw hits
+
+  // do the zero suppression
   const HitStorageIterator hitEndIt = m_hitStorage.end();
   for (HitStorageIterator it = m_hitStorage.begin(); it != hitEndIt; ++it) {
     DetectorElement* element = it.key();
-    const QVector<Hit*>& hits = it.value();
-    clusters += element->findClusters(hits);
+    const QVector<Hit*>& hits = it.value().values().toVector();
+    foreach (Hit* cluster, element->findClusters(hits))
+      destinationEvent->addHit(cluster);
+    it.value().clear();
   }
 
-  return clusters;
+  // copy sensor  data
+  for (unsigned int i = SensorTypes::START; i < SensorTypes::END; i++) {
+    destinationEvent->setSensorData((SensorTypes::Type)i, sourceEvent->sensorData((SensorTypes::Type)i) );
+  }
+
+  foreach(EventDestination* destination, m_destinations)
+    destination->processEvent(rawhits, 0, destinationEvent);
 }
