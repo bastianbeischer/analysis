@@ -69,8 +69,15 @@ void EventWriter::readingFinished()
 void EventWriter::run()
 {
   // continuously write events until reading is finished
-  while(!m_finished) {
+  while(true) {
     writeEvent(m_queue->dequeue());
+
+    m_mutex.lock();
+    if (m_finished){
+      m_mutex.unlock();
+      break;
+    }
+    m_mutex.unlock();
   } 
 
   // write the events still left in the queue
