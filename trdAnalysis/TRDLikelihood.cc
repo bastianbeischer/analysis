@@ -67,7 +67,9 @@ TRDLikelihood::TRDLikelihood():
   for (int i = 0; i < nBins; i++) {
     double binLower = pow(lowerBound, delta*i+1);
     double binupper = pow(lowerBound, delta*(i+1)+1);
-     m_defaultMomBins << QPair<double, double>(binLower, binupper);
+    binLower = ((int)(binLower*1000))/1000. ;
+    binupper = ((int)(binupper*1000))/1000. ;
+    m_defaultMomBins << QPair<double, double>(binLower, binupper);
   }
 
   initializeModuleLikelihoods();
