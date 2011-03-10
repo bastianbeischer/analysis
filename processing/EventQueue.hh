@@ -10,13 +10,11 @@ class EventQueue {
 public:
   EventQueue();
   ~EventQueue();
-  int freeSpace();
   int numberOfEvents();
   void enqueue(SimpleEvent*);
   SimpleEvent* dequeue();
     
-  static const int s_bufferSize = 1000;
-private:
+protected:
   QQueue<SimpleEvent*> m_queue;
   QMutex m_mutex;
 };

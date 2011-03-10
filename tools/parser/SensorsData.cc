@@ -11,17 +11,23 @@ SensorsData::SensorsData(DataType type, const char* filename) :
   m_type(type),
   m_file(0),
   m_tree(0),
+  m_nKeys(0),
+  m_keys(0),
   m_firstTime(0),
   m_good(false),
   m_time(0),
-  m_var(sqrt(-1))
+  m_var(sqrt(-1)),
+  m_values(0)
 {
   m_good = addRootFile(filename);
+  if (m_good) init();
 }
 
 SensorsData::~SensorsData()
 {
   delete m_file;
+  delete [] m_keys;
+  delete [] m_values;
 }
 
 bool SensorsData::addRootFile(const char* filename)
@@ -49,25 +55,15 @@ bool SensorsData::addRootFile(const char* filename)
     return false;
   }
 
-  // m_tree->SetCacheSize(1e3);
-  // m_tree->AddBranchToCache("*");
-  //  m_tree->SetMaxVirtualSize(1e3);
-  m_tree->SetBranchStatus("*", 0);
-  m_tree->SetBranchStatus("time", 1);
-  m_tree->SetBranchAddress("time",&m_time);
-  m_tree->GetEntry(0);
-  m_tree->SetBranchStatus("time", 0);
-  m_firstTime = m_time;
-
   return true;
 }
 
 int SensorsData::entryForTime(unsigned int time) const
 {
   if (time < m_firstTime || time > m_firstTime + m_tree->GetEntries()) {
-    std::cerr << "Tree does not contain the requested time " << time 
-              << " (first time = " << m_firstTime << ", entries = " << m_tree->GetEntries() << ")" << std::endl;
-    return 0;
+    // std::cerr << "Tree does not contain the requested time " << time 
+    //           << " (first time = " << m_firstTime << ", entries = " << m_tree->GetEntries() << ")" << std::endl;
+    return -1;
   }
 
   return time - m_firstTime;
@@ -157,25 +153,39 @@ float SensorsData::averageValue(const char* id, unsigned int time)
   return average;
 }
 
-char** SensorsData::keys() const
+float* SensorsData::values(unsigned int time) const
 {
-  TObjArray* branches = m_tree->GetListOfBranches();
-  char** keys = new char*[branches->GetEntries()];
-  
-  int i = 0;
-  int k = 0;
-  while (k < branches->GetEntries()) {
-    if (strcmp(branches->At(i)->GetName(),"time") != 0) {
-      keys[i] = const_cast<char*>(branches->At(k)->GetName());
-      i++;
+  int entry = entryForTime(time);
+  if (entry >= 0)
+    m_tree->GetEntry(entry);
+  else {
+    for (int i = 0; i < m_nKeys; i++) {
+      m_values[i] = sqrt(-1);
     }
-    k++;
   }
-  return keys;
+
+  return m_values;
 }
 
-int SensorsData::numberOfKeys() const
+void SensorsData::init()
 {
   TObjArray* branches = m_tree->GetListOfBranches();
-  return branches->GetEntries()-1;
+  m_nKeys = branches->GetEntries()-1;
+  m_keys = new const char*[m_nKeys];
+  m_values = new float[m_nKeys];
+
+  int i = 0;
+  for (int k = 0; k < branches->GetEntries(); ++k) {
+    const char* key = const_cast<char*>(branches->At(k)->GetName());
+    if (strcmp(key, "time") != 0) {
+      m_keys[i] = key;
+      m_tree->SetBranchAddress(m_keys[i], &m_values[i]);
+      i++;
+    }
+  }
+
+  m_tree->SetBranchAddress("time",&m_time);
+  m_tree->GetEntry(0);
+  m_firstTime = m_time;
 }
+

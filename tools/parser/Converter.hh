@@ -8,6 +8,8 @@ class MCSimpleEvent;
 class MCSingleFile;
 class MCEventInformation;
 
+#include <QMap>
+#include <TVector3.h>
 
 class Converter
 {
@@ -22,6 +24,10 @@ public:
 private:
   const MCEventInformation* generateNextMCEventInformation(const MCSingleFile* mcFile);
   
+private:
+  QMap<unsigned short, TVector3> m_positions;
+  QMap<unsigned short, TVector3> m_counterPositions;
+
 };
 
 #endif /* Converter_hh */

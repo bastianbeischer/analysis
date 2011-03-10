@@ -20,7 +20,9 @@ SOURCES = \
   main.cc
                   
 CLASSES = \
-  ClusterGenerator
+  PreAnalysisManager \
+  ClusterGenerator \
+  EventWriter
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

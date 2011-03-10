@@ -24,6 +24,9 @@ public:
   double progress() const;
   double buffer() const;
 
+  int bufferSize() const;
+  void setBufferSize(int bufferSize);
+
   void setFileList(const QString& fileName);
   void addFileList(const QString& fileName);
   void addRootFile(const QString& file);
@@ -40,6 +43,7 @@ private:
   unsigned int m_readEvents;
   DataChain* m_chain;
   int m_nThreads;
+  int m_bufferSize;
   QVector<ProcessingThread*> m_threads;
 };
 

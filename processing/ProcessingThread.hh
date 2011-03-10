@@ -4,7 +4,7 @@
 #include <QThread>
 #include <QMutex>
 
-class EventQueue;
+class LimitedEventQueue;
 class EventDestination;
 class EventProcessor;
 
@@ -16,7 +16,7 @@ public:
   ProcessingThread(EventProcessor*, QObject* = 0);
   ~ProcessingThread();
   
-  EventQueue* queue();
+  LimitedEventQueue* queue();
   EventProcessor* processor();
 
   void start();
@@ -26,7 +26,7 @@ protected:
   void run();
 
 protected:
-  EventQueue* m_queue;
+  LimitedEventQueue* m_queue;
   EventProcessor* m_processor;
   bool m_abort;
   QMutex m_mutex;

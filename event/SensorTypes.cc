@@ -5,7 +5,7 @@
 
 namespace SensorTypes {
 
-  Type convertFromString(char* string)
+  Type convertFromString(const char* string)
   {
     // Our own sensors
     if (strcmp(string, "TRD_PRESSURE") == 0) return TRD_PRESSURE;
