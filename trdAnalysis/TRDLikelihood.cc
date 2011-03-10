@@ -59,11 +59,20 @@ TRDLikelihood::TRDLikelihood():
 
   m_trdLikelihoodSettings = new QSettings(path + "TRDLikelihood.conf", QSettings::IniFormat);
 
-  double momBinWidth = 0.5;
-  for (double lower = 0; lower < 10; lower += momBinWidth)
-    m_defaultMomBins << QPair<double, double>(lower, lower+momBinWidth);
+  //log binning
+  int nBins = 20;
+  double lowerBound = 1e-1;
+  double upperBound = 10.;
+  double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
+  for (int i = 0; i < nBins; i++) {
+    double binLower = pow(lowerBound, delta*i+1);
+    double binupper = pow(lowerBound, delta*(i+1)+1);
+     m_defaultMomBins << QPair<double, double>(binLower, binupper);
+  }
 
   initializeModuleLikelihoods();
+
+  loadFunParameters();
 }
 
 TRDLikelihood::~TRDLikelihood(){
@@ -121,10 +130,11 @@ TRDLikelihood::~TRDLikelihood(){
 }
 
 TRDLikelihood* TRDLikelihood::instance()
-{
+{  
   if (!m_instance) {
     QMutexLocker locker(&m_mutex);
-    m_instance = new TRDLikelihood;
+    if (!m_instance)
+      m_instance = new TRDLikelihood();
   }
   return m_instance;
 }
@@ -194,7 +204,7 @@ void TRDLikelihood::initializeModuleLikelihoods(){
 
 }
 
-bool TRDLikelihood::analyzeEvent(const QVector<Hit*>&, const Track* track, const SimpleEvent* event, bool& isPositronish){
+bool TRDLikelihood::analyzeEvent(const QVector<Hit*>&, const Track* track, const SimpleEvent* event, bool& isPositronish, double& logLH){
 
   //get particle info:
   int pdgId = event->MCInformation()->pdgId();
@@ -209,14 +219,23 @@ bool TRDLikelihood::analyzeEvent(const QVector<Hit*>&, const Track* track, const
   if (!track || !track->fitGood())
     return false;
 
-  //check if all tracker layers have a hit
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
-    return false;
 
+  TrackInformation::Flags flags = track->information()->flags();
   //check if track was inside of magnet
-  if (!(flags & TrackInformation::InsideMagnet))
+  if (!(flags & TrackInformation::InsideMagnet)){
     return false;
+  }
+
+  //check if good fit
+  if ( track->chi2() / track->ndf() > 4.){
+    return false;
+  }
+
+  //check albedo
+  if ((flags & TrackInformation::Albedo)){
+    return false;
+  }
+
 
   //get the reconstructed momentum
   double p = track->p(); //GeV
@@ -224,14 +243,12 @@ bool TRDLikelihood::analyzeEvent(const QVector<Hit*>&, const Track* track, const
   //only use following momenta
   double pAbs = qAbs(p);
   if(pAbs < 0.0 || pAbs > 10.5){
-    m_pNotInRange++;
     return false;
   }
 
   //find momentum bin
   QPair<double, double> momBin = findMomBin(pAbs, m_defaultMomBins);
   if( momBin == QPair<double, double>(0,0) ){
-    m_pNotInRange++;
     return false;
   }
 
@@ -304,14 +321,14 @@ bool TRDLikelihood::analyzeEvent(const QVector<Hit*>&, const Track* track, const
   //m_positronLikelihood->Fill(positronLikelihood);
 
   //test:
-  double testValue = -log(positronLikelihood / ( positronLikelihood + protonLikelihood)) ;
+  logLH = -log(positronLikelihood / ( positronLikelihood + protonLikelihood)) ;
 
   if (isProton)
-    m_protonLikelihood.value(momBin)->Fill(testValue);
+    m_protonLikelihood.value(momBin)->Fill(logLH);
   else
-    m_positronLikelihood.value(momBin)->Fill(testValue);
+    m_positronLikelihood.value(momBin)->Fill(logLH);
 
-  if ( testValue > 0.5){
+  if ( logLH > 0.5){
     isPositronish = false;
   }else{
     isPositronish = true;

@@ -22,12 +22,14 @@ public:
     ~TRDLikelihood();
     static TRDLikelihood* instance();
 
-    bool analyzeEvent(const QVector<Hit*>& hits, const Track* track, const SimpleEvent*, bool& isPositronish);
+    bool analyzeEvent(const QVector<Hit*>& hits, const Track* track, const SimpleEvent*, bool& isPositronish, double& logLH);
 
     void addLearnEvent(const QVector<Hit*>& hits, const Track* track, const SimpleEvent*);
 
     TH1D* protonModuleLikelihoodHisto(QPair<double,double> momBin, unsigned int moduleID)    {return m_protonModuleLikelihood.value(momBin).value(moduleID) ;}
     TH1D* positronModuleLikelihoodHisto(QPair<double,double> momBin, unsigned int moduleID)  {return m_positronModuleLikelihood.value(momBin).value(moduleID) ;}
+
+    const QList< QPair<double,double> >& momBins() const{return m_defaultMomBins ;}
 
     void saveLikelihoodHistos();
     void loadLikelihoodHistos();
