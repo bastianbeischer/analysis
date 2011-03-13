@@ -197,7 +197,7 @@ void Corrections::multipleScattering(Track* track)
       double sipmRes = hit->resolutionEstimate();
       double m = Constants::protonMass; // assume mass?!
       double beta = p / sqrt(p*p + m*m);
-      double mscPart = 1/(p*beta) * 90e-3; // depends on position......
+      double mscPart = 1/(p*beta) * 73e-3;
       double newRes = sqrt(sipmRes*sipmRes + mscPart*mscPart);
       hit->setResolution(newRes);
     }
