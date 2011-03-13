@@ -17,7 +17,7 @@ Chi2VsMomentumPlot::Chi2VsMomentumPlot() :
 {
   setTitle("Chi2 vs Momentum");
   
-  int nBinsX = 10;
+  int nBinsX = 30;
   double x0 = 0.;
   double x1 = 10.;
   int nBinsY = 100.;
@@ -28,10 +28,13 @@ Chi2VsMomentumPlot::Chi2VsMomentumPlot() :
   histogram->GetXaxis()->SetTitle("rigidity / GV");
   histogram->GetYaxis()->SetTitle("#chi^{2} / ndf");
   setHistogram(histogram);
+
+  m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBinsX, x0, x1);
 }
 
 Chi2VsMomentumPlot::~Chi2VsMomentumPlot()
 {
+  delete m_normHisto;
 }
 
 void Chi2VsMomentumPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
@@ -44,4 +47,15 @@ void Chi2VsMomentumPlot::processEvent(const QVector<Hit*>&, Track* track, Simple
     return;
 
   histogram()->Fill(track->rigidity(), track->chi2() / track->ndf());
+  m_normHisto->Fill(track->rigidity());
+}
+
+void Chi2VsMomentumPlot::finalize()
+{
+  for (int i = 1; i <= histogram()->GetNbinsX(); i++) {
+    for (int j = 1; j <= histogram()->GetNbinsY(); j++) {
+      double bc = histogram()->GetBinContent(i,j);
+      histogram()->SetBinContent(i,j,bc/m_normHisto->GetBinContent(i));
+    }
+  }
 }
