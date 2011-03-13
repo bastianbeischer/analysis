@@ -1499,6 +1499,12 @@ reconstruction</string>
        </layout>
       </widget>
       <widget class="QWidget" name="rightWidget" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="minimumSize">
         <size>
          <width>200</width>
@@ -1533,6 +1539,9 @@ reconstruction</string>
           </property>
           <property name="frameShadow">
            <enum>QFrame::Plain</enum>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAsNeeded</enum>
           </property>
           <property name="widgetResizable">
            <bool>true</bool>
@@ -1583,6 +1592,16 @@ mop value</string>
               <property name="text">
                <string>constant time
 over threshold</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="multipleScatteringCorrectionCheckBox">
+              <property name="text">
+               <string>multiple scattering</string>
               </property>
               <property name="checked">
                <bool>true</bool>
@@ -1691,7 +1710,7 @@ over threshold</string>
      <x>0</x>
      <y>0</y>
      <width>1122</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="font">

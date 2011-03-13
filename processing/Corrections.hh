@@ -21,7 +21,8 @@ class Corrections
 {
   
 public:
-  enum Flag {None = 0x0, Alignment = 0x1<<0, TimeShifts = 0x1<<1, TrdMopv = 0x1<<2, TofTimeOverThreshold = 0x1<<3, PhotonTravelTime = 0x1<<4};
+  enum Flag {None = 0x0, Alignment = 0x1<<0, TimeShifts = 0x1<<1, TrdMopv = 0x1<<2, TofTimeOverThreshold = 0x1<<3, 
+             MultipleScattering = 0x1<<4, PhotonTravelTime = 0x1<<5};
   Q_DECLARE_FLAGS(Flags, Flag);
 
 public:
@@ -47,6 +48,7 @@ private:
   void timeShift(Hit*);
   void trdMopv(Hit*);
   void tofTot(Hit* hit, SimpleEvent* event);
+  void multipleScattering(Track*);
   void photonTravelTime(Track*); 
 
 public:

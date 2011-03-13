@@ -60,6 +60,7 @@ void Corrections::preFitCorrections(SimpleEvent* event)
 
 void Corrections::postFitCorrections(Track* track)
 {
+  if (m_flags & MultipleScattering) multipleScattering(track); // should be done first
   if (m_flags & PhotonTravelTime) photonTravelTime(track);
 }
 
@@ -184,6 +185,24 @@ double Corrections::photonTravelTimeDifference(double bending, double nonBending
     p2[i] = p[i+nPhotonTravelTimeParameters];
   }
   return p[0] + photonTravelTime(bending, nonBending, p1) - photonTravelTime(bending, -nonBending, p2);
+}
+
+void Corrections::multipleScattering(Track* track)
+{
+  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+    Hit* hit = *it;
+    if (hit->type() == Hit::tracker) {
+      double p = track->rigidity();
+      double sipmRes = hit->resolutionEstimate();
+      double m = Constants::protonMass; // assume mass?!
+      double beta = p / sqrt(p*p + m*m);
+      double mscPart = 1/(p*beta) * 90e-3; // depends on position......
+      double newRes = sqrt(sipmRes*sipmRes + mscPart*mscPart);
+      hit->setResolution(newRes);
+    }
+  }
+  track->fit(track->hits());
 }
 
 void Corrections::photonTravelTime(Track* track)

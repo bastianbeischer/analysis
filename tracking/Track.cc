@@ -39,6 +39,7 @@ int Track::fit(const QVector<Hit*>& hits)
   m_hits = hits;
   m_fitGood = m_matrix->fit(m_hits);
   if (m_fitGood) retrieveFitResults();
+  calculateTransverseRigidity();
   m_information->reset();
   return m_fitGood;
 }
@@ -46,7 +47,6 @@ int Track::fit(const QVector<Hit*>& hits)
 void Track::process()
 {
   if (m_fitGood) {
-    calculateTransverseRigidity();
     calculateTimes();
   }
   m_information->process();
