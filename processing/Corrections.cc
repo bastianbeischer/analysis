@@ -189,20 +189,30 @@ double Corrections::photonTravelTimeDifference(double bending, double nonBending
 
 void Corrections::multipleScattering(Track* track)
 {
-  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
-    Hit* hit = *it;
-    if (hit->type() == Hit::tracker) {
-      double p = track->rigidity();
-      double sipmRes = hit->resolutionEstimate();
-      double m = Constants::protonMass; // assume mass?!
-      double beta = p / sqrt(p*p + m*m);
-      double mscPart = 1/(p*beta) * 74.5e-3;
-      double newRes = sqrt(sipmRes*sipmRes + mscPart*mscPart);
-      hit->setResolution(newRes);
+  for (int i = 0; i < 5; i++) {
+    const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
+    for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+      Hit* hit = *it;
+      if (hit->type() == Hit::tracker) {
+        double p = track->rigidity();
+        double sipmRes = hit->resolutionEstimate();
+        double m = Constants::protonMass; // assume mass?!
+        double beta = p / sqrt(p*p + m*m);
+        double z = hit->position().z();
+        z = round(z);
+        double parameter = 0;
+        if (qAbs(z) == 236) parameter = 11e-3;
+        else if (qAbs(z) == 218) parameter = 7.4e-3;
+        else if (qAbs(z) == 69) parameter = 35e-3;
+        else if (qAbs(z) == 51) parameter = 31e-3;
+
+        double mscPart = 1/(p*beta) * parameter;
+        double newRes = sqrt(sipmRes*sipmRes + mscPart*mscPart);
+        hit->setResolution(newRes);
+      }
     }
+    track->fit(track->hits());
   }
-  track->fit(track->hits());
 }
 
 void Corrections::photonTravelTime(Track* track)
