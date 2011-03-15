@@ -21,8 +21,7 @@ INCLUDEPATH += \
 
 DEPENDPATH += $${INCLUDEPATH}
 
-LIBS += -L$${PERDAIX_LIB_DIR} -lperdaixdataformats -lperdaixusb -lperdaixglobal -lperdaixsensors -lperdaix1wire -lperdaixsipm -lperdaixtof -ldaqlib -lxml++-2.6 -lcolorlog -lutil -lregio -lmlink -lcommipc \
-        -lquickusb -lusb
+LIBS += -L$${PERDAIX_LIB_DIR} -lperdaixdataformats -lperdaixusb -lperdaixglobal -lperdaixsensors -lperdaixsipm -lperdaixtof -lquickusb -lusb
 
 linux-g++-64 {
   LIBS -= -lquickusb -lusb
