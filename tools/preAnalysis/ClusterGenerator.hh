@@ -9,8 +9,8 @@
 class DetectorElement;
 class Hit;
 
-typedef QMap< DetectorElement*, QMap<unsigned short, Hit*> > HitStorage;
-typedef QMap< DetectorElement*, QMap<unsigned short, Hit*> >::iterator HitStorageIterator;
+typedef QMap< DetectorElement*, QVector<Hit*> > HitStorage;
+typedef QMap< DetectorElement*, QVector<Hit*> >::iterator HitStorageIterator;
 
 class ClusterGenerator :
   public EventProcessor
