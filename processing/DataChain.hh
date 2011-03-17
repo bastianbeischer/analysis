@@ -4,6 +4,7 @@
 #include <TChain.h>
 
 #include <QMutex>
+#include <QDateTime>
 
 class SimpleEvent;
 class DataDescription;
@@ -35,6 +36,10 @@ public:
   int entry() const {return m_currentEntry;}
   int entryInFile() const;
   const std::string& rawFileNameForEvent() const;
+
+  QDateTime time(int event);
+  QDateTime startTime();
+  QDateTime stopTime();
 
 private:
   void init();

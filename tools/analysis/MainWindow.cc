@@ -54,10 +54,12 @@
 #include "TOTTemperatureCorrelationPlot.hh"
 #include "TOFAlignment.hh"
 #include "TOTTimeCorrelationPlot.hh"
+#include "TrackerTemperatureTimePlot.hh"
 
 #include <QProcess>
 #include <QFileDialog>
 #include <QVBoxLayout>
+#include <QDateTime>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget* parent)
@@ -533,7 +535,9 @@ void MainWindow::setupPlots()
     //m_ui.plotter->addPlot(new TOFAlignment);
   }
   if (m_ui.slowControlCheckBox->isChecked()) {
-  
+    QDateTime first = m_reader->time(m_ui.firstEventSpinBox->value());
+    QDateTime last = m_reader->time(m_ui.lastEventSpinBox->value());
+    m_ui.plotter->addPlot(new TrackerTemperatureTimePlot(first, last));
   }
 }
 
