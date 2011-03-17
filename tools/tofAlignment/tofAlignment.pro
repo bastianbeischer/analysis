@@ -7,7 +7,6 @@ TOPLEVEL = ../..
 
 INCLUDEPATH += \
   $$TOPLEVEL/alignment \
-  $$TOPLEVEL/alignment/millepede \
   $$TOPLEVEL/event \
   $$TOPLEVEL/processing \
   $$TOPLEVEL/global
@@ -19,8 +18,7 @@ LIBS += \
   -lSimpleEvent \
   -lsetup \
   -ltracking \
-  -lprocessing \
-  -lmillepede
+  -lprocessing
 
 SOURCES = \
   main.cc
