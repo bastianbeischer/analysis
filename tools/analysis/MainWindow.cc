@@ -642,7 +642,10 @@ void MainWindow::setOrAddFileListDialogActionTriggered()
 
 void MainWindow::saveButtonsClicked()
 {
-  QString fileName = m_topLevelPath + "/plots/" + m_ui.titleLabel->text();
+  QString fileName = m_ui.titleLabel->text();
+  fileName.remove(QChar('/'));
+  fileName.remove(QChar(':'));
+  fileName.prepend(m_topLevelPath + "/plots/");
   QPushButton* b = static_cast<QPushButton*>(sender());
   if (b == m_ui.savePdfButton) {
     fileName+= ".pdf";
