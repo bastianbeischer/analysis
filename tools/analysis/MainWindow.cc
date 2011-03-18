@@ -54,7 +54,7 @@
 #include "TOTTemperatureCorrelationPlot.hh"
 #include "TOFAlignment.hh"
 #include "TOTTimeCorrelationPlot.hh"
-#include "TrackerTemperatureTimePlot.hh"
+#include "TemperatureTimePlot.hh"
 
 #include <QProcess>
 #include <QFileDialog>
@@ -537,7 +537,9 @@ void MainWindow::setupPlots()
   if (m_ui.slowControlCheckBox->isChecked()) {
     QDateTime first = m_reader->time(m_ui.firstEventSpinBox->value());
     QDateTime last = m_reader->time(m_ui.lastEventSpinBox->value());
-    m_ui.plotter->addPlot(new TrackerTemperatureTimePlot(first, last));
+    QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());
+    foreach(SensorTypes::Type sensor, temperatureSensors)
+      m_ui.plotter->addPlot(new TemperatureTimePlot(sensor, first, last));
   }
 }
 
