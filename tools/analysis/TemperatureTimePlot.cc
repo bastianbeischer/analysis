@@ -14,7 +14,12 @@ TemperatureTimePlot::TemperatureTimePlot(SensorTypes::Type type, QDateTime first
   , m_type(type)
 {
   setTitle(QString::fromStdString(SensorTypes::convertToString(m_type)));
-  TH2D* histogram = new TH2D(qPrintable(title()), "", 100, first.toTime_t(), last.toTime_t(), 396, -99, 99);
+  int t1 = first.toTime_t();
+  t1-= (t1 % 60) + 60;
+  int t2 = last.toTime_t();
+  t2+= 120 - (t2 % 60);
+  int nBins = (t2 - t1) / 60;
+  TH2D* histogram = new TH2D(qPrintable(title()), "", nBins, t1, t2, 396, -99, 99);
   histogram->GetXaxis()->SetTimeDisplay(1);
   histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");
   histogram->GetXaxis()->SetTitle("time");
