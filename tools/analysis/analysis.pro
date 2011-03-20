@@ -71,7 +71,8 @@ CLASSES = \
   TOTPlot \
   TOTTemperatureCorrelationPlot \
   TOTTimeCorrelationPlot \
-  TOFAlignment
+  TOFAlignment \
+  TrackerTemperatureTimePlot
 
 SOURCES += \
   main.cc

@@ -54,10 +54,12 @@
 #include "TOTTemperatureCorrelationPlot.hh"
 #include "TOFAlignment.hh"
 #include "TOTTimeCorrelationPlot.hh"
+#include "TrackerTemperatureTimePlot.hh"
 
 #include <QProcess>
 #include <QFileDialog>
 #include <QVBoxLayout>
+#include <QDateTime>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget* parent)
@@ -96,6 +98,7 @@ MainWindow::MainWindow(QWidget* parent)
   m_topicCheckBoxes.append(m_ui.miscellaneousTrackerCheckBox);
   m_topicCheckBoxes.append(m_ui.miscellaneousTRDCheckBox);
   m_topicCheckBoxes.append(m_ui.miscellaneousTOFCheckBox);
+  m_topicCheckBoxes.append(m_ui.slowControlCheckBox);
 
   m_trackerCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
   m_trackerCheckBoxes.append(m_ui.clusterShapeTrackerCheckBox);
@@ -187,6 +190,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.miscellaneousTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTOFButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.slowControlButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
 
   foreach(QCheckBox* checkBox, m_topicCheckBoxes)
     connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged()));
@@ -262,6 +266,8 @@ void MainWindow::showButtonsClicked()
     topic = AnalysisPlot::MiscellaneousTRD;
   } else if (b == m_ui.miscellaneousTOFButton) {
     topic = AnalysisPlot::MiscellaneousTOF;
+  } else if (b == m_ui.slowControlButton) {
+    topic = AnalysisPlot::SlowControl;
   }
   if (b->text() == "+") {
     b->setText("-");
@@ -528,6 +534,11 @@ void MainWindow::setupPlots()
     }
     //m_ui.plotter->addPlot(new TOFAlignment);
   }
+  if (m_ui.slowControlCheckBox->isChecked()) {
+    QDateTime first = m_reader->time(m_ui.firstEventSpinBox->value());
+    QDateTime last = m_reader->time(m_ui.lastEventSpinBox->value());
+    m_ui.plotter->addPlot(new TrackerTemperatureTimePlot(first, last));
+  }
 }
 
 void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
@@ -571,6 +582,7 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
   m_ui.miscellaneousTrackerButton->setText("+");
   m_ui.miscellaneousTRDButton->setText("+");
   m_ui.miscellaneousTOFButton->setText("+");
+  m_ui.slowControlButton->setText("+");
 
   m_ui.signalHeightTrackerButton->setEnabled(m_ui.signalHeightTrackerCheckBox->isChecked());
   m_ui.signalHeightTRDButton->setEnabled(m_ui.signalHeightTRDCheckBox->isChecked());
@@ -588,6 +600,7 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
   m_ui.miscellaneousTrackerButton->setEnabled(m_ui.miscellaneousTrackerCheckBox->isChecked());
   m_ui.miscellaneousTRDButton->setEnabled(m_ui.miscellaneousTRDCheckBox->isChecked());
   m_ui.miscellaneousTOFButton->setEnabled(m_ui.miscellaneousTOFCheckBox->isChecked());
+  m_ui.slowControlButton->setEnabled(m_ui.slowControlCheckBox->isChecked());
 }
 
 void MainWindow::analyzeButtonClicked()
@@ -629,7 +642,10 @@ void MainWindow::setOrAddFileListDialogActionTriggered()
 
 void MainWindow::saveButtonsClicked()
 {
-  QString fileName = m_topLevelPath + "/plots/" + m_ui.titleLabel->text();
+  QString fileName = m_ui.titleLabel->text();
+  fileName.remove(QChar('/'));
+  fileName.remove(QChar(':'));
+  fileName.prepend(m_topLevelPath + "/plots/");
   QPushButton* b = static_cast<QPushButton*>(sender());
   if (b == m_ui.savePdfButton) {
     fileName+= ".pdf";

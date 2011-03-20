@@ -24,19 +24,18 @@ QVector<Hit*> TRDModule::findClusters(const QVector<Hit*>& rawhits)
 
   for (unsigned short channel = 0; channel < m_nChannels; ++channel) {
     Hit* hit = rawhits[channel];
-    Q_ASSERT(hit);
       
-    if (hit->signalHeight() > seedThreshold) {
+    if (hit && hit->signalHeight() > seedThreshold) {
       Cluster* cluster = new Cluster;
 
       // look to the right
       short rightCursor = channel+1;
-      while(rightCursor < m_nChannels && rawhits[rightCursor]->signalHeight() > neighbourThreshold)
+      while(rightCursor < m_nChannels && rawhits[rightCursor] && rawhits[rightCursor]->signalHeight() > neighbourThreshold)
         ++rightCursor;
 
       // look to the left
       short leftCursor = channel-1;
-      while(leftCursor >=0 && rawhits[leftCursor]->signalHeight() > neighbourThreshold)
+      while(leftCursor >=0 && rawhits[leftCursor] && rawhits[leftCursor]->signalHeight() > neighbourThreshold)
         --leftCursor;
 
       for (int channelToBeAdded = leftCursor+1; channelToBeAdded < rightCursor; channelToBeAdded++)

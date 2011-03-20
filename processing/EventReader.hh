@@ -4,6 +4,7 @@
 #include <QThread>
 #include <QVector>
 #include <QMutex>
+#include <QDateTime>
 
 class DataChain;
 class EventDestination;
@@ -30,6 +31,8 @@ public:
   void setFileList(const QString& fileName);
   void addFileList(const QString& fileName);
   void addRootFile(const QString& file);
+
+  QDateTime time(int eventNumber);
 signals:
   void numberOfEventsChanged(int);
 protected:
