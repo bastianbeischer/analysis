@@ -1,4 +1,4 @@
-#include "TimeDifferenceHistogram.hh"
+#include "TimeShiftHistogram.hh"
 
 #include <TH1.h>
 #include <TH2.h>
@@ -13,7 +13,7 @@
 #include <QDebug>
 #include <QStringList>
 
-TimeDifferenceHistogram::TimeDifferenceHistogram(TCanvas* canvas, int ch)
+TimeShiftHistogram::TimeShiftHistogram(TCanvas* canvas, int ch)
   : PostAnalysisPlot()
   , H1DPlot()
 {
@@ -47,10 +47,10 @@ TimeDifferenceHistogram::TimeDifferenceHistogram(TCanvas* canvas, int ch)
   addHistogram(projection);
 }
 
-TimeDifferenceHistogram::~TimeDifferenceHistogram()
+TimeShiftHistogram::~TimeShiftHistogram()
 {}
 
-void TimeDifferenceHistogram::draw(TCanvas* canvas)
+void TimeShiftHistogram::draw(TCanvas* canvas)
 {
   H1DPlot::draw(canvas);
   m_fitFunction->Draw("SAME");

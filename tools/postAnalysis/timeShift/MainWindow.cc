@@ -1,7 +1,7 @@
 #include "MainWindow.hh"
 
 #include "PostAnalysisPlot.hh"
-#include "TimeDifferenceHistogram.hh"
+#include "TimeShiftHistogram.hh"
 #include <TCanvas.h>
 #include <TFile.h>
 #include <TROOT.h>
@@ -66,28 +66,28 @@ void MainWindow::setupAnalysis()
   gROOT->cd();
   canvas = addCanvas(&file, "time shift 0x8000 0x8010 canvas");
   for (int ch = 0; ch < 8; ++ch)
-    addPlot(new TimeDifferenceHistogram(canvas, ch));
+    addPlot(new TimeShiftHistogram(canvas, ch));
   canvas = addCanvas(&file, "time shift 0x8004 0x8014 canvas");
   for (int ch = 0; ch < 8; ++ch)
-    addPlot(new TimeDifferenceHistogram(canvas, ch));
+    addPlot(new TimeShiftHistogram(canvas, ch));
   canvas = addCanvas(&file, "time shift 0x8008 0x8018 canvas");
   for (int ch = 0; ch < 8; ++ch)
-    addPlot(new TimeDifferenceHistogram(canvas, ch));
+    addPlot(new TimeShiftHistogram(canvas, ch));
   canvas = addCanvas(&file, "time shift 0x800c 0x801c canvas");
   for (int ch = 0; ch < 8; ++ch)
-    addPlot(new TimeDifferenceHistogram(canvas, ch));
+    addPlot(new TimeShiftHistogram(canvas, ch));
   canvas = addCanvas(&file, "time shift 0x8020 0x8030 canvas");
   for (int ch = 0; ch < 8; ++ch)
-    addPlot(new TimeDifferenceHistogram(canvas, ch));
+    addPlot(new TimeShiftHistogram(canvas, ch));
   canvas = addCanvas(&file, "time shift 0x8024 0x8034 canvas");
   for (int ch = 0; ch < 8; ++ch)
-    addPlot(new TimeDifferenceHistogram(canvas, ch));
+    addPlot(new TimeShiftHistogram(canvas, ch));
   canvas = addCanvas(&file, "time shift 0x8028 0x8038 canvas");
   for (int ch = 0; ch < 8; ++ch)
-    addPlot(new TimeDifferenceHistogram(canvas, ch));
+    addPlot(new TimeShiftHistogram(canvas, ch));
   canvas = addCanvas(&file, "time shift 0x802c 0x803c canvas");
   for (int ch = 0; ch < 8; ++ch)
-    addPlot(new TimeDifferenceHistogram(canvas, ch));
+    addPlot(new TimeShiftHistogram(canvas, ch));
   file.Close();
   connect(m_ui.canvasListWidget, SIGNAL(currentRowChanged(int)), this, SLOT(canvasListWidgetCurrentRowChanged(int)));
   connect(m_ui.plotListWidget, SIGNAL(currentRowChanged(int)), this, SLOT(plotListWidgetCurrentRowChanged(int)));
