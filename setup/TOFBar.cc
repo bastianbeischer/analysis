@@ -24,8 +24,10 @@ QVector<Hit*> TOFBar::findClusters(const QVector<Hit*>& rawhits)
   if(rawhits.size() >= 3) {
     TOFCluster* tofCluster = new TOFCluster;
     foreach(Hit* hit, rawhits) {
-      TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
-      tofCluster->addHit(new TOFSipmHit(*tofHit));
+      if (hit) {
+        TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
+        tofCluster->addHit(new TOFSipmHit(*tofHit));
+      }
     }
     tofCluster->processHits();
     clusters.push_back(tofCluster);
