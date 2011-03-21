@@ -119,8 +119,8 @@ void Track::calculateTimeOfFlight()
   delete[] values;
   if (qAbs(leftStartTime - median) > 10) leftStartTime = DBL_MAX;
   if (qAbs(rightStartTime - median) > 10) rightStartTime = DBL_MAX;
-  if (qAbs(leftStartTime - median) > 10) leftStartTime = DBL_MAX;
-  if (qAbs(leftStartTime - median) > 10) leftStartTime = DBL_MAX;
+  if (qAbs(leftStopTime - median) > 10) leftStopTime = DBL_MAX;
+  if (qAbs(rightStopTime - median) > 10) rightStopTime = DBL_MAX;
 
   m_timeOfFlight =
     (leftStopTime < rightStopTime ? leftStopTime : rightStopTime) -
