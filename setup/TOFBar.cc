@@ -21,7 +21,14 @@ TOFBar::~TOFBar()
 QVector<Hit*> TOFBar::findClusters(const QVector<Hit*>& rawhits)
 {
   QVector<Hit*> clusters;
-  if(rawhits.size() >= 3) {
+
+  // count valid hits (non 0-pointers)
+  int validHits = 0;
+  foreach(Hit* hit, rawhits)
+    if (hit) ++validHits;
+
+  // create cluster if we have at least 3 valid hits.
+  if(validHits >= 3) {
     TOFCluster* tofCluster = new TOFCluster;
     foreach(Hit* hit, rawhits) {
       if (hit) {
@@ -32,6 +39,7 @@ QVector<Hit*> TOFBar::findClusters(const QVector<Hit*>& rawhits)
     tofCluster->processHits();
     clusters.push_back(tofCluster);
   }
+
   return clusters;
 }
 
