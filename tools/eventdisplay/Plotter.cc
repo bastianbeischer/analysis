@@ -150,7 +150,7 @@ void Plotter::drawEvent(unsigned int i, Track::Type type, QPlainTextEdit& infoTe
   infoTextEdit.appendPlainText("\n  run start:\n  " +  timeOfRun.toString("dd.MM.yyyy hh:mm:ss.zzz"));
   infoTextEdit.appendPlainText("\n  runfilename:\n  " +  runfileName);
   infoTextEdit.appendPlainText("\n  event in runfile:\n  " +  QString::number(eventInRunFile));
-  if(event->contentType() == 3){
+  if(event->contentType() == SimpleEvent::MonteCarlo){
     const MCEventInformation* mcInfo = event->MCInformation();
     infoTextEdit.appendPlainText("\nMonte-Carlo Information:");
     infoTextEdit.appendPlainText("PDG ID =\t" + QString::number(mcInfo->pdgId()));
