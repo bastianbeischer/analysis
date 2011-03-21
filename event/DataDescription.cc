@@ -35,7 +35,7 @@ DataDescription::~DataDescription()
 
 const std::string DataDescription::calculateSoftwareVersionHash()
 {
-  FILE* file = popen("git rev-parse HEAD | tr -d '\n'", "r");
+  FILE* file = popen("cd $PERDAIXANA_PATH && git rev-parse HEAD | tr -d '\n'", "r");
   char line[128];
   std::stringstream stream;
   while (fgets(line, sizeof(line), file)) {
