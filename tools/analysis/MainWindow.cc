@@ -56,7 +56,6 @@
 #include "TOTTimeCorrelationPlot.hh"
 #include "TemperatureTimePlot.hh"
 
-#include <QProcess>
 #include <QFileDialog>
 #include <QVBoxLayout>
 #include <QDateTime>
@@ -73,14 +72,11 @@ MainWindow::MainWindow(QWidget* parent)
 {
   m_ui.setupUi(this);
  
-  QStringList envVariables = QProcess::systemEnvironment();
-  QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
-  if (filteredVars.size() != 0) {
-    QString entry = filteredVars.first();
-    m_topLevelPath = entry.split("=").at(1);
-  } else {
+  char* env = getenv("PERDAIXANA_PATH");
+  if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
+  m_topLevelPath = QString(env);
 
   m_topicCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
   m_topicCheckBoxes.append(m_ui.signalHeightTRDCheckBox);

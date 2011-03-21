@@ -13,7 +13,7 @@
 #include "SensorTypes.hh"
 #include "SimpleEvent.hh"
 
-#include <QProcess>
+#include <QStringList>
 #include <QSettings>
 #include <QDebug>
 
@@ -26,17 +26,12 @@ Corrections::Corrections(Flags flags)
   , m_tofSettings(0)
   , m_flags(flags)
 {
-  QStringList envVariables = QProcess::systemEnvironment();
-  QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
-  QString path = "";
-  if (filteredVars.size() != 0) {
-    QString entry = filteredVars.first();
-    path = entry.split("=").at(1);
-    path += "/conf/";
-  }
-  else {
+  char* env = getenv("PERDAIXANA_PATH");
+  if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
+  QString path(env);
+  path += "/conf/";
   m_trdSettings = new QSettings(path + "TRDCorrections.conf", QSettings::IniFormat);
   m_tofSettings = new QSettings(path + "TOFCorrections.conf", QSettings::IniFormat);
   
