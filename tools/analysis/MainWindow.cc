@@ -54,7 +54,7 @@
 #include "TOTTemperatureCorrelationPlot.hh"
 #include "TOFAlignment.hh"
 #include "TOTTimeCorrelationPlot.hh"
-#include "TrackerTemperatureTimePlot.hh"
+#include "TemperatureTimePlot.hh"
 
 #include <QProcess>
 #include <QFileDialog>
@@ -485,22 +485,14 @@ void MainWindow::setupPlots()
       if (element->type() == DetectorElement::tof)
         m_ui.plotter->addPlot(new TOFTimeDifferencePlot(element->id()));
     }
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8000, 0x8010, true));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8000, 0x8010, false));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8004, 0x8014, true));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8004, 0x8014, false));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8008, 0x8018, true));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8008, 0x8018, false));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x800c, 0x801c, true));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x800c, 0x801c, false));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8020, 0x8030, true));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8020, 0x8030, false));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8024, 0x8034, true));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8024, 0x8034, false));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8028, 0x8038, true));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8028, 0x8038, false));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x802c, 0x803c, true));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x802c, 0x803c, false));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8000, 0x8010));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8004, 0x8014));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8008, 0x8018));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x800c, 0x801c));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8020, 0x8030));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8024, 0x8034));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8028, 0x8038));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x802c, 0x803c));
   }
   if (m_ui.miscellaneousTrackerCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TotalSignalHeightPlot);
@@ -537,7 +529,9 @@ void MainWindow::setupPlots()
   if (m_ui.slowControlCheckBox->isChecked()) {
     QDateTime first = m_reader->time(m_ui.firstEventSpinBox->value());
     QDateTime last = m_reader->time(m_ui.lastEventSpinBox->value());
-    m_ui.plotter->addPlot(new TrackerTemperatureTimePlot(first, last));
+    QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());
+    foreach(SensorTypes::Type sensor, temperatureSensors)
+      m_ui.plotter->addPlot(new TemperatureTimePlot(sensor, first, last));
   }
 }
 

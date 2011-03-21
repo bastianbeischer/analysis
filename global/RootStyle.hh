@@ -44,6 +44,7 @@ RootStyle::RootStyle()
   SetPadGridY(1);
   SetMarkerStyle(20);
   SetPaintTextFormat(".2f");
+  SetNumberContours(99);
 }
 
 RootStyle* RootStyle::s_instance = 0;
@@ -53,6 +54,10 @@ void RootStyle::set()
   if (!s_instance)
     s_instance = new RootStyle;
   s_instance->cd();
+}
+
+RootStyle::~RootStyle()
+{
 }
 
 void RootStyle::setPalette(PaletteType type)
@@ -67,10 +72,6 @@ void RootStyle::setPalette(PaletteType type)
     return;
   }
   gStyle->SetPalette(1, 0);
-}
-
-RootStyle::~RootStyle()
-{
 }
 
 #endif
