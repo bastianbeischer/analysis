@@ -1,4 +1,4 @@
-#include "TimeShiftHistogram.hh"
+#include "ChannelTimeShiftHistogram.hh"
 
 #include <TH1.h>
 #include <TH2.h>
@@ -13,7 +13,7 @@
 #include <QDebug>
 #include <QStringList>
 
-TimeShiftHistogram::TimeShiftHistogram(TCanvas* canvas, int ch)
+ChannelTimeShiftHistogram::ChannelTimeShiftHistogram(TCanvas* canvas, int ch)
   : PostAnalysisPlot()
   , H1DPlot()
 {
@@ -48,10 +48,10 @@ TimeShiftHistogram::TimeShiftHistogram(TCanvas* canvas, int ch)
   addHistogram(projection);
 }
 
-TimeShiftHistogram::~TimeShiftHistogram()
+ChannelTimeShiftHistogram::~ChannelTimeShiftHistogram()
 {}
 
-void TimeShiftHistogram::draw(TCanvas* canvas)
+void ChannelTimeShiftHistogram::draw(TCanvas* canvas)
 {
   H1DPlot::draw(canvas);
   m_fitFunction->Draw("SAME");
