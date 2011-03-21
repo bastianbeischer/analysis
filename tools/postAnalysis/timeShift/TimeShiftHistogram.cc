@@ -44,6 +44,7 @@ TimeShiftHistogram::TimeShiftHistogram(TCanvas* canvas, int ch)
   QStringList stringList = title.split(" ");
   int id = (stringList[ch < 4 ? 2 : 3].remove(0, 2).toInt(0, 16)) | (ch - (ch < 4 ? 0 : 4));
   std::cout << "0x" <<std::hex << id << "=" << -m_fitFunction->GetParameter(1) << std::endl;
+  projection->GetXaxis()->SetRangeUser(-2, 2);
   addHistogram(projection);
 }
 

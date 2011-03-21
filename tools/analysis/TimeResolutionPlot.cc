@@ -76,9 +76,7 @@ void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Track* track, S
   if (!track || !track->fitGood())
     return;
   TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
-    return;
-  if (track->p() < 1.5)
+  if (!(flags & TrackInformation::Chi2Good))
     return;
   if (qAbs(track->y(Constants::upperTofPosition)) < 100. && qAbs(track->y(Constants::lowerTofPosition)) < 100.) {
     histogram(0)->Fill(track->timeOfFlight());
