@@ -11,7 +11,7 @@ class Track;
 class TLine;
 class TMarker;
 class TLatex;
-class TPolyLine;
+class TGraph;
 
 class HitsPlot :
   public PerdaixDisplay,
@@ -34,8 +34,8 @@ private:
   QVector<TLine*>     m_lines;
   QVector<TMarker*>   m_markers;
   TLatex*             m_fitInfo;
-  TPolyLine*          m_trajectoryXZ;
-  TPolyLine*          m_trajectoryYZ;
+  TGraph*             m_trajectoryXZ;
+  TGraph*             m_trajectoryYZ;
 
 };
 

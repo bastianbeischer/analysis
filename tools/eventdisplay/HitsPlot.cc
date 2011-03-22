@@ -15,7 +15,7 @@
 #include <TList.h>
 #include <TLine.h>
 #include <TVector3.h>
-#include <TPolyLine.h>
+#include <TGraph.h>
 #include <TLatex.h>
 #include <TH2D.h>
 #include <TBox.h>
@@ -31,18 +31,20 @@ HitsPlot::HitsPlot()
   : PerdaixDisplay()
   , EventDestination()
   , m_fitInfo(0)
-  , m_trajectoryXZ(new TPolyLine())
-  , m_trajectoryYZ(new TPolyLine())
+  , m_trajectoryXZ(0)
+  , m_trajectoryYZ(0)
 {
-  m_trajectoryXZ->SetLineColor(8);
-  m_trajectoryYZ->SetLineColor(46);
-  m_trajectoryXZ->SetLineStyle(5);;
-  m_trajectoryYZ->SetLineStyle(5);
 }
 
 HitsPlot::~HitsPlot()
 {
   clearHits();
+
+  if (m_trajectoryXZ)
+    delete m_trajectoryXZ;
+
+  if (m_trajectoryYZ)
+    delete m_trajectoryYZ;
 }
 
 void HitsPlot::clearHits()
@@ -241,7 +243,7 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent
     m_hits.push_back(box);
   }
 
-  if( event->contentType() == 3){
+  if( event->contentType() == SimpleEvent::MonteCarlo){
     const MCEventInformation* mcInfo = event->MCInformation();
     std::vector<TVector3> trajectory = mcInfo->trajectory();
     QVector<double> x,y,z;
@@ -255,11 +257,20 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent
     }
 
 
-    m_trajectoryXZ->SetPolyLine(x.size(),&*x.begin(), &*z.begin());
-    m_trajectoryXZ->Draw("same");
+    if (m_trajectoryXZ)
+      delete m_trajectoryXZ;
+    m_trajectoryXZ = new TGraph(x.size(),&*x.begin(), &*z.begin());
+    m_trajectoryXZ->SetLineColor(8);
+    m_trajectoryXZ->SetLineStyle(5);
+    m_trajectoryXZ->Draw("same L");
 
-    m_trajectoryYZ->SetPolyLine(y.size(),&*y.begin(), &*z.begin());
-    m_trajectoryYZ->Draw("same");
+    if (m_trajectoryYZ)
+      delete m_trajectoryYZ;
+    m_trajectoryYZ = new TGraph(y.size(),&*y.begin(), &*z.begin());
+    m_trajectoryYZ->SetLineColor(46);
+    m_trajectoryYZ->SetLineStyle(5);
+    m_trajectoryYZ->Draw("same L");
+
   }
 
 }
