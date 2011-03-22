@@ -75,6 +75,7 @@ void PreAnalysisManager::processArgument(QString argument)
 void PreAnalysisManager::start(int nThreads)
 {
   std::cout << std::endl;
+  std::cout << "using " << nThreads << " threads" << std::endl;
   std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
   std::cout << "| Processing:                                                                                        |" << std::endl;
   std::cout << "| 0%     10%       20%       30%       40%       50%       60%       70%       80%       90%     100%|" << std::endl;

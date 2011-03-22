@@ -34,8 +34,8 @@ private:
   QVector<TLine*>     m_lines;
   QVector<TMarker*>   m_markers;
   TLatex*             m_fitInfo;
-  TGraph*             m_trajectoryXZ;
-  TGraph*             m_trajectoryYZ;
+  QList<TGraph*>      m_trajectoriesXZ;
+  QList<TGraph*>      m_trajectoriesYZ;
 
 };
 

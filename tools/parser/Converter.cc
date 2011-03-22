@@ -182,41 +182,59 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
 
 const MCEventInformation* Converter::generateNextMCEventInformation(const MCSingleFile* mcFile)
 {
+  //generate new mcEventInfo
+  MCEventInformation* mcEventInfo = new MCEventInformation();
+
   //get MCEvent
   const MCEvent* mcEvent = mcFile->getNextMCEvent() ;
 
   //read MC data
   QVector<MCParticle*> particles = mcEvent->GetParticles();
 
-  //get info on primary
-  MCParticle* primary = particles.at(0);
-  int pdgID = primary->GetPDGID();
+  //get info on primary and store it
+  MCParticle* primarySim = particles.at(0);
+  MCSimpleEventParticle primary = constructMCSimpleEventParticle (primarySim);
+  mcEventInfo->setPrimary(primary);
 
-  QVector<MCParticle::DetectorHit> primaryHits = primary->GetHits();
-
-  HepGeom::Vector3D<double> primaryMom = primaryHits.at(0).preStep.momentum;
-
-  QVector<HepGeom::Point3D<double> > mcTrajectory = primary->GetTrajectory();
-  //convert into data structures used by SimpleEvents
-  TVector3 mc_primaryMomentum(primaryMom.x(), primaryMom.y(), primaryMom.z())  ;
-
-  std::vector<TVector3> traj;
-  for (int i = 0; i < mcTrajectory.size(); ++i){
-    const HepGeom::Point3D<double>& point = mcTrajectory.at(i);
-    traj.push_back( TVector3(point.x(), point.y(), point.z()) );
+  //get all secondaries
+  for (int i = 1; i < particles.size(); ++i)
+  {
+    MCParticle* secondaryMC = particles.at(i);
+    MCSimpleEventParticle secondary = constructMCSimpleEventParticle (secondaryMC);
+    mcEventInfo->addSecondary(secondary);
   }
 
-  //create MC Information Object
-  MCEventInformation* mcEventInfo = new MCEventInformation();
-
-  //fill it with data
-  mcEventInfo->setPdgId(pdgID);
-  mcEventInfo->setInitialMomentum(mc_primaryMomentum);
-  mcEventInfo->setTrajectory(traj);
 
   delete mcEvent;
 
   return mcEventInfo;
+}
+
+MCSimpleEventParticle Converter::constructMCSimpleEventParticle(MCParticle* mcParticle)
+{
+  //create MCSimpleEventParticle
+  MCSimpleEventParticle se_particle;
+
+  //pdgID
+  se_particle.pdgID = mcParticle->GetPDGID();
+
+  QVector<MCParticle::DetectorHit> hits = mcParticle->GetHits();
+  //momentum
+  HepGeom::Vector3D<double> mom = hits.at(0).preStep.momentum;
+  se_particle.initialMomentum.SetXYZ(mom.x(), mom.y(), mom.z());
+  //position
+  HepGeom::Vector3D<double> pos = hits.at(0).preStep.position;
+  se_particle.initialPosition.SetXYZ(pos.x(), pos.y(), pos.z());
+
+
+  //trajectory
+  const QVector<HepGeom::Point3D<double> >& trajectory = mcParticle->GetTrajectory();
+  for (int i = 0; i < trajectory.size(); ++i){
+    const HepGeom::Point3D<double>& point = trajectory.at(i);
+    se_particle.trajectory.push_back( TVector3(point.x(), point.y(), point.z()) );
+  }
+
+  return se_particle;
 }
 
 

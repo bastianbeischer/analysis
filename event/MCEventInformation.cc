@@ -7,6 +7,7 @@ MCEventInformation::MCEventInformation()
 {
 }
 
+/* needed? as all structures behave correctly with the defaule copy constructors ?
 MCEventInformation::MCEventInformation(const MCEventInformation& other)
   : m_pdgId(other.m_pdgId)
   , m_initialMomentum(other.m_initialMomentum)
@@ -15,3 +16,4 @@ MCEventInformation::MCEventInformation(const MCEventInformation& other)
     m_trajectory.push_back(other.m_trajectory.at(i));
   }
 }
+*/
