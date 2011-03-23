@@ -26,7 +26,7 @@ public:
 
 private:
   const MCEventInformation* generateNextMCEventInformation(const MCSingleFile* mcFile);
-  MCSimpleEventParticle constructMCSimpleEventParticle(MCParticle* mcParticle);
+  const MCSimpleEventParticle* constructMCSimpleEventParticle(MCParticle* mcParticle);
   
 private:
   QMap<unsigned short, TVector3> m_positions;

@@ -251,7 +251,7 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent
     //read all particles:
     const MCEventInformation* mcInfo = event->MCInformation();
 
-    QList<MCSimpleEventParticle> allMCParticles;
+    QList<const MCSimpleEventParticle*> allMCParticles;
     //qDebug("draw traj: add primary");
     allMCParticles << mcInfo->primary();
     //qDebug("draw traj: added primary");
@@ -266,8 +266,8 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent
     //now draw all trajectories
     for (int i = 0; i < allMCParticles.size(); ++i)
     {
-      const MCSimpleEventParticle& particle = allMCParticles.at(i);
-      const std::vector<TVector3>& trajectory = particle.trajectory;
+      const MCSimpleEventParticle* particle = allMCParticles.at(i);
+      const std::vector<TVector3>& trajectory = particle->trajectory;
       QVector<double> x,y,z;
       for (unsigned int j = 0; j < trajectory.size(); ++j){
         double zCoord = trajectory.at(j).Z();

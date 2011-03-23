@@ -11,6 +11,8 @@ class MCSimpleEventParticle :
 {
 public:
   int pdgID;
+  int trackID;
+  int parentTrackID;
   TVector3 initialMomentum;
   TVector3 initialPosition;
   std::vector<TVector3> trajectory;

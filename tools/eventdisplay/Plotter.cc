@@ -152,9 +152,10 @@ void Plotter::drawEvent(unsigned int i, Track::Type type, QPlainTextEdit& infoTe
   infoTextEdit.appendPlainText("\n  event in runfile:\n  " +  QString::number(eventInRunFile));
   if(event->contentType() == SimpleEvent::MonteCarlo){
     const MCEventInformation* mcInfo = event->MCInformation();
+    const MCSimpleEventParticle* mcPrimary = mcInfo->primary();
     infoTextEdit.appendPlainText("\nMonte-Carlo Information:");
-    infoTextEdit.appendPlainText("PDG ID =\t" + QString::number(mcInfo->pdgId()));
-    infoTextEdit.appendPlainText("momentum =\t" + QString::number(mcInfo->initialMomentum().Mag()/1000.,'f',3) + "GeV");
+    infoTextEdit.appendPlainText("PDG ID =\t" + QString::number(mcPrimary->pdgID));
+    infoTextEdit.appendPlainText("momentum =\t" + QString::number(mcPrimary->initialMomentum.Mag()/1000,'f',3) + "GeV");
   }
 
   delete event;

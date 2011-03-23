@@ -193,14 +193,14 @@ const MCEventInformation* Converter::generateNextMCEventInformation(const MCSing
 
   //get info on primary and store it
   MCParticle* primarySim = particles.at(0);
-  MCSimpleEventParticle primary = constructMCSimpleEventParticle (primarySim);
+  const MCSimpleEventParticle* primary = constructMCSimpleEventParticle (primarySim);
   mcEventInfo->setPrimary(primary);
 
   //get all secondaries
   for (int i = 1; i < particles.size(); ++i)
   {
     MCParticle* secondaryMC = particles.at(i);
-    MCSimpleEventParticle secondary = constructMCSimpleEventParticle (secondaryMC);
+    const MCSimpleEventParticle* secondary = constructMCSimpleEventParticle (secondaryMC);
     mcEventInfo->addSecondary(secondary);
   }
 
@@ -210,28 +210,34 @@ const MCEventInformation* Converter::generateNextMCEventInformation(const MCSing
   return mcEventInfo;
 }
 
-MCSimpleEventParticle Converter::constructMCSimpleEventParticle(MCParticle* mcParticle)
+const MCSimpleEventParticle* Converter::constructMCSimpleEventParticle(MCParticle* mcParticle)
 {
   //create MCSimpleEventParticle
-  MCSimpleEventParticle se_particle;
+  MCSimpleEventParticle* se_particle = new MCSimpleEventParticle();
+
+  //trackID
+  se_particle->trackID = mcParticle->GetTrackID();
+
+  //parenttrackID
+  se_particle->parentTrackID = mcParticle->GetParentTrackID();
 
   //pdgID
-  se_particle.pdgID = mcParticle->GetPDGID();
+  se_particle->pdgID = mcParticle->GetPDGID();
 
   QVector<MCParticle::DetectorHit> hits = mcParticle->GetHits();
   //momentum
   HepGeom::Vector3D<double> mom = hits.at(0).preStep.momentum;
-  se_particle.initialMomentum.SetXYZ(mom.x(), mom.y(), mom.z());
+  se_particle->initialMomentum.SetXYZ(mom.x(), mom.y(), mom.z());
   //position
   HepGeom::Vector3D<double> pos = hits.at(0).preStep.position;
-  se_particle.initialPosition.SetXYZ(pos.x(), pos.y(), pos.z());
+  se_particle->initialPosition.SetXYZ(pos.x(), pos.y(), pos.z());
 
 
   //trajectory
   const QVector<HepGeom::Point3D<double> >& trajectory = mcParticle->GetTrajectory();
   for (int i = 0; i < trajectory.size(); ++i){
     const HepGeom::Point3D<double>& point = trajectory.at(i);
-    se_particle.trajectory.push_back( TVector3(point.x(), point.y(), point.z()) );
+    se_particle->trajectory.push_back( TVector3(point.x(), point.y(), point.z()) );
   }
 
   return se_particle;
