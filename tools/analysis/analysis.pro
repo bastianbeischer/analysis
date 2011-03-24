@@ -72,7 +72,9 @@ CLASSES = \
   TOTTemperatureCorrelationPlot \
   TOTTimeCorrelationPlot \
   TOFAlignment \
-  TemperatureTimePlot
+  TemperatureTimePlot \
+  ChannelTriggerProbabilityPlot \
+  TOFTimeShiftTriggerPlot
 
 SOURCES += \
   main.cc

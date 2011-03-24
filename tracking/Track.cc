@@ -13,6 +13,8 @@
 #include <cmath>
 #include <cfloat>
 
+#include <QDebug>
+
 Track::Track() :
   m_type(None),
   m_information(new TrackInformation(this)),
@@ -22,7 +24,8 @@ Track::Track() :
   m_chi2(0),
   m_ndf(0),
   m_pt(0.),
-  m_timeOfFlight(0.)
+  m_startTime(0.),
+  m_stopTime(0.)
 {
 }
 
@@ -44,7 +47,7 @@ void Track::process()
 {
   if (m_fitGood) {
     calculatePt();
-    calculateTimeOfFlight();
+    calculateTimes();
   }
   m_information->process();
 }
@@ -65,9 +68,11 @@ void Track::calculatePt()
   }
 }
 
-void Track::calculateTimeOfFlight()
+void Track::calculateTimes()
 {
   QVector<double> t[2][2];
+  QVector<double> startTimes;
+  QVector<double> stopTimes;
   const QVector<Hit*>::const_iterator hitsEnd = m_hits.end();
   for (QVector<Hit*>::const_iterator it = m_hits.begin(); it != hitsEnd; ++it) {
     Hit* cluster = *it;
@@ -122,9 +127,8 @@ void Track::calculateTimeOfFlight()
   if (qAbs(leftStopTime - median) > 10) leftStopTime = DBL_MAX;
   if (qAbs(rightStopTime - median) > 10) rightStopTime = DBL_MAX;
 
-  m_timeOfFlight =
-    (leftStopTime < rightStopTime ? leftStopTime : rightStopTime) -
-    (leftStartTime < rightStartTime ? leftStartTime : rightStartTime);
+  m_startTime = (leftStartTime < rightStartTime ? leftStartTime : rightStartTime);
+  m_stopTime = (leftStopTime < rightStopTime ? leftStopTime : rightStopTime);
 }
 
 double Track::lastGoodTime(QVector<double>& times)
