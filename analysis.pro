@@ -7,11 +7,11 @@ TEMPLATE = subdirs
 CONFIG += ordered
 
 SUBDIRS = \
+  global \
   event \
   tracking \
   setup \
   processing \
   alignment \
   rootplot \
-  tools \
-	global
+  tools

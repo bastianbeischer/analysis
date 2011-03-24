@@ -193,7 +193,7 @@ MainWindow::MainWindow(QWidget* parent)
   foreach(QCheckBox* checkBox, m_topicCheckBoxes)
     connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged()));
 
-  setupPlots();
+  //setupPlots();
 
   m_updateTimer.setInterval(50);
   m_ui.numberOfThreadsSpinBox->setValue(QThread::idealThreadCount());
@@ -332,6 +332,9 @@ void MainWindow::setupPlots()
   m_ui.plotter->clearPlots();
   m_activePlots.clear();
   m_ui.listWidget->clear();
+    
+  QDateTime first = m_reader->time(m_ui.firstEventSpinBox->value());
+  QDateTime last = m_reader->time(m_ui.lastEventSpinBox->value());
 
   if (m_ui.signalHeightTrackerCheckBox->isChecked()) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
@@ -404,7 +407,7 @@ void MainWindow::setupPlots()
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)
         for (int ch = 0; ch < 4; ++ch)
-          m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch));
+          m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch, first, last));
     }
   }
   if (m_ui.trackingCheckBox->isChecked()) {
@@ -527,8 +530,6 @@ void MainWindow::setupPlots()
     //m_ui.plotter->addPlot(new TOFAlignment);
   }
   if (m_ui.slowControlCheckBox->isChecked()) {
-    QDateTime first = m_reader->time(m_ui.firstEventSpinBox->value());
-    QDateTime last = m_reader->time(m_ui.lastEventSpinBox->value());
     QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());
     foreach(SensorTypes::Type sensor, temperatureSensors)
       m_ui.plotter->addPlot(new TemperatureTimePlot(sensor, first, last));
