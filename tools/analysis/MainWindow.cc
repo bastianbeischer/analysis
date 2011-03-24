@@ -55,6 +55,8 @@
 #include "TOFAlignment.hh"
 #include "TOTTimeCorrelationPlot.hh"
 #include "TemperatureTimePlot.hh"
+#include "ChannelTriggerProbabilityPlot.hh"
+#include "TOFTimeShiftTriggerPlot.hh"
 
 #include <QFileDialog>
 #include <QVBoxLayout>
@@ -476,6 +478,8 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x802c, 0x803c));
   }
   if (m_ui.calibrationTofCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new ChannelTriggerProbabilityPlot);
+    m_ui.plotter->addPlot(new TOFTimeShiftTriggerPlot);
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)
