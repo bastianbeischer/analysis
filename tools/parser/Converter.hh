@@ -5,11 +5,13 @@ class SimpleEvent;
 class SingleFile;
 
 class MCParticle;
+class MCEvent;
 
 class MCSimpleEvent;
 class MCSingleFile;
 class MCEventInformation;
 class MCSimpleEventParticle;
+class MCSimpleEventDigi;
 
 #include <QMap>
 #include <TVector3.h>
@@ -27,6 +29,7 @@ public:
 private:
   const MCEventInformation* generateNextMCEventInformation(const MCSingleFile* mcFile);
   const MCSimpleEventParticle* constructMCSimpleEventParticle(MCParticle* mcParticle);
+  const QVector<const MCSimpleEventDigi*> getAllMCDigis(const MCEvent*);
   
 private:
   QMap<unsigned short, TVector3> m_positions;

@@ -244,3 +244,50 @@ const MCSimpleEventParticle* Converter::constructMCSimpleEventParticle(MCParticl
 }
 
 
+const QVector<const MCSimpleEventDigi*> Converter::getAllMCDigis(const MCEvent* mcEvent)
+{
+  //get all digis of MCEvent:
+  QVector<MCDigi*> mcDigis = mcEvent->GetDigis();
+
+  QVector<const MCSimpleEventDigi*> seDigis;
+  //loop over all digis and convert:
+  for (int i = 0; i < mcDigis.size(); ++i)
+  {
+    MCDigi* mcDigi = mcDigis.at(i);
+    DetectorID* id = DetectorID::Get(mcDigi->GetDetectorID());
+
+    Hit::ModuleType moduleType = Hit::none;
+    if (id->IsTracker())
+      moduleType = Hit::tracker;
+    else if (id->IsTRD())
+      moduleType = Hit::trd;
+    else if (id->IsTOF())
+      moduleType = Hit::tof;
+
+    MCSimpleEventDigi* seDigi = new MCSimpleEventDigi(moduleType, id->GetID16());
+
+    //convert all Signals:
+    const QVector<MCDigi::Signal>& mcDigiSignals = mcDigi->GetMCValues();
+    for (int j = 0; j < mcDigiSignals.size(); ++j)
+    {
+      const MCDigi::Signal& mcSignal = mcDigiSignals.at(j);
+      MCDigiSignal* seSignal = new MCDigiSignal();
+
+      seSignal->trackID = mcSignal._trackId;
+      const HepGeom::Point3D<double>& pos = mcSignal._position;
+      seSignal->hitPosition.SetXYZ(pos.x(), pos.y(), pos.z());
+      seSignal->time = mcSignal._time;
+      seSignal->energyDeposition = mcSignal._energyDeposit;
+
+      seDigi->AddSignal(seSignal);
+    }
+
+    seDigis << seDigi;
+  }
+
+  return seDigis;
+
+
+
+}
+

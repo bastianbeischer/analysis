@@ -6,7 +6,7 @@ TEMPDIR     := .tmp
 NAME        := SimpleEvent
 TARGET      := $(LIBDIR)/lib$(NAME).so
 
-CLASSES = SimpleEvent MCEventInformation MCSimpleEventParticle Hit Cluster DataDescription TOFSipmHit TOFCluster SensorTypes
+CLASSES = SimpleEvent MCEventInformation MCSimpleEventParticle MCSimpleEventDigi MCDigiSignal Hit Cluster DataDescription TOFSipmHit TOFCluster SensorTypes
 
 SOURCES = $(addsuffix .cc, $(CLASSES))
 HEADERS = $(addsuffix .hh, $(CLASSES))
