@@ -22,7 +22,8 @@ LIBS += \
   -lprocessing \
   -ltracking \
   -lrootplot \
-  -lsetup
+  -lsetup \
+  -lglobal
 
 CLASSES = \
   AlbedosVsMomentumPlot \

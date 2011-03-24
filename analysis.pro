@@ -13,4 +13,5 @@ SUBDIRS = \
   processing \
   alignment \
   rootplot \
-  tools
+  tools \
+	global

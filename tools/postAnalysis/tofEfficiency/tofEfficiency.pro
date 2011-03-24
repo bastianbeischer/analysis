@@ -20,7 +20,8 @@ LIBS += \
   -lSimpleEvent \
   -ltracking \
   -lrootplot \
-  -lsetup
+  -lsetup \
+	-lglobal
 
 CLASSES = \
   MainWindow \

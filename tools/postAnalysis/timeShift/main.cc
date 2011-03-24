@@ -7,7 +7,6 @@
 int main(int argc, char* argv[])
 {
   RootStyle::set();
-  RootStyle::setPalette(RootStyle::ResiduePalette);
 
   QApplication application(argc, argv);
   MainWindow window;

@@ -1,4 +1,5 @@
 #include "BarTimeShiftHistogram.hh"
+#include "RootStyle.hh"
 
 #include <TH1.h>
 #include <TH2.h>
@@ -6,6 +7,7 @@
 #include <TAxis.h>
 #include <TList.h>
 #include <TF1.h>
+#include <TStyle.h>
 
 #include <iostream>
 #include <iomanip>
@@ -28,7 +30,7 @@ BarTimeShiftHistogram::BarTimeShiftHistogram(const QVector<TCanvas*>& canvases)
     }
   }
 
-  TH2D* histogram = new TH2D("barShiftHistogram", ";id;id;#Deltat / ns", 4, 0, 4, 4, 0, 4);
+  TH2D* histogram = new TH2D("barShiftHistogram", ";;;#Deltat / ns", 4, 0, 4, 4, 0, 4);
   foreach(TH1D* h, histograms) {
     int xBin = 0;
     int yBin = 0;
@@ -51,9 +53,18 @@ BarTimeShiftHistogram::BarTimeShiftHistogram(const QVector<TCanvas*>& canvases)
   histogram->GetYaxis()->SetBinLabel(3, "8028 8038");
   histogram->GetYaxis()->SetBinLabel(4, "802c 803c");
   histogram->GetZaxis()->SetRangeUser(-0.5, 0.5);
+  //RootStyle::setPalette(RootStyle::ResiduePalette);
+	//gStyle->SetPaintTextFormat("3.2f ns");
+	//histogram->SetDrawOption("COL Z TEXT");
   //histogram->Draw("colz");
   setHistogram(histogram);
 }
 
 BarTimeShiftHistogram::~BarTimeShiftHistogram()
 {}
+
+void BarTimeShiftHistogram::draw(TCanvas* canvas)
+{
+	H2DPlot::draw(canvas);
+	histogram()->SetDrawOption("COL Z TEXT");
+}
