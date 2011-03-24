@@ -8,10 +8,10 @@ CONFIG += ordered
 
 SUBDIRS = \
   event \
+  global \
   tracking \
   setup \
   processing \
   alignment \
   rootplot \
-  tools \
-	global
+  tools
