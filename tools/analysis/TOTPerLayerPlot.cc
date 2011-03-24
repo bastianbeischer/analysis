@@ -15,12 +15,12 @@
 #include <QString>
 #include <QDebug>
 
-TOTPerLayerPlot::TOTPerLayerPlot(QString layer)
+TOTPerLayerPlot::TOTPerLayerPlot(TofLayer layer)
   : AnalysisPlot(TimeOverThreshold)
   , H1DPlot()
   , m_layer(layer)
 {
-  QString title = QString("time over threshold "+layer+" layer");
+  QString title = QString("time over threshold "+layerName(layer)+" layer");
   setTitle(title);
   const unsigned int nBinsX = 150;
   const double xMin = 0;
@@ -61,12 +61,8 @@ void TOTPerLayerPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simp
         if (tofHit->detId() == 0x8034) {
           continue;
         }
-//        int tofBar = (int)((tofHit->detId() - 0x8000) / 4);
         TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
         double tot = tofSipmHit->timeOverThreshold();
-//        if (tofBar == 13) {// bar with one sipm damaged
-//          tot *= 4/3.;
-//        }
         totSum += tot;
         nTofHits++;
       }
@@ -75,29 +71,36 @@ void TOTPerLayerPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simp
   }
 }
 
+QString TOTPerLayerPlot::layerName(TofLayer layer)
+{
+  switch (layer) {
+    case LOWER:
+      return "lower";
+      break;
+    case UPPER:
+      return "upper";
+      break;
+    case TOTAL:
+      return "total";
+      break;
+    default:
+      return "not found";
+      break;
+  }
+}
+
 bool TOTPerLayerPlot::checkLayer(double z)
 {
-  if (m_layer == "upper") {
-    if (z > 0) {
-      return true;
-    }
-    else {
-      return false;
-    }      
+  if (m_layer == UPPER && z > 0) {
+    return true;
   }
-  else if (m_layer == "lower") {
-    if (z < 0) {
-      return true;
-    }
-    else {
-      return false;
-    }      
+  else if (m_layer == LOWER && z < 0) {
+    return true;
   }
-  else if (m_layer == "total") {
+  else if (m_layer == TOTAL) {
     return true;
   }
   else {
-    qFatal("Wrong argument passed to TOTPerLayer!");
     return false;
   }
 }

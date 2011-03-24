@@ -47,7 +47,6 @@ void TOTPerBarPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simple
       TOFCluster* cluster = static_cast<TOFCluster*> (hit);
       if (qAbs(track->x(cluster->position().z()) - cluster->position().x()) > Constants::tofBarWidth)
         continue;
-      //histogram()->Fill( (int)((cluster->detId() - 0x8000) / 4), cluster->signalHeight());
       std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       double totSum[TOTPerBarPlot::nTofBars];
@@ -67,9 +66,6 @@ void TOTPerBarPlot::processEvent(const QVector<Hit*>& hits, Track* track, Simple
         totSum[tofBar] += tofSipmHit->timeOverThreshold();
         nTofHits[tofBar]++;
       }
-//      if (tofBar == 13) {// bar with one sipm damaged
-//        totSum[tofBar] *= 4/3.;
-//      }
       histogram()->Fill(tofBar, totSum[tofBar]/nTofHits[tofBar]);
     }
   }

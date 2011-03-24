@@ -14,13 +14,12 @@
 
 #include <QDebug>
 
-TOTBetaCorrelation::TOTBetaCorrelation(QString layer)
+TOTBetaCorrelation::TOTBetaCorrelation(TofLayer layer)
 : AnalysisPlot(AnalysisPlot::TimeOverThreshold)
 , H2DPlot()
 , m_layer(layer)
 {
-  
-  QString htitle = "time over threshold beta correlation "+layer+" tof";
+  QString htitle = "time over threshold beta correlation "+layerName(layer)+" tof";
   setTitle(htitle);
   const unsigned int nBinsX = 100;
   const double xMin = 0;
@@ -29,7 +28,6 @@ TOTBetaCorrelation::TOTBetaCorrelation(QString layer)
   const double yMin = 0;
   const double yMax = 100;
   TH2D* histogram = new TH2D(qPrintable(htitle), "", nBinsX, xMin, xMax, nBinsY, yMin, yMax);
-  
   histogram->GetXaxis()->SetTitle("beta");
   histogram->GetYaxis()->SetTitle("sum time over threshold / ns");
   histogram->GetYaxis()->SetTitleOffset(1.4);
@@ -76,7 +74,7 @@ void TOTBetaCorrelation::processEvent(const QVector<Hit*>& clusters, Track* trac
         totSum += tot;
         nTofHits++;
       }
-      histogram()->Fill(track->beta(), totSum/nTofHits);      
+      histogram()->Fill(track->beta(), totSum/nTofHits);
     }
   }
 }
@@ -91,29 +89,36 @@ void TOTBetaCorrelation::draw(TCanvas* canvas)
   histogram()->Draw("cont4z");
 }
 
+QString TOTBetaCorrelation::layerName(TofLayer layer)
+{
+  switch (layer) {
+    case LOWER:
+      return "lower";
+      break;
+    case UPPER:
+      return "upper";
+      break;
+    case TOTAL:
+      return "total";
+      break;
+    default:
+      return "not found";
+      break;
+  }
+}
+
 bool TOTBetaCorrelation::checkLayer(double z)
 {
-  if (m_layer == "upper") {
-    if (z > 0) {
-      return true;
-    }
-    else {
-      return false;
-    }      
+  if (m_layer == UPPER && z > 0) {
+    return true;
   }
-  else if (m_layer == "lower") {
-    if (z < 0) {
-      return true;
-    }
-    else {
-      return false;
-    }      
+  else if (m_layer == LOWER && z < 0) {
+    return true;
   }
-  else if (m_layer == "total") {
+  else if (m_layer == TOTAL) {
     return true;
   }
   else {
-    qFatal("Wrong argument passed to TOTPerLayer!");
     return false;
   }
 }

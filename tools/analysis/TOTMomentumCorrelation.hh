@@ -12,15 +12,17 @@ class SimpleEvent;
 
 class TOTMomentumCorrelation : public AnalysisPlot, public H2DPlot {
 public:
-//  TOTMomentumCorrelation(unsigned int id);
-  TOTMomentumCorrelation(QString layer);
+  enum TofLayer {
+    LOWER, UPPER, TOTAL
+  };
+  TOTMomentumCorrelation(TofLayer layer);
   ~TOTMomentumCorrelation();
   virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
   virtual void update();
   virtual void draw(TCanvas*);
 private:
-//  unsigned int m_id;
-  QString m_layer;
+  TofLayer m_layer;
+  QString layerName(TofLayer layer);
   bool checkLayer(double z);
 };
 

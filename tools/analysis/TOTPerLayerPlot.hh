@@ -13,11 +13,15 @@ class SimpleEvent;
 
 class TOTPerLayerPlot : public AnalysisPlot, public H1DPlot {
 public:
-  TOTPerLayerPlot(QString layer);
+  enum TofLayer {
+    LOWER, UPPER, TOTAL
+  };
+  TOTPerLayerPlot(TofLayer layer);
   ~TOTPerLayerPlot();
   virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
 private:
-  QString m_layer;
+  TofLayer m_layer;
+  QString layerName(TofLayer layer);
   bool checkLayer(double z);
 };
 

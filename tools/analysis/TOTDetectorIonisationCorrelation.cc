@@ -15,10 +15,11 @@
 #include <QString>
 #include <QDebug>
 
-TOTDetectorIonisationCorrelation::TOTDetectorIonisationCorrelation(QString layer, QString typ)
+TOTDetectorIonisationCorrelation::TOTDetectorIonisationCorrelation(TofLayer layer, Hit::ModuleType type)
   : AnalysisPlot(TimeOverThreshold)
   , H2DPlot()
   , m_layer(layer)
+  , m_type(type)
 {
   const unsigned int nBinsY = 150;
   const double yMin = 0;
@@ -26,19 +27,20 @@ TOTDetectorIonisationCorrelation::TOTDetectorIonisationCorrelation(QString layer
   unsigned int nBinsX = 150;
   double xMin = 0;
   double xMax = 1e5;
-  if (typ == "trd") {
-    m_typ = Hit::trd;
+  QString typeName;
+  if (m_type == Hit::trd) {
+    typeName = "trd";
     nBinsX = 150;
     xMin = 0;
     xMax = 7e2;
   }
-  if (typ == "tracker") {
-    m_typ = Hit::tracker;
+  if (m_type == Hit::tracker) {
+    typeName = "tracker";
     nBinsX = 150;
     xMin = 0;
     xMax = 7e4;
   }
-  QString title = QString("time over threshold "+typ+" signal hight correlation "+layer+" layer");
+  QString title = QString("time over threshold "+typeName+" signal hight correlation "+layer+" layer");
   setTitle(title);
   TH2D* histogram = new TH2D(qPrintable(title), "", nBinsX, xMin, xMax, nBinsY, yMin, yMax);  histogram->GetXaxis()->SetTitleOffset(1.4);
   histogram->GetYaxis()->SetTitle("mean time over threshold / ns");
@@ -77,12 +79,8 @@ void TOTDetectorIonisationCorrelation::processEvent(const QVector<Hit*>& hits, T
         if (tofHit->detId() == 0x8034) {
           continue;
         }
-//        int tofBar = (int)((tofHit->detId() - 0x8000) / 4);
         TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
         double tot = tofSipmHit->timeOverThreshold();
-//        if (tofBar == 13) {// bar with one sipm damaged
-//          tot *= 4/3.;
-//        }
         totSum += tot;
         nTofHits++;
       }
@@ -100,7 +98,7 @@ void TOTDetectorIonisationCorrelation::draw(TCanvas* canvas)
 double TOTDetectorIonisationCorrelation::sumOfNonTOFSignalHeights(Track* /*track*/, QVector<Hit*> clusters) {
 	double sumSignal = 0;
 	foreach(Hit* clusterHit, clusters) {
-		if (clusterHit->type() != Hit::tof && clusterHit->type() == m_typ) {
+		if (clusterHit->type() != Hit::tof && clusterHit->type() == m_type) {
       Cluster* cluster = static_cast<Cluster*>(clusterHit);
       foreach(Hit* hit, cluster->hits()){
         sumSignal += hit->signalHeight();
@@ -110,29 +108,36 @@ double TOTDetectorIonisationCorrelation::sumOfNonTOFSignalHeights(Track* /*track
 	return sumSignal;
 }
 
+QString TOTDetectorIonisationCorrelation::layerName(TofLayer layer)
+{
+  switch (layer) {
+    case LOWER:
+      return "lower";
+      break;
+    case UPPER:
+      return "upper";
+      break;
+    case TOTAL:
+      return "total";
+      break;
+    default:
+      return "not found";
+      break;
+  }
+}
+
 bool TOTDetectorIonisationCorrelation::checkLayer(double z)
 {
-  if (m_layer == "upper") {
-    if (z > 0) {
-      return true;
-    }
-    else {
-      return false;
-    }      
+  if (m_layer == UPPER && z > 0) {
+    return true;
   }
-  else if (m_layer == "lower") {
-    if (z < 0) {
-      return true;
-    }
-    else {
-      return false;
-    }      
+  else if (m_layer == LOWER && z < 0) {
+    return true;
   }
-  else if (m_layer == "total") {
+  else if (m_layer == TOTAL) {
     return true;
   }
   else {
-    qFatal("Wrong argument passed to TOTPerLayer!");
     return false;
   }
 }

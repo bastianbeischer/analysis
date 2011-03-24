@@ -14,28 +14,13 @@
 
 #include <QDebug>
 
-//TOTMomentumCorrelation::TOTMomentumCorrelation(unsigned int id)
-//  : AnalysisPlot(AnalysisPlot::TimeOverThreshold)
-//  , H2DPlot()
-//  , m_id(id)
-//{
-//  
-//  QString htitle =QString("time over threshold momentum correlation 0x%1").arg(m_id, 0, 16);
-//  setTitle(htitle);
-//  TH2D* histogram = new TH2D(qPrintable(title()), "", 50, 0, 5, 75, 0, 75);
-//  histogram->GetXaxis()->SetTitle("rigidity / GV");
-//  histogram->GetYaxis()->SetTitle("time over threshold / ns");
-//  setHistogram(histogram);
-//  addLatex(RootPlot::newLatex(.15, .85));
-//}
-
-TOTMomentumCorrelation::TOTMomentumCorrelation(QString layer)
+TOTMomentumCorrelation::TOTMomentumCorrelation(TofLayer layer)
 : AnalysisPlot(AnalysisPlot::TimeOverThreshold)
 , H2DPlot()
 , m_layer(layer)
 {
   
-  QString htitle = "time over threshold momentum correlation "+layer+" tof";
+  QString htitle = "time over threshold momentum correlation "+layerName(layer)+" tof";
   setTitle(htitle);
   const unsigned int nBinsX = 100;
   const double xMin = 0;
@@ -79,10 +64,6 @@ void TOTMomentumCorrelation::processEvent(const QVector<Hit*>& clusters, Track* 
       int nTofHits = 0;
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         Hit* tofHit = *it;
-//        if (tofHit->detId() == m_id) {
-//          TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*> (tofHit);
-//          histogram()->Fill(track->pt(), tofSipmHit->timeOverThreshold());
-//        }
         if (tofHit->detId() == 0x8034) {
           continue;
         }
@@ -95,7 +76,7 @@ void TOTMomentumCorrelation::processEvent(const QVector<Hit*>& clusters, Track* 
         totSum += tot;
         nTofHits++;
       }
-      histogram()->Fill(track->pt(), totSum/nTofHits);      
+      histogram()->Fill(track->pt(), totSum/nTofHits);
     }
   }
 }
@@ -110,29 +91,36 @@ void TOTMomentumCorrelation::draw(TCanvas* canvas)
   histogram()->Draw("cont4z");
 }
 
+QString TOTMomentumCorrelation::layerName(TofLayer layer)
+{
+  switch (layer) {
+    case LOWER:
+      return "lower";
+      break;
+    case UPPER:
+      return "upper";
+      break;
+    case TOTAL:
+      return "total";
+      break;
+    default:
+      return "not found";
+      break;
+  }
+}
+
 bool TOTMomentumCorrelation::checkLayer(double z)
 {
-  if (m_layer == "upper") {
-    if (z > 0) {
-      return true;
-    }
-    else {
-      return false;
-    }      
+  if (m_layer == UPPER && z > 0) {
+    return true;
   }
-  else if (m_layer == "lower") {
-    if (z < 0) {
-      return true;
-    }
-    else {
-      return false;
-    }      
+  else if (m_layer == LOWER && z < 0) {
+    return true;
   }
-  else if (m_layer == "total") {
+  else if (m_layer == TOTAL) {
     return true;
   }
   else {
-    qFatal("Wrong argument passed to TOTPerLayer!");
     return false;
   }
 }
