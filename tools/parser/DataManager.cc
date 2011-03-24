@@ -19,14 +19,23 @@
 
 DataManager::DataManager() :
   m_description(0),
-  m_sensorsData(new SensorsData(SensorsData::SENSORS, "sensors.root")),
-  m_atcData(new SensorsData(SensorsData::ATC, "sensors.root")),
-  m_ebassData(new SensorsData(SensorsData::EBASS, "sensors.root")),
+  m_sensorsData(0),
+  m_atcData(0),
+  m_ebassData(0),
   m_outputFileName("output.root"),
   m_currentEvent(0),
   m_outputFile(0),
   m_outputTree(0)
 {
+  char* env = getenv("PERDAIXANA_PATH");
+  if (env == 0) {
+    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
+  }
+  QString path(env);
+  QString sensorFileName = path + "/tools/parser/sensors.root";
+  m_sensorsData = new SensorsData(SensorsData::SENSORS, qPrintable(sensorFileName));
+  m_atcData = new SensorsData(SensorsData::ATC, qPrintable(sensorFileName));
+  m_ebassData = new SensorsData(SensorsData::EBASS, qPrintable(sensorFileName));
 }
 
 DataManager::~DataManager()

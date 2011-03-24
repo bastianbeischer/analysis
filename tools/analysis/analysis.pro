@@ -18,11 +18,13 @@ INCLUDEPATH += \
 
 LIBS += \
   -L$$TOPLEVEL/lib \
+  -lglobal \
   -lSimpleEvent \
   -lprocessing \
   -ltracking \
   -lrootplot \
-  -lsetup
+  -lsetup \
+  -lglobal
 
 CLASSES = \
   AlbedosVsMomentumPlot \
@@ -75,7 +77,10 @@ CLASSES = \
   TOTDetectorIonisationCorrelation \
   TOTTemperatureCorrelationPlot \
   TOTTimeCorrelationPlot \
-  TOFAlignment
+  TOFAlignment \
+  TemperatureTimePlot \
+  ChannelTriggerProbabilityPlot \
+  TOFTimeShiftTriggerPlot
 
 SOURCES += \
   main.cc

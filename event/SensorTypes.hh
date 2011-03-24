@@ -1,11 +1,12 @@
 #ifndef SensorTypes_hh
 #define SensorTypes_hh
 
+#include <string>
+#include <vector>
+
 namespace SensorTypes
 {
-
   enum Type {
-
     // Our own sensors
     START = 0,
     TRD_PRESSURE = START,
@@ -112,7 +113,8 @@ namespace SensorTypes
   };
 
   Type convertFromString(const char* string);
-
+  std::string convertToString(SensorTypes::Type);
+  std::vector<SensorTypes::Type> temperatureSensors();
 }
 
 #endif /* SensorTypes_hh */

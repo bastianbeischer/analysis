@@ -1,7 +1,10 @@
 #include "MainWindow.hh"
 
 #include "PostAnalysisPlot.hh"
-#include "TimeShiftHistogram.hh"
+#include "ChannelTimeShiftHistogram.hh"
+#include "BarTimeShiftHistogram.hh"
+#include "RootStyle.hh"
+
 #include <TCanvas.h>
 #include <TFile.h>
 #include <TROOT.h>
@@ -22,6 +25,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::canvasListWidgetCurrentRowChanged(int i)
 {
+  RootStyle::setPalette(RootStyle::DefaultPalette);
   m_ui.qtWidget->GetCanvas()->cd();
   gPad->Clear();
   m_canvases[i]->DrawClonePad();
@@ -64,54 +68,48 @@ void MainWindow::setupAnalysis()
   TCanvas* canvas = 0;
   TFile file(qPrintable(m_analysisFile));
   gROOT->cd();
-  canvas = addCanvas(&file, "time shift 0x8000 0x8010 n canvas");
-  for (int i = 1; i < 4; ++i)
-    addPlot(new TimeShiftHistogram(canvas, i));
-  canvas = addCanvas(&file, "time shift 0x8000 0x8010 p canvas");
-  for (int i = 1; i < 4; ++i)
-    addPlot(new TimeShiftHistogram(canvas, i));
-  canvas = addCanvas(&file, "time shift 0x8004 0x8014 n canvas");
-  for (int i = 1; i < 4; ++i)
-    addPlot(new TimeShiftHistogram(canvas, i));
-  canvas = addCanvas(&file, "time shift 0x8004 0x8014 p canvas");
-  for (int i = 1; i < 4; ++i)
-    addPlot(new TimeShiftHistogram(canvas, i));
-  canvas = addCanvas(&file, "time shift 0x8008 0x8018 n canvas");
-  for (int i = 1; i < 4; ++i)
-    addPlot(new TimeShiftHistogram(canvas, i));
-  canvas = addCanvas(&file, "time shift 0x8008 0x8018 p canvas");
-  for (int i = 1; i < 4; ++i)
-    addPlot(new TimeShiftHistogram(canvas, i));
-  canvas = addCanvas(&file, "time shift 0x800c 0x801c n canvas");
-  for (int i = 1; i < 4; ++i)
-    addPlot(new TimeShiftHistogram(canvas, i));
-  canvas = addCanvas(&file, "time shift 0x800c 0x801c p canvas");
-  for (int i = 1; i < 4; ++i)
-    addPlot(new TimeShiftHistogram(canvas, i));
-  canvas = addCanvas(&file, "time shift 0x8020 0x8030 n canvas");
-  for (int i = 1; i < 4; ++i)
-    addPlot(new TimeShiftHistogram(canvas, i));
-  canvas = addCanvas(&file, "time shift 0x8020 0x8030 p canvas");
-  for (int i = 1; i < 4; ++i)
-    addPlot(new TimeShiftHistogram(canvas, i));
-  canvas = addCanvas(&file, "time shift 0x8024 0x8034 n canvas");
-  for (int i = 1; i < 4; ++i)
-    addPlot(new TimeShiftHistogram(canvas, i));
-  canvas = addCanvas(&file, "time shift 0x8024 0x8034 p canvas");
-  for (int i = 1; i < 4; ++i)
-    addPlot(new TimeShiftHistogram(canvas, i));
-  canvas = addCanvas(&file, "time shift 0x8028 0x8038 n canvas");
-  for (int i = 1; i < 4; ++i)
-    addPlot(new TimeShiftHistogram(canvas, i));
-  canvas = addCanvas(&file, "time shift 0x8028 0x8038 p canvas");
-  for (int i = 1; i < 4; ++i)
-    addPlot(new TimeShiftHistogram(canvas, i));
-  canvas = addCanvas(&file, "time shift 0x802c 0x803c n canvas");
-  for (int i = 1; i < 4; ++i)
-    addPlot(new TimeShiftHistogram(canvas, i));
-  canvas = addCanvas(&file, "time shift 0x802c 0x803c p canvas");
-  for (int i = 1; i < 4; ++i)
-    addPlot(new TimeShiftHistogram(canvas, i));
+  canvas = addCanvas(&file, "time shift 0x8000 0x8010 canvas");
+  for (int ch = 0; ch < 8; ++ch)
+    addPlot(new ChannelTimeShiftHistogram(canvas, ch));
+  canvas = addCanvas(&file, "time shift 0x8004 0x8014 canvas");
+  for (int ch = 0; ch < 8; ++ch)
+    addPlot(new ChannelTimeShiftHistogram(canvas, ch));
+  canvas = addCanvas(&file, "time shift 0x8008 0x8018 canvas");
+  for (int ch = 0; ch < 8; ++ch)
+    addPlot(new ChannelTimeShiftHistogram(canvas, ch));
+  canvas = addCanvas(&file, "time shift 0x800c 0x801c canvas");
+  for (int ch = 0; ch < 8; ++ch)
+    addPlot(new ChannelTimeShiftHistogram(canvas, ch));
+  canvas = addCanvas(&file, "time shift 0x8020 0x8030 canvas");
+  for (int ch = 0; ch < 8; ++ch)
+    addPlot(new ChannelTimeShiftHistogram(canvas, ch));
+  canvas = addCanvas(&file, "time shift 0x8024 0x8034 canvas");
+  for (int ch = 0; ch < 8; ++ch)
+    addPlot(new ChannelTimeShiftHistogram(canvas, ch));
+  canvas = addCanvas(&file, "time shift 0x8028 0x8038 canvas");
+  for (int ch = 0; ch < 8; ++ch)
+    addPlot(new ChannelTimeShiftHistogram(canvas, ch));
+  canvas = addCanvas(&file, "time shift 0x802c 0x803c canvas");
+  for (int ch = 0; ch < 8; ++ch)
+    addPlot(new ChannelTimeShiftHistogram(canvas, ch));
+  QVector<TCanvas*> canvases;
+  canvases.append(addCanvas(&file, "time resolution 0x8000 0x8010 0x8020 0x8030 canvas"));
+  canvases.append(addCanvas(&file, "time resolution 0x8000 0x8010 0x8024 0x8034 canvas"));
+  canvases.append(addCanvas(&file, "time resolution 0x8000 0x8010 0x8028 0x8038 canvas"));
+  canvases.append(addCanvas(&file, "time resolution 0x8000 0x8010 0x802c 0x803c canvas"));
+  canvases.append(addCanvas(&file, "time resolution 0x8004 0x8014 0x8020 0x8030 canvas"));
+  canvases.append(addCanvas(&file, "time resolution 0x8004 0x8014 0x8024 0x8034 canvas"));
+  canvases.append(addCanvas(&file, "time resolution 0x8004 0x8014 0x8028 0x8038 canvas"));
+  canvases.append(addCanvas(&file, "time resolution 0x8004 0x8014 0x802c 0x803c canvas"));
+  canvases.append(addCanvas(&file, "time resolution 0x8008 0x8018 0x8020 0x8030 canvas"));
+  canvases.append(addCanvas(&file, "time resolution 0x8008 0x8018 0x8024 0x8034 canvas"));
+  canvases.append(addCanvas(&file, "time resolution 0x8008 0x8018 0x8028 0x8038 canvas"));
+  canvases.append(addCanvas(&file, "time resolution 0x8008 0x8018 0x802c 0x803c canvas"));
+  canvases.append(addCanvas(&file, "time resolution 0x800c 0x801c 0x8020 0x8030 canvas"));
+  canvases.append(addCanvas(&file, "time resolution 0x800c 0x801c 0x8024 0x8034 canvas"));
+  canvases.append(addCanvas(&file, "time resolution 0x800c 0x801c 0x8028 0x8038 canvas"));
+  canvases.append(addCanvas(&file, "time resolution 0x800c 0x801c 0x802c 0x803c canvas"));
+  addPlot(new BarTimeShiftHistogram(canvases));
   file.Close();
   connect(m_ui.canvasListWidget, SIGNAL(currentRowChanged(int)), this, SLOT(canvasListWidgetCurrentRowChanged(int)));
   connect(m_ui.plotListWidget, SIGNAL(currentRowChanged(int)), this, SLOT(plotListWidgetCurrentRowChanged(int)));

@@ -76,11 +76,11 @@ void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Track* track, S
   if (!track || !track->fitGood())
     return;
   TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  if (!(flags & TrackInformation::Chi2Good))
     return;
-  if (track->p() < 1.5)
+  if (track->p() < 5)
     return;
-  if (qAbs(track->y(Constants::upperTofPosition)) < 100. && qAbs(track->y(Constants::lowerTofPosition)) < 100.) {
+  if (qAbs(track->y(Constants::upperTofPosition)) < 50. && qAbs(track->y(Constants::lowerTofPosition)) < 50.) {
     histogram(0)->Fill(track->timeOfFlight());
     bool idTop1 = false, idTop2 = false, idBottom1 = false, idBottom2 = false;
     const QVector<Hit*>::const_iterator endIt = hits.end();

@@ -1,24 +1,19 @@
 #include "MainWindow.hh"
 
+#include <QProcess>
 #include <QDebug>
 #include <QFileDialog>
-#include <QProcess>
 
 MainWindow::MainWindow(QWidget* parent)
   : QDialog(parent)
 {
   m_ui.setupUi(this);
 
-  QStringList envVariables = QProcess::systemEnvironment();
-  QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
-  QString topLevelPath = "";
-  if (filteredVars.size() != 0) {
-    QString entry = filteredVars.first();
-    topLevelPath = entry.split("=").at(1);
-  } else {
+  char* env = getenv("PERDAIXANA_PATH");
+  if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
-
+  QString topLevelPath(env);
   QFile file(topLevelPath + "/tools/presentation/" + "template.tex");
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
     qFatal("Couldn't open template file!");

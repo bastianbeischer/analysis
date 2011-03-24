@@ -30,7 +30,9 @@ public:
   double chi2() const {return m_chi2;}
   unsigned int ndf() const {return m_ndf;}
   double pt() const {return m_pt;}
-  double timeOfFlight() const {return m_timeOfFlight;}
+  double startTime() const {return m_startTime;}
+  double stopTime() const {return m_stopTime;}
+  double timeOfFlight() const {return m_stopTime - m_startTime;}
   const QVector<Hit*>& hits() const {return m_hits;}
 
   virtual double x(double z) const = 0;
@@ -55,7 +57,7 @@ private:
 
 private:
   void calculatePt();
-  void calculateTimeOfFlight();
+  void calculateTimes();
 
 protected:
   Type m_type;
@@ -70,7 +72,8 @@ protected:
   unsigned int m_ndf;
 
   double m_pt;
-  double m_timeOfFlight;
+  double m_startTime;
+  double m_stopTime;
 
   QVector<Hit*> m_hits;
 };

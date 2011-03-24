@@ -4,7 +4,6 @@
 #include <QRegExp>
 #include <QString>
 #include <QStringList>
-#include <QProcess>
 #include <QDebug>
 
 int main(int argc, char** argv)

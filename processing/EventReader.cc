@@ -145,3 +145,8 @@ void EventReader::run()
   qDeleteAll(m_threads);
   m_threads.clear();
 }
+
+QDateTime EventReader::time(int eventNumber)
+{
+  return m_chain->time(eventNumber);
+}

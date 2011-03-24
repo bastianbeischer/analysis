@@ -11,7 +11,6 @@
 
 #include <QStringList>
 #include <QSettings>
-#include <QProcess>
 #include <QMutex>
 
 #include <TVector3.h>
@@ -26,17 +25,12 @@ Setup::Setup() :
   m_coordinates(0),
   m_settings(0)
 {
-  QStringList envVariables = QProcess::systemEnvironment();
-  QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
-  QString path = "";
-  if (filteredVars.size() != 0) {
-    QString entry = filteredVars.first();
-    path = entry.split("=").at(1);
-    path += "/conf/";
-  }
-  else {
+  char* env = getenv("PERDAIXANA_PATH");
+  if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
+  QString path(env);
+  path += "/conf/";
   m_coordinates = new QSettings(path+"perdaix_coordinates.conf", QSettings::IniFormat);
   m_settings = new QSettings(path+"setup.conf", QSettings::IniFormat);
 

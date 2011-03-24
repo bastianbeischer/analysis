@@ -22,7 +22,8 @@ LIBS += \
   -ltracking \
   -lrootplot \
   -lsetup \
-  -lprocessing
+  -lprocessing \
+	-lglobal
 
 CLASSES = \
   MainWindow \

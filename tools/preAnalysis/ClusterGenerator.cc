@@ -14,6 +14,15 @@
 ClusterGenerator::ClusterGenerator() :
   EventProcessor()
 {
+  Setup* setup = Setup::instance();
+  const ElementIterator elementEndIt = setup->lastElement();
+  for (ElementIterator elementIt = setup->firstElement(); elementIt != elementEndIt; ++elementIt) {
+    DetectorElement* element = *elementIt;
+    int nChannels = element->nChannels();
+    for (int i = 0; i < nChannels; i++) {
+      m_hitStorage[element].append(0);
+    }
+  }  
 }
 
 ClusterGenerator::~ClusterGenerator()
@@ -37,18 +46,23 @@ void ClusterGenerator::process(SimpleEvent* sourceEvent)
   foreach(Hit* rawhit, rawhits) {
     unsigned short id = rawhit->detId() - rawhit->channel();
     DetectorElement* element = setup->element(id);
-    QMap<unsigned short, Hit*>& hitMap = m_hitStorage[element];
-    hitMap[element->sortedChannel(rawhit->channel())] = rawhit;
+    QVector<Hit*>& hits = m_hitStorage[element];
+    hits[element->sortedChannel(rawhit->channel())] = rawhit;
   }
 
   // do the zero suppression
   const HitStorageIterator hitEndIt = m_hitStorage.end();
   for (HitStorageIterator it = m_hitStorage.begin(); it != hitEndIt; ++it) {
     DetectorElement* element = it.key();
-    const QVector<Hit*>& hits = it.value().values().toVector();
-    foreach (Hit* cluster, element->findClusters(hits))
-      destinationEvent->addHit(cluster);
-    it.value().clear();
+    QVector<Hit*>& hits = m_hitStorage[element];
+    const QVector<Hit*>& clusters = element->findClusters(hits);
+    const QVector<Hit*>::const_iterator clustersEnd = clusters.end();
+    for (QVector<Hit*>::const_iterator it = clusters.begin(); it != clustersEnd; ++it)
+      destinationEvent->addHit(*it);
+
+    int nChannels = element->nChannels();
+    for (int i = 0; i < nChannels; i++)
+      hits[i] = 0;
   }
 
   // copy sensor  data

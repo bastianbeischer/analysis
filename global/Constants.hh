@@ -21,6 +21,8 @@ namespace Constants
   const double tofClusterSignalCut = 600;  // ns
   const double idealTot = 30.;             //ns
   const int nTofChannels = 64;
+  const int nTofBars = 16;
+  const int nTofSipmsPerBar = 4;
 
   const double TRDTubeRadius = 3.0;        //mm
 

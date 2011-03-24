@@ -58,10 +58,13 @@
 #include "TOTTemperatureCorrelationPlot.hh"
 #include "TOFAlignment.hh"
 #include "TOTTimeCorrelationPlot.hh"
+#include "TemperatureTimePlot.hh"
+#include "ChannelTriggerProbabilityPlot.hh"
+#include "TOFTimeShiftTriggerPlot.hh"
 
-#include <QProcess>
 #include <QFileDialog>
 #include <QVBoxLayout>
+#include <QDateTime>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget* parent)
@@ -75,14 +78,11 @@ MainWindow::MainWindow(QWidget* parent)
 {
   m_ui.setupUi(this);
  
-  QStringList envVariables = QProcess::systemEnvironment();
-  QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
-  if (filteredVars.size() != 0) {
-    QString entry = filteredVars.first();
-    m_topLevelPath = entry.split("=").at(1);
-  } else {
+  char* env = getenv("PERDAIXANA_PATH");
+  if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
+  m_topLevelPath = QString(env);
 
   m_topicCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
   m_topicCheckBoxes.append(m_ui.signalHeightTRDCheckBox);
@@ -100,6 +100,7 @@ MainWindow::MainWindow(QWidget* parent)
   m_topicCheckBoxes.append(m_ui.miscellaneousTrackerCheckBox);
   m_topicCheckBoxes.append(m_ui.miscellaneousTRDCheckBox);
   m_topicCheckBoxes.append(m_ui.miscellaneousTOFCheckBox);
+  m_topicCheckBoxes.append(m_ui.slowControlCheckBox);
 
   m_trackerCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
   m_trackerCheckBoxes.append(m_ui.clusterShapeTrackerCheckBox);
@@ -191,11 +192,12 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.miscellaneousTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTOFButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.slowControlButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
 
   foreach(QCheckBox* checkBox, m_topicCheckBoxes)
     connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged()));
 
-  setupPlots();
+  //setupPlots();
 
   m_updateTimer.setInterval(50);
   m_ui.numberOfThreadsSpinBox->setValue(QThread::idealThreadCount());
@@ -266,6 +268,8 @@ void MainWindow::showButtonsClicked()
     topic = AnalysisPlot::MiscellaneousTRD;
   } else if (b == m_ui.miscellaneousTOFButton) {
     topic = AnalysisPlot::MiscellaneousTOF;
+  } else if (b == m_ui.slowControlButton) {
+    topic = AnalysisPlot::SlowControl;
   }
   if (b->text() == "+") {
     b->setText("-");
@@ -332,6 +336,9 @@ void MainWindow::setupPlots()
   m_ui.plotter->clearPlots();
   m_activePlots.clear();
   m_ui.listWidget->clear();
+    
+  QDateTime first = m_reader->time(m_ui.firstEventSpinBox->value());
+  QDateTime last = m_reader->time(m_ui.lastEventSpinBox->value());
 
   if (m_ui.signalHeightTrackerCheckBox->isChecked()) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
@@ -420,7 +427,7 @@ void MainWindow::setupPlots()
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)
         for (int ch = 0; ch < 4; ++ch)
-          m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch));
+          m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch, first, last));
     }
   }
   if (m_ui.trackingCheckBox->isChecked()) {
@@ -494,27 +501,21 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x802c, 0x803c));
   }
   if (m_ui.calibrationTofCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new ChannelTriggerProbabilityPlot);
+    m_ui.plotter->addPlot(new TOFTimeShiftTriggerPlot);
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)
         m_ui.plotter->addPlot(new TOFTimeDifferencePlot(element->id()));
     }
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8000, 0x8010, true));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8000, 0x8010, false));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8004, 0x8014, true));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8004, 0x8014, false));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8008, 0x8018, true));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8008, 0x8018, false));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x800c, 0x801c, true));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x800c, 0x801c, false));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8020, 0x8030, true));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8020, 0x8030, false));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8024, 0x8034, true));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8024, 0x8034, false));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8028, 0x8038, true));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8028, 0x8038, false));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x802c, 0x803c, true));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x802c, 0x803c, false));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8000, 0x8010));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8004, 0x8014));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8008, 0x8018));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x800c, 0x801c));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8020, 0x8030));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8024, 0x8034));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8028, 0x8038));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x802c, 0x803c));
   }
   if (m_ui.miscellaneousTrackerCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TotalSignalHeightPlot);
@@ -547,6 +548,11 @@ void MainWindow::setupPlots()
         m_ui.plotter->addPlot(new TOFPositionCorrelationPlot(element->id()));
     }
     //m_ui.plotter->addPlot(new TOFAlignment);
+  }
+  if (m_ui.slowControlCheckBox->isChecked()) {
+    QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());
+    foreach(SensorTypes::Type sensor, temperatureSensors)
+      m_ui.plotter->addPlot(new TemperatureTimePlot(sensor, first, last));
   }
 }
 
@@ -591,6 +597,7 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
   m_ui.miscellaneousTrackerButton->setText("+");
   m_ui.miscellaneousTRDButton->setText("+");
   m_ui.miscellaneousTOFButton->setText("+");
+  m_ui.slowControlButton->setText("+");
 
   m_ui.signalHeightTrackerButton->setEnabled(m_ui.signalHeightTrackerCheckBox->isChecked());
   m_ui.signalHeightTRDButton->setEnabled(m_ui.signalHeightTRDCheckBox->isChecked());
@@ -608,6 +615,7 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
   m_ui.miscellaneousTrackerButton->setEnabled(m_ui.miscellaneousTrackerCheckBox->isChecked());
   m_ui.miscellaneousTRDButton->setEnabled(m_ui.miscellaneousTRDCheckBox->isChecked());
   m_ui.miscellaneousTOFButton->setEnabled(m_ui.miscellaneousTOFCheckBox->isChecked());
+  m_ui.slowControlButton->setEnabled(m_ui.slowControlCheckBox->isChecked());
 }
 
 void MainWindow::analyzeButtonClicked()
@@ -649,7 +657,10 @@ void MainWindow::setOrAddFileListDialogActionTriggered()
 
 void MainWindow::saveButtonsClicked()
 {
-  QString fileName = m_topLevelPath + "/plots/" + m_ui.titleLabel->text();
+  QString fileName = m_ui.titleLabel->text();
+  fileName.remove(QChar('/'));
+  fileName.remove(QChar(':'));
+  fileName.prepend(m_topLevelPath + "/plots/");
   QPushButton* b = static_cast<QPushButton*>(sender());
   if (b == m_ui.savePdfButton) {
     fileName+= ".pdf";

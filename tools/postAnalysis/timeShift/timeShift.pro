@@ -20,12 +20,14 @@ LIBS += \
   -lSimpleEvent \
   -ltracking \
   -lrootplot \
-  -lsetup
+  -lsetup \
+  -lglobal
 
 CLASSES = \
   MainWindow \
   PostAnalysisPlot \
-  TimeShiftHistogram
+  ChannelTimeShiftHistogram \
+  BarTimeShiftHistogram
 
 SOURCES = \
   main.cc

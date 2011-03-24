@@ -1,5 +1,7 @@
 #include "DataChain.hh"
 
+#include <QMutexLocker>
+
 #include <TFile.h>
 #include <TList.h>
 
@@ -92,20 +94,21 @@ void DataChain::addRootFile(const char* filename)
 
 SimpleEvent* DataChain::event(unsigned int i)
 {
+  QMutexLocker locker(&s_mutex);
   assert(i < m_chain->GetEntries());
-  s_mutex.lock();
   m_currentEntry = i;
   m_event = 0;
   m_chain->GetEntry(i); 
-  s_mutex.unlock();
   return m_event;
 }
 
 SimpleEvent* DataChain::nextEvent()
 {
-  m_currentEntry++;
-  if (m_currentEntry >= m_chain->GetEntries())
+  ++m_currentEntry;
+  if (m_currentEntry >= m_chain->GetEntries()) {
+    m_currentEntry = -1;
     return 0;
+  }
   m_chain->GetEntry(m_currentEntry); 
   return m_event;
 }
@@ -132,4 +135,26 @@ int DataChain::entryInFile() const
 const std::string& DataChain::rawFileNameForEvent() const
 {
   return currentDescription()->runFileNameForEventNumber(entryInFile());
+}
+ 
+QDateTime DataChain::time(int eventNumber)
+{
+  int savedEntry = m_currentEntry;
+  SimpleEvent* ev = event(eventNumber);
+  QDateTime dt;
+  if (ev)
+    dt.setTime_t(ev->time());
+  if (savedEntry >= 0)
+    event(savedEntry);
+  return dt;
+}
+
+QDateTime DataChain::startTime()
+{
+  return time(0);
+}
+
+QDateTime DataChain::stopTime()
+{
+  return time(nEntries() - 1);
 }
