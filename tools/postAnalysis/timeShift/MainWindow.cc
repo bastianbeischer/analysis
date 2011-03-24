@@ -3,6 +3,8 @@
 #include "PostAnalysisPlot.hh"
 #include "ChannelTimeShiftHistogram.hh"
 #include "BarTimeShiftHistogram.hh"
+#include "RootStyle.hh"
+
 #include <TCanvas.h>
 #include <TFile.h>
 #include <TROOT.h>
@@ -23,6 +25,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::canvasListWidgetCurrentRowChanged(int i)
 {
+  RootStyle::setPalette(RootStyle::DefaultPalette);
   m_ui.qtWidget->GetCanvas()->cd();
   gPad->Clear();
   m_canvases[i]->DrawClonePad();

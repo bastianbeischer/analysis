@@ -53,10 +53,7 @@ BarTimeShiftHistogram::BarTimeShiftHistogram(const QVector<TCanvas*>& canvases)
   histogram->GetYaxis()->SetBinLabel(3, "8028 8038");
   histogram->GetYaxis()->SetBinLabel(4, "802c 803c");
   histogram->GetZaxis()->SetRangeUser(-0.5, 0.5);
-  //RootStyle::setPalette(RootStyle::ResiduePalette);
-	//gStyle->SetPaintTextFormat("3.2f ns");
-	//histogram->SetDrawOption("COL Z TEXT");
-  //histogram->Draw("colz");
+  histogram->SetMarkerColor(kYellow);
   setHistogram(histogram);
 }
 
@@ -65,6 +62,7 @@ BarTimeShiftHistogram::~BarTimeShiftHistogram()
 
 void BarTimeShiftHistogram::draw(TCanvas* canvas)
 {
+  RootStyle::setPalette(RootStyle::ResiduePalette);
 	H2DPlot::draw(canvas);
 	histogram()->SetDrawOption("COL Z TEXT");
 }
