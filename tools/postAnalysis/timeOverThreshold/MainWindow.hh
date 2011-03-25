@@ -23,6 +23,7 @@ private slots:
 private:
   void setupAnalysis();
   TCanvas* addCanvas(TFile*, const char* name);
+  TCanvas* addCanvas(TFile*, const QString name);
   void addPlot(PostAnalysisPlot*);
   QString m_analysisFile;
   QVector<TCanvas*> m_canvases;

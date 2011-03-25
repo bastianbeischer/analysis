@@ -18,6 +18,7 @@ INCLUDEPATH += \
 
 LIBS += \
   -L$$TOPLEVEL/lib \
+  -lglobal \
   -lSimpleEvent \
   -lprocessing \
   -ltracking \
@@ -69,7 +70,11 @@ CLASSES = \
   TOFEfficiencyPlot \
   TrackingEfficiencyVsMomentumPlot \
   TOTMomentumCorrelation \
+  TOTBetaCorrelation \
   TOTPlot \
+  TOTPerBarPlot \
+  TOTPerLayerPlot \
+  TOTDetectorIonisationCorrelation \
   TOTTemperatureCorrelationPlot \
   TOTTimeCorrelationPlot \
   TOFAlignment \

@@ -2,6 +2,8 @@
 
 #include "PostAnalysisPlot.hh"
 #include "TimeOverThresholdProjection.hh"
+#include "ResiduumPlot.hh"
+
 #include <TCanvas.h>
 #include <TFile.h>
 #include <TROOT.h>
@@ -51,6 +53,11 @@ TCanvas* MainWindow::addCanvas(TFile* file, const char* name)
   return canvas;
 }
 
+TCanvas* MainWindow::addCanvas(TFile* file, const QString name)
+{
+  return addCanvas(file, name.toStdString().c_str());
+}
+
 void MainWindow::addPlot(PostAnalysisPlot* plot)
 {
   m_plots.append(plot);
@@ -67,6 +74,18 @@ void MainWindow::setupAnalysis()
   canvas = addCanvas(&file, "time over threshold canvas");
   for (int i = 0; i < 64; ++i)
     addPlot(new TimeOverThresholdProjection(canvas, i));
+  for (int ch = 0x8000; ch <= 0x803f; ch++) {
+    const QString title = "time over threshold temperature correlation 0x"+QString::number(ch, 16);
+    const QString canvasName = title + " canvas";
+    canvas = addCanvas(&file, canvasName);
+    addPlot(new ResiduumPlot(canvas, title, 30));
+  }
+  for (int ch = 0x8000; ch <= 0x803f; ch++) {
+    const QString title = "time over threshold time correlation 0x"+QString::number(ch, 16);
+    const QString canvasName = title + " canvas";
+    canvas = addCanvas(&file, canvasName);
+    addPlot(new ResiduumPlot(canvas, title, 30));
+  }
   file.Close();
   connect(m_ui.canvasListWidget, SIGNAL(currentRowChanged(int)), this, SLOT(canvasListWidgetCurrentRowChanged(int)));
   connect(m_ui.plotListWidget, SIGNAL(currentRowChanged(int)), this, SLOT(plotListWidgetCurrentRowChanged(int)));

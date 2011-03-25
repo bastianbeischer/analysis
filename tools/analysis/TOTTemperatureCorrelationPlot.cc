@@ -35,6 +35,7 @@ TOTTemperatureCorrelationPlot::TOTTemperatureCorrelationPlot(unsigned int id)
   TH2D* histogram = new TH2D(qPrintable(title), "", nTemperatureBins, minTemperature, maxTemperature, nTotBins, minTot, maxTot);
   histogram->GetXaxis()->SetTitleOffset(1.4);
   histogram->GetXaxis()->SetTitle("temperature /  #circC");
+  histogram->GetYaxis()->SetTitleOffset(1.4);
   histogram->GetYaxis()->SetTitle("time over threshold / ns");
   setHistogram(histogram);
 }

@@ -26,7 +26,8 @@ LIBS += \
 CLASSES = \
   MainWindow \
   PostAnalysisPlot \
-  timeOverThresholdProjection
+  TimeOverThresholdProjection \
+  ResiduumPlot
 
 SOURCES = \
   main.cc

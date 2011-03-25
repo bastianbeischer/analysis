@@ -1,4 +1,4 @@
-#include "TOTMomentumCorrelation.hh"
+#include "TOTBetaCorrelation.hh"
 
 #include "SimpleEvent.hh"
 #include "Hit.hh"
@@ -14,54 +14,39 @@
 
 #include <QDebug>
 
-//TOTMomentumCorrelation::TOTMomentumCorrelation(unsigned int id)
-//  : AnalysisPlot(AnalysisPlot::TimeOverThreshold)
-//  , H2DPlot()
-//  , m_id(id)
-//{
-//  
-//  QString htitle =QString("time over threshold momentum correlation 0x%1").arg(m_id, 0, 16);
-//  setTitle(htitle);
-//  TH2D* histogram = new TH2D(qPrintable(title()), "", 50, 0, 5, 75, 0, 75);
-//  histogram->GetXaxis()->SetTitle("rigidity / GV");
-//  histogram->GetYaxis()->SetTitle("time over threshold / ns");
-//  setHistogram(histogram);
-//  addLatex(RootPlot::newLatex(.15, .85));
-//}
-
-TOTMomentumCorrelation::TOTMomentumCorrelation(QString layer)
+TOTBetaCorrelation::TOTBetaCorrelation(QString layer)
 : AnalysisPlot(AnalysisPlot::TimeOverThreshold)
 , H2DPlot()
 , m_layer(layer)
 {
   
-  QString htitle = "time over threshold momentum correlation "+layer+" tof";
+  QString htitle = "time over threshold beta correlation "+layer+" tof";
   setTitle(htitle);
   const unsigned int nBinsX = 100;
   const double xMin = 0;
-  const double xMax = 10;
+  const double xMax = 1.6;
   const unsigned int nBinsY = 150;
   const double yMin = 0;
   const double yMax = 100;
   TH2D* histogram = new TH2D(qPrintable(htitle), "", nBinsX, xMin, xMax, nBinsY, yMin, yMax);
   
-  histogram->GetXaxis()->SetTitle("rigidity / GV");
-  histogram->GetYaxis()->SetTitle("mean time over threshold / ns");
+  histogram->GetXaxis()->SetTitle("beta");
+  histogram->GetYaxis()->SetTitle("sum time over threshold / ns");
   histogram->GetYaxis()->SetTitleOffset(1.4);
   setHistogram(histogram);
   addLatex(RootPlot::newLatex(.15, .85));
 }
 
-TOTMomentumCorrelation::~TOTMomentumCorrelation()
+TOTBetaCorrelation::~TOTBetaCorrelation()
 {}
 
 
-void TOTMomentumCorrelation::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void TOTBetaCorrelation::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
 {
   if (!track || !track->fitGood())
     return;
   TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & (TrackInformation::AllTrackerLayers | TrackInformation::InsideMagnet)))
+  if (!(flags & (TrackInformation::AllTrackerLayers)))
     return;
 
   const QVector<Hit*>::const_iterator endIt = clusters.end();
@@ -79,10 +64,6 @@ void TOTMomentumCorrelation::processEvent(const QVector<Hit*>& clusters, Track* 
       int nTofHits = 0;
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         Hit* tofHit = *it;
-//        if (tofHit->detId() == m_id) {
-//          TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*> (tofHit);
-//          histogram()->Fill(track->pt(), tofSipmHit->timeOverThreshold());
-//        }
         if (tofHit->detId() == 0x8034) {
           continue;
         }
@@ -95,22 +76,22 @@ void TOTMomentumCorrelation::processEvent(const QVector<Hit*>& clusters, Track* 
         totSum += tot;
         nTofHits++;
       }
-      histogram()->Fill(track->pt(), totSum/nTofHits);      
+      histogram()->Fill(track->beta(), totSum/nTofHits);      
     }
   }
 }
 
-void TOTMomentumCorrelation::update() {
+void TOTBetaCorrelation::update() {
   latex()->SetTitle(qPrintable(QString("#rho = %1").arg(histogram()->GetCorrelationFactor())));
 }
 
-void TOTMomentumCorrelation::draw(TCanvas* canvas)
+void TOTBetaCorrelation::draw(TCanvas* canvas)
 {
   H2DPlot::draw(canvas);
   histogram()->Draw("cont4z");
 }
 
-bool TOTMomentumCorrelation::checkLayer(double z)
+bool TOTBetaCorrelation::checkLayer(double z)
 {
   if (m_layer == "upper") {
     if (z > 0) {
