@@ -27,12 +27,12 @@ TOTMomentumCorrelation::TOTMomentumCorrelation(TofLayer layer)
   const double xMax = 10;
   const unsigned int nBinsY = 150;
   const double yMin = 0;
-  const double yMax = 100;
+  const double yMax = 70;
   TH2D* histogram = new TH2D(qPrintable(htitle), "", nBinsX, xMin, xMax, nBinsY, yMin, yMax);
   
   histogram->GetXaxis()->SetTitle("rigidity / GV");
   histogram->GetYaxis()->SetTitle("mean time over threshold / ns");
-  histogram->GetYaxis()->SetTitleOffset(1.4);
+  //histogram->GetYaxis()->SetTitleOffset(4);
   setHistogram(histogram);
   addLatex(RootPlot::newLatex(.15, .85));
 }
