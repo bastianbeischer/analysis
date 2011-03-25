@@ -78,7 +78,7 @@ void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Track* track, S
   TrackInformation::Flags flags = track->information()->flags();
   if (!(flags & TrackInformation::Chi2Good))
     return;
-  if (track->p() < 5)
+  if (track->p() < 1)
     return;
   if (qAbs(track->y(Constants::upperTofPosition)) < 50. && qAbs(track->y(Constants::lowerTofPosition)) < 50.) {
     histogram(0)->Fill(track->timeOfFlight());
@@ -92,8 +92,17 @@ void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Track* track, S
       if (!idBottom1 && barId == m_idBottom1) idBottom1 = true;
       if (!idBottom2 && barId  == m_idBottom2) idBottom2 = true;
     }
-    if (idTop1 && idTop2 && idBottom1 && idBottom2)
-      histogram(1)->Fill(track->timeOfFlight());
+    if (idTop1 && idTop2 && idBottom1 && idBottom2) {
+      double l = track->trackLength();
+      double d = Constants::upperTofPosition - Constants::lowerTofPosition;
+      double lCorrection = (d - l) / Constants::speedOfLight;
+      double m = Constants::protonMass; //TODO: use reconstructed particle
+      double p = track->p();
+      double t = track->timeOfFlight();
+      double pCorrection = (t + lCorrection) * (1 - sqrt(p*p + m*m) / p);
+      //qDebug() << t << p << lCorrection << pCorrection << (t + lCorrection + pCorrection);
+      histogram(1)->Fill(t + lCorrection + pCorrection);
+    }
   }
 }
 
