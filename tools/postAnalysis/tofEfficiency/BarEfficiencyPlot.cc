@@ -44,6 +44,34 @@ BarEfficiencyPlot::BarEfficiencyPlot(TCanvas* c1, TCanvas* c2, TCanvas* c3, TCan
   setHistogram(h);
 }
 
+BarEfficiencyPlot::BarEfficiencyPlot(QVector<TCanvas*> canvases)
+: PostAnalysisPlot()
+, H2DPlot()
+{
+  TH2* h0 = findHistogram(canvases[0]);
+  int nBinsX = h0->GetXaxis()->GetNbins();
+  int nBinsY = h0->GetYaxis()->GetNbins();
+  double minX = h0->GetXaxis()->GetXmin();
+  double maxX = h0->GetXaxis()->GetXmax();
+  double minY = h0->GetYaxis()->GetXmin();
+  double maxY = h0->GetYaxis()->GetXmax();
+  QString title;
+  title = QString("tof efficiency");
+  setTitle(title);
+  TH2D* h = new TH2D(qPrintable(title), "", nBinsX, minX, maxX, nBinsY, minY, maxY);
+  h->GetXaxis()->SetTitle("y_{tracker} / mm");
+  h->GetYaxis()->SetTitle("x_{tracker} / mm");
+  h->GetZaxis()->SetTitle("efficiency");
+  for (int i = 0; i < 64; ++i) {
+    TH2D* hi = findHistogram(canvases[i]);
+    h->Add(hi, 1);
+  }
+  h->Scale(1/64.);
+  
+  setHistogram(h);
+  histogram()->GetZaxis()->SetRangeUser(0.97, 0.99);
+}
+
 BarEfficiencyPlot::~BarEfficiencyPlot()
 {}
 

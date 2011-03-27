@@ -89,6 +89,8 @@ void MainWindow::setupAnalysis()
     addPlot(new BarEfficiencyPlot(m_canvases[4*i+0], m_canvases[4*i+1], m_canvases[4*i+2], m_canvases[4*i+3]));
   }
 
+  addPlot(new BarEfficiencyPlot(m_canvases));
+  
   connect(m_ui.canvasListWidget, SIGNAL(currentRowChanged(int)), this, SLOT(canvasListWidgetCurrentRowChanged(int)));
   connect(m_ui.plotListWidget, SIGNAL(currentRowChanged(int)), this, SLOT(plotListWidgetCurrentRowChanged(int)));
   connect(m_ui.plotOptionComboBox, SIGNAL(currentIndexChanged(const QString&)),
