@@ -5,15 +5,13 @@ CONFIG += debug
 
 TOPLEVEL = ../../..
 
-FORMS+= \
-  MainWindow.ui
-
 INCLUDEPATH += \
   $$TOPLEVEL/event \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/tracking \
-  $$TOPLEVEL/global
+  $$TOPLEVEL/global \
+  $$TOPLEVEL/tools/postAnalysis/postAnalysis
 
 LIBS += \
   -L$$TOPLEVEL/lib \
@@ -21,11 +19,11 @@ LIBS += \
   -ltracking \
   -lrootplot \
   -lsetup \
-	-lglobal
+	-lglobal \
+  -lpostAnalysis
 
 CLASSES = \
   MainWindow \
-  PostAnalysisPlot \
   BarEfficiencyPlot
 
 SOURCES = \
