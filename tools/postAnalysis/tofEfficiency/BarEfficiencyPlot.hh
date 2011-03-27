@@ -9,6 +9,7 @@ class TH2D;
 class BarEfficiencyPlot : public PostAnalysisPlot, public H2DPlot {
 public:
   BarEfficiencyPlot(TCanvas*, TCanvas*, TCanvas*, TCanvas*);
+  BarEfficiencyPlot(QVector<TCanvas*> canvases);
   virtual ~BarEfficiencyPlot();
 private:
   TH2D* findHistogram(TCanvas*);
