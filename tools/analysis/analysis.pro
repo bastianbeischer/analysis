@@ -75,7 +75,10 @@ CLASSES = \
   TOFAlignment \
   TemperatureTimePlot \
   ChannelTriggerProbabilityPlot \
-  TOFTimeShiftTriggerPlot
+  TOFTimeShiftTriggerPlot \
+  HeightTimePlot \
+  TriggerRateTimePlot \
+  SensorTimePlot
 
 SOURCES += \
   main.cc

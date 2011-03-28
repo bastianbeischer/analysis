@@ -57,6 +57,8 @@
 #include "TemperatureTimePlot.hh"
 #include "ChannelTriggerProbabilityPlot.hh"
 #include "TOFTimeShiftTriggerPlot.hh"
+#include "TriggerRateTimePlot.hh"
+#include "HeightTimePlot.hh"
 
 #include <QFileDialog>
 #include <QVBoxLayout>
@@ -533,6 +535,8 @@ void MainWindow::setupPlots()
     QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());
     foreach(SensorTypes::Type sensor, temperatureSensors)
       m_ui.plotter->addPlot(new TemperatureTimePlot(sensor, first, last));
+    m_ui.plotter->addPlot(new TriggerRateTimePlot(first, last));
+    m_ui.plotter->addPlot(new HeightTimePlot(first, last));
   }
 }
 
