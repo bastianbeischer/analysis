@@ -62,14 +62,20 @@ BarEfficiencyPlot::BarEfficiencyPlot(QVector<TCanvas*> canvases)
   h->GetXaxis()->SetTitle("y_{tracker} / mm");
   h->GetYaxis()->SetTitle("x_{tracker} / mm");
   h->GetZaxis()->SetTitle("efficiency");
+  int n = 0;
   for (int i = 0; i < 64; ++i) {
+    QString name = canvases[i]->GetName();
+    if (name.contains("0x8034")) {
+      continue;
+    }
     TH2D* hi = findHistogram(canvases[i]);
     h->Add(hi, 1);
+    n++;
   }
-  h->Scale(1/64.);
+  h->Scale(1/double(n));
   
   setHistogram(h);
-  histogram()->GetZaxis()->SetRangeUser(0.97, 0.99);
+  histogram()->GetZaxis()->SetRangeUser(0.97, 1.01);
 }
 
 BarEfficiencyPlot::~BarEfficiencyPlot()
