@@ -30,9 +30,9 @@ TimeResolutionPlot::TimeResolutionPlot(unsigned short idTop1, unsigned short idT
     .arg(m_idBottom2, 0, 16);
   setTitle(title);
   TH2D* histogram = new TH2D(qPrintable(title), "",
-    5, -Constants::tofBarWidth/2., Constants::tofBarWidth/2., 30, 0, 6);
+    5, -Constants::tofBarLength / 2., Constants::tofBarLength / 2., 30, 0, 6);
   histogram->GetXaxis()->SetTitle("y / mm");
-  histogram->GetXaxis()->SetTitle("#Deltat / ns");
+  histogram->GetYaxis()->SetTitle("#Deltat / ns");
   setHistogram(histogram);
 }
 

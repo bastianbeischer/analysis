@@ -19,8 +19,12 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
   , m_ui(new Ui_postAnalysisWindow)
 {
   m_ui->setupUi(this);
-  connect(m_ui->canvasListWidget, SIGNAL(currentRowChanged(int)), this, SLOT(canvasListWidgetCurrentRowChanged(int)));
-  connect(m_ui->plotListWidget, SIGNAL(currentRowChanged(int)), this, SLOT(plotListWidgetCurrentRowChanged(int)));
+  connect(m_ui->canvasListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectCanvas(QListWidgetItem*)));
+  connect(m_ui->canvasListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
+    this, SLOT(selectCanvas(QListWidgetItem*, QListWidgetItem*)));
+  connect(m_ui->plotListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectPlot(QListWidgetItem*)));
+  connect(m_ui->plotListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
+    this, SLOT(selectPlot(QListWidgetItem*, QListWidgetItem*)));
   connect(m_ui->plotOptionComboBox, SIGNAL(currentIndexChanged(const QString&)),
     this, SLOT(plotOptionComboBoxCurrentIndexChanged(const QString&)));
 }
@@ -30,18 +34,28 @@ PostAnalysisWindow::~PostAnalysisWindow()
   delete m_ui;
 }
 
-void PostAnalysisWindow::canvasListWidgetCurrentRowChanged(int i)
+void PostAnalysisWindow::selectCanvas(QListWidgetItem* item, QListWidgetItem*)
+{
+  selectCanvas(item);
+}
+
+void PostAnalysisWindow::selectCanvas(QListWidgetItem* item)
 {
   m_ui->qtWidget->GetCanvas()->cd();
   gPad->Clear();
-  m_canvases[i]->DrawClonePad();
+  m_canvases[m_ui->canvasListWidget->row(item)]->DrawClonePad();
   plotOptionComboBoxCurrentIndexChanged(m_ui->plotOptionComboBox->currentText());
 }
 
-void PostAnalysisWindow::plotListWidgetCurrentRowChanged(int i)
+void PostAnalysisWindow::selectPlot(QListWidgetItem* item, QListWidgetItem*)
+{
+  selectPlot(item);
+}
+
+void PostAnalysisWindow::selectPlot(QListWidgetItem* item)
 {
   gPad->Clear();
-  m_plots[i]->draw(m_ui->qtWidget->GetCanvas());
+  m_plots[m_ui->plotListWidget->row(item)]->draw(m_ui->qtWidget->GetCanvas());
   plotOptionComboBoxCurrentIndexChanged(m_ui->plotOptionComboBox->currentText());
 }
 

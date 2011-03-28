@@ -8,4 +8,5 @@ SUBDIRS  = \
   photonTravelTime \
   tofEfficiency \
   timeOverThreshold \
-  timeOverThresholdScaling
+  timeOverThresholdScaling \
+  timeResolution
