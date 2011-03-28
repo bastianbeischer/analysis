@@ -4,9 +4,11 @@
 #include "PostAnalysisPlot.hh"
 #include "H2DPlot.hh"
 
+#include "PostAnalysisCanvas.hh"
+
 class BarTimeShiftHistogram : public PostAnalysisPlot, public H2DPlot {
 public:
-  BarTimeShiftHistogram(const QVector<TCanvas*>&);
+  BarTimeShiftHistogram(const QVector<PostAnalysisCanvas*>&);
   virtual ~BarTimeShiftHistogram();
 };
 

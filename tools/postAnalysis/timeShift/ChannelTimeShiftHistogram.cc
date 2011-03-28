@@ -1,4 +1,5 @@
 #include "ChannelTimeShiftHistogram.hh"
+#include "PostAnalysisCanvas.hh"
 
 #include <TH1.h>
 #include <TH2.h>
@@ -13,17 +14,13 @@
 #include <QDebug>
 #include <QStringList>
 
-ChannelTimeShiftHistogram::ChannelTimeShiftHistogram(TCanvas* canvas, int ch)
+ChannelTimeShiftHistogram::ChannelTimeShiftHistogram(PostAnalysisCanvas* canvas, int ch)
   : PostAnalysisPlot()
   , H1DPlot()
 {
-  TH2* histogram = 0;
-  for (int i = 0; i < canvas->GetListOfPrimitives()->GetSize(); ++i) {
-    if (!strcmp(canvas->GetListOfPrimitives()->At(i)->ClassName(), "TH2D"))
-      histogram = static_cast<TH2*>(canvas->GetListOfPrimitives()->At(i));
-  }
+  TH2* histogram = canvas->histograms2D().at(0);
   histogram->Draw("COLZ");
-  QString title = QString("%1 channel %2").arg(canvas->GetName()).arg(ch);
+  QString title = QString("%1 channel %2").arg(canvas->name()).arg(ch);
   setTitle(title);
   TH1D* projection = histogram->ProjectionY("tmp", ch+1, ch+1);
   if (ch > 0)

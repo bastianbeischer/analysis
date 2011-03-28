@@ -1,4 +1,5 @@
 #include "PostAnalysisWindow.hh"
+#include "PostAnalysisCanvas.hh"
 #include "PostAnalysisPlot.hh"
 #include "RootStyle.hh"
 
@@ -16,6 +17,7 @@
 
 PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
   : QMainWindow(parent)
+  , m_canvases()
   , m_plots()
   , m_ui(new Ui_postAnalysisWindow)
 {
@@ -45,7 +47,7 @@ void PostAnalysisWindow::selectCanvas(QListWidgetItem* item)
   RootStyle::setPalette(RootStyle::DefaultPalette);
   m_ui->qtWidget->GetCanvas()->cd();
   gPad->Clear();
-  m_canvases[m_ui->canvasListWidget->row(item)]->DrawClonePad();
+  m_canvases[m_ui->canvasListWidget->row(item)]->draw(m_ui->qtWidget->GetCanvas());
   plotOptionComboBoxCurrentIndexChanged(m_ui->plotOptionComboBox->currentText());
 }
 
@@ -80,11 +82,11 @@ void PostAnalysisWindow::setAnalysisFile(const QString& file)
   setupAnalysis();
 }
 
-TCanvas* PostAnalysisWindow::addCanvas(TFile* file, const char* name)
+PostAnalysisCanvas* PostAnalysisWindow::addCanvas(TFile* file, const QString& name)
 {
-  TCanvas* canvas = static_cast<TCanvas*>(file->Get(name)->Clone());
+  PostAnalysisCanvas* canvas = new PostAnalysisCanvas(file, name);
   m_canvases.append(canvas);
-  QListWidgetItem* item = new QListWidgetItem(canvas->GetName());
+  QListWidgetItem* item = new QListWidgetItem(canvas->name());
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
   m_ui->canvasListWidget->addItem(item);
   return canvas;

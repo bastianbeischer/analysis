@@ -26,7 +26,7 @@ LIBS += \
 
 CLASSES = \
   MainWindow \
-  timeOverThresholdScaling
+  TimeOverThresholdScaling
 
 SOURCES = \
   main.cc

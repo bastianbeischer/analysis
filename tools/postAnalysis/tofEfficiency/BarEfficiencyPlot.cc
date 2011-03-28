@@ -1,4 +1,5 @@
 #include "BarEfficiencyPlot.hh"
+#include "PostAnalysisCanvas.hh"
 
 #include <TH2.h>
 #include <TCanvas.h>
@@ -11,16 +12,16 @@
 #include <QDebug>
 #include <QStringList>
 
-BarEfficiencyPlot::BarEfficiencyPlot(TCanvas* c1, TCanvas* c2, TCanvas* c3, TCanvas* c4)
+BarEfficiencyPlot::BarEfficiencyPlot(PostAnalysisCanvas* c1, PostAnalysisCanvas* c2, PostAnalysisCanvas* c3, PostAnalysisCanvas* c4)
   : PostAnalysisPlot()
   , H2DPlot()
 {
-  TH2D* h1 = findHistogram(c1);
-  TH2D* h2 = findHistogram(c2);
-  TH2D* h3 = findHistogram(c3);
-  TH2D* h4 = findHistogram(c4);
+  TH2D* h1 = c1->histograms2D().at(0);
+  TH2D* h2 = c2->histograms2D().at(0);
+  TH2D* h3 = c3->histograms2D().at(0);
+  TH2D* h4 = c4->histograms2D().at(0);
   QString title;
-  title = QString("%1 bar efficiency").arg(c1->GetName());
+  title = QString("%1 bar efficiency").arg(c1->name());
   setTitle(title);
   
   double sum1 = sumEntries(h1);
@@ -46,15 +47,6 @@ BarEfficiencyPlot::BarEfficiencyPlot(TCanvas* c1, TCanvas* c2, TCanvas* c3, TCan
 
 BarEfficiencyPlot::~BarEfficiencyPlot()
 {}
-
-TH2D* BarEfficiencyPlot::findHistogram(TCanvas* canvas)
-{
-  for (int i = 0; i < canvas->GetListOfPrimitives()->GetSize(); ++i) {
-    if (!strcmp(canvas->GetListOfPrimitives()->At(i)->ClassName(), "TH2D"))
-      return static_cast<TH2D*>(canvas->GetListOfPrimitives()->At(i));
-  }
-  return 0;
-}
 
 double BarEfficiencyPlot::sumEntries(TH2D* h)
 {

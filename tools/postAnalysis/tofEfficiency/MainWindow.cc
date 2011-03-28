@@ -1,6 +1,7 @@
 #include "MainWindow.hh"
 
 #include "PostAnalysisPlot.hh"
+#include "PostAnalysisCanvas.hh"
 #include "BarEfficiencyPlot.hh"
 
 #include <TCanvas.h>

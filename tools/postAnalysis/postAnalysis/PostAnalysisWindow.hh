@@ -4,9 +4,9 @@
 #include <QMainWindow>
 #include <QListWidgetItem>
 
-class TCanvas;
 class TFile;
 class PostAnalysisPlot;
+class PostAnalysisCanvas;
 class Ui_postAnalysisWindow;
 
 class PostAnalysisWindow : public QMainWindow {
@@ -17,10 +17,10 @@ public:
   void setAnalysisFile(const QString&);
 protected:
   virtual void setupAnalysis() = 0;
-  TCanvas* addCanvas(TFile*, const char* name);
+  PostAnalysisCanvas* addCanvas(TFile*, const QString& name);
   void addPlot(PostAnalysisPlot*);
   QString m_analysisFile;
-  QVector<TCanvas*> m_canvases;
+  QVector<PostAnalysisCanvas*> m_canvases;
   QVector<PostAnalysisPlot*> m_plots;
 private slots:
   void savePlotsButtonClicked();

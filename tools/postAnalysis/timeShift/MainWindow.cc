@@ -4,6 +4,7 @@
 #include "ChannelTimeShiftHistogram.hh"
 #include "BarTimeShiftHistogram.hh"
 #include "RootStyle.hh"
+#include "PostAnalysisCanvas.hh"
 
 #include <TCanvas.h>
 #include <TFile.h>
@@ -23,7 +24,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupAnalysis()
 {
-  TCanvas* canvas = 0;
+  PostAnalysisCanvas* canvas = 0;
   TFile file(qPrintable(m_analysisFile));
   gROOT->cd();
   canvas = addCanvas(&file, "time shift 0x8000 0x8010 canvas");
@@ -50,7 +51,7 @@ void MainWindow::setupAnalysis()
   canvas = addCanvas(&file, "time shift 0x802c 0x803c canvas");
   for (int ch = 0; ch < 8; ++ch)
     addPlot(new ChannelTimeShiftHistogram(canvas, ch));
-  QVector<TCanvas*> canvases;
+  QVector<PostAnalysisCanvas*> canvases;
   canvases.append(addCanvas(&file, "time resolution 0x8000 0x8010 0x8020 0x8030 canvas"));
   canvases.append(addCanvas(&file, "time resolution 0x8000 0x8010 0x8024 0x8034 canvas"));
   canvases.append(addCanvas(&file, "time resolution 0x8000 0x8010 0x8028 0x8038 canvas"));

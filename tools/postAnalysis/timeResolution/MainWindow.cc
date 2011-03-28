@@ -1,5 +1,6 @@
 #include "MainWindow.hh"
 
+#include "PostAnalysisCanvas.hh"
 #include "PostAnalysisPlot.hh"
 #include "TimeOfFlightHistogram.hh"
 #include "RootStyle.hh"
@@ -22,7 +23,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupAnalysis()
 {
-  TCanvas* canvas = 0;
+  PostAnalysisCanvas* canvas = 0;
   TFile file(qPrintable(m_analysisFile));
   gROOT->cd();
   const char* upper[] = {"0x8000 0x8010", "0x8004 0x8014", "0x8008 0x8018", "0x800c 0x801c"};

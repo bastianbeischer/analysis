@@ -1,6 +1,7 @@
 #ifndef timeOverThresholdScaling_hh
 #define timeOverThresholdScaling_hh
 
+#include "PostAnalysisCanvas.hh"
 #include "PostAnalysisPlot.hh"
 #include "GraphPlot.hh"
 
@@ -13,7 +14,7 @@
 
 class TimeOverThresholdScaling : public PostAnalysisPlot, public GraphPlot {
 public:
-  TimeOverThresholdScaling(TCanvas*, unsigned int tofId);
+  TimeOverThresholdScaling(PostAnalysisCanvas*, unsigned int tofId);
   virtual ~TimeOverThresholdScaling();
   
 public:

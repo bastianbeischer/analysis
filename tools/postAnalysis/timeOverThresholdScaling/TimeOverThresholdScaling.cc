@@ -1,4 +1,4 @@
-#include "timeOverThresholdScaling.hh"
+#include "TimeOverThresholdScaling.hh"
 
 #include "Corrections.hh"
 
@@ -24,21 +24,13 @@ QMap<unsigned int, TF1> TimeOverThresholdScaling::timeOverThresholdScalingFits;
 QMap<unsigned int, double> TimeOverThresholdScaling::minTofTemps;
 QMap<unsigned int , double> TimeOverThresholdScaling::maxTofTemps;
 
-TimeOverThresholdScaling::TimeOverThresholdScaling(TCanvas* canvas, unsigned int tofId)
+TimeOverThresholdScaling::TimeOverThresholdScaling(PostAnalysisCanvas* canvas, unsigned int tofId)
   : PostAnalysisPlot()
   , GraphPlot()
 {
-  QString title;
-  TH2D* histogram = 0;
-  for (int i = 0; i < canvas->GetListOfPrimitives()->GetSize(); ++i) {
-    if (!strcmp(canvas->GetListOfPrimitives()->At(i)->ClassName(), "TH2D")) {
-      title = QString(canvas->GetName()).replace("canvas", QString("graph"));
-      TH2D* h = static_cast<TH2D*>(canvas->GetListOfPrimitives()->At(i));
-      histogram = new TH2D(*h);
-    }
-  }
+  TH2D* histogram = canvas->histograms2D().at(0);
   scaling(tofId, histogram);
-  
+  QString title = QString(canvas->name()).replace("canvas", "graph");
   setTitle(title);
   TGraphErrors* graph = new TGraphErrors(TimeOverThresholdScaling::timeOverThresholdScalingGraphs[tofId]);
   addGraph(graph, "P");

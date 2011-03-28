@@ -19,7 +19,8 @@ LIBS += \
 
 CLASSES = \
   PostAnalysisWindow \
-  PostAnalysisPlot
+  PostAnalysisPlot \
+  PostAnalysisCanvas
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
