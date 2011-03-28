@@ -42,6 +42,7 @@ BarEfficiencyPlot::BarEfficiencyPlot(PostAnalysisCanvas* c1, PostAnalysisCanvas*
   double minY = h1->GetYaxis()->GetXmin();
   double maxY = h1->GetYaxis()->GetXmax();
   TH2D* h = new TH2D(qPrintable(title), "", nBinsX, minX, maxX, nBinsY, minY, maxY);
+  //TODO: for Andi.
   setHistogram(h);
 }
 
