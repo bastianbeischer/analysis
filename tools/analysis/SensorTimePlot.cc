@@ -20,8 +20,8 @@ SensorTimePlot::SensorTimePlot(SensorTypes::Type type, QDateTime first, QDateTim
   t1-= (t1 % 60) + 60;
   int t2 = last.toTime_t();
   t2+= 120 - (t2 % 60);
-  int nBins = qMin((t2 - t1) / 60, 500);
-  TH2D* histogram = new TH2D(qPrintable(title()), "", nBins, t1, t2, nBins, min, max);
+  int nBins = qMin((t2 - t1) / 60, 1000);
+  TH2D* histogram = new TH2D(qPrintable(title()), "", nBins, t1, t2, nBinsY, min, max);
   histogram->GetXaxis()->SetTimeDisplay(1);
   histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");
   histogram->GetXaxis()->SetTitle("time");
