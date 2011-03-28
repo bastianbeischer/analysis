@@ -9,11 +9,13 @@ FORMS+= \
   PostAnalysisWindow.ui
 
 INCLUDEPATH += \
-  $$TOPLEVEL/rootplot
+  $$TOPLEVEL/rootplot \
+  $$TOPLEVEL/global
 
 LIBS += \
   -L$$TOPLEVEL/lib \
-  -lrootplot
+  -lrootplot \
+  -lglobal
 
 CLASSES = \
   PostAnalysisWindow \

@@ -24,17 +24,12 @@ BendingAnglePositionPlot::BendingAnglePositionPlot(double cut)
   m_normHisto = new TH2D(qPrintable(title()+"_all"), "", 30, -250, 250, 24, -120, 120);
   m_normHisto->GetXaxis()->SetTitle("y / mm");
   m_normHisto->GetYaxis()->SetTitle("x / mm");
+  setDrawOption("LEGO");
 }
 
 BendingAnglePositionPlot::~BendingAnglePositionPlot()
 {
   delete m_normHisto;
-}
-
-void BendingAnglePositionPlot::draw(TCanvas* canvas)
-{
-  canvas->cd();
-  histogram()->Draw("lego");
 }
 
 void BendingAnglePositionPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)

@@ -30,29 +30,24 @@ ChannelTimeShiftHistogram::ChannelTimeShiftHistogram(TCanvas* canvas, int ch)
     projection->Smooth();
   projection->SetName(qPrintable(title));
   projection->GetXaxis()->SetTitle("#Deltat / ns");
-  m_fitFunction = new TF1(qPrintable(title + "Function"), "gaus", projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
-  projection->Fit(m_fitFunction, "QN0");
+  TF1* function = new TF1(qPrintable(title + "Function"), "gaus", projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
+  projection->Fit(function, "QN0");
   if (ch > 0) {
     for (int i = 0; i < 5; ++i) {
-      double mean = m_fitFunction->GetParameter(1);
-      double sigma = m_fitFunction->GetParameter(2);
-      m_fitFunction->SetRange(mean - 1.5 * sigma, mean + 1.5 * sigma);
-      projection->Fit(m_fitFunction, "RQN0");
+      double mean = function->GetParameter(1);
+      double sigma = function->GetParameter(2);
+      function->SetRange(mean - 1.5 * sigma, mean + 1.5 * sigma);
+      projection->Fit(function, "RQN0");
     }
   }
-  m_fitFunction->SetRange(projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
+  function->SetRange(projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
   QStringList stringList = title.split(" ");
   int id = (stringList[ch < 4 ? 2 : 3].remove(0, 2).toInt(0, 16)) | (ch - (ch < 4 ? 0 : 4));
-  std::cout << "0x" <<std::hex << id << "=" << -m_fitFunction->GetParameter(1) << std::endl;
+  std::cout << "0x" <<std::hex << id << "=" << -function->GetParameter(1) << std::endl;
   projection->GetXaxis()->SetRangeUser(-2, 2);
   addHistogram(projection);
+  addFunction(function);
 }
 
 ChannelTimeShiftHistogram::~ChannelTimeShiftHistogram()
 {}
-
-void ChannelTimeShiftHistogram::draw(TCanvas* canvas)
-{
-  H1DPlot::draw(canvas);
-  m_fitFunction->Draw("SAME");
-}

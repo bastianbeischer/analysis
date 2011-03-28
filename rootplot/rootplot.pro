@@ -3,7 +3,10 @@ TARGET = rootplot
 
 CONFIG += debug
 
-TOPLEVEL    = ..
+TOPLEVEL = ..
+
+INCLUDEPATH+= \
+  $$TOPLEVEL/global
 
 CLASSES += \
   RootPlot \

@@ -44,6 +44,7 @@ SingleLayerTrackingEfficiencyPlot::SingleLayerTrackingEfficiencyPlot() :
       i++;
     }
   }
+  setDrawOption("COL Z TEXT");
 }
 
 SingleLayerTrackingEfficiencyPlot::~SingleLayerTrackingEfficiencyPlot()
@@ -81,13 +82,6 @@ void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, 
     m_normHisto->Fill(track->p(), i+1);
   }
 }
-
-void SingleLayerTrackingEfficiencyPlot::draw(TCanvas* can)
-{
-  H2DPlot::draw(can);
-  histogram()->SetDrawOption("col.z.text");
-}
-
 
 void SingleLayerTrackingEfficiencyPlot::finalize()
 {

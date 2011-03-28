@@ -2,8 +2,10 @@
 #define H2DPlot_hh
 
 #include "RootPlot.hh"
+#include "RootStyle.hh"
 
 #include <QVector>
+#include <QString>
 
 class TCanvas;
 class TH2D;
@@ -17,8 +19,12 @@ public:
   virtual void clear();
   TH2D* histogram();
   void setHistogram(TH2D*);
+  void setPalette(RootStyle::PaletteType);
+  void setDrawOption(const QString&);
 private:
   TH2D* m_histogram;
+  RootStyle::PaletteType m_palette;
+  QString m_drawOption;
 };
 
 #endif

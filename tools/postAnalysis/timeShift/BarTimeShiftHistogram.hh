@@ -8,7 +8,6 @@ class BarTimeShiftHistogram : public PostAnalysisPlot, public H2DPlot {
 public:
   BarTimeShiftHistogram(const QVector<TCanvas*>&);
   virtual ~BarTimeShiftHistogram();
-	virtual void draw(TCanvas*);
 };
 
 #endif

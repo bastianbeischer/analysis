@@ -1,5 +1,6 @@
 #include "PostAnalysisWindow.hh"
 #include "PostAnalysisPlot.hh"
+#include "RootStyle.hh"
 
 #include "ui_PostAnalysisWindow.h"
 
@@ -41,6 +42,7 @@ void PostAnalysisWindow::selectCanvas(QListWidgetItem* item, QListWidgetItem*)
 
 void PostAnalysisWindow::selectCanvas(QListWidgetItem* item)
 {
+  RootStyle::setPalette(RootStyle::DefaultPalette);
   m_ui->qtWidget->GetCanvas()->cd();
   gPad->Clear();
   m_canvases[m_ui->canvasListWidget->row(item)]->DrawClonePad();
