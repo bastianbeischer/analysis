@@ -1,5 +1,6 @@
 #include "MainWindow.hh"
 
+#include "PostAnalysisCanvas.hh"
 #include "PostAnalysisPlot.hh"
 #include "TimeDifferenceFunction.hh"
 #include "TimeDifferencePlot.hh"
@@ -24,7 +25,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupAnalysis()
 {
-  TCanvas* canvas = 0;
+  PostAnalysisCanvas* canvas = 0;
   TFile file(qPrintable(m_analysisFile));
   gROOT->cd();
   int ids[] = {

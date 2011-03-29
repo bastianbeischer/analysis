@@ -1,4 +1,5 @@
 #include "TimeOfFlightHistogram.hh"
+#include "PostAnalysisCanvas.hh"
 
 #include <TH1.h>
 #include <TH2.h>
@@ -21,13 +22,13 @@ TH2D* TimeOfFlightHistogram::histgram(TCanvas* canvas)
   return 0;
 }
 
-TimeOfFlightHistogram::TimeOfFlightHistogram(TCanvas* canvas, int bin)
+TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin)
   : PostAnalysisPlot()
   , H1DPlot()
 {
-  TH2* histogram = histgram(canvas);
+  TH2D* histogram = canvas->histograms2D().at(0);
   histogram->Draw("COLZ");
-  QString title = QString("%1 channel %2").arg(canvas->GetName()).arg(bin);
+  QString title = QString("%1 channel %2").arg(canvas->name()).arg(bin);
   setTitle(title);
   TH1D* projection = histogram->ProjectionY("tmp", bin+1, bin+1);
   if (bin > 0)

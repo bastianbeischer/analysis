@@ -1,4 +1,4 @@
-#include "ChannelTimeShiftHistogram.hh"
+#include "TriggerRateHeightCorrelationPlot.hh"
 #include "PostAnalysisCanvas.hh"
 
 #include <TH1.h>
@@ -14,7 +14,7 @@
 #include <QDebug>
 #include <QStringList>
 
-ChannelTimeShiftHistogram::ChannelTimeShiftHistogram(PostAnalysisCanvas* canvas, int ch)
+TriggerRateHeightCorrelationPlot::TriggerRateHeightCorrelationPlot(PostAnalysisCanvas* canvas, int ch)
   : PostAnalysisPlot()
   , H1DPlot()
 {
@@ -46,5 +46,5 @@ ChannelTimeShiftHistogram::ChannelTimeShiftHistogram(PostAnalysisCanvas* canvas,
   addFunction(function);
 }
 
-ChannelTimeShiftHistogram::~ChannelTimeShiftHistogram()
+TriggerRateHeightCorrelationPlot::~TriggerRateHeightCorrelationPlot()
 {}

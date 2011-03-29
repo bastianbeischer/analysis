@@ -5,14 +5,17 @@
 #include "H2DPlot.hh"
 
 class TH2D;
+class PostAnalysisCanvas;
 
 class BarEfficiencyPlot : public PostAnalysisPlot, public H2DPlot {
 public:
-  BarEfficiencyPlot(TCanvas*, TCanvas*, TCanvas*, TCanvas*);
+//<<<<<<< HEAD
+//  BarEfficiencyPlot(TCanvas*, TCanvas*, TCanvas*, TCanvas*);
   BarEfficiencyPlot(QVector<TCanvas*> canvases);
+  BarEfficiencyPlot(PostAnalysisCanvas*, PostAnalysisCanvas*, PostAnalysisCanvas*, PostAnalysisCanvas*);
+
   virtual ~BarEfficiencyPlot();
 private:
-  TH2D* findHistogram(TCanvas*);
   double sumEntries(TH2D*);
 };
 

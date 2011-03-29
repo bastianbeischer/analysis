@@ -9,4 +9,5 @@ SUBDIRS  = \
   tofEfficiency \
   timeOverThreshold \
   timeOverThresholdScaling \
-  timeResolution
+  timeResolution \
+  slowControl

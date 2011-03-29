@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = timeOverThresholdScaling
+TARGET = slowControl
 
 CONFIG += debug
 
@@ -11,7 +11,6 @@ INCLUDEPATH += \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/tracking \
   $$TOPLEVEL/global \
-  $$TOPLEVEL/processing \
   $$TOPLEVEL/tools/postAnalysis/postAnalysis
 
 LIBS += \
@@ -20,13 +19,14 @@ LIBS += \
   -ltracking \
   -lrootplot \
   -lsetup \
-  -lprocessing \
-	-lglobal \
+  -lglobal \
   -lpostAnalysis
 
 CLASSES = \
   MainWindow \
-  TimeOverThresholdScaling
+  TrackerTemperaturePlot \
+  TriggerRateHeightCorrelationPlot \
+  TriggerRateTimePlot
 
 SOURCES = \
   main.cc
