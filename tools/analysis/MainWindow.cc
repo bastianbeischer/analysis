@@ -722,17 +722,6 @@ void MainWindow::saveAllCanvasDialogActionTriggered()
       m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".root");
       m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".png");
     }
-#ifdef Q_WS_MACX 
-  else {
-    for (int i = 0; i < m_ui.listWidget->count(); ++i) {
-      m_ui.listWidget->setCurrentRow(i);
-      QString directoryName = m_topLevelPath+"/plots";  
-      m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".svg");
-      m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".root");
-      m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".png");
-    }
-  }
-#endif
 }
 
 void MainWindow::saveForPostAnalysisActionTriggered()
