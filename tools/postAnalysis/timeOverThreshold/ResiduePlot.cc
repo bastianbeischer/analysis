@@ -1,4 +1,4 @@
-#include "ResiduumPlot.hh"
+#include "ResiduePlot.hh"
 #include "PostAnalysisCanvas.hh"
 
 #include <TH1.h>
@@ -15,29 +15,30 @@
 #include <QDebug>
 #include <QStringList>
 
-ResiduumPlot::ResiduumPlot(PostAnalysisCanvas* canvas, QString title, double referenceValue)
+const double ResiduePlot::s_reference = 30.;
+
+ResiduePlot::ResiduePlot(PostAnalysisCanvas* canvas)
   : PostAnalysisPlot()
   , H1DPlot()
 {
   TH2D* h2 = canvas->histograms2D().at(0);
-  title = canvas->name().replace("canvas", QString("histogram"));
+  QString title = canvas->name().replace("canvas", "histogram");
 
-  const unsigned int nBins = h2->GetNbinsY();
-  const double xMin = h2->GetYaxis()->GetXmin() - referenceValue;
-  const double xMax = h2->GetYaxis()->GetXmax() - referenceValue;
+  unsigned int nBins = h2->GetNbinsY();
+  double xMin = h2->GetYaxis()->GetXmin() - s_reference;
+  double xMax = h2->GetYaxis()->GetXmax() - s_reference;
   
   TH1D* histogram = new TH1D(qPrintable(title), "", nBins, xMin, xMax);
-  for (int binX = 0; binX < h2->GetNbinsX(); binX++) {
+  for (int binX = 0; binX < h2->GetNbinsX(); ++binX) {
     TH1* projectionHistogram = h2->ProjectionY("_py", binX + 1, binX + 1);
     if (projectionHistogram->GetEntries() > 0) {
-      const double value = projectionHistogram->GetMean();
-      const double residuum = value - referenceValue;
-      histogram->Fill(residuum);
+      double value = projectionHistogram->GetMean();
+      double residue = value - s_reference;
+      histogram->Fill(residue);
     }
   }
   setTitle(title);
-  const QString xTitle = h2->GetYaxis()->GetTitle();
-  histogram->GetXaxis()->SetTitle(qPrintable(xTitle));
+  histogram->GetXaxis()->SetTitle(h2->GetYaxis()->GetTitle());
   addHistogram(histogram);
   
   TLatex* latex = 0;  
@@ -54,5 +55,5 @@ ResiduumPlot::ResiduumPlot(PostAnalysisCanvas* canvas, QString title, double ref
   addLatex(latex);
 }
 
-ResiduumPlot::~ResiduumPlot()
+ResiduePlot::~ResiduePlot()
 {}

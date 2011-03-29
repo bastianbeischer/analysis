@@ -52,9 +52,8 @@
 #include "TOTMomentumCorrelation.hh"
 #include "TOTBetaCorrelation.hh"
 #include "TOTPlot.hh"
-#include "TOTPerBarPlot.hh"
-#include "TOTPerLayerPlot.hh"
-#include "TOTDetectorIonisationCorrelation.hh"
+#include "TOTLayerPlot.hh"
+#include "TOTIonizationCorrelation.hh"
 #include "TOTTemperatureCorrelationPlot.hh"
 #include "TOFAlignment.hh"
 #include "TOTTimeCorrelationPlot.hh"
@@ -397,22 +396,21 @@ void MainWindow::setupPlots()
   }
   if (m_ui.timeOverThresholdCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TOTPlot);
-    m_ui.plotter->addPlot(new TOTPerBarPlot);
-    m_ui.plotter->addPlot(new TOTPerLayerPlot(TOTPerLayerPlot::UPPER));
-    m_ui.plotter->addPlot(new TOTPerLayerPlot(TOTPerLayerPlot::LOWER));
-    m_ui.plotter->addPlot(new TOTPerLayerPlot(TOTPerLayerPlot::TOTAL));
-    m_ui.plotter->addPlot(new TOTDetectorIonisationCorrelation(TOTDetectorIonisationCorrelation::UPPER, Hit::trd));
-    m_ui.plotter->addPlot(new TOTDetectorIonisationCorrelation(TOTDetectorIonisationCorrelation::LOWER, Hit::trd));
-    m_ui.plotter->addPlot(new TOTDetectorIonisationCorrelation(TOTDetectorIonisationCorrelation::TOTAL, Hit::trd));
-    m_ui.plotter->addPlot(new TOTDetectorIonisationCorrelation(TOTDetectorIonisationCorrelation::UPPER, Hit::tracker));
-    m_ui.plotter->addPlot(new TOTDetectorIonisationCorrelation(TOTDetectorIonisationCorrelation::LOWER, Hit::tracker));
-    m_ui.plotter->addPlot(new TOTDetectorIonisationCorrelation(TOTDetectorIonisationCorrelation::TOTAL, Hit::tracker));
-    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::UPPER));
-    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::LOWER));
-    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::TOTAL));
-    m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::UPPER));
-    m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::LOWER));
-    m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::TOTAL));
+    m_ui.plotter->addPlot(new TOTLayerPlot(TOTLayerPlot::Upper));
+    m_ui.plotter->addPlot(new TOTLayerPlot(TOTLayerPlot::Lower));
+    m_ui.plotter->addPlot(new TOTLayerPlot(TOTLayerPlot::All));
+    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Upper, Hit::trd));
+    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Lower, Hit::trd));
+    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::All, Hit::trd));
+    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Upper, Hit::tracker));
+    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Lower, Hit::tracker));
+    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::All, Hit::tracker));
+    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::Upper));
+    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::Lower));
+    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::All));
+    m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::Upper));
+    m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::Lower));
+    m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::All));
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)

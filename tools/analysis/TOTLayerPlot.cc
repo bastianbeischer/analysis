@@ -1,4 +1,4 @@
-#include "TOTMomentumCorrelation.hh"
+#include "TOTLayerPlot.hh"
 
 #include "SimpleEvent.hh"
 #include "Hit.hh"
@@ -6,31 +6,32 @@
 #include "TOFSipmHit.hh"
 #include "TOFCluster.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
 #include "Constants.hh"
+#include "TrackInformation.hh"
 
-#include <TH2D.h>
-#include <TLatex.h>
+#include <TH1D.h>
+#include <TAxis.h>
 
+#include <QString>
 #include <QDebug>
 
-TOTMomentumCorrelation::TOTMomentumCorrelation(TofLayer layer)
-: AnalysisPlot(AnalysisPlot::TimeOverThreshold)
-, H2DPlot()
-, m_layer(layer)
+TOTLayerPlot::TOTLayerPlot(TofLayer layer)
+  : AnalysisPlot(TimeOverThreshold)
+  , H1DPlot()
+  , m_layer(layer)
 {
-  QString htitle = "time over threshold momentum correlation " + layerName(layer) + " tof";
-  setTitle(htitle);
-  TH2D* histogram = new TH2D(qPrintable(htitle), "", 100, 0, 10, 150, 0, 100);
-  histogram->GetXaxis()->SetTitle("rigidity / GV");
-  histogram->GetYaxis()->SetTitle("mean time over threshold / ns");
-  setHistogram(histogram);
+  QString title = QString("time over threshold "+layerName(layer)+" layer");
+  setTitle(title);
+  TH1D* histogram = new TH1D(qPrintable(title), "", 150, 0, 100);
+  histogram->GetXaxis()->SetTitleOffset(1.4);
+  histogram->GetXaxis()->SetTitle("mean time over threshold / ns");
+  addHistogram(histogram);
 }
 
-TOTMomentumCorrelation::~TOTMomentumCorrelation()
+TOTLayerPlot::~TOTLayerPlot()
 {}
 
-void TOTMomentumCorrelation::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void TOTLayerPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
 {
   if (!track || !track->fitGood())
     return;
@@ -58,25 +59,22 @@ void TOTMomentumCorrelation::processEvent(const QVector<Hit*>& clusters, Track* 
       }
     }
   }
-  if (nTofHits > 0)
-    histogram()->Fill(track->pt(), totSum / nTofHits);
-}
+  if (nTofHits > 0) {
+    histogram()->Fill(totSum / nTofHits);
+  }
+} 
 
-void TOTMomentumCorrelation::finalize() {
-  setDrawOption("CONT4 Z");
-}
-
-QString TOTMomentumCorrelation::layerName(TofLayer layer)
+QString TOTLayerPlot::layerName(TofLayer layer)
 {
   switch (layer) {
     case Lower: return "lower";
     case Upper: return "upper";
-    case All: return "all";
+    case All: return "total";
   }
   return QString();
 }
 
-bool TOTMomentumCorrelation::checkLayer(double z)
+bool TOTLayerPlot::checkLayer(double z)
 {
   if (m_layer == Upper && z > 0) {
     return true;

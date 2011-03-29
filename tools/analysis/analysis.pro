@@ -72,9 +72,8 @@ CLASSES = \
   TOTMomentumCorrelation \
   TOTBetaCorrelation \
   TOTPlot \
-  TOTPerBarPlot \
-  TOTPerLayerPlot \
-  TOTDetectorIonisationCorrelation \
+  TOTLayerPlot \
+  TOTIonizationCorrelation \
   TOTTemperatureCorrelationPlot \
   TOTTimeCorrelationPlot \
   TOFAlignment \

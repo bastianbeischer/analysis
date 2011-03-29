@@ -3,7 +3,7 @@
 #include "PostAnalysisCanvas.hh"
 #include "PostAnalysisPlot.hh"
 #include "TimeOverThresholdProjection.hh"
-#include "ResiduumPlot.hh"
+#include "ResiduePlot.hh"
 
 #include <TCanvas.h>
 #include <TFile.h>
@@ -29,16 +29,14 @@ void MainWindow::setupAnalysis()
   for (int i = 0; i < 64; ++i)
     addPlot(new TimeOverThresholdProjection(canvas, i));
   for (int ch = 0x8000; ch <= 0x803f; ch++) {
-    const QString title = "time over threshold temperature correlation 0x"+QString::number(ch, 16);
-    const QString canvasName = title + " canvas";
-    canvas = addCanvas(&file, qPrintable(canvasName));
-    addPlot(new ResiduumPlot(canvas, title, 30));
+    QString name = QString("time over threshold temperature correlation 0x%1 canvas").arg(ch, 0, 16);
+    canvas = addCanvas(&file, qPrintable(name));
+    addPlot(new ResiduePlot(canvas));
   }
   for (int ch = 0x8000; ch <= 0x803f; ch++) {
-    const QString title = "time over threshold time correlation 0x"+QString::number(ch, 16);
-    const QString canvasName = title + " canvas";
-    canvas = addCanvas(&file, qPrintable(canvasName));
-    addPlot(new ResiduumPlot(canvas, title, 30));
+    QString name = QString("time over threshold time correlation 0x%1 canvas").arg(ch, 0, 16);
+    canvas = addCanvas(&file, qPrintable(name));
+    addPlot(new ResiduePlot(canvas));
   }
   file.Close();
 }

@@ -10,7 +10,6 @@ public:
   ~MainWindow();
 protected:
   virtual void setupAnalysis();
-
 };
 
 #endif

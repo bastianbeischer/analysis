@@ -38,7 +38,7 @@ void TOTPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*
     Hit* hit = *it;
     if (hit->type() == Hit::tof) {
       TOFCluster* cluster = static_cast<TOFCluster*> (hit);
-      if (qAbs(track->x(cluster->position().z()) - cluster->position().x()) > Constants::tofBarWidth)
+      if (qAbs(track->x(cluster->position().z()) - cluster->position().x()) > .95 * Constants::tofBarWidth / 2.)
         continue;
       std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();

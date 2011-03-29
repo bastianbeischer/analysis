@@ -53,7 +53,7 @@ void TOTTimeCorrelationPlot::processEvent(const QVector<Hit*>& hits, Track* trac
     Hit* hit = *it;
     if (hit->type() == Hit::tof) {
       TOFCluster* cluster = static_cast<TOFCluster*> (hit);
-      if (qAbs(track->x(cluster->position().z()) - cluster->position().x()) > 1.2 * Constants::tofBarWidth / 2)
+      if (qAbs(track->x(cluster->position().z()) - cluster->position().x()) > 0.95 * Constants::tofBarWidth / 2.)
         continue;
       std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();

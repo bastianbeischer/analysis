@@ -1,5 +1,5 @@
-#ifndef TOTPerLayerPlot_hh
-#define TOTPerLayerPlot_hh
+#ifndef TOTLayerPlot_hh
+#define TOTLayerPlot_hh
 
 #include "AnalysisPlot.hh"
 #include "H1DPlot.hh"
@@ -11,13 +11,11 @@ class Hit;
 class Track;
 class SimpleEvent;
 
-class TOTPerLayerPlot : public AnalysisPlot, public H1DPlot {
+class TOTLayerPlot : public AnalysisPlot, public H1DPlot {
 public:
-  enum TofLayer {
-    LOWER, UPPER, TOTAL
-  };
-  TOTPerLayerPlot(TofLayer layer);
-  ~TOTPerLayerPlot();
+  enum TofLayer {Lower, Upper, All};
+  TOTLayerPlot(TofLayer layer);
+  ~TOTLayerPlot();
   virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
 private:
   TofLayer m_layer;
@@ -25,4 +23,4 @@ private:
   bool checkLayer(double z);
 };
 
-#endif /* TOTPerLayerPlot_hh */
+#endif /* TOTLayerPlot_hh */
