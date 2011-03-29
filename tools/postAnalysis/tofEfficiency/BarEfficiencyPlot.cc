@@ -73,7 +73,6 @@ BarEfficiencyPlot::BarEfficiencyPlot(QVector<TCanvas*> canvases)
     n++;
   }
   h->Scale(1/double(n));
-  
   setHistogram(h);
   histogram()->GetZaxis()->SetRangeUser(0.97, 1.01);
 }
