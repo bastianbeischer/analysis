@@ -46,11 +46,11 @@ BarEfficiencyPlot::BarEfficiencyPlot(PostAnalysisCanvas* c1, PostAnalysisCanvas*
   setHistogram(h);
 }
 
-BarEfficiencyPlot::BarEfficiencyPlot(QVector<TCanvas*> canvases)
+BarEfficiencyPlot::BarEfficiencyPlot(QVector<PostAnalysisCanvas*> canvases)
 : PostAnalysisPlot()
 , H2DPlot()
 {
-  TH2* h0 = findHistogram(canvases[0]);
+  TH2* h0 = canvases[0]->histograms2D().at(0);
   int nBinsX = h0->GetXaxis()->GetNbins();
   int nBinsY = h0->GetYaxis()->GetNbins();
   double minX = h0->GetXaxis()->GetXmin();
@@ -66,11 +66,11 @@ BarEfficiencyPlot::BarEfficiencyPlot(QVector<TCanvas*> canvases)
   h->GetZaxis()->SetTitle("efficiency");
   int n = 0;
   for (int i = 0; i < 64; ++i) {
-    QString name = canvases[i]->GetName();
+    QString name = canvases[i]->name();
     if (name.contains("0x8034")) {
       continue;
     }
-    TH2D* hi = findHistogram(canvases[i]);
+    TH2D* hi = canvases[i]->histograms2D().at(0);
     h->Add(hi, 1);
     n++;
   }

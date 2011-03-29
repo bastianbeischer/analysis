@@ -5,7 +5,7 @@
 #include <TH2.h>
 #include <TAxis.h>
 
-#include <cmath>
+#include <math.h>
 
 HeightTimePlot::HeightTimePlot(QDateTime first, QDateTime last)
   : SensorTimePlot(SensorTypes::EBASS_HEIGHT, first, last, 164, -1, 40)

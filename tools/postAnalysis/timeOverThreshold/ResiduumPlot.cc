@@ -1,4 +1,5 @@
 #include "ResiduumPlot.hh"
+#include "PostAnalysisCanvas.hh"
 
 #include <TH1.h>
 #include <TH2.h>
@@ -14,17 +15,13 @@
 #include <QDebug>
 #include <QStringList>
 
-ResiduumPlot::ResiduumPlot(TCanvas* canvas, QString title, double referenceValue)
+ResiduumPlot::ResiduumPlot(PostAnalysisCanvas* canvas, QString title, double referenceValue)
   : PostAnalysisPlot()
   , H1DPlot()
 {
-  TH2D* h2 = 0;
-  for (int i = 0; i < canvas->GetListOfPrimitives()->GetSize(); ++i) {
-    if (!strcmp(canvas->GetListOfPrimitives()->At(i)->ClassName(), "TH2D")) {
-      title = QString(canvas->GetName()).replace("canvas", QString("histogram") );
-      h2 = static_cast<TH2D*>(canvas->GetListOfPrimitives()->At(i));
-    }
-  }
+  TH2D* h2 = canvas->histograms2D().at(0);
+  title = canvas->name().replace("canvas", QString("histogram"));
+
   const unsigned int nBins = h2->GetNbinsY();
   const double xMin = h2->GetYaxis()->GetXmin() - referenceValue;
   const double xMax = h2->GetYaxis()->GetXmax() - referenceValue;

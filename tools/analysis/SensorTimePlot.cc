@@ -6,7 +6,7 @@
 #include <TH2.h>
 #include <TAxis.h>
 
-#include <cmath>
+#include <math.h>
 
 #include <QDebug>
 

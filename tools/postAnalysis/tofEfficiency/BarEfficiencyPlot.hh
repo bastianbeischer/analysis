@@ -9,9 +9,7 @@ class PostAnalysisCanvas;
 
 class BarEfficiencyPlot : public PostAnalysisPlot, public H2DPlot {
 public:
-//<<<<<<< HEAD
-//  BarEfficiencyPlot(TCanvas*, TCanvas*, TCanvas*, TCanvas*);
-  BarEfficiencyPlot(QVector<TCanvas*> canvases);
+  BarEfficiencyPlot(QVector<PostAnalysisCanvas*> canvases);
   BarEfficiencyPlot(PostAnalysisCanvas*, PostAnalysisCanvas*, PostAnalysisCanvas*, PostAnalysisCanvas*);
 
   virtual ~BarEfficiencyPlot();

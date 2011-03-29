@@ -4,9 +4,11 @@
 #include "PostAnalysisPlot.hh"
 #include "H1DPlot.hh"
 
+class PostAnalysisCanvas;
+
 class ResiduumPlot : public PostAnalysisPlot, public H1DPlot {
 public:
-  ResiduumPlot(TCanvas* canvas, QString title, double referenceValue);
+  ResiduumPlot(PostAnalysisCanvas* canvas, QString title, double referenceValue);
   virtual ~ResiduumPlot();
 };
 
