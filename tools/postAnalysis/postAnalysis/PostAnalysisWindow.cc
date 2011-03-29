@@ -46,7 +46,7 @@ void PostAnalysisWindow::selectCanvas(QListWidgetItem* item)
 {
   RootStyle::setPalette(RootStyle::DefaultPalette);
   m_ui->qtWidget->GetCanvas()->cd();
-  gPad->Clear();
+  m_ui->qtWidget->GetCanvas()->Clear();
   m_canvases[m_ui->canvasListWidget->row(item)]->draw(m_ui->qtWidget->GetCanvas());
   plotOptionComboBoxCurrentIndexChanged(m_ui->plotOptionComboBox->currentText());
 }

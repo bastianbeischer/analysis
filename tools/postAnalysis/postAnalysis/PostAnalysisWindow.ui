@@ -120,6 +120,11 @@
             </property>
             <item>
              <property name="text">
+              <string>COL Z</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
               <string>SURF1</string>
              </property>
             </item>
@@ -131,11 +136,6 @@
             <item>
              <property name="text">
               <string>CONT4 Z</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>COL Z</string>
              </property>
             </item>
             <item>
