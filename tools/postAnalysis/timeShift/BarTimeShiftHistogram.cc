@@ -55,14 +55,9 @@ BarTimeShiftHistogram::BarTimeShiftHistogram(const QVector<TCanvas*>& canvases)
   histogram->GetZaxis()->SetRangeUser(-0.5, 0.5);
   histogram->SetMarkerColor(kYellow);
   setHistogram(histogram);
+  setPalette(RootStyle::ResiduePalette);
+  setDrawOption("COL Z TEXT");
 }
 
 BarTimeShiftHistogram::~BarTimeShiftHistogram()
 {}
-
-void BarTimeShiftHistogram::draw(TCanvas* canvas)
-{
-  RootStyle::setPalette(RootStyle::ResiduePalette);
-	H2DPlot::draw(canvas);
-	histogram()->SetDrawOption("COL Z TEXT");
-}

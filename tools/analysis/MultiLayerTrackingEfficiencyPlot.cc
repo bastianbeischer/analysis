@@ -45,6 +45,7 @@ MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot() :
       i++;
     }
   }
+  setDrawOption("COL Z TEXT");
 }
 
 MultiLayerTrackingEfficiencyPlot::~MultiLayerTrackingEfficiencyPlot()
@@ -79,13 +80,6 @@ void MultiLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, T
   histogram()->Fill(track->p(), nbOfLayers);
   m_normHisto->Fill(track->p());
 }
-
-void MultiLayerTrackingEfficiencyPlot::draw(TCanvas* can)
-{
-  H2DPlot::draw(can);
-  histogram()->SetDrawOption("col.z.text");
-}
-
 
 void MultiLayerTrackingEfficiencyPlot::finalize()
 {

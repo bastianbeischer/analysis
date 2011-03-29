@@ -13,7 +13,6 @@ class PostAnalysisPlot : virtual public RootPlot {
 public:
   PostAnalysisPlot();
   virtual ~PostAnalysisPlot();
-private:
 };
 
 #endif

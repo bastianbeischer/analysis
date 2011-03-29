@@ -16,7 +16,6 @@ public:
   ~TrackingEfficiencyVsMomentumPlot();
   
   void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
-  void draw(TCanvas*);
   void finalize();
 
 };

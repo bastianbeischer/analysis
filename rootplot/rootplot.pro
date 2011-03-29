@@ -3,7 +3,10 @@ TARGET = rootplot
 
 CONFIG += debug
 
-TOPLEVEL    = ..
+TOPLEVEL = ..
+
+INCLUDEPATH+= \
+  $$TOPLEVEL/global
 
 CLASSES += \
   RootPlot \
@@ -11,6 +14,10 @@ CLASSES += \
   H2DPlot \
   GraphPlot \
   PerdaixDisplay
+
+LIBS += \
+  -L$$TOPLEVEL/lib \
+  -lglobal
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

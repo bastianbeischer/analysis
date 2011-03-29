@@ -17,6 +17,7 @@ TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot() :
   histogram->GetXaxis()->SetTitle("rigidity / GV");
   histogram->GetYaxis()->SetTitle("layers with exactly one hit");
   setHistogram(histogram);
+  setDrawOption("COL Z TEXT");
 }
 
 TrackingEfficiencyVsMomentumPlot::~TrackingEfficiencyVsMomentumPlot()
@@ -47,12 +48,6 @@ void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, Track*
   double p = track->p();
 
   histogram()->Fill(p,nLayers);
-}
-
-void TrackingEfficiencyVsMomentumPlot::draw(TCanvas* can)
-{
-  H2DPlot::draw(can);
-  histogram()->SetDrawOption("col.z.text");
 }
 
 void TrackingEfficiencyVsMomentumPlot::finalize()

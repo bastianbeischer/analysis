@@ -1,30 +1,24 @@
 TEMPLATE = app
-TARGET = tofEfficiency
+TARGET = timeResolution
 
 CONFIG += debug
 
 TOPLEVEL = ../../..
 
 INCLUDEPATH += \
-  $$TOPLEVEL/event \
   $$TOPLEVEL/rootplot \
-  $$TOPLEVEL/setup \
-  $$TOPLEVEL/tracking \
   $$TOPLEVEL/global \
   $$TOPLEVEL/tools/postAnalysis/postAnalysis
 
 LIBS += \
   -L$$TOPLEVEL/lib \
-  -lSimpleEvent \
-  -ltracking \
   -lrootplot \
-  -lsetup \
-	-lglobal \
+  -lglobal \
   -lpostAnalysis
 
 CLASSES = \
   MainWindow \
-  BarEfficiencyPlot
+  TimeOfFlightHistogram
 
 SOURCES = \
   main.cc

@@ -18,7 +18,7 @@ TemperatureTimePlot::TemperatureTimePlot(SensorTypes::Type type, QDateTime first
   t1-= (t1 % 60) + 60;
   int t2 = last.toTime_t();
   t2+= 120 - (t2 % 60);
-  int nBins = (t2 - t1) / 60;
+  int nBins = qMin((t2 - t1) / 60, 200);
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBins, t1, t2, 396, -99, 99);
   histogram->GetXaxis()->SetTimeDisplay(1);
   histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");
