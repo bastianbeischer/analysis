@@ -16,14 +16,12 @@
 #include <QDebug>
 #include <QStringList>
 
-BarTimeShiftHistogram::BarTimeShiftHistogram(const QVector<PostAnalysisCanvas*>& canvases)
+BarTimeShiftHistogram::BarTimeShiftHistogram(const QVector<PostAnalysisCanvas*>&)
   : PostAnalysisPlot()
   , H2DPlot()
 {
   setTitle("bar time shift");
   QVector<TH1D*> histograms;
-  foreach(PostAnalysisCanvas* canvas, canvases) {
-  }
 
   TH2D* histogram = new TH2D("barShiftHistogram", ";;;#Deltat / ns", 4, 0, 4, 4, 0, 4);
   foreach(TH1D* h, histograms) {
