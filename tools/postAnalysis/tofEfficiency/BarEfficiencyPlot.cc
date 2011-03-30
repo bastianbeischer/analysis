@@ -5,6 +5,7 @@
 #include <TCanvas.h>
 #include <TAxis.h>
 #include <TList.h>
+#include <TLatex.h>
 
 #include <iostream>
 #include <iomanip>
@@ -42,8 +43,23 @@ BarEfficiencyPlot::BarEfficiencyPlot(PostAnalysisCanvas* c1, PostAnalysisCanvas*
   double minY = h1->GetYaxis()->GetXmin();
   double maxY = h1->GetYaxis()->GetXmax();
   TH2D* h = new TH2D(qPrintable(title), "", nBinsX, minX, maxX, nBinsY, minY, maxY);
-  //TODO for Andi: fill h!
+  h->GetXaxis()->SetTitle("y_{tracker} / mm");
+  h->GetYaxis()->SetTitle("x_{tracker} / mm");
+  h->GetZaxis()->SetTitle("efficiency");
+  h->Add(h1, 1 / 4.);
+  h->Add(h2, 1 / 4.);
+  h->Add(h3, 1 / 4.);
+  h->Add(h4, 1 / 4.);
+
+  double sum = sumEntries(h);
+  double mean = sum / (h->GetXaxis()->GetNbins() * h->GetYaxis()->GetNbins());
+
   setHistogram(h);
+
+  TLatex* latex = 0;
+  latex = RootPlot::newLatex(.3, .82);
+  latex->SetTitle(qPrintable(QString("mean efficiency = %1").arg(mean)));
+  addLatex(latex);
 }
 
 BarEfficiencyPlot::~BarEfficiencyPlot()

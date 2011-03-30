@@ -5,6 +5,7 @@
 #include <TCanvas.h>
 #include <TAxis.h>
 #include <TList.h>
+#include <TLatex.h>
 
 #include <iostream>
 #include <iomanip>
@@ -16,34 +17,35 @@ MeanBarEfficiencyPlot::MeanBarEfficiencyPlot(const QVector<BarEfficiencyPlot*>& 
   : PostAnalysisPlot()
   , H2DPlot()
 {
-  setHistogram(plots.at(0)->histogram());
-  /*TH2* h0 = canvases[0]->histograms2D().at(0);
+  TH2* h0 = plots.at(0)->histogram();
   int nBinsX = h0->GetXaxis()->GetNbins();
   int nBinsY = h0->GetYaxis()->GetNbins();
   double minX = h0->GetXaxis()->GetXmin();
   double maxX = h0->GetXaxis()->GetXmax();
   double minY = h0->GetYaxis()->GetXmin();
   double maxY = h0->GetYaxis()->GetXmax();
-  QString title;
-  title = QString("tof efficiency");
-  setTitle(title);
-  TH2D* h = new TH2D(qPrintable(title), "", nBinsX, minX, maxX, nBinsY, minY, maxY);
+  setTitle("mean tof efficiency");
+  TH2D* h = new TH2D(qPrintable(title()), "", nBinsX, minX, maxX, nBinsY, minY, maxY); 
   h->GetXaxis()->SetTitle("y_{tracker} / mm");
   h->GetYaxis()->SetTitle("x_{tracker} / mm");
   h->GetZaxis()->SetTitle("efficiency");
   int n = 0;
-  for (int i = 0; i < 64; ++i) {
-    QString name = canvases[i]->name();
-    if (name.contains("0x8034")) {
-      continue;
-    }
-    TH2D* hi = canvases[i]->histograms2D().at(0);
+  for (int i = 0; i < plots.size(); ++i) {
+    TH2D* hi = plots.at(i)->histogram();
     h->Add(hi, 1);
     n++;
   }
   h->Scale(1/double(n));
+
+  double sum = sumEntries(h);
+  double mean = sum / (h->GetXaxis()->GetNbins() * h->GetYaxis()->GetNbins());
+
   setHistogram(h);
-  histogram()->GetZaxis()->SetRangeUser(0.97, 1.01);*/
+
+  TLatex* latex = 0;
+  latex = RootPlot::newLatex(.3, .82);
+  latex->SetTitle(qPrintable(QString("mean efficiency = %1").arg(mean)));
+  addLatex(latex);
 }
 
 MeanBarEfficiencyPlot::~MeanBarEfficiencyPlot()
