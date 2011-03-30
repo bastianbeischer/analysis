@@ -3,6 +3,7 @@
 #include "PostAnalysisPlot.hh"
 #include "PostAnalysisCanvas.hh"
 #include "BarEfficiencyPlot.hh"
+#include "MeanBarEfficiencyPlot.hh"
 
 #include <TCanvas.h>
 #include <TFile.h>
@@ -31,9 +32,13 @@ void MainWindow::setupAnalysis()
     addCanvas(&file, qPrintable(title));
   }
   file.Close();
+  QVector<BarEfficiencyPlot*> barEfficiencies;
   for (int i = 0; i < 16; ++i) {
-    addPlot(new BarEfficiencyPlot(m_canvases[4*i+0], m_canvases[4*i+1], m_canvases[4*i+2], m_canvases[4*i+3]));
+    BarEfficiencyPlot* barEfficiency = new BarEfficiencyPlot(
+      m_canvases[4*i+0], m_canvases[4*i+1], m_canvases[4*i+2], m_canvases[4*i+3]);
+    addPlot(barEfficiency);
+    barEfficiencies.append(barEfficiency);
   }
-  addPlot(new BarEfficiencyPlot(m_canvases));
+  addPlot(new MeanBarEfficiencyPlot(barEfficiencies));
 }
 

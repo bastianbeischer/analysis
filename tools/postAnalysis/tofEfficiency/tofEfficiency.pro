@@ -24,7 +24,8 @@ LIBS += \
 
 CLASSES = \
   MainWindow \
-  BarEfficiencyPlot
+  BarEfficiencyPlot \
+  MeanBarEfficiencyPlot
 
 SOURCES = \
   main.cc
