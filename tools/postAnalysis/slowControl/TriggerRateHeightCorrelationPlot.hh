@@ -4,12 +4,11 @@
 #include "PostAnalysisPlot.hh"
 #include "GraphPlot.hh"
 
-class TriggerRateTimePlot;
-class HeightTimePlot;
+class PostAnalysisCanvas;
 
 class TriggerRateHeightCorrelationPlot : public PostAnalysisPlot, public GraphPlot {
 public:
-  TriggerRateHeightCorrelationPlot(TriggerRateTimePlot*, HeightTimePlot*);
+  TriggerRateHeightCorrelationPlot(PostAnalysisCanvas* trigger, PostAnalysisCanvas* height);
   virtual ~TriggerRateHeightCorrelationPlot();
 };
 

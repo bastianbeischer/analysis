@@ -26,8 +26,6 @@ CLASSES = \
   MainWindow \
   TrackerTemperaturePlot \
   TriggerRateHeightCorrelationPlot \
-  TriggerRateTimePlot \
-  HeightTimePlot \
   TriggerRateHeightTimePlot
 
 SOURCES = \

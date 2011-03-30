@@ -4,8 +4,6 @@
 #include "PostAnalysisPlot.hh"
 #include "TrackerTemperaturePlot.hh"
 #include "TriggerRateHeightCorrelationPlot.hh"
-#include "TriggerRateTimePlot.hh"
-#include "HeightTimePlot.hh"
 #include "TriggerRateHeightTimePlot.hh"
 #include "SensorTypes.hh"
 
@@ -28,15 +26,11 @@ void MainWindow::setupAnalysis()
 {
   TFile file(qPrintable(m_analysisFile));
   gROOT->cd();
-  PostAnalysisCanvas* canvas = 0;
-  canvas = addCanvas(&file, "trigger rate canvas");
-  TriggerRateTimePlot* trtp = new TriggerRateTimePlot(canvas);
-  addPlot(trtp);
-  canvas = addCanvas(&file, "EBASS_HEIGHT canvas");
-  HeightTimePlot* htp = new HeightTimePlot(canvas);
-  addPlot(htp);
-  addPlot(new TriggerRateHeightCorrelationPlot(trtp, htp));
-  addPlot(new TriggerRateHeightTimePlot(trtp, htp));
+
+  PostAnalysisCanvas* triggerRateCanvas = addCanvas(&file, "trigger rate canvas");
+  PostAnalysisCanvas* heightCanvas = addCanvas(&file, "EBASS_HEIGHT canvas");
+  addPlot(new TriggerRateHeightTimePlot(triggerRateCanvas, heightCanvas));
+  addPlot(new TriggerRateHeightCorrelationPlot(triggerRateCanvas, heightCanvas));
   
   QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());
 

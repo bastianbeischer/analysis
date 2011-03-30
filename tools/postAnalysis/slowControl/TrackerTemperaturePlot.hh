@@ -2,14 +2,14 @@
 #define TrackerTemperaturePlot_hh
 
 #include "PostAnalysisPlot.hh"
-#include "H1DPlot.hh"
+#include "GraphPlot.hh"
 
 class PostAnalysisCanvas;
 class TriggerRateTimePlot;
 class TrackerTemperaturePlot;
 class TCanvas;
 
-class TrackerTemperaturePlot : public PostAnalysisPlot, public H1DPlot {
+class TrackerTemperaturePlot : public PostAnalysisPlot, public GraphPlot {
 public:
   TrackerTemperaturePlot(const QVector<PostAnalysisCanvas*>);
   virtual ~TrackerTemperaturePlot();

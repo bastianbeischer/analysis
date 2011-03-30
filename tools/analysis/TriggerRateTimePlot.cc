@@ -15,7 +15,7 @@ TriggerRateTimePlot::TriggerRateTimePlot(QDateTime first, QDateTime last)
   t1-= (t1 % 60) + 60;
   int t2 = last.toTime_t();
   t2+= 120 - (t2 % 60);
-  int nBins = qMin((t2 - t1) / 60, 1000);
+  int nBins = (t2 - t1) / 60;
   TH1D* histogram = new TH1D("trigger rate", "", nBins, t1, t2);
   histogram->GetXaxis()->SetTimeDisplay(1);
   histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");

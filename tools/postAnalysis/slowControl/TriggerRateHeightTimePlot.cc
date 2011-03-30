@@ -1,12 +1,12 @@
 #include "TriggerRateHeightTimePlot.hh"
 #include "PostAnalysisCanvas.hh"
-#include "TriggerRateTimePlot.hh"
-#include "HeightTimePlot.hh"
 
 #include <TH1.h>
 #include <TAxis.h>
 #include <TPad.h>
 #include <TLegend.h>
+#include <TGraph.h>
+#include <TMultiGraph.h>
 
 #include <iostream>
 #include <iomanip>
@@ -14,37 +14,39 @@
 #include <QDebug>
 #include <QStringList>
 
-TriggerRateHeightTimePlot::TriggerRateHeightTimePlot(TriggerRateTimePlot* trtp, HeightTimePlot* htp)
+TriggerRateHeightTimePlot::TriggerRateHeightTimePlot(PostAnalysisCanvas* trigger, PostAnalysisCanvas* height)
   : PostAnalysisPlot()
   , H1DPlot()
 {
   setTitle("trigger rate height time");
-  TH1D* h = 0;
+  TH1D* h0 = static_cast<TH1D*>(trigger->histograms1D().at(0)->Clone());
+  TH1D* h1 = static_cast<TH1D*>(height->histograms1D().at(0)->Clone());
+
+  m_graph = new TGraph;
+  for (int bin = 1; bin <= h0->GetXaxis()->GetNbins(); ++bin)
+    m_graph->SetPoint(m_graph->GetN(), h0->GetXaxis()->GetBinCenter(bin), h1->GetBinContent(bin));
+  m_graph->SetMarkerColor(kBlue);
+  m_graph->SetMarkerStyle(20);
+  m_graph->SetMarkerSize(0.4);
+
+  h0->GetYaxis()->SetTitle("");
+  addHistogram(h0);
   
-  h = static_cast<TH1D*>(trtp->histogram()->Clone());
-  h->SetLineColor(kRed);
-  h->GetYaxis()->SetTitle("");
-  addHistogram(h);
-
-  h = static_cast<TH1D*>(htp->histogram()->Clone());
-  h->SetLineColor(kBlue);
-  h->SetMarkerColor(kBlue);
-  h->GetYaxis()->SetTitle("");
-  addHistogram(h);
-
   TLegend* legend = new TLegend(0.11, 0.81, 0.28, 0.89);
-  legend->AddEntry(histogram(0), "rate / Hz", "l");
-  legend->AddEntry(histogram(1), "height / km", "p");
+  legend->AddEntry(histogram(0), "rate / Hz", "L");
+  legend->AddEntry(m_graph, "height / km", "P");
   addLegend(legend);
 }
 
 TriggerRateHeightTimePlot::~TriggerRateHeightTimePlot()
-{}
+{
+  delete m_graph;
+}
 
 void TriggerRateHeightTimePlot::draw(TCanvas* canvas)
 {
   H1DPlot::draw(canvas);
-  histogram(1)->SetDrawOption("SAME P");
+  m_graph->Draw("P");
   gPad->Modified();
   gPad->Update();
 }

@@ -7,12 +7,15 @@
 class PostAnalysisCanvas;
 class TriggerRateTimePlot;
 class HeightTimePlot;
+class TGraph;
 
 class TriggerRateHeightTimePlot : public PostAnalysisPlot, public H1DPlot {
 public:
-  TriggerRateHeightTimePlot(TriggerRateTimePlot*, HeightTimePlot*);
+  TriggerRateHeightTimePlot(PostAnalysisCanvas* trigger, PostAnalysisCanvas* height);
   virtual ~TriggerRateHeightTimePlot();
   virtual void draw(TCanvas* canvas);
+private:
+  TGraph* m_graph;
 };
 
 #endif
