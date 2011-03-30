@@ -1,12 +1,15 @@
 #include "TriggerRateHeightCorrelationPlot.hh"
 #include "PostAnalysisCanvas.hh"
+#include "TriggerRateTimePlot.hh"
+#include "HeightTimePlot.hh"
 
 #include <TH1.h>
-#include <TH2.h>
+#include <TGraph.h>
 #include <TCanvas.h>
 #include <TAxis.h>
 #include <TList.h>
 #include <TF1.h>
+#include <TMultiGraph.h>
 
 #include <iostream>
 #include <iomanip>
@@ -14,36 +17,20 @@
 #include <QDebug>
 #include <QStringList>
 
-TriggerRateHeightCorrelationPlot::TriggerRateHeightCorrelationPlot(PostAnalysisCanvas* canvas, int ch)
+TriggerRateHeightCorrelationPlot::TriggerRateHeightCorrelationPlot(TriggerRateTimePlot* trtp, HeightTimePlot* htp)
   : PostAnalysisPlot()
-  , H1DPlot()
+  , GraphPlot()
 {
-  TH2* histogram = canvas->histograms2D().at(0);
-  histogram->Draw("COLZ");
-  QString title = QString("%1 channel %2").arg(canvas->name()).arg(ch);
-  setTitle(title);
-  TH1D* projection = histogram->ProjectionY("tmp", ch+1, ch+1);
-  if (ch > 0)
-    projection->Smooth();
-  projection->SetName(qPrintable(title));
-  projection->GetXaxis()->SetTitle("#Deltat / ns");
-  TF1* function = new TF1(qPrintable(title + "Function"), "gaus", projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
-  projection->Fit(function, "QN0");
-  if (ch > 0) {
-    for (int i = 0; i < 5; ++i) {
-      double mean = function->GetParameter(1);
-      double sigma = function->GetParameter(2);
-      function->SetRange(mean - 1.5 * sigma, mean + 1.5 * sigma);
-      projection->Fit(function, "RQN0");
-    }
+  setTitle("trigger rate height correlation");
+  int nBinsX = htp->histogram()->GetXaxis()->GetNbins();
+  TGraph* g = new TGraph;
+  for (int bin = 1; bin <= nBinsX; ++bin) {
+    g->SetPoint(bin - 1, htp->histogram()->GetBinContent(bin), trtp->histogram()->GetBinContent(bin));
   }
-  function->SetRange(projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
-  QStringList stringList = title.split(" ");
-  int id = (stringList[ch < 4 ? 2 : 3].remove(0, 2).toInt(0, 16)) | (ch - (ch < 4 ? 0 : 4));
-  std::cout << "0x" <<std::hex << id << "=" << -function->GetParameter(1) << std::endl;
-  projection->GetXaxis()->SetRangeUser(-2, 2);
-  addHistogram(projection);
-  addFunction(function);
+  g->SetMarkerStyle(20);
+  g->SetMarkerSize(0.4);
+  addGraph(g, "P");
+  m_multiGraph->SetTitle(";height / km;trigger rate / Hz");
 }
 
 TriggerRateHeightCorrelationPlot::~TriggerRateHeightCorrelationPlot()

@@ -5,6 +5,8 @@
 #include "TrackerTemperaturePlot.hh"
 #include "TriggerRateHeightCorrelationPlot.hh"
 #include "TriggerRateTimePlot.hh"
+#include "HeightTimePlot.hh"
+#include "TriggerRateHeightTimePlot.hh"
 
 #include <TFile.h>
 #include <TROOT.h>
@@ -25,8 +27,14 @@ void MainWindow::setupAnalysis()
 {
   TFile file(qPrintable(m_analysisFile));
   gROOT->cd();
-  PostAnalysisCanvas* triggerRateCanvas = addCanvas(&file, "TRIGGER_RATE canvas");
-  addPlot(new TriggerRateTimePlot(triggerRateCanvas));
-  //addPlot(new TriggerRateTimePlot(canvas));
+  PostAnalysisCanvas* canvas = 0;
+  canvas = addCanvas(&file, "trigger rate canvas");
+  TriggerRateTimePlot* trtp = new TriggerRateTimePlot(canvas);
+  addPlot(trtp);
+  canvas = addCanvas(&file, "EBASS_HEIGHT canvas");
+  HeightTimePlot* htp = new HeightTimePlot(canvas);
+  addPlot(htp);
+  addPlot(new TriggerRateHeightCorrelationPlot(trtp, htp));
+  addPlot(new TriggerRateHeightTimePlot(trtp, htp));
   file.Close();
 }

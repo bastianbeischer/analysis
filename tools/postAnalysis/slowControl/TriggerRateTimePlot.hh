@@ -2,11 +2,11 @@
 #define TriggerRateTimePlot_hh
 
 #include "PostAnalysisPlot.hh"
-#include "H2DPlot.hh"
+#include "H1DPlot.hh"
 
 class PostAnalysisCanvas;
 
-class TriggerRateTimePlot : public PostAnalysisPlot, public H2DPlot {
+class TriggerRateTimePlot : public PostAnalysisPlot, public H1DPlot {
 public:
   TriggerRateTimePlot(PostAnalysisCanvas*);
   virtual ~TriggerRateTimePlot();
