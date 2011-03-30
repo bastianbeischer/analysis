@@ -1,5 +1,9 @@
 #include "TrackerTemperaturePlot.hh"
 #include "PostAnalysisCanvas.hh"
+#include "TriggerRateTimePlot.hh"
+#include "TrackerTemperaturePlot.hh"
+#include "Setup.hh"
+#include "DetectorElement.hh"
 
 #include <TH1.h>
 #include <TH2.h>
@@ -7,6 +11,7 @@
 #include <TAxis.h>
 #include <TList.h>
 #include <TF1.h>
+#include <TVector3.h>
 
 #include <iostream>
 #include <iomanip>
@@ -14,37 +19,58 @@
 #include <QDebug>
 #include <QStringList>
 
-TrackerTemperaturePlot::TrackerTemperaturePlot(PostAnalysisCanvas* canvas, int ch)
+TrackerTemperaturePlot::TrackerTemperaturePlot(const QVector<PostAnalysisCanvas*> canvases)
   : PostAnalysisPlot()
   , H1DPlot()
 {
-  TH2* histogram = canvas->histograms2D().at(0);
-  histogram->Draw("COLZ");
-  QString title = QString("%1 channel %2").arg(canvas->name()).arg(ch);
-  setTitle(title);
-  TH1D* projection = histogram->ProjectionY("tmp", ch+1, ch+1);
-  if (ch > 0)
-    projection->Smooth();
-  projection->SetName(qPrintable(title));
-  projection->GetXaxis()->SetTitle("#Deltat / ns");
-  TF1* function = new TF1(qPrintable(title + "Function"), "gaus", projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
-  projection->Fit(function, "QN0");
-  if (ch > 0) {
-    for (int i = 0; i < 5; ++i) {
-      double mean = function->GetParameter(1);
-      double sigma = function->GetParameter(2);
-      function->SetRange(mean - 1.5 * sigma, mean + 1.5 * sigma);
-      projection->Fit(function, "RQN0");
+  setTitle("tracker temperature plot");
+  foreach(PostAnalysisCanvas* canvas, canvases) {
+    TH2D* h = canvas->histograms2D().at(0);
+    int nBinsX = h->GetXaxis()->GetNbins();
+    double minX = h->GetXaxis()->GetXmin();
+    double maxX = h->GetXaxis()->GetXmax();
+    TH1D* histogram = new TH1D(qPrintable(title() + canvas->name()), "", nBinsX, minX, maxX);
+    for (int binX = 1; binX <= nBinsX; ++binX) {
+      TH1D* projection = h->ProjectionY(qPrintable(title() + "projection"), binX, binX);
+      histogram->SetBinContent(binX, projection->GetMean());
+      delete projection;
     }
+    histogram->GetXaxis()->SetTimeDisplay(1);
+    histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");
+    histogram->GetXaxis()->SetTitle("time");
+    histogram->GetYaxis()->SetTitle("height / km");
+    histogram->SetMarkerStyle(20);
+    histogram->SetMarkerSize(0.2);
+    int id = canvas->name().mid(6, 4).toInt(0, 16);
+    const TVector3& position = Setup::instance()->element(id & 0xFFF0)->position();
+    histogram->SetMarkerColor(layer(position.z()));
+    //qDebug() << hex << id << "->" << layer(position.z()) << position.x() << position.y() << position.z();
+    addHistogram(histogram);
   }
-  function->SetRange(projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
-  QStringList stringList = title.split(" ");
-  int id = (stringList[ch < 4 ? 2 : 3].remove(0, 2).toInt(0, 16)) | (ch - (ch < 4 ? 0 : 4));
-  std::cout << "0x" <<std::hex << id << "=" << -function->GetParameter(1) << std::endl;
-  projection->GetXaxis()->SetRangeUser(-2, 2);
-  addHistogram(projection);
-  addFunction(function);
 }
 
 TrackerTemperaturePlot::~TrackerTemperaturePlot()
 {}
+
+int TrackerTemperaturePlot::layer(double z)
+{
+  if (z > 200.) {
+    return 1;
+  } else if (z > 0.) {
+    return 2;
+  } else if (z > -200) {
+    return 3;
+  } else {
+    return 4;
+  }
+}
+
+void TrackerTemperaturePlot::draw(TCanvas* canvas)
+{
+  canvas->cd();
+  histogram(0)->Draw("P");
+  for (int i = 1; i < numberOfHistograms(); ++i)
+    histogram(i)->Draw("SAME P");
+  gPad->Modified();
+  gPad->Update();
+}

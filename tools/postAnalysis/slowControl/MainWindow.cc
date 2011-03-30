@@ -7,6 +7,7 @@
 #include "TriggerRateTimePlot.hh"
 #include "HeightTimePlot.hh"
 #include "TriggerRateHeightTimePlot.hh"
+#include "SensorTypes.hh"
 
 #include <TFile.h>
 #include <TROOT.h>
@@ -36,5 +37,16 @@ void MainWindow::setupAnalysis()
   addPlot(htp);
   addPlot(new TriggerRateHeightCorrelationPlot(trtp, htp));
   addPlot(new TriggerRateHeightTimePlot(trtp, htp));
+  
+  QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());
+
+  QVector<PostAnalysisCanvas*> trackerTemperatures;
+  foreach(SensorTypes::Type type, temperatureSensors) {
+    QString title = QString::fromStdString(convertToString(type)) + " canvas";
+    if (title.contains("HPE"))
+      trackerTemperatures.append(addCanvas(&file, title));
+  }
+  addPlot(new TrackerTemperaturePlot(trackerTemperatures));
+
   file.Close();
 }
