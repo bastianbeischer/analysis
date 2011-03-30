@@ -29,13 +29,16 @@ TrackerTemperaturePlot::TrackerTemperaturePlot(const QVector<PostAnalysisCanvas*
     TH1D* h0 = canvas->histograms1D().at(0);
     int nBins = h0->GetXaxis()->GetNbins();
     TGraph* g = new TGraph;
-    for (int bin = 1; bin <= nBins; ++bin)
-      g->SetPoint(g->GetN(), h0->GetXaxis()->GetBinCenter(bin), h0->GetBinContent(bin));
+    for (int bin = 1; bin <= nBins; ++bin) {
+      double temperature = h0->GetBinContent(bin);
+      if (!qFuzzyCompare(temperature, 0))
+        g->SetPoint(g->GetN(), h0->GetXaxis()->GetBinCenter(bin), temperature);
+    }
     int id = canvas->name().mid(6, 4).toInt(0, 16);
     const TVector3& position = Setup::instance()->element(id & 0xFFF0)->position();
     g->SetMarkerColor(layer(position.z()));
     g->SetMarkerStyle(20);
-    g->SetMarkerSize(0.1);
+    g->SetMarkerSize(0.2);
     addGraph(g, "P");
     //qDebug() << hex << id << "->" << layer(position.z()) << position.x() << position.y() << position.z();
   }

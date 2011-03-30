@@ -30,6 +30,8 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
     this, SLOT(selectPlot(QListWidgetItem*, QListWidgetItem*)));
   connect(m_ui->plotOptionComboBox, SIGNAL(currentIndexChanged(const QString&)),
     this, SLOT(plotOptionComboBoxCurrentIndexChanged(const QString&)));
+  connect(m_ui->saveCanvasButton, SIGNAL(clicked()), this, SLOT(savePlotsButtonClicked()));
+  connect(m_ui->saveAllCanvasesButton, SIGNAL(clicked()), this, SLOT(savePlotsButtonClicked()));
 }
 
 PostAnalysisWindow::~PostAnalysisWindow()

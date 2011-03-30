@@ -23,8 +23,11 @@ TriggerRateHeightTimePlot::TriggerRateHeightTimePlot(PostAnalysisCanvas* trigger
   TH1D* h1 = static_cast<TH1D*>(height->histograms1D().at(0)->Clone());
 
   m_graph = new TGraph;
-  for (int bin = 1; bin <= h0->GetXaxis()->GetNbins(); ++bin)
-    m_graph->SetPoint(m_graph->GetN(), h0->GetXaxis()->GetBinCenter(bin), h1->GetBinContent(bin));
+  for (int bin = 1; bin <= h0->GetXaxis()->GetNbins(); ++bin) {
+    double h = h1->GetBinContent(bin);
+    if (!qFuzzyCompare(h, 0.))
+      m_graph->SetPoint(m_graph->GetN(), h0->GetXaxis()->GetBinCenter(bin), h);
+  }
   m_graph->SetMarkerColor(kBlue);
   m_graph->SetMarkerStyle(20);
   m_graph->SetMarkerSize(0.4);
