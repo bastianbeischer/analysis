@@ -46,10 +46,10 @@ BarEfficiencyPlot::BarEfficiencyPlot(PostAnalysisCanvas* c1, PostAnalysisCanvas*
   h->GetXaxis()->SetTitle("y_{tracker} / mm");
   h->GetYaxis()->SetTitle("x_{tracker} / mm");
   h->GetZaxis()->SetTitle("efficiency");
-  h->Add(h1, 1 / 4.);
-  h->Add(h2, 1 / 4.);
-  h->Add(h3, 1 / 4.);
-  h->Add(h4, 1 / 4.);
+  h->Add(h1, 0.25);
+  h->Add(h2, 0.25);
+  h->Add(h3, 0.25);
+  h->Add(h4, 0.25);
 
   double sum = sumEntries(h);
   double mean = sum / (h->GetXaxis()->GetNbins() * h->GetYaxis()->GetNbins());

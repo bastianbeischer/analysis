@@ -33,9 +33,9 @@ MeanBarEfficiencyPlot::MeanBarEfficiencyPlot(const QVector<BarEfficiencyPlot*>& 
   for (int i = 0; i < plots.size(); ++i) {
     TH2D* hi = plots.at(i)->histogram();
     h->Add(hi, 1);
-    n++;
+    ++n;
   }
-  h->Scale(1/double(n));
+  h->Scale(1./n);
 
   double sum = sumEntries(h);
   double mean = sum / (h->GetXaxis()->GetNbins() * h->GetYaxis()->GetNbins());
