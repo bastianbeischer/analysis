@@ -13,7 +13,7 @@
 #include "SensorTypes.hh"
 #include "SimpleEvent.hh"
 
-#include <QProcess>
+#include <QStringList>
 #include <QSettings>
 #include <QDebug>
 
@@ -26,17 +26,12 @@ Corrections::Corrections(Flags flags)
   , m_tofSettings(0)
   , m_flags(flags)
 {
-  QStringList envVariables = QProcess::systemEnvironment();
-  QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
-  QString path = "";
-  if (filteredVars.size() != 0) {
-    QString entry = filteredVars.first();
-    path = entry.split("=").at(1);
-    path += "/conf/";
-  }
-  else {
+  char* env = getenv("PERDAIXANA_PATH");
+  if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
+  QString path(env);
+  path += "/conf/";
   m_trdSettings = new QSettings(path + "TRDCorrections.conf", QSettings::IniFormat);
   m_tofSettings = new QSettings(path + "TOFCorrections.conf", QSettings::IniFormat);
   
@@ -92,7 +87,27 @@ void Corrections::timeShift(Hit* hit)
       TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(*it);
       DetectorElement* element = setup->element(cluster->detId() - cluster->channel());
       double timeShift = static_cast<TOFBar*>(element)->timeShift((*it)->channel());
-      tofHit->applyTimeShift(timeShift);
+      
+      unsigned short id = element->id();
+      double barTimeShift = 0;
+      if (id == 0x8000 || id == 0x8010) {
+        barTimeShift = 0;
+      } else if (id == 0x8004 || id == 0x8014) {
+        barTimeShift = -.424683288999999964;
+      } else if (id == 0x8008 || id == 0x8018) {
+        barTimeShift = -.154683288999999974;
+      } else if (id == 0x800c || id == 0x801c) {
+        barTimeShift = -0.324999999999999872e-1;
+      } else if (id == 0x8020 || id == 0x8030) {
+        barTimeShift = -.120693492999999999;
+      } else if (id == 0x8024 || id == 0x8034) {
+        barTimeShift = 0.303989795999999979;
+      } else if (id == 0x8028 || id == 0x8038) {
+        barTimeShift = -.343510203999999986;
+      } else if (id == 0x802c || id == 0x803c) {
+        barTimeShift = 0.269306507000000028;
+      }
+      tofHit->applyTimeShift(timeShift + barTimeShift);
     }
     cluster->processHits();
   }

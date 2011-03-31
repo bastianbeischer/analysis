@@ -19,23 +19,25 @@
 #include <QSettings>
 #include <math.h>
 
-TOTTimeCorrelationPlot::TOTTimeCorrelationPlot(unsigned int id)
+TOTTimeCorrelationPlot::TOTTimeCorrelationPlot(unsigned int id, QDateTime first, QDateTime last)
   : AnalysisPlot(TimeOverThreshold)
   , H2DPlot()
   , m_id(id)
-  , m_minTime(1964373878) //flight 1964373878 //float 2016232280
-  , m_maxTime(2023068183) //flight 2023068183 //float 2021732904
 {
   QString title = QString("time over threshold time correlation 0x%1").arg(0x8000 | id, 0, 16);
   setTitle(title);
-  const unsigned int nTimeBins = 100;
-
+  int t1 = first.toTime_t();
+  t1-= (t1 % 60) + 60;
+  int t2 = last.toTime_t();
+  t2+= 120 - (t2 % 60);
+  const unsigned int nTimeBins = (t2 - t1) / 60;
   const unsigned int nTotBins = 100;
   const double minTot = 0;
   const double maxTot = 75;
-  TH2D* histogram = new TH2D(qPrintable(title), "", nTimeBins, convertTime(m_minTime), convertTime(m_maxTime), nTotBins, minTot, maxTot);
-  histogram->GetXaxis()->SetTitleOffset(1.4);
-  histogram->GetXaxis()->SetTitle("time / min");
+  TH2D* histogram = new TH2D(qPrintable(title), "", nTimeBins, t1, t2, nTotBins, minTot, maxTot);
+  histogram->GetXaxis()->SetTimeDisplay(1);
+  histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");
+  histogram->GetXaxis()->SetTitle("time");
   histogram->GetYaxis()->SetTitle("time over threshold / ns");
   setHistogram(histogram);
 }
@@ -51,29 +53,18 @@ void TOTTimeCorrelationPlot::processEvent(const QVector<Hit*>& hits, Track* trac
     Hit* hit = *it;
     if (hit->type() == Hit::tof) {
       TOFCluster* cluster = static_cast<TOFCluster*> (hit);
-      if (qAbs(track->x(cluster->position().z()) - cluster->position().x()) > 1.2 * Constants::tofBarWidth / 2)
+      if (qAbs(track->x(cluster->position().z()) - cluster->position().x()) > 0.95 * Constants::tofBarWidth / 2.)
         continue;
       std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         Hit* tofHit = *it;
         if (tofHit->detId() == m_id) {
-          unsigned int eventTime = event->runStartTime() *1000 + event->eventTime();
+          unsigned int eventTime = event->time();
           TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
-          histogram()->Fill(convertTime(eventTime), tofSipmHit->timeOverThreshold());
+          histogram()->Fill(eventTime, tofSipmHit->timeOverThreshold());
         }
       }
     }
   }
 }
-
-inline double TOTTimeCorrelationPlot::msToMin(double timeInMs)
-{
-  return timeInMs / 1000. / 60.;
-}
-
-inline double TOTTimeCorrelationPlot::convertTime(unsigned int time)
-{
-  return msToMin(time - m_minTime);
-}
-

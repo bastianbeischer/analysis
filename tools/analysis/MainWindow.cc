@@ -50,13 +50,19 @@
 #include "TotalSignalHeightPlot.hh"
 #include "TOFEfficiencyPlot.hh"
 #include "TOTMomentumCorrelation.hh"
+#include "TOTBetaCorrelation.hh"
 #include "TOTPlot.hh"
+#include "TOTLayerPlot.hh"
+#include "TOTIonizationCorrelation.hh"
 #include "TOTTemperatureCorrelationPlot.hh"
 #include "TOFAlignment.hh"
 #include "TOTTimeCorrelationPlot.hh"
 #include "TemperatureTimePlot.hh"
+#include "ChannelTriggerProbabilityPlot.hh"
+#include "TOFTimeShiftTriggerPlot.hh"
+#include "TriggerRateTimePlot.hh"
+#include "HeightTimePlot.hh"
 
-#include <QProcess>
 #include <QFileDialog>
 #include <QVBoxLayout>
 #include <QDateTime>
@@ -73,14 +79,11 @@ MainWindow::MainWindow(QWidget* parent)
 {
   m_ui.setupUi(this);
  
-  QStringList envVariables = QProcess::systemEnvironment();
-  QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
-  if (filteredVars.size() != 0) {
-    QString entry = filteredVars.first();
-    m_topLevelPath = entry.split("=").at(1);
-  } else {
+  char* env = getenv("PERDAIXANA_PATH");
+  if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
+  m_topLevelPath = QString(env);
 
   m_topicCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
   m_topicCheckBoxes.append(m_ui.signalHeightTRDCheckBox);
@@ -195,7 +198,7 @@ MainWindow::MainWindow(QWidget* parent)
   foreach(QCheckBox* checkBox, m_topicCheckBoxes)
     connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged()));
 
-  setupPlots();
+  //setupPlots();
 
   m_updateTimer.setInterval(50);
   m_ui.numberOfThreadsSpinBox->setValue(QThread::idealThreadCount());
@@ -334,6 +337,9 @@ void MainWindow::setupPlots()
   m_ui.plotter->clearPlots();
   m_activePlots.clear();
   m_ui.listWidget->clear();
+    
+  QDateTime first = m_reader->time(m_ui.firstEventSpinBox->value());
+  QDateTime last = m_reader->time(m_ui.lastEventSpinBox->value());
 
   if (m_ui.signalHeightTrackerCheckBox->isChecked()) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
@@ -390,12 +396,21 @@ void MainWindow::setupPlots()
   }
   if (m_ui.timeOverThresholdCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TOTPlot);
-    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
-      DetectorElement* element = *elementIt;
-      if (element->type() == DetectorElement::tof)
-        for (int ch = 0; ch < 4; ++ch)
-          m_ui.plotter->addPlot(new TOTMomentumCorrelation(element->id() | ch));
-    }
+    m_ui.plotter->addPlot(new TOTLayerPlot(TOTLayerPlot::Upper));
+    m_ui.plotter->addPlot(new TOTLayerPlot(TOTLayerPlot::Lower));
+    m_ui.plotter->addPlot(new TOTLayerPlot(TOTLayerPlot::All));
+    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Upper, Hit::trd));
+    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Lower, Hit::trd));
+    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::All, Hit::trd));
+    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Upper, Hit::tracker));
+    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Lower, Hit::tracker));
+    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::All, Hit::tracker));
+    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::Upper));
+    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::Lower));
+    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::All));
+    m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::Upper));
+    m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::Lower));
+    m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::All));
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)
@@ -406,7 +421,7 @@ void MainWindow::setupPlots()
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)
         for (int ch = 0; ch < 4; ++ch)
-          m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch));
+          m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch, first, last));
     }
   }
   if (m_ui.trackingCheckBox->isChecked()) {
@@ -480,6 +495,8 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x802c, 0x803c));
   }
   if (m_ui.calibrationTofCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new ChannelTriggerProbabilityPlot);
+    m_ui.plotter->addPlot(new TOFTimeShiftTriggerPlot);
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)
@@ -527,11 +544,11 @@ void MainWindow::setupPlots()
     //m_ui.plotter->addPlot(new TOFAlignment);
   }
   if (m_ui.slowControlCheckBox->isChecked()) {
-    QDateTime first = m_reader->time(m_ui.firstEventSpinBox->value());
-    QDateTime last = m_reader->time(m_ui.lastEventSpinBox->value());
     QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());
     foreach(SensorTypes::Type sensor, temperatureSensors)
       m_ui.plotter->addPlot(new TemperatureTimePlot(sensor, first, last));
+    m_ui.plotter->addPlot(new TriggerRateTimePlot(first, last));
+    m_ui.plotter->addPlot(new HeightTimePlot(first, last));
   }
 }
 

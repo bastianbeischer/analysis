@@ -10,7 +10,6 @@
 
 #include <fstream>
 #include <iostream>
-#include <QDebug>
 
 QMutex DataChain::s_mutex;
 
@@ -140,7 +139,6 @@ const std::string& DataChain::rawFileNameForEvent() const
  
 QDateTime DataChain::time(int eventNumber)
 {
-  qDebug() << eventNumber << nEntries();
   int savedEntry = m_currentEntry;
   SimpleEvent* ev = event(eventNumber);
   QDateTime dt;

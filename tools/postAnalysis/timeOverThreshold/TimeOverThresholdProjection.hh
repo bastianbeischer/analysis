@@ -4,9 +4,11 @@
 #include "PostAnalysisPlot.hh"
 #include "H1DPlot.hh"
 
+class PostAnalysisCanvas;
+
 class TimeOverThresholdProjection : public PostAnalysisPlot, public H1DPlot {
 public:
-  TimeOverThresholdProjection(TCanvas*, int ch);
+  TimeOverThresholdProjection(PostAnalysisCanvas*, int ch);
   virtual ~TimeOverThresholdProjection();
 };
 

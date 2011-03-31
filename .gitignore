@@ -1,5 +1,5 @@
 .tmp
-/Makefile
+Makefile
 /bin
 /lib
 /data
@@ -15,3 +15,4 @@ perdaix.log
 texput.*
 *.xcodeproj
 fort.66
+build

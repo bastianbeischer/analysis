@@ -4,8 +4,6 @@
 #include <QFile>
 #include <QString>
 #include <QRegExp>
-#include <QStringList>
-#include <QProcess>
 #include <iostream>
 
 #include <TTree.h>
@@ -29,18 +27,12 @@ DataManager::DataManager() :
   m_outputFile(0),
   m_outputTree(0)
 {
-  QStringList envVariables = QProcess::systemEnvironment();
-  QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
-  QString path = "";
-  if (filteredVars.size() != 0) {
-    QString entry = filteredVars.first();
-    path = entry.split("=").at(1);
-    path += "/tools/parser/";
-  }
-  else {
+  char* env = getenv("PERDAIXANA_PATH");
+  if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
-  QString sensorFileName = path + "sensors.root";
+  QString path(env);
+  QString sensorFileName = path + "/tools/parser/sensors.root";
   m_sensorsData = new SensorsData(SensorsData::SENSORS, qPrintable(sensorFileName));
   m_atcData = new SensorsData(SensorsData::ATC, qPrintable(sensorFileName));
   m_ebassData = new SensorsData(SensorsData::EBASS, qPrintable(sensorFileName));

@@ -1,9 +1,11 @@
 #include "BarEfficiencyPlot.hh"
+#include "PostAnalysisCanvas.hh"
 
 #include <TH2.h>
 #include <TCanvas.h>
 #include <TAxis.h>
 #include <TList.h>
+#include <TLatex.h>
 
 #include <iostream>
 #include <iomanip>
@@ -11,16 +13,16 @@
 #include <QDebug>
 #include <QStringList>
 
-BarEfficiencyPlot::BarEfficiencyPlot(TCanvas* c1, TCanvas* c2, TCanvas* c3, TCanvas* c4)
+BarEfficiencyPlot::BarEfficiencyPlot(PostAnalysisCanvas* c1, PostAnalysisCanvas* c2, PostAnalysisCanvas* c3, PostAnalysisCanvas* c4)
   : PostAnalysisPlot()
   , H2DPlot()
 {
-  TH2D* h1 = findHistogram(c1);
-  TH2D* h2 = findHistogram(c2);
-  TH2D* h3 = findHistogram(c3);
-  TH2D* h4 = findHistogram(c4);
+  TH2D* h1 = c1->histograms2D().at(0);
+  TH2D* h2 = c2->histograms2D().at(0);
+  TH2D* h3 = c3->histograms2D().at(0);
+  TH2D* h4 = c4->histograms2D().at(0);
   QString title;
-  title = QString("%1 bar efficiency").arg(c1->GetName());
+  title = QString("%1 bar efficiency").arg(c1->name());
   setTitle(title);
   
   double sum1 = sumEntries(h1);
@@ -41,20 +43,27 @@ BarEfficiencyPlot::BarEfficiencyPlot(TCanvas* c1, TCanvas* c2, TCanvas* c3, TCan
   double minY = h1->GetYaxis()->GetXmin();
   double maxY = h1->GetYaxis()->GetXmax();
   TH2D* h = new TH2D(qPrintable(title), "", nBinsX, minX, maxX, nBinsY, minY, maxY);
+  h->GetXaxis()->SetTitle("y_{tracker} / mm");
+  h->GetYaxis()->SetTitle("x_{tracker} / mm");
+  h->GetZaxis()->SetTitle("efficiency");
+  h->Add(h1, 0.25);
+  h->Add(h2, 0.25);
+  h->Add(h3, 0.25);
+  h->Add(h4, 0.25);
+
+  double sum = sumEntries(h);
+  double mean = sum / (h->GetXaxis()->GetNbins() * h->GetYaxis()->GetNbins());
+
   setHistogram(h);
+
+  TLatex* latex = 0;
+  latex = RootPlot::newLatex(.3, .82);
+  latex->SetTitle(qPrintable(QString("mean efficiency = %1").arg(mean)));
+  addLatex(latex);
 }
 
 BarEfficiencyPlot::~BarEfficiencyPlot()
 {}
-
-TH2D* BarEfficiencyPlot::findHistogram(TCanvas* canvas)
-{
-  for (int i = 0; i < canvas->GetListOfPrimitives()->GetSize(); ++i) {
-    if (!strcmp(canvas->GetListOfPrimitives()->At(i)->ClassName(), "TH2D"))
-      return static_cast<TH2D*>(canvas->GetListOfPrimitives()->At(i));
-  }
-  return 0;
-}
 
 double BarEfficiencyPlot::sumEntries(TH2D* h)
 {

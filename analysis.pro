@@ -8,6 +8,7 @@ CONFIG += ordered
 
 SUBDIRS = \
   event \
+  global \
   tracking \
   setup \
   processing \

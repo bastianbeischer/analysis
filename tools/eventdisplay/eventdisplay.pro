@@ -22,7 +22,8 @@ LIBS += \
   -lprocessing \
   -lrootplot \
   -ltracking \
-  -lsetup
+  -lsetup \
+	-lglobal
 
 CLASSES+= \
   Plotter \

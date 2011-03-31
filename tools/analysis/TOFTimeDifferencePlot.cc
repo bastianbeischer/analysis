@@ -30,6 +30,7 @@ TOFTimeDifferencePlot::TOFTimeDifferencePlot(unsigned short id)
   histogram->GetYaxis()->SetTitle("x_{tracker} / mm");
   histogram->GetZaxis()->SetTitle("(t_{left} - t_{right}) / ns");
   setHistogram(histogram);
+  setDrawOption("SURF1");
 }
 
 TOFTimeDifferencePlot::~TOFTimeDifferencePlot()
@@ -98,12 +99,6 @@ void TOFTimeDifferencePlot::update()
     AnalysisPlot::update();
     m_updateCounter = 0;
   }
-}
-
-void TOFTimeDifferencePlot::draw(TCanvas* canvas)
-{
-  H2DPlot::draw(canvas);
-  histogram()->Draw("SURF1");
 }
 
 void TOFTimeDifferencePlot::finalize()

@@ -14,53 +14,76 @@
 
 #include <QDebug>
 
-TOTMomentumCorrelation::TOTMomentumCorrelation(unsigned int id)
-  : AnalysisPlot(AnalysisPlot::TimeOverThreshold)
-  , H2DPlot()
-  , m_id(id)
+TOTMomentumCorrelation::TOTMomentumCorrelation(TofLayer layer)
+: AnalysisPlot(AnalysisPlot::TimeOverThreshold)
+, H2DPlot()
+, m_layer(layer)
 {
-  
-  QString htitle =QString("time over threshold momentum correlation 0x%1").arg(m_id, 0, 16);
+  QString htitle = "time over threshold momentum correlation " + layerName(layer) + " tof";
   setTitle(htitle);
-  TH2D* histogram = new TH2D(qPrintable(title()), "", 50, 0, 5, 75, 0, 75);
+  TH2D* histogram = new TH2D(qPrintable(htitle), "", 100, 0, 10, 150, 0, 100);
   histogram->GetXaxis()->SetTitle("rigidity / GV");
-  histogram->GetYaxis()->SetTitle("time over threshold / ns");
+  histogram->GetYaxis()->SetTitle("mean time over threshold / ns");
   setHistogram(histogram);
-  addLatex(RootPlot::newLatex(.15, .85));
 }
 
 TOTMomentumCorrelation::~TOTMomentumCorrelation()
 {}
-
 
 void TOTMomentumCorrelation::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
 {
   if (!track || !track->fitGood())
     return;
   TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & (TrackInformation::AllTrackerLayers | TrackInformation::InsideMagnet)))
+  if (!(flags & (TrackInformation::Chi2Good | TrackInformation::InsideMagnet)))
     return;
-
+  double totSum = 0.;
+  int nTofHits = 0;
   const QVector<Hit*>::const_iterator endIt = clusters.end();
-  for (QVector<Hit*>::const_iterator it = clusters.begin(); it != endIt; ++it) {
-    Hit* hit = *it;
+  for (QVector<Hit*>::const_iterator clusterIt = clusters.begin(); clusterIt != endIt; ++clusterIt) {
+    Hit* hit = *clusterIt;
     if (hit->type() == Hit::tof) {
-      TOFCluster* cluster = static_cast<TOFCluster*> (hit);
-      if (qAbs(track->x(cluster->position().z()) - cluster->position().x()) > Constants::tofBarWidth)
+      TOFCluster* tofCluster = static_cast<TOFCluster*>(hit);
+      double z = tofCluster->position().z();
+      if (qAbs(track->x(z) - tofCluster->position().x()) > 0.95 * Constants::tofBarWidth / 2.)
         continue;
-      std::vector<Hit*>& subHits = cluster->hits();
+      if (!checkLayer(z))
+        continue;
+      std::vector<Hit*>& subHits = tofCluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
-        Hit* tofHit = *it;
-        if (tofHit->detId() == m_id) {
-          TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*> (tofHit);
-          histogram()->Fill(track->pt(), tofSipmHit->timeOverThreshold());
-        }
+        TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(*it);
+        totSum+= tofSipmHit->timeOverThreshold();
+        ++nTofHits;
       }
     }
   }
+  if (nTofHits > 0)
+    histogram()->Fill(track->pt(), totSum / nTofHits);
 }
 
-void TOTMomentumCorrelation::update() {
-  latex()->SetTitle(qPrintable(QString("#rho = %1").arg(histogram()->GetCorrelationFactor())));
+void TOTMomentumCorrelation::finalize() {
+  setDrawOption("CONT4 Z");
+}
+
+QString TOTMomentumCorrelation::layerName(TofLayer layer)
+{
+  switch (layer) {
+    case Lower: return "lower";
+    case Upper: return "upper";
+    case All: return "all";
+  }
+  return QString();
+}
+
+bool TOTMomentumCorrelation::checkLayer(double z)
+{
+  if (m_layer == Upper && z > 0) {
+    return true;
+  } else if (m_layer == Lower && z < 0) {
+    return true;
+  } else if (m_layer == All) {
+    return true;
+  }
+  return false;
 }
