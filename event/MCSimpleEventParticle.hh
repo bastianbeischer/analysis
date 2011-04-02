@@ -10,6 +10,7 @@ class MCSimpleEventParticle :
     public TObject
 {
 public:
+  MCSimpleEventParticle();
   int pdgID;
   int trackID;
   int parentTrackID;

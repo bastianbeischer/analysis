@@ -10,6 +10,11 @@ MCSimpleEventDigi::MCSimpleEventDigi(Hit::ModuleType type, unsigned short detID)
 {
 }
 
+MCSimpleEventDigi::MCSimpleEventDigi()
+  : TObject()
+{
+}
+
 MCSimpleEventDigi::~MCSimpleEventDigi()
 {
   for (unsigned int i = 0; i < m_signals.size(); i++) {

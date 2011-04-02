@@ -14,6 +14,7 @@ class MCSimpleEventDigi :
     public TObject
 {
 public:
+  MCSimpleEventDigi();
   MCSimpleEventDigi(Hit::ModuleType, unsigned short);
   ~MCSimpleEventDigi();
 
@@ -22,6 +23,8 @@ public:
   const std::vector<const MCDigiSignal*>& Signals() const {return m_signals;}
 
   void AddSignal(const MCDigiSignal* signal) {m_signals.push_back(signal);}
+  void DetID(unsigned short id) {m_detID = id;}
+  void Type(Hit::ModuleType type) {m_type = type;}
 
 
 private:
