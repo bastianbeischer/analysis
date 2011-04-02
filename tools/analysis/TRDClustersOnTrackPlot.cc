@@ -4,7 +4,7 @@
 
 #include "Hit.hh"
 #include "Cluster.hh"
-
+#include "SimpleEvent.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
 
@@ -16,13 +16,16 @@ TRDClustersOnTrackPlot::TRDClustersOnTrackPlot(AnalysisPlot::Topic topic) :
   TH1D* histogram = new TH1D(qPrintable(title()), "", 11, -0.5, 10.5);
   histogram->SetStats(true);
   addHistogram(histogram);
+  TH1D* histogramMC = new TH1D(qPrintable(title()+"MC"), "MC", 11, -0.5, 10.5);
+  histogramMC->SetLineColor(kRed);
+  addHistogram(histogramMC);
 }
 
 TRDClustersOnTrackPlot::~TRDClustersOnTrackPlot()
 {
 }
 
-void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/,Track* track ,SimpleEvent* /*event*/)
+void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/,Track* track ,SimpleEvent* event)
 {
 
   //check if everything worked and a track has been fit
@@ -41,7 +44,11 @@ void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/,Track* t
       ++nTRDHits;
   }
 
-  histogram(0)->Fill(nTRDHits);
+  if (event->contentType() == SimpleEvent::MonteCarlo)
+    histogram(1)->Fill(nTRDHits);
+  else
+    histogram(0)->Fill(nTRDHits);
+
 
 }
 

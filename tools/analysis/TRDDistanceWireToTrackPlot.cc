@@ -5,6 +5,7 @@
 #include <TH1D.h>
 
 #include "Cluster.hh"
+#include "SimpleEvent.hh"
 #include "Constants.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
@@ -18,13 +19,16 @@ TRDDistanceWireToTrackPlot::TRDDistanceWireToTrackPlot(AnalysisPlot::Topic topic
   TH1D* histogram = new TH1D(qPrintable(title()), qPrintable(title() + ";distance / mm; entries"), 100, -15, 15);
   histogram->SetStats(true);
   addHistogram(histogram);
+  TH1D* histogramMC = new TH1D(qPrintable(title() + " MC"), qPrintable(title() + " MC;distance / mm; entries"), 100, -15, 15);
+  histogramMC->SetLineColor(kRed);
+  addHistogram(histogramMC);
 }
 
 TRDDistanceWireToTrackPlot::~TRDDistanceWireToTrackPlot()
 {
 }
 
-void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent* /*event*/)
+void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent* event)
 {
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
@@ -57,11 +61,16 @@ void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& /*hits*/, Tra
     Cluster* cluster = static_cast<Cluster*>(*it);
     if (cluster->type() == Hit::trd) {
       double distanceWireToTrack = TRDCalculations::distanceTrackToWire(cluster, track);
-      histogram(0)->Fill(distanceWireToTrack);
+      if (event->contentType() == SimpleEvent::MonteCarlo)
+        histogram(1)->Fill(distanceWireToTrack);
+      else
+        histogram(0)->Fill(distanceWireToTrack);
     }
   }
 }
 
 void TRDDistanceWireToTrackPlot::finalize()
 {
+  histogram(0)->Scale(1./histogram(0)->Integral("width"));
+  histogram(1)->Scale(1./histogram(1)->Integral("width"));
 }

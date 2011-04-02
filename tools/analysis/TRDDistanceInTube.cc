@@ -3,6 +3,7 @@
 #include <TH1D.h>
 
 #include "Cluster.hh"
+#include "SimpleEvent.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
 #include "TRDCalculations.hh"
@@ -15,13 +16,16 @@ TRDDistanceInTube::TRDDistanceInTube(AnalysisPlot::Topic topic) :
   TH1D* histogram = new TH1D(qPrintable(title()), qPrintable(title() + ";distance / mm; entries"), 100, 0, 12);
   histogram->SetStats(true);
   addHistogram(histogram);
+  TH1D* histogramMC = new TH1D(qPrintable(title()+"MC"), qPrintable(title() + "MC;distance / mm; entries"), 100, 0, 12);
+  histogramMC->SetLineColor(kRed);
+  addHistogram(histogramMC);
 }
 
 TRDDistanceInTube::~TRDDistanceInTube()
 {
 }
 
-void TRDDistanceInTube::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent* /*event*/)
+void TRDDistanceInTube::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent* event)
 {
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
@@ -53,12 +57,18 @@ void TRDDistanceInTube::processEvent(const QVector<Hit*>& /*hits*/, Track* track
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       Hit* subHit = *it;
       double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(subHit, track);
-      if(distanceInTube > 0)
-        histogram(0)->Fill(distanceInTube);
+      if(distanceInTube > 0){
+        if (event->contentType() == SimpleEvent::MonteCarlo)
+          histogram(1)->Fill(distanceInTube);
+        else
+          histogram(0)->Fill(distanceInTube);
+      }
     }
   }
 }
 
 void TRDDistanceInTube::finalize()
 {
+  histogram(0)->Scale(1./histogram(0)->Integral("width"));
+  histogram(1)->Scale(1./histogram(1)->Integral("width"));
 }
