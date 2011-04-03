@@ -114,6 +114,8 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
     for (int i = 0; i < nMax; i++) {
       if (!id->IsTOF()) {
         Calibration* cali = file->getCalibrationForDetector(id, i);
+        if (cali)
+          qDebug("didnt get cali for 0x%x i=%i", id->GetID16(), i);
         Q_ASSERT(cali);
         cali->GetAmplitudes(values + i*nValues/nMax, temp + i*nValues/nMax);
       }
@@ -205,6 +207,13 @@ const MCEventInformation* Converter::generateNextMCEventInformation(const MCSing
   }
 
 
+  //get all digis:
+  const QVector<const MCSimpleEventDigi*> digis = getAllMCDigis(mcEvent);
+
+  foreach (const MCSimpleEventDigi* digi, digis)
+    mcEventInfo->addMcDigis(digi);
+
+
   delete mcEvent;
 
   return mcEventInfo;
@@ -249,6 +258,8 @@ const QVector<const MCSimpleEventDigi*> Converter::getAllMCDigis(const MCEvent* 
   //get all digis of MCEvent:
   QVector<MCDigi*> mcDigis = mcEvent->GetDigis();
 
+  qDebug("read %i digis from raw MC file", mcDigis.size());
+
   QVector<const MCSimpleEventDigi*> seDigis;
   //loop over all digis and convert:
   for (int i = 0; i < mcDigis.size(); ++i)
@@ -264,6 +275,8 @@ const QVector<const MCSimpleEventDigi*> Converter::getAllMCDigis(const MCEvent* 
     else if (id->IsTOF())
       moduleType = Hit::tof;
 
+
+    qDebug("got digi type %i with id 0x%x",moduleType,id->GetID16());
     MCSimpleEventDigi* seDigi = new MCSimpleEventDigi(moduleType, id->GetID16());
 
     //convert all Signals:
