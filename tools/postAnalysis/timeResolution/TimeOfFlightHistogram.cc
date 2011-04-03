@@ -7,6 +7,7 @@
 #include <TAxis.h>
 #include <TList.h>
 #include <TF1.h>
+#include <TLatex.h>
 
 #include <iostream>
 #include <iomanip>
@@ -51,6 +52,13 @@ TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin
   //std::cout << "0x" <<std::hex << id << "=" << -m_fitFunction->GetParameter(1) << std::endl;
   addHistogram(projection);
   addFunction(function);
+  TLatex* latex = 0;
+  latex = RootPlot::newLatex(0.15, 0.85);
+  latex->SetTitle(qPrintable(QString("mean   = %1 ns").arg(function->GetParameter(1), 0, 'f', 3, ' ')));
+  addLatex(latex);
+  latex = RootPlot::newLatex(0.15, 0.82);
+  latex->SetTitle(qPrintable(QString("#sigma = %1 ns").arg(function->GetParameter(2), 0, 'f', 3, ' ')));
+  addLatex(latex);
 }
 
 TimeOfFlightHistogram::~TimeOfFlightHistogram()
