@@ -23,8 +23,7 @@ TOTLayerPlot::TOTLayerPlot(TofLayer layer)
   QString title = QString("time over threshold "+layerName(layer)+" layer");
   setTitle(title);
   TH1D* histogram = new TH1D(qPrintable(title), "", 150, 0, 100);
-  histogram->GetXaxis()->SetTitleOffset(1.4);
-  histogram->GetXaxis()->SetTitle("mean time over threshold / ns");
+  setAxisTitle("mean time over threshold / ns", "");
   addHistogram(histogram);
 }
 

@@ -21,9 +21,14 @@ public:
   TH2D* histogram();
   void setHistogram(TH2D*);
   void setPalette(RootStyle::PaletteType);
-private:
+  void setAxisTitle(const QString&, const QString&, const QString&);
+protected:
   TH2D* m_histogram;
+private:
   RootStyle::PaletteType m_palette;
+  QString m_xAxisTitle;
+  QString m_yAxisTitle;
+  QString m_zAxisTitle;
   static const QVector<DrawOption> s_drawOptions;
 };
 

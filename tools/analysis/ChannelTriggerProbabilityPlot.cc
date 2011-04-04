@@ -12,6 +12,7 @@
 #include <TVector3.h>
 #include <TLatex.h>
 #include <TF1.h>
+#include <THStack.h>
 
 #include <QDebug>
 
@@ -22,8 +23,6 @@ ChannelTriggerProbabilityPlot::ChannelTriggerProbabilityPlot()
 {
   setTitle("channel trigger probability");
   TH1D* histogram = new TH1D(qPrintable(title()), "", Constants::nTofChannels, 0, Constants::nTofChannels);
-  for (int ch = 0; ch < Constants::nTofChannels; ++ch)
-    histogram->GetXaxis()->SetBinLabel(ch + 1, qPrintable(QString("0x%1").arg(0x8000 | ch, 0, 16)));
   addHistogram(histogram);
 }
 
@@ -70,4 +69,15 @@ void ChannelTriggerProbabilityPlot::processEvent(const QVector<Hit*>& clusters, 
 void ChannelTriggerProbabilityPlot::finalize()
 {
   histogram()->Divide(m_normalizationHistogram);
+}
+  
+void ChannelTriggerProbabilityPlot::draw(TCanvas* canvas)
+{
+  if (m_drawn) {
+    H1DPlot::draw(canvas);
+  } else {
+    H1DPlot::draw(canvas);
+    for (int ch = 0; ch < Constants::nTofChannels; ++ch)
+      m_stack->GetXaxis()->SetBinLabel(ch + 1, qPrintable(QString("0x%1").arg(0x8000 | ch, 0, 16)));
+  }
 }

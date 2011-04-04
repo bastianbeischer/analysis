@@ -25,7 +25,7 @@ TOFTimeShiftTriggerPlot::TOFTimeShiftTriggerPlot()
     nBins, min-.5*(max-min)/nBins, max-.5*(max-min)/nBins);
   for (int ch = 0; ch < Constants::nTofChannels; ++ch)
     histogram->GetXaxis()->SetBinLabel(ch + 1, qPrintable(QString("0x%1").arg(0x8000 | ch, 0, 16)));
-  histogram->GetYaxis()->SetTitle("#Deltat / ns");
+  setAxisTitle("", "#Deltat / ns", "");
   setHistogram(histogram);
 }
 

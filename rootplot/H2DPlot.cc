@@ -12,6 +12,9 @@ H2DPlot::H2DPlot()
   : RootPlot()
   , m_histogram()
   , m_palette(RootStyle::DefaultPalette)
+  , m_xAxisTitle()
+  , m_yAxisTitle()
+  , m_zAxisTitle()
 {
   m_drawOption = COLZ;
   m_type = RootPlot::H2DPlot;
@@ -31,9 +34,13 @@ void H2DPlot::draw(TCanvas* canvas)
 {
   if (!m_histogram)
     return;
-  RootStyle::setPalette(m_palette);
   canvas->cd();
+  canvas->Clear();
+  RootStyle::setPalette(m_palette);
+  if (!m_drawn)
+    m_histogram->SetTitle(qPrintable(";" + m_xAxisTitle + ";" + m_yAxisTitle + ";" + m_zAxisTitle));
   m_histogram->Draw(qPrintable(drawOption(m_drawOption)));
+  m_drawn = true;
   RootPlot::draw(canvas);
 }
 
@@ -68,4 +75,11 @@ void H2DPlot::setHistogram(TH2D* h)
 const QVector<RootPlot::DrawOption>& H2DPlot::drawOptions()
 {
   return s_drawOptions;
+}
+  
+void H2DPlot::setAxisTitle(const QString& x, const QString& y, const QString& z)
+{
+  m_xAxisTitle = x;
+  m_yAxisTitle = y;
+  m_zAxisTitle = z;
 }

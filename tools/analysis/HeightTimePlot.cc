@@ -10,7 +10,7 @@
 HeightTimePlot::HeightTimePlot(QDateTime first, QDateTime last)
   : SensorTimePlot(SensorTypes::EBASS_HEIGHT, first, last)
 {
-  histogram()->GetYaxis()->SetTitle("height / km");
+  setAxisTitle("time", "height / km");
 }
 
 void HeightTimePlot::processEvent(const QVector<Hit*>&, Track*, SimpleEvent* event)

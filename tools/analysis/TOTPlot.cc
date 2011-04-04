@@ -23,9 +23,7 @@ TOTPlot::TOTPlot()
   TH2D* histogram = new TH2D(qPrintable(title), "", 64, -0.5, 63.5, 150, 0, 150);
   for (int ch = 0; ch < 64; ++ch)
     histogram->GetXaxis()->SetBinLabel(1 + ch, qPrintable(QString("%1").arg(0x8000 | ch, 0, 16)));
-  histogram->GetXaxis()->SetTitleOffset(1.4);
-  histogram->GetXaxis()->SetTitle("channel ID");
-  histogram->GetYaxis()->SetTitle("time over threshold / ns");
+  setAxisTitle("", "time over threshold / ns", "");
   setHistogram(histogram);
 }
 

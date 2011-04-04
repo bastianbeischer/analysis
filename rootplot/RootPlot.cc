@@ -9,6 +9,7 @@ RootPlot::RootPlot()
   : m_title(QString())
   , m_drawOption(UndefinedDrawOption)
   , m_type(Undefined)
+  , m_drawn(false)
   , m_latex(QVector<TLatex*>())
   , m_legend(QVector<TLegend*>())
   , m_function(QVector<TF1*>())
@@ -82,6 +83,8 @@ TF1* RootPlot::function(int i)
 QString RootPlot::drawOption(DrawOption option)
 {
   switch (option) {
+    case BLANK: return "";
+    case NOSTACK: return "NOSTACK";
     case COLZ: return "COLZ";
     case CONT4Z: return "CONT4 Z";
     case LEGO: return "LEGO";

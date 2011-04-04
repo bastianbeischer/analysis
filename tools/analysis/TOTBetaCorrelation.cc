@@ -22,8 +22,7 @@ TOTBetaCorrelation::TOTBetaCorrelation(TofLayer layer)
   QString htitle = "time over threshold beta correlation " + layerName(layer) + " tof";
   setTitle(htitle);
   TH2D* histogram = new TH2D(qPrintable(htitle), "", 100, 0, 1.6, 150, 0, 100);
-  histogram->GetXaxis()->SetTitle("beta");
-  histogram->GetYaxis()->SetTitle("sum time over threshold / ns");
+  setAxisTitle("beta", "sum time over threshold / ns", "");
   setHistogram(histogram);
 }
 

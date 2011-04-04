@@ -29,8 +29,7 @@ Chi2Plot::Chi2Plot(unsigned short ndf) :
   double x1 = 100.;
 
   TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, x0, x1);
-  histogram->GetXaxis()->SetTitle("#chi^{2}");
-  histogram->GetYaxis()->SetTitle("entries");
+  setAxisTitle("#chi^{2}", "");
   addHistogram(histogram);
 
   TF1* chi2function = new TF1("chi2function", chisquare, x0, x1, 2);

@@ -14,8 +14,7 @@ GeometricOccupancyPlot::GeometricOccupancyPlot(double zPosition)
 {
   setTitle(QString("occupancy %1").arg(zPosition));
   TH2D* histogram = new TH2D(qPrintable(title()), "", 100, -250, 250, 120, -120, 120);
-  histogram->GetXaxis()->SetTitle("y / mm");
-  histogram->GetYaxis()->SetTitle("x / mm");
+  setAxisTitle("y / mm", "x / mm", "");
   setHistogram(histogram);
 }
 

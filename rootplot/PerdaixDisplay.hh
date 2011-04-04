@@ -8,8 +8,7 @@ class TCanvas;
 class TBox;
 class TGaxis;
 
-class PerdaixDisplay :
-  public H2DPlot
+class PerdaixDisplay : public H2DPlot
 {
   
 public:

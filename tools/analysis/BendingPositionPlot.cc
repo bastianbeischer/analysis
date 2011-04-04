@@ -12,7 +12,7 @@ BendingPositionPlot::BendingPositionPlot()
 {
   setTitle("bending position");
   TH1D* histogram = new TH1D("bending position", "", 1000, -1000, 1000);
-  histogram->GetXaxis()->SetTitle("z / mm");
+  setAxisTitle("z / mm", "");
   addHistogram(histogram);
 }
 

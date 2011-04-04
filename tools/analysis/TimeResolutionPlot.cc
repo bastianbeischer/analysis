@@ -31,8 +31,7 @@ TimeResolutionPlot::TimeResolutionPlot(unsigned short idTop1, unsigned short idT
   setTitle(title);
   TH2D* histogram = new TH2D(qPrintable(title), "",
     5, -Constants::tofBarLength / 2., Constants::tofBarLength / 2., 30, 0, 6);
-  histogram->GetXaxis()->SetTitle("y / mm");
-  histogram->GetYaxis()->SetTitle("#Deltat / ns");
+  setAxisTitle("y / mm", "#Deltat / ns", "");
   setHistogram(histogram);
 }
 

@@ -7,6 +7,7 @@
 
 class TCanvas;
 class TH1D;
+class THStack;
 
 class H1DPlot : virtual public RootPlot {
 public:
@@ -15,13 +16,18 @@ public:
   static const QVector<DrawOption>& drawOptions();
   virtual void draw(TCanvas*);
   virtual void unzoom();
-  void clear();
+  virtual void clear();
   virtual void clear(int);
   int numberOfHistograms();
   TH1D* histogram(int i = 0);
-  void addHistogram(TH1D*);
+  void setAxisTitle(const QString&, const QString&);
+  void addHistogram(TH1D*, DrawOption = BLANK);
+protected:
+  THStack* m_stack;
 private:
   QVector<TH1D*> m_histograms;
+  QString m_xAxisTitle;
+  QString m_yAxisTitle;
   static const QVector<DrawOption> s_drawOptions;
 };
 

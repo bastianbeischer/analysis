@@ -6,5 +6,5 @@
 TemperatureTimePlot::TemperatureTimePlot(SensorTypes::Type type, QDateTime first, QDateTime last)
   : SensorTimePlot(type, first, last)
 {
-  histogram()->GetYaxis()->SetTitle("#vartheta / #circC");
+  setAxisTitle("time", "#vartheta / #circC");
 }

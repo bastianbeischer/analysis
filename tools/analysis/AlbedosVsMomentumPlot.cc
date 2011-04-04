@@ -12,6 +12,7 @@ AlbedosVsMomentumPlot::AlbedosVsMomentumPlot() :
   m_totalHisto(0)
 {
   setTitle("Albedos vs Momentum");
+  setAxisTitle("R / GV", "");
 
   int nBins = 100;
   TH1D* histogram = 0;
@@ -23,28 +24,20 @@ AlbedosVsMomentumPlot::AlbedosVsMomentumPlot() :
   // ratio histo
   histoTitle = title();
   histogram = new TH1D(qPrintable(histoTitle), qPrintable(histoTitle), nBins, lowerBound, upperBound);
-  histogram->GetXaxis()->SetTitle("R / GV");
-  histogram->GetYaxis()->SetTitle("entries");
   histogram->SetLineColor(kBlack);
   addHistogram(histogram);
 
   // total histo
   histoTitle = title() + " - All";
   histogram = new TH1D(qPrintable(histoTitle), qPrintable(histoTitle), nBins, lowerBound, upperBound);
-  histogram->GetXaxis()->SetTitle("R / GV");
-  histogram->GetYaxis()->SetTitle("entries");
   histogram->SetLineColor(kBlack);
   m_totalHisto = histogram;
 
   // albedo histo
   histoTitle = title() + " - Albedos";
   histogram = new TH1D(qPrintable(histoTitle), qPrintable(histoTitle), nBins, lowerBound, upperBound);
-  histogram->GetXaxis()->SetTitle("R / GV");
-  histogram->GetYaxis()->SetTitle("entries");
   histogram->SetLineColor(kRed);
   m_albedoHisto = histogram;
-
-  // addLatex(RootPlot::newLatex(.15, .85));
 }
 
 AlbedosVsMomentumPlot::~AlbedosVsMomentumPlot()

@@ -15,9 +15,7 @@ CutStatisticsPlot::CutStatisticsPlot() :
   histogram->GetXaxis()->SetNdivisions(8);
   histogram->GetYaxis()->SetNdivisions(520);
   histogram->SetMinimum(0.);
-  histogram->GetXaxis()->SetTitle("cut number");
-  histogram->GetYaxis()->SetTitle("relative entries after cut");
-  histogram->GetYaxis()->SetTitleOffset(1.5);
+  setAxisTitle("cut number", "relative entries after cut");
   addHistogram(histogram);
   addLatex(RootPlot::newLatex(0., 0.));
   addLatex(RootPlot::newLatex(1., 0.));

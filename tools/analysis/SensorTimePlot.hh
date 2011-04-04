@@ -16,6 +16,7 @@ public:
   virtual ~SensorTimePlot();
   virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
   virtual void finalize();
+  virtual void draw(TCanvas* canvas);
 protected:
   SensorTypes::Type m_type;
   TH1D* m_normalizationHistogram;

@@ -18,10 +18,8 @@ TRDEnergyDepositionOverMomentumPlot::TRDEnergyDepositionOverMomentumPlot(Analysi
 {
   setTitle("TRD energy deposition over momentum");
   //  setMultiGraphTitle(qPrintable(title() + ";rigidity / GV; energy deposition / (ADCCounts per mm per tube "));
-
   TH2D* histo = new TH2D(qPrintable(title()), qPrintable(title()), 200, -10, 10, 200, 0, 60);
-  histo->GetXaxis()->SetTitle("R / GV");
-  histo->GetYaxis()->SetTitle("dE/dx");
+  setAxisTitle("R / GV", "dE/dx", "");
   setHistogram(histo);
 }
 

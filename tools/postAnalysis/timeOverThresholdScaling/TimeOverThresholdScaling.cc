@@ -34,19 +34,16 @@ TimeOverThresholdScaling::TimeOverThresholdScaling(PostAnalysisCanvas* canvas, u
   setTitle(title);
   TGraphErrors* graph = new TGraphErrors(TimeOverThresholdScaling::timeOverThresholdScalingGraphs[tofId]);
   addGraph(graph, "P");
-  QString graphTitle = title + ";temperature /  #circ C;time over threshold / ns";
-  multiGraph()->SetTitle(qPrintable(graphTitle));
+  setAxisTitle("temperature /  #circC", "time over threshold / ns");
   
   TLatex* latex = 0;
-
   latex = RootPlot::newLatex(.67, .85);
   latex->SetTitle(qPrintable(QString("id = 0x%1").arg(QString::number(tofId, 16))));
   addLatex(latex);
-  }
+}
 
 TimeOverThresholdScaling::~TimeOverThresholdScaling()
 {
-
 }
 
 void TimeOverThresholdScaling::scaling(unsigned int tofId, TH2D* histogram) 

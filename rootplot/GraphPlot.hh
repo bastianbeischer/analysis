@@ -21,10 +21,13 @@ public:
   virtual void clear(int);
   void addGraph(TGraph*, const char* = "");
   int numberOfGraphs() const;
+  void setAxisTitle(const QString&, const QString&);
   TGraph* graph(int i = 0);
-  TMultiGraph* multiGraph();
 protected:
   TMultiGraph* m_multiGraph;
+private:
+  QString m_xAxisTitle;
+  QString m_yAxisTitle;
   static const QVector<DrawOption> s_drawOptions;
 };
 

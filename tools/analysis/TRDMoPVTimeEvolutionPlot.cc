@@ -53,7 +53,7 @@ TRDMoPVTimeEvolutionPlot::TRDMoPVTimeEvolutionPlot(AnalysisPlot::Topic topic) :
       m_mopvGraphs.insert(element->id(),g);
     }
   }
-  multiGraph()->SetTitle(qPrintable(title() + ";Run;MoPV"));
+  setAxisTitle("Run", "MoPV");
 
   addLegend(legend);
 }
@@ -170,14 +170,12 @@ void TRDMoPVTimeEvolutionPlot::updateGraph()
     }
   }
 
-  TAxis* multiAxis = multiGraph()->GetXaxis();
-  if (multiAxis) {
-    multiGraph()->GetXaxis()->SetLimits(m_binningMap.keys().first(), m_binningMap.keys().last()) ;
-    m_graphNeedsUpdate = false ;
+  if (m_drawn) {
+    m_multiGraph->GetXaxis()->SetLimits(m_binningMap.keys().first(), m_binningMap.keys().last()) ;
+    m_graphNeedsUpdate = false;
   } else {
-    m_graphNeedsUpdate = true ;
+    m_graphNeedsUpdate = true;
   }
-
 }
 
 

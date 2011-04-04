@@ -42,6 +42,7 @@ TrackerTemperaturePlot::TrackerTemperaturePlot(const QVector<PostAnalysisCanvas*
     addGraph(g, "P");
     //qDebug() << hex << id << "->" << layer(position.z()) << position.x() << position.y() << position.z();
   }
+  setAxisTitle("time", "#vartheta / #circC");
 }
 
 TrackerTemperaturePlot::~TrackerTemperaturePlot()
@@ -63,10 +64,8 @@ int TrackerTemperaturePlot::layer(double z)
 void TrackerTemperaturePlot::draw(TCanvas* canvas)
 {
   GraphPlot::draw(canvas);
-  multiGraph()->GetXaxis()->SetTimeDisplay(1);
-  multiGraph()->GetXaxis()->SetTimeFormat("%d-%H:%M");
-  multiGraph()->GetXaxis()->SetTitle("time");
-  multiGraph()->GetYaxis()->SetTitle("#vartheta / #circC");
+  m_multiGraph->GetXaxis()->SetTimeDisplay(1);
+  m_multiGraph->GetXaxis()->SetTimeFormat("%d-%H:%M");
   gPad->Modified();
   gPad->Update();
 }

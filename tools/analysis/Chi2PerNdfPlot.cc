@@ -17,8 +17,7 @@ Chi2PerNdfPlot::Chi2PerNdfPlot() :
   double x1 = 10.;
 
   TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, x0, x1);
-  histogram->GetXaxis()->SetTitle("#chi^{2} / ndf");
-  histogram->GetYaxis()->SetTitle("entries");
+  setAxisTitle("#chi^{2} / ndf", "");
   addHistogram(histogram);
 
   addLatex(RootPlot::newLatex(.55, .85));

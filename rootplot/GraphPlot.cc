@@ -10,6 +10,8 @@ const QVector<RootPlot::DrawOption> GraphPlot::s_drawOptions = QVector<DrawOptio
 
 GraphPlot::GraphPlot()
   : m_multiGraph(new TMultiGraph)
+  , m_xAxisTitle()
+  , m_yAxisTitle()
 {
   m_type = RootPlot::GraphPlot;
 }
@@ -23,13 +25,16 @@ void GraphPlot::draw(TCanvas* canvas)
 {
   canvas->cd();
   canvas->Clear();
+  if (!m_drawn)
+    m_multiGraph->SetTitle(qPrintable(";" + m_xAxisTitle + ";" + m_yAxisTitle));
   m_multiGraph->Draw("A");
+  m_drawn = true;
   RootPlot::draw(canvas);
 }
 
 void GraphPlot::unzoom()
 {
-  if (m_multiGraph->GetXaxis() && m_multiGraph->GetYaxis()) {
+  if (m_drawn) {
     m_multiGraph->GetXaxis()->UnZoom();
     m_multiGraph->GetYaxis()->UnZoom();
   }
@@ -66,12 +71,13 @@ TGraph* GraphPlot::graph(int i)
   return static_cast<TGraph*>(graphs->At(i));
 }
 
-TMultiGraph* GraphPlot::multiGraph()
-{
-  return m_multiGraph;
-}
-
 const QVector<RootPlot::DrawOption>& GraphPlot::drawOptions()
 {
   return s_drawOptions;
+}
+
+void GraphPlot::setAxisTitle(const QString& x, const QString& y)
+{
+  m_xAxisTitle = x;
+  m_yAxisTitle = y;
 }

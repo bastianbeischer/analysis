@@ -28,8 +28,7 @@ MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot() :
   double y1 = m_nLayers+0.5;
   
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, x0, x1, nBinsY, y0, y1);
-  histogram->GetXaxis()->SetTitle("rigidity / GV");
-  histogram->GetYaxis()->SetTitle("layer number");
+  setAxisTitle("R / GV", "layer number", "");
   setHistogram(histogram);
 
   m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBinsX, x0, x1);

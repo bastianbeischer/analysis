@@ -22,8 +22,7 @@ TOTMomentumCorrelation::TOTMomentumCorrelation(TofLayer layer)
   QString htitle = "time over threshold momentum correlation " + layerName(layer) + " tof";
   setTitle(htitle);
   TH2D* histogram = new TH2D(qPrintable(htitle), "", 100, 0, 10, 150, 0, 100);
-  histogram->GetXaxis()->SetTitle("rigidity / GV");
-  histogram->GetYaxis()->SetTitle("mean time over threshold / ns");
+  setAxisTitle("rigidity / GV", "mean time over threshold / ns", "");
   setHistogram(histogram);
 }
 

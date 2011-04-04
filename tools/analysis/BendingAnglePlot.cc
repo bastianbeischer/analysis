@@ -14,9 +14,9 @@ BendingAnglePlot::BendingAnglePlot()
   , H1DPlot()
 {
   setTitle("bending angle");
+  setAxisTitle("bending angle / rad", "");
   TH1D* histogram = 0;
   histogram = new TH1D("bending angle all tracks", "", 400, -.2, .2);
-  histogram->GetXaxis()->SetTitle("bending angle / rad");
   addHistogram(histogram);
   histogram = new TH1D("bending angle insige magnet", "", 400, -.2, .2);
   histogram->SetLineColor(kRed);

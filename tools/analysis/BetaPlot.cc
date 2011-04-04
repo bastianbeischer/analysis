@@ -24,7 +24,7 @@ BetaPlot::BetaPlot()
 {
   setTitle("beta");
   TH1D* histogram = new TH1D(qPrintable(title()), "", 200, -10, 10);
-  histogram->GetXaxis()->SetTitle("1 / #beta");
+  setAxisTitle("1 / #beta", "");
   addHistogram(histogram);
   addLatex(RootPlot::newLatex(.15, .85));
   addLatex(RootPlot::newLatex(.15, .82));

@@ -3,6 +3,8 @@
 
 #include <TH1.h>
 #include <TAxis.h>
+#include <TPad.h>
+#include <THStack.h>
 
 #include <QDebug>
 
@@ -17,9 +19,7 @@ TriggerRateTimePlot::TriggerRateTimePlot(QDateTime first, QDateTime last)
   t2+= 120 - (t2 % 60);
   int nBins = (t2 - t1) / 60;
   TH1D* histogram = new TH1D("trigger rate", "", nBins, t1, t2);
-  histogram->GetXaxis()->SetTimeDisplay(1);
-  histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");
-  histogram->GetXaxis()->SetTitle("time");
+  setAxisTitle("time", "trigger rate / Hz");
   addHistogram(histogram);
 }
 
@@ -40,5 +40,17 @@ void TriggerRateTimePlot::finalize()
   //histogram()->Scale(1./binWidth); //Cannot be used due to a ROOT bug leading to a rebin of the x axis.
   for (int bin = 1; bin <= histogram()->GetXaxis()->GetNbins(); ++bin)
     histogram()->SetBinContent(bin, histogram()->GetBinContent(bin) / binWidth);
-  histogram()->GetYaxis()->SetTitle("trigger rate / Hz");
+}
+
+void TriggerRateTimePlot::draw(TCanvas* canvas)
+{
+  if (m_drawn) {
+    H1DPlot::draw(canvas);
+  } else {
+    H1DPlot::draw(canvas);
+    m_stack->GetXaxis()->SetTimeDisplay(1);
+    m_stack->GetXaxis()->SetTimeFormat("%d-%H:%M");
+    gPad->Modified();
+    gPad->Update();
+  }
 }

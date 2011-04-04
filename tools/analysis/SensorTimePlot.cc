@@ -5,6 +5,8 @@
 
 #include <TH2.h>
 #include <TAxis.h>
+#include <THStack.h>
+#include <TPad.h>
 
 #include <math.h>
 
@@ -25,9 +27,6 @@ SensorTimePlot::SensorTimePlot(SensorTypes::Type type, QDateTime first, QDateTim
   TH1D* histogram = 0;
   
   histogram = new TH1D(qPrintable(title()), "", nBins, t1, t2);
-  histogram->GetXaxis()->SetTimeDisplay(1);
-  histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");
-  histogram->GetXaxis()->SetTitle("time");
   addHistogram(histogram);
   
   m_normalizationHistogram = new TH1D(qPrintable(title() + "normalization"), "", nBins, t1, t2);
@@ -55,5 +54,18 @@ void SensorTimePlot::finalize()
     double n = m_normalizationHistogram->GetBinContent(bin);
     if (n > 0)
       histogram()->SetBinContent(bin, histogram()->GetBinContent(bin) / n);
+  }
+}
+
+void SensorTimePlot::draw(TCanvas* canvas)
+{
+  if (m_drawn) {
+    H1DPlot::draw(canvas);
+  } else {
+    H1DPlot::draw(canvas);
+    m_stack->GetXaxis()->SetTimeDisplay(1);
+    m_stack->GetXaxis()->SetTimeFormat("%d-%H:%M");
+    gPad->Modified();
+    gPad->Update();
   }
 }

@@ -29,7 +29,7 @@ TriggerRateHeightCorrelationPlot::TriggerRateHeightCorrelationPlot(PostAnalysisC
   g->SetMarkerStyle(20);
   g->SetMarkerSize(0.4);
   addGraph(g, "P");
-  multiGraph()->SetTitle(";height / km;trigger rate / Hz");
+  setAxisTitle("height / km", "trigger rate / Hz");
 }
 
 TriggerRateHeightCorrelationPlot::~TriggerRateHeightCorrelationPlot()

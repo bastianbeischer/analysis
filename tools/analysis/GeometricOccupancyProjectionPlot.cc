@@ -16,7 +16,7 @@ GeometricOccupancyProjectionPlot::GeometricOccupancyProjectionPlot(double zPosit
 {
   setTitle(QString("occupancy projection %1").arg(zPosition));
   TH1D* histogram = new TH1D(qPrintable(title()), "", 240, -120, 120);
-  histogram->GetXaxis()->SetTitle("x / mm");
+  setAxisTitle("x / mm", "");
   addHistogram(histogram);
 }
 

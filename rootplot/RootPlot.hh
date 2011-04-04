@@ -12,8 +12,12 @@ class TF1;
 class RootPlot
 {
 public:
-  enum DrawOption {UndefinedDrawOption = -1, COLZ, CONT4Z, LEGO, LEGO2, LEGOCOLZ, SURF1, COLZTEXT};
-  enum Type {Undefined = -1, H1DPlot, H2DPlot, GraphPlot};
+  enum DrawOption {
+    UndefinedDrawOption,
+    BLANK, NOSTACK,
+    COLZ, CONT4Z, LEGO, LEGO2, LEGOCOLZ, SURF1, COLZTEXT
+  };
+  enum Type {Undefined, H1DPlot, H2DPlot, GraphPlot};
 
   RootPlot();
   virtual ~RootPlot();
@@ -35,10 +39,12 @@ public:
   DrawOption drawOption();
   void setDrawOption(DrawOption);
   Type type() {return m_type;}
+  bool drawn() const {return m_drawn;}
 protected:
   QString m_title;
   DrawOption m_drawOption;
   Type m_type;
+  bool m_drawn;
 private:
   QVector<TLatex*> m_latex;
   QVector<TLegend*> m_legend;

@@ -25,8 +25,7 @@ Chi2VsMomentumPlot::Chi2VsMomentumPlot() :
   double y1 = 10.;
   
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, x0, x1, nBinsY, y0, y1);
-  histogram->GetXaxis()->SetTitle("rigidity / GV");
-  histogram->GetYaxis()->SetTitle("#chi^{2} / ndf");
+  setAxisTitle("R / GV", "#chi^{2} / ndf", "");
   setHistogram(histogram);
 }
 

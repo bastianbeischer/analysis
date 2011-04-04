@@ -16,7 +16,6 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Type type) :
   m_type(type)
 {
   setTitle("Momentum Spectrum");
-
   int nBins = 100;
   TH1D* histogram = 0;
   if (m_type == All) {
@@ -24,10 +23,8 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Type type) :
     double upperBound = 20.;
     setTitle(title() + " - All");
     histogram = new TH1D(qPrintable(title()), "", nBins, lowerBound, upperBound);
-    histogram->GetXaxis()->SetTitle("R / GV");
-    histogram->GetYaxis()->SetTitle("particles / GV");
-  }
-  else if (m_type == Negative || m_type == Positive){
+    setAxisTitle("R / GV", "particles / GV");
+  } else if (m_type == Negative || m_type == Positive) {
     if (m_type == Negative) setTitle(title() + " - Negative");
     if (m_type == Positive) setTitle(title() + " - Positive");
     double lowerBound = 1e-1;
@@ -38,20 +35,16 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Type type) :
       p[i] = pow(lowerBound, delta*i+1);
     }
     histogram = new TH1D(qPrintable(title()), "", nBins, p);
-    histogram->GetXaxis()->SetTitle("R / GV");
-    histogram->GetYaxis()->SetTitle("particles / GV");
-  }
-  else if(m_type == Inverted) {
+    setAxisTitle("R / GV", "particles / GV");
+  } else if (m_type == Inverted) {
     setTitle(title() + " - Inverted");
     nBins = 300;
     double lowerBound = -10;
     double upperBound = 10;
     histogram = new TH1D(qPrintable(title()), "", nBins, lowerBound, upperBound);
-    histogram->GetXaxis()->SetTitle("1/R / 1/GV");
-    histogram->GetYaxis()->SetTitle("particles / bin");
+    setAxisTitle("1/R / 1/GV", "particles / bin");
   }
   
-  histogram->GetYaxis()->SetTitleOffset(1.3);
   histogram->SetLineColor(kBlack);
   addHistogram(histogram);
   addLatex(RootPlot::newLatex(.15, .85));

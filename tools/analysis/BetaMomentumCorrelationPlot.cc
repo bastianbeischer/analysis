@@ -34,9 +34,9 @@ BetaMomentumCorrelationPlot::BetaMomentumCorrelationPlot()
   double yMin = -10;
   double yMax = 10;
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, xMin, xMax, nBinsY, yMin, yMax);
-  histogram->GetXaxis()->SetTitle("R / GV");
-  histogram->GetYaxis()->SetTitle("1 / #beta");
   setHistogram(histogram);
+  setAxisTitle("R / GV", "1 / #beta", "");
+
   TF1* function = 0;
   TLegend* legend = new TLegend(.12, .72, .23, .88);
   legend->SetMargin(.7);

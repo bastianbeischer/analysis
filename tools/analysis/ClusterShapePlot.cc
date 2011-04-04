@@ -27,10 +27,8 @@ ClusterShapePlot::ClusterShapePlot(unsigned short id) :
   double x0 = -5.5;
   double x1 = 5.5;
   TH1D* histogram = new TH1D(qPrintable(title()),"", nBins, x0, x1);
-  histogram->GetXaxis()->SetTitle("strip no. relative to maximum");
-  histogram->GetYaxis()->SetTitle("mean amplitude");
-  histogram->GetXaxis()->SetNdivisions(520);
-  histogram->GetYaxis()->SetTitleOffset(1.5);
+  setAxisTitle("strip no. relative to maximum", "mean amplitude");
+  //histogram->GetXaxis()->SetNdivisions(520);
   addHistogram(histogram);
 
   TH1D* normHist = new TH1D(qPrintable(title() + "_normHisto"), "", nBins, x0, x1);

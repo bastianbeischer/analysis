@@ -26,11 +26,9 @@ TOFEfficiencyPlot::TOFEfficiencyPlot(unsigned short id)
     20, -200, 200, 10, -25, 25);
   TH2D* histogram = new TH2D(qPrintable(title()), "",
     20, -200, 200, 10, -25, 25);
-  histogram->GetXaxis()->SetTitle("y_{tracker} / mm");
-  histogram->GetYaxis()->SetTitle("x_{tracker} / mm");
-  histogram->GetZaxis()->SetTitle("efficiency");
-  setHistogram(histogram);
+  setAxisTitle("y_{tracker} / mm", "x_{tracker} / mm", "efficiency");
   setDrawOption(LEGO2);
+  setHistogram(histogram);
 }
 
 TOFEfficiencyPlot::~TOFEfficiencyPlot()

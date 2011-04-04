@@ -37,8 +37,7 @@ TOTTimeCorrelationPlot::TOTTimeCorrelationPlot(unsigned int id, QDateTime first,
   TH2D* histogram = new TH2D(qPrintable(title), "", nTimeBins, t1, t2, nTotBins, minTot, maxTot);
   histogram->GetXaxis()->SetTimeDisplay(1);
   histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");
-  histogram->GetXaxis()->SetTitle("time");
-  histogram->GetYaxis()->SetTitle("time over threshold / ns");
+  setAxisTitle("time", "time over threshold / ns", "");
   setHistogram(histogram);
 }
 

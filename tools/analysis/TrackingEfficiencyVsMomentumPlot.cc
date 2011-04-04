@@ -7,15 +7,14 @@
 
 #include <TH2D.h>
 
-TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot() :
-  AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
-  H2DPlot()
+TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot()
+  : AnalysisPlot(AnalysisPlot::MiscellaneousTracker)
+  , H2DPlot()
 {
   setTitle(QString("Efficiency vs momentum"));
   
   TH2D* histogram = new TH2D(qPrintable(title()), "", 10, 0., 10., 7, 1.5, 8.5);
-  histogram->GetXaxis()->SetTitle("rigidity / GV");
-  histogram->GetYaxis()->SetTitle("layers with exactly one hit");
+  setAxisTitle("R / GV", "layers with exactly one hit", "");
   setHistogram(histogram);
   setDrawOption(COLZTEXT);
 }

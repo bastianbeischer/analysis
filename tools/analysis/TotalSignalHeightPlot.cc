@@ -15,8 +15,7 @@ TotalSignalHeightPlot::TotalSignalHeightPlot() :
   int bins = 1000;
   setTitle(QString("sum of all signal heights"));
   TH1D* histogram = new TH1D(qPrintable(title()), "", bins, 0, maximum);
-  histogram->GetXaxis()->SetTitle("signal height / adc counts");
-  histogram->GetYaxis()->SetTitle("entries");
+  setAxisTitle("signal height / adc counts", "entries");
   addHistogram(histogram);
 }
 
