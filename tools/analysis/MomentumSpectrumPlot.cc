@@ -71,18 +71,18 @@ void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Track* track, Simp
   if ( !(flags & TrackInformation::AllTrackerLayers) || !(flags & TrackInformation::InsideMagnet) || (flags & TrackInformation::Albedo) )
     return;
 
-  double pt = track->pt();
-  if (m_type == Negative && pt >= 0)
+  double rigidity = track->rigidity();
+  if (m_type == Negative && rigidity >= 0)
     return;
-  if (m_type == Positive && pt <= 0)
+  if (m_type == Positive && rigidity <= 0)
     return;
 
-  double value = pt;
+  double value = rigidity;
   if (m_type == Negative) {
-    value = -pt;
+    value = -rigidity;
   }
   else if (m_type == Inverted) {
-    value = 1./pt;
+    value = 1./rigidity;
   }
 
   int iBin = histogram()->FindBin(value);

@@ -29,7 +29,7 @@ public:
   unsigned short nParameters() const {return m_matrix->nCol();}
   double chi2() const {return m_chi2;}
   unsigned int ndf() const {return m_ndf;}
-  double pt() const {return m_pt;}
+  double transverseRigidity() const {return m_transverseRigidity;}
   double startTime() const {return m_startTime;}
   double stopTime() const {return m_stopTime;}
   double timeOfFlight() const {return m_stopTime - m_startTime;}
@@ -42,7 +42,7 @@ public:
   virtual double bendingAngle() const = 0;
   virtual double trackLength() const = 0;
   TVector3 position(double z) const {return TVector3(x(z), y(z), z);}
-  double p() const;
+  double rigidity() const;
   double beta() const;
 
   static double lastGoodTime(QVector<double>&);
@@ -56,7 +56,7 @@ private:
   virtual void retrieveFitResults() = 0;
 
 private:
-  void calculatePt();
+  void calculateTransverseRigidity();
   void calculateTimes();
 
 protected:
@@ -71,7 +71,7 @@ protected:
   double m_chi2;
   unsigned int m_ndf;
 
-  double m_pt;
+  double m_transverseRigidity;
   double m_startTime;
   double m_stopTime;
 

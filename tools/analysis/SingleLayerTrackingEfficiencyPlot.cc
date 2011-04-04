@@ -78,8 +78,8 @@ void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, 
 
     // fill histograms
     if (beenHit)
-      histogram()->Fill(track->p(), i+1);
-    m_normHisto->Fill(track->p(), i+1);
+      histogram()->Fill(track->rigidity(), i+1);
+    m_normHisto->Fill(track->rigidity(), i+1);
   }
 }
 

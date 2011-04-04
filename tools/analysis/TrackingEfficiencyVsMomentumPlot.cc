@@ -45,9 +45,9 @@ void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, Track*
       return;
   }
 
-  double p = track->p();
+  double rigidity = track->rigidity();
 
-  histogram()->Fill(p,nLayers);
+  histogram()->Fill(rigidity,nLayers);
 }
 
 void TrackingEfficiencyVsMomentumPlot::finalize()

@@ -45,10 +45,10 @@ void TRDEnergyDepositionOverMomentumPlot::processEvent(const QVector<Hit*>& /*hi
     return;
 
   //get the reconstructed momentum
-  double p = track->p(); //GeV
+  double rigidity = track->rigidity(); //GeV
 
   //only use following momenta
-  if(p < -10 || p > 10)
+  if(rigidity < -10 || rigidity > 10)
     return;
 
   //loop over all hits and count tracker hits
@@ -91,7 +91,7 @@ void TRDEnergyDepositionOverMomentumPlot::processEvent(const QVector<Hit*>& /*hi
   meanEnergyDepPerTubePerDistance /= energyDepPerTubePerDistance.size();
 
   //qDebug() << "mean of " << energyDepPerTubePerDistance << " is " <<  meanEnergyDepPerTubePerDistance;
-  histogram()->Fill(p, meanEnergyDepPerTubePerDistance);
+  histogram()->Fill(rigidity, meanEnergyDepPerTubePerDistance);
 }
 
 void TRDEnergyDepositionOverMomentumPlot::finalize()
