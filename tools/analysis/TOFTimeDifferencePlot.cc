@@ -30,7 +30,7 @@ TOFTimeDifferencePlot::TOFTimeDifferencePlot(unsigned short id)
   histogram->GetYaxis()->SetTitle("x_{tracker} / mm");
   histogram->GetZaxis()->SetTitle("(t_{left} - t_{right}) / ns");
   setHistogram(histogram);
-  setDrawOption("SURF1");
+  setDrawOption(SURF1);
 }
 
 TOFTimeDifferencePlot::~TOFTimeDifferencePlot()

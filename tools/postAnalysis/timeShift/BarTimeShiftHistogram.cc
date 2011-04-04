@@ -49,7 +49,7 @@ BarTimeShiftHistogram::BarTimeShiftHistogram(const QVector<PostAnalysisCanvas*>&
   histogram->SetMarkerColor(kYellow);
   setHistogram(histogram);
   setPalette(RootStyle::ResiduePalette);
-  setDrawOption("COL Z TEXT");
+  setDrawOption(COLZTEXT);
 }
 
 BarTimeShiftHistogram::~BarTimeShiftHistogram()

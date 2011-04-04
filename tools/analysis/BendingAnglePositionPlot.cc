@@ -24,7 +24,7 @@ BendingAnglePositionPlot::BendingAnglePositionPlot(double cut)
   m_normHisto = new TH2D(qPrintable(title()+"_all"), "", 30, -250, 250, 24, -120, 120);
   m_normHisto->GetXaxis()->SetTitle("y / mm");
   m_normHisto->GetYaxis()->SetTitle("x / mm");
-  setDrawOption("LEGO");
+  setDrawOption(LEGO);
 }
 
 BendingAnglePositionPlot::~BendingAnglePositionPlot()

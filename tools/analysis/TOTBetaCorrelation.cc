@@ -87,5 +87,5 @@ bool TOTBetaCorrelation::checkLayer(double z)
   
 void TOTBetaCorrelation::finalize()
 {
-  setDrawOption("CONT4 Z");
+  setDrawOption(CONT4Z);
 }

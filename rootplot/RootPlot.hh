@@ -12,15 +12,16 @@ class TF1;
 class RootPlot
 {
 public:
+  enum DrawOption {UndefinedDrawOption = -1, COLZ, CONT4Z, LEGO, LEGO2, LEGOCOLZ, SURF1, COLZTEXT};
+  enum Type {Undefined = -1, H1DPlot, H2DPlot, GraphPlot};
+
   RootPlot();
   virtual ~RootPlot();
-public:
   static TLatex* newLatex(double rx, double ry);
-
+  static QString drawOption(DrawOption);
   virtual void draw(TCanvas*);
   virtual void unzoom() {}
   virtual void clear() {}
-  unsigned long id() const {return m_id;}
   void setTitle(const QString& title) {m_title = title;}
   const QString& title() const {return m_title;}
   void addLatex(TLatex*);
@@ -31,9 +32,14 @@ public:
   TF1* function(int i = 0);
   virtual void finalize() {}
   virtual void update() {}
-private:
+  DrawOption drawOption();
+  void setDrawOption(DrawOption);
+  Type type() {return m_type;}
+protected:
   QString m_title;
-  unsigned long m_id;
+  DrawOption m_drawOption;
+  Type m_type;
+private:
   QVector<TLatex*> m_latex;
   QVector<TLegend*> m_legend;
   QVector<TF1*> m_function;

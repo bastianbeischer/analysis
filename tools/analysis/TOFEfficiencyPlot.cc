@@ -30,7 +30,7 @@ TOFEfficiencyPlot::TOFEfficiencyPlot(unsigned short id)
   histogram->GetYaxis()->SetTitle("x_{tracker} / mm");
   histogram->GetZaxis()->SetTitle("efficiency");
   setHistogram(histogram);
-  setDrawOption("LEGO2");
+  setDrawOption(LEGO2);
 }
 
 TOFEfficiencyPlot::~TOFEfficiencyPlot()

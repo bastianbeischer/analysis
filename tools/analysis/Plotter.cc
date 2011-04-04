@@ -1,5 +1,6 @@
 #include "Plotter.hh"
 #include "AnalysisPlot.hh"
+#include "H2DPlot.hh"
 
 #include <QApplication>
 #include <QDebug>
@@ -182,4 +183,20 @@ void Plotter::setLogZ(bool b)
 {
   gPad->SetLogz(b);
   updateCanvas();
+}
+  
+RootPlot::Type Plotter::selectedPlotType()
+{
+  if (m_selectedPlot < 0) {
+    return RootPlot::Undefined;
+  }
+  return m_plots[m_selectedPlot]->type();
+}
+  
+RootPlot::DrawOption Plotter::drawOption()
+{
+  if (m_selectedPlot < 0) {
+    return RootPlot::UndefinedDrawOption;
+  }
+  return m_plots[m_selectedPlot]->drawOption();
 }

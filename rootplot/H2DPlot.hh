@@ -14,17 +14,17 @@ class H2DPlot : virtual public RootPlot {
 public:
   H2DPlot();
   virtual ~H2DPlot();
+  static const QVector<DrawOption>& drawOptions();
   virtual void draw(TCanvas*);
   virtual void unzoom();
   virtual void clear();
   TH2D* histogram();
   void setHistogram(TH2D*);
   void setPalette(RootStyle::PaletteType);
-  void setDrawOption(const QString&);
 private:
   TH2D* m_histogram;
   RootStyle::PaletteType m_palette;
-  QString m_drawOption;
+  static const QVector<DrawOption> s_drawOptions;
 };
 
 #endif

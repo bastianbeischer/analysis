@@ -4,12 +4,18 @@
 #include <TList.h>
 #include <TCanvas.h>
 
+const QVector<RootPlot::DrawOption> H2DPlot::s_drawOptions = QVector<RootPlot::DrawOption>()
+  << RootPlot::COLZ << RootPlot::CONT4Z << RootPlot::LEGO << RootPlot::LEGO2 << RootPlot::LEGOCOLZ
+  << RootPlot::SURF1 << RootPlot::COLZTEXT;
+
 H2DPlot::H2DPlot()
   : RootPlot()
   , m_histogram()
   , m_palette(RootStyle::DefaultPalette)
-  , m_drawOption("COL Z")
-{}
+{
+  m_drawOption = COLZ;
+  m_type = RootPlot::H2DPlot;
+}
 
 H2DPlot::~H2DPlot()
 {
@@ -21,19 +27,13 @@ void H2DPlot::setPalette(RootStyle::PaletteType palette)
   m_palette = palette;
 }
 
-
-void H2DPlot::setDrawOption(const QString& option)
-{
-  m_drawOption = option;
-}
-
 void H2DPlot::draw(TCanvas* canvas)
 {
   if (!m_histogram)
     return;
   RootStyle::setPalette(m_palette);
   canvas->cd();
-  m_histogram->Draw(qPrintable(m_drawOption));
+  m_histogram->Draw(qPrintable(drawOption(m_drawOption)));
   RootPlot::draw(canvas);
 }
 
@@ -63,4 +63,9 @@ void H2DPlot::setHistogram(TH2D* h)
   if (m_histogram)
     delete m_histogram;
   m_histogram = h;
+}
+  
+const QVector<RootPlot::DrawOption>& H2DPlot::drawOptions()
+{
+  return s_drawOptions;
 }

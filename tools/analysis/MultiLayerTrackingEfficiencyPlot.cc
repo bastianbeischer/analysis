@@ -45,7 +45,7 @@ MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot() :
       i++;
     }
   }
-  setDrawOption("COL Z TEXT");
+  setDrawOption(COLZTEXT);
 }
 
 MultiLayerTrackingEfficiencyPlot::~MultiLayerTrackingEfficiencyPlot()

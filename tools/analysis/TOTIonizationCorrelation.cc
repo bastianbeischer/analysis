@@ -122,5 +122,5 @@ bool TOTIonizationCorrelation::checkLayer(double z)
 
 void TOTIonizationCorrelation::finalize()
 {
-  setDrawOption("CONT4 Z");
+  setDrawOption(CONT4Z);
 }

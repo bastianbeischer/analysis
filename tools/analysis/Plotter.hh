@@ -24,6 +24,8 @@ public:
   const QString& plotTitle(unsigned int);
   AnalysisPlot::Topic plotTopic(unsigned int);
   void selectPlot(int, bool = false);
+  RootPlot::DrawOption drawOption();
+  RootPlot::Type selectedPlotType();
   void unzoom();
   void setGrid(bool);
   void setLogX(bool);

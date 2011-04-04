@@ -200,7 +200,12 @@ MainWindow::MainWindow(QWidget* parent)
   foreach(QCheckBox* checkBox, m_topicCheckBoxes)
     connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged()));
 
-  //setupPlots();
+  m_2dPlotOptions.append("COL Z");
+  m_2dPlotOptions.append("CONT4 Z");
+  m_2dPlotOptions.append("LEGO");
+  m_2dPlotOptions.append("LEGO2");
+  m_2dPlotOptions.append("LEGO COL Z");
+  m_2dPlotOptions.append("SURF1");
 
   m_updateTimer.setInterval(50);
   m_ui.numberOfThreadsSpinBox->setValue(QThread::idealThreadCount());
@@ -318,12 +323,35 @@ void MainWindow::listWidgetItemChanged(QListWidgetItem* item)
 
 void MainWindow::listWidgetCurrentRowChanged(int i)
 {
+  m_ui.drawOptionComboBox->setEnabled(false);
+  m_ui.drawOptionComboBox->clear();
   if (i < 0 || m_activePlots.size() == 0) {
     m_ui.plotter->selectPlot(-1);
     return;
   }
-  if (!m_inhibitDraw)
+  if (!m_inhibitDraw) {
     m_ui.plotter->selectPlot(m_activePlots[i]);
+    switch (m_ui.plotter->selectedPlotType()) {
+      case RootPlot::H1DPlot:
+        foreach(const RootPlot::DrawOption& option, H1DPlot::drawOptions())
+          m_ui.drawOptionComboBox->addItem(RootPlot::drawOption(option));
+        m_ui.drawOptionComboBox->setEnabled(true);
+        break;
+      case RootPlot::H2DPlot:
+        foreach(const RootPlot::DrawOption& option, H2DPlot::drawOptions()) {
+          m_ui.drawOptionComboBox->addItem(RootPlot::drawOption(option));
+        }
+        m_ui.drawOptionComboBox->setEnabled(true);
+        break;
+      case RootPlot::GraphPlot:
+        foreach(const RootPlot::DrawOption& option, GraphPlot::drawOptions())
+          m_ui.drawOptionComboBox->addItem(RootPlot::drawOption(option));
+        m_ui.drawOptionComboBox->setEnabled(true);
+        break;
+      default: break;
+    }
+    //TODO set m_ui.drawOptionComboBox to the plots option
+  }
 }
 
 void MainWindow::setupPlots()

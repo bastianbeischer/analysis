@@ -14,6 +14,7 @@ class GraphPlot : virtual public RootPlot {
 public:
   GraphPlot();
   virtual ~GraphPlot();
+  static const QVector<DrawOption>& drawOptions();
   virtual void draw(TCanvas*);
   virtual void unzoom();
   virtual void clear();
@@ -24,6 +25,7 @@ public:
   TMultiGraph* multiGraph();
 protected:
   TMultiGraph* m_multiGraph;
+  static const QVector<DrawOption> s_drawOptions;
 };
 
 #endif // GRAPHPLOT_HH

@@ -63,7 +63,7 @@ void TOTMomentumCorrelation::processEvent(const QVector<Hit*>& clusters, Track* 
 }
 
 void TOTMomentumCorrelation::finalize() {
-  setDrawOption("CONT4 Z");
+  setDrawOption(CONT4Z);
 }
 
 QString TOTMomentumCorrelation::layerName(TofLayer layer)

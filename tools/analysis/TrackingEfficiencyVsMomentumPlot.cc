@@ -17,7 +17,7 @@ TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot() :
   histogram->GetXaxis()->SetTitle("rigidity / GV");
   histogram->GetYaxis()->SetTitle("layers with exactly one hit");
   setHistogram(histogram);
-  setDrawOption("COL Z TEXT");
+  setDrawOption(COLZTEXT);
 }
 
 TrackingEfficiencyVsMomentumPlot::~TrackingEfficiencyVsMomentumPlot()

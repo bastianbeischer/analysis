@@ -67,6 +67,7 @@ private:
   QVector<QCheckBox*> m_trdCheckBoxes;
   QVector<QCheckBox*> m_trackerCheckBoxes;
   QVector<QWidget*> m_controlWidgets;
+  QStringList m_2dPlotOptions;
   bool m_inhibitDraw;
   QTime m_time;
   QTimer m_updateTimer;

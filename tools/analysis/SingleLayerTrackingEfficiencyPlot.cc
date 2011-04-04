@@ -44,7 +44,7 @@ SingleLayerTrackingEfficiencyPlot::SingleLayerTrackingEfficiencyPlot() :
       i++;
     }
   }
-  setDrawOption("COL Z TEXT");
+  setDrawOption(COLZTEXT);
 }
 
 SingleLayerTrackingEfficiencyPlot::~SingleLayerTrackingEfficiencyPlot()

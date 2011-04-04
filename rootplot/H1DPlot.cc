@@ -5,12 +5,14 @@
 #include <TCanvas.h>
 #include <TPad.h>
 
-#include <QDebug>
+const QVector<RootPlot::DrawOption> H1DPlot::s_drawOptions = QVector<DrawOption>();
 
 H1DPlot::H1DPlot()
   : RootPlot()
   , m_histograms()
-{}
+{
+  m_type = RootPlot::H1DPlot;
+}
 
 H1DPlot::~H1DPlot()
 {
@@ -68,3 +70,7 @@ void H1DPlot::addHistogram(TH1D* h)
   m_histograms.append(h);
 }
 
+const QVector<RootPlot::DrawOption>& H1DPlot::drawOptions()
+{
+  return s_drawOptions;
+}

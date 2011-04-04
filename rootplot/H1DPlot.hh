@@ -12,6 +12,7 @@ class H1DPlot : virtual public RootPlot {
 public:
   H1DPlot();
   virtual ~H1DPlot();
+  static const QVector<DrawOption>& drawOptions();
   virtual void draw(TCanvas*);
   virtual void unzoom();
   void clear();
@@ -21,6 +22,7 @@ public:
   void addHistogram(TH1D*);
 private:
   QVector<TH1D*> m_histograms;
+  static const QVector<DrawOption> s_drawOptions;
 };
 
 #endif

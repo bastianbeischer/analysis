@@ -6,9 +6,12 @@
 #include <TList.h>
 #include <TMultiGraph.h>
 
-GraphPlot::GraphPlot() :
-  m_multiGraph(new TMultiGraph)
+const QVector<RootPlot::DrawOption> GraphPlot::s_drawOptions = QVector<DrawOption>();
+
+GraphPlot::GraphPlot()
+  : m_multiGraph(new TMultiGraph)
 {
+  m_type = RootPlot::GraphPlot;
 }
 
 GraphPlot::~GraphPlot()
@@ -66,4 +69,9 @@ TGraph* GraphPlot::graph(int i)
 TMultiGraph* GraphPlot::multiGraph()
 {
   return m_multiGraph;
+}
+
+const QVector<RootPlot::DrawOption>& GraphPlot::drawOptions()
+{
+  return s_drawOptions;
 }
