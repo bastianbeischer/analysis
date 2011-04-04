@@ -83,6 +83,9 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
 
   // loop over all present detector IDs
   QList<DetectorID*> detIDs = event->GetIDs();
+  //qSort(detIDs);
+  //qDebug() << "detIDs.size() = " << detIDs.size();
+  //qDebug() << detIDs;
   foreach(DetectorID* id, detIDs) {
 
     //get event data from detector, distinguish types of detectors
@@ -114,8 +117,10 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
     for (int i = 0; i < nMax; i++) {
       if (!id->IsTOF()) {
         Calibration* cali = file->getCalibrationForDetector(id, i);
-        if (cali)
-          qDebug("didnt get cali for 0x%x i=%i", id->GetID16(), i);
+        /*if (cali)
+          qDebug("got cali for 0x%x i=%i", id->GetID16(), i);
+        else
+          qDebug("didn't get cali for 0x%x i=%i", id->GetID16(), i);*/
         Q_ASSERT(cali);
         cali->GetAmplitudes(values + i*nValues/nMax, temp + i*nValues/nMax);
       }
@@ -208,7 +213,7 @@ const MCEventInformation* Converter::generateNextMCEventInformation(const MCSing
 
 
   //get all digis:
-  const QVector<const MCSimpleEventDigi*> digis = getAllMCDigis(mcEvent);
+  const QVector<const MCSimpleEventDigi*> digis ; //= getAllMCDigis(mcEvent);
 
   foreach (const MCSimpleEventDigi* digi, digis)
     mcEventInfo->addMcDigis(digi);
