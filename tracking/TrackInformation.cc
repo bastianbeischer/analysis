@@ -29,7 +29,7 @@ void TrackInformation::process()
   checkChi2Good();
   checkInsideMagnet();
   checkOutsideMagnet();
-  checkHighPt();
+  checkHighTransverseRigidity();
   checkMagnetCollision();
   checkAlbedo();
 }
@@ -94,14 +94,14 @@ void TrackInformation::checkOutsideMagnet()
     m_flags |= OutsideMagnet;
 }
 
-void TrackInformation::checkHighPt()
+void TrackInformation::checkHighTransverseRigidity()
 {
   if (!m_track->fitGood())
     return;
-  double pt = m_track->pt();
+  double transverseRigidity = m_track->transverseRigidity();
   // 2GeV currently...
-  if (pt > 2 || pt == DBL_MAX)
-    m_flags |= HighPt;
+  if (transverseRigidity > 2 || transverseRigidity == DBL_MAX)
+    m_flags |= HighTransverseRigidity;
 }
 
 void TrackInformation::checkMagnetCollision()

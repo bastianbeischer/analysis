@@ -59,7 +59,7 @@ void TOTMomentumCorrelation::processEvent(const QVector<Hit*>& clusters, Track* 
     }
   }
   if (nTofHits > 0)
-    histogram()->Fill(track->pt(), totSum / nTofHits);
+    histogram()->Fill(track->rigidity(), totSum / nTofHits);
 }
 
 void TOTMomentumCorrelation::finalize() {

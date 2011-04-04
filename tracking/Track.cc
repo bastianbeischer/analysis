@@ -23,7 +23,7 @@ Track::Track() :
   m_fitGood(0),
   m_chi2(0),
   m_ndf(0),
-  m_pt(0.),
+  m_transverseRigidity(0.),
   m_startTime(0.),
   m_stopTime(0.)
 {
@@ -46,17 +46,17 @@ int Track::fit(const QVector<Hit*>& hits)
 void Track::process()
 {
   if (m_fitGood) {
-    calculatePt();
+    calculateTransverseRigidity();
     calculateTimes();
   }
   m_information->process();
 }
 
-void Track::calculatePt()
+void Track::calculateTransverseRigidity()
 {
   double alpha = bendingAngle();
   if (alpha == 0.)
-    m_pt = DBL_MAX;
+    m_transverseRigidity = DBL_MAX;
   else {
     double z0_magnet = -40.; // mm
     double z1_magnet =  40.; // mm
@@ -64,7 +64,7 @@ void Track::calculatePt()
     double x1_magnet = x(z1_magnet); // mm
     double B_estimate = 0.27; // tesla
     double L  = sqrt(pow(x1_magnet - x0_magnet, 2.) + pow(z1_magnet - z0_magnet,2.))*1000.; // convert from mm to m
-    m_pt = 0.3*B_estimate*L/alpha/1e6; // GeV
+    m_transverseRigidity = 0.3*B_estimate*L/alpha/1e6; // GeV
   }
 }
 
@@ -174,12 +174,12 @@ double Track::bestTime(QVector<double>& times)
   return times[i];
 }
 
-double Track::p() const
+double Track::rigidity() const
 {
   double z = 100.;
   double sx = slopeX(z);
   double sy = slopeY(z);
-  double p = sqrt((sx*sx + sy*sy + 1)/(sx*sx + 1)) * m_pt;
+  double p = sqrt((sx*sx + sy*sy + 1)/(sx*sx + 1)) * m_transverseRigidity;
   return p;
 }
 

@@ -32,7 +32,7 @@ void TOFAlignment::processEvent(const QVector<Hit*>& clusters, Track* track, Sim
   if (!track || !track->fitGood())
     return;
 
-  if (track->p() < 2)
+  if (track->rigidity() < 2)
     return;
 
   TrackInformation::Flags flags = track->information()->flags();

@@ -11,7 +11,7 @@ public:
   TrackInformation(const Track* track);
   ~TrackInformation();
   
-  enum Flag {None=0x0, AllTrackerLayers=0x1<<0, InsideMagnet=0x1<<1, OutsideMagnet=0x1<<2, HighPt=0x1<<3, 
+  enum Flag {None=0x0, AllTrackerLayers=0x1<<0, InsideMagnet=0x1<<1, OutsideMagnet=0x1<<2, HighTransverseRigidity=0x1<<3, 
     MagnetCollision=0x1<<4, Albedo=0x1<<5, Chi2Good=0x1<<6};
 
   Q_DECLARE_FLAGS(Flags, Flag);
@@ -28,7 +28,7 @@ private:
   void checkChi2Good();
   void checkInsideMagnet();
   void checkOutsideMagnet();
-  void checkHighPt();
+  void checkHighTransverseRigidity();
   void checkMagnetCollision();
   void checkAlbedo();
 

@@ -76,9 +76,9 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, 
     return;
 
   //get the reconstructed momentum
-  double p = track->p(); //GeV
+  double rigidity = track->rigidity(); //GeV
 
-  if(p < m_lowerMomentum || p > m_upperMomentum)
+  if(rigidity < m_lowerMomentum || rigidity > m_upperMomentum)
     return;
 
   //TODO: check for off track hits ?!?

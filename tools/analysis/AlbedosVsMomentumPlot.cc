@@ -62,11 +62,11 @@ void AlbedosVsMomentumPlot::processEvent(const QVector<Hit*>&, Track* track, Sim
   if ( !(flags & TrackInformation::AllTrackerLayers) || !(flags & TrackInformation::InsideMagnet) )
     return;
 
-  double pt = track->pt();
-  m_totalHisto->Fill(pt);
+  double rigidity = track->rigidity();
+  m_totalHisto->Fill(rigidity);
 
   if (flags & TrackInformation::Albedo)
-    m_albedoHisto->Fill(pt);
+    m_albedoHisto->Fill(rigidity);
 }
 
 void AlbedosVsMomentumPlot::update()
