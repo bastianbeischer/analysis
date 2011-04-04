@@ -82,7 +82,8 @@ CLASSES = \
   TOFTimeShiftTriggerPlot \
   HeightTimePlot \
   TriggerRateTimePlot \
-  SensorTimePlot
+  SensorTimePlot \
+  MCTotalEnergyDepositionTRDvsTrackerPlot
 
 SOURCES += \
   main.cc
