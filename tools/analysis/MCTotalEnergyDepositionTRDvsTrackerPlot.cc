@@ -3,6 +3,7 @@
 #include <TPad.h>
 #include <TMultiGraph.h>
 #include <TGraph.h>
+#include <TLegend.h>
 
 #include "Track.hh"
 #include "TrackInformation.hh"
@@ -15,9 +16,14 @@
 MCTotalEnergyDepositionTRDvsTrackerPlot::MCTotalEnergyDepositionTRDvsTrackerPlot()
   : AnalysisPlot(AnalysisPlot::MiscellaneousTRD)
   , GraphPlot()
-  , m_colorCounter(0)
+  , m_colorCounter(1)
 {
   setTitle("MC Mean dE_dx TRD vs. tracker");
+
+  TLegend* legend = new TLegend(.72, .72, .98, .98);
+  legend->SetFillColor(kWhite);
+  legend->SetMargin(.7);
+  addLegend(legend);
 }
 
 MCTotalEnergyDepositionTRDvsTrackerPlot::~MCTotalEnergyDepositionTRDvsTrackerPlot()
@@ -111,6 +117,7 @@ void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& 
     graph->SetMarkerSize(0.3);
     m_graphMap.insert(pdgID, graph);
     addGraph(graph, "P");
+    legend()->AddEntry(graph, qPrintable(QString::number(pdgID)), "p");
   }
 
   int nPoints = graph->GetN();

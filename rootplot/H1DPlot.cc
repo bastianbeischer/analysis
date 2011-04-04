@@ -24,7 +24,10 @@ void H1DPlot::draw(TCanvas* canvas)
     if (h == m_histograms.first()) {
       h->Draw();
     } else {
-      h->Draw("SAME");
+      if (m_histograms.first()->GetEntries() > 0)
+        h->Draw("SAME");
+      else
+        h->Draw();
     }
   RootPlot::draw(canvas);
 }

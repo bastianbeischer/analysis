@@ -83,7 +83,8 @@ CLASSES = \
   HeightTimePlot \
   TriggerRateTimePlot \
   SensorTimePlot \
-  MCTotalEnergyDepositionTRDvsTrackerPlot
+  MCTotalEnergyDepositionTRDvsTrackerPlot \
+  MCTRDSpectrumPlot
 
 SOURCES += \
   main.cc

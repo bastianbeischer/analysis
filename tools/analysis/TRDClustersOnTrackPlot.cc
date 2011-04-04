@@ -54,4 +54,8 @@ void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/,Track* t
 
 void TRDClustersOnTrackPlot::finalize()
 {
+  if (histogram(0)->Integral("width") > 0)
+    histogram(0)->Scale(1./histogram(0)->Integral("width"));
+  if (histogram(1)->Integral("width") > 0)
+    histogram(1)->Scale(1./histogram(1)->Integral("width"));
 }
