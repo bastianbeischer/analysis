@@ -6,18 +6,19 @@ CONFIG += debug
 TOPLEVEL = ..
 
 CLASSES += \
-  Track \
-  TrackInformation \
-  TrackFinding \
-  StraightLine \
   BrokenLine \
+  BrokenLineMatrix \
   CenteredBrokenLine \
   CenteredBrokenLine2D \
-  Matrix \
-  StraightLineMatrix \
-  BrokenLineMatrix \
   CenteredBrokenLineMatrix \
-  CenteredBrokenLineMatrix2D
+  CenteredBrokenLineMatrix2D \
+  Matrix \
+  Particle \
+  StraightLine \
+  StraightLineMatrix \
+  Track \
+  TrackFinding \
+  TrackInformation
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \
