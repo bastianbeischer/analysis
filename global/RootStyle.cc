@@ -57,3 +57,18 @@ void RootStyle::setPalette(PaletteType type)
 	gStyle->SetPalette(1, 0);
 }
 
+int RootStyle::rootColor(int i)
+{
+  if (0 <= i%16 && i%16 <= 7)
+    return i+2;
+  switch (i%16) {
+    case  8: return 28;
+    case  9: return 30;
+    case 10: return 33;
+    case 11: return 38;
+  }
+  if (12 <= i%16 && i%16 <= 15)
+    return i+28;
+  return 1;
+}
+

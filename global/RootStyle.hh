@@ -12,6 +12,7 @@ public:
   ~RootStyle();
   static void set();
   static void setPalette(PaletteType);
+  static int rootColor(int i);
 private:
   RootStyle();
   static RootStyle* s_instance;
