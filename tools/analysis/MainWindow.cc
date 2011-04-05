@@ -63,7 +63,7 @@
 #include "TriggerRateTimePlot.hh"
 #include "HeightTimePlot.hh"
 #include "MCTotalEnergyDepositionTRDvsTrackerPlot.hh"
-#include "MCTRDSpectrumPlot.hh"
+//#include "MCTRDSpectrumPlot.hh"
 
 #include <QFileDialog>
 #include <QVBoxLayout>
@@ -536,7 +536,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits));
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits, true));
     m_ui.plotter->addPlot(new MCTotalEnergyDepositionTRDvsTrackerPlot());
-    m_ui.plotter->addPlot(new MCTRDSpectrumPlot(AnalysisPlot::MiscellaneousTRD, 0 /* doesnt matter */,MCTRDSpectrumPlot::completeTRD));
+    //m_ui.plotter->addPlot(new MCTRDSpectrumPlot(AnalysisPlot::MiscellaneousTRD, 0 /* doesnt matter */,MCTRDSpectrumPlot::completeTRD));
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BetaPlot());
