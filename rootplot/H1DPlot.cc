@@ -62,7 +62,7 @@ void H1DPlot::clear(int i)
 
 int H1DPlot::numberOfHistograms()
 {
-  return m_stack->GetHists()->GetSize();
+  return m_stack->GetHists() ? m_stack->GetHists()->GetSize() : 0;
 }
 
 TH1D* H1DPlot::histogram(int i)

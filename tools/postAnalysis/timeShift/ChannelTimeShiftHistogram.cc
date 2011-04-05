@@ -7,6 +7,7 @@
 #include <TAxis.h>
 #include <TList.h>
 #include <TF1.h>
+#include <TLatex.h>
 
 #include <iostream>
 #include <iomanip>
@@ -44,6 +45,17 @@ ChannelTimeShiftHistogram::ChannelTimeShiftHistogram(PostAnalysisCanvas* canvas,
   projection->GetXaxis()->SetRangeUser(-2, 2);
   addHistogram(projection);
   addFunction(function);
+  TLatex* latex = 0;
+  latex = RootPlot::newLatex(0.15, 0.85);
+  latex->SetTitle(qPrintable(QString("#bar{x}_{ } = %1%2 ns")
+    .arg(function->GetParameter(1) < 0 ? '-' : ' ')
+    .arg(qAbs(function->GetParameter(1)), 0, 'f', 3, ' ')));
+  addLatex(latex);
+  latex = RootPlot::newLatex(0.15, 0.82);
+  latex->SetTitle(qPrintable(QString("x_{0} = %1%2 ns")
+    .arg(projection->GetMean() < 0 ? '-' : ' ')
+    .arg(qAbs(projection->GetMean()), 0, 'f', 3, ' ')));
+  addLatex(latex);
 }
 
 ChannelTimeShiftHistogram::~ChannelTimeShiftHistogram()

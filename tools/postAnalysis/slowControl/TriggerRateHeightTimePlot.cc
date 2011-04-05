@@ -22,8 +22,8 @@ TriggerRateHeightTimePlot::TriggerRateHeightTimePlot(PostAnalysisCanvas* trigger
   setTitle("trigger rate height time");
   setAxisTitle("time", "");
   TH1D* h0 = static_cast<TH1D*>(trigger->histograms1D().at(0)->Clone());
+  addHistogram(h0);
   TH1D* h1 = static_cast<TH1D*>(height->histograms1D().at(0)->Clone());
-
   m_graph = new TGraph;
   for (int bin = 1; bin <= h0->GetXaxis()->GetNbins(); ++bin) {
     double h = h1->GetBinContent(bin);
@@ -34,7 +34,6 @@ TriggerRateHeightTimePlot::TriggerRateHeightTimePlot(PostAnalysisCanvas* trigger
   m_graph->SetMarkerStyle(20);
   m_graph->SetMarkerSize(0.4);
 
-  addHistogram(h0);
   
   TLegend* legend = new TLegend(0.11, 0.81, 0.28, 0.89);
   legend->AddEntry(histogram(0), "rate / Hz", "L");

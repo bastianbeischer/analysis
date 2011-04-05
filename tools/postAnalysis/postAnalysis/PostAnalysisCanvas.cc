@@ -6,6 +6,9 @@
 #include <TCanvas.h>
 #include <TROOT.h>
 #include <TFile.h>
+#include <THStack.h>
+
+#include <QDebug>
 
 PostAnalysisCanvas::PostAnalysisCanvas(TFile* file, const QString& name)
   : m_palette(RootStyle::DefaultPalette)
@@ -45,9 +48,16 @@ QVector<TH2D*> PostAnalysisCanvas::histograms2D()
 QVector<TH1D*> PostAnalysisCanvas::histograms1D()
 {
   QVector<TH1D*> ret;
-  for (int i = 0; i < m_canvas->GetListOfPrimitives()->GetSize(); ++i)
-    if (!strcmp(m_canvas->GetListOfPrimitives()->At(i)->ClassName(), "TH1D"))
-      ret.append(static_cast<TH1D*>(m_canvas->GetListOfPrimitives()->At(i)));
+  for (int i = 0; i < m_canvas->GetListOfPrimitives()->GetSize(); ++i) {
+    if (!strcmp(m_canvas->GetListOfPrimitives()->At(i)->ClassName(), "THStack")) {
+      THStack* stack = static_cast<THStack*>(m_canvas->GetListOfPrimitives()->At(i));
+      for (int j = 0; j < stack->GetHists()->GetSize(); ++j) {
+        if (!strcmp(stack->GetHists()->At(j)->ClassName(), "TH1D")) {
+          ret.append(static_cast<TH1D*>(stack->GetHists()->At(j)));
+        }
+      }
+    }
+  }
   return ret;
 }
 
