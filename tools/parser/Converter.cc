@@ -213,7 +213,7 @@ const MCEventInformation* Converter::generateNextMCEventInformation(const MCSing
 
 
   //get all digis:
-  const QVector<const MCSimpleEventDigi*> digis ; //= getAllMCDigis(mcEvent);
+  const QVector<const MCSimpleEventDigi*> digis = getAllMCDigis(mcEvent);
 
   foreach (const MCSimpleEventDigi* digi, digis)
     mcEventInfo->addMcDigis(digi);
@@ -270,6 +270,7 @@ const QVector<const MCSimpleEventDigi*> Converter::getAllMCDigis(const MCEvent* 
   for (int i = 0; i < mcDigis.size(); ++i)
   {
     MCDigi* mcDigi = mcDigis.at(i);
+    quint16 completeChannelID16bit = static_cast<quint16>(mcDigi->GetDetectorID() & 0xFFFF);
     DetectorID* id = DetectorID::Get(mcDigi->GetDetectorID());
 
     Hit::ModuleType moduleType = Hit::none;
@@ -281,8 +282,8 @@ const QVector<const MCSimpleEventDigi*> Converter::getAllMCDigis(const MCEvent* 
       moduleType = Hit::tof;
 
 
-    qDebug("got digi type %i with id 0x%x",moduleType,id->GetID16());
-    MCSimpleEventDigi* seDigi = new MCSimpleEventDigi(moduleType, id->GetID16());
+    qDebug("got digi type %i with id 0x%x", moduleType, completeChannelID16bit);
+    MCSimpleEventDigi* seDigi = new MCSimpleEventDigi(moduleType, completeChannelID16bit);
 
     //convert all Signals:
     const QVector<MCDigi::Signal>& mcDigiSignals = mcDigi->GetMCValues();
