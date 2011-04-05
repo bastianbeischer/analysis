@@ -65,7 +65,7 @@ void TimeOverThresholdScaling::scaling(unsigned int tofId, TH2D* histogram)
     double mpv = function->GetParameter(1);
     double sigma = function->GetParameter(2);
     delete function;
-    
+
     double tot = mpv;
     double totError = sigma;
     double temperature = histogram->GetBinCenter(bin+1);
