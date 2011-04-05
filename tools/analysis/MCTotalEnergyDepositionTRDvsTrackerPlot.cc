@@ -12,11 +12,14 @@
 #include "Hit.hh"
 
 #include "TRDCalculations.hh"
+#include "RootStyle.hh"
+
+#include "TDatabasePDG.h"
 
 MCTotalEnergyDepositionTRDvsTrackerPlot::MCTotalEnergyDepositionTRDvsTrackerPlot()
   : AnalysisPlot(AnalysisPlot::MiscellaneousTRD)
   , GraphPlot()
-  , m_colorCounter(1)
+  , m_colorCounter(0)
 {
   setTitle("MC Mean dE_dx TRD vs. tracker");
 
@@ -113,11 +116,21 @@ void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& 
   else
   {
     graph = new TGraph();
-    graph->SetMarkerColor(m_colorCounter++);
+    graph->SetMarkerColor(RootStyle::rootColor(m_colorCounter++));
     graph->SetMarkerSize(0.3);
     m_graphMap.insert(pdgID, graph);
     addGraph(graph, "P");
-    legend()->AddEntry(graph, qPrintable(QString::number(pdgID)), "p");
+    qDebug("getting pdgDB instance");
+    TDatabasePDG* pdgDB = TDatabasePDG::Instance();
+    //pdgDB->ReadPDGTable();
+    qDebug("getting particle description for pdgID = %i", pdgID);
+    TParticlePDG* particle = pdgDB->GetParticle(pdgID);
+
+    qDebug("got particle 0x%x for pdgID = %i", particle, pdgID);
+    const char* particleName = 0;
+    if (particle) particleName = particle->GetName();
+    qDebug("got %s for pdgID = %i", particleName, pdgID);
+    legend()->AddEntry(graph, particleName, "p");
   }
 
   int nPoints = graph->GetN();
