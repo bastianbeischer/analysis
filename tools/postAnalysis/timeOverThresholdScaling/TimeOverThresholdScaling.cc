@@ -35,10 +35,10 @@ TimeOverThresholdScaling::TimeOverThresholdScaling(PostAnalysisCanvas* canvas, u
   TGraphErrors* graph = new TGraphErrors(TimeOverThresholdScaling::timeOverThresholdScalingGraphs[tofId]);
   addGraph(graph, "P");
   QString graphTitle = title + ";temperature /  #circ C;time over threshold / ns";
-  multiGraph()->SetTitle(graphTitle.toStdString().c_str());
+  multiGraph()->SetTitle(qPrintable(graphTitle));
   
   TLatex* latex = 0;
-  
+
   latex = RootPlot::newLatex(.67, .85);
   latex->SetTitle(qPrintable(QString("id = 0x%1").arg(QString::number(tofId, 16))));
   addLatex(latex);
@@ -51,20 +51,27 @@ TimeOverThresholdScaling::~TimeOverThresholdScaling()
 
 void TimeOverThresholdScaling::scaling(unsigned int tofId, TH2D* histogram) 
 {
-  const double minTot = 20;
-  
+  const double minTot = 0;
+  const int minEntries = 100;
   TGraphErrors graph;
   
   QMap<double, double> temperatureMap;
   
   for (int bin = 0; bin < histogram->GetNbinsX(); ++bin) {
     TH1* projectionHistogram = histogram->ProjectionY("_py", bin + 1, bin + 1);
-    double tot = projectionHistogram->GetMean();
-    double totError = projectionHistogram->GetRMS();
+    int nEntries = projectionHistogram->GetEntries();
+    TF1* function = new TF1(qPrintable(QString(histogram->GetTitle()) + "Function"), "landau", histogram->GetXaxis()->GetXmin(), histogram->GetXaxis()->GetXmax());
+    projectionHistogram->Fit(function, "EQN0");
+    double mpv = function->GetParameter(1);
+    double sigma = function->GetParameter(2);
+    delete function;
+
+    double tot = mpv;
+    double totError = sigma;
     double temperature = histogram->GetBinCenter(bin+1);
     double temperatureError = histogram->GetBinWidth(bin+1)/sqrt(12);
     
-    if (tot > minTot) {
+    if (tot > minTot && nEntries > minEntries) {
       int nPoints = graph.GetN();
       graph.SetPoint(nPoints, temperature, tot);
       graph.SetPointError(nPoints, temperatureError, totError);

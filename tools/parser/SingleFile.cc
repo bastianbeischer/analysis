@@ -131,15 +131,15 @@ Calibration* SingleFile::getCalibrationForDetector(DetectorID* id, int whichCali
 {
   if(id->IsTracker()) {
     foreach(PERDaixFiberModule* module, m_fiberModules) {
-      if (module->GetBoardID(PERDaixFiberModule::BOARD_0) == id)
+      if (module->GetBoardID(PERDaixFiberModule::BOARD_0)->GetID16() == id->GetID16())
         return (Calibration*) module->GetCalibrations().at(whichCali);
-      else if (module->GetBoardID(PERDaixFiberModule::BOARD_1) == id)
+      else if (module->GetBoardID(PERDaixFiberModule::BOARD_1)->GetID16() == id->GetID16())
         return (Calibration*) module->GetCalibrations().at(whichCali+8);
     }
   }
   else if(id->IsTRD()) {
     foreach(PERDaixTRDModule* module, m_trdModules)
-      if (module->GetBoardID() == id)
+      if (module->GetBoardID()->GetID16() == id->GetID16())
         return (Calibration*) module->GetCalibrations().at(whichCali);
   }
 
