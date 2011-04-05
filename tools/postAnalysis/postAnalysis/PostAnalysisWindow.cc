@@ -30,8 +30,8 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
     this, SLOT(selectPlot(QListWidgetItem*, QListWidgetItem*)));
   connect(m_ui->plotOptionComboBox, SIGNAL(currentIndexChanged(const QString&)),
     this, SLOT(plotOptionComboBoxCurrentIndexChanged(const QString&)));
-  connect(m_ui->saveCanvasButton, SIGNAL(clicked()), this, SLOT(savePlotsButtonClicked()));
-  connect(m_ui->saveAllCanvasesButton, SIGNAL(clicked()), this, SLOT(savePlotsButtonClicked()));
+  connect(m_ui->saveButton, SIGNAL(clicked()), this, SLOT(saveButtonClicked()));
+  connect(m_ui->saveAllButton, SIGNAL(clicked()), this, SLOT(saveAllButtonClicked()));
 }
 
 PostAnalysisWindow::~PostAnalysisWindow()
@@ -104,7 +104,7 @@ void PostAnalysisWindow::addPlot(PostAnalysisPlot* plot)
   m_ui->plotListWidget->addItem(item);
 }
 
-void PostAnalysisWindow::savePlotsButtonClicked()
+void PostAnalysisWindow::saveButtonClicked()
 {
   QString fileEnding;
   QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "svg;;pdf;;root;;png", &fileEnding);
@@ -116,11 +116,19 @@ void PostAnalysisWindow::savePlotsButtonClicked()
   m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(fileName));
 }
 
-void PostAnalysisWindow::saveAllPlotsButtonClicked()
+void PostAnalysisWindow::saveAllButtonClicked()
 {
   QFileDialog dialog(this, "save all canvases displayed", ".");
   dialog.setFileMode(QFileDialog::DirectoryOnly);
-  if (dialog.exec())
+  if (dialog.exec()) {
+    for (int i = 0; i < m_ui->canvasListWidget->count(); ++i) {
+      m_ui->canvasListWidget->setCurrentRow(i);
+      QString directoryName = dialog.selectedFiles().first();
+      m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(directoryName + '/' + m_ui->titleLabel->text() + ".svg"));
+      m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(directoryName + '/' + m_ui->titleLabel->text() + ".pdf"));
+      m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(directoryName + '/' + m_ui->titleLabel->text() + ".root"));
+      m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(directoryName + '/' + m_ui->titleLabel->text() + ".png"));
+    }
     for (int i = 0; i < m_ui->plotListWidget->count(); ++i) {
       m_ui->plotListWidget->setCurrentRow(i);
       QString directoryName = dialog.selectedFiles().first();
@@ -129,4 +137,5 @@ void PostAnalysisWindow::saveAllPlotsButtonClicked()
       m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(directoryName + '/' + m_ui->titleLabel->text() + ".root"));
       m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(directoryName + '/' + m_ui->titleLabel->text() + ".png"));
     }
+  }
 }

@@ -23,8 +23,8 @@ protected:
   QVector<PostAnalysisCanvas*> m_canvases;
   QVector<PostAnalysisPlot*> m_plots;
 private slots:
-  void savePlotsButtonClicked();
-  void saveAllPlotsButtonClicked();
+  void saveButtonClicked();
+  void saveAllButtonClicked();
   void selectCanvas(QListWidgetItem*);
   void selectCanvas(QListWidgetItem*, QListWidgetItem*);
   void selectPlot(QListWidgetItem*);
