@@ -92,6 +92,10 @@ QString RootPlot::drawOption(DrawOption option)
     case LEGOCOLZ: return "LEGO COL Z";
     case SURF1: return "SURF1";
     case COLZTEXT: return "COL Z TEXT";
+    case AP: return "AP";
+    case AC: return "AC";
+    case ALP: return "ALP";
+    case ACP: return "ACP";
     default: return QString();
   }
   return QString();

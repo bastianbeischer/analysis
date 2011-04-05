@@ -335,23 +335,31 @@ void MainWindow::listWidgetCurrentRowChanged(int i)
       case RootPlot::H1DPlot:
         foreach(const RootPlot::DrawOption& option, H1DPlot::drawOptions())
           m_ui.drawOptionComboBox->addItem(RootPlot::drawOption(option));
-        m_ui.drawOptionComboBox->setEnabled(true);
         break;
       case RootPlot::H2DPlot:
-        foreach(const RootPlot::DrawOption& option, H2DPlot::drawOptions()) {
+        foreach(const RootPlot::DrawOption& option, H2DPlot::drawOptions())
           m_ui.drawOptionComboBox->addItem(RootPlot::drawOption(option));
-        }
-        m_ui.drawOptionComboBox->setEnabled(true);
         break;
       case RootPlot::GraphPlot:
         foreach(const RootPlot::DrawOption& option, GraphPlot::drawOptions())
           m_ui.drawOptionComboBox->addItem(RootPlot::drawOption(option));
-        m_ui.drawOptionComboBox->setEnabled(true);
         break;
       default: break;
     }
-    //TODO set m_ui.drawOptionComboBox to the plots option
+    setDrawOptionComboBox();
   }
+}
+
+void MainWindow::setDrawOptionComboBox()
+{
+  QString option = RootPlot::drawOption(m_ui.plotter->drawOption());
+  for (int i = 0; i < m_ui.drawOptionComboBox->count(); ++i) {
+    if (m_ui.drawOptionComboBox->itemText(i) == option) {
+      m_ui.drawOptionComboBox->setCurrentIndex(i);
+      break;
+    }
+  }
+  m_ui.drawOptionComboBox->setEnabled(true);
 }
 
 void MainWindow::setupPlots()

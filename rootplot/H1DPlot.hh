@@ -25,7 +25,6 @@ public:
 protected:
   THStack* m_stack;
 private:
-  QVector<TH1D*> m_histograms;
   QString m_xAxisTitle;
   QString m_yAxisTitle;
   static const QVector<DrawOption> s_drawOptions;

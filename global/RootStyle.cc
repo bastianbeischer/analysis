@@ -17,7 +17,7 @@ RootStyle::RootStyle()
   SetOptStat(0);
   SetOptFit(111);
   SetLineScalePS(1);
-  SetHistLineWidth(2);
+  SetHistLineWidth(3);
   SetLabelFont(42, "XYZ");
   SetLabelSize(0.025, "XYZ");
   SetStatFont(42);

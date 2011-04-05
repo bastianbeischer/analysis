@@ -6,7 +6,8 @@
 #include <TList.h>
 #include <TMultiGraph.h>
 
-const QVector<RootPlot::DrawOption> GraphPlot::s_drawOptions = QVector<DrawOption>();
+const QVector<RootPlot::DrawOption> GraphPlot::s_drawOptions = QVector<DrawOption>()
+  << AP << AC << ALP << ACP;
 
 GraphPlot::GraphPlot()
   : m_multiGraph(new TMultiGraph)

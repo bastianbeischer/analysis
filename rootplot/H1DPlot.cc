@@ -6,13 +6,14 @@
 #include <TPad.h>
 #include <THStack.h>
 
+#include <QDebug>
+
 const QVector<RootPlot::DrawOption> H1DPlot::s_drawOptions = QVector<DrawOption>()
-  << BLANK << NOSTACK;
+  << NOSTACK << BLANK;
 
 H1DPlot::H1DPlot()
   : RootPlot()
   , m_stack(new THStack)
-  , m_histograms()
   , m_xAxisTitle()
   , m_yAxisTitle()
 {
@@ -22,24 +23,19 @@ H1DPlot::H1DPlot()
 
 H1DPlot::~H1DPlot()
 {
+  for (int i = 0; i < numberOfHistograms(); ++i)
+    delete histogram(i);
   delete m_stack;
-  qDeleteAll(m_histograms);
 }
 
 void H1DPlot::draw(TCanvas* canvas)
 {
-  if (!m_histograms.size())
+  if (!numberOfHistograms())
     return;
   canvas->cd();
-  foreach (TH1D* h, m_histograms)
-    if (h == m_histograms.first()) {
-      h->Draw();
-    } else {
-      if (m_histograms.first()->GetEntries() > 0)
-        h->Draw("SAME");
-      else
-        h->Draw();
-    }
+  if (!m_drawn)
+    m_stack->SetTitle(qPrintable(";" + m_xAxisTitle + ";" + m_yAxisTitle));
+  m_stack->Draw(qPrintable(drawOption(m_drawOption)));
   m_drawn = true;
   RootPlot::draw(canvas);
 }
@@ -54,30 +50,29 @@ void H1DPlot::unzoom()
 
 void H1DPlot::clear()
 {
-  foreach (TH1D* h, m_histograms)
-    h->Clear();
+  for (int i = 0; i < numberOfHistograms(); ++i)
+    histogram(i)->Clear();
 }
 
 void H1DPlot::clear(int i)
 {
   Q_ASSERT(0 <= i && i < numberOfHistograms());
-  m_histograms[i]->Clear();
+  histogram(i)->Clear();
 }
 
 int H1DPlot::numberOfHistograms()
 {
-  return m_histograms.size();
+  return m_stack->GetHists()->GetSize();
 }
 
 TH1D* H1DPlot::histogram(int i)
 {
   Q_ASSERT(0 <= i && i < numberOfHistograms());
-  return m_histograms[i];
+  return static_cast<TH1D*>(m_stack->GetHists()->At(i));
 }
 
 void H1DPlot::addHistogram(TH1D* h, DrawOption option)
 {
-  m_histograms.append(h);
   m_stack->Add(h, qPrintable(drawOption(option)));
 }
 

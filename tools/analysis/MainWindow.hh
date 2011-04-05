@@ -56,6 +56,7 @@ private:
   void changeTopicGroupStatus(QVector<QCheckBox*>&);
   void removeListWidgetItem(int);
   void closeEvent(QCloseEvent*);
+  void setDrawOptionComboBox();
 
   Ui_mainWindow m_ui;
   QVector<EventProcessor*> m_processors;
