@@ -45,9 +45,9 @@ void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Track* track, S
   if (!track || !track->fitGood())
     return;
   TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::Chi2Good))
+  if (!(flags & (TrackInformation::Chi2Good | TrackInformation::InsideMagnet)))
     return;
-  if (track->p() < 1)
+  if (track->rigidity() < 1)
     return;
   bool idTop1 = false, idTop2 = false, idBottom1 = false, idBottom2 = false;
   const QVector<Hit*>::const_iterator endIt = hits.end();
@@ -64,10 +64,13 @@ void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Track* track, S
     double d = Constants::upperTofPosition - Constants::lowerTofPosition;
     double lCorrection = (d - l) / Constants::speedOfLight;
     double m = Constants::protonMass; //TODO: use reconstructed particle
-    double p = track->p();
+    double rigidity = track->rigidity();
     double t = track->timeOfFlight();
-    double pCorrection = (t + lCorrection) * (1 - sqrt(p*p + m*m) / p);
-    double y = (track->y(Constants::upperTofPosition) + track->y(Constants::lowerTofPosition)) / 2.;
-    histogram()->Fill(y, t + lCorrection + pCorrection);
+    double pCorrection = (t + lCorrection) * (1 - sqrt(rigidity*rigidity + m*m) / rigidity);
+    double yu = track->y(Constants::upperTofPosition);
+    double yl = track->y(Constants::lowerTofPosition);
+    double binWidth = histogram()->GetXaxis()->GetBinWidth(1);
+    if (qAbs(yu - yl) < binWidth)
+      histogram()->Fill((yu + yl) / 2., t + lCorrection + pCorrection);
   }
 }

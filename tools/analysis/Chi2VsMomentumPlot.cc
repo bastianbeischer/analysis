@@ -43,5 +43,5 @@ void Chi2VsMomentumPlot::processEvent(const QVector<Hit*>&, Track* track, Simple
   if (!(flags & TrackInformation::AllTrackerLayers))
     return;
 
-  histogram()->Fill(track->p(), track->chi2() / track->ndf());
+  histogram()->Fill(track->rigidity(), track->chi2() / track->ndf());
 }

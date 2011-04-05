@@ -77,8 +77,8 @@ void MultiLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, T
       }
     }
   }
-  histogram()->Fill(track->p(), nbOfLayers);
-  m_normHisto->Fill(track->p());
+  histogram()->Fill(track->rigidity(), nbOfLayers);
+  m_normHisto->Fill(track->rigidity());
 }
 
 void MultiLayerTrackingEfficiencyPlot::finalize()
