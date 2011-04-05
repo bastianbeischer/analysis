@@ -7,6 +7,7 @@
 #include <TLegend.h>
 #include <TGraph.h>
 #include <TMultiGraph.h>
+#include <THStack.h>
 
 #include <iostream>
 #include <iomanip>
@@ -19,6 +20,7 @@ TriggerRateHeightTimePlot::TriggerRateHeightTimePlot(PostAnalysisCanvas* trigger
   , H1DPlot()
 {
   setTitle("trigger rate height time");
+  setAxisTitle("time", "");
   TH1D* h0 = static_cast<TH1D*>(trigger->histograms1D().at(0)->Clone());
   TH1D* h1 = static_cast<TH1D*>(height->histograms1D().at(0)->Clone());
 
@@ -32,7 +34,6 @@ TriggerRateHeightTimePlot::TriggerRateHeightTimePlot(PostAnalysisCanvas* trigger
   m_graph->SetMarkerStyle(20);
   m_graph->SetMarkerSize(0.4);
 
-  h0->GetYaxis()->SetTitle("");
   addHistogram(h0);
   
   TLegend* legend = new TLegend(0.11, 0.81, 0.28, 0.89);
@@ -48,7 +49,13 @@ TriggerRateHeightTimePlot::~TriggerRateHeightTimePlot()
 
 void TriggerRateHeightTimePlot::draw(TCanvas* canvas)
 {
-  H1DPlot::draw(canvas);
+  if (m_drawn) {
+    H1DPlot::draw(canvas);
+  } else {
+    H1DPlot::draw(canvas);
+    m_stack->GetXaxis()->SetTimeDisplay(1);
+    m_stack->GetXaxis()->SetTimeFormat("%d-%H:%M");
+  }
   m_graph->Draw("P");
   gPad->Modified();
   gPad->Update();

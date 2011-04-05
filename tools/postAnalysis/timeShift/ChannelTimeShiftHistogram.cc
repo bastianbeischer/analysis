@@ -26,7 +26,7 @@ ChannelTimeShiftHistogram::ChannelTimeShiftHistogram(PostAnalysisCanvas* canvas,
   if (ch > 0)
     projection->Smooth();
   projection->SetName(qPrintable(title));
-  projection->GetXaxis()->SetTitle("#Deltat / ns");
+  setAxisTitle("#Deltat / ns", "");
   TF1* function = new TF1(qPrintable(title + "Function"), "gaus", projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
   projection->Fit(function, "QN0");
   if (ch > 0) {

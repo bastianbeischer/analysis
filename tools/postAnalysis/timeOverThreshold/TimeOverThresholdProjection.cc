@@ -24,7 +24,7 @@ TimeOverThresholdProjection::TimeOverThresholdProjection(PostAnalysisCanvas* can
   TH1D* histogram = histogram2D->ProjectionY(qPrintable(title + "projection"), ch+1, ch+1);
 
   setTitle(title);
-  histogram->GetXaxis()->SetTitle("time over threshold / ns");
+  setAxisTitle("time over threshold / ns", "");
   addHistogram(histogram);
   
   TLatex* latex = 0;

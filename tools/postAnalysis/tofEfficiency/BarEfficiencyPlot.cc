@@ -43,9 +43,7 @@ BarEfficiencyPlot::BarEfficiencyPlot(PostAnalysisCanvas* c1, PostAnalysisCanvas*
   double minY = h1->GetYaxis()->GetXmin();
   double maxY = h1->GetYaxis()->GetXmax();
   TH2D* h = new TH2D(qPrintable(title), "", nBinsX, minX, maxX, nBinsY, minY, maxY);
-  h->GetXaxis()->SetTitle("y_{tracker} / mm");
-  h->GetYaxis()->SetTitle("x_{tracker} / mm");
-  h->GetZaxis()->SetTitle("efficiency");
+  setAxisTitle("y_{tracker} / mm", "x_{tracker} / mm", "efficiency");
   h->Add(h1, 0.25);
   h->Add(h2, 0.25);
   h->Add(h3, 0.25);

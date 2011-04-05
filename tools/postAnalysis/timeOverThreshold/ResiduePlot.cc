@@ -38,7 +38,7 @@ ResiduePlot::ResiduePlot(PostAnalysisCanvas* canvas)
     }
   }
   setTitle(title);
-  histogram->GetXaxis()->SetTitle(h2->GetYaxis()->GetTitle());
+  setAxisTitle(h2->GetYaxis()->GetTitle(), "");
   addHistogram(histogram);
   
   TLatex* latex = 0;  

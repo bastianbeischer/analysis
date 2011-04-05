@@ -26,9 +26,7 @@ MeanBarEfficiencyPlot::MeanBarEfficiencyPlot(const QVector<BarEfficiencyPlot*>& 
   double maxY = h0->GetYaxis()->GetXmax();
   setTitle("mean tof efficiency");
   TH2D* h = new TH2D(qPrintable(title()), "", nBinsX, minX, maxX, nBinsY, minY, maxY); 
-  h->GetXaxis()->SetTitle("y_{tracker} / mm");
-  h->GetYaxis()->SetTitle("x_{tracker} / mm");
-  h->GetZaxis()->SetTitle("efficiency");
+  setAxisTitle("y_{tracker} / mm", "x_{tracker} / mm", "efficiency");
   int n = 0;
   for (int i = 0; i < plots.size(); ++i) {
     TH2D* hi = plots.at(i)->histogram();
