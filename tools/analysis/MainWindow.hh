@@ -6,9 +6,11 @@
 #include "Track.hh"
 #include "Corrections.hh"
 #include "EventReader.hh"
+#include "RootPlot.hh"
 
 #include <QMainWindow>
 #include <QString>
+#include <QVector>
 #include <QTime>
 #include <QTimer>
 
@@ -48,6 +50,7 @@ private slots:
   void checkSelectAll();
   void plotterTitleChanged(const QString&);
   void plotterPositionChanged(double, double);
+  void drawOptionComboBoxCurrentIndexChanged(int);
   void update();
 private:
   void setupPlots();
@@ -68,7 +71,7 @@ private:
   QVector<QCheckBox*> m_trdCheckBoxes;
   QVector<QCheckBox*> m_trackerCheckBoxes;
   QVector<QWidget*> m_controlWidgets;
-  QStringList m_2dPlotOptions;
+  QVector<RootPlot::DrawOption> m_drawOptions;
   bool m_inhibitDraw;
   QTime m_time;
   QTimer m_updateTimer;

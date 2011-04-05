@@ -25,6 +25,7 @@ public:
   AnalysisPlot::Topic plotTopic(unsigned int);
   void selectPlot(int, bool = false);
   RootPlot::DrawOption drawOption();
+  void setDrawOption(RootPlot::DrawOption);
   RootPlot::Type selectedPlotType();
   void unzoom();
   void setGrid(bool);

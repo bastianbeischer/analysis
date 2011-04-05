@@ -85,11 +85,10 @@ QString RootPlot::drawOption(DrawOption option)
   switch (option) {
     case BLANK: return "";
     case NOSTACK: return "NOSTACK";
-    case COLZ: return "COLZ";
+    case COLZ: return "COL Z";
     case CONT4Z: return "CONT4 Z";
     case LEGO: return "LEGO";
     case LEGO2: return "LEGO2";
-    case LEGOCOLZ: return "LEGO COL Z";
     case SURF1: return "SURF1";
     case COLZTEXT: return "COL Z TEXT";
     case AP: return "AP";

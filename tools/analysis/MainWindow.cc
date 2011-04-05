@@ -75,6 +75,7 @@ MainWindow::MainWindow(QWidget* parent)
   , m_processors()
   , m_reader(new EventReader(this))
   , m_activePlots()
+  , m_drawOptions()
   , m_inhibitDraw(false)
   , m_time()
   , m_updateTimer()
@@ -200,13 +201,6 @@ MainWindow::MainWindow(QWidget* parent)
   foreach(QCheckBox* checkBox, m_topicCheckBoxes)
     connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged()));
 
-  m_2dPlotOptions.append("COL Z");
-  m_2dPlotOptions.append("CONT4 Z");
-  m_2dPlotOptions.append("LEGO");
-  m_2dPlotOptions.append("LEGO2");
-  m_2dPlotOptions.append("LEGO COL Z");
-  m_2dPlotOptions.append("SURF1");
-
   m_updateTimer.setInterval(50);
   m_ui.numberOfThreadsSpinBox->setValue(QThread::idealThreadCount());
 }
@@ -323,8 +317,10 @@ void MainWindow::listWidgetItemChanged(QListWidgetItem* item)
 
 void MainWindow::listWidgetCurrentRowChanged(int i)
 {
+  disconnect(m_ui.drawOptionComboBox, 0, this, 0);
   m_ui.drawOptionComboBox->setEnabled(false);
   m_ui.drawOptionComboBox->clear();
+  m_drawOptions.clear();
   if (i < 0 || m_activePlots.size() == 0) {
     m_ui.plotter->selectPlot(-1);
     return;
@@ -333,16 +329,22 @@ void MainWindow::listWidgetCurrentRowChanged(int i)
     m_ui.plotter->selectPlot(m_activePlots[i]);
     switch (m_ui.plotter->selectedPlotType()) {
       case RootPlot::H1DPlot:
-        foreach(const RootPlot::DrawOption& option, H1DPlot::drawOptions())
+        foreach(const RootPlot::DrawOption& option, H1DPlot::drawOptions()) {
+          m_drawOptions.append(option);
           m_ui.drawOptionComboBox->addItem(RootPlot::drawOption(option));
+        }
         break;
       case RootPlot::H2DPlot:
-        foreach(const RootPlot::DrawOption& option, H2DPlot::drawOptions())
+        foreach(const RootPlot::DrawOption& option, H2DPlot::drawOptions()) {
+          m_drawOptions.append(option);
           m_ui.drawOptionComboBox->addItem(RootPlot::drawOption(option));
+        }
         break;
       case RootPlot::GraphPlot:
-        foreach(const RootPlot::DrawOption& option, GraphPlot::drawOptions())
+        foreach(const RootPlot::DrawOption& option, GraphPlot::drawOptions()) {
+          m_drawOptions.append(option);
           m_ui.drawOptionComboBox->addItem(RootPlot::drawOption(option));
+        }
         break;
       default: break;
     }
@@ -352,14 +354,15 @@ void MainWindow::listWidgetCurrentRowChanged(int i)
 
 void MainWindow::setDrawOptionComboBox()
 {
-  QString option = RootPlot::drawOption(m_ui.plotter->drawOption());
   for (int i = 0; i < m_ui.drawOptionComboBox->count(); ++i) {
-    if (m_ui.drawOptionComboBox->itemText(i) == option) {
+    if (m_drawOptions[i] == m_ui.plotter->drawOption()) {
       m_ui.drawOptionComboBox->setCurrentIndex(i);
       break;
     }
   }
   m_ui.drawOptionComboBox->setEnabled(true);
+  connect(m_ui.drawOptionComboBox, SIGNAL(currentIndexChanged(int)),
+    this, SLOT(drawOptionComboBoxCurrentIndexChanged(int)));
 }
 
 void MainWindow::setupPlots()
@@ -907,4 +910,9 @@ void MainWindow::update()
   m_ui.dataChainProgressBar->setValue(m_reader->progress());
   m_ui.eventQueueProgressBar->setValue(m_reader->buffer());
   m_ui.timeLabel->setText(QString("%1s").arg(m_time.elapsed()/1000));
+}
+
+void MainWindow::drawOptionComboBoxCurrentIndexChanged(int i)
+{
+  m_ui.plotter->setDrawOption(m_drawOptions[i]);
 }

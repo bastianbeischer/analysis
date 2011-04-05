@@ -200,3 +200,11 @@ RootPlot::DrawOption Plotter::drawOption()
   }
   return m_plots[m_selectedPlot]->drawOption();
 }
+  
+void Plotter::setDrawOption(RootPlot::DrawOption option)
+{
+  if (m_selectedPlot < 0)
+    return;
+  m_plots[m_selectedPlot]->setDrawOption(option);
+  selectPlot(m_selectedPlot);
+}
