@@ -35,7 +35,7 @@ TimeOverThresholdScaling::TimeOverThresholdScaling(PostAnalysisCanvas* canvas, u
   TGraphErrors* graph = new TGraphErrors(TimeOverThresholdScaling::timeOverThresholdScalingGraphs[tofId]);
   addGraph(graph, "P");
   QString graphTitle = title + ";temperature /  #circ C;time over threshold / ns";
-  multiGraph()->SetTitle(graphTitle.toStdString().c_str());
+  multiGraph()->SetTitle(qPrintable(graphTitle));
   
   TLatex* latex = 0;
 
