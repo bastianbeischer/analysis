@@ -51,6 +51,7 @@ void PostAnalysisWindow::selectCanvas(QListWidgetItem* item)
   m_ui->qtWidget->GetCanvas()->Clear();
   m_canvases[m_ui->canvasListWidget->row(item)]->draw(m_ui->qtWidget->GetCanvas());
   plotOptionComboBoxCurrentIndexChanged(m_ui->plotOptionComboBox->currentText());
+  m_ui->titleLabel->setText(item->text());
 }
 
 void PostAnalysisWindow::selectPlot(QListWidgetItem* item, QListWidgetItem*)
@@ -63,6 +64,7 @@ void PostAnalysisWindow::selectPlot(QListWidgetItem* item)
   gPad->Clear();
   m_plots[m_ui->plotListWidget->row(item)]->draw(m_ui->qtWidget->GetCanvas());
   plotOptionComboBoxCurrentIndexChanged(m_ui->plotOptionComboBox->currentText());
+  m_ui->titleLabel->setText(item->text());
 }
 
 void PostAnalysisWindow::plotOptionComboBoxCurrentIndexChanged(const QString& option)
