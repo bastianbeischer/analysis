@@ -16,6 +16,7 @@ class MCSimpleEventDigi :
 public:
   MCSimpleEventDigi();
   MCSimpleEventDigi(Hit::ModuleType, unsigned short);
+  MCSimpleEventDigi(const MCSimpleEventDigi&);
   ~MCSimpleEventDigi();
 
   unsigned short DetID() const {return m_detID;}
