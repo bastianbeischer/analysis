@@ -3,7 +3,6 @@
 #include <TH1D.h>
 
 #include <TMarker.h>
-
 #include "Track.hh"
 #include "TrackInformation.hh"
 #include "Cluster.hh"
@@ -62,17 +61,16 @@ TRDSpectrumPlot::~TRDSpectrumPlot()
 
 void TRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent*)
 {
+
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;
 
-  //check if all tracker layers have a hit
-  TrackInformation::Flags flags = track->information()->flags();
-  //if (!(flags & TrackInformation::AllTrackerLayers))
-    //return;
+  if (track->chi2() / track->ndf() > 10)
+    return;
 
   //check if track was inside of magnet
-  if (!(flags & TrackInformation::InsideMagnet))
+  if (!(track->information()->flags() & TrackInformation::InsideMagnet))
     return;
 
   //get the reconstructed momentum
