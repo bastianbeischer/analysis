@@ -34,7 +34,7 @@ TOTTemperatureCorrelationPlot::TOTTemperatureCorrelationPlot(unsigned int id)
   const double maxTot = 75;
   TH2D* histogram = new TH2D(qPrintable(title), "", nTemperatureBins, minTemperature, maxTemperature, nTotBins, minTot, maxTot);
   setAxisTitle("temperature /  #circC", "time over threshold / ns", "");
-  setHistogram(histogram);
+  addHistogram(histogram);
 }
 
 TOTTemperatureCorrelationPlot::~TOTTemperatureCorrelationPlot() 

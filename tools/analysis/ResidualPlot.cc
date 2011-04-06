@@ -36,7 +36,7 @@ ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer)
   TH2D* histogram = new TH2D(qPrintable(title()), "", nElements*nChannels, 0, nElements*nChannels, 200, -max, max);
 
   setAxisTitle("channel number", "residue / mm", "");
-  setHistogram(histogram);
+  addHistogram(histogram);
 }
 
 ResidualPlot::~ResidualPlot()

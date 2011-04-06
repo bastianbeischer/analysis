@@ -24,7 +24,7 @@ TOTPlot::TOTPlot()
   for (int ch = 0; ch < 64; ++ch)
     histogram->GetXaxis()->SetBinLabel(1 + ch, qPrintable(QString("%1").arg(0x8000 | ch, 0, 16)));
   setAxisTitle("", "time over threshold / ns", "");
-  setHistogram(histogram);
+  addHistogram(histogram);
 }
 
 TOTPlot::~TOTPlot()

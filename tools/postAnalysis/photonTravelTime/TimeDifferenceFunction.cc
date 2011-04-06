@@ -52,7 +52,7 @@ TimeDifferenceFunction::TimeDifferenceFunction(PostAnalysisCanvas* canvas)
       h->SetBinContent(binX, binY, m_function->Eval(nonBending, bending));
     }
   }
-  setHistogram(h);
+  addHistogram(h);
 }
 
 TimeDifferenceFunction::~TimeDifferenceFunction()

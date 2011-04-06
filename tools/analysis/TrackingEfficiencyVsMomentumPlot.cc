@@ -15,7 +15,7 @@ TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot()
   
   TH2D* histogram = new TH2D(qPrintable(title()), "", 10, 0., 10., 7, 1.5, 8.5);
   setAxisTitle("R / GV", "layers with exactly one hit", "");
-  setHistogram(histogram);
+  addHistogram(histogram);
   setDrawOption(COLZTEXT);
 }
 

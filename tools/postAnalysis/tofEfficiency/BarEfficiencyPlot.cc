@@ -52,7 +52,7 @@ BarEfficiencyPlot::BarEfficiencyPlot(PostAnalysisCanvas* c1, PostAnalysisCanvas*
   double sum = sumEntries(h);
   double mean = sum / (h->GetXaxis()->GetNbins() * h->GetYaxis()->GetNbins());
 
-  setHistogram(h);
+  addHistogram(h);
 
   TLatex* latex = 0;
   latex = RootPlot::newLatex(.3, .82);

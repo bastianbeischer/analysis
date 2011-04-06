@@ -26,7 +26,7 @@ Chi2VsMomentumPlot::Chi2VsMomentumPlot() :
   
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, x0, x1, nBinsY, y0, y1);
   setAxisTitle("R / GV", "#chi^{2} / ndf", "");
-  setHistogram(histogram);
+  addHistogram(histogram);
 }
 
 Chi2VsMomentumPlot::~Chi2VsMomentumPlot()

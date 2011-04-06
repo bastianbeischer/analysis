@@ -19,7 +19,7 @@ BendingAnglePositionPlot::BendingAnglePositionPlot(double cut)
   setTitle(QString("position of tracks with abs(alpha) > %1 rad").arg(cut));
   TH2D* histogram = new TH2D(qPrintable(title()), "", 30, -250, 250, 24, -120, 120);
   setAxisTitle("y / mm", "x / mm", "");
-  setHistogram(histogram);
+  addHistogram(histogram);
   m_normHisto = new TH2D(qPrintable(title()+"_all"), "", 30, -250, 250, 24, -120, 120);
   setDrawOption(LEGO);
 }

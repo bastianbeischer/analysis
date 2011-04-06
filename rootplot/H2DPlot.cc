@@ -1,6 +1,7 @@
 #include "H2DPlot.hh"
 
 #include <TH2.h>
+#include <THStack.h>
 #include <TList.h>
 #include <TCanvas.h>
 
@@ -10,7 +11,7 @@ const QVector<RootPlot::DrawOption> H2DPlot::s_drawOptions = QVector<RootPlot::D
 
 H2DPlot::H2DPlot()
   : RootPlot()
-  , m_histogram()
+  , m_stack(new THStack)
   , m_palette(RootStyle::DefaultPalette)
   , m_xAxisTitle()
   , m_yAxisTitle()
@@ -22,7 +23,9 @@ H2DPlot::H2DPlot()
 
 H2DPlot::~H2DPlot()
 {
-  delete m_histogram;
+  for (int i = 0; i < numberOfHistograms(); ++i)
+    delete histogram(i);
+  delete m_stack;
 }
 
 void H2DPlot::setPalette(RootStyle::PaletteType palette)
@@ -32,44 +35,47 @@ void H2DPlot::setPalette(RootStyle::PaletteType palette)
 
 void H2DPlot::draw(TCanvas* canvas)
 {
-  if (!m_histogram)
+  if (!numberOfHistograms())
     return;
   canvas->cd();
-  canvas->Clear();
   RootStyle::setPalette(m_palette);
   if (!m_drawn)
-    m_histogram->SetTitle(qPrintable(";" + m_xAxisTitle + ";" + m_yAxisTitle + ";" + m_zAxisTitle));
-  m_histogram->Draw(qPrintable(drawOption(m_drawOption)));
+    m_stack->SetTitle(qPrintable(";" + m_xAxisTitle + ";" + m_yAxisTitle + ";" + m_zAxisTitle));
+  m_stack->Draw(qPrintable(drawOption(m_drawOption)));
   m_drawn = true;
   RootPlot::draw(canvas);
 }
 
 void H2DPlot::unzoom()
 {
-  if (!m_histogram)
-    return;
-  m_histogram->GetXaxis()->UnZoom();
-  m_histogram->GetYaxis()->UnZoom();
-  m_histogram->GetZaxis()->UnZoom();
+  if (m_drawn) {
+    m_stack->GetXaxis()->UnZoom();
+    m_stack->GetYaxis()->UnZoom();
+    //m_stack->GetZaxis()->UnZoom();
+  }
+}
+
+void H2DPlot::clear(int i)
+{
+  Q_ASSERT(0 <= i && i <= numberOfHistograms());
+  histogram(i)->Clear();
 }
 
 void H2DPlot::clear()
 {
-  if (!m_histogram)
-    return;
-  m_histogram->Clear();
+  for (int i = 0; i < numberOfHistograms(); ++i)
+    histogram(i)->Clear();
 }
 
-TH2D* H2DPlot::histogram()
+TH2D* H2DPlot::histogram(int i)
 {
-  return m_histogram;
+  Q_ASSERT(0 <= i && i <= numberOfHistograms());
+  return static_cast<TH2D*>(m_stack->GetHists()->At(i));
 }
 
-void H2DPlot::setHistogram(TH2D* h)
+void H2DPlot::addHistogram(TH2D* h, DrawOption option)
 {
-  if (m_histogram)
-    delete m_histogram;
-  m_histogram = h;
+  m_stack->Add(h, qPrintable(drawOption(option)));
 }
   
 const QVector<RootPlot::DrawOption>& H2DPlot::drawOptions()
@@ -82,4 +88,9 @@ void H2DPlot::setAxisTitle(const QString& x, const QString& y, const QString& z)
   m_xAxisTitle = x;
   m_yAxisTitle = y;
   m_zAxisTitle = z;
+}
+
+int H2DPlot::numberOfHistograms()
+{
+  return m_stack->GetHists() ? m_stack->GetHists()->GetSize() : 0;
 }

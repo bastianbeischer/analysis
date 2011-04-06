@@ -27,7 +27,7 @@ TOFTimeShiftPlot::TOFTimeShiftPlot(unsigned short topBarId, unsigned short botto
   TH2D* histogram = new TH2D(qPrintable(title), "", 8, -0.5, 7.5, nBins, min-.5*(max-min)/nBins, max-.5*(max-min)/nBins);
   setAxisTitle("channel", "#Deltat / ns", "");
   //histogram->GetXaxis()->SetRangeUser(0.5, 7.5);
-  setHistogram(histogram);
+  addHistogram(histogram);
 }
 
 TOFTimeShiftPlot::~TOFTimeShiftPlot()

@@ -19,7 +19,7 @@ TotalEnergyDepositionTRDvsTrackerPlot::TotalEnergyDepositionTRDvsTrackerPlot() :
   setTitle("Mean dE_dx TRD vs. tracker");
 
   TH2D* histogram = new TH2D(qPrintable(title()), qPrintable(title() + ";tracker mean amplitude tracker;TRD mean dE/dx"), 50, 0, 8000, 50, 0, 30);
-  setHistogram(histogram);
+  addHistogram(histogram);
 }
 
 TotalEnergyDepositionTRDvsTrackerPlot::~TotalEnergyDepositionTRDvsTrackerPlot()

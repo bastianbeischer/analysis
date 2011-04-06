@@ -23,7 +23,7 @@ TOTMomentumCorrelation::TOTMomentumCorrelation(TofLayer layer)
   setTitle(htitle);
   TH2D* histogram = new TH2D(qPrintable(htitle), "", 100, 0, 10, 150, 0, 100);
   setAxisTitle("rigidity / GV", "mean time over threshold / ns", "");
-  setHistogram(histogram);
+  addHistogram(histogram);
 }
 
 TOTMomentumCorrelation::~TOTMomentumCorrelation()

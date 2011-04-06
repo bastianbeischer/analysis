@@ -28,7 +28,7 @@ TOFEfficiencyPlot::TOFEfficiencyPlot(unsigned short id)
     20, -200, 200, 10, -25, 25);
   setAxisTitle("y_{tracker} / mm", "x_{tracker} / mm", "efficiency");
   setDrawOption(LEGO2);
-  setHistogram(histogram);
+  addHistogram(histogram);
 }
 
 TOFEfficiencyPlot::~TOFEfficiencyPlot()

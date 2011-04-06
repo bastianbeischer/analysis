@@ -36,6 +36,7 @@ void H1DPlot::draw(TCanvas* canvas)
   if (!m_drawn)
     m_stack->SetTitle(qPrintable(";" + m_xAxisTitle + ";" + m_yAxisTitle));
   m_stack->Draw(qPrintable(drawOption(m_drawOption)));
+  gPad->RedrawAxis();
   m_drawn = true;
   RootPlot::draw(canvas);
 }

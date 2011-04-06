@@ -38,7 +38,7 @@ MeanBarEfficiencyPlot::MeanBarEfficiencyPlot(const QVector<BarEfficiencyPlot*>& 
   double sum = sumEntries(h);
   double mean = sum / (h->GetXaxis()->GetNbins() * h->GetYaxis()->GetNbins());
 
-  setHistogram(h);
+  addHistogram(h);
 
   TLatex* latex = 0;
   latex = RootPlot::newLatex(.3, .82);

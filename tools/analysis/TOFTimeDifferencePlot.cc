@@ -27,7 +27,7 @@ TOFTimeDifferencePlot::TOFTimeDifferencePlot(unsigned short id)
   TH2D* histogram = new TH2D(qPrintable(title()), "",
     20, -200, 200, 10, -25, 25);
   setAxisTitle("y_{tracker} / mm", "x_{tracker} / mm", "(t_{left} - t_{right}) / ns");
-  setHistogram(histogram);
+  addHistogram(histogram);
   setDrawOption(SURF1);
 }
 

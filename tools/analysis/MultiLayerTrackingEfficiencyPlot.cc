@@ -29,7 +29,7 @@ MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot() :
   
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, x0, x1, nBinsY, y0, y1);
   setAxisTitle("R / GV", "layer number", "");
-  setHistogram(histogram);
+  addHistogram(histogram);
 
   m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBinsX, x0, x1);
 

@@ -47,7 +47,7 @@ BarTimeShiftHistogram::BarTimeShiftHistogram(const QVector<PostAnalysisCanvas*>&
   histogram->GetYaxis()->SetBinLabel(4, "802c 803c");
   histogram->GetZaxis()->SetRangeUser(-0.5, 0.5);
   histogram->SetMarkerColor(kYellow);
-  setHistogram(histogram);
+  addHistogram(histogram);
   setPalette(RootStyle::ResiduePalette);
   setDrawOption(COLZTEXT);
 }

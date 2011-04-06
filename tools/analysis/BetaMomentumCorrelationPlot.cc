@@ -34,7 +34,7 @@ BetaMomentumCorrelationPlot::BetaMomentumCorrelationPlot()
   double yMin = -10;
   double yMax = 10;
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, xMin, xMax, nBinsY, yMin, yMax);
-  setHistogram(histogram);
+  addHistogram(histogram);
   setAxisTitle("R / GV", "1 / #beta", "");
 
   TF1* function = 0;

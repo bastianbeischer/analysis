@@ -22,7 +22,7 @@ TOFPositionCorrelationPlot::TOFPositionCorrelationPlot(unsigned short id)
   setTitle(QString("tof position correlation 0x%1").arg(id, 0, 16));
   TH2D* histogram = new TH2D(qPrintable(title()), "", 45, -450, 450, 90, -450, 450);
   setAxisTitle("y_{tracker} / mm", "y_{TOF} / mm", "");
-  setHistogram(histogram);
+  addHistogram(histogram);
   TF1* function = new TF1(qPrintable(QString("tof correlation Function %1").arg(id)), "pol1");
   function->SetRange(-450, 450);
   function->SetParameters(0, 1);

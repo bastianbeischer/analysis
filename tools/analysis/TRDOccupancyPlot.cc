@@ -41,7 +41,7 @@ TRDOccupancyPlot::TRDOccupancyPlot(TrdOccupancyType occupancyType, bool onlyOnTr
   setTitle(tempTitle);
 
   TH2D* histogram = new TH2D(qPrintable(title()), qPrintable(title() + ";x / mm;z /mm"),200,-120,120,200,-550, -250);
-  setHistogram(histogram);
+  addHistogram(histogram);
 
   //initialize all needed ellipses
   initializeEllipses();

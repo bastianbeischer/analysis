@@ -26,7 +26,7 @@ TRDEfficiencyPlot::TRDEfficiencyPlot()
   setTitle("TRD efficiency (hits / was on track)");
 
   TH2D* histogram = new TH2D(qPrintable(title()), qPrintable(title() + ";x / mm;z /mm"),200,-120,120,200,-550, -250);
-  setHistogram(histogram);
+  addHistogram(histogram);
 
   //initialize the 2D positions of the trd tubes:
   Setup* setup = Setup::instance();

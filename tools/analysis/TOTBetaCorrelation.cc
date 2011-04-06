@@ -23,7 +23,7 @@ TOTBetaCorrelation::TOTBetaCorrelation(TofLayer layer)
   setTitle(htitle);
   TH2D* histogram = new TH2D(qPrintable(htitle), "", 100, 0, 1.6, 150, 0, 100);
   setAxisTitle("beta", "sum time over threshold / ns", "");
-  setHistogram(histogram);
+  addHistogram(histogram);
 }
 
 TOTBetaCorrelation::~TOTBetaCorrelation()

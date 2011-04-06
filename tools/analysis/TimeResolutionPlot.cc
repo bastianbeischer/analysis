@@ -32,7 +32,7 @@ TimeResolutionPlot::TimeResolutionPlot(unsigned short idTop1, unsigned short idT
   TH2D* histogram = new TH2D(qPrintable(title), "",
     5, -Constants::tofBarLength / 2., Constants::tofBarLength / 2., 30, 0, 6);
   setAxisTitle("y / mm", "#Deltat / ns", "");
-  setHistogram(histogram);
+  addHistogram(histogram);
 }
 
 TimeResolutionPlot::~TimeResolutionPlot()

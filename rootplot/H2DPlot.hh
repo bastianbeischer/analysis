@@ -9,6 +9,7 @@
 
 class TCanvas;
 class TH2D;
+class THStack;
 
 class H2DPlot : virtual public RootPlot {
 public:
@@ -17,13 +18,15 @@ public:
   static const QVector<DrawOption>& drawOptions();
   virtual void draw(TCanvas*);
   virtual void unzoom();
+  virtual void clear(int);
   virtual void clear();
-  TH2D* histogram();
-  void setHistogram(TH2D*);
-  void setPalette(RootStyle::PaletteType);
+  int numberOfHistograms();
+  TH2D* histogram(int i = 0);
   void setAxisTitle(const QString&, const QString&, const QString&);
+  void addHistogram(TH2D*, DrawOption = BLANK);
+  void setPalette(RootStyle::PaletteType);
 protected:
-  TH2D* m_histogram;
+  THStack* m_stack;
 private:
   RootStyle::PaletteType m_palette;
   QString m_xAxisTitle;

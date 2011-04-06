@@ -36,7 +36,7 @@ TimeDifferencePlot::TimeDifferencePlot(PostAnalysisCanvas* canvas, TimeDifferenc
     }
   }
   h->Add(f->histogram(), -1);
-  setHistogram(h);
+  addHistogram(h);
 }
 
 TimeDifferencePlot::~TimeDifferencePlot()
