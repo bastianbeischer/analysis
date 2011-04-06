@@ -10,6 +10,7 @@
 #include "BrokenLine.hh"
 #include "CenteredBrokenLine.hh"
 #include "CenteredBrokenLine2D.hh"
+#include "Particle.hh"
 #include "Track.hh"
 #include "TH2D.h"
 
@@ -43,8 +44,10 @@ ResidualPlot::~ResidualPlot()
 {
 }
 
-void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* /*event*/)
+void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* /*event*/)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;

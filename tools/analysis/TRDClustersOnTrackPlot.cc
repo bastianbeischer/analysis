@@ -5,6 +5,7 @@
 #include "Hit.hh"
 #include "Cluster.hh"
 #include "SimpleEvent.hh"
+#include "Particle.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
 
@@ -25,8 +26,9 @@ TRDClustersOnTrackPlot::~TRDClustersOnTrackPlot()
 {
 }
 
-void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/,Track* track ,SimpleEvent* event)
+void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/,Particle* particle ,SimpleEvent* event)
 {
+  const Track* track = particle->track();
 
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())

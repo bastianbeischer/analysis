@@ -5,6 +5,7 @@
 
 #include "TrackInformation.hh"
 #include "Hit.hh"
+#include "Particle.hh"
 #include "Track.hh"
 
 Chi2PerNdfPlot::Chi2PerNdfPlot() :
@@ -28,8 +29,10 @@ Chi2PerNdfPlot::~Chi2PerNdfPlot()
 {
 }
 
-void Chi2PerNdfPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent* /*event*/)
+void Chi2PerNdfPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* /*event*/)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if(!track || !track->fitGood())
     return;

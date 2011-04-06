@@ -3,7 +3,7 @@
 
 #include "EventDestination.hh"
 
-class Track;
+class Particle;
 class TestbeamSetup;
 
 class AlignmentMatrix :
@@ -15,7 +15,7 @@ public:
   ~AlignmentMatrix();
 
 public:
-  void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
+  void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
   void resetArrays();
   void init();
 

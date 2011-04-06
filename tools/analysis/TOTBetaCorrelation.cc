@@ -5,6 +5,7 @@
 #include "Cluster.hh"
 #include "TOFSipmHit.hh"
 #include "TOFCluster.hh"
+#include "Particle.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
 #include "Constants.hh"
@@ -30,8 +31,10 @@ TOTBetaCorrelation::~TOTBetaCorrelation()
 {}
 
 
-void TOTBetaCorrelation::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void TOTBetaCorrelation::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if (!track || !track->fitGood())
     return;
   TrackInformation::Flags flags = track->information()->flags();

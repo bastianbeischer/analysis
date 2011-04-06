@@ -3,6 +3,7 @@
 #include <TH1D.h>
 
 #include "TrackInformation.hh"
+#include "Particle.hh"
 #include "Track.hh"
 #include "Hit.hh"
 #include "Cluster.hh"
@@ -23,8 +24,10 @@ TotalSignalHeightPlot::~TotalSignalHeightPlot()
 {
 }
 
-void TotalSignalHeightPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
+void TotalSignalHeightPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if(!track)
     return;
 

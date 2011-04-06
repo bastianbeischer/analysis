@@ -4,6 +4,7 @@
 #include <TLatex.h>
 #include <TLegend.h>
 
+#include "Particle.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
 
@@ -39,8 +40,10 @@ TrackerLayerStatisticsPlot::~TrackerLayerStatisticsPlot()
 {
 }
 
-void TrackerLayerStatisticsPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent*)
+void TrackerLayerStatisticsPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if (!track || !track->fitGood())
     return;
 

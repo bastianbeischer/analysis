@@ -7,6 +7,8 @@
 #include "TOFSipmHit.hh"
 #include "Setup.hh"
 #include "TOFBar.hh"
+#include "Particle.hh"
+#include "Track.hh"
 
 #include <TH2.h>
 #include <TVector3.h>
@@ -38,8 +40,10 @@ TimeResolutionPlot::TimeResolutionPlot(unsigned short idTop1, unsigned short idT
 TimeResolutionPlot::~TimeResolutionPlot()
 {}
 
-void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
+void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;

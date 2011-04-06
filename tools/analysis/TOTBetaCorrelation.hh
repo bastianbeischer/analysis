@@ -7,7 +7,7 @@
 #include <QString>
 
 class Hit;
-class Track;
+class Particle;
 class SimpleEvent;
 
 class TOTBetaCorrelation : public AnalysisPlot, public H2DPlot {
@@ -15,7 +15,7 @@ public:
   enum TofLayer {Lower, Upper, All};
   TOTBetaCorrelation(TofLayer layer);
   ~TOTBetaCorrelation();
-  virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
+  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
   virtual void finalize();
 private:
   TofLayer m_layer;

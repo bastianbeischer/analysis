@@ -7,6 +7,8 @@
 #include "TOFSipmHit.hh"
 #include "Setup.hh"
 #include "TOFBar.hh"
+#include "Particle.hh"
+#include "Track.hh"
 
 #include <TH1.h>
 #include <TVector3.h>
@@ -40,8 +42,10 @@ BetaPlot::~BetaPlot()
   delete m_line;
 }
 
-void BetaPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
+void BetaPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;

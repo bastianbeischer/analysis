@@ -3,6 +3,7 @@
 #include <TPad.h>
 #include <TH2D.h>
 
+#include "Particle.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
 #include "SimpleEvent.hh"
@@ -26,8 +27,10 @@ TotalEnergyDepositionTRDvsTrackerPlot::~TotalEnergyDepositionTRDvsTrackerPlot()
 {
 }
 
-void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
+void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;

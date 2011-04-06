@@ -7,6 +7,8 @@
 #include "TOFSipmHit.hh"
 #include "Setup.hh"
 #include "TOFBar.hh"
+#include "Particle.hh"
+#include "Track.hh"
 
 #include <TH2.h>
 #include <TVector3.h>
@@ -32,8 +34,10 @@ TOFTimeShiftTriggerPlot::TOFTimeShiftTriggerPlot()
 TOFTimeShiftTriggerPlot::~TOFTimeShiftTriggerPlot()
 {}
 
-void TOFTimeShiftTriggerPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void TOFTimeShiftTriggerPlot::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;

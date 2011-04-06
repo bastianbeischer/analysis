@@ -10,7 +10,7 @@ class BendingAnglePositionPlot : public AnalysisPlot, public H2DPlot {
 public:
   BendingAnglePositionPlot(double cut);
   virtual ~BendingAnglePositionPlot();
-  virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
+  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
   virtual void finalize();
 private:
   double m_cut;

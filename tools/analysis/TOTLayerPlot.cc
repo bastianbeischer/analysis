@@ -5,6 +5,7 @@
 #include "Cluster.hh"
 #include "TOFSipmHit.hh"
 #include "TOFCluster.hh"
+#include "Particle.hh"
 #include "Track.hh"
 #include "Constants.hh"
 #include "TrackInformation.hh"
@@ -30,8 +31,10 @@ TOTLayerPlot::TOTLayerPlot(TofLayer layer)
 TOTLayerPlot::~TOTLayerPlot()
 {}
 
-void TOTLayerPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void TOTLayerPlot::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if (!track || !track->fitGood())
     return;
   TrackInformation::Flags flags = track->information()->flags();

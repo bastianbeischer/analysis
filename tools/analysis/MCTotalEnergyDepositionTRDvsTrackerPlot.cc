@@ -10,6 +10,7 @@
 #include "SimpleEvent.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
+#include "Particle.hh"
 
 #include "TRDCalculations.hh"
 #include "RootStyle.hh"
@@ -33,8 +34,10 @@ MCTotalEnergyDepositionTRDvsTrackerPlot::~MCTotalEnergyDepositionTRDvsTrackerPlo
 {
 }
 
-void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* event)
+void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
+  const Track* track = particle->track();
+
   //only accept mc events:
   if (event->contentType() != SimpleEvent::MonteCarlo)
     return;

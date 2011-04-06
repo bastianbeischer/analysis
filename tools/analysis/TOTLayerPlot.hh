@@ -8,7 +8,7 @@
 #include <QString>
 
 class Hit;
-class Track;
+class Particle;
 class SimpleEvent;
 
 class TOTLayerPlot : public AnalysisPlot, public H1DPlot {
@@ -16,7 +16,7 @@ public:
   enum TofLayer {Lower, Upper, All};
   TOTLayerPlot(TofLayer layer);
   ~TOTLayerPlot();
-  virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
+  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
 private:
   TofLayer m_layer;
   QString layerName(TofLayer layer);

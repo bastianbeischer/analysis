@@ -7,7 +7,7 @@
 #include "EventDestination.hh"
 
 class Hit;
-class Track;
+class Particle;
 class TLine;
 class TMarker;
 class TLatex;
@@ -23,7 +23,7 @@ public:
   ~HitsPlot();
   
 public:
-  void processEvent(const QVector<Hit*>& hits, Track* track = 0, SimpleEvent* = 0);
+  void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
 
 private:
   void drawHits();

@@ -9,6 +9,7 @@
 #include <TFitResult.h>
 #include <TLegend.h>
 
+#include "Particle.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
 #include "SimpleEvent.hh"
@@ -66,8 +67,10 @@ TRDMoPVTimeEvolutionPlot::~TRDMoPVTimeEvolutionPlot()
   //qDeleteAll(m_mopvGraphs);
 }
 
-void TRDMoPVTimeEvolutionPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent* event)
+void TRDMoPVTimeEvolutionPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent* event)
 {
+  const Track* track = particle->track();
+
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;

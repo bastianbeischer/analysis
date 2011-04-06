@@ -7,6 +7,7 @@
 #include "Layer.hh"
 #include "TrackFinding.hh"
 #include "Setup.hh"
+#include "Particle.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
 
@@ -52,8 +53,10 @@ SingleLayerTrackingEfficiencyPlot::~SingleLayerTrackingEfficiencyPlot()
   delete [] m_layerZ;
 }
 
-void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
+void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if (!track || !track->fitGood())
     return;
 

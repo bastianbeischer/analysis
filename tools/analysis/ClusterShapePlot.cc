@@ -54,7 +54,7 @@ ClusterShapePlot::~ClusterShapePlot()
   delete m_eventCountAxis;
 }
 
-void ClusterShapePlot::processEvent(const QVector<Hit*>& hits, Track*, SimpleEvent*)
+void ClusterShapePlot::processEvent(const QVector<Hit*>& hits, Particle*, SimpleEvent*)
 {
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {

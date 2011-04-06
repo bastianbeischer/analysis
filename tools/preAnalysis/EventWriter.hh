@@ -10,7 +10,7 @@
 class EventQueue;
 class TFile;
 class TTree;
-class Track;
+class Particle;
 class SimpleEvent;
 class DataDescription;
 
@@ -26,7 +26,7 @@ public:
   ~EventWriter();
   
   void init(QString filename);
-  void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
+  void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
   void start();
 
   void addInputFileToDescription(QString filename);

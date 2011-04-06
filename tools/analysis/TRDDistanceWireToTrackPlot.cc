@@ -7,6 +7,7 @@
 #include "Cluster.hh"
 #include "SimpleEvent.hh"
 #include "Constants.hh"
+#include "Particle.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
 #include "TRDCalculations.hh"
@@ -28,8 +29,10 @@ TRDDistanceWireToTrackPlot::~TRDDistanceWireToTrackPlot()
 {
 }
 
-void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent* event)
+void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent* event)
 {
+  const Track* track = particle->track();
+
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;

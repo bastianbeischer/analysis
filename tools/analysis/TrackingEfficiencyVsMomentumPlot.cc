@@ -1,5 +1,6 @@
 #include "TrackingEfficiencyVsMomentumPlot.hh"
 
+#include "Particle.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
 
@@ -23,8 +24,10 @@ TrackingEfficiencyVsMomentumPlot::~TrackingEfficiencyVsMomentumPlot()
 {
 }
 
-void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
+void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if (!track || !track->fitGood())
     return;
 

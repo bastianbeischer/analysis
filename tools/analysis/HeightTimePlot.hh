@@ -8,7 +8,7 @@
 class HeightTimePlot : public SensorTimePlot {
 public:
   HeightTimePlot(QDateTime first, QDateTime last);
-  virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
+  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
 };
 
 #endif

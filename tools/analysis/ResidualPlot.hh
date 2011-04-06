@@ -7,7 +7,7 @@
 #include "H2DPlot.hh"
 
 class Layer;
-class Track;
+class Particle;
 
 class ResidualPlot : public AnalysisPlot, public H2DPlot {
   
@@ -16,7 +16,7 @@ public:
   ~ResidualPlot();
   
 public:
-  void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
+  void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
 
 private:
   const Layer* m_layer;

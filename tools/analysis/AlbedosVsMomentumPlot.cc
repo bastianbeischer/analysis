@@ -2,6 +2,7 @@
 
 #include <TH1D.h>
 
+#include "Particle.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
 
@@ -46,8 +47,10 @@ AlbedosVsMomentumPlot::~AlbedosVsMomentumPlot()
   delete m_totalHisto;
 }
 
-void AlbedosVsMomentumPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
+void AlbedosVsMomentumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if (!track || !track->fitGood())
     return;
 

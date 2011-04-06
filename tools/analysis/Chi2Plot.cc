@@ -7,6 +7,7 @@
 
 #include "TrackInformation.hh"
 #include "Hit.hh"
+#include "Particle.hh"
 #include "Track.hh"
 
 double chisquare(double* x, double* p)
@@ -47,8 +48,10 @@ Chi2Plot::~Chi2Plot()
 {
 }
 
-void Chi2Plot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent* /*event*/)
+void Chi2Plot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* /*event*/)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if(!track || !track->fitGood())
     return;

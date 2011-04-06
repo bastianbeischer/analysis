@@ -1,4 +1,5 @@
 #include "GeometricOccupancyProjectionPlot.hh"
+#include "Particle.hh"
 #include "Track.hh"
 
 #include "TrackInformation.hh"
@@ -23,8 +24,10 @@ GeometricOccupancyProjectionPlot::GeometricOccupancyProjectionPlot(double zPosit
 GeometricOccupancyProjectionPlot::~GeometricOccupancyProjectionPlot()
 {}
 
-void GeometricOccupancyProjectionPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
+void GeometricOccupancyProjectionPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;

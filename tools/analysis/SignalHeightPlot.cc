@@ -2,6 +2,7 @@
 
 #include <TH1D.h>
 
+#include "Particle.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
 #include "Hit.hh"
@@ -31,8 +32,10 @@ SignalHeightPlot::~SignalHeightPlot()
 {
 }
 
-void SignalHeightPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
+void SignalHeightPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if(!track)
     return;
 

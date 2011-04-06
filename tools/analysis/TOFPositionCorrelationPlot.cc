@@ -1,6 +1,8 @@
 #include "TOFPositionCorrelationPlot.hh"
 #include "BrokenLine.hh"
 
+#include "Particle.hh"
+#include "Track.hh"
 #include "TrackInformation.hh"
 #include "Hit.hh"
 #include "TOFCluster.hh"
@@ -36,8 +38,10 @@ TOFPositionCorrelationPlot::~TOFPositionCorrelationPlot()
   delete m_correlationGraph;
 }
 
-void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;

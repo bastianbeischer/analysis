@@ -6,6 +6,8 @@
 #include "Track.hh"
 #include "Corrections.hh"
 
+class Particle;
+
 class TrackFinding;
 
 class AnalysisProcessor : public EventProcessor {
@@ -20,6 +22,7 @@ public:
   void process(SimpleEvent*);
 
 private:
+  Particle* m_particle;
   Track* m_track;
   TrackFinding* m_trackFinding;
   Corrections* m_corrections;

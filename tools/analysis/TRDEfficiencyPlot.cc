@@ -5,6 +5,7 @@
 #include "Hit.hh"
 #include "Cluster.hh"
 #include "SimpleEvent.hh"
+#include "Particle.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
 #include "TRDCalculations.hh"
@@ -59,8 +60,10 @@ TRDEfficiencyPlot::~TRDEfficiencyPlot()
   m_ellipses.clear();
 }
 
-void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent*)
+void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;

@@ -2,6 +2,7 @@
 
 #include <TH1D.h>
 
+#include "Particle.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
 #include "SimpleEvent.hh"
@@ -27,8 +28,9 @@ TotalEnergyDepositionPlot::~TotalEnergyDepositionPlot()
 {
 }
 
-void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent* event)
+void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
 {
+  const Track* track = particle->track();
 
   /*
   //check if everything worked and a track has been fit

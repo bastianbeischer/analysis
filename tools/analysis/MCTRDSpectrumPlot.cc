@@ -7,6 +7,7 @@
 
 
 #include "SimpleEvent.hh"
+#include "Particle.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
 #include "Cluster.hh"
@@ -54,8 +55,10 @@ MCTRDSpectrumPlot::~MCTRDSpectrumPlot()
 {
 }
 
-void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent* event)
+void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent* event)
 {
+  const Track* track = particle->track();
+
   //only accept mc events:
   if (event->contentType() != SimpleEvent::MonteCarlo)
     return;

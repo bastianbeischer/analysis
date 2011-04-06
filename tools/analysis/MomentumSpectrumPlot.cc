@@ -5,6 +5,7 @@
 
 #include "Hit.hh"
 #include "TrackInformation.hh"
+#include "Particle.hh"
 #include "Track.hh"
 
 #include <iostream>
@@ -54,8 +55,10 @@ MomentumSpectrumPlot::~MomentumSpectrumPlot()
 {
 }
 
-void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent* /*event*/)
+void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* /*event*/)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;

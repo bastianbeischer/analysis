@@ -8,6 +8,7 @@
 #include "Layer.hh"
 #include "TrackFinding.hh"
 #include "Setup.hh"
+#include "Particle.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
 
@@ -33,8 +34,10 @@ Chi2VsMomentumPlot::~Chi2VsMomentumPlot()
 {
 }
 
-void Chi2VsMomentumPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
+void Chi2VsMomentumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if(!track || !track->fitGood())
     return;
 

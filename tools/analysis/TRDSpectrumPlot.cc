@@ -3,6 +3,8 @@
 #include <TH1D.h>
 
 #include <TMarker.h>
+
+#include "Particle.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
 #include "Cluster.hh"
@@ -59,8 +61,9 @@ TRDSpectrumPlot::~TRDSpectrumPlot()
   delete m_fitRangeMarker_upper;
 }
 
-void TRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent*)
+void TRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
 
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())

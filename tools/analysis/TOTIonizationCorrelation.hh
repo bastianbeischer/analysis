@@ -8,6 +8,7 @@
 #include <QVector>
 #include <QString>
 
+class Particle;
 class Track;
 class SimpleEvent;
 
@@ -16,13 +17,13 @@ public:
   enum TofLayer {Lower, Upper, All};
   TOTIonizationCorrelation(TofLayer layer, Hit::ModuleType type);
   ~TOTIonizationCorrelation();
-  virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
+  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
   virtual void finalize();
 private:
   TofLayer m_layer;
   QString layerName(TofLayer layer);
   bool checkLayer(double z);
-  double sumOfNonTOFSignalHeights(Track*, const QVector<Hit*>&);
+  double sumOfNonTOFSignalHeights(const Track*, const QVector<Hit*>&);
   Hit::ModuleType m_type;
 };
 

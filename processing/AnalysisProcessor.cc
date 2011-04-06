@@ -11,9 +11,11 @@
 #include "SimpleEvent.hh"
 #include "Setup.hh"
 #include "EventDestination.hh"
+#include "Particle.hh"
 
 AnalysisProcessor::AnalysisProcessor()
   : EventProcessor()
+  , m_particle(new Particle)
   , m_track(0)
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections)
@@ -53,6 +55,8 @@ void AnalysisProcessor::setTrackType(Track::Type track)
     m_track = new BrokenLine;
   else if (track == Track::StraightLine)
     m_track = new StraightLine;
+
+  m_particle->setTrack(m_track);
 }
 
 void AnalysisProcessor::setCorrectionFlags(Corrections::Flags flags)
@@ -66,11 +70,12 @@ void AnalysisProcessor::process(SimpleEvent* event)
 
   QVector<Hit*> clusters = QVector<Hit*>::fromStdVector(event->hits());
   QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
+  m_particle->setType(Particle::Proton);
   if (m_track) {
     m_track->fit(trackClusters);
     m_corrections->postFitCorrections(m_track);
     m_track->process();
   }
   foreach (EventDestination* destination, m_destinations)
-    destination->processEvent(clusters, m_track, event);
+    destination->processEvent(clusters, m_particle, event);
 }

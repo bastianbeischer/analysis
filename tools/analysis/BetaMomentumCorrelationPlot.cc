@@ -5,6 +5,8 @@
 #include "TrackInformation.hh"
 #include "Hit.hh"
 #include "TOFCluster.hh"
+#include "Particle.hh"
+#include "Track.hh"
 
 #include <TH2.h>
 #include <TAxis.h>
@@ -93,8 +95,10 @@ BetaMomentumCorrelationPlot::~BetaMomentumCorrelationPlot()
 {
 }
 
-void BetaMomentumCorrelationPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
+void BetaMomentumCorrelationPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;

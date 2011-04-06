@@ -1,4 +1,5 @@
 #include "BendingAnglePlot.hh"
+#include "Particle.hh"
 #include "Track.hh"
 
 #include "Hit.hh"
@@ -29,8 +30,10 @@ BendingAnglePlot::BendingAnglePlot()
 BendingAnglePlot::~BendingAnglePlot()
 {}
 
-void BendingAnglePlot::processEvent(const QVector<Hit*>& /*clusters*/, Track* track, SimpleEvent*)
+void BendingAnglePlot::processEvent(const QVector<Hit*>& /*clusters*/, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;

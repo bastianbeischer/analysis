@@ -3,6 +3,7 @@
 #include <TH1D.h>
 #include <TLatex.h>
 
+#include "Particle.hh"
 #include "Track.hh"
 #include "TrackInformation.hh"
 
@@ -33,8 +34,10 @@ CutStatisticsPlot::~CutStatisticsPlot()
 {
 }
 
-void CutStatisticsPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent*)
+void CutStatisticsPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   histogram()->Fill(0);
   if (!track || !track->fitGood())
     return;
