@@ -16,7 +16,7 @@ ClusterLengthPlot::ClusterLengthPlot(AnalysisPlot::Topic topic, unsigned short i
   setTitle(QString("cluster length 0x%1").arg(m_id,0,16));
   TH1D* histogram = new TH1D(qPrintable(title()), "", 11, -0.5, 10.5);
   setAxisTitle("cluster length", "");
-  //histogram->GetXaxis()->SetNdivisions(520);
+  histogram->GetXaxis()->SetNdivisions(520);
   addHistogram(histogram);
 
   addLatex(RootPlot::newLatex(0.65, 0.75));

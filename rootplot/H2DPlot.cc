@@ -1,24 +1,24 @@
 #include "H2DPlot.hh"
 
 #include <TH2.h>
-#include <THStack.h>
 #include <TList.h>
 #include <TCanvas.h>
 
 const QVector<RootPlot::DrawOption> H2DPlot::s_drawOptions = QVector<RootPlot::DrawOption>()
   << RootPlot::COLZ << RootPlot::CONT4Z << RootPlot::LEGO << RootPlot::LEGO2
-  << RootPlot::SURF1 << RootPlot::COLZTEXT;
+  << RootPlot::SURF1 << RootPlot::COLZTEXT << RootPlot::BLANK;
 
 H2DPlot::H2DPlot()
   : RootPlot()
   , m_xAxis(0)
   , m_yAxis(0)
   , m_zAxis(0)
-  , m_stack(new THStack)
+  , m_histograms()
   , m_palette(RootStyle::DefaultPalette)
   , m_xAxisTitle()
   , m_yAxisTitle()
   , m_zAxisTitle()
+  , m_drawOptions()
 {
   m_drawOption = COLZ;
   m_type = RootPlot::H2DPlot;
@@ -26,9 +26,10 @@ H2DPlot::H2DPlot()
 
 H2DPlot::~H2DPlot()
 {
-  for (int i = 0; i < numberOfHistograms(); ++i)
-    delete histogram(i);
-  delete m_stack;
+  foreach(TH2D* h, m_histograms)
+    delete h;
+  m_histograms.clear();
+  m_drawOptions.clear();
 }
 
 void H2DPlot::setPalette(RootStyle::PaletteType palette)
@@ -41,43 +42,21 @@ void H2DPlot::draw(TCanvas* canvas)
   if (!numberOfHistograms())
     return;
   canvas->cd();
-  canvas->Clear();
   RootStyle::setPalette(m_palette);
-  m_stack->Modified();
-
-  // TODO: clean up when drawing of THStacks is fixed
-  if (numberOfHistograms() == 1) {
-    if (!m_drawn)
-      histogram(0)->SetTitle(qPrintable(";" + m_xAxisTitle + ";" + m_yAxisTitle + ";" + m_zAxisTitle));
-    histogram(0)->Draw(qPrintable(drawOption(m_drawOption)));
-    m_xAxis = histogram(0)->GetXaxis();
-    m_yAxis = histogram(0)->GetYaxis();
-    m_zAxis = histogram(0)->GetZaxis();
-  } else {
-    if (!m_drawn)
-      m_stack->SetTitle(qPrintable(";" + m_xAxisTitle + ";" + m_yAxisTitle + ";" + m_zAxisTitle));
-    m_stack->Draw(qPrintable("NOSTACK" + drawOption(m_drawOption)));
-    m_xAxis = m_stack->GetXaxis();
-    m_yAxis = m_stack->GetYaxis();
-    m_zAxis = 0;
-  }
+  histogram(0)->SetTitle(qPrintable(";" + m_xAxisTitle + ";" + m_yAxisTitle + ";" + m_zAxisTitle));
+  histogram(0)->Draw(qPrintable(drawOption(m_drawOption)));
+  for (int i = 1; i < numberOfHistograms(); ++i)
+    histogram(i)->Draw(qPrintable("SAME" + drawOption(m_drawOptions[i])));
   m_drawn = true;
-  
-  if (numberOfHistograms() > 1) {  
-    m_xAxis = m_stack->GetXaxis();
-    m_yAxis = m_stack->GetYaxis();
-    m_zAxis = 0;
-  }
-
   RootPlot::draw(canvas);
 }
 
 void H2DPlot::unzoom()
 {
   if (m_drawn) {
-    m_stack->GetXaxis()->UnZoom();
-    m_stack->GetYaxis()->UnZoom();
-    //m_stack->GetZaxis()->UnZoom();
+    xAxis()->UnZoom();
+    yAxis()->UnZoom();
+    zAxis()->UnZoom();
   }
 }
 
@@ -96,12 +75,18 @@ void H2DPlot::clear()
 TH2D* H2DPlot::histogram(int i)
 {
   Q_ASSERT(0 <= i && i <= numberOfHistograms());
-  return static_cast<TH2D*>(m_stack->GetHists()->At(i));
+  return m_histograms[i];
 }
 
 void H2DPlot::addHistogram(TH2D* h, DrawOption option)
 {
-  m_stack->Add(h, qPrintable(drawOption(option)));
+  m_histograms.append(h);
+  m_drawOptions.append(option);
+  if (!m_xAxis && !m_yAxis && !m_zAxis) {
+    m_xAxis = h->GetXaxis();
+    m_yAxis = h->GetYaxis();
+    m_zAxis = h->GetZaxis();
+  }
 }
   
 const QVector<RootPlot::DrawOption>& H2DPlot::drawOptions()
@@ -118,7 +103,7 @@ void H2DPlot::setAxisTitle(const QString& x, const QString& y, const QString& z)
 
 int H2DPlot::numberOfHistograms()
 {
-  return m_stack->GetHists() ? m_stack->GetHists()->GetSize() : 0;
+  return m_histograms.size();
 }
   
 TAxis* H2DPlot::xAxis()

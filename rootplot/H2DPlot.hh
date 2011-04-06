@@ -24,7 +24,7 @@ public:
   int numberOfHistograms();
   TH2D* histogram(int i = 0);
   void setAxisTitle(const QString&, const QString&, const QString&);
-  void addHistogram(TH2D*, DrawOption = BLANK);
+  void addHistogram(TH2D*, DrawOption = COLZ);
   void setPalette(RootStyle::PaletteType);
   TAxis* xAxis();
   TAxis* yAxis();
@@ -33,11 +33,12 @@ private:
   TAxis* m_xAxis;
   TAxis* m_yAxis;
   TAxis* m_zAxis;
-  THStack* m_stack;
+  QVector<TH2D*> m_histograms;
   RootStyle::PaletteType m_palette;
   QString m_xAxisTitle;
   QString m_yAxisTitle;
   QString m_zAxisTitle;
+  QVector<DrawOption> m_drawOptions;
   static const QVector<DrawOption> s_drawOptions;
 };
 

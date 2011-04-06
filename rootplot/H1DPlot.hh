@@ -26,11 +26,12 @@ public:
   TAxis* xAxis();
   TAxis* yAxis();
 private:
-  THStack* m_stack;
+  QVector<TH1D*> m_histograms;
   TAxis* m_xAxis;
   TAxis* m_yAxis;
   QString m_xAxisTitle;
   QString m_yAxisTitle;
+  QVector<DrawOption> m_drawOptions;
   static const QVector<DrawOption> s_drawOptions;
 };
 
