@@ -10,6 +10,8 @@
 
 #include <TH2.h>
 #include <TVector3.h>
+#include <THStack.h>
+
 #include <iostream>
 #include <QDebug>
 
@@ -23,8 +25,6 @@ TOFTimeShiftTriggerPlot::TOFTimeShiftTriggerPlot()
   double max = 10;
   TH2D* histogram = new TH2D(qPrintable(title()), "", Constants::nTofChannels, 0, Constants::nTofChannels,
     nBins, min-.5*(max-min)/nBins, max-.5*(max-min)/nBins);
-  for (int ch = 0; ch < Constants::nTofChannels; ++ch)
-    histogram->GetXaxis()->SetBinLabel(ch + 1, qPrintable(QString("0x%1").arg(0x8000 | ch, 0, 16)));
   setAxisTitle("", "#Deltat / ns", "");
   addHistogram(histogram);
 }
@@ -59,5 +59,15 @@ void TOFTimeShiftTriggerPlot::processEvent(const QVector<Hit*>& clusters, Track*
       }
     }
   }
+}
 
+void TOFTimeShiftTriggerPlot::draw(TCanvas* canvas)
+{
+  if (m_drawn) {
+    H2DPlot::draw(canvas);
+  } else {
+    H2DPlot::draw(canvas);
+    for (int ch = 0; ch < Constants::nTofChannels; ++ch)
+      m_xAxis->SetBinLabel(ch + 1, qPrintable(QString("0x%1").arg(0x8000 | ch, 0, 16)));
+  }
 }

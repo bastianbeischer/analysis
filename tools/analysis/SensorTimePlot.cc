@@ -50,7 +50,7 @@ void SensorTimePlot::processEvent(const QVector<Hit*>&, Track*, SimpleEvent* eve
 void SensorTimePlot::finalize()
 {
   //histogram()->Divide(m_normalizationHistogram); //Cannot be used due to a ROOT bug leading to a rebin of the x axis.
-  for (int bin = 1; bin <= histogram()->GetXaxis()->GetNbins(); ++bin) {
+  for (int bin = 1; bin <= m_xAxis->GetNbins(); ++bin) {
     double n = m_normalizationHistogram->GetBinContent(bin);
     if (n > 0)
       histogram()->SetBinContent(bin, histogram()->GetBinContent(bin) / n);
@@ -63,8 +63,8 @@ void SensorTimePlot::draw(TCanvas* canvas)
     H1DPlot::draw(canvas);
   } else {
     H1DPlot::draw(canvas);
-    m_stack->GetXaxis()->SetTimeDisplay(1);
-    m_stack->GetXaxis()->SetTimeFormat("%d-%H:%M");
+    m_xAxis->SetTimeDisplay(1);
+    m_xAxis->SetTimeFormat("%d-%H:%M");
     gPad->Modified();
     gPad->Update();
   }

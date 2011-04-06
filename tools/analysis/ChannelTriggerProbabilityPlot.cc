@@ -78,6 +78,6 @@ void ChannelTriggerProbabilityPlot::draw(TCanvas* canvas)
   } else {
     H1DPlot::draw(canvas);
     for (int ch = 0; ch < Constants::nTofChannels; ++ch)
-      m_stack->GetXaxis()->SetBinLabel(ch + 1, qPrintable(QString("0x%1").arg(0x8000 | ch, 0, 16)));
+      m_xAxis->SetBinLabel(ch + 1, qPrintable(QString("0x%1").arg(0x8000 | ch, 0, 16)));
   }
 }

@@ -10,6 +10,7 @@
 class TCanvas;
 class TH2D;
 class THStack;
+class TAxis;
 
 class H2DPlot : virtual public RootPlot {
 public:
@@ -26,8 +27,11 @@ public:
   void addHistogram(TH2D*, DrawOption = BLANK);
   void setPalette(RootStyle::PaletteType);
 protected:
-  THStack* m_stack;
+  TAxis* m_xAxis;
+  TAxis* m_yAxis;
+  TAxis* m_zAxis;
 private:
+  THStack* m_stack;
   RootStyle::PaletteType m_palette;
   QString m_xAxisTitle;
   QString m_yAxisTitle;

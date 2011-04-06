@@ -12,9 +12,9 @@ CutStatisticsPlot::CutStatisticsPlot() :
 {
   setTitle("cut statistics");
   TH1D* histogram = new TH1D(qPrintable(title()), "", 8, -0.5, 7.5);
-  histogram->GetXaxis()->SetNdivisions(8);
-  histogram->GetYaxis()->SetNdivisions(520);
-  histogram->SetMinimum(0.);
+  //histogram->GetXaxis()->SetNdivisions(8);
+  //histogram->GetYaxis()->SetNdivisions(520);
+  //histogram->SetMinimum(0.);
   setAxisTitle("cut number", "relative entries after cut");
   addHistogram(histogram);
   addLatex(RootPlot::newLatex(0., 0.));
@@ -63,5 +63,5 @@ void CutStatisticsPlot::update()
 void CutStatisticsPlot::finalize()
 {
   histogram(0)->Scale(1./histogram()->GetBinContent(3));
-  histogram(0)->GetYaxis()->SetRangeUser(0., 1.05*histogram()->GetMaximum());
+  m_yAxis->SetRangeUser(0., 1.05 * histogram()->GetMaximum());
 }

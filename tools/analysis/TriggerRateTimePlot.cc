@@ -28,7 +28,7 @@ TriggerRateTimePlot::~TriggerRateTimePlot()
 
 void TriggerRateTimePlot::processEvent(const QVector<Hit*>&, Track*, SimpleEvent* event)
 {
-  if (event->time() < histogram()->GetXaxis()->GetXmin() || event->time() >= histogram()->GetXaxis()->GetXmax())
+  if (event->time() < m_xAxis->GetXmin() || event->time() >= m_xAxis->GetXmax())
     qDebug() << event->time();
   else
     histogram()->Fill(event->time());
@@ -36,9 +36,9 @@ void TriggerRateTimePlot::processEvent(const QVector<Hit*>&, Track*, SimpleEvent
 
 void TriggerRateTimePlot::finalize()
 {
-  double binWidth = histogram()->GetXaxis()->GetBinWidth(1);
+  double binWidth = m_xAxis->GetBinWidth(1);
   //histogram()->Scale(1./binWidth); //Cannot be used due to a ROOT bug leading to a rebin of the x axis.
-  for (int bin = 1; bin <= histogram()->GetXaxis()->GetNbins(); ++bin)
+  for (int bin = 1; bin <= m_xAxis->GetNbins(); ++bin)
     histogram()->SetBinContent(bin, histogram()->GetBinContent(bin) / binWidth);
 }
 
@@ -48,8 +48,8 @@ void TriggerRateTimePlot::draw(TCanvas* canvas)
     H1DPlot::draw(canvas);
   } else {
     H1DPlot::draw(canvas);
-    m_stack->GetXaxis()->SetTimeDisplay(1);
-    m_stack->GetXaxis()->SetTimeFormat("%d-%H:%M");
+    m_xAxis->SetTimeDisplay(1);
+    m_xAxis->SetTimeFormat("%d-%H:%M");
     gPad->Modified();
     gPad->Update();
   }

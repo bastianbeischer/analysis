@@ -11,6 +11,9 @@ const QVector<RootPlot::DrawOption> H2DPlot::s_drawOptions = QVector<RootPlot::D
 
 H2DPlot::H2DPlot()
   : RootPlot()
+  , m_xAxis(0)
+  , m_yAxis(0)
+  , m_zAxis(0)
   , m_stack(new THStack)
   , m_palette(RootStyle::DefaultPalette)
   , m_xAxisTitle()
@@ -38,11 +41,34 @@ void H2DPlot::draw(TCanvas* canvas)
   if (!numberOfHistograms())
     return;
   canvas->cd();
+  canvas->Clear();
   RootStyle::setPalette(m_palette);
-  if (!m_drawn)
-    m_stack->SetTitle(qPrintable(";" + m_xAxisTitle + ";" + m_yAxisTitle + ";" + m_zAxisTitle));
-  m_stack->Draw(qPrintable(drawOption(m_drawOption)));
+  m_stack->Modified();
+
+  // TODO: clean up when drawing of THStacks is fixed
+  if (numberOfHistograms() == 1) {
+    if (!m_drawn)
+      histogram(0)->SetTitle(qPrintable(";" + m_xAxisTitle + ";" + m_yAxisTitle + ";" + m_zAxisTitle));
+    histogram(0)->Draw(qPrintable(drawOption(m_drawOption)));
+    m_xAxis = histogram(0)->GetXaxis();
+    m_yAxis = histogram(0)->GetYaxis();
+    m_zAxis = histogram(0)->GetZaxis();
+  } else {
+    if (!m_drawn)
+      m_stack->SetTitle(qPrintable(";" + m_xAxisTitle + ";" + m_yAxisTitle + ";" + m_zAxisTitle));
+    m_stack->Draw(qPrintable("NOSTACK" + drawOption(m_drawOption)));
+    m_xAxis = m_stack->GetXaxis();
+    m_yAxis = m_stack->GetYaxis();
+    m_zAxis = 0;
+  }
   m_drawn = true;
+  
+  if (numberOfHistograms() > 1) {  
+    m_xAxis = m_stack->GetXaxis();
+    m_yAxis = m_stack->GetYaxis();
+    m_zAxis = 0;
+  }
+
   RootPlot::draw(canvas);
 }
 

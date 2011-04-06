@@ -13,6 +13,8 @@ const QVector<RootPlot::DrawOption> H1DPlot::s_drawOptions = QVector<DrawOption>
 
 H1DPlot::H1DPlot()
   : RootPlot()
+  , m_xAxis(0)
+  , m_yAxis(0)
   , m_stack(new THStack)
   , m_xAxisTitle()
   , m_yAxisTitle()
@@ -33,11 +35,26 @@ void H1DPlot::draw(TCanvas* canvas)
   if (!numberOfHistograms())
     return;
   canvas->cd();
-  if (!m_drawn)
-    m_stack->SetTitle(qPrintable(";" + m_xAxisTitle + ";" + m_yAxisTitle));
-  m_stack->Draw(qPrintable(drawOption(m_drawOption)));
-  gPad->RedrawAxis();
+  // TODO: clean up when drawing of THStacks is fixed
+  if (numberOfHistograms() == 1) {
+    if (!m_drawn)
+      histogram(0)->SetTitle(qPrintable(";" + m_xAxisTitle + ";" + m_yAxisTitle));
+    histogram(0)->Draw(qPrintable(drawOption(m_drawOption)));
+    m_stack->SetHistogram(histogram(0));
+    m_xAxis = histogram(0)->GetXaxis();
+    m_yAxis = histogram(0)->GetYaxis();
+  } else {
+    if (!m_drawn)
+      m_stack->SetTitle(qPrintable(";" + m_xAxisTitle + ";" + m_yAxisTitle));
+    m_stack->Draw(qPrintable(drawOption(m_drawOption)));
+  }
   m_drawn = true;
+  
+  if (numberOfHistograms() > 1) {
+    m_xAxis = m_stack->GetXaxis();
+    m_yAxis = m_stack->GetYaxis();
+  }
+
   RootPlot::draw(canvas);
 }
 

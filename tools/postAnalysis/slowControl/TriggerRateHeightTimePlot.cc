@@ -34,7 +34,6 @@ TriggerRateHeightTimePlot::TriggerRateHeightTimePlot(PostAnalysisCanvas* trigger
   m_graph->SetMarkerStyle(20);
   m_graph->SetMarkerSize(0.4);
 
-  
   TLegend* legend = new TLegend(0.11, 0.81, 0.28, 0.89);
   legend->AddEntry(histogram(0), "rate / Hz", "L");
   legend->AddEntry(m_graph, "height / km", "P");
@@ -52,8 +51,8 @@ void TriggerRateHeightTimePlot::draw(TCanvas* canvas)
     H1DPlot::draw(canvas);
   } else {
     H1DPlot::draw(canvas);
-    m_stack->GetXaxis()->SetTimeDisplay(1);
-    m_stack->GetXaxis()->SetTimeFormat("%d-%H:%M");
+    m_xAxis->SetTimeDisplay(1);
+    m_xAxis->SetTimeFormat("%d-%H:%M");
   }
   m_graph->Draw("P");
   gPad->Modified();

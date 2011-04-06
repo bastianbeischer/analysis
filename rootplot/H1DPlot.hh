@@ -8,6 +8,7 @@
 class TCanvas;
 class TH1D;
 class THStack;
+class TAxis;
 
 class H1DPlot : virtual public RootPlot {
 public:
@@ -23,8 +24,10 @@ public:
   void setAxisTitle(const QString&, const QString&);
   void addHistogram(TH1D*, DrawOption = BLANK);
 protected:
-  THStack* m_stack;
+  TAxis* m_xAxis;
+  TAxis* m_yAxis;
 private:
+  THStack* m_stack;
   QString m_xAxisTitle;
   QString m_yAxisTitle;
   static const QVector<DrawOption> s_drawOptions;
