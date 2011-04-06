@@ -64,12 +64,12 @@ void TOFPositionCorrelationPlot::draw(TCanvas* canvas)
 
 void TOFPositionCorrelationPlot::finalize()
 {
-  int nBins = m_xAxis->GetNbins();
+  int nBins = xAxis()->GetNbins();
   for (int i = 0; i < nBins; ++i) {
     TF1 f("tofPositionCorreletionFitFunction", "gaus");
     TH1D* h = histogram()->ProjectionY("_py", i+1, i+1);
     if (h->GetEntries() > 10) {
-      double x = m_xAxis->GetBinCenter(i+1);
+      double x = xAxis()->GetBinCenter(i+1);
       double sigma = 100;
       f.SetParameters(h->GetMaximum(), x, sigma);
       f.SetRange(x - 5 * sigma, x + 5 * sigma);

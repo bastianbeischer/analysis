@@ -76,6 +76,6 @@ void TOFEfficiencyPlot::update()
 
 void TOFEfficiencyPlot::finalize()
 {
-  m_zAxis->SetRangeUser(-0.25, 1.25);
+  zAxis()->SetRangeUser(-0.25, 1.25);
   histogram()->Divide(m_normalizationHistogram);
 }

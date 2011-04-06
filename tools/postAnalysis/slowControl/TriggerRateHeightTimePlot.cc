@@ -51,8 +51,8 @@ void TriggerRateHeightTimePlot::draw(TCanvas* canvas)
     H1DPlot::draw(canvas);
   } else {
     H1DPlot::draw(canvas);
-    m_xAxis->SetTimeDisplay(1);
-    m_xAxis->SetTimeFormat("%d-%H:%M");
+    xAxis()->SetTimeDisplay(1);
+    xAxis()->SetTimeFormat("%d-%H:%M");
   }
   m_graph->Draw("P");
   gPad->Modified();

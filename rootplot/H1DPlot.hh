@@ -23,11 +23,12 @@ public:
   TH1D* histogram(int i = 0);
   void setAxisTitle(const QString&, const QString&);
   void addHistogram(TH1D*, DrawOption = BLANK);
-protected:
-  TAxis* m_xAxis;
-  TAxis* m_yAxis;
+  TAxis* xAxis();
+  TAxis* yAxis();
 private:
   THStack* m_stack;
+  TAxis* m_xAxis;
+  TAxis* m_yAxis;
   QString m_xAxisTitle;
   QString m_yAxisTitle;
   static const QVector<DrawOption> s_drawOptions;

@@ -13,9 +13,9 @@ const QVector<RootPlot::DrawOption> H1DPlot::s_drawOptions = QVector<DrawOption>
 
 H1DPlot::H1DPlot()
   : RootPlot()
+  , m_stack(new THStack)
   , m_xAxis(0)
   , m_yAxis(0)
-  , m_stack(new THStack)
   , m_xAxisTitle()
   , m_yAxisTitle()
 {
@@ -103,4 +103,16 @@ void H1DPlot::setAxisTitle(const QString& x, const QString& y)
 {
   m_xAxisTitle = x;
   m_yAxisTitle = y;
+}
+  
+TAxis* H1DPlot::xAxis()
+{
+  Q_ASSERT(m_xAxis);
+  return m_xAxis;
+}
+
+TAxis* H1DPlot::yAxis()
+{
+  Q_ASSERT(m_yAxis);
+  return m_yAxis;
 }

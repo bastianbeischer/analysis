@@ -68,7 +68,7 @@ void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Track* track, S
     double pCorrection = (t + lCorrection) * (1 - sqrt(rigidity*rigidity + m*m) / rigidity);
     double yu = track->y(Constants::upperTofPosition);
     double yl = track->y(Constants::lowerTofPosition);
-    double binWidth = m_xAxis->GetBinWidth(1);
+    double binWidth = xAxis()->GetBinWidth(1);
     if (qAbs(yu - yl) < binWidth)
       histogram()->Fill((yu + yl) / 2., t + lCorrection + pCorrection);
   }

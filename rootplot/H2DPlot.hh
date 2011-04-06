@@ -26,11 +26,13 @@ public:
   void setAxisTitle(const QString&, const QString&, const QString&);
   void addHistogram(TH2D*, DrawOption = BLANK);
   void setPalette(RootStyle::PaletteType);
-protected:
+  TAxis* xAxis();
+  TAxis* yAxis();
+  TAxis* zAxis();
+private:
   TAxis* m_xAxis;
   TAxis* m_yAxis;
   TAxis* m_zAxis;
-private:
   THStack* m_stack;
   RootStyle::PaletteType m_palette;
   QString m_xAxisTitle;

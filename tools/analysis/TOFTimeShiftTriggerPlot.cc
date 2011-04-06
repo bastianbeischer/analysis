@@ -68,6 +68,6 @@ void TOFTimeShiftTriggerPlot::draw(TCanvas* canvas)
   } else {
     H2DPlot::draw(canvas);
     for (int ch = 0; ch < Constants::nTofChannels; ++ch)
-      m_xAxis->SetBinLabel(ch + 1, qPrintable(QString("0x%1").arg(0x8000 | ch, 0, 16)));
+      xAxis()->SetBinLabel(ch + 1, qPrintable(QString("0x%1").arg(0x8000 | ch, 0, 16)));
   }
 }

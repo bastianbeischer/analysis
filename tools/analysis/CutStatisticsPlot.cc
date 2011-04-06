@@ -63,5 +63,5 @@ void CutStatisticsPlot::update()
 void CutStatisticsPlot::finalize()
 {
   histogram(0)->Scale(1./histogram()->GetBinContent(3));
-  m_yAxis->SetRangeUser(0., 1.05 * histogram()->GetMaximum());
+  yAxis()->SetRangeUser(0., 1.05 * histogram()->GetMaximum());
 }

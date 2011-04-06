@@ -120,3 +120,21 @@ int H2DPlot::numberOfHistograms()
 {
   return m_stack->GetHists() ? m_stack->GetHists()->GetSize() : 0;
 }
+  
+TAxis* H2DPlot::xAxis()
+{
+  Q_ASSERT(m_xAxis);
+  return m_xAxis;
+}
+
+TAxis* H2DPlot::yAxis()
+{
+  Q_ASSERT(m_yAxis);
+  return m_yAxis;
+}
+
+TAxis* H2DPlot::zAxis()
+{
+  Q_ASSERT(m_zAxis);
+  return m_zAxis;
+}

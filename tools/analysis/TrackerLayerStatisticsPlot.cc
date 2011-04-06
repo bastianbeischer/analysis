@@ -13,7 +13,7 @@ TrackerLayerStatisticsPlot::TrackerLayerStatisticsPlot() :
 {
   setTitle("tracker layer statistics");
   TH1D* histogram = new TH1D(qPrintable(title()+"_1"), "", 9, -0.5, 8.5);
-  m_xAxis->SetNdivisions(9);
+  xAxis()->SetNdivisions(9);
   setAxisTitle("number of layers", "relative entries");
   addHistogram(histogram);
   histogram = new TH1D(qPrintable(title()+"_2"), "", 9, -0.5, 8.5);
@@ -77,5 +77,5 @@ void TrackerLayerStatisticsPlot::finalize()
   histogram(0)->Scale(factor);
   histogram(1)->Scale(factor);
   histogram(2)->Scale(factor);
-  m_yAxis->SetRangeUser(0., 1.05);
+  yAxis()->SetRangeUser(0., 1.05);
 }

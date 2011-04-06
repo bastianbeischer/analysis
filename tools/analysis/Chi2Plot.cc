@@ -70,5 +70,5 @@ void Chi2Plot::update()
 void Chi2Plot::finalize()
 {
   histogram()->Scale(1./histogram()->Integral("WIDTH"));
-  m_yAxis->SetRangeUser(0, 0.1);
+  yAxis()->SetRangeUser(0, 0.1);
 }

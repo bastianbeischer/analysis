@@ -53,8 +53,8 @@ void BetaPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
 
 void BetaPlot::update()
 {
-  int nBins = m_xAxis->GetNbins();
-  int cutBin = qMin(m_xAxis->FindBin(m_cut), nBins);
+  int nBins = xAxis()->GetNbins();
+  int cutBin = qMin(xAxis()->FindBin(m_cut), nBins);
   int n = histogram()->GetEntries();
   double sum = 0;
   for (int bin = 1; bin <= cutBin; ++bin)
