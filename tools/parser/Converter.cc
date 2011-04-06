@@ -262,9 +262,7 @@ const QVector<const MCSimpleEventDigi*> Converter::getAllMCDigis(const MCEvent* 
 {
   //get all digis of MCEvent:
   QVector<MCDigi*> mcDigis = mcEvent->GetDigis();
-
-  qDebug("read %i digis from raw MC file", mcDigis.size());
-
+  //qDebug("read %i digis from raw MC file", mcDigis.size());
   QVector<const MCSimpleEventDigi*> seDigis;
   //loop over all digis and convert:
   for (int i = 0; i < mcDigis.size(); ++i)
@@ -281,8 +279,7 @@ const QVector<const MCSimpleEventDigi*> Converter::getAllMCDigis(const MCEvent* 
     else if (id->IsTOF())
       moduleType = Hit::tof;
 
-
-    qDebug("got digi type %i with id 0x%x", moduleType, completeChannelID16bit);
+    //qDebug("got digi type %i with id 0x%x", moduleType, completeChannelID16bit);
     MCSimpleEventDigi* seDigi = new MCSimpleEventDigi(moduleType, completeChannelID16bit);
 
     //convert all Signals:
