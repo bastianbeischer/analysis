@@ -39,9 +39,9 @@ MCTRDSpectrumPlot::MCTRDSpectrumPlot(AnalysisPlot::Topic topic, unsigned short i
   }
 
   if(m_spectrumType == MCTRDSpectrumPlot::completeTRD)
-    setTitle(QString(" MC spectra"));
+    setTitle(QString("MC spectra"));
   else
-    setTitle(QString(" MC spectra 0x%1").arg(m_id,0,16));
+    setTitle(QString("MC spectra 0x%1").arg(m_id,0,16));
 
   TLegend* legend = new TLegend(.72, .72, .98, .98);
   legend->SetFillColor(kWhite);
