@@ -62,7 +62,7 @@ void TOTBetaCorrelation::processEvent(const QVector<Hit*>& clusters, Particle* p
     }
   }
   if (nTofHits > 0)
-    histogram()->Fill(track->beta(), totSum / nTofHits);
+    histogram()->Fill(particle->beta(), totSum / nTofHits);
 }
 
 QString TOTBetaCorrelation::layerName(TofLayer layer)

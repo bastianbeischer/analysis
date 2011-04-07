@@ -52,7 +52,7 @@ void BetaPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEven
   ParticleInformation::Flags flags = particle->information()->flags();
   if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
-  histogram()->Fill(1./track->beta());
+  histogram()->Fill(1./particle->beta());
 }
 
 void BetaPlot::update()

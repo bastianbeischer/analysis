@@ -7,7 +7,8 @@ TOPLEVEL = ..
 
 CLASSES += \
   Particle \
-  ParticleInformation
+  ParticleInformation \
+  TimeOfFlight
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \

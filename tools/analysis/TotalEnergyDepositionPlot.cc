@@ -54,7 +54,7 @@ void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, Particle* par
     */
 
 
-  if (track->beta() < 1.5 || track->beta() < 0)
+  if (particle->beta() < 1.5 || particle->beta() < 0)
     return;
 
   double signalSum = 0;

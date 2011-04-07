@@ -9,6 +9,7 @@
 #include "TOFBar.hh"
 #include "Particle.hh"
 #include "Track.hh"
+#include "TimeOfFlight.hh"
 
 #include <TH1.h>
 #include <TVector3.h>
@@ -36,6 +37,7 @@ ChannelTriggerProbabilityPlot::~ChannelTriggerProbabilityPlot()
 void ChannelTriggerProbabilityPlot::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
 {
   const Track* track = particle->track();
+  const TimeOfFlight* tof = particle->timeOfFlight();
 
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
@@ -55,11 +57,11 @@ void ChannelTriggerProbabilityPlot::processEvent(const QVector<Hit*>& clusters, 
       for (unsigned int i = 0; i < tofCluster->hits().size(); ++i) {
         TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(tofCluster->hits()[i]);
         if (z > 0) {
-          if (qFuzzyCompare(track->startTime(), tofHit->startTime())) {
+          if (qFuzzyCompare(tof->startTime(), tofHit->startTime())) {
             histogram()->Fill(tofHit->detId() - 0x8000);
           }
         } else {
-          if (qFuzzyCompare(track->stopTime(), tofHit->startTime())) {
+          if (qFuzzyCompare(tof->stopTime(), tofHit->startTime())) {
             histogram()->Fill(tofHit->detId() - 0x8000);
           }
         }

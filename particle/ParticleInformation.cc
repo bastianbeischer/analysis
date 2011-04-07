@@ -2,6 +2,7 @@
 
 #include "Particle.hh"
 #include "Track.hh"
+#include "TimeOfFlight.hh"
 #include "Hit.hh"
 
 #include <QMap>
@@ -134,6 +135,6 @@ void ParticleInformation::checkAlbedo()
 
   if (!track->fitGood())
     return;
-  if (track->beta() < 0)
+  if (m_particle->beta() < 0)
     m_flags |= Albedo;
 }

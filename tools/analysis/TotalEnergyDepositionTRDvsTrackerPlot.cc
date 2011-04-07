@@ -53,7 +53,7 @@ void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hi
   if( p < m_lowerMomentum || p > m_upperMomentum)
     return;
 
-  if (track->beta() < 1.5 || track->beta() < 0)
+  if (particle->beta() < 1.5 || particle->beta() < 0)
     return;
   */
 

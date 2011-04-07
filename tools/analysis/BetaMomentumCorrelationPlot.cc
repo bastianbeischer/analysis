@@ -105,5 +105,5 @@ void BetaMomentumCorrelationPlot::processEvent(const QVector<Hit*>&, Particle* p
   ParticleInformation::Flags flags = particle->information()->flags();
   if (!(flags & (ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet)))
     return;
-  histogram()->Fill(track->rigidity(), 1./track->beta());
+  histogram()->Fill(track->rigidity(), 1./particle->beta());
 }

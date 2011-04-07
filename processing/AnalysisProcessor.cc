@@ -7,6 +7,7 @@
 #include "Setup.hh"
 #include "EventDestination.hh"
 #include "Particle.hh"
+#include "TimeOfFlight.hh"
 #include "ParticleInformation.hh"
 
 AnalysisProcessor::AnalysisProcessor()
@@ -53,6 +54,7 @@ void AnalysisProcessor::process(SimpleEvent* event)
   m_particle->setType(Particle::Proton);
 
   Track* track = m_particle->track();
+  TimeOfFlight* tof = m_particle->timeOfFlight();
   ParticleInformation* info = m_particle->information();
 
   if (track) {
@@ -60,6 +62,7 @@ void AnalysisProcessor::process(SimpleEvent* event)
     track->fit(trackClusters);
     m_corrections->postFitCorrections(track);
     track->process();
+    tof->calculateTimes(track);
     info->process();
   }
 

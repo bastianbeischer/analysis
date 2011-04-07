@@ -2,6 +2,7 @@
 
 #include "Constants.hh"
 #include "ParticleInformation.hh"
+#include "TimeOfFlight.hh"
 
 #include "CenteredBrokenLine.hh"
 #include "CenteredBrokenLine2D.hh"
@@ -12,6 +13,7 @@
 Particle::Particle() :
   m_type(None),
   m_track(new CenteredBrokenLine),
+  m_tof(new TimeOfFlight),
   m_information(new ParticleInformation(this)),
   m_mass(0.),
   m_charge(0)
@@ -21,6 +23,7 @@ Particle::Particle() :
 Particle::Particle(Type type) :
   m_type(None),
   m_track(new CenteredBrokenLine),
+  m_tof(new TimeOfFlight),
   m_information(new ParticleInformation(this)),
   m_mass(0.),
   m_charge(0)
@@ -30,6 +33,8 @@ Particle::Particle(Type type) :
 
 Particle::~Particle()
 {
+  delete m_track;
+  delete m_tof;
   delete m_information;
 }
 
@@ -86,4 +91,9 @@ void Particle::setTrackType(Track::Type trackType)
     m_track = new BrokenLine;
   else if (trackType == Track::StraightLine)
     m_track = new StraightLine;
+}
+
+double Particle::beta() const
+{
+  return m_track->trackLength() / (m_tof->timeOfFlight() * Constants::speedOfLight);
 }
