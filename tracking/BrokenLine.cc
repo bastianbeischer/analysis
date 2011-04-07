@@ -4,7 +4,6 @@
 #include <TMatrixD.h>
 
 #include "BrokenLineMatrix.hh"
-#include "TrackInformation.hh"
 #include "Hit.hh"
 #include "Constants.hh"
 
