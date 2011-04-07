@@ -16,11 +16,11 @@ public:
   Particle(Type);
   ~Particle();
 
-  void setType(Type type);
-  void setTrack(const Track* track) {m_track = track;}
+  void setType(Type);
+  void setTrackType(Track::Type);
 
-  const Track* track() const {return m_track;}
-  const ParticleInformation* information() const {return m_information;}
+  Track* track() const {return m_track;}
+  ParticleInformation* information() const {return m_information;}
 
   double mass() const {return m_mass;}
   double charge() const {return m_charge;}
@@ -29,8 +29,8 @@ public:
 private:
   Type m_type;
 
-  const Track* m_track;
-  const ParticleInformation* m_information;
+  Track* m_track;
+  ParticleInformation* m_information;
 
   double m_mass;
   int m_charge;

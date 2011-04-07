@@ -7,7 +7,6 @@
 #include "Corrections.hh"
 
 class Particle;
-
 class TrackFinding;
 
 class AnalysisProcessor : public EventProcessor {
@@ -23,7 +22,6 @@ public:
 
 private:
   Particle* m_particle;
-  Track* m_track;
   TrackFinding* m_trackFinding;
   Corrections* m_corrections;
 };
