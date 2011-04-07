@@ -6,7 +6,7 @@
 
 #include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 
 TrackerLayerStatisticsPlot::TrackerLayerStatisticsPlot() :
   AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
@@ -47,7 +47,7 @@ void TrackerLayerStatisticsPlot::processEvent(const QVector<Hit*>& /*hits*/, Par
   if (!track || !track->fitGood())
     return;
 
-  const TrackInformation* info = track->information();
+  const ParticleInformation* info = particle->information();
   const QMap<double,int>& hitsInLayers = info->hitsInLayers();
   unsigned short nLayers = info->numberOfTrackerLayers();
 

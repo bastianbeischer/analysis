@@ -8,7 +8,6 @@
 #include <QVector>
 #include <QMap>
 
-class TrackInformation;
 class Hit;
 
 class Track {
@@ -23,7 +22,6 @@ public:
 
 public:
   Type type() const {return m_type;}
-  const TrackInformation* information() const {return m_information;}
   unsigned short verbose() const {return m_verbose;}
   int fitGood() const {return m_fitGood;}
   unsigned short nParameters() const {return m_matrix->nCol();}
@@ -62,7 +60,6 @@ private:
 protected:
   Type m_type;
 
-  TrackInformation* m_information;
   Matrix* m_matrix;
 
   unsigned short m_verbose;

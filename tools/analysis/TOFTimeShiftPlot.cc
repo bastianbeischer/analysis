@@ -1,6 +1,6 @@
 #include "TOFTimeShiftPlot.hh"
 #include "BrokenLine.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
 #include "Constants.hh"
 #include "TOFCluster.hh"
@@ -43,8 +43,8 @@ void TOFTimeShiftPlot::processEvent(const QVector<Hit*>& hits, Particle* particl
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
   double t[8];
   for (int i = 0; i < 8; ++i)

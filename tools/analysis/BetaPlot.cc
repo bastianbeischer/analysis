@@ -1,6 +1,6 @@
 #include "BetaPlot.hh"
 #include "BrokenLine.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
 #include "Constants.hh"
 #include "TOFCluster.hh"
@@ -49,8 +49,8 @@ void BetaPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEven
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
   histogram()->Fill(1./track->beta());
 }

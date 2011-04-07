@@ -1,15 +1,15 @@
-#ifndef TrackSelection_hh
-#define TrackSelection_hh
+#ifndef ParticleSelection_hh
+#define ParticleSelection_hh
 
 #include <QFlags>
 #include <QMap>
 
-class Track;
+class Particle;
 
-class TrackInformation {
+class ParticleInformation {
 public:
-  TrackInformation(const Track* track);
-  ~TrackInformation();
+  ParticleInformation(const Particle* particle);
+  ~ParticleInformation();
   
   enum Flag {None=0x0, AllTrackerLayers=0x1<<0, InsideMagnet=0x1<<1, OutsideMagnet=0x1<<2, HighTransverseRigidity=0x1<<3, 
     MagnetCollision=0x1<<4, Albedo=0x1<<5, Chi2Good=0x1<<6};
@@ -33,12 +33,12 @@ private:
   void checkAlbedo();
 
 private:
-  const Track* m_track;
+  const Particle* m_particle;
   Flags m_flags;
   QMap<double, int> m_hitsInLayers;
 
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(TrackInformation::Flags);
+Q_DECLARE_OPERATORS_FOR_FLAGS(ParticleInformation::Flags);
 
-#endif /* TrackSelection_hh */
+#endif /* ParticleSelection_hh */

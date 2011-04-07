@@ -4,7 +4,7 @@
 
 #include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "SimpleEvent.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
@@ -41,7 +41,7 @@ void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, Particle* par
     return;
 
   //check if track was inside of magnet
-  if (!(track->information()->flags() & TrackInformation::InsideMagnet))
+  if (!(particle->information()->flags() & ParticleInformation::InsideMagnet))
     return;
 
 

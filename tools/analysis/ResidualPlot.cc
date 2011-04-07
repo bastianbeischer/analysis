@@ -1,6 +1,6 @@
 #include "ResidualPlot.hh"
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Setup.hh"
 #include "Layer.hh"
 #include "Setup.hh"
@@ -52,12 +52,12 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, S
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   // only select tracks which didn't pass through the magnet
-  if ((flags & TrackInformation::MagnetCollision))
+  if ((flags & ParticleInformation::MagnetCollision))
     return;
 
   // remove hits in this layer from hits for track fit

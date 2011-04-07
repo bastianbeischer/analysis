@@ -3,7 +3,7 @@
 #include <TLatex.h>
 #include <TH1D.h>
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
 #include "Particle.hh"
 #include "Track.hh"
@@ -37,8 +37,8 @@ void Chi2PerNdfPlot::processEvent(const QVector<Hit*>&, Particle* particle, Simp
   if(!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   histogram()->Fill(track->chi2() / track->ndf());

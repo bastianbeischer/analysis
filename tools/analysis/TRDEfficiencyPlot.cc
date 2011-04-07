@@ -7,7 +7,7 @@
 #include "SimpleEvent.hh"
 #include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "TRDCalculations.hh"
 
 #include <TCanvas.h>
@@ -69,8 +69,8 @@ void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* pa
     return;
 
   //filter: only use events with 8 tracker hits:
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   //TODO: check for off track hits, atm this is Bastians criteria for on track

@@ -1,9 +1,11 @@
 #include "Particle.hh"
 
 #include "Constants.hh"
+#include "ParticleInformation.hh"
 
 Particle::Particle() :
   m_type(None),
+  m_information(new ParticleInformation(this)),
   m_track(0),
   m_mass(0.),
   m_charge(0)
@@ -21,6 +23,7 @@ Particle::Particle(Type type) :
 
 Particle::~Particle()
 {
+  delete m_information;
 }
 
 void Particle::setType(Type type)

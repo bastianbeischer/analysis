@@ -1,6 +1,5 @@
 #include "Track.hh"
 
-#include "TrackInformation.hh"
 #include "Matrix.hh"
 #include "Hit.hh"
 #include "Constants.hh"
@@ -17,7 +16,6 @@
 
 Track::Track() :
   m_type(None),
-  m_information(new TrackInformation(this)),
   m_matrix(0),
   m_verbose(0),
   m_fitGood(0),
@@ -31,7 +29,6 @@ Track::Track() :
 
 Track::~Track()
 {
-  delete m_information;
 }
 
 int Track::fit(const QVector<Hit*>& hits)
@@ -39,7 +36,6 @@ int Track::fit(const QVector<Hit*>& hits)
   m_hits = hits;
   m_fitGood = m_matrix->fit(m_hits);
   if (m_fitGood) retrieveFitResults();
-  m_information->reset();
   return m_fitGood;
 }
 
@@ -49,7 +45,6 @@ void Track::process()
     calculateTransverseRigidity();
     calculateTimes();
   }
-  m_information->process();
 }
 
 void Track::calculateTransverseRigidity()

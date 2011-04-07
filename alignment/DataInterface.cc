@@ -7,7 +7,6 @@
 #include "Layer.hh"
 #include "CenteredBrokenLine.hh"
 #include "DataChain.hh"
-#include "TrackInformation.hh"
 #include "TrackFinding.hh"
 #include "Manager.hh"
 #include "Setup.hh"

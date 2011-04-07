@@ -9,7 +9,7 @@
 #include "Setup.hh"
 #include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 
 SingleLayerTrackingEfficiencyPlot::SingleLayerTrackingEfficiencyPlot() :
   AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
@@ -60,8 +60,8 @@ void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, 
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if ( !(flags & TrackInformation::InsideMagnet) )
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if ( !(flags & ParticleInformation::InsideMagnet) )
     return;
 
   for (int i = 0; i < m_nLayers; i++) {

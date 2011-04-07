@@ -3,6 +3,8 @@
 
 #include "Track.hh"
 
+class ParticleInformation;
+
 class Particle
 {
 
@@ -18,13 +20,18 @@ public:
   void setTrack(const Track* track) {m_track = track;}
 
   const Track* track() const {return m_track;}
+  const ParticleInformation* information() const {return m_information;}
+
   double mass() const {return m_mass;}
   double charge() const {return m_charge;}
   double momentum() const {return m_charge*m_track->rigidity();}
 
 private:
   Type m_type;
+
   const Track* m_track;
+  const ParticleInformation* m_information;
+
   double m_mass;
   int m_charge;
   

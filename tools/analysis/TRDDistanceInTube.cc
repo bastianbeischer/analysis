@@ -6,7 +6,7 @@
 #include "SimpleEvent.hh"
 #include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "TRDCalculations.hh"
 
 TRDDistanceInTube::TRDDistanceInTube(AnalysisPlot::Topic topic) :
@@ -35,8 +35,8 @@ void TRDDistanceInTube::processEvent(const QVector<Hit*>& /*hits*/, Particle* pa
     return;
 
   //check if all tracker layers have a hit
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   //TODO: check for off track hits ?!?

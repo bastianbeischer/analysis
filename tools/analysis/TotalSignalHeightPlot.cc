@@ -2,7 +2,7 @@
 
 #include <TH1D.h>
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Particle.hh"
 #include "Track.hh"
 #include "Hit.hh"
@@ -31,8 +31,8 @@ void TotalSignalHeightPlot::processEvent(const QVector<Hit*>& hits, Particle* pa
   if(!track)
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   double sum = 0;

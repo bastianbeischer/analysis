@@ -10,7 +10,7 @@
 #include "Setup.hh"
 #include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 
 Chi2VsMomentumPlot::Chi2VsMomentumPlot() :
   AnalysisPlot(AnalysisPlot::Tracking),
@@ -41,8 +41,8 @@ void Chi2VsMomentumPlot::processEvent(const QVector<Hit*>&, Particle* particle, 
   if(!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   histogram()->Fill(track->rigidity(), track->chi2() / track->ndf());

@@ -10,7 +10,7 @@
 #include "Cluster.hh"
 #include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "TRDCalculations.hh"
 
 TRDEnergyDepositionOverMomentumPlot::TRDEnergyDepositionOverMomentumPlot(AnalysisPlot::Topic topic) :
@@ -37,12 +37,12 @@ void TRDEnergyDepositionOverMomentumPlot::processEvent(const QVector<Hit*>& /*hi
     return;
 
   //check if all tracker layers have a hit
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   //check if track was inside of magnet
-  if (!(flags & TrackInformation::InsideMagnet))
+  if (!(flags & ParticleInformation::InsideMagnet))
     return;
 
   //get the reconstructed momentum

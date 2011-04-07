@@ -1,6 +1,6 @@
 #include "TOFTimeShiftTriggerPlot.hh"
 #include "BrokenLine.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
 #include "Constants.hh"
 #include "TOFCluster.hh"
@@ -41,8 +41,8 @@ void TOFTimeShiftTriggerPlot::processEvent(const QVector<Hit*>& clusters, Partic
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::Chi2Good))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::Chi2Good))
     return;
 
   const QVector<Hit*>::const_iterator endIt = clusters.end();

@@ -8,7 +8,6 @@
 #include "DetectorElement.hh"
 #include "TOFBar.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
 #include "Constants.hh"
 #include "SensorTypes.hh"
 #include "SimpleEvent.hh"

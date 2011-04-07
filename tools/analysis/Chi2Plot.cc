@@ -5,7 +5,7 @@
 #include <TH1D.h>
 #include <TMath.h>
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
 #include "Particle.hh"
 #include "Track.hh"
@@ -56,8 +56,8 @@ void Chi2Plot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEven
   if(!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   if (track->ndf() == m_ndf)

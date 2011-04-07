@@ -1,7 +1,7 @@
 #include "BendingPositionPlot.hh"
 #include "BrokenLine.hh"
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
 #include "Particle.hh"
 #include "Track.hh"
@@ -32,8 +32,8 @@ void BendingPositionPlot::processEvent(const QVector<Hit*>&, Particle* particle,
   if (track->type() == Track::BrokenLine) {
     const BrokenLine* line = static_cast<const BrokenLine*>(track);
 
-    TrackInformation::Flags flags = track->information()->flags();
-    if (!(flags & TrackInformation::AllTrackerLayers))
+    ParticleInformation::Flags flags = particle->information()->flags();
+    if (!(flags & ParticleInformation::AllTrackerLayers))
       return;
 
     histogram()->Fill(line->zIntersection());

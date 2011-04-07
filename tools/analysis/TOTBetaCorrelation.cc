@@ -7,7 +7,7 @@
 #include "TOFCluster.hh"
 #include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Constants.hh"
 
 #include <TH2D.h>
@@ -37,8 +37,8 @@ void TOTBetaCorrelation::processEvent(const QVector<Hit*>& clusters, Particle* p
 
   if (!track || !track->fitGood())
     return;
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & (TrackInformation::Chi2Good | TrackInformation::InsideMagnet)))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
     return;
   double totSum = 0.;
   int nTofHits = 0;

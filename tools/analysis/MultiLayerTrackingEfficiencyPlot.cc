@@ -10,7 +10,7 @@
 #include "Setup.hh"
 #include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 
 MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot() :
   AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
@@ -61,8 +61,8 @@ void MultiLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, P
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if ( !(flags & TrackInformation::InsideMagnet) )
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if ( !(flags & ParticleInformation::InsideMagnet) )
     return;
 
   int nbOfLayers = 0;

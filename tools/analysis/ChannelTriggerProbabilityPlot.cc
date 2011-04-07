@@ -1,6 +1,6 @@
 #include "ChannelTriggerProbabilityPlot.hh"
 #include "BrokenLine.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
 #include "Constants.hh"
 #include "TOFCluster.hh"
@@ -40,8 +40,8 @@ void ChannelTriggerProbabilityPlot::processEvent(const QVector<Hit*>& clusters, 
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::Chi2Good))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::Chi2Good))
     return;
 
   const QVector<Hit*>::const_iterator endIt = clusters.end();

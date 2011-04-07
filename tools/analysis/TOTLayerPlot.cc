@@ -8,7 +8,7 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "Constants.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 
 #include <TH1D.h>
 #include <TAxis.h>
@@ -37,8 +37,8 @@ void TOTLayerPlot::processEvent(const QVector<Hit*>& clusters, Particle* particl
 
   if (!track || !track->fitGood())
     return;
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & (TrackInformation::Chi2Good | TrackInformation::InsideMagnet)))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
     return;
   double totSum = 0.;
   int nTofHits = 0;

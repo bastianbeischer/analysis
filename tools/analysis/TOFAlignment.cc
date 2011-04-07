@@ -1,6 +1,6 @@
 #include "TOFAlignment.hh"
 #include "BrokenLine.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
 #include "Constants.hh"
 #include "TOFCluster.hh"
@@ -39,7 +39,7 @@ void TOFAlignment::processEvent(const QVector<Hit*>& clusters, Particle* particl
   if (track->rigidity() < 2)
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
+  ParticleInformation::Flags flags = particle->information()->flags();
 
   QString output;
   int counter = 0;

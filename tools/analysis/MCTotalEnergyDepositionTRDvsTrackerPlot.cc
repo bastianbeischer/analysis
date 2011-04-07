@@ -6,7 +6,7 @@
 #include <TLegend.h>
 
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "SimpleEvent.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
@@ -50,7 +50,7 @@ void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& 
     return;
 
   //check if track was inside of magnet
-  if (!(track->information()->flags() & TrackInformation::InsideMagnet))
+  if (!(particle->information()->flags() & ParticleInformation::InsideMagnet))
     return;
 
 

@@ -5,7 +5,7 @@
 
 #include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "SimpleEvent.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
@@ -35,14 +35,14 @@ void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hi
   if (!track || !track->fitGood())
     return;
 
-  if (track->information()->numberOfTrackerLayers() < 7)
+  if (particle->information()->numberOfTrackerLayers() < 7)
     return;
 
   if (track->chi2() / track->ndf() > 5)
     return;
 
   //check if track was inside of magnet
-  if (!(track->information()->flags() & TrackInformation::InsideMagnet))
+  if (!(particle->information()->flags() & ParticleInformation::InsideMagnet))
     return;
 
 

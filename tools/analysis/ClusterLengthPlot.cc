@@ -2,7 +2,7 @@
 
 #include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include <TH1D.h>
 #include <TLatex.h>
 
@@ -35,8 +35,8 @@ void ClusterLengthPlot::processEvent(const QVector<Hit*>& hits, Particle* partic
   if (!track)
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   const QVector<Hit*>::const_iterator endIt = hits.end();

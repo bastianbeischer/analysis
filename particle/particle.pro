@@ -6,9 +6,11 @@ CONFIG += debug
 TOPLEVEL = ..
 
 CLASSES += \
-  Particle
+  Particle \
+  ParticleInformation
 
 INCLUDEPATH += \
+  $$TOPLEVEL/event \
   $$TOPLEVEL/global \
   $$TOPLEVEL/tracking
 

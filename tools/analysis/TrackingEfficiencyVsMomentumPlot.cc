@@ -2,7 +2,7 @@
 
 #include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 
 #include <QMap>
 
@@ -31,10 +31,10 @@ void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, Partic
   if (!track || !track->fitGood())
     return;
 
-  const TrackInformation* info = track->information();
+  const ParticleInformation* info = particle->information();
 
-  TrackInformation::Flags flags = info->flags();
-  if ( !(flags & TrackInformation::InsideMagnet) || !(flags & TrackInformation::Chi2Good) )
+  ParticleInformation::Flags flags = info->flags();
+  if ( !(flags & ParticleInformation::InsideMagnet) || !(flags & ParticleInformation::Chi2Good) )
     return;
 
   const QMap<double,int>& hitsInLayers = info->hitsInLayers();

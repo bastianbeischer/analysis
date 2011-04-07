@@ -9,7 +9,7 @@
 #include "SimpleEvent.hh"
 #include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
 
@@ -71,7 +71,7 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* pa
     return;
 
   //check if track was inside of magnet
-  if (!(track->information()->flags() & TrackInformation::InsideMagnet))
+  if (!(particle->information()->flags() & ParticleInformation::InsideMagnet))
     return;
 
   //get the reconstructed momentum

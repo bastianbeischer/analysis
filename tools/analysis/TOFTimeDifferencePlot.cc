@@ -1,7 +1,7 @@
 #include "TOFTimeDifferencePlot.hh"
 #include "BrokenLine.hh"
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Particle.hh"
 #include "Track.hh"
 #include "Hit.hh"
@@ -46,8 +46,8 @@ void TOFTimeDifferencePlot::processEvent(const QVector<Hit*>& clusters, Particle
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   const QVector<Hit*>::const_iterator endIt = clusters.end();
