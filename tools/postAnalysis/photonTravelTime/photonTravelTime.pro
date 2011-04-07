@@ -9,6 +9,7 @@ INCLUDEPATH += \
   $$TOPLEVEL/event \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/setup \
+  $$TOPLEVEL/particle \
   $$TOPLEVEL/tracking \
   $$TOPLEVEL/global \
   $$TOPLEVEL/processing \
@@ -17,11 +18,12 @@ INCLUDEPATH += \
 LIBS += \
   -L$$TOPLEVEL/lib \
   -lSimpleEvent \
+  -lparticle \
   -ltracking \
   -lrootplot \
   -lsetup \
   -lprocessing \
-	-lglobal \
+  -lglobal \
   -lpostAnalysis
 
 CLASSES = \

@@ -12,6 +12,7 @@ INCLUDEPATH += \
   $$TOPLEVEL/event \
   $$TOPLEVEL/processing \
   $$TOPLEVEL/rootplot \
+  $$TOPLEVEL/particle \
   $$TOPLEVEL/tracking \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/global
@@ -21,9 +22,10 @@ LIBS += \
   -lSimpleEvent \
   -lprocessing \
   -lrootplot \
+  -lparticle \
   -ltracking \
   -lsetup \
-	-lglobal
+  -lglobal
 
 CLASSES+= \
   Plotter \

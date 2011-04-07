@@ -14,6 +14,7 @@ INCLUDEPATH += \
   $$TOPLEVEL/processing \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/setup \
+  $$TOPLEVEL/particle \
   $$TOPLEVEL/tracking
 
 LIBS += \
@@ -21,6 +22,7 @@ LIBS += \
   -lglobal \
   -lSimpleEvent \
   -lprocessing \
+  -lparticle \
   -ltracking \
   -lrootplot \
   -lsetup \

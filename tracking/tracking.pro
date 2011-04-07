@@ -13,7 +13,6 @@ CLASSES += \
   CenteredBrokenLineMatrix \
   CenteredBrokenLineMatrix2D \
   Matrix \
-  Particle \
   StraightLine \
   StraightLineMatrix \
   Track \
