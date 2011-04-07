@@ -41,7 +41,6 @@ public:
 
 public:
   int fit(const QVector<Hit*>& hits);
-  void process();
 
 private:
   virtual void retrieveFitResults() = 0;

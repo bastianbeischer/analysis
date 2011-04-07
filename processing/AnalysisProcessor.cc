@@ -61,7 +61,6 @@ void AnalysisProcessor::process(SimpleEvent* event)
     info->reset();
     track->fit(trackClusters);
     m_corrections->postFitCorrections(track);
-    track->process();
     tof->calculateTimes(track);
     info->process();
   }

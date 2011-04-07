@@ -89,7 +89,6 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, S
 
   // fit and fill histograms
   if (mytrack->fit(hitsForFit)) {
-    mytrack->process();
     QVector<Hit*>::const_iterator layerEndIt = hitsInThisLayer.end();
     for (QVector<Hit*>::const_iterator it = hitsInThisLayer.begin(); it != layerEndIt; ++it) {
       Hit* hit = *it;
