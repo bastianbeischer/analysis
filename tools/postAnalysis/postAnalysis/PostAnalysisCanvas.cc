@@ -49,13 +49,8 @@ QVector<TH1D*> PostAnalysisCanvas::histograms1D()
 {
   QVector<TH1D*> ret;
   for (int i = 0; i < m_canvas->GetListOfPrimitives()->GetSize(); ++i) {
-    if (!strcmp(m_canvas->GetListOfPrimitives()->At(i)->ClassName(), "THStack")) {
-      THStack* stack = static_cast<THStack*>(m_canvas->GetListOfPrimitives()->At(i));
-      for (int j = 0; j < stack->GetHists()->GetSize(); ++j) {
-        if (!strcmp(stack->GetHists()->At(j)->ClassName(), "TH1D")) {
-          ret.append(static_cast<TH1D*>(stack->GetHists()->At(j)));
-        }
-      }
+    if (!strcmp(m_canvas->GetListOfPrimitives()->At(i)->ClassName(), "TH1D")) {
+      ret.append(static_cast<TH1D*>(m_canvas->GetListOfPrimitives()->At(i)));
     }
   }
   return ret;
