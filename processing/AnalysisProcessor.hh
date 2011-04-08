@@ -8,6 +8,7 @@
 
 class Particle;
 class TrackFinding;
+class ParticleIdentifier;
 
 class AnalysisProcessor : public EventProcessor {
 public:
@@ -24,6 +25,7 @@ private:
   Particle* m_particle;
   TrackFinding* m_trackFinding;
   Corrections* m_corrections;
+  ParticleIdentifier* m_identifier;
 };
 
 #endif

@@ -41,6 +41,9 @@ void Chi2PerNdfPlot::processEvent(const QVector<Hit*>&, Particle* particle, Simp
   if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
+  if (particle->type() != Particle::Helium)
+    return;
+
   histogram()->Fill(track->chi2() / track->ndf());
 }
 

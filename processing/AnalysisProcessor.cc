@@ -7,6 +7,7 @@
 #include "Setup.hh"
 #include "EventDestination.hh"
 #include "Particle.hh"
+#include "ParticleIdentifier.hh"
 #include "TimeOfFlight.hh"
 #include "ParticleInformation.hh"
 
@@ -15,6 +16,7 @@ AnalysisProcessor::AnalysisProcessor()
   , m_particle(new Particle)
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections)
+  , m_identifier(new ParticleIdentifier)
 {
 }
 
@@ -23,6 +25,7 @@ AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, Tr
   , m_particle(new Particle)
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections(flags))
+  , m_identifier(new ParticleIdentifier)
 {
   setTrackType(track);
   setCorrectionFlags(flags);
@@ -32,6 +35,7 @@ AnalysisProcessor::~AnalysisProcessor()
 {
   delete m_trackFinding;
   delete m_corrections;
+  delete m_identifier;
 }
 
 void AnalysisProcessor::setTrackType(Track::Type trackType)
@@ -51,8 +55,6 @@ void AnalysisProcessor::process(SimpleEvent* event)
   QVector<Hit*> clusters = QVector<Hit*>::fromStdVector(event->hits());
   QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
 
-  m_particle->setType(Particle::Proton);
-
   Track* track = m_particle->track();
   TimeOfFlight* tof = m_particle->timeOfFlight();
   ParticleInformation* info = m_particle->information();
@@ -64,6 +66,9 @@ void AnalysisProcessor::process(SimpleEvent* event)
     tof->calculateTimes(track);
     info->process();
   }
+
+  // identify particle species
+  m_identifier->identify(m_particle);
 
   foreach (EventDestination* destination, m_destinations)
     destination->processEvent(clusters, m_particle, event);

@@ -30,7 +30,7 @@ TotalEnergyDepositionPlot::~TotalEnergyDepositionPlot()
 
 void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
 {
-  const Track* track = particle->track();
+  //const Track* track = particle->track();
 
   /*
   //check if everything worked and a track has been fit

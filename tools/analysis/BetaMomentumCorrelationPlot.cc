@@ -105,5 +105,12 @@ void BetaMomentumCorrelationPlot::processEvent(const QVector<Hit*>&, Particle* p
   ParticleInformation::Flags flags = particle->information()->flags();
   if (!(flags & (ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet)))
     return;
+  
+  if (!(flags & ParticleInformation::Chi2Good))
+    return;
+
+  // if (particle->type() != Particle::Helium)
+  //   return;
+
   histogram()->Fill(track->rigidity(), 1./particle->beta());
 }

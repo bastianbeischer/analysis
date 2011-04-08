@@ -11,7 +11,7 @@
 #include "TrackFinding.hh"
 
 Particle::Particle() :
-  m_type(None),
+  m_type(Unknown),
   m_track(new CenteredBrokenLine),
   m_tof(new TimeOfFlight),
   m_information(new ParticleInformation(this)),
@@ -21,7 +21,7 @@ Particle::Particle() :
 }
 
 Particle::Particle(Type type) :
-  m_type(None),
+  m_type(Unknown),
   m_track(new CenteredBrokenLine),
   m_tof(new TimeOfFlight),
   m_information(new ParticleInformation(this)),
@@ -38,9 +38,11 @@ Particle::~Particle()
   delete m_information;
 }
 
-void Particle::setType(Type type)
+void Particle::setType(const Type type)
 {
-  switch (type) {
+  m_type = type;
+
+  switch (m_type) {
   case Proton:
     m_mass = Constants::protonMass;
     m_charge = 1;
@@ -65,18 +67,12 @@ void Particle::setType(Type type)
     m_mass = Constants::heliumMass;
     m_charge = 2;
     break;
-  case Pion:
-    m_mass = Constants::pionMass;
-    m_charge = 1;
-    break;
   default:
-    // shouldn't happen!
-    Q_ASSERT(false);
     break;
   }
 }
 
-void Particle::setTrackType(Track::Type trackType)
+void Particle::setTrackType(const Track::Type trackType)
 {
   if (m_track)
     delete m_track;
