@@ -64,6 +64,7 @@
 #include "HeightTimePlot.hh"
 #include "MCTotalEnergyDepositionTRDvsTrackerPlot.hh"
 #include "MCTRDSpectrumPlot.hh"
+#include "MCRigidityResolution.hh"
 
 #include <QFileDialog>
 #include <QVBoxLayout>
@@ -574,8 +575,6 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeights, true));
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits));
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits, true));
-    m_ui.plotter->addPlot(new MCTotalEnergyDepositionTRDvsTrackerPlot());
-    m_ui.plotter->addPlot(new MCTRDSpectrumPlot(AnalysisPlot::MiscellaneousTRD, 0 /* doesnt matter */,MCTRDSpectrumPlot::completeTRD));
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BetaPlot());
@@ -593,6 +592,20 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TriggerRateTimePlot(first, last));
     m_ui.plotter->addPlot(new HeightTimePlot(first, last));
   }
+  if (m_ui.mcCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new MCTotalEnergyDepositionTRDvsTrackerPlot());
+  }
+  if (m_ui.mcTRDCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new MCTRDSpectrumPlot(0 /* doesnt matter */,MCTRDSpectrumPlot::completeTRD));
+  }
+  if (m_ui.mcTrackerCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new MCRigidityResolution());
+  }
+
+
+
+
+
 }
 
 void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
