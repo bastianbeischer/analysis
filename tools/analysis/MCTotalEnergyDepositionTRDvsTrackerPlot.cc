@@ -17,7 +17,7 @@
 #include "TDatabasePDG.h"
 
 MCTotalEnergyDepositionTRDvsTrackerPlot::MCTotalEnergyDepositionTRDvsTrackerPlot()
-  : AnalysisPlot(AnalysisPlot::MiscellaneousTRD)
+  : AnalysisPlot(AnalysisPlot::MonteCarlo)
   , GraphPlot()
   , m_colorCounter(0)
 {

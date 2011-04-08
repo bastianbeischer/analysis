@@ -16,8 +16,8 @@
 #include "Corrections.hh"
 #include "RootStyle.hh"
 
-MCTRDSpectrumPlot::MCTRDSpectrumPlot(AnalysisPlot::Topic topic, unsigned short id, TRDSpectrumType spectrumType, double lowerMom, double upperMom)
-  : AnalysisPlot(topic)
+MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType, double lowerMom, double upperMom)
+  : AnalysisPlot(AnalysisPlot::MonteCarloTRD)
   , H1DPlot()
   , m_colorCounter(0)
   , m_id(id)

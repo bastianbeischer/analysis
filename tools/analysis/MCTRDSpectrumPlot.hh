@@ -15,7 +15,7 @@ class MCTRDSpectrumPlot : public AnalysisPlot, public H1DPlot
 public:
   enum TRDSpectrumType{completeTRD, module, channel};
 
-  MCTRDSpectrumPlot(AnalysisPlot::Topic, unsigned short, TRDSpectrumType, double lowerMomentum = -10, double upperMomentum = 10);
+  MCTRDSpectrumPlot(unsigned short, TRDSpectrumType, double lowerMomentum = -10, double upperMomentum = 10);
   ~MCTRDSpectrumPlot();
 
   virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
