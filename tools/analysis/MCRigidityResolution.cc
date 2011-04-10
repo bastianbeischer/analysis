@@ -15,16 +15,28 @@
 MCRigidityResolution::MCRigidityResolution()
   : AnalysisPlot(AnalysisPlot::MonteCarloTracker)
   , H1DPlot()
+  , m_rigidityRangeLower(0)
+  , m_rigidityRangeUppper(10)
+  , m_numberOfBins(20)
 {
-  setTitle("momentum resolution");
+  setTitle("rigidity resolution");
 
-  TH1D* hist = new TH1D(qPrintable(title()), qPrintable(title()+";1/R;entries"), 100, -2, 2);
+  TH1D* hist = new TH1D(qPrintable(title()), qPrintable(title()+";R / GeV;resolution")
+                        , m_numberOfBins
+                        , m_rigidityRangeLower
+                        , m_rigidityRangeUppper);
   addHistogram(hist);
 
-  addFunction(new TF1("rigiditygausfit", "gaus"));
+ for (int i = 1; i <= hist->GetNbinsX(); ++i)
+  {
+   QString histTitle = QString("resolutionhist_%1").arg(i);
+   double inverseRigRange = 1. / (3. * 3.);
+   int resolutionBins = 100;
+   m_resolutionHistos.insert(i, new TH1D(qPrintable(histTitle)
+                                         ,qPrintable(histTitle)
+                                         , resolutionBins, -inverseRigRange, inverseRigRange));
 
-  addLatex(RootPlot::newLatex(.55, .85));
-  addLatex(RootPlot::newLatex(.55, .82));
+  }
 }
 
 
@@ -47,7 +59,7 @@ void MCRigidityResolution::processEvent(const QVector<Hit*>& /*hits*/, Track* tr
   if (!(track->information()->flags() & TrackInformation::InsideMagnet))
     return;
 
-  //
+  //only protons atm
   if (event->MCInformation()->primary()->pdgID != 2212)
     return;
 
@@ -57,22 +69,41 @@ void MCRigidityResolution::processEvent(const QVector<Hit*>& /*hits*/, Track* tr
 
   double mcRigidity = mcMom;
 
-  if(mcRigidity < 0.9*CLHEP::GeV || mcRigidity > 1.1*CLHEP::GeV)
-    return;
-
   //get the reconstructed momentum
   double rigidity = track->rigidity() *CLHEP::GeV; //GeV
 
-  double innverseDifference = 1.0 /(rigidity/CLHEP::GeV) - 1.0 /(mcRigidity/CLHEP::GeV);
+  double inverseDifference = 1.0 /(rigidity/CLHEP::GeV) - 1.0 /(mcRigidity/CLHEP::GeV); // 1 /GV
 
-  histogram()->Fill(innverseDifference);
+  //get bin
+  int bin = histogram()->FindBin(mcRigidity / CLHEP::GeV);
+
+
+  if (m_resolutionHistos.contains(bin))
+  {
+    TH1D* hist = m_resolutionHistos.value(bin);
+    hist->Fill(inverseDifference);
+  }
 }
 
 void MCRigidityResolution::update()
 {
- histogram()->Fit(function()) ;
- latex(0)->SetTitle(qPrintable(QString("RMS = %1+-%2").arg(histogram()->GetRMS()).arg(histogram()->GetRMSError())));
- latex(1)->SetTitle(qPrintable(QString("#sigma = %1+-%2").arg(function()->GetParameter(2)).arg(function()->GetParError(2))));
+  histogram()->Reset();
+
+  QMap<int, TH1D*>::const_iterator i;
+  for (i = m_resolutionHistos.constBegin(); i != m_resolutionHistos.constEnd(); ++i)
+  {
+    TH1D* hist = i.value();
+    double mcRigidity = histogram()->GetBinCenter(i.key());
+    double inverseRMS = hist->GetRMS();
+    double inverseRMSError = hist->GetRMSError();
+    double rigidityRes = inverseRMS / (1. / mcRigidity) ;
+    double rigidityResErr = inverseRMSError / (1. / mcRigidity) ;
+
+    histogram()->SetBinContent(i.key(), rigidityRes);
+    histogram()->SetBinError(i.key(), rigidityResErr);
+  }
+
+
 }
 
 void MCRigidityResolution::finalize()
