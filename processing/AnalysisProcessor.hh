@@ -7,6 +7,7 @@
 #include "Corrections.hh"
 
 class Particle;
+class ParticleFilter;
 class TrackFinding;
 class ParticleIdentifier;
 
@@ -23,6 +24,7 @@ public:
 
 private:
   Particle* m_particle;
+  ParticleFilter* m_filter;
   TrackFinding* m_trackFinding;
   Corrections* m_corrections;
   ParticleIdentifier* m_identifier;

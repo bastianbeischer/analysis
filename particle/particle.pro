@@ -7,6 +7,7 @@ TOPLEVEL = ..
 
 CLASSES += \
   Particle \
+  ParticleFilter \
   ParticleIdentifier \
   ParticleInformation \
   TimeOfFlight

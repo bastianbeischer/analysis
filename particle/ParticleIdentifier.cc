@@ -23,8 +23,8 @@ void ParticleIdentifier::identify(Particle* particle)
 
   // keep a list of candidates
   m_candidates.clear();
-  for (int type = Particle::START; type != Particle::END; ++type)
-    m_candidates.append((Particle::Type)type);
+  // for (int type = Particle::START; type != Particle::END; ++type)
+  //   m_candidates.append((Particle::Type)type);
 
   const Track* track = particle->track();
   if (!track || !track->fitGood())

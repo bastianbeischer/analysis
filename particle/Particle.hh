@@ -12,7 +12,7 @@ class Particle
 {
 
 public:
-  enum Type {Unknown=-1, START=0, Proton=START, Helium, Electron, Positron, Muon, AntiMuon, PiPlus, PiMinus, Photon, END};
+  enum Type {Unknown=0x1>>1, Proton=0x1<<0, Helium=0x1<<1, Electron=0x1<<2, Positron=0x1<<3, Muon=0x1<<4, AntiMuon=0x1<<5, PiPlus=0x1<<6, PiMinus=0x1<<7, Photon=0x1<<8};
 
 public:
   Particle();

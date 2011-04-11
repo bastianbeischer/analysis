@@ -7,6 +7,7 @@
 #include "Setup.hh"
 #include "EventDestination.hh"
 #include "Particle.hh"
+#include "ParticleFilter.hh"
 #include "ParticleIdentifier.hh"
 #include "TimeOfFlight.hh"
 #include "ParticleInformation.hh"
@@ -14,6 +15,7 @@
 AnalysisProcessor::AnalysisProcessor()
   : EventProcessor()
   , m_particle(new Particle)
+  , m_filter(new ParticleFilter)
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections)
   , m_identifier(new ParticleIdentifier)
@@ -23,6 +25,7 @@ AnalysisProcessor::AnalysisProcessor()
 AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, Track::Type track, Corrections::Flags flags)
   : EventProcessor(destinations)
   , m_particle(new Particle)
+  , m_filter(new ParticleFilter)
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections(flags))
   , m_identifier(new ParticleIdentifier)
@@ -33,6 +36,8 @@ AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, Tr
 
 AnalysisProcessor::~AnalysisProcessor()
 {
+  delete m_particle;
+  delete m_filter;
   delete m_trackFinding;
   delete m_corrections;
   delete m_identifier;
@@ -70,6 +75,7 @@ void AnalysisProcessor::process(SimpleEvent* event)
   // identify particle species
   m_identifier->identify(m_particle);
 
-  foreach (EventDestination* destination, m_destinations)
-    destination->processEvent(clusters, m_particle, event);
+  if (m_filter->passes(m_particle))
+    foreach (EventDestination* destination, m_destinations)
+      destination->processEvent(clusters, m_particle, event);
 }
