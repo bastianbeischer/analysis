@@ -14,8 +14,6 @@
 #include "TRDCalculations.hh"
 #include "RootStyle.hh"
 
-#include "TDatabasePDG.h"
-
 MCTotalEnergyDepositionTRDvsTrackerPlot::MCTotalEnergyDepositionTRDvsTrackerPlot()
   : AnalysisPlot(AnalysisPlot::MonteCarlo)
   , GraphPlot()
@@ -120,17 +118,8 @@ void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& 
     graph->SetMarkerSize(0.3);
     m_graphMap.insert(pdgID, graph);
     addGraph(graph, "P");
-    qDebug("getting pdgDB instance");
-    TDatabasePDG* pdgDB = TDatabasePDG::Instance();
-    //pdgDB->ReadPDGTable();
-    qDebug("getting particle description for pdgID = %i", pdgID);
-    TParticlePDG* particle = pdgDB->GetParticle(pdgID);
-
-    qDebug("got particle 0x%x for pdgID = %i", particle, pdgID);
-    const char* particleName = 0;
-    if (particle) particleName = particle->GetName();
-    qDebug("got %s for pdgID = %i", particleName, pdgID);
-    legend()->AddEntry(graph, particleName, "p");
+    QString particleName = QString::number(pdgID);
+    legend()->AddEntry(graph, qPrintable(particleName), "p");
   }
 
   int nPoints = graph->GetN();
