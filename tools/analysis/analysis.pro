@@ -60,7 +60,6 @@ CLASSES = \
   TRDDistanceWireToTrackPlot \
   TRDEfficiencyPlot \
   TRDEnergyDepositionOverMomentumPlot \
-  TRDFitPlot \
   TRDMoPVTimeEvolutionPlot \
   TRDOccupancyPlot \
   TRDSpectrumPlot \

@@ -1,7 +1,6 @@
 #include "StraightLine.hh"
 
 #include "StraightLineMatrix.hh"
-#include "TrackInformation.hh"
 #include "Hit.hh"
 #include "Constants.hh"
 

@@ -16,7 +16,8 @@ public:
               ClusterShapeTracker, ClusterShapeTRD, TimeOverThreshold, Tracking, Occupancy,
               ResidualsTracker, ResidualsTRD, MomentumReconstruction, EfficiencyTOF,
               ResolutionTOF, CalibrationTOF, MiscellaneousTracker, MiscellaneousTRD,
-              MiscellaneousTOF, SlowControl, TopicEnd};
+              MiscellaneousTOF, SlowControl, MonteCarloTracker, MonteCarloTRD, MonteCarloTOF,
+              MonteCarlo, Testbeam, TopicEnd};
 public:
   AnalysisPlot(Topic);
   virtual ~AnalysisPlot();

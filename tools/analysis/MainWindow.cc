@@ -40,7 +40,6 @@
 #include "TRDMoPVTimeEvolutionPlot.hh"
 #include "TRDEnergyDepositionOverMomentumPlot.hh"
 #include "TRDSpectrumPlot.hh"
-#include "TRDFitPlot.hh"
 #include "TRDOccupancyPlot.hh"
 #include "TRDEfficiencyPlot.hh"
 #include "TotalEnergyDepositionPlot.hh"
@@ -102,6 +101,11 @@ MainWindow::MainWindow(QWidget* parent)
   m_topicCheckBoxes.append(m_ui.efficiencyTofCheckBox);
   m_topicCheckBoxes.append(m_ui.resolutionTofCheckBox);
   m_topicCheckBoxes.append(m_ui.calibrationTofCheckBox);
+  m_topicCheckBoxes.append(m_ui.mcTrackerCheckBox);
+  m_topicCheckBoxes.append(m_ui.mcTRDCheckBox);
+  m_topicCheckBoxes.append(m_ui.mcTOFCheckBox);
+  m_topicCheckBoxes.append(m_ui.mcCheckBox);
+  m_topicCheckBoxes.append(m_ui.testbeamCheckBox);
   m_topicCheckBoxes.append(m_ui.miscellaneousTrackerCheckBox);
   m_topicCheckBoxes.append(m_ui.miscellaneousTRDCheckBox);
   m_topicCheckBoxes.append(m_ui.miscellaneousTOFCheckBox);
@@ -112,11 +116,13 @@ MainWindow::MainWindow(QWidget* parent)
   m_trackerCheckBoxes.append(m_ui.trackingCheckBox);
   m_trackerCheckBoxes.append(m_ui.residualsTrackerCheckBox);
   m_trackerCheckBoxes.append(m_ui.momentumReconstructionCheckBox);
+  m_trackerCheckBoxes.append(m_ui.mcTrackerCheckBox);
   m_trackerCheckBoxes.append(m_ui.miscellaneousTrackerCheckBox);
 
   m_trdCheckBoxes.append(m_ui.signalHeightTRDCheckBox);
   m_trdCheckBoxes.append(m_ui.clusterShapeTRDCheckBox);
   m_trdCheckBoxes.append(m_ui.residualsTRDCheckBox);
+  m_trdCheckBoxes.append(m_ui.mcTRDCheckBox);
   m_trdCheckBoxes.append(m_ui.miscellaneousTRDCheckBox);
 
   m_tofCheckBoxes.append(m_ui.timeOverThresholdCheckBox);
@@ -124,6 +130,7 @@ MainWindow::MainWindow(QWidget* parent)
   m_tofCheckBoxes.append(m_ui.efficiencyTofCheckBox);
   m_tofCheckBoxes.append(m_ui.resolutionTofCheckBox);
   m_tofCheckBoxes.append(m_ui.calibrationTofCheckBox);
+  m_tofCheckBoxes.append(m_ui.mcTOFCheckBox);
   m_tofCheckBoxes.append(m_ui.miscellaneousTOFCheckBox);
   
   foreach(QCheckBox* checkBox, m_topicCheckBoxes)
@@ -194,6 +201,11 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.efficiencyTofButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.resolutionTofButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.calibrationTofButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.mcTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.mcTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.mcTOFButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.mcButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
+  connect(m_ui.testbeamButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
   connect(m_ui.miscellaneousTOFButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
@@ -265,6 +277,16 @@ void MainWindow::showButtonsClicked()
     topic = AnalysisPlot::ResolutionTOF;
   } else if (b == m_ui.calibrationTofButton) {
     topic = AnalysisPlot::CalibrationTOF;
+  } else if (b == m_ui.mcTrackerButton) {
+    topic = AnalysisPlot::MonteCarloTracker;
+  } else if (b == m_ui.mcTRDButton) {
+    topic = AnalysisPlot::MonteCarloTRD;
+  } else if (b == m_ui.mcTOFButton) {
+    topic = AnalysisPlot::MonteCarloTOF;
+  } else if (b == m_ui.mcButton) {
+    topic = AnalysisPlot::MonteCarlo;
+  } else if (b == m_ui.testbeamButton) {
+    topic = AnalysisPlot::Testbeam;
   } else if (b == m_ui.miscellaneousTrackerButton) {
     topic = AnalysisPlot::MiscellaneousTracker;
   } else if (b == m_ui.miscellaneousTRDButton) {
@@ -401,24 +423,17 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, -3, -1.5));
     m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, 1.5, 3));
     
-    TRDFitPlot* mpvModuleTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD, "MPVs of TRD Modules");
-    TRDFitPlot* mpvChannelTRDPlot = new TRDFitPlot(AnalysisPlot::SignalHeightTRD, "MPVs of TRD Channels");
-
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::trd){
         TRDSpectrumPlot* trdModuleSpectrumPlot = new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, element->id(),TRDSpectrumPlot::module);
         m_ui.plotter->addPlot(trdModuleSpectrumPlot);
-        mpvModuleTRDPlot->addLandauFit(trdModuleSpectrumPlot->landauFit());
         for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++){
           TRDSpectrumPlot* trdChannelSpectrumPlot = new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, element->id() | tubeNo,TRDSpectrumPlot::channel);
           m_ui.plotter->addPlot(trdChannelSpectrumPlot);
-          mpvChannelTRDPlot->addLandauFit(trdChannelSpectrumPlot->landauFit());
         }
       }
     }
-    m_ui.plotter->addPlot(mpvModuleTRDPlot);
-    m_ui.plotter->addPlot(mpvChannelTRDPlot);
   }
   if (m_ui.clusterShapeTrackerCheckBox->isChecked()) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
@@ -646,6 +661,11 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
   m_ui.efficiencyTofButton->setText("+");
   m_ui.resolutionTofButton->setText("+");
   m_ui.calibrationTofButton->setText("+");
+  m_ui.mcTrackerButton->setText("+");
+  m_ui.mcTRDButton->setText("+");
+  m_ui.mcTOFButton->setText("+");
+  m_ui.mcButton->setText("+");
+  m_ui.testbeamButton->setText("+");
   m_ui.miscellaneousTrackerButton->setText("+");
   m_ui.miscellaneousTRDButton->setText("+");
   m_ui.miscellaneousTOFButton->setText("+");
@@ -664,6 +684,11 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
   m_ui.efficiencyTofButton->setEnabled(m_ui.efficiencyTofCheckBox->isChecked());
   m_ui.resolutionTofButton->setEnabled(m_ui.resolutionTofCheckBox->isChecked());
   m_ui.calibrationTofButton->setEnabled(m_ui.calibrationTofCheckBox->isChecked());
+  m_ui.mcTrackerButton->setEnabled(m_ui.mcTrackerCheckBox->isChecked());
+  m_ui.mcTRDButton->setEnabled(m_ui.mcTRDCheckBox->isChecked());
+  m_ui.mcTOFButton->setEnabled(m_ui.mcTOFCheckBox->isChecked());
+  m_ui.mcButton->setEnabled(m_ui.mcCheckBox->isChecked());
+  m_ui.testbeamButton->setEnabled(m_ui.testbeamCheckBox->isChecked());
   m_ui.miscellaneousTrackerButton->setEnabled(m_ui.miscellaneousTrackerCheckBox->isChecked());
   m_ui.miscellaneousTRDButton->setEnabled(m_ui.miscellaneousTRDCheckBox->isChecked());
   m_ui.miscellaneousTOFButton->setEnabled(m_ui.miscellaneousTOFCheckBox->isChecked());

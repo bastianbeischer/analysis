@@ -107,9 +107,9 @@
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-387</y>
              <width>253</width>
-             <height>685</height>
+             <height>850</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -161,7 +161,7 @@
               </property>
              </widget>
             </item>
-            <item row="7" column="1">
+            <item row="9" column="1">
              <widget class="QCheckBox" name="signalHeightTRDCheckBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -182,7 +182,7 @@
               </property>
              </widget>
             </item>
-            <item row="7" column="5">
+            <item row="9" column="5">
              <widget class="QPushButton" name="signalHeightTRDButton">
               <property name="enabled">
                <bool>false</bool>
@@ -209,7 +209,7 @@
               </property>
              </widget>
             </item>
-            <item row="28" column="1">
+            <item row="31" column="1">
              <widget class="QCheckBox" name="miscellaneousTOFCheckBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -230,7 +230,7 @@
               </property>
              </widget>
             </item>
-            <item row="28" column="5">
+            <item row="31" column="5">
              <widget class="QPushButton" name="miscellaneousTOFButton">
               <property name="enabled">
                <bool>false</bool>
@@ -257,7 +257,7 @@
               </property>
              </widget>
             </item>
-            <item row="9" column="1">
+            <item row="11" column="1">
              <widget class="QCheckBox" name="clusterShapeTRDCheckBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -273,7 +273,7 @@
               </property>
              </widget>
             </item>
-            <item row="9" column="5">
+            <item row="11" column="5">
              <widget class="QPushButton" name="clusterShapeTRDButton">
               <property name="enabled">
                <bool>false</bool>
@@ -300,7 +300,7 @@
               </property>
              </widget>
             </item>
-            <item row="20" column="1">
+            <item row="23" column="1">
              <widget class="QCheckBox" name="efficiencyTofCheckBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -316,7 +316,7 @@
               </property>
              </widget>
             </item>
-            <item row="20" column="5">
+            <item row="23" column="5">
              <widget class="QPushButton" name="efficiencyTofButton">
               <property name="enabled">
                <bool>false</bool>
@@ -338,7 +338,7 @@
               </property>
              </widget>
             </item>
-            <item row="22" column="1">
+            <item row="25" column="1">
              <widget class="QCheckBox" name="resolutionTofCheckBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -354,7 +354,7 @@
               </property>
              </widget>
             </item>
-            <item row="22" column="5">
+            <item row="25" column="5">
              <widget class="QPushButton" name="resolutionTofButton">
               <property name="enabled">
                <bool>false</bool>
@@ -383,49 +383,49 @@
               </property>
              </widget>
             </item>
-            <item row="7" column="2">
+            <item row="9" column="2">
              <widget class="QLabel" name="signalHeightTRDLabel">
               <property name="text">
                <string>signal height</string>
               </property>
              </widget>
             </item>
-            <item row="9" column="2">
+            <item row="11" column="2">
              <widget class="QLabel" name="clusterShapeTRDLabel">
               <property name="text">
                <string>cluster shape</string>
               </property>
              </widget>
             </item>
-            <item row="20" column="2">
+            <item row="23" column="2">
              <widget class="QLabel" name="efficiencyTofLabel">
               <property name="text">
                <string>efficiency</string>
               </property>
              </widget>
             </item>
-            <item row="22" column="2">
+            <item row="25" column="2">
              <widget class="QLabel" name="resolutionTofLabel">
               <property name="text">
                <string>resolution</string>
               </property>
              </widget>
             </item>
-            <item row="28" column="2">
+            <item row="31" column="2">
              <widget class="QLabel" name="miscellaneousTOFLabel">
               <property name="text">
                <string>miscellaneous</string>
               </property>
              </widget>
             </item>
-            <item row="23" column="2">
+            <item row="26" column="2">
              <widget class="QLabel" name="calibrationTofLabel">
               <property name="text">
                <string>calibration</string>
               </property>
              </widget>
             </item>
-            <item row="23" column="1">
+            <item row="26" column="1">
              <widget class="QCheckBox" name="calibrationTofCheckBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -441,7 +441,7 @@
               </property>
              </widget>
             </item>
-            <item row="23" column="5">
+            <item row="26" column="5">
              <widget class="QPushButton" name="calibrationTofButton">
               <property name="enabled">
                <bool>false</bool>
@@ -654,7 +654,7 @@
               </item>
              </layout>
             </item>
-            <item row="6" column="1" colspan="5">
+            <item row="8" column="1" colspan="5">
              <layout class="QHBoxLayout" name="trdSpacerHorizontalLayout">
               <item>
                <widget class="Line" name="trdSpacerLeftLine">
@@ -685,7 +685,7 @@
               </item>
              </layout>
             </item>
-            <item row="16" column="1" colspan="5">
+            <item row="19" column="1" colspan="5">
              <layout class="QHBoxLayout" name="tofSpacerHorizontalLayout">
               <item>
                <widget class="Line" name="tofSpacerLeftLine">
@@ -716,14 +716,14 @@
               </item>
              </layout>
             </item>
-            <item row="11" column="2">
+            <item row="13" column="2">
              <widget class="QLabel" name="residualsTRDLabel">
               <property name="text">
                <string>residuals</string>
               </property>
              </widget>
             </item>
-            <item row="11" column="1">
+            <item row="13" column="1">
              <widget class="QCheckBox" name="residualsTRDCheckBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -744,7 +744,7 @@
               </property>
              </widget>
             </item>
-            <item row="11" column="5">
+            <item row="13" column="5">
              <widget class="QPushButton" name="residualsTRDButton">
               <property name="enabled">
                <bool>false</bool>
@@ -771,7 +771,7 @@
               </property>
              </widget>
             </item>
-            <item row="18" column="2">
+            <item row="21" column="2">
              <widget class="QLabel" name="timeOverThresholdLabel">
               <property name="text">
                <string>time over
@@ -779,7 +779,7 @@ threshold</string>
               </property>
              </widget>
             </item>
-            <item row="18" column="1">
+            <item row="21" column="1">
              <widget class="QCheckBox" name="timeOverThresholdCheckBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -800,7 +800,7 @@ threshold</string>
               </property>
              </widget>
             </item>
-            <item row="18" column="5">
+            <item row="21" column="5">
              <widget class="QPushButton" name="timeOverThresholdButton">
               <property name="enabled">
                <bool>false</bool>
@@ -827,7 +827,7 @@ threshold</string>
               </property>
              </widget>
             </item>
-            <item row="29" column="1" colspan="5">
+            <item row="32" column="1" colspan="5">
              <layout class="QHBoxLayout" name="otherSpacerHorizontalLayout">
               <item>
                <widget class="Line" name="otherSpacerLeftLine">
@@ -858,7 +858,7 @@ threshold</string>
               </item>
              </layout>
             </item>
-            <item row="30" column="2">
+            <item row="33" column="2">
              <widget class="QLabel" name="momentumReconstructionLabel">
               <property name="text">
                <string>momentum
@@ -866,7 +866,7 @@ reconstruction</string>
               </property>
              </widget>
             </item>
-            <item row="30" column="1">
+            <item row="33" column="1">
              <widget class="QCheckBox" name="momentumReconstructionCheckBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -887,7 +887,7 @@ reconstruction</string>
               </property>
              </widget>
             </item>
-            <item row="30" column="5">
+            <item row="33" column="5">
              <widget class="QPushButton" name="momentumReconstructionButton">
               <property name="enabled">
                <bool>false</bool>
@@ -914,14 +914,14 @@ reconstruction</string>
               </property>
              </widget>
             </item>
-            <item row="31" column="2">
+            <item row="34" column="2">
              <widget class="QLabel" name="occupancyLabel">
               <property name="text">
                <string>occupancy</string>
               </property>
              </widget>
             </item>
-            <item row="31" column="1">
+            <item row="34" column="1">
              <widget class="QCheckBox" name="occupancyCheckBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -942,7 +942,7 @@ reconstruction</string>
               </property>
              </widget>
             </item>
-            <item row="31" column="5">
+            <item row="34" column="5">
              <widget class="QPushButton" name="occupancyButton">
               <property name="enabled">
                <bool>false</bool>
@@ -969,14 +969,14 @@ reconstruction</string>
               </property>
              </widget>
             </item>
-            <item row="12" column="2">
+            <item row="15" column="2">
              <widget class="QLabel" name="miscellaneousTRDLabel">
               <property name="text">
                <string>miscellaneous</string>
               </property>
              </widget>
             </item>
-            <item row="12" column="1">
+            <item row="15" column="1">
              <widget class="QCheckBox" name="miscellaneousTRDCheckBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -997,7 +997,7 @@ reconstruction</string>
               </property>
              </widget>
             </item>
-            <item row="12" column="5">
+            <item row="15" column="5">
              <widget class="QPushButton" name="miscellaneousTRDButton">
               <property name="enabled">
                <bool>false</bool>
@@ -1024,14 +1024,14 @@ reconstruction</string>
               </property>
              </widget>
             </item>
-            <item row="5" column="2">
+            <item row="6" column="2">
              <widget class="QLabel" name="miscellaneousTrackerLabel">
               <property name="text">
                <string>miscellaneous</string>
               </property>
              </widget>
             </item>
-            <item row="5" column="1">
+            <item row="6" column="1">
              <widget class="QCheckBox" name="miscellaneousTrackerCheckBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -1052,7 +1052,7 @@ reconstruction</string>
               </property>
              </widget>
             </item>
-            <item row="5" column="5">
+            <item row="6" column="5">
              <widget class="QPushButton" name="miscellaneousTrackerButton">
               <property name="enabled">
                <bool>false</bool>
@@ -1079,7 +1079,7 @@ reconstruction</string>
               </property>
              </widget>
             </item>
-            <item row="32" column="1">
+            <item row="36" column="1">
              <widget class="QCheckBox" name="slowControlCheckBox">
               <property name="maximumSize">
                <size>
@@ -1094,14 +1094,14 @@ reconstruction</string>
               </property>
              </widget>
             </item>
-            <item row="32" column="2">
+            <item row="36" column="2">
              <widget class="QLabel" name="slowControlLabel">
               <property name="text">
                <string>slow control</string>
               </property>
              </widget>
             </item>
-            <item row="32" column="5">
+            <item row="36" column="5">
              <widget class="QPushButton" name="slowControlButton">
               <property name="enabled">
                <bool>false</bool>
@@ -1122,6 +1122,186 @@ reconstruction</string>
                <font>
                 <pointsize>10</pointsize>
                </font>
+              </property>
+              <property name="text">
+               <string>+</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QCheckBox" name="mcTrackerCheckBox">
+              <property name="maximumSize">
+               <size>
+                <width>19</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="14" column="1">
+             <widget class="QCheckBox" name="mcTRDCheckBox">
+              <property name="maximumSize">
+               <size>
+                <width>19</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="27" column="1">
+             <widget class="QCheckBox" name="mcTOFCheckBox">
+              <property name="maximumSize">
+               <size>
+                <width>19</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="35" column="1">
+             <widget class="QCheckBox" name="mcCheckBox">
+              <property name="maximumSize">
+               <size>
+                <width>19</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="37" column="1">
+             <widget class="QCheckBox" name="testbeamCheckBox">
+              <property name="maximumSize">
+               <size>
+                <width>19</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="2">
+             <widget class="QLabel" name="mcTrackerLabel">
+              <property name="text">
+               <string>monte carlo</string>
+              </property>
+             </widget>
+            </item>
+            <item row="14" column="2">
+             <widget class="QLabel" name="mcTRDLabel">
+              <property name="text">
+               <string>monte carlo</string>
+              </property>
+             </widget>
+            </item>
+            <item row="27" column="2">
+             <widget class="QLabel" name="mcTOFLabel">
+              <property name="text">
+               <string>monte carlo</string>
+              </property>
+             </widget>
+            </item>
+            <item row="35" column="2">
+             <widget class="QLabel" name="mcLabel">
+              <property name="text">
+               <string>monte carlo</string>
+              </property>
+             </widget>
+            </item>
+            <item row="37" column="2">
+             <widget class="QLabel" name="testbeamLabel">
+              <property name="text">
+               <string>testbeam</string>
+              </property>
+             </widget>
+            </item>
+            <item row="37" column="5">
+             <widget class="QPushButton" name="testbeamButton">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>27</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>+</string>
+              </property>
+             </widget>
+            </item>
+            <item row="27" column="5">
+             <widget class="QPushButton" name="mcTOFButton">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>27</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>+</string>
+              </property>
+             </widget>
+            </item>
+            <item row="14" column="5">
+             <widget class="QPushButton" name="mcTRDButton">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>27</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>+</string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="5">
+             <widget class="QPushButton" name="mcTrackerButton">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>27</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="text">
+               <string>+</string>
+              </property>
+             </widget>
+            </item>
+            <item row="35" column="5">
+             <widget class="QPushButton" name="mcButton">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>27</width>
+                <height>16777215</height>
+               </size>
               </property>
               <property name="text">
                <string>+</string>
@@ -1627,7 +1807,7 @@ over threshold</string>
             </property>
             <item>
              <property name="text">
-              <string> </string>
+              <string/>
              </property>
             </item>
            </widget>
