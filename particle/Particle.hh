@@ -3,6 +3,8 @@
 
 #include "Track.hh"
 
+#include <QString>
+
 class ParticleInformation;
 class TimeOfFlight;
 
@@ -10,7 +12,7 @@ class Particle
 {
 
 public:
-  enum Type {Unknown=-1, START=0, Proton=START, Electron, Positron, Muon, AntiMuon, Helium, END};
+  enum Type {Unknown=-1, START=0, Proton=START, Helium, Electron, Positron, Muon, AntiMuon, PiPlus, PiMinus, Photon, END};
 
 public:
   Particle();
@@ -21,7 +23,9 @@ public:
   void setTrackType(const Track::Type);
 
   Type type() const {return m_type;}
+  int pdgId() const {return m_pdgId;}
   Track* track() const {return m_track;}
+  QString name() const {return m_name;}
   TimeOfFlight* timeOfFlight() const {return m_tof;}
   ParticleInformation* information() const {return m_information;}
 
@@ -32,14 +36,19 @@ public:
   double beta() const;
 
 private:
+  void init();
+
+private:
   Type m_type;
+  double m_mass;
+  int m_charge;
+  int m_pdgId;
+  QString m_name;
+
   Track* m_track;
   TimeOfFlight* m_tof;
   ParticleInformation* m_information;
 
-  double m_mass;
-  int m_charge;
-  
 };
 
 #endif /* Particle_hh */

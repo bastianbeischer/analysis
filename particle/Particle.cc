@@ -10,24 +10,14 @@
 #include "StraightLine.hh"
 #include "TrackFinding.hh"
 
-Particle::Particle() :
-  m_type(Unknown),
-  m_track(new CenteredBrokenLine),
-  m_tof(new TimeOfFlight),
-  m_information(new ParticleInformation(this)),
-  m_mass(0.),
-  m_charge(0)
+Particle::Particle()
 {
+  init();
 }
 
-Particle::Particle(Type type) :
-  m_type(Unknown),
-  m_track(new CenteredBrokenLine),
-  m_tof(new TimeOfFlight),
-  m_information(new ParticleInformation(this)),
-  m_mass(0.),
-  m_charge(0)
+Particle::Particle(Type type)
 {
+  init();
   setType(type);
 }
 
@@ -38,6 +28,18 @@ Particle::~Particle()
   delete m_information;
 }
 
+void Particle::init()
+{
+  m_type = Unknown;
+  m_mass = 0.;
+  m_charge = 0;
+  m_pdgId = 0;
+  m_name = QString("unknown");
+  m_track = new CenteredBrokenLine;
+  m_tof = new TimeOfFlight;
+  m_information = new ParticleInformation(this);
+}
+
 void Particle::setType(const Type type)
 {
   m_type = type;
@@ -46,26 +48,56 @@ void Particle::setType(const Type type)
   case Proton:
     m_mass = Constants::protonMass;
     m_charge = 1;
-    break;
-  case Electron:
-    m_mass = Constants::electronMass;
-    m_charge = -1;
-    break;
-  case Positron:
-    m_mass = Constants::electronMass;
-    m_charge = 1;
-    break;
-  case Muon:
-    m_mass = Constants::muonMass;
-    m_charge = -1;
-    break;
-  case AntiMuon:
-    m_mass = Constants::muonMass;
-    m_charge = 1;
+    m_pdgId = 2212;
+    m_name = "proton";
     break;
   case Helium:
     m_mass = Constants::heliumMass;
     m_charge = 2;
+    m_pdgId = 1000020040;
+    m_name = "helium";
+    break;
+  case Electron:
+    m_mass = Constants::electronMass;
+    m_charge = -1;
+    m_pdgId = 11;
+    m_name = "e-";
+    break;
+  case Positron:
+    m_mass = Constants::electronMass;
+    m_charge = 1;
+    m_pdgId = -11;
+    m_name = "e+";
+    break;
+  case Muon:
+    m_mass = Constants::muonMass;
+    m_charge = -1;
+    m_pdgId = 13;
+    m_name = "mu-";
+    break;
+  case AntiMuon:
+    m_mass = Constants::muonMass;
+    m_charge = 1;
+    m_pdgId = -13;
+    m_name = "mu+";
+    break;
+  case PiPlus:
+    m_mass = Constants::pionMass;
+    m_charge = 1;
+    m_pdgId = 211;
+    m_name = "pi+";
+    break;
+  case PiMinus:
+    m_mass = Constants::pionMass;
+    m_charge = -1;
+    m_pdgId = -211;
+    m_name = "pi-";
+    break;
+  case Photon:
+    m_mass = 0.;
+    m_charge = 0.;
+    m_pdgId = 22;
+    m_name = "photon";
     break;
   default:
     break;
