@@ -38,10 +38,12 @@ void ParticleIdentifier::identify(Particle* particle)
     chargeSign *= -1.;
 
   if (chargeSign > 0) {
+    particle->setType(Particle::Proton);
     m_candidates.removeAll(Particle::Electron);
     m_candidates.removeAll(Particle::Muon);
   }
   else {
+    particle->setType(Particle::Electron);
     m_candidates.removeAll(Particle::Proton);
     m_candidates.removeAll(Particle::Helium);
     m_candidates.removeAll(Particle::Positron);
@@ -70,6 +72,8 @@ void ParticleIdentifier::identify(Particle* particle)
 
   if (timeOverThreshold < 37)
     m_candidates.removeAll(Particle::Helium);
+  else
+    particle->setType(Particle::Helium);
 
-  qDebug() << m_candidates;
+  //qDebug() << m_candidates;
 }
