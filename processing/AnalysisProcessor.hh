@@ -5,9 +5,9 @@
 
 #include "Track.hh"
 #include "Corrections.hh"
+#include "ParticleFilter.hh"
 
 class Particle;
-class ParticleFilter;
 class TrackFinding;
 class ParticleIdentifier;
 
@@ -19,6 +19,7 @@ public:
 
   void setTrackType(Track::Type);
   void setCorrectionFlags(Corrections::Flags);
+  void setParticleFilter(ParticleFilter::Types);
 
   void process(SimpleEvent*);
 

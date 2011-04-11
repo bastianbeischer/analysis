@@ -53,6 +53,11 @@ void AnalysisProcessor::setCorrectionFlags(Corrections::Flags flags)
   m_corrections->setFlags(flags);
 }
 
+void AnalysisProcessor::setParticleFilter(ParticleFilter::Types types)
+{
+  m_filter->setTypes(types);
+}
+
 void AnalysisProcessor::process(SimpleEvent* event)
 {
   m_corrections->preFitCorrections(event);
