@@ -147,6 +147,7 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.timeShiftCorrectionCheckBox);
   m_controlWidgets.append(m_ui.trdMopValueCorrectionCheckBox);
   m_controlWidgets.append(m_ui.timeOverThresholdCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.multipleScatteringCorrectionCheckBox);
   m_controlWidgets.append(m_ui.photonTravelTimeCorrectionCheckBox);
   m_controlWidgets.append(m_ui.protonCheckBox);
   m_controlWidgets.append(m_ui.heliumCheckBox);
@@ -623,6 +624,8 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
     flags|= Corrections::Alignment;
   if (m_ui.timeShiftCorrectionCheckBox->isChecked())
     flags|= Corrections::TimeShifts;
+  if (m_ui.multipleScatteringCorrectionCheckBox->isChecked())
+    flags|= Corrections::MultipleScattering;
   if (m_ui.photonTravelTimeCorrectionCheckBox->isChecked())
     flags|= Corrections::PhotonTravelTime;
   if (m_ui.trdMopValueCorrectionCheckBox->isChecked())

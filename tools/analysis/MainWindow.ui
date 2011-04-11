@@ -1727,8 +1727,8 @@ reconstruction</string>
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>121</width>
-               <height>154</height>
+               <width>125</width>
+               <height>187</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1788,6 +1788,17 @@ time</string>
                 </property>
                </widget>
               </item>
+              <item>
+               <widget class="QCheckBox" name="multipleScatteringCorrectionCheckBox">
+                <property name="text">
+                 <string>multiple
+scattering</string>
+                </property>
+                <property name="checked">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
              </layout>
             </widget>
            </widget>
@@ -1803,7 +1814,7 @@ time</string>
             <property name="minimumSize">
              <size>
               <width>0</width>
-              <height>154</height>
+              <height>187</height>
              </size>
             </property>
             <property name="frameShape">
@@ -1820,8 +1831,8 @@ time</string>
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>121</width>
-               <height>154</height>
+               <width>125</width>
+               <height>187</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_5">
