@@ -6,14 +6,18 @@
 #include "TOFSipmHit.hh"
 #include "TOFCluster.hh"
 
-#include <QDebug>
+#include <iostream>
 
 ParticleIdentifier::ParticleIdentifier()
 {
+  for (int type = Particle::START; type <= Particle::END; type = type<<1) {
+    m_allParticles.append(new Particle((Particle::Type)type));
+  }
 }
 
 ParticleIdentifier::~ParticleIdentifier()
 {
+  qDeleteAll(m_allParticles);
 }
 
 void ParticleIdentifier::identify(Particle* particle)
@@ -22,35 +26,36 @@ void ParticleIdentifier::identify(Particle* particle)
   particle->setType(Particle::Unknown);
 
   // keep a list of candidates
-  m_candidates.clear();
-  // for (int type = Particle::START; type != Particle::END; ++type)
-  //   m_candidates.append((Particle::Type)type);
+  m_candidates = m_allParticles;
 
   const Track* track = particle->track();
+  const TimeOfFlight* tof = particle->timeOfFlight();
   if (!track || !track->fitGood())
     return;
 
-  const TimeOfFlight* tof = particle->timeOfFlight();
-
+  // calculate charge sign
   bool albedo = tof->timeOfFlight() > 0 ? false: true;
   int chargeSign = track->rigidity() > 0 ? 1: -1;
   if (albedo) 
-    chargeSign *= -1.;
+    chargeSign *= -1;
 
+  // remove candidates according to charge sign and set particle type to most likely value
   if (chargeSign > 0) {
     particle->setType(Particle::Proton);
-    m_candidates.removeAll(Particle::Electron);
-    m_candidates.removeAll(Particle::Muon);
+    foreach(const Particle* candidate, m_candidates) {
+      if (candidate->charge() <= 0)
+        m_candidates.removeAll(candidate);
+    }
   }
   else {
-    particle->setType(Particle::Electron);
-    m_candidates.removeAll(Particle::Proton);
-    m_candidates.removeAll(Particle::Helium);
-    m_candidates.removeAll(Particle::Positron);
-    m_candidates.removeAll(Particle::AntiMuon);
+    particle->setType(Particle::Muon);
+    foreach(const Particle* candidate, m_candidates) {
+      if (candidate->charge() >= 0)
+        m_candidates.removeAll(candidate);
+    }
   }
 
-  // time over threshold
+  // time over threshold for helium ID
   double timeOverThreshold = 0.;
   int nTofHits = 0;
   const QVector<Hit*> hits = track->hits();
@@ -68,12 +73,21 @@ void ParticleIdentifier::identify(Particle* particle)
       }
     }
   }
-  timeOverThreshold = timeOverThreshold/nTofHits;
 
-  if (timeOverThreshold < 37)
-    m_candidates.removeAll(Particle::Helium);
-  else
-    particle->setType(Particle::Helium);
+  // hard cut on tot for helium
+  if (nTofHits > 0) {
+    timeOverThreshold = timeOverThreshold/nTofHits;
+    if (timeOverThreshold > 37 && chargeSign > 0)
+      particle->setType(Particle::Helium);
+    else {
+      foreach(const Particle* candidate, m_candidates) {
+        if (candidate->type() == Particle::Helium)
+          m_candidates.removeAll(candidate);
+      }
+    }
+  }
 
-  //qDebug() << m_candidates;
+  // if only candidate remains, use it.
+  if (m_candidates.size() == 1)
+    particle->setType(m_candidates.at(0)->type());
 }

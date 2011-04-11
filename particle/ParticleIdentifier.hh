@@ -10,11 +10,13 @@ class ParticleIdentifier
 public:
   ParticleIdentifier();
   ~ParticleIdentifier();
-  
+
+  const QList<const Particle*>& candidates() const {return m_candidates;}
   void identify(Particle* particle);
   
 private:
-  QList<Particle::Type> m_candidates;
+  QList<const Particle*> m_allParticles;
+  QList<const Particle*> m_candidates;
 
 };
 
