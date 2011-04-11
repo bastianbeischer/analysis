@@ -10,12 +10,13 @@
 class MCRigidityResolution : public AnalysisPlot, public H1DPlot
 {
 public:
-    MCRigidityResolution();
+    MCRigidityResolution(int pdgID = 11);
 
      virtual void processEvent(const QVector<Hit*>&, Track*, SimpleEvent*);
      virtual void update();
      virtual void finalize();
 private:
+     const int m_pdgID;
      const double m_rigidityRangeLower;
      const double m_rigidityRangeUppper;
      const int m_numberOfBins;

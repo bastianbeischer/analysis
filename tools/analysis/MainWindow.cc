@@ -614,7 +614,9 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MCTRDSpectrumPlot(0 /* doesnt matter */,MCTRDSpectrumPlot::completeTRD));
   }
   if (m_ui.mcTrackerCheckBox->isChecked()) {
-    m_ui.plotter->addPlot(new MCRigidityResolution());
+    m_ui.plotter->addPlot(new MCRigidityResolution(-11));
+    m_ui.plotter->addPlot(new MCRigidityResolution(2212));
+    m_ui.plotter->addPlot(new MCRigidityResolution(1000020040));
   }
 
 

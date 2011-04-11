@@ -12,24 +12,26 @@
 #include "Cluster.hh"
 #include "Hit.hh"
 
-MCRigidityResolution::MCRigidityResolution()
+MCRigidityResolution::MCRigidityResolution(int pdgID)
   : AnalysisPlot(AnalysisPlot::MonteCarloTracker)
   , H1DPlot()
+  , m_pdgID(pdgID)
   , m_rigidityRangeLower(0)
-  , m_rigidityRangeUppper(10)
-  , m_numberOfBins(20)
+  , m_rigidityRangeUppper(12)
+  , m_numberOfBins(50)
 {
-  setTitle("rigidity resolution");
+  setTitle("rigidity resolution for " + QString::number(m_pdgID));
 
-  TH1D* hist = new TH1D(qPrintable(title()), qPrintable(title()+";R / GeV;resolution")
+  TH1D* hist = new TH1D(qPrintable(title()), qPrintable(title())
                         , m_numberOfBins
                         , m_rigidityRangeLower
                         , m_rigidityRangeUppper);
+  setAxisTitle("R / GeV","resolution");
   addHistogram(hist);
 
  for (int i = 1; i <= hist->GetNbinsX(); ++i)
   {
-   QString histTitle = QString("resolutionhist_%1").arg(i);
+   QString histTitle = QString("resolutionhist_%1_%2").arg(m_pdgID).arg(i);
    double inverseRigRange = 1. / (3. * 3.);
    int resolutionBins = 100;
    m_resolutionHistos.insert(i, new TH1D(qPrintable(histTitle)
@@ -59,8 +61,8 @@ void MCRigidityResolution::processEvent(const QVector<Hit*>& /*hits*/, Track* tr
   if (!(track->information()->flags() & TrackInformation::InsideMagnet))
     return;
 
-  //only protons atm
-  if (event->MCInformation()->primary()->pdgID != 2212)
+  //only use selected pdgID
+  if (event->MCInformation()->primary()->pdgID != m_pdgID)
     return;
 
 
