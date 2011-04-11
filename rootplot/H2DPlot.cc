@@ -5,7 +5,7 @@
 #include <TCanvas.h>
 
 const QVector<RootPlot::DrawOption> H2DPlot::s_drawOptions = QVector<RootPlot::DrawOption>()
-  << RootPlot::COLZ << RootPlot::CONT4Z << RootPlot::LEGO << RootPlot::LEGO2
+  << RootPlot::COLZ << RootPlot::SCAT << RootPlot::CONT4Z << RootPlot::LEGO << RootPlot::LEGO2
   << RootPlot::SURF1 << RootPlot::COLZTEXT << RootPlot::BLANK;
 
 H2DPlot::H2DPlot()

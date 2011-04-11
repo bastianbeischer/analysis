@@ -15,7 +15,7 @@ public:
   enum DrawOption {
     UndefinedDrawOption,
     BLANK,
-    COLZ, CONT4Z, LEGO, LEGO2, SURF1, COLZTEXT,
+    COLZ, SCAT, CONT4Z, LEGO, LEGO2, SURF1, COLZTEXT,
     AP, AC, ALP, ACP
   };
   enum Type {Undefined, H1DPlot, H2DPlot, GraphPlot};
