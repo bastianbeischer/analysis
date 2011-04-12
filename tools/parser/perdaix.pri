@@ -4,16 +4,13 @@
 
 PERDAIX_LIB_DIR = $(PERDAIX10_PATH)/lib
 
-CLHEPDIR = $(CLHEP_BASE_DIR)
-
 INCLUDEPATH += \
 	./include \
 	$(PERDAIX10_PATH)/flightsoftware/libraries/dataformats \
 	$(PERDAIX10_PATH)/flightsoftware/libraries/global \
 	$(PERDAIX10_PATH)/flightsoftware/libraries/sipm \
 	$(PERDAIX10_PATH)/flightsoftware/libraries/perdaixusb \
-        $(PERDAIX10_PATH)/flightsoftware/libraries/tof \
-        $(CLHEP_BASE_DIR)/include
+        $(PERDAIX10_PATH)/flightsoftware/libraries/tof
 
 DEPENDPATH += $${INCLUDEPATH}
 

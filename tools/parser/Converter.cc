@@ -18,11 +18,6 @@
 #include "MCParticle.h"
 #include "MCDigi.h"
 
-#include "CLHEP/Units/SystemOfUnits.h"
-#include <CLHEP/Geometry/Point3D.h>
-#include <CLHEP/Geometry/Vector3D.h>
-
-
 #include <TVector3.h>
 #include <QDebug>
 
