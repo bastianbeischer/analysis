@@ -14,7 +14,7 @@
 class QSettings;
 class SimpleEvent;
 class Hit;
-class Track;
+class Particle;
 class SimpleEvent;
 
 class Corrections
@@ -35,7 +35,7 @@ public:
 
 public:
   void preFitCorrections(SimpleEvent*);
-  void postFitCorrections(Track*);
+  void postFitCorrections(Particle*);
 
   static const int nPhotonTravelTimeParameters = 3;
   static const int nPhotonTravelTimeDifferenceParameters = 6;
@@ -48,8 +48,8 @@ private:
   void timeShift(Hit*);
   void trdMopv(Hit*);
   void tofTot(Hit* hit, SimpleEvent* event);
-  void multipleScattering(Track*);
-  void photonTravelTime(Track*); 
+  void multipleScattering(Particle*);
+  void photonTravelTime(Particle*); 
 
 public:
   double trdScalingFactor(unsigned int);

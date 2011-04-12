@@ -72,7 +72,7 @@ void AnalysisProcessor::process(SimpleEvent* event)
   if (track) {
     info->reset();
     track->fit(trackClusters);
-    m_corrections->postFitCorrections(track);
+    m_corrections->postFitCorrections(m_particle);
     tof->calculateTimes(track);
     info->process();
   }
