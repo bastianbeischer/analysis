@@ -12,7 +12,7 @@ class MCRigidityResolution : public AnalysisPlot, public H1DPlot
 public:
     MCRigidityResolution(int pdgID = 11);
 
-     virtual void processEvent(const QVector<Hit*>&, Track*, SimpleEvent*);
+     virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
      virtual void update();
      virtual void finalize();
 private:

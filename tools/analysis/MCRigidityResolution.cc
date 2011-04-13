@@ -8,7 +8,8 @@
 
 #include "SimpleEvent.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "Particle.hh"
+#include "ParticleInformation.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
 
@@ -42,23 +43,25 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
 }
 
 
-void MCRigidityResolution::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent* event)
+void MCRigidityResolution::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent* event)
 {
   //only accept mc events:
   if (event->contentType() != SimpleEvent::MonteCarlo)
     return;
 
+  //get track
+  Track* track = particle->track();
 
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;
 
   //check if track fits chi2 is ok
-  if (!(track->information()->flags() & TrackInformation::Chi2Good))
+  if (!(particle->information()->flags() & ParticleInformation::Chi2Good))
     return;
 
   //check if track was inside of magnet
-  if (!(track->information()->flags() & TrackInformation::InsideMagnet))
+  if (!(particle->information()->flags() & ParticleInformation::InsideMagnet))
     return;
 
   //only use selected pdgID
@@ -95,7 +98,7 @@ void MCRigidityResolution::update()
   for (i = m_resolutionHistos.constBegin(); i != m_resolutionHistos.constEnd(); ++i)
   {
     TH1D* hist = i.value();
-    double mcRigidity = histogram()->GetBinCenter(i.key());
+    double mcRigidity = histogram()->GetBinCenter(i.key()); // GeV
     double inverseRMS = hist->GetRMS();
     double inverseRMSError = hist->GetRMSError();
     double rigidityRes = inverseRMS / (1. / mcRigidity) ;
