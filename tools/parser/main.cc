@@ -20,7 +20,7 @@ int main(int argc, char** argv)
     output = argv[2];
   }
   else {
-    QRegExp rx("\\..*$");
+    QRegExp rx("\\.([^\\.]+)$");
     rx.setMinimal(true);
     output = output.replace(rx, ".root");
   }
