@@ -2,6 +2,7 @@
 
 #include "Hit.hh"
 #include "TOFSipmHit.hh"
+#include "Particle.hh"
 #include "Track.hh"
 #include "BrokenLine.hh"
 #include "CenteredBrokenLine.hh"
@@ -55,8 +56,12 @@ void HitsPlot::clearHits()
   m_fitInfo = 0;
 }
 
-void HitsPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* event)
+void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
+  std::cout << particle->type() << std::endl;
+
+  const Track* track = particle->track();
+
   clearHits();
 
   TPaletteAxis* palette = (TPaletteAxis*) histogram()->GetListOfFunctions()->FindObject("palette");
@@ -67,7 +72,7 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent
 
     double y0 = 0., slopeY = 0.;
     if (track->type() == Track::StraightLine) {
-      StraightLine* straightLine = static_cast<StraightLine*>(track);
+      const StraightLine* straightLine = static_cast<const StraightLine*>(track);
       double x0 = straightLine->x0();
       double slopeX = straightLine->slopeX();
       double x_min = x0 + z_min * slopeX;
@@ -89,7 +94,7 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent
 
       // lower line
       if (track->type() == Track::BrokenLine) {
-        BrokenLine* brokenLine = static_cast<BrokenLine*>(track);
+        const BrokenLine* brokenLine = static_cast<const BrokenLine*>(track);
         zIntersection = brokenLine->zIntersection();
         x0 = brokenLine->lowerX0();
         slopeX = brokenLine->lowerSlopeX();
@@ -97,7 +102,7 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent
         slopeY = brokenLine->slopeY();
       }
       else if (track->type() == Track::CenteredBrokenLine) {
-        CenteredBrokenLine* centeredBrokenLine = static_cast<CenteredBrokenLine*>(track);
+        const CenteredBrokenLine* centeredBrokenLine = static_cast<const CenteredBrokenLine*>(track);
         zIntersection = centeredBrokenLine->zIntersection();
         x0 = centeredBrokenLine->x0();
         slopeX = centeredBrokenLine->lowerSlopeX();
@@ -114,13 +119,13 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent
 
       // upper line
       if (track->type() == Track::BrokenLine) {
-        BrokenLine* brokenLine = static_cast<BrokenLine*>(track);
+        const BrokenLine* brokenLine = static_cast<const BrokenLine*>(track);
         zIntersection = brokenLine->zIntersection();
         x0 = brokenLine->upperX0();
         slopeX = brokenLine->upperSlopeX();
       }
       else if (track->type() == Track::CenteredBrokenLine) {
-        CenteredBrokenLine* centeredBrokenLine = static_cast<CenteredBrokenLine*>(track);
+        const CenteredBrokenLine* centeredBrokenLine = static_cast<const CenteredBrokenLine*>(track);
         zIntersection = centeredBrokenLine->zIntersection();
         x0 = centeredBrokenLine->x0();
         slopeX = centeredBrokenLine->upperSlopeX();

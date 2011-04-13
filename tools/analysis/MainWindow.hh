@@ -5,6 +5,7 @@
 
 #include "Track.hh"
 #include "Corrections.hh"
+#include "ParticleFilter.hh"
 #include "EventReader.hh"
 #include "RootPlot.hh"
 
@@ -54,7 +55,7 @@ private slots:
   void update();
 private:
   void setupPlots();
-  void setupAnalysis(Track::Type& type, Corrections::Flags& flags);
+  void setupAnalysis(Track::Type&, Corrections::Flags&, ParticleFilter::Types&);
   void startAnalysis();
   void changeTopicGroupStatus(QVector<QCheckBox*>&);
   void removeListWidgetItem(int);

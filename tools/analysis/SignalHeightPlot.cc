@@ -2,8 +2,9 @@
 
 #include <TH1D.h>
 
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
 
 SignalHeightPlot::SignalHeightPlot(AnalysisPlot::Topic topic, unsigned short id) :
@@ -31,13 +32,15 @@ SignalHeightPlot::~SignalHeightPlot()
 {
 }
 
-void SignalHeightPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
+void SignalHeightPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if(!track)
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   const QVector<Hit*>::const_iterator endIt = hits.end();

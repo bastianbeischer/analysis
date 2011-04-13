@@ -37,7 +37,7 @@ SensorTimePlot::~SensorTimePlot()
   delete m_normalizationHistogram;
 }
 
-void SensorTimePlot::processEvent(const QVector<Hit*>&, Track*, SimpleEvent* event)
+void SensorTimePlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
 {
   double value = event->sensorData(m_type);
   if (!isnan(value)) {

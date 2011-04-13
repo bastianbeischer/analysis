@@ -5,8 +5,9 @@
 #include <TH1D.h>
 #include <TMath.h>
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
+#include "Particle.hh"
 #include "Track.hh"
 
 double chisquare(double* x, double* p)
@@ -47,14 +48,16 @@ Chi2Plot::~Chi2Plot()
 {
 }
 
-void Chi2Plot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent* /*event*/)
+void Chi2Plot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* /*event*/)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if(!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   if (track->ndf() == m_ndf)

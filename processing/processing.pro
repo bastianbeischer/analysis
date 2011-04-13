@@ -19,6 +19,7 @@ CLASSES += \
 INCLUDEPATH += \
   $$TOPLEVEL/event \
   $$TOPLEVEL/setup \
+  $$TOPLEVEL/particle \
   $$TOPLEVEL/tracking \
   $$TOPLEVEL/global
 
@@ -26,6 +27,7 @@ LIBS += \
   -L$$TOPLEVEL/lib \
   -lSimpleEvent \
   -lsetup \
+  -lparticle \
   -ltracking
 
 include($$TOPLEVEL/root.pri)

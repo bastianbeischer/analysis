@@ -1,7 +1,8 @@
 #include "TrackingEfficiencyVsMomentumPlot.hh"
 
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 
 #include <QMap>
 
@@ -23,15 +24,17 @@ TrackingEfficiencyVsMomentumPlot::~TrackingEfficiencyVsMomentumPlot()
 {
 }
 
-void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
+void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if (!track || !track->fitGood())
     return;
 
-  const TrackInformation* info = track->information();
+  const ParticleInformation* info = particle->information();
 
-  TrackInformation::Flags flags = info->flags();
-  if ( !(flags & TrackInformation::InsideMagnet) || !(flags & TrackInformation::Chi2Good) )
+  ParticleInformation::Flags flags = info->flags();
+  if ( !(flags & ParticleInformation::InsideMagnet) || !(flags & ParticleInformation::Chi2Good) )
     return;
 
   const QMap<double,int>& hitsInLayers = info->hitsInLayers();

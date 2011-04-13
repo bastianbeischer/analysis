@@ -7,6 +7,7 @@ TOPLEVEL = ../..
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \
+  $$TOPLEVEL/particle \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/processing
 
@@ -14,6 +15,7 @@ LIBS += \
   -L$$TOPLEVEL/lib \
   -lSimpleEvent \
   -lsetup \
+  -lparticle \
   -lprocessing
 
 SOURCES = \

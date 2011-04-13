@@ -7,7 +7,7 @@
 #include <QMutex>
 
 class Hit;
-class Track;
+class Particle;
 class SimpleEvent;
 
 class AnalysisPlot : virtual public RootPlot, public EventDestination {

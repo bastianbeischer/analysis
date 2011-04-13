@@ -28,6 +28,7 @@ public:
   void setSignalHeight(const double height) {m_signalHeight = height;}
   void setPosition(const TVector3& pos) {m_position = pos;}
   void setCounterPosition(const TVector3& pos) {m_counterPosition = pos;}
+  void setResolution(const double& res) {m_resolution = res;}
 
 public:
   ModuleType      type()            const {return m_type;}
@@ -39,6 +40,7 @@ public:
 
 public:
   double          resolutionEstimate() const;
+  double          resolution() const;
 
   unsigned short  device()     const;
   unsigned short  connection() const;
@@ -55,6 +57,7 @@ protected:
   TVector3       m_position;
   TVector3       m_counterPosition;
   double         m_angle;
+  double         m_resolution; //!
 
   ClassDef(Hit, 1);
 

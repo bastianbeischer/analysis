@@ -1,8 +1,10 @@
 #include "TOFEfficiencyPlot.hh"
 #include "BrokenLine.hh"
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
+#include "Particle.hh"
+#include "Track.hh"
 #include "TOFCluster.hh"
 #include "TOFSipmHit.hh"
 #include "Constants.hh"
@@ -36,14 +38,16 @@ TOFEfficiencyPlot::~TOFEfficiencyPlot()
   delete m_normalizationHistogram;
 }
 
-void TOFEfficiencyPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void TOFEfficiencyPlot::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   const QVector<Hit*>::const_iterator endIt = clusters.end();

@@ -26,7 +26,7 @@ TriggerRateTimePlot::TriggerRateTimePlot(QDateTime first, QDateTime last)
 TriggerRateTimePlot::~TriggerRateTimePlot()
 {}
 
-void TriggerRateTimePlot::processEvent(const QVector<Hit*>&, Track*, SimpleEvent* event)
+void TriggerRateTimePlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
 {
   if (event->time() < xAxis()->GetXmin() || event->time() >= xAxis()->GetXmax())
     qDebug() << event->time();

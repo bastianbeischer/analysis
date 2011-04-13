@@ -79,7 +79,7 @@ int Matrix::fit(const QVector<Hit*>& hits)
     TMatrixD RotTrans(2,2);
     RotTrans.Transpose(Rot);
 
-    double sigmaV = hit->resolutionEstimate();
+    double sigmaV = hit->resolution();
     TMatrixD V1(2,2);
     V1(0,0) = 0.;
     V1(0,1) = 0.;

@@ -5,8 +5,9 @@
 #include "Hit.hh"
 #include "Cluster.hh"
 #include "SimpleEvent.hh"
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 
 TRDClustersOnTrackPlot::TRDClustersOnTrackPlot(AnalysisPlot::Topic topic) :
   AnalysisPlot(topic),
@@ -25,16 +26,17 @@ TRDClustersOnTrackPlot::~TRDClustersOnTrackPlot()
 {
 }
 
-void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/,Track* track ,SimpleEvent* event)
+void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/,Particle* particle ,SimpleEvent* event)
 {
+  const Track* track = particle->track();
 
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;
 
   //check if all tracker layers have a hit
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   int nTRDHits = 0;

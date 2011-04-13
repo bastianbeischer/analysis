@@ -2,9 +2,11 @@
 #include "BrokenLine.hh"
 #include "Constants.hh"
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
 #include "TOFCluster.hh"
+#include "Particle.hh"
+#include "Track.hh"
 
 #include <TH2.h>
 #include <TAxis.h>
@@ -93,13 +95,22 @@ BetaMomentumCorrelationPlot::~BetaMomentumCorrelationPlot()
 {
 }
 
-void BetaMomentumCorrelationPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
+void BetaMomentumCorrelationPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & (TrackInformation::AllTrackerLayers | TrackInformation::InsideMagnet)))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & (ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet)))
     return;
-  histogram()->Fill(track->rigidity(), 1./track->beta());
+  
+  if (!(flags & ParticleInformation::Chi2Good))
+    return;
+
+  // if (particle->type() != Particle::Helium)
+  //   return;
+
+  histogram()->Fill(track->rigidity(), 1./particle->beta());
 }

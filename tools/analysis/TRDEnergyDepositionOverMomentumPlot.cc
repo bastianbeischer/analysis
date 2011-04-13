@@ -8,8 +8,9 @@
 #include <TAxis.h>
 
 #include "Cluster.hh"
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "TRDCalculations.hh"
 
 TRDEnergyDepositionOverMomentumPlot::TRDEnergyDepositionOverMomentumPlot(AnalysisPlot::Topic topic) :
@@ -27,19 +28,21 @@ TRDEnergyDepositionOverMomentumPlot::~TRDEnergyDepositionOverMomentumPlot()
 {
 }
 
-void TRDEnergyDepositionOverMomentumPlot::processEvent(const QVector<Hit*>& /*hits*/,Track* track, SimpleEvent* /*event*/)
+void TRDEnergyDepositionOverMomentumPlot::processEvent(const QVector<Hit*>& /*hits*/,Particle* particle, SimpleEvent* /*event*/)
 {
+  const Track* track = particle->track();
+
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;
 
   //check if all tracker layers have a hit
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   //check if track was inside of magnet
-  if (!(flags & TrackInformation::InsideMagnet))
+  if (!(flags & ParticleInformation::InsideMagnet))
     return;
 
   //get the reconstructed momentum

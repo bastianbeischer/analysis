@@ -1,6 +1,6 @@
 #include "ResidualPlot.hh"
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Setup.hh"
 #include "Layer.hh"
 #include "Setup.hh"
@@ -10,6 +10,7 @@
 #include "BrokenLine.hh"
 #include "CenteredBrokenLine.hh"
 #include "CenteredBrokenLine2D.hh"
+#include "Particle.hh"
 #include "Track.hh"
 #include "TH2D.h"
 
@@ -43,18 +44,20 @@ ResidualPlot::~ResidualPlot()
 {
 }
 
-void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* /*event*/)
+void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* /*event*/)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   // only select tracks which didn't pass through the magnet
-  if ((flags & TrackInformation::MagnetCollision))
+  if ((flags & ParticleInformation::MagnetCollision))
     return;
 
   // remove hits in this layer from hits for track fit
@@ -86,7 +89,6 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleE
 
   // fit and fill histograms
   if (mytrack->fit(hitsForFit)) {
-    mytrack->process();
     QVector<Hit*>::const_iterator layerEndIt = hitsInThisLayer.end();
     for (QVector<Hit*>::const_iterator it = hitsInThisLayer.begin(); it != layerEndIt; ++it) {
       Hit* hit = *it;

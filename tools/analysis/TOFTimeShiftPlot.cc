@@ -1,12 +1,14 @@
 #include "TOFTimeShiftPlot.hh"
 #include "BrokenLine.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
 #include "Constants.hh"
 #include "TOFCluster.hh"
 #include "TOFSipmHit.hh"
 #include "Setup.hh"
 #include "TOFBar.hh"
+#include "Particle.hh"
+#include "Track.hh"
 
 #include <TH2.h>
 #include <TVector3.h>
@@ -33,14 +35,16 @@ TOFTimeShiftPlot::TOFTimeShiftPlot(unsigned short topBarId, unsigned short botto
 TOFTimeShiftPlot::~TOFTimeShiftPlot()
 {}
 
-void TOFTimeShiftPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
+void TOFTimeShiftPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
   double t[8];
   for (int i = 0; i < 8; ++i)

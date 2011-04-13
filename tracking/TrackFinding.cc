@@ -103,7 +103,7 @@ QVector<Hit*> TrackFinding::findTrack(const QVector<Hit*>& hits)
 }
 
 
-bool TrackFinding::isInCorridor(Track* track, Hit* hit, double maxPull)
+bool TrackFinding::isInCorridor(const Track* track, Hit* hit, double maxPull)
 {
   Q_ASSERT(track);
 

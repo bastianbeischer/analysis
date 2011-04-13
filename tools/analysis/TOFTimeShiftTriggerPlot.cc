@@ -1,12 +1,15 @@
 #include "TOFTimeShiftTriggerPlot.hh"
 #include "BrokenLine.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
 #include "Constants.hh"
 #include "TOFCluster.hh"
 #include "TOFSipmHit.hh"
 #include "Setup.hh"
 #include "TOFBar.hh"
+#include "Particle.hh"
+#include "Track.hh"
+#include "TimeOfFlight.hh"
 
 #include <TH2.h>
 #include <TVector3.h>
@@ -32,13 +35,16 @@ TOFTimeShiftTriggerPlot::TOFTimeShiftTriggerPlot()
 TOFTimeShiftTriggerPlot::~TOFTimeShiftTriggerPlot()
 {}
 
-void TOFTimeShiftTriggerPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void TOFTimeShiftTriggerPlot::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+  const TimeOfFlight* tof = particle->timeOfFlight();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::Chi2Good))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::Chi2Good))
     return;
 
   const QVector<Hit*>::const_iterator endIt = clusters.end();
@@ -52,9 +58,9 @@ void TOFTimeShiftTriggerPlot::processEvent(const QVector<Hit*>& clusters, Track*
       for (unsigned int i = 0; i < tofCluster->hits().size(); ++i) {
         TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(tofCluster->hits()[i]);
         if (z > 0) {
-          histogram()->Fill(tofHit->detId() - 0x8000, track->startTime() - tofHit->startTime());
+          histogram()->Fill(tofHit->detId() - 0x8000, tof->startTime() - tofHit->startTime());
         } else {
-          histogram()->Fill(tofHit->detId() - 0x8000, track->stopTime() - tofHit->startTime());
+          histogram()->Fill(tofHit->detId() - 0x8000, tof->stopTime() - tofHit->startTime());
         }
       }
     }

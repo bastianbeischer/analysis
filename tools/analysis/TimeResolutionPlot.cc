@@ -1,12 +1,15 @@
 #include "TimeResolutionPlot.hh"
 #include "BrokenLine.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
 #include "Constants.hh"
 #include "TOFCluster.hh"
 #include "TOFSipmHit.hh"
 #include "Setup.hh"
 #include "TOFBar.hh"
+#include "Particle.hh"
+#include "Track.hh"
+#include "TimeOfFlight.hh"
 
 #include <TH2.h>
 #include <TVector3.h>
@@ -38,13 +41,16 @@ TimeResolutionPlot::TimeResolutionPlot(unsigned short idTop1, unsigned short idT
 TimeResolutionPlot::~TimeResolutionPlot()
 {}
 
-void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
+void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+  const TimeOfFlight* tof = particle->timeOfFlight();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & (TrackInformation::Chi2Good | TrackInformation::InsideMagnet)))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
     return;
   if (track->rigidity() < 1)
     return;
@@ -64,7 +70,7 @@ void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Track* track, S
     double lCorrection = (d - l) / Constants::speedOfLight;
     double m = Constants::protonMass; //TODO: use reconstructed particle
     double rigidity = track->rigidity();
-    double t = track->timeOfFlight();
+    double t = tof->timeOfFlight();
     double pCorrection = (t + lCorrection) * (1 - sqrt(rigidity*rigidity + m*m) / rigidity);
     double yu = track->y(Constants::upperTofPosition);
     double yl = track->y(Constants::lowerTofPosition);

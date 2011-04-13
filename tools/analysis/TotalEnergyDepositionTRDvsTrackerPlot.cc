@@ -3,8 +3,9 @@
 #include <TPad.h>
 #include <TH2D.h>
 
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "SimpleEvent.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
@@ -26,20 +27,22 @@ TotalEnergyDepositionTRDvsTrackerPlot::~TotalEnergyDepositionTRDvsTrackerPlot()
 {
 }
 
-void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
+void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;
 
-  if (track->information()->numberOfTrackerLayers() < 7)
+  if (particle->information()->numberOfTrackerLayers() < 7)
     return;
 
   if (track->chi2() / track->ndf() > 5)
     return;
 
   //check if track was inside of magnet
-  if (!(track->information()->flags() & TrackInformation::InsideMagnet))
+  if (!(particle->information()->flags() & ParticleInformation::InsideMagnet))
     return;
 
 
@@ -50,7 +53,7 @@ void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hi
   if( p < m_lowerMomentum || p > m_upperMomentum)
     return;
 
-  if (track->beta() < 1.5 || track->beta() < 0)
+  if (particle->beta() < 1.5 || particle->beta() < 0)
     return;
   */
 

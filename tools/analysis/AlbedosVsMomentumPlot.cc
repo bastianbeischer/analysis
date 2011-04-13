@@ -2,8 +2,9 @@
 
 #include <TH1D.h>
 
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 
 AlbedosVsMomentumPlot::AlbedosVsMomentumPlot() :
   AnalysisPlot(AnalysisPlot::MomentumReconstruction),
@@ -46,19 +47,21 @@ AlbedosVsMomentumPlot::~AlbedosVsMomentumPlot()
   delete m_totalHisto;
 }
 
-void AlbedosVsMomentumPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
+void AlbedosVsMomentumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if ( !(flags & TrackInformation::AllTrackerLayers) || !(flags & TrackInformation::InsideMagnet) )
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) )
     return;
 
   double rigidity = track->rigidity();
   m_totalHisto->Fill(rigidity);
 
-  if (flags & TrackInformation::Albedo)
+  if (flags & ParticleInformation::Albedo)
     m_albedoHisto->Fill(rigidity);
 }
 

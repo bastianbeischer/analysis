@@ -5,6 +5,7 @@
 #include "Cluster.hh"
 #include "TOFSipmHit.hh"
 #include "TOFCluster.hh"
+#include "Particle.hh"
 #include "Track.hh"
 #include "Constants.hh"
 
@@ -30,7 +31,10 @@ TOTPlot::TOTPlot()
 TOTPlot::~TOTPlot()
 {}
 
-void TOTPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*) {
+void TOTPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
+{
+  const Track* track = particle->track();
+
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Hit* hit = *it;

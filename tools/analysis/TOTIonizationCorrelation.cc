@@ -5,9 +5,10 @@
 #include "Cluster.hh"
 #include "TOFSipmHit.hh"
 #include "TOFCluster.hh"
+#include "Particle.hh"
 #include "Track.hh"
 #include "Constants.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 
 #include <TH2D.h>
 #include <TAxis.h>
@@ -47,11 +48,14 @@ TOTIonizationCorrelation::TOTIonizationCorrelation(TofLayer layer, Hit::ModuleTy
 TOTIonizationCorrelation::~TOTIonizationCorrelation()
 {}
 
-void TOTIonizationCorrelation::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*) {
+void TOTIonizationCorrelation::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
+{
+  const Track* track = particle->track();
+
   if (!track || !track->fitGood())
     return;
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & (TrackInformation::Chi2Good | TrackInformation::InsideMagnet)))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
     return;
   double totSum = 0.;
   int nTofHits = 0;
@@ -80,21 +84,21 @@ void TOTIonizationCorrelation::processEvent(const QVector<Hit*>& clusters, Track
   }
 }
 
-double TOTIonizationCorrelation::sumOfNonTOFSignalHeights(Track*, const QVector<Hit*>& clusters) {
-	double sumSignal = 0;
+double TOTIonizationCorrelation::sumOfNonTOFSignalHeights(const Track*, const QVector<Hit*>& clusters) {
+  double sumSignal = 0;
   const QVector<Hit*>::const_iterator endIt = clusters.end();
   for (QVector<Hit*>::const_iterator clusterIt = clusters.begin(); clusterIt != endIt; ++clusterIt) {
     Hit* hit = *clusterIt;
-		if (hit->type() != Hit::tof && hit->type() == m_type) {
+    if (hit->type() != Hit::tof && hit->type() == m_type) {
       Cluster* cluster = static_cast<Cluster*>(hit);
       std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         sumSignal+= (*it)->signalHeight();
       }
-		}
-	}
-	return sumSignal;
+    }
+  }
+  return sumSignal;
 }
 
 QString TOTIonizationCorrelation::layerName(TofLayer layer)

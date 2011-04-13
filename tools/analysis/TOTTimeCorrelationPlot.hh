@@ -10,14 +10,14 @@
 #include <QDateTime>
 
 class Hit;
-class Track;
+class Particle;
 class SimpleEvent;
 
 class TOTTimeCorrelationPlot : public AnalysisPlot, public H2DPlot {
 public:
   TOTTimeCorrelationPlot(unsigned int tofChannel, QDateTime first, QDateTime last);
   ~TOTTimeCorrelationPlot();
-  virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
+  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
 private:
   unsigned short m_id;
 };

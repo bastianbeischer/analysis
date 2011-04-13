@@ -4,7 +4,8 @@
 #include <TLatex.h>
 
 #include "Hit.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
+#include "Particle.hh"
 #include "Track.hh"
 
 #include <iostream>
@@ -54,14 +55,16 @@ MomentumSpectrumPlot::~MomentumSpectrumPlot()
 {
 }
 
-void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent* /*event*/)
+void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* /*event*/)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if ( !(flags & TrackInformation::AllTrackerLayers) || !(flags & TrackInformation::InsideMagnet) || (flags & TrackInformation::Albedo) )
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
     return;
 
   double rigidity = track->rigidity();

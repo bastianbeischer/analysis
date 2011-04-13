@@ -1,30 +1,34 @@
 #include "AnalysisProcessor.hh"
 
 #include "TrackFinding.hh"
-#include "CenteredBrokenLine.hh"
-#include "CenteredBrokenLine2D.hh"
-#include "BrokenLine.hh"
-#include "StraightLine.hh"
-#include "TrackFinding.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
 #include "SimpleEvent.hh"
 #include "Setup.hh"
 #include "EventDestination.hh"
+#include "Particle.hh"
+#include "ParticleFilter.hh"
+#include "ParticleIdentifier.hh"
+#include "TimeOfFlight.hh"
+#include "ParticleInformation.hh"
 
 AnalysisProcessor::AnalysisProcessor()
   : EventProcessor()
-  , m_track(0)
+  , m_particle(new Particle)
+  , m_filter(new ParticleFilter)
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections)
+  , m_identifier(new ParticleIdentifier)
 {
 }
 
 AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, Track::Type track, Corrections::Flags flags)
   : EventProcessor(destinations)
-  , m_track(0)
+  , m_particle(new Particle)
+  , m_filter(new ParticleFilter)
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections(flags))
+  , m_identifier(new ParticleIdentifier)
 {
   setTrackType(track);
   setCorrectionFlags(flags);
@@ -32,32 +36,26 @@ AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, Tr
 
 AnalysisProcessor::~AnalysisProcessor()
 {
-  if (m_track)
-    delete m_track;
+  delete m_particle;
+  delete m_filter;
   delete m_trackFinding;
   delete m_corrections;
+  delete m_identifier;
 }
 
-void AnalysisProcessor::setTrackType(Track::Type track)
+void AnalysisProcessor::setTrackType(Track::Type trackType)
 {
-  if (m_track)
-    delete m_track;
-
-  if (track == Track::None)
-    m_track = 0;
-  if (track == Track::CenteredBrokenLine)
-    m_track = new CenteredBrokenLine;
-  else if (track == Track::CenteredBrokenLine2D)
-    m_track = new CenteredBrokenLine2D;
-  else if (track == Track::BrokenLine)
-    m_track = new BrokenLine;
-  else if (track == Track::StraightLine)
-    m_track = new StraightLine;
+  m_particle->setTrackType(trackType);
 }
 
 void AnalysisProcessor::setCorrectionFlags(Corrections::Flags flags)
 {
   m_corrections->setFlags(flags);
+}
+
+void AnalysisProcessor::setParticleFilter(ParticleFilter::Types types)
+{
+  m_filter->setTypes(types);
 }
 
 void AnalysisProcessor::process(SimpleEvent* event)
@@ -66,11 +64,23 @@ void AnalysisProcessor::process(SimpleEvent* event)
 
   QVector<Hit*> clusters = QVector<Hit*>::fromStdVector(event->hits());
   QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
-  if (m_track) {
-    m_track->fit(trackClusters);
-    m_corrections->postFitCorrections(m_track);
-    m_track->process();
+
+  Track* track = m_particle->track();
+  TimeOfFlight* tof = m_particle->timeOfFlight();
+  ParticleInformation* info = m_particle->information();
+
+  if (track) {
+    info->reset();
+    track->fit(trackClusters);
+    m_corrections->postFitCorrections(m_particle);
+    tof->calculateTimes(track);
+    info->process();
   }
-  foreach (EventDestination* destination, m_destinations)
-    destination->processEvent(clusters, m_track, event);
+
+  // identify particle species
+  m_identifier->identify(m_particle);
+
+  if (m_filter->passes(m_particle))
+    foreach (EventDestination* destination, m_destinations)
+      destination->processEvent(clusters, m_particle, event);
 }

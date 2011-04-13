@@ -8,12 +8,14 @@ TOPLEVEL = ../..
 INCLUDEPATH += \
   $$TOPLEVEL/alignment \
   $$TOPLEVEL/event \
+  $$TOPLEVEL/particle \
   $$TOPLEVEL/processing \
   $$TOPLEVEL/global
 
 LIBS += \
   -lgfortran \
   -L$$TOPLEVEL/lib \
+  -lparticle \
   -lprocessing \
   -lSimpleEvent \
   -lsetup \

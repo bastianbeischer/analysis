@@ -6,10 +6,11 @@
 #include <TLegend.h>
 
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "SimpleEvent.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
+#include "Particle.hh"
 
 #include "TRDCalculations.hh"
 #include "RootStyle.hh"
@@ -31,8 +32,10 @@ MCTotalEnergyDepositionTRDvsTrackerPlot::~MCTotalEnergyDepositionTRDvsTrackerPlo
 {
 }
 
-void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* event)
+void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
+  const Track* track = particle->track();
+
   //only accept mc events:
   if (event->contentType() != SimpleEvent::MonteCarlo)
     return;
@@ -45,7 +48,7 @@ void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& 
     return;
 
   //check if track was inside of magnet
-  if (!(track->information()->flags() & TrackInformation::InsideMagnet))
+  if (!(particle->information()->flags() & ParticleInformation::InsideMagnet))
     return;
 
 
@@ -56,7 +59,7 @@ void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& 
   if( p < m_lowerMomentum || p > m_upperMomentum)
     return;
 
-  if (track->beta() < 1.5 || track->beta() < 0)
+  if (particle->beta() < 1.5 || particle->beta() < 0)
     return;
   */
 

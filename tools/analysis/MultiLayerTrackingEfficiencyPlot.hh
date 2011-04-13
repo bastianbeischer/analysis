@@ -16,7 +16,7 @@ public:
   MultiLayerTrackingEfficiencyPlot();
   ~MultiLayerTrackingEfficiencyPlot();
   
-  void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
+  void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
   void finalize();
 
 private:

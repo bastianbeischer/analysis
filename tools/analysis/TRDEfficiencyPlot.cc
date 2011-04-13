@@ -5,8 +5,9 @@
 #include "Hit.hh"
 #include "Cluster.hh"
 #include "SimpleEvent.hh"
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "TRDCalculations.hh"
 
 #include <TCanvas.h>
@@ -59,15 +60,17 @@ TRDEfficiencyPlot::~TRDEfficiencyPlot()
   m_ellipses.clear();
 }
 
-void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent*)
+void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;
 
   //filter: only use events with 8 tracker hits:
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   //TODO: check for off track hits, atm this is Bastians criteria for on track

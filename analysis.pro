@@ -11,6 +11,7 @@ SUBDIRS = \
   global \
   tracking \
   setup \
+  particle \
   processing \
   alignment \
   rootplot \

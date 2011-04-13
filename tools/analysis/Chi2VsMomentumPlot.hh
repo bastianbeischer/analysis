@@ -16,7 +16,11 @@ public:
   Chi2VsMomentumPlot();
   ~Chi2VsMomentumPlot();
   
-  void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
+  void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  void finalize();
+
+private:
+  TH1D* m_normHisto;
 
 };
 

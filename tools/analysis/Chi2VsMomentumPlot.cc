@@ -8,8 +8,9 @@
 #include "Layer.hh"
 #include "TrackFinding.hh"
 #include "Setup.hh"
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 
 Chi2VsMomentumPlot::Chi2VsMomentumPlot() :
   AnalysisPlot(AnalysisPlot::Tracking),
@@ -17,7 +18,7 @@ Chi2VsMomentumPlot::Chi2VsMomentumPlot() :
 {
   setTitle("Chi2 vs Momentum");
   
-  int nBinsX = 10;
+  int nBinsX = 30;
   double x0 = 0.;
   double x1 = 10.;
   int nBinsY = 100.;
@@ -27,20 +28,36 @@ Chi2VsMomentumPlot::Chi2VsMomentumPlot() :
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, x0, x1, nBinsY, y0, y1);
   setAxisTitle("R / GV", "#chi^{2} / ndf", "");
   addHistogram(histogram);
+
+  m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBinsX, x0, x1);
 }
 
 Chi2VsMomentumPlot::~Chi2VsMomentumPlot()
 {
+  delete m_normHisto;
 }
 
-void Chi2VsMomentumPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
+void Chi2VsMomentumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if(!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   histogram()->Fill(track->rigidity(), track->chi2() / track->ndf());
+  m_normHisto->Fill(track->rigidity());
+}
+
+void Chi2VsMomentumPlot::finalize()
+{
+  for (int i = 1; i <= histogram()->GetNbinsX(); i++) {
+    for (int j = 1; j <= histogram()->GetNbinsY(); j++) {
+      double bc = histogram()->GetBinContent(i,j);
+      histogram()->SetBinContent(i,j,bc/m_normHisto->GetBinContent(i));
+    }
+  }
 }

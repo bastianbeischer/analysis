@@ -3,8 +3,9 @@
 #include <TH1D.h>
 #include <TLatex.h>
 
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 
 CutStatisticsPlot::CutStatisticsPlot() :
   AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
@@ -33,20 +34,22 @@ CutStatisticsPlot::~CutStatisticsPlot()
 {
 }
 
-void CutStatisticsPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent*)
+void CutStatisticsPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   histogram()->Fill(0);
   if (!track || !track->fitGood())
     return;
   histogram()->Fill(1);
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::InsideMagnet))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::InsideMagnet))
     return;
   histogram()->Fill(2);
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
   histogram()->Fill(3);
-  if ((flags & TrackInformation::Albedo))
+  if ((flags & ParticleInformation::Albedo))
     return;
   histogram()->Fill(4);
 }

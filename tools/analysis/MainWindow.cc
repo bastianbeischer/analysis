@@ -8,6 +8,7 @@
 #include "BrokenLine.hh"
 #include "StraightLine.hh"
 #include "Corrections.hh"
+#include "ParticleFilter.hh"
 #include "AnalysisProcessor.hh"
 #include "EventReader.hh"
 
@@ -147,7 +148,14 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.timeShiftCorrectionCheckBox);
   m_controlWidgets.append(m_ui.trdMopValueCorrectionCheckBox);
   m_controlWidgets.append(m_ui.timeOverThresholdCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.multipleScatteringCorrectionCheckBox);
   m_controlWidgets.append(m_ui.photonTravelTimeCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.protonCheckBox);
+  m_controlWidgets.append(m_ui.heliumCheckBox);
+  m_controlWidgets.append(m_ui.electronCheckBox);
+  m_controlWidgets.append(m_ui.positronCheckBox);
+  m_controlWidgets.append(m_ui.muonCheckBox);
+  m_controlWidgets.append(m_ui.antiMuonCheckBox);
 
   connect(m_reader, SIGNAL(started()), this, SLOT(toggleControlWidgetsStatus()));
   connect(m_reader, SIGNAL(finished()), this, SLOT(toggleControlWidgetsStatus()));
@@ -625,18 +633,33 @@ void MainWindow::setupPlots()
 
 }
 
-void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags)
+void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes)
 {
   if (m_ui.alignmentCorrectionCheckBox->isChecked())
     flags|= Corrections::Alignment;
   if (m_ui.timeShiftCorrectionCheckBox->isChecked())
     flags|= Corrections::TimeShifts;
+  if (m_ui.multipleScatteringCorrectionCheckBox->isChecked())
+    flags|= Corrections::MultipleScattering;
   if (m_ui.photonTravelTimeCorrectionCheckBox->isChecked())
     flags|= Corrections::PhotonTravelTime;
   if (m_ui.trdMopValueCorrectionCheckBox->isChecked())
     flags|= Corrections::TrdMopv;
   if (m_ui.timeOverThresholdCorrectionCheckBox->isChecked())
     flags|= Corrections::TofTimeOverThreshold;
+
+  if (m_ui.protonCheckBox->isChecked())
+    filterTypes |= Particle::Proton;
+  if (m_ui.heliumCheckBox->isChecked())
+    filterTypes |= Particle::Helium;
+  if (m_ui.electronCheckBox->isChecked())
+    filterTypes |= Particle::Electron;
+  if (m_ui.positronCheckBox->isChecked())
+    filterTypes |= Particle::Positron;
+  if (m_ui.muonCheckBox->isChecked())
+    filterTypes |= Particle::Muon;
+  if (m_ui.antiMuonCheckBox->isChecked())
+    filterTypes |= Particle::AntiMuon;
 
   if (m_ui.trackComboBox->currentText() == "centered broken line") {
     type = Track::CenteredBrokenLine;
@@ -702,7 +725,8 @@ void MainWindow::analyzeButtonClicked()
   if (m_ui.analyzeButton->text() == "&start") {
     Track::Type type;
     Corrections::Flags flags;
-    setupAnalysis(type, flags);
+    ParticleFilter::Types filterTypes;
+    setupAnalysis(type, flags, filterTypes);
     setupPlots();
 
     qDeleteAll(m_processors);
@@ -713,6 +737,7 @@ void MainWindow::analyzeButtonClicked()
         processor->addDestination(plot);
       processor->setTrackType(type);
       processor->setCorrectionFlags(flags);
+      processor->setParticleFilter(filterTypes);
       m_processors.append(processor);
     }      
     m_reader->start(m_processors, m_ui.firstEventSpinBox->value(), m_ui.lastEventSpinBox->value());

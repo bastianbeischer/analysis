@@ -14,14 +14,15 @@
 class QSettings;
 class SimpleEvent;
 class Hit;
-class Track;
+class Particle;
 class SimpleEvent;
 
 class Corrections
 {
   
 public:
-  enum Flag {None = 0x0, Alignment = 0x1<<0, TimeShifts = 0x1<<1, TrdMopv = 0x1<<2, TofTimeOverThreshold = 0x1<<3, PhotonTravelTime = 0x1<<4};
+  enum Flag {None = 0x0, Alignment = 0x1<<0, TimeShifts = 0x1<<1, TrdMopv = 0x1<<2, TofTimeOverThreshold = 0x1<<3, 
+             MultipleScattering = 0x1<<4, PhotonTravelTime = 0x1<<5};
   Q_DECLARE_FLAGS(Flags, Flag);
 
 public:
@@ -34,7 +35,7 @@ public:
 
 public:
   void preFitCorrections(SimpleEvent*);
-  void postFitCorrections(Track*);
+  void postFitCorrections(Particle*);
 
   static const int nPhotonTravelTimeParameters = 3;
   static const int nPhotonTravelTimeDifferenceParameters = 6;
@@ -47,7 +48,8 @@ private:
   void timeShift(Hit*);
   void trdMopv(Hit*);
   void tofTot(Hit* hit, SimpleEvent* event);
-  void photonTravelTime(Track*); 
+  void multipleScattering(Particle*);
+  void photonTravelTime(Particle*); 
 
 public:
   double trdScalingFactor(unsigned int);

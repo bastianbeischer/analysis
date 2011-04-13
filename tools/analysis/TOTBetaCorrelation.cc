@@ -5,8 +5,9 @@
 #include "Cluster.hh"
 #include "TOFSipmHit.hh"
 #include "TOFCluster.hh"
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Constants.hh"
 
 #include <TH2D.h>
@@ -30,12 +31,14 @@ TOTBetaCorrelation::~TOTBetaCorrelation()
 {}
 
 
-void TOTBetaCorrelation::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void TOTBetaCorrelation::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if (!track || !track->fitGood())
     return;
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & (TrackInformation::Chi2Good | TrackInformation::InsideMagnet)))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
     return;
   double totSum = 0.;
   int nTofHits = 0;
@@ -59,7 +62,7 @@ void TOTBetaCorrelation::processEvent(const QVector<Hit*>& clusters, Track* trac
     }
   }
   if (nTofHits > 0)
-    histogram()->Fill(track->beta(), totSum / nTofHits);
+    histogram()->Fill(particle->beta(), totSum / nTofHits);
 }
 
 QString TOTBetaCorrelation::layerName(TofLayer layer)

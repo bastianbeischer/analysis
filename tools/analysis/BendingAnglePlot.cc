@@ -1,8 +1,9 @@
 #include "BendingAnglePlot.hh"
+#include "Particle.hh"
 #include "Track.hh"
 
 #include "Hit.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 
 #include <TH1.h>
 #include <TCanvas.h>
@@ -29,22 +30,24 @@ BendingAnglePlot::BendingAnglePlot()
 BendingAnglePlot::~BendingAnglePlot()
 {}
 
-void BendingAnglePlot::processEvent(const QVector<Hit*>& /*clusters*/, Track* track, SimpleEvent*)
+void BendingAnglePlot::processEvent(const QVector<Hit*>& /*clusters*/, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   double alpha = track->bendingAngle();
 
   histogram(0)->Fill(alpha);
-  if(flags & TrackInformation::InsideMagnet)
+  if(flags & ParticleInformation::InsideMagnet)
     histogram(1)->Fill(alpha);
-  if(flags & TrackInformation::OutsideMagnet)
+  if(flags & ParticleInformation::OutsideMagnet)
     histogram(2)->Fill(alpha);
 }
 
