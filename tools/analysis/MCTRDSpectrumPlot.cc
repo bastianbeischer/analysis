@@ -10,6 +10,8 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "ParticleInformation.hh"
+#include "ParticleDB.hh"
+#include "ParticleProperties.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
 
@@ -120,12 +122,14 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* pa
             spectrumHisto = m_spectrumMap.value(pdgID);
           else
           {
-            spectrumHisto = new TH1D(qPrintable(QString::number(pdgID) + " " + title())
-                                     , qPrintable(QString::number(pdgID) +" " + title())
+            const ParticleProperties* properties = ParticleDB::instance()->lookupPdgId(pdgID);
+            QString particleName = properties->name();
+            spectrumHisto = new TH1D(qPrintable(particleName + " " + title())
+                                     , qPrintable(particleName +" " + title())
                                      , 50, 0, 15);
             spectrumHisto->SetLineColor(RootStyle::rootColor(m_colorCounter++));
             m_spectrumMap.insert(pdgID, spectrumHisto);
-            legend()->AddEntry(spectrumHisto, qPrintable(QString::number(pdgID)), "l");
+            legend()->AddEntry(spectrumHisto, qPrintable(particleName), "l");
             addHistogram(spectrumHisto);
           }
 

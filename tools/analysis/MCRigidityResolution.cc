@@ -8,6 +8,8 @@
 #include "Track.hh"
 #include "Particle.hh"
 #include "ParticleInformation.hh"
+#include "ParticleDB.hh"
+#include "ParticleProperties.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
 
@@ -21,7 +23,10 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
   , m_rigidityRangeUppper(10.05)
   , m_numberOfBins(100)
 {
-  setTitle("rigidity resolution for " + QString::number(m_pdgID));
+  const ParticleProperties* partProps = ParticleDB::instance()->lookupPdgId(m_pdgID);
+  QString particleName = partProps->name();
+
+  setTitle("rigidity resolution for " + particleName);
 
   TH1D* hist = new TH1D(qPrintable(title()), qPrintable(title())
                         , m_numberOfBins
@@ -33,37 +38,32 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
 
   TF1* expectedRes = new TF1(qPrintable("expected resolution for " + title()), "sqrt(([2]*[1]*x)**2 + ([3]*sqrt(1+[0]*[0]/([1]*[1]*x*x)))**2)", 0, 20);
   expectedRes->SetParNames("mass/GeV", "abs(charge)", "a", "b");
-  //TODO use particle class and its mass
-  switch (qAbs(m_pdgID))
+
+  expectedRes->FixParameter(0, partProps->mass());
+  expectedRes->FixParameter(1, qAbs(partProps->charge()));
+
+  switch (partProps->type())
   {
-  case 2212:
-    expectedRes->FixParameter(0, 0.938);
-    expectedRes->FixParameter(1, 1);
+  case Particle::Proton: //case Particle::AntiProton:
     expectedRes->SetParameter(2, 0.077);
     expectedRes->SetParameter(3, 0.3175);
     break;
-  case 11:
-    expectedRes->FixParameter(0, 0.000511);
-    expectedRes->FixParameter(1, 1);
+  case Particle::Electron: case Particle::Positron:
     expectedRes->SetParameter(2, 0.07627);
     expectedRes->SetParameter(3, 0.2349);
     break;
-  case 1000020040:
-    expectedRes->FixParameter(0, 3.73);
-    expectedRes->FixParameter(1, 2);
+  case Particle::Helium:
     expectedRes->SetParameter(2, 0.04195);
     expectedRes->SetParameter(3, 0.3024);
     break;
   default:
-    expectedRes->FixParameter(0, 0.938);
-    expectedRes->FixParameter(1, 1);
     expectedRes->SetParameter(2, 0.077);
     expectedRes->SetParameter(3, 0.3175);
     break;
   }
 
   for (int i = 1; i <= hist->GetNbinsX(); ++i) {
-    QString histTitle = QString("resolutionhist_%1_%2").arg(m_pdgID).arg(i);
+    QString histTitle = QString("resolutionhist_%1_%2").arg(particleName).arg(i);
     double mcRig = hist->GetBinCenter(i);
     double inverseRigRange = expectedRes->Eval(mcRig)*5;
     int resolutionBins = 100;
