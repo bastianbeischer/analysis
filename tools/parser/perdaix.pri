@@ -2,9 +2,11 @@
     error(Please set PERDAIX10_PATH environment variable!)
 }
 
-PERDAIX_LIB_DIR = $(PERDAIX10_PATH)/lib
+!exists($(CLHEP_BASE_DIR)) {
+    error(Please set CLHEP_BASE_DIR environment variable!)
+}
 
-CLHEPDIR = $(CLHEP_BASE_DIR)
+PERDAIX_LIB_DIR = $(PERDAIX10_PATH)/lib
 
 INCLUDEPATH += \
 	./include \
@@ -12,8 +14,8 @@ INCLUDEPATH += \
 	$(PERDAIX10_PATH)/flightsoftware/libraries/global \
 	$(PERDAIX10_PATH)/flightsoftware/libraries/sipm \
 	$(PERDAIX10_PATH)/flightsoftware/libraries/perdaixusb \
-  $(PERDAIX10_PATH)/flightsoftware/libraries/tof \
-  $${CLHEPDIR}/include
+        $(PERDAIX10_PATH)/flightsoftware/libraries/tof \
+        $(CLHEP_BASE_DIR)/include
 
 DEPENDPATH += $${INCLUDEPATH}
 
