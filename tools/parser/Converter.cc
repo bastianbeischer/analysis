@@ -21,6 +21,12 @@
 #include <TVector3.h>
 #include <QDebug>
 
+#include <CLHEP/Units/SystemOfUnits.h>
+
+#include <CLHEP/Geometry/Point3D.h>
+#include <CLHEP/Geometry/Vector3D.h>
+
+
 #include <iostream>
 
 const int tdcChannelToBar[64] = {

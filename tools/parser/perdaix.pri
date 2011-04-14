@@ -12,8 +12,8 @@ INCLUDEPATH += \
 	$(PERDAIX10_PATH)/flightsoftware/libraries/global \
 	$(PERDAIX10_PATH)/flightsoftware/libraries/sipm \
 	$(PERDAIX10_PATH)/flightsoftware/libraries/perdaixusb \
-        $(PERDAIX10_PATH)/flightsoftware/libraries/tof \
-        $(CLHEPDIR)/include
+  $(PERDAIX10_PATH)/flightsoftware/libraries/tof \
+  $${CLHEPDIR}/include
 
 DEPENDPATH += $${INCLUDEPATH}
 
