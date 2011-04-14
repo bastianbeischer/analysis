@@ -39,7 +39,7 @@ public:
   double          angle()           const {return m_angle;}
 
 public:
-  double          resolutionEstimate() const;
+  virtual double  resolutionEstimate() const;
   double          resolution() const;
 
   unsigned short  device()     const;
