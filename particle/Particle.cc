@@ -1,8 +1,10 @@
 #include "Particle.hh"
 
-#include "Constants.hh"
+#include "ParticleDB.hh"
+#include "ParticleProperties.hh"
 #include "ParticleInformation.hh"
 #include "TimeOfFlight.hh"
+#include "Constants.hh"
 
 #include "CenteredBrokenLine.hh"
 #include "CenteredBrokenLine2D.hh"
@@ -15,10 +17,16 @@ Particle::Particle()
   init();
 }
 
-Particle::Particle(Type type)
+Particle::Particle(const Type& type)
 {
   init();
   setType(type);
+}
+
+Particle::Particle(const int& pdgId)
+{
+  init();
+  setPdgId(pdgId);
 }
 
 Particle::~Particle()
@@ -30,81 +38,23 @@ Particle::~Particle()
 
 void Particle::init()
 {
-  m_type = Unknown;
-  m_mass = 0.;
-  m_charge = 0;
-  m_pdgId = 0;
-  m_name = QString("unknown");
+  m_properties = ParticleDB::instance()->lookupType(Unknown);
   m_track = new CenteredBrokenLine;
   m_tof = new TimeOfFlight;
   m_information = new ParticleInformation(this);
 }
 
-void Particle::setType(const Type type)
+void Particle::setType(const Type& type)
 {
-  m_type = type;
-
-  switch (m_type) {
-  case Proton:
-    m_mass = Constants::protonMass;
-    m_charge = 1;
-    m_pdgId = 2212;
-    m_name = "proton";
-    break;
-  case Helium:
-    m_mass = Constants::heliumMass;
-    m_charge = 2;
-    m_pdgId = 1000020040;
-    m_name = "helium";
-    break;
-  case Electron:
-    m_mass = Constants::electronMass;
-    m_charge = -1;
-    m_pdgId = 11;
-    m_name = "e-";
-    break;
-  case Positron:
-    m_mass = Constants::electronMass;
-    m_charge = 1;
-    m_pdgId = -11;
-    m_name = "e+";
-    break;
-  case Muon:
-    m_mass = Constants::muonMass;
-    m_charge = -1;
-    m_pdgId = 13;
-    m_name = "mu-";
-    break;
-  case AntiMuon:
-    m_mass = Constants::muonMass;
-    m_charge = 1;
-    m_pdgId = -13;
-    m_name = "mu+";
-    break;
-  case PiPlus:
-    m_mass = Constants::pionMass;
-    m_charge = 1;
-    m_pdgId = 211;
-    m_name = "pi+";
-    break;
-  case PiMinus:
-    m_mass = Constants::pionMass;
-    m_charge = -1;
-    m_pdgId = -211;
-    m_name = "pi-";
-    break;
-  case Photon:
-    m_mass = 0.;
-    m_charge = 0.;
-    m_pdgId = 22;
-    m_name = "photon";
-    break;
-  default:
-    break;
-  }
+  m_properties = ParticleDB::instance()->lookupType(type);
 }
 
-void Particle::setTrackType(const Track::Type trackType)
+void Particle::setPdgId(const int& pdgId)
+{
+  m_properties = ParticleDB::instance()->lookupPdgId(pdgId);
+}
+
+void Particle::setTrackType(const Track::Type& trackType)
 {
   if (m_track)
     delete m_track;
@@ -121,7 +71,45 @@ void Particle::setTrackType(const Track::Type trackType)
     m_track = new StraightLine;
 }
 
+double Particle::transverseMomentum() const
+{
+  return m_properties->charge()*m_track->transverseRigidity();
+}
+
+double Particle::momentum() const
+{
+  return m_properties->charge()*m_track->rigidity();
+}
+
 double Particle::beta() const
 {
   return m_track->trackLength() / (m_tof->timeOfFlight() * Constants::speedOfLight);
+}
+
+//////////////////////////////////////////////////
+// loopthrough functions for convenience
+
+Particle::Type Particle::type() const
+{
+  return m_properties->type();
+}
+
+int Particle::pdgId() const
+{
+  return m_properties->pdgId();
+}
+
+QString Particle::name() const
+{
+  return m_properties->name();
+}
+
+double Particle::mass() const
+{
+  return m_properties->mass();
+}
+
+double Particle::charge() const
+{
+  return m_properties->charge();
 }

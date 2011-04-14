@@ -1,6 +1,8 @@
 #include "ParticleIdentifier.hh"
 
 #include "Particle.hh"
+#include "ParticleDB.hh"
+#include "ParticleProperties.hh"
 #include "TimeOfFlight.hh"
 
 #include "TOFSipmHit.hh"
@@ -10,14 +12,10 @@
 
 ParticleIdentifier::ParticleIdentifier()
 {
-  for (int type = Particle::START; type <= Particle::END; type = type<<1) {
-    m_allParticles.append(new Particle((Particle::Type)type));
-  }
 }
 
 ParticleIdentifier::~ParticleIdentifier()
 {
-  qDeleteAll(m_allParticles);
 }
 
 void ParticleIdentifier::identify(Particle* particle)
@@ -26,7 +24,7 @@ void ParticleIdentifier::identify(Particle* particle)
   particle->setType(Particle::Unknown);
 
   // keep a list of candidates
-  m_candidates = m_allParticles;
+  m_candidates = ParticleDB::instance()->allParticles();
 
   const Track* track = particle->track();
   const TimeOfFlight* tof = particle->timeOfFlight();
@@ -42,14 +40,14 @@ void ParticleIdentifier::identify(Particle* particle)
   // remove candidates according to charge sign and set particle type to most likely value
   if (chargeSign > 0) {
     particle->setType(Particle::Proton);
-    foreach(const Particle* candidate, m_candidates) {
+    foreach(const ParticleProperties* candidate, m_candidates) {
       if (candidate->charge() <= 0)
         m_candidates.removeAll(candidate);
     }
   }
   else {
     particle->setType(Particle::Muon);
-    foreach(const Particle* candidate, m_candidates) {
+    foreach(const ParticleProperties* candidate, m_candidates) {
       if (candidate->charge() >= 0)
         m_candidates.removeAll(candidate);
     }
@@ -80,7 +78,7 @@ void ParticleIdentifier::identify(Particle* particle)
     if (timeOverThreshold > 37 && chargeSign > 0)
       particle->setType(Particle::Helium);
     else {
-      foreach(const Particle* candidate, m_candidates) {
+      foreach(const ParticleProperties* candidate, m_candidates) {
         if (candidate->type() == Particle::Helium)
           m_candidates.removeAll(candidate);
       }

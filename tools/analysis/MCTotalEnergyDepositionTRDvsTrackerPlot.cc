@@ -7,6 +7,8 @@
 
 #include "Track.hh"
 #include "ParticleInformation.hh"
+#include "ParticleDB.hh"
+#include "ParticleProperties.hh"
 #include "SimpleEvent.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
@@ -123,17 +125,10 @@ void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& 
     graph->SetMarkerSize(0.3);
     m_graphMap.insert(pdgID, graph);
     addGraph(graph, "P");
-    qDebug("getting pdgDB instance");
-    TDatabasePDG* pdgDB = TDatabasePDG::Instance();
-    //pdgDB->ReadPDGTable();
-    qDebug("getting particle description for pdgID = %i", pdgID);
-    TParticlePDG* particle = pdgDB->GetParticle(pdgID);
-
-    qDebug("got particle 0x%x for pdgID = %i", particle, pdgID);
-    const char* particleName = 0;
-    if (particle) particleName = particle->GetName();
-    qDebug("got %s for pdgID = %i", particleName, pdgID);
-    legend()->AddEntry(graph, particleName, "p");
+    const ParticleProperties* properties = ParticleDB::instance()->lookupPdgId(pdgID);
+    QString particleName = properties->name();
+    qDebug("got %s for pdgID = %i", qPrintable(particleName), pdgID);
+    legend()->AddEntry(graph, qPrintable(particleName), "p");
   }
 
   int nPoints = graph->GetN();
