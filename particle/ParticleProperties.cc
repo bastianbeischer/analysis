@@ -80,6 +80,12 @@ void ParticleProperties::setType(const Particle::Type& type)
     m_pdgId = 22;
     m_name = "photon";
     break;
+  case Particle::AntiProton:
+    m_mass = Constants::protonMass;
+    m_charge = -1;
+    m_pdgId = -2212;
+    m_name = "anti_proton";
+    break;
   default:
     break;
   }
