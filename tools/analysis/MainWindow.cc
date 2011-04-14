@@ -623,6 +623,7 @@ void MainWindow::setupPlots()
   }
   if (m_ui.mcTrackerCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new MCRigidityResolution(-11));
+    m_ui.plotter->addPlot(new MCRigidityResolution(11));
     m_ui.plotter->addPlot(new MCRigidityResolution(2212));
     m_ui.plotter->addPlot(new MCRigidityResolution(1000020040));
   }
