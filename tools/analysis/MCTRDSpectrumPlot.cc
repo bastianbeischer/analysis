@@ -10,6 +10,8 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "ParticleInformation.hh"
+#include "ParticleDB.hh"
+#include "ParticleProperties.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
 
@@ -17,8 +19,8 @@
 #include "Corrections.hh"
 #include "RootStyle.hh"
 
-MCTRDSpectrumPlot::MCTRDSpectrumPlot(AnalysisPlot::Topic topic, unsigned short id, TRDSpectrumType spectrumType, double lowerMom, double upperMom)
-  : AnalysisPlot(topic)
+MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType, double lowerMom, double upperMom)
+  : AnalysisPlot(AnalysisPlot::MonteCarloTRD)
   , H1DPlot()
   , m_colorCounter(0)
   , m_id(id)
@@ -43,6 +45,8 @@ MCTRDSpectrumPlot::MCTRDSpectrumPlot(AnalysisPlot::Topic topic, unsigned short i
     setTitle(QString("MC spectra"));
   else
     setTitle(QString("MC spectra 0x%1").arg(m_id,0,16));
+
+  setAxisTitle("ADCCs per length in tube / (1/mm)","entries");
 
   TLegend* legend = new TLegend(.72, .72, .98, .98);
   legend->SetFillColor(kWhite);
@@ -118,12 +122,14 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* pa
             spectrumHisto = m_spectrumMap.value(pdgID);
           else
           {
-            spectrumHisto = new TH1D(qPrintable(QString::number(pdgID) + " " + title())
-                                     , qPrintable(QString::number(pdgID) +" " + title() + ";ADCCs per length in tube / (1/mm);entries")
+            const ParticleProperties* properties = ParticleDB::instance()->lookupPdgId(pdgID);
+            QString particleName = properties->name();
+            spectrumHisto = new TH1D(qPrintable(particleName + " " + title())
+                                     , qPrintable(particleName +" " + title())
                                      , 50, 0, 15);
             spectrumHisto->SetLineColor(RootStyle::rootColor(m_colorCounter++));
             m_spectrumMap.insert(pdgID, spectrumHisto);
-            legend()->AddEntry(spectrumHisto, qPrintable(QString::number(pdgID)), "l");
+            legend()->AddEntry(spectrumHisto, qPrintable(particleName), "l");
             addHistogram(spectrumHisto);
           }
 

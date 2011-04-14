@@ -85,7 +85,8 @@ CLASSES = \
   TriggerRateTimePlot \
   SensorTimePlot \
   MCTotalEnergyDepositionTRDvsTrackerPlot \
-  MCTRDSpectrumPlot
+  MCTRDSpectrumPlot \
+  MCRigidityResolution
 
 SOURCES += \
   main.cc

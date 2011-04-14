@@ -21,6 +21,8 @@
 #include <TVector3.h>
 #include <QDebug>
 
+#include <CLHEP/Units/SystemOfUnits.h>
+
 #include <iostream>
 
 const int tdcChannelToBar[64] = {
@@ -235,7 +237,7 @@ const MCSimpleEventParticle* Converter::constructMCSimpleEventParticle(MCParticl
 
   QVector<MCParticle::DetectorHit> hits = mcParticle->GetHits();
   //momentum
-  HepGeom::Vector3D<double> mom = hits.at(0).preStep.momentum;
+  HepGeom::Vector3D<double> mom = hits.at(0).preStep.momentum / CLHEP::GeV;
   se_particle->initialMomentum.SetXYZ(mom.x(), mom.y(), mom.z());
   //position
   HepGeom::Vector3D<double> pos = hits.at(0).preStep.position;
@@ -288,7 +290,7 @@ const QVector<const MCSimpleEventDigi*> Converter::getAllMCDigis(const MCEvent* 
       const HepGeom::Point3D<double>& pos = mcSignal._position;
       seSignal->hitPosition.SetXYZ(pos.x(), pos.y(), pos.z());
       seSignal->time = mcSignal._time;
-      seSignal->energyDeposition = mcSignal._energyDeposit;
+      seSignal->energyDeposition = mcSignal._energyDeposit / CLHEP::keV;
 
       seDigi->AddSignal(seSignal);
     }

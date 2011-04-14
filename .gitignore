@@ -8,10 +8,12 @@ Makefile
 /TAGS
 /plots
 perdaix.log
+/*.txt
 *.png
 *.pdf
 *.dat
 *.root
+*.pro.user*
 texput.*
 *.xcodeproj
 fort.66
