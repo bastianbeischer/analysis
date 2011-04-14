@@ -44,6 +44,8 @@ MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrum
   else
     setTitle(QString("MC spectra 0x%1").arg(m_id,0,16));
 
+  setAxisTitle("ADCCs per length in tube / (1/mm)","entries");
+
   TLegend* legend = new TLegend(.72, .72, .98, .98);
   legend->SetFillColor(kWhite);
   legend->SetMargin(.7);
@@ -119,7 +121,7 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* pa
           else
           {
             spectrumHisto = new TH1D(qPrintable(QString::number(pdgID) + " " + title())
-                                     , qPrintable(QString::number(pdgID) +" " + title() + ";ADCCs per length in tube / (1/mm);entries")
+                                     , qPrintable(QString::number(pdgID) +" " + title())
                                      , 50, 0, 15);
             spectrumHisto->SetLineColor(RootStyle::rootColor(m_colorCounter++));
             m_spectrumMap.insert(pdgID, spectrumHisto);

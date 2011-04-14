@@ -30,8 +30,7 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
   setAxisTitle("R / GeV","resolution");
   addHistogram(hist);
 
- for (int i = 1; i <= hist->GetNbinsX(); ++i)
-  {
+ for (int i = 1; i <= hist->GetNbinsX(); ++i) {
    QString histTitle = QString("resolutionhist_%1_%2").arg(m_pdgID).arg(i);
    double inverseRigRange = 1. / (3. * 3.);
    int resolutionBins = 100;
@@ -40,6 +39,11 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
                                          , resolutionBins, -inverseRigRange, inverseRigRange));
 
   }
+}
+
+MCRigidityResolution::~MCRigidityResolution()
+{
+  qDeleteAll(m_resolutionHistos);
 }
 
 
@@ -83,8 +87,7 @@ void MCRigidityResolution::processEvent(const QVector<Hit*>& /*hits*/, Particle*
   int bin = histogram()->FindBin(mcRigidity / CLHEP::GeV);
 
 
-  if (m_resolutionHistos.contains(bin))
-  {
+  if (m_resolutionHistos.contains(bin)) {
     TH1D* hist = m_resolutionHistos.value(bin);
     hist->Fill(inverseDifference);
   }
@@ -95,8 +98,7 @@ void MCRigidityResolution::update()
   histogram()->Reset();
 
   QMap<int, TH1D*>::const_iterator i;
-  for (i = m_resolutionHistos.constBegin(); i != m_resolutionHistos.constEnd(); ++i)
-  {
+  for (i = m_resolutionHistos.constBegin(); i != m_resolutionHistos.constEnd(); ++i) {
     TH1D* hist = i.value();
     double mcRigidity = histogram()->GetBinCenter(i.key()); // GeV
     double inverseRMS = hist->GetRMS();

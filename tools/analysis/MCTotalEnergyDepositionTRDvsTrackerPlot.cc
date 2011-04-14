@@ -22,6 +22,8 @@ MCTotalEnergyDepositionTRDvsTrackerPlot::MCTotalEnergyDepositionTRDvsTrackerPlot
 {
   setTitle("MC Mean dE_dx TRD vs. tracker");
 
+  setAxisTitle("entry tracker","entry TRD");
+
   TLegend* legend = new TLegend(.72, .72, .98, .98);
   legend->SetFillColor(kWhite);
   legend->SetMargin(.7);
@@ -73,7 +75,7 @@ void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& 
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Cluster* cluster = static_cast<Cluster*>(*it);
-    if (cluster->type() == Hit::trd){
+    if (cluster->type() == Hit::trd) {
       std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
@@ -114,8 +116,7 @@ void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& 
   QMutexLocker locker(&m_mutex);
   if (m_graphMap.contains(pdgID))
     graph = m_graphMap.value(pdgID);
-  else
-  {
+  else {
     graph = new TGraph();
     graph->SetMarkerColor(RootStyle::rootColor(m_colorCounter++));
     graph->SetMarkerSize(0.3);
