@@ -27,24 +27,37 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
                         , m_numberOfBins
                         , m_rigidityRangeLower
                         , m_rigidityRangeUppper);
-  setAxisTitle("R / GeV","resolution");
+  setAxisTitle("R / GV","#sigma_{R}/R");
   addHistogram(hist);
 
   TF1* expectedRes = new TF1(qPrintable("expected resolution for " + title()), "sqrt(([2]*x)**2 + ([3]*sqrt(1+[0]*[0]/([1]*[1]*x*x)))**2)", 0, 20);
+  expectedRes->SetParNames("mass/GeV", "abs(charge)", "a", "b");
   //TODO use particle class and its mass
   switch (qAbs(m_pdgID))
   {
   case 2212:
-    expectedRes->SetParameters(1,1,0.07766,0.237);
+    expectedRes->FixParameter(0, 0.938);
+    expectedRes->FixParameter(1, 1);
+    expectedRes->SetParameter(2, 0.077);
+    expectedRes->SetParameter(3, 0.3175);
     break;
   case 11:
-    expectedRes->SetParameters(0.000511,1,0.07698,0.2583);
+    expectedRes->FixParameter(0, 0.000511);
+    expectedRes->FixParameter(1, 1);
+    expectedRes->SetParameter(2, 0.07627);
+    expectedRes->SetParameter(3, 0.2349);
     break;
   case 1000020040:
-    expectedRes->SetParameters(4,2,0.07698,0.2583);
+    expectedRes->FixParameter(0, 3.73);
+    expectedRes->FixParameter(1, 1);
+    expectedRes->SetParameter(2, 0.04195*2.);
+    expectedRes->SetParameter(3, 0.3024);
     break;
   default:
-    expectedRes->SetParameters(1,1,0.07766,0.237);
+    expectedRes->FixParameter(0, 0.938);
+    expectedRes->FixParameter(1, 1);
+    expectedRes->SetParameter(2, 0.077);
+    expectedRes->SetParameter(3, 0.3175);
     break;
   }
 
@@ -54,12 +67,18 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
     double inverseRigRange = expectedRes->Eval(mcRig)*5;
     int resolutionBins = 100;
     m_resolutionHistos.insert(i, new TH1D(qPrintable(histTitle)
-                                         ,qPrintable(histTitle)
+                                         , qPrintable(histTitle)
                                          , resolutionBins, -inverseRigRange, inverseRigRange));
 
   }
 
+  TF1* fittedRes = new TF1(*expectedRes);
+
+  expectedRes->SetLineColor(kBlack);
+  expectedRes->SetLineStyle(kDashed);
+  fittedRes->SetLineColor(kRed);
   addFunction(expectedRes);
+  addFunction(fittedRes);
 }
 
 MCRigidityResolution::~MCRigidityResolution()
@@ -130,6 +149,7 @@ void MCRigidityResolution::update()
     histogram()->SetBinError(i.key(), rigidityResErr);
   }
 
+  histogram()->Fit(function(1),"q0");
 
 }
 
