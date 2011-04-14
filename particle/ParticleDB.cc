@@ -43,6 +43,5 @@ const ParticleProperties* ParticleDB::lookupPdgId(const int& pdgId)
 const ParticleProperties* ParticleDB::lookupType(const Particle::Type& type)
 {
   int pdgId = m_pdgIdMap[type];
-  Q_ASSERT(pdgId);
   return lookupPdgId(pdgId);
 }
