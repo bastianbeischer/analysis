@@ -40,7 +40,7 @@ public:
   int pdgId() const;
   QString name() const;
   double mass() const;
-  double charge() const;
+  int charge() const;
 
 private:
   void init();

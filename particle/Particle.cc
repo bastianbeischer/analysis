@@ -109,7 +109,7 @@ double Particle::mass() const
   return m_properties->mass();
 }
 
-double Particle::charge() const
+int Particle::charge() const
 {
   return m_properties->charge();
 }

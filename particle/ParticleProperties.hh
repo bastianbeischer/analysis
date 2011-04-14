@@ -18,7 +18,7 @@ public:
   int pdgId() const {return m_pdgId;}
   QString name() const {return m_name;}
   double mass() const {return m_mass;}
-  double charge() const {return m_charge;}
+  int charge() const {return m_charge;}
 
 private:
   Particle::Type m_type;
