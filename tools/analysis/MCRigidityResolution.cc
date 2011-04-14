@@ -28,9 +28,10 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
                         , m_rigidityRangeLower
                         , m_rigidityRangeUppper);
   setAxisTitle("R / GV","#sigma_{R}/R");
+  hist->GetYaxis()->SetRangeUser(0,1.5);
   addHistogram(hist);
 
-  TF1* expectedRes = new TF1(qPrintable("expected resolution for " + title()), "sqrt(([2]*x)**2 + ([3]*sqrt(1+[0]*[0]/([1]*[1]*x*x)))**2)", 0, 20);
+  TF1* expectedRes = new TF1(qPrintable("expected resolution for " + title()), "sqrt(([2]*[1]*x)**2 + ([3]*sqrt(1+[0]*[0]/([1]*[1]*x*x)))**2)", 0, 20);
   expectedRes->SetParNames("mass/GeV", "abs(charge)", "a", "b");
   //TODO use particle class and its mass
   switch (qAbs(m_pdgID))
@@ -49,8 +50,8 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
     break;
   case 1000020040:
     expectedRes->FixParameter(0, 3.73);
-    expectedRes->FixParameter(1, 1);
-    expectedRes->SetParameter(2, 0.04195*2.);
+    expectedRes->FixParameter(1, 2);
+    expectedRes->SetParameter(2, 0.04195);
     expectedRes->SetParameter(3, 0.3024);
     break;
   default:
@@ -79,6 +80,17 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
   fittedRes->SetLineColor(kRed);
   addFunction(expectedRes);
   addFunction(fittedRes);
+
+  TLatex* ltx = new TLatex(5,0.3,"#sigma_{R}/R = #sqrt{(a*c*R)^{2}+(b/#beta)^{2}}");
+  ltx->SetTextSizePixels(50);
+  TLatex* ltxa = new TLatex(6,0.2,qPrintable("a_{old} = " + QString::number(expectedRes->GetParameter("a"))));
+  ltxa->SetTextSizePixels(50);
+  TLatex* ltxb = new TLatex(6,0.1,qPrintable("b_{old} = " + QString::number(expectedRes->GetParameter("b"))));
+  ltxb->SetTextSizePixels(50);
+
+  addLatex(ltx);
+  addLatex(ltxa);
+  addLatex(ltxb);
 }
 
 MCRigidityResolution::~MCRigidityResolution()
@@ -116,7 +128,7 @@ void MCRigidityResolution::processEvent(const QVector<Hit*>& /*hits*/, Particle*
   //get mc rigidity
   double mcMom = event->MCInformation()->primary()->initialMomentum.Mag();
 
-  double mcRigidity = mcMom;
+  double mcRigidity = m_pdgID==1000020040 ? mcMom/2. : mcMom;
 
   //get the reconstructed momentum
   double rigidity = track->rigidity(); //GeV
@@ -140,10 +152,12 @@ void MCRigidityResolution::update()
   QMap<int, TH1D*>::const_iterator i;
   for (i = m_resolutionHistos.constBegin(); i != m_resolutionHistos.constEnd(); ++i) {
     TH1D* hist = i.value();
-    double inverseRMS = hist->GetRMS();
-    double inverseRMSError = hist->GetRMSError();
-    double rigidityRes = inverseRMS ;
-    double rigidityResErr = inverseRMSError ;
+    TF1* fit = new TF1("gausfit","gaus");
+    hist->Fit(fit,"QN");
+    double inverseSigma = fit->GetParameter(2);
+    double inverseSigmaErr = fit->GetParError(2);
+    double rigidityRes = inverseSigma ;
+    double rigidityResErr = inverseSigmaErr ;
 
     histogram()->SetBinContent(i.key(), rigidityRes);
     histogram()->SetBinError(i.key(), rigidityResErr);
