@@ -32,6 +32,12 @@ void ParticleProperties::setType(const Particle::Type& type)
     m_pdgId = 2212;
     m_name = "proton";
     break;
+  case Particle::AntiProton:
+    m_mass = Constants::protonMass;
+    m_charge = -1;
+    m_pdgId = -2212;
+    m_name = "anti_proton";
+    break;
   case Particle::Helium:
     m_mass = Constants::heliumMass;
     m_charge = 2;
@@ -79,12 +85,6 @@ void ParticleProperties::setType(const Particle::Type& type)
     m_charge = 0.;
     m_pdgId = 22;
     m_name = "photon";
-    break;
-  case Particle::AntiProton:
-    m_mass = Constants::protonMass;
-    m_charge = -1;
-    m_pdgId = -2212;
-    m_name = "anti_proton";
     break;
   default:
     break;
