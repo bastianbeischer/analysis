@@ -30,34 +30,36 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
   setAxisTitle("R / GeV","resolution");
   addHistogram(hist);
 
-  TF1 expectedRes(qPrintable("expected resolution for " + title()), "sqrt(([2]*x)**2 + ([3]*sqrt(1+[0]*[0]/([1]*[1]*x*x)))**2)");
+  TF1* expectedRes = new TF1(qPrintable("expected resolution for " + title()), "sqrt(([2]*x)**2 + ([3]*sqrt(1+[0]*[0]/([1]*[1]*x*x)))**2)", 0, 20);
   //TODO use particle class and its mass
   switch (qAbs(m_pdgID))
   {
   case 2212:
-    expectedRes.SetParameters(1,1,0.07766,0.237);
+    expectedRes->SetParameters(1,1,0.07766,0.237);
     break;
   case 11:
-    expectedRes.SetParameters(0.000511,1,0.07698,0.2583);
+    expectedRes->SetParameters(0.000511,1,0.07698,0.2583);
     break;
   case 1000020040:
-    expectedRes.SetParameters(4,2,0.07698,0.2583);
+    expectedRes->SetParameters(4,2,0.07698,0.2583);
     break;
   default:
-    expectedRes.SetParameters(1,1,0.07766,0.237);
+    expectedRes->SetParameters(1,1,0.07766,0.237);
     break;
   }
 
   for (int i = 1; i <= hist->GetNbinsX(); ++i) {
     QString histTitle = QString("resolutionhist_%1_%2").arg(m_pdgID).arg(i);
     double mcRig = hist->GetBinCenter(i);
-    double inverseRigRange = expectedRes.Eval(mcRig)*5;
+    double inverseRigRange = expectedRes->Eval(mcRig)*5;
     int resolutionBins = 100;
     m_resolutionHistos.insert(i, new TH1D(qPrintable(histTitle)
                                          ,qPrintable(histTitle)
                                          , resolutionBins, -inverseRigRange, inverseRigRange));
 
   }
+
+  addFunction(expectedRes);
 }
 
 MCRigidityResolution::~MCRigidityResolution()
