@@ -6,10 +6,12 @@ CONFIG += debug
 TOPLEVEL = ..
 
 CLASSES += \
+  ParticleDB \
   Particle \
   ParticleFilter \
   ParticleIdentifier \
   ParticleInformation \
+  ParticleProperties \
   TimeOfFlight
 
 INCLUDEPATH += \

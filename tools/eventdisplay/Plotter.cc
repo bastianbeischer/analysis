@@ -15,6 +15,8 @@
 #include "DataDescription.hh"
 #include "HitsPlot.hh"
 #include "AnalysisProcessor.hh"
+#include "ParticleProperties.hh"
+#include "ParticleDB.hh"
 
 #include <TCanvas.h>
 #include <TH2I.h>
@@ -155,6 +157,7 @@ void Plotter::drawEvent(unsigned int i, Track::Type type, QPlainTextEdit& infoTe
     const MCSimpleEventParticle* mcPrimary = mcInfo->primary();
     infoTextEdit.appendPlainText("\nMonte-Carlo Information:");
     infoTextEdit.appendPlainText("PDG ID =\t" + QString::number(mcPrimary->pdgID));
+    infoTextEdit.appendPlainText("Particle Name =\t" + ParticleDB::instance()->lookupPdgId(mcPrimary->pdgID)->name());
     infoTextEdit.appendPlainText("momentum =\t" + QString::number(mcPrimary->initialMomentum.Mag()/1000,'f',3) + "GeV");
   }
 

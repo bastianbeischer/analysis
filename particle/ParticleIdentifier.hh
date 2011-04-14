@@ -2,7 +2,7 @@
 #define ParticleIdentifier_hh
 
 #include <QList>
-#include "Particle.hh"
+#include "ParticleProperties.hh"
 
 class ParticleIdentifier
 {
@@ -11,12 +11,11 @@ public:
   ParticleIdentifier();
   ~ParticleIdentifier();
 
-  const QList<const Particle*>& candidates() const {return m_candidates;}
+  const QList<const ParticleProperties*>& candidates() const {return m_candidates;}
   void identify(Particle* particle);
   
 private:
-  QList<const Particle*> m_allParticles;
-  QList<const Particle*> m_candidates;
+  QList<const ParticleProperties*> m_candidates;
 
 };
 

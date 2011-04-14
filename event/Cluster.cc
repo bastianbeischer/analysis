@@ -105,3 +105,13 @@ void Cluster::processHits()
   calculateAngle();
 }
 
+double Cluster::resolutionEstimate() const
+{
+  if (m_type == tracker) {
+    int length = m_hits.size();
+    if (length == 1) return .250/sqrt(12);
+    else if (length == 2) return .061;
+    else if (length >= 3) return .050;
+  }
+  return Hit::resolutionEstimate();
+}

@@ -7,6 +7,8 @@
 
 #include "Track.hh"
 #include "ParticleInformation.hh"
+#include "ParticleDB.hh"
+#include "ParticleProperties.hh"
 #include "SimpleEvent.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
@@ -122,7 +124,8 @@ void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& 
     graph->SetMarkerSize(0.3);
     m_graphMap.insert(pdgID, graph);
     addGraph(graph, "P");
-    QString particleName = QString::number(pdgID);
+    const ParticleProperties* properties = ParticleDB::instance()->lookupPdgId(pdgID);
+    QString particleName = properties->name();
     legend()->AddEntry(graph, qPrintable(particleName), "p");
   }
 
