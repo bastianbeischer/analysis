@@ -87,7 +87,7 @@ void ParticleIdentifier::identify(Particle* particle)
     }
   }
 
-  // if only candidate remains, use it.
+  // if only one candidate remains, use it.
   if (m_candidates.size() == 1)
     particle->setType(m_candidates.at(0)->type());
 }
