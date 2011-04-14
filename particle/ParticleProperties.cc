@@ -20,6 +20,12 @@ void ParticleProperties::setType(const Particle::Type& type)
   m_type = type;
 
   switch (m_type) {
+  case Particle::Unknown:
+    m_mass = 0.;
+    m_charge = 0;
+    m_pdgId = 0;
+    m_name = "unknown";
+    break;
   case Particle::Proton:
     m_mass = Constants::protonMass;
     m_charge = 1;
