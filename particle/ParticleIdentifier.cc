@@ -72,10 +72,23 @@ void ParticleIdentifier::identify(Particle* particle)
     }
   }
 
+  double sumTRD = 0;
+  for (QVector<Hit*>::const_iterator clusterIt = hits.begin(); clusterIt != clusterEndIt; ++clusterIt) {
+    Hit* hit = *clusterIt;
+    if (hit->type() == Hit::trd) {
+      Cluster* cluster = static_cast<Cluster*>(hit);
+      std::vector<Hit*>& subHits = cluster->hits();
+      std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+      for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
+        sumTRD += (*it)->signalHeight();
+      }
+    }
+  }
+
   // hard cut on tot for helium
   if (nTofHits > 0) {
     timeOverThreshold = timeOverThreshold/nTofHits;
-    if (timeOverThreshold > 37 && chargeSign > 0)
+    if (timeOverThreshold > 37 && sumTRD > 250 && chargeSign > 0)
       particle->setType(Particle::Helium);
     else {
       foreach(const ParticleProperties* candidate, m_candidates) {
