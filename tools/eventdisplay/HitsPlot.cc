@@ -58,8 +58,6 @@ void HitsPlot::clearHits()
 
 void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
-  std::cout << particle->type() << std::endl;
-
   const Track* track = particle->track();
 
   clearHits();
