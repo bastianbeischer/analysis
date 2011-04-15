@@ -31,16 +31,11 @@ public:
 
 private:
   void init();
-  void cleanupLists();
   void calibrate();
   void open(QString fileName);
 
 private:
   RunFile*                      m_runFile;
-
-  QMap<quint16, quint16>        m_hpePairs;
-  QList<quint16>                m_trdIds;
-  QList<quint16>                m_tofIds;
 
   QList<PERDaixFiberModule*>    m_fiberModules;
   QList<PERDaixTRDModule*>      m_trdModules;

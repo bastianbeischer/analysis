@@ -24,7 +24,9 @@ SingleFile::SingleFile(QString fileName)
 SingleFile::~SingleFile()
 {
   delete m_runFile;
-  cleanupLists();
+  qDeleteAll(m_fiberModules);
+  qDeleteAll(m_trdModules);
+  qDeleteAll(m_tofModules);
 }
 
 void SingleFile::init()
@@ -32,33 +34,31 @@ void SingleFile::init()
   m_runFile = 0;
 
   // ugly hardcoded
-  m_hpePairs[0x6100]=0x7A00;
-  m_hpePairs[0x6400]=0x7F00;
-  m_hpePairs[0x6000]=0x7B00;
-  m_hpePairs[0x6200]=0x7900;
-  m_hpePairs[0x6500]=0x7E00;
-  m_hpePairs[0x6700]=0x7800;
-  m_hpePairs[0x6600]=0x7D00;
-  m_hpePairs[0x3300]=0x3000;
-  m_hpePairs[0x3700]=0x3100;
-  m_hpePairs[0x6300]=0x7C00;
+  QList< QPair<quint16, quint16> > hpePairs;
+  hpePairs.append(QPair<quint16,quint16>(0x6100,0x7A00));
+  hpePairs.append(QPair<quint16,quint16>(0x6400,0x7F00));
+  hpePairs.append(QPair<quint16,quint16>(0x6000,0x7B00));
+  hpePairs.append(QPair<quint16,quint16>(0x6200,0x7900));
+  hpePairs.append(QPair<quint16,quint16>(0x6500,0x7E00));
+  hpePairs.append(QPair<quint16,quint16>(0x6700,0x7800));
+  hpePairs.append(QPair<quint16,quint16>(0x6600,0x7D00));
+  hpePairs.append(QPair<quint16,quint16>(0x3300,0x3000));
+  hpePairs.append(QPair<quint16,quint16>(0x3700,0x3100));
+  hpePairs.append(QPair<quint16,quint16>(0x6300,0x7C00));
+  for (QList< QPair<quint16, quint16> >::iterator iter = hpePairs.begin(); iter != hpePairs.end(); iter++) {
+    quint16 value1 = iter->first;
+    quint16 value2 = iter->second;
+    DetectorID* id1 = DetectorID::Get(value1,DetectorID::TYPE_TRACKER_MODULE);
+    DetectorID* id2 = DetectorID::Get(value2,DetectorID::TYPE_TRACKER_MODULE);
+    m_fiberModules.push_back(new PERDaixFiberModule(id1,id2));
+  }
 
-  m_trdIds.append(0x3200);
-  m_trdIds.append(0x3400);
-  m_trdIds.append(0x3500);
-  m_trdIds.append(0x3600);
+  m_trdModules.push_back(new PERDaixTRDModule(DetectorID::Get(0x3200, DetectorID::TYPE_TRD_MODULE)));
+  m_trdModules.push_back(new PERDaixTRDModule(DetectorID::Get(0x3400, DetectorID::TYPE_TRD_MODULE)));
+  m_trdModules.push_back(new PERDaixTRDModule(DetectorID::Get(0x3500, DetectorID::TYPE_TRD_MODULE)));
+  m_trdModules.push_back(new PERDaixTRDModule(DetectorID::Get(0x3600, DetectorID::TYPE_TRD_MODULE)));
 
-  m_tofIds.append(0x8000);
-}
-
-void SingleFile::cleanupLists()
-{
-  foreach(PERDaixFiberModule* module, m_fiberModules) delete module;
-  foreach(PERDaixTRDModule* module, m_trdModules)     delete module;
-  foreach(PERDaixTOFModule* module, m_tofModules)     delete module;
-  m_fiberModules.clear();
-  m_trdModules.clear();
-  m_tofModules.clear();
+  m_tofModules.push_back(new PERDaixTOFModule(DetectorID::Get(0x8000, DetectorID::TYPE_TOF_MODULE)));
 }
 
 unsigned int SingleFile::getNumberOfEvents() const
@@ -73,6 +73,10 @@ const RawEvent* SingleFile::getNextRawEvent() const
 
 void SingleFile::open(QString fileName)
 {
+  if (m_runFile) {
+    m_runFile->Close();
+    delete m_runFile;
+  }
   m_runFile = new RunFile(fileName, RunFile::MODE_READING);
   //  m_runId = m_runFile->GetRunId();
   
@@ -83,20 +87,6 @@ void SingleFile::open(QString fileName)
     qDebug() << "SKIPPING FILE!!";
     return;
   }
-
-  for (QMap<quint16, quint16>::iterator iter = m_hpePairs.begin(); iter != m_hpePairs.end(); iter++) {
-    quint16 value1 = iter.key();
-    quint16 value2 = iter.value();
-    DetectorID* id1 = DetectorID::Get(value1,DetectorID::TYPE_TRACKER_MODULE);
-    DetectorID* id2 = DetectorID::Get(value2,DetectorID::TYPE_TRACKER_MODULE);
-    m_fiberModules.push_back(new PERDaixFiberModule(id1,id2));
-  }
-
-  foreach(quint16 id, m_trdIds)
-    m_trdModules.push_back(new PERDaixTRDModule(DetectorID::Get(id, DetectorID::TYPE_TRD_MODULE)));
-
-  foreach(quint16 id, m_tofIds)
-    m_tofModules.push_back(new PERDaixTOFModule(DetectorID::Get(id, DetectorID::TYPE_TOF_MODULE)));
 
   calibrate();
 }
