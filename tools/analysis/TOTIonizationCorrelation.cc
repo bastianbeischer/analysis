@@ -41,7 +41,7 @@ TOTIonizationCorrelation::TOTIonizationCorrelation(TofLayer layer, Hit::ModuleTy
   QString title = QString("time over threshold %1 signal height correlation %2").arg(typeName).arg(layerName(layer));
   setTitle(title);
   TH2D* histogram = new TH2D(qPrintable(title), "", nBinsX, xMin, xMax, 100, 0, 100);
-  setAxisTitle("mean time over threshold / ns", "signal height / ADC counts", "");
+  setAxisTitle("signal height / ADC counts", "mean time over threshold / ns", "");
   addHistogram(histogram);
 }
 
