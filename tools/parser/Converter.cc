@@ -167,10 +167,9 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
       else if (id->IsPMT()) {
         int amplitude = static_cast<int>(temp[i]);
 
-        TVector3 pos;// = m_positions[detId | i];
-        TVector3 counterPos;// = m_counterPositions[detId | i];
-
-        simpleEvent->addHit(new Hit(Hit::pmt, detId | i, amplitude, pos, counterPos));
+        if (i == 4) {
+          simpleEvent->setSensorData(SensorTypes::BEAM_CHERENKOV1, amplitude);
+        }
       } // pmt
 
     } // all hits

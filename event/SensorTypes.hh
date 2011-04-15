@@ -1,7 +1,6 @@
 #ifndef SensorTypes_hh
 #define SensorTypes_hh
 
-#include <string>
 #include <vector>
 
 namespace SensorTypes
@@ -91,6 +90,11 @@ namespace SensorTypes
     BAT_BOTTOM_TEMP,
     BAT_TOP_TEMP,
 
+    // TESTBEAM 2011
+    BEAM_TRIGGER,
+    BEAM_CHERENKOV1,
+    BEAM_CHERENKOV2,
+
     // ATC sensors
     ATC_LATITUDE,
     ATC_LONGITUDE,
@@ -113,8 +117,9 @@ namespace SensorTypes
   };
 
   Type convertFromString(const char* string);
-  std::string convertToString(SensorTypes::Type);
+  const char* convertToString(SensorTypes::Type);
   std::vector<SensorTypes::Type> temperatureSensors();
+  std::vector<SensorTypes::Type> beamSensors();
 }
 
 #endif /* SensorTypes_hh */
