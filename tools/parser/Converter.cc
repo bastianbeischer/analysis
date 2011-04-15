@@ -8,6 +8,7 @@
 #include "DetectorID.h"
 #include "TrackerDataBlock.h"
 #include "TRDDataBlock.h"
+#include "PMTDataBlock.h"
 #include "TOFDataBlock.h"
 #include "Setup.hh"
 #include "DetectorElement.hh"
@@ -79,11 +80,7 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
   SimpleEvent* simpleEvent = new SimpleEvent(eventId, runStartTime, eventTime, mcFile? SimpleEvent::MonteCarlo : SimpleEvent::Data);
 
   // loop over all present detector IDs
-  QList<DetectorID*> detIDs = event->GetIDs();
-  //qSort(detIDs);
-  //qDebug() << "detIDs.size() = " << detIDs.size();
-  //qDebug() << detIDs;
-  foreach(DetectorID* id, detIDs) {
+  foreach(DetectorID* id, event->GetIDs()) {
 
     //get event data from detector, distinguish types of detectors
     DataBlock* dataBlock = event->GetBlock(id);
@@ -99,6 +96,7 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
     // get tracker and trd data from block
     int nArrays = 8;
     int nTrd = 2;
+    int nPmt = 4;
     int nMax = 0;
     const quint16* values;
     if (id->IsTracker()) {
@@ -109,15 +107,15 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
       nMax = nTrd;
       values = ((TRDDataBlock*) dataBlock)->GetRawData();
     }
+    else if (id->IsPMT()) {
+      nMax = nPmt;
+      values = ((PMTDataBlock*) dataBlock)->GetRawData();
+    }
 
     //get calibration for non-tof detectors
     for (int i = 0; i < nMax; i++) {
       if (!id->IsTOF()) {
         Calibration* cali = file->getCalibrationForDetector(id, i);
-        /*if (cali)
-          qDebug("got cali for 0x%x i=%i", id->GetID16(), i);
-        else
-          qDebug("didn't get cali for 0x%x i=%i", id->GetID16(), i);*/
         Q_ASSERT(cali);
         cali->GetAmplitudes(values + i*nValues/nMax, temp + i*nValues/nMax);
       }
@@ -165,6 +163,15 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
         }
         tofHitMap[channel]->addLevelChange(value);
       } // tof
+
+      else if (id->IsPMT()) {
+        int amplitude = static_cast<int>(temp[i]);
+
+        TVector3 pos;// = m_positions[detId | i];
+        TVector3 counterPos;// = m_counterPositions[detId | i];
+
+        simpleEvent->addHit(new Hit(Hit::pmt, detId | i, amplitude, pos, counterPos));
+      } // pmt
 
     } // all hits
 

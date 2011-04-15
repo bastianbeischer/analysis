@@ -9,7 +9,7 @@ class Hit :
 {
 
 public:
-  enum ModuleType {none=-1, tracker, trd, tof};
+  enum ModuleType {none=-1, tracker, trd, tof, pmt};
 
 public:
   Hit();

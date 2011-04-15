@@ -9,6 +9,7 @@ class DetectorID;
 class PERDaixFiberModule;
 class PERDaixTOFModule;
 class PERDaixTRDModule;
+class PERDaixPMTModule;
 class QString;
 class RawEvent;
 class RunFile;
@@ -40,6 +41,7 @@ private:
   QList<PERDaixFiberModule*>    m_fiberModules;
   QList<PERDaixTRDModule*>      m_trdModules;
   QList<PERDaixTOFModule*>      m_tofModules;
+  QList<PERDaixPMTModule*>      m_pmtModules;
 
 };
 

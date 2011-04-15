@@ -5,6 +5,7 @@
 #include "PERDaixFiberModule.h"
 #include "PERDaixTRDModule.h"
 #include "PERDaixTOFModule.h"
+#include "PERDaixPMTModule.h"
 #include "SimpleEvent.hh"
 
 #include <iostream>
@@ -59,6 +60,8 @@ void SingleFile::init()
   m_trdModules.push_back(new PERDaixTRDModule(DetectorID::Get(0x3600, DetectorID::TYPE_TRD_MODULE)));
 
   m_tofModules.push_back(new PERDaixTOFModule(DetectorID::Get(0x8000, DetectorID::TYPE_TOF_MODULE)));
+
+  m_pmtModules.push_back(new PERDaixPMTModule(DetectorID::Get(0x4000, DetectorID::TYPE_PMT_MODULE)));
 }
 
 unsigned int SingleFile::getNumberOfEvents() const
@@ -78,7 +81,6 @@ void SingleFile::open(QString fileName)
     delete m_runFile;
   }
   m_runFile = new RunFile(fileName, RunFile::MODE_READING);
-  //  m_runId = m_runFile->GetRunId();
   
   int nCalibrationEvents = m_runFile->GetNumberOfCalibrationEvents();
   int nEvents = m_runFile->GetNumberOfEvents() - nCalibrationEvents;
@@ -109,6 +111,9 @@ void SingleFile::calibrate()
     foreach(PERDaixTRDModule* module, m_trdModules) {
       module->ProcessCalibrationEvent((TRDDataBlock*) dataBlockMap[module->GetBoardID()]);
     }
+    foreach(PERDaixPMTModule* module, m_pmtModules) {
+      module->ProcessCalibrationEvent((PMTDataBlock*) dataBlockMap[module->GetBoardID()]);
+    }
     delete event;
   }
 
@@ -129,6 +134,11 @@ Calibration* SingleFile::getCalibrationForDetector(DetectorID* id, int whichCali
   }
   else if(id->IsTRD()) {
     foreach(PERDaixTRDModule* module, m_trdModules)
+      if (module->GetBoardID()->GetID16() == id->GetID16())
+        return (Calibration*) module->GetCalibrations().at(whichCali);
+  }
+  else if(id->IsPMT()) {
+    foreach(PERDaixPMTModule* module, m_pmtModules)
       if (module->GetBoardID()->GetID16() == id->GetID16())
         return (Calibration*) module->GetCalibrations().at(whichCali);
   }
