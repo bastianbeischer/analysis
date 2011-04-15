@@ -65,6 +65,7 @@
 #include "MCTotalEnergyDepositionTRDvsTrackerPlot.hh"
 #include "MCTRDSpectrumPlot.hh"
 #include "MCRigidityResolution.hh"
+#include "PMTPlot.hh"
 
 #include <QFileDialog>
 #include <QVBoxLayout>
@@ -627,11 +628,11 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MCRigidityResolution(2212));
     m_ui.plotter->addPlot(new MCRigidityResolution(1000020040));
   }
-
-
-
-
-
+  if (m_ui.testbeamCheckBox->isChecked()) {
+    QVector<SensorTypes::Type> beamSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::beamSensors());
+    foreach(SensorTypes::Type sensor, beamSensors)
+      m_ui.plotter->addPlot(new PMTPlot(sensor));
+  }
 }
 
 void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes)
