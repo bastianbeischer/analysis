@@ -90,11 +90,6 @@ namespace SensorTypes {
     else if (strcmp(string, "BAT_BOTTOM_TEMP") == 0) return BAT_BOTTOM_TEMP;
     else if (strcmp(string, "BAT_TOP_TEMP") == 0) return BAT_TOP_TEMP;
 
-    // Testbeam PMT
-    else if (strcmp(string, "BEAM_TRIGGER") == 0) return BEAM_TRIGGER;
-    else if (strcmp(string, "BEAM_CHERENKOV1") == 0) return BEAM_CHERENKOV1;
-    else if (strcmp(string, "BEAM_CHERENKOV2") == 0) return BEAM_CHERENKOV2;
-
     // ATC
     else if (strcmp(string, "ATC_LATITUDE") == 0) return ATC_LATITUDE;
     else if (strcmp(string, "ATC_LONGITUDE") == 0) return ATC_LONGITUDE;
@@ -111,6 +106,11 @@ namespace SensorTypes {
     else if (strcmp(string, "EBASS_TEMP_OUT") == 0) return EBASS_TEMP_OUT;
     else if (strcmp(string, "EBASS_TEMP_GAS") == 0) return EBASS_TEMP_GAS;
     else if (strcmp(string, "EBASS_PRESSURE") == 0) return EBASS_PRESSURE;
+
+    // Testbeam PMT
+    else if (strcmp(string, "BEAM_TRIGGER") == 0) return BEAM_TRIGGER;
+    else if (strcmp(string, "BEAM_CHERENKOV1") == 0) return BEAM_CHERENKOV1;
+    else if (strcmp(string, "BEAM_CHERENKOV2") == 0) return BEAM_CHERENKOV2;
 
     // we should never come to this point -> assert
     assert(false);
@@ -201,9 +201,6 @@ namespace SensorTypes {
     case INLET_TEMP: return "INLET_TEMP";
     case BAT_BOTTOM_TEMP: return "BAT_BOTTOM_TEMP";
     case BAT_TOP_TEMP: return "BAT_TOP_TEMP";
-    case BEAM_TRIGGER: return "BEAM_TRIGGER";
-    case BEAM_CHERENKOV1: return "BEAM_CHERENKOV1";
-    case BEAM_CHERENKOV2: return "BEAM_CHERENKOV2";
     case ATC_LATITUDE: return "ATC_LATITUDE";
     case ATC_LONGITUDE: return "ATC_LONGITUDE";
     case ATC_HEIGHT: return "ATC_HEIGHT";
@@ -217,6 +214,9 @@ namespace SensorTypes {
     case EBASS_TEMP_OUT: return "EBASS_TEMP_OUT";
     case EBASS_TEMP_GAS: return "EBASS_TEMP_GAS";
     case EBASS_PRESSURE: return "EBASS_PRESSURE";
+    case BEAM_TRIGGER: return "BEAM_TRIGGER";
+    case BEAM_CHERENKOV1: return "BEAM_CHERENKOV1";
+    case BEAM_CHERENKOV2: return "BEAM_CHERENKOV2";
     default: return "none";
     }
   }
