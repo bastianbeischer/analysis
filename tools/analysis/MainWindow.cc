@@ -66,6 +66,7 @@
 #include "MCTRDSpectrumPlot.hh"
 #include "MCRigidityResolution.hh"
 #include "PMTPlot.hh"
+#include "ZSquareTRDPlot.hh"
 
 #include <QFileDialog>
 #include <QVBoxLayout>
@@ -422,6 +423,7 @@ void MainWindow::setupPlots()
     }
   }
   if (m_ui.signalHeightTRDCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new ZSquareTRDPlot);
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::trd)

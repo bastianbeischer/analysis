@@ -87,7 +87,8 @@ CLASSES = \
   MCTotalEnergyDepositionTRDvsTrackerPlot \
   MCTRDSpectrumPlot \
   MCRigidityResolution \
-  PMTPlot
+  PMTPlot \
+  ZSquareTRDPlot
 
 SOURCES += \
   main.cc
