@@ -173,24 +173,30 @@ void DataManager::processFiles()
 
 void DataManager::addSensorData(SimpleEvent* event)
 {
-  int nKeys = m_sensorsData->numberOfKeys();
-  const char** keys = m_sensorsData->keys();
-  float* values = m_sensorsData->values(event->time());
-  for (int iKey = 0; iKey < nKeys; iKey++) {
-    event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
+  if (m_sensorsData->good()) {
+    int nKeys = m_sensorsData->numberOfKeys();
+    const char** keys = m_sensorsData->keys();
+    float* values = m_sensorsData->values(event->time());
+    for (int iKey = 0; iKey < nKeys; iKey++) {
+      event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
+    }
   }
 
-  nKeys = m_atcData->numberOfKeys();
-  keys = m_atcData->keys();
-  values = m_atcData->values(event->time());
-  for (int iKey = 0; iKey < nKeys; iKey++) {
-    event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
+  if (m_atcData->good()) {
+    int nKeys = m_atcData->numberOfKeys();
+    const char** keys = m_atcData->keys();
+    float* values = m_atcData->values(event->time());
+    for (int iKey = 0; iKey < nKeys; iKey++) {
+      event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
+    }
   }
 
-  nKeys = m_ebassData->numberOfKeys();
-  keys = m_ebassData->keys();
-  values = m_ebassData->values(event->time());
-  for (int iKey = 0; iKey < nKeys; iKey++) {
-    event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
+  if (m_ebassData->good()) {
+    int nKeys = m_ebassData->numberOfKeys();
+    const char** keys = m_ebassData->keys();
+    float* values = m_ebassData->values(event->time());
+    for (int iKey = 0; iKey < nKeys; iKey++) {
+      event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
+    }
   }
 }
