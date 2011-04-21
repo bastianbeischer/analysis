@@ -21,7 +21,9 @@ INCLUDEPATH += \
 
 DEPENDPATH += $$INCLUDEPATH
 
-LIBS += -L$$TOPLEVEL/lib -lSimpleEvent
+LIBS += -L$$TOPLEVEL/lib \
+        -lSimpleEvent \
+        -ltracking
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
