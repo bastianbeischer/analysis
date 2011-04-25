@@ -116,7 +116,7 @@ void MainWindow::update()
   bool drawTracks = m_ui.drawTrackCheckBox->isChecked();
   m_ui.fitMethodComboBox->setEnabled(drawTracks);
 
-  Track::Type type;
+  Track::Type type = Track::None;
   int index = m_ui.fitMethodComboBox->currentIndex();
   if (!drawTracks) type = Track::None;
   else if (index == 0) type = Track::CenteredBrokenLine;
