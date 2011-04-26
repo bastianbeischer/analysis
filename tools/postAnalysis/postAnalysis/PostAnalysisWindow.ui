@@ -157,6 +157,11 @@
                 <string>LEGO2</string>
                </property>
               </item>
+              <item>
+               <property name="text">
+                <string>COL Z TEXT</string>
+               </property>
+              </item>
              </widget>
             </item>
             <item>

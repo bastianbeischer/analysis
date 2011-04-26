@@ -88,7 +88,8 @@ CLASSES = \
   MCTRDSpectrumPlot \
   MCRigidityResolution \
   PMTPlot \
-  ZSquareTRDPlot
+  ZSquareTRDPlot \
+  TOFBarShiftPlot
 
 SOURCES += \
   main.cc
