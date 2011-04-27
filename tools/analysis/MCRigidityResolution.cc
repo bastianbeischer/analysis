@@ -152,19 +152,21 @@ void MCRigidityResolution::update()
   QMap<int, TH1D*>::const_iterator i;
   for (i = m_resolutionHistos.constBegin(); i != m_resolutionHistos.constEnd(); ++i) {
     TH1D* hist = i.value();
-    TF1* fit = new TF1("gausfit","gaus");
-    hist->Fit(fit,"QN");
-    double inverseSigma = fit->GetParameter(2);
-    double inverseSigmaErr = fit->GetParError(2);
-    double rigidityRes = inverseSigma ;
-    double rigidityResErr = inverseSigmaErr ;
+    if (hist->GetEntries() > 10) {
+      TF1* fit = new TF1("gausfit","gaus");
+      hist->Fit(fit,"QN");
+      double inverseSigma = fit->GetParameter(2);
+      double inverseSigmaErr = fit->GetParError(2);
+      double rigidityRes = inverseSigma ;
+      double rigidityResErr = inverseSigmaErr ;
 
-    histogram()->SetBinContent(i.key(), rigidityRes);
-    histogram()->SetBinError(i.key(), rigidityResErr);
+      histogram()->SetBinContent(i.key(), rigidityRes);
+      histogram()->SetBinError(i.key(), rigidityResErr);
+    }
   }
 
-  histogram()->Fit(function(1),"q0");
-
+  if (histogram()->GetEntries() > 3)
+    histogram()->Fit(function(1),"q0");
 }
 
 void MCRigidityResolution::finalize()

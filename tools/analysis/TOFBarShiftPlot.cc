@@ -1,4 +1,4 @@
-#include "TimeResolutionPlot.hh"
+#include "TOFBarShiftPlot.hh"
 #include "BrokenLine.hh"
 #include "ParticleInformation.hh"
 #include "Hit.hh"
@@ -11,37 +11,44 @@
 #include "Track.hh"
 #include "TimeOfFlight.hh"
 
-#include <TH2.h>
+#include <TH1.h>
 #include <TVector3.h>
 #include <TLatex.h>
 #include <TF1.h>
 
 #include <QDebug>
 
-TimeResolutionPlot::TimeResolutionPlot(unsigned short idTop1, unsigned short idTop2, unsigned short idBottom1, unsigned short idBottom2)
-  : AnalysisPlot(AnalysisPlot::ResolutionTOF)
-  , H2DPlot()
+TOFBarShiftPlot::TOFBarShiftPlot(unsigned short idTop1, unsigned short idTop2, unsigned short idBottom1, unsigned short idBottom2)
+  : AnalysisPlot(AnalysisPlot::CalibrationTOF)
+  , H1DPlot()
   , m_idTop1(idTop1)
   , m_idTop2(idTop2)
   , m_idBottom1(idBottom1)
   , m_idBottom2(idBottom2)
 {
-  QString title = QString("time resolution 0x%1 0x%2 0x%3 0x%4")
+  QString title = QString("bar shift 0x%1 0x%2 0x%3 0x%4")
     .arg(m_idTop1, 0, 16)
     .arg(m_idTop2, 0, 16)
     .arg(m_idBottom1, 0, 16)
     .arg(m_idBottom2, 0, 16);
   setTitle(title);
-  TH2D* histogram = new TH2D(qPrintable(title), "",
-    5, -Constants::tofBarLength / 2., Constants::tofBarLength / 2., 30, 0, 6);
-  setAxisTitle("y / mm", "#Deltat / ns", "");
+  TH1D* histogram = new TH1D(qPrintable(title), "", 30, 0, 6);
+  setAxisTitle("#Deltat / ns", "");
   addHistogram(histogram);
+  TF1* function = new TF1(qPrintable(title + " function"), "gaus(0)", 0, 6);
+  function->SetLineColor(kRed);
+  addFunction(function);
+  addLatex(RootPlot::newLatex(.15, .85));
+  addLatex(RootPlot::newLatex(.15, .82));
+  addLatex(RootPlot::newLatex(.15, .79));
+  addLatex(RootPlot::newLatex(.15, .76));
+  addLatex(RootPlot::newLatex(.15, .73));
 }
 
-TimeResolutionPlot::~TimeResolutionPlot()
+TOFBarShiftPlot::~TOFBarShiftPlot()
 {}
 
-void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
+void TOFBarShiftPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
 {
   const Track* track = particle->track();
   const TimeOfFlight* tof = particle->timeOfFlight();
@@ -74,8 +81,22 @@ void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Particle* parti
     double pCorrection = (t + lCorrection) * (1 - sqrt(rigidity*rigidity + m*m) / rigidity);
     double yu = track->y(Constants::upperTofPosition);
     double yl = track->y(Constants::lowerTofPosition);
-    double binWidth = xAxis()->GetBinWidth(1);
-    if (qAbs(yu - yl) < binWidth)
-      histogram()->Fill((yu + yl) / 2., t + lCorrection + pCorrection);
+    if (qAbs(yu) < 50. && qAbs(yl) < 50.)
+      histogram()->Fill(t + lCorrection + pCorrection);
   }
+}
+
+void TOFBarShiftPlot::update()
+{
+  latex(0)->SetTitle(qPrintable(QString("n    = %1").arg(histogram(0)->GetEntries())));
+  latex(1)->SetTitle(qPrintable(QString("mean = %1 ns").arg(histogram(0)->GetMean(), 0, 'f', 2, ' ')));
+  latex(2)->SetTitle(qPrintable(QString("rms  = %1 ns").arg(histogram(0)->GetRMS(), 0, 'f', 2, ' ')));
+}
+
+void TOFBarShiftPlot::finalize()
+{
+  function(0)->SetParameters(histogram(0)->GetMaximum(), histogram(0)->GetMean(), histogram(0)->GetRMS());
+  histogram(0)->Fit(function(0), "RQN0");
+  latex(3)->SetTitle(qPrintable(QString("t    = %1 ns").arg(function(0)->GetParameter(1), 0, 'f', 2, ' ')));
+  latex(4)->SetTitle(qPrintable(QString("#sigma    = %1 ns").arg(function(0)->GetParameter(2), 0, 'f', 2, ' ')));
 }

@@ -108,8 +108,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>253</width>
-             <height>850</height>
+             <width>183</width>
+             <height>716</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -1701,6 +1701,11 @@ reconstruction</string>
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="font">
+            <font>
+             <family>DejaVu Sans</family>
+            </font>
+           </property>
            <property name="currentIndex">
             <number>0</number>
            </property>
@@ -1716,6 +1721,11 @@ reconstruction</string>
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <family>DejaVu Sans</family>
+                </font>
                </property>
                <property name="text">
                 <string>alignment</string>
@@ -1733,6 +1743,11 @@ reconstruction</string>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="font">
+                <font>
+                 <family>DejaVu Sans</family>
+                </font>
+               </property>
                <property name="text">
                 <string>time shifts</string>
                </property>
@@ -1749,6 +1764,11 @@ reconstruction</string>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="font">
+                <font>
+                 <family>DejaVu Sans</family>
+                </font>
+               </property>
                <property name="text">
                 <string>constant TRD mop value</string>
                </property>
@@ -1764,6 +1784,11 @@ reconstruction</string>
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <family>DejaVu Sans</family>
+                </font>
                </property>
                <property name="text">
                 <string>constant time
@@ -1782,6 +1807,11 @@ over threshold</string>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="font">
+                <font>
+                 <family>DejaVu Sans</family>
+                </font>
+               </property>
                <property name="text">
                 <string>photon travel time</string>
                </property>
@@ -1797,6 +1827,11 @@ over threshold</string>
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <family>DejaVu Sans</family>
+                </font>
                </property>
                <property name="text">
                 <string>multiple scattering</string>
@@ -2035,7 +2070,7 @@ over threshold</string>
      <x>0</x>
      <y>0</y>
      <width>1207</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="font">

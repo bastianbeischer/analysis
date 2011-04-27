@@ -6,12 +6,17 @@ CONFIG += debug
 TOPLEVEL = ..
 
 CLASSES += \
+  Axis \
   DetectorElement \
   Layer \
   Setup \
   SipmArray \
   TRDModule \
-  TOFBar
+  TOFBar \
+  FieldManager \
+  InhomField \
+  MagneticField \
+  UniformField
 
 INCLUDEPATH += \
   $$TOPLEVEL/event

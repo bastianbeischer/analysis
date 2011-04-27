@@ -158,16 +158,20 @@ void TRDMoPVTimeEvolutionPlot::updateGraph()
     foreach (unsigned int run, m_binningMap.keys()) {
       if (m_binningMap.value(run).contains(module)) {
         // qDebug("fitting a landau to hist with entries %f", m_binningMap.value(run).value(module)->GetEntries());
-        TFitResultPtr fitResult = m_binningMap.value(run).value(module)->Fit("landau","0QS","",m_landauFitRange_lower,m_landauFitRange_upper) ;
-        TGraphErrors* moduleGraph = m_mopvGraphs.value(module);
-        int fitStatus = fitResult;
-        if ( fitStatus == 0 ) {
-          // qDebug("for module 0x%x adding point %i, %f", module, run, fitResult->Parameter(1));
-          moduleGraph->SetPoint(pointNo, run, fitResult->Parameter(1));
-          moduleGraph->SetPointError(pointNo, 0, fitResult->ParError(1));
-          pointNo++ ;
-        } else {
-          //moduleGraph->SetPoint(pointNo, run, -1.0);
+
+        TH1* hist = m_binningMap.value(run).value(module);
+        if (hist->GetEntries() > 10) {
+          TFitResultPtr fitResult = hist->Fit("landau","0QS","",m_landauFitRange_lower,m_landauFitRange_upper) ;
+          TGraphErrors* moduleGraph = m_mopvGraphs.value(module);
+          int fitStatus = fitResult;
+          if ( fitStatus == 0 ) {
+            // qDebug("for module 0x%x adding point %i, %f", module, run, fitResult->Parameter(1));
+            moduleGraph->SetPoint(pointNo, run, fitResult->Parameter(1));
+            moduleGraph->SetPointError(pointNo, 0, fitResult->ParError(1));
+            pointNo++ ;
+          } else {
+            //moduleGraph->SetPoint(pointNo, run, -1.0);
+          }
         }
       }
     }

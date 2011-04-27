@@ -117,13 +117,15 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* part
 
 void TRDSpectrumPlot::finalize()
 {
-  histogram(0)->Fit(m_landauFit,"Q0","",m_landauFitRange_lower,m_landauFitRange_upper);
+  if (histogram(0)->GetEntries() > 10) {
+    histogram(0)->Fit(m_landauFit,"Q0","",m_landauFitRange_lower,m_landauFitRange_upper);
 
-  m_fitRangeMarker_lower->SetX(m_landauFitRange_lower);
-  m_fitRangeMarker_lower->SetY(m_landauFit->Eval(m_landauFitRange_lower));
+    m_fitRangeMarker_lower->SetX(m_landauFitRange_lower);
+    m_fitRangeMarker_lower->SetY(m_landauFit->Eval(m_landauFitRange_lower));
 
-  m_fitRangeMarker_upper->SetX(m_landauFitRange_upper);
-  m_fitRangeMarker_upper->SetY(m_landauFit->Eval(m_landauFitRange_upper));
+    m_fitRangeMarker_upper->SetX(m_landauFitRange_upper);
+    m_fitRangeMarker_upper->SetY(m_landauFit->Eval(m_landauFitRange_upper));
+  }
 
   //  if (false) {
   //    //write fit results:
