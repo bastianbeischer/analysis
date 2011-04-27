@@ -745,7 +745,7 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
 void MainWindow::analyzeButtonClicked()
 {
   if (m_ui.analyzeButton->text() == "&start") {
-    Track::Type type;
+    Track::Type type = Track::None;
     Corrections::Flags flags;
     ParticleFilter::Types filterTypes;
     setupAnalysis(type, flags, filterTypes);
