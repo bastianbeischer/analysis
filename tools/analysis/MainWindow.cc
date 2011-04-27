@@ -963,6 +963,8 @@ void MainWindow::numberOfEventsChanged(int nEvents)
   m_ui.lastEventSpinBox->setMaximum(nEvents-1);
   m_ui.firstEventSpinBox->setValue(0);
   m_ui.lastEventSpinBox->setValue(nEvents-1);
+  if (nEvents > 0)
+    m_ui.analyzeButton->setEnabled(true);
   firstOrLastEventChanged();
 }
 

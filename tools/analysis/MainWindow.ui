@@ -1316,6 +1316,9 @@ reconstruction</string>
          <layout class="QGridLayout" name="controlGridLayout">
           <item row="4" column="1">
            <widget class="QPushButton" name="analyzeButton">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="font">
              <font>
               <family>DejaVu Sans</family>
