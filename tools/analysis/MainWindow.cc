@@ -41,6 +41,7 @@
 #include "TRDMoPVTimeEvolutionPlot.hh"
 #include "TRDEnergyDepositionOverMomentumPlot.hh"
 #include "TRDSpectrumPlot.hh"
+#include "TRDSpectrumVsTimePlot.hh"
 #include "TRDOccupancyPlot.hh"
 #include "TRDEfficiencyPlot.hh"
 #include "TotalEnergyDepositionPlot.hh"
@@ -445,6 +446,23 @@ void MainWindow::setupPlots()
         }
       }
     }
+
+    m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumVsTimePlot::completeTRD,first,last));
+    m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumVsTimePlot::completeTRD,first,last, -3, -1.5));
+    m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumVsTimePlot::completeTRD,first,last, 1.5, 3));
+
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
+      if (element->type() == DetectorElement::trd){
+        TRDSpectrumVsTimePlot* trdModuleSpectrumPlot = new TRDSpectrumVsTimePlot(element->id(),TRDSpectrumVsTimePlot::module, first, last);
+        m_ui.plotter->addPlot(trdModuleSpectrumPlot);
+        for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++){
+          TRDSpectrumVsTimePlot* trdChannelSpectrumPlot = new TRDSpectrumVsTimePlot(element->id() | tubeNo,TRDSpectrumVsTimePlot::channel, first, last);
+          m_ui.plotter->addPlot(trdChannelSpectrumPlot);
+        }
+      }
+    }
+ 
   }
   if (m_ui.clusterShapeTrackerCheckBox->isChecked()) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
