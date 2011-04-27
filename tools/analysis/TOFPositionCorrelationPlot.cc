@@ -86,7 +86,9 @@ void TOFPositionCorrelationPlot::finalize()
     }
     delete h;
   }
-  m_correlationGraph->Fit(function(), "QN0");
-  latex(0)->SetTitle(qPrintable(QString("b = %1 mm").arg(function()->GetParameter(0), 0, 'f', 2, ' ')));
-  latex(1)->SetTitle(qPrintable(QString("m = %1").arg(function()->GetParameter(1), 0, 'f', 2, ' ')));
+  if (m_correlationGraph->GetN() > 2) {
+    m_correlationGraph->Fit(function(), "QN0");
+    latex(0)->SetTitle(qPrintable(QString("b = %1 mm").arg(function()->GetParameter(0), 0, 'f', 2, ' ')));
+    latex(1)->SetTitle(qPrintable(QString("m = %1").arg(function()->GetParameter(1), 0, 'f', 2, ' ')));
+  }
 }
