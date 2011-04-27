@@ -17,10 +17,13 @@ LIBS += \
 CLASSES = \
   Converter \
   DataManager \
-  SingleFile
+  SingleFile \
+  MCSingleFile \
+  SensorsData
 
 SOURCES += \
   main.cc
+
 
 macx {
   QMAKE_CXXFLAGS += -DNO_QUICKUSB

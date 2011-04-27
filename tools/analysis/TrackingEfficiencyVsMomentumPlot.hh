@@ -15,8 +15,7 @@ public:
   TrackingEfficiencyVsMomentumPlot();
   ~TrackingEfficiencyVsMomentumPlot();
   
-  void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
-  void draw(TCanvas*);
+  void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
   void finalize();
 
 };

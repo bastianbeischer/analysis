@@ -1,56 +1,55 @@
 #include "TrackingEfficiencyVsMomentumPlot.hh"
 
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 
 #include <QMap>
 
 #include <TH2D.h>
 
-TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot() :
-  AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
-  H2DPlot()
+TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot()
+  : AnalysisPlot(AnalysisPlot::MiscellaneousTracker)
+  , H2DPlot()
 {
   setTitle(QString("Efficiency vs momentum"));
   
   TH2D* histogram = new TH2D(qPrintable(title()), "", 10, 0., 10., 7, 1.5, 8.5);
-  histogram->GetXaxis()->SetTitle("rigidity / GV");
-  histogram->GetYaxis()->SetTitle("layers with exactly one hit");
-  setHistogram(histogram);
+  setAxisTitle("R / GV", "layers with exactly one hit", "");
+  addHistogram(histogram);
+  setDrawOption(COLZTEXT);
 }
 
 TrackingEfficiencyVsMomentumPlot::~TrackingEfficiencyVsMomentumPlot()
 {
 }
 
-void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
+void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if (!track || !track->fitGood())
     return;
 
-  const TrackInformation* info = track->information();
+  const ParticleInformation* info = particle->information();
 
-  TrackInformation::Flags flags = info->flags();
-  if ( !(flags & TrackInformation::InsideMagnet) || !(flags & TrackInformation::Chi2Good) )
+  ParticleInformation::Flags flags = info->flags();
+  if ( !(flags & ParticleInformation::InsideMagnet) || !(flags & ParticleInformation::Chi2Good) )
     return;
 
-  QMap<double, int> hitsInLayers = info->hitsInLayers();
+  const QMap<double,int>& hitsInLayers = info->hitsInLayers();
   unsigned short nLayers = info->numberOfTrackerLayers();
 
-  foreach(int count, hitsInLayers) {
+  const QMap<double,int>::const_iterator endIt = hitsInLayers.end();
+  for(QMap<double,int>::const_iterator it = hitsInLayers.begin(); it != endIt; ++it) {
+    int count = it.value();
     if (count != 1)
       return;
   }
 
-  double p = track->p();
+  double rigidity = track->rigidity();
 
-  histogram()->Fill(p,nLayers);
-}
-
-void TrackingEfficiencyVsMomentumPlot::draw(TCanvas* can)
-{
-  H2DPlot::draw(can);
-  histogram()->SetDrawOption("col.z.text");
+  histogram()->Fill(rigidity,nLayers);
 }
 
 void TrackingEfficiencyVsMomentumPlot::finalize()

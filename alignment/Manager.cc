@@ -54,9 +54,9 @@ void Manager::startAlignment()
 void Manager::saveResults() const
 {
   Setup* setup = Setup::instance();
-
-  DetectorElement* element = setup->firstElement();
-  while(element) {
+  const ElementIterator endIt = setup->lastElement();
+  for (ElementIterator it = setup->firstElement(); it != endIt; ++it) {
+    DetectorElement* element = *it;
     unsigned short detId = element->id();
     unsigned int index = m_parameters->indexForDetId(detId);
     float shift = m_parameters->parameter(index);
@@ -65,7 +65,6 @@ void Manager::saveResults() const
       double oldShift = element->alignmentShift();
       element->setAlignmentShift(oldShift + shift);
     }
-    element = setup->nextElement();
   }
 
   setup->writeSettings();

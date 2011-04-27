@@ -13,7 +13,7 @@ PerdaixDisplay::PerdaixDisplay() :
   m_yAxis(new TGaxis(-200, 350, 200, 350, -400, 400, 510, "-"))
 {
   TH2D* histogram = new TH2D("PerdaixDisplay", "", 100, -200., 200., 100, -650, 350);
-  setHistogram(histogram);
+  addHistogram(histogram);
   constructTracker();
   constructTrd();
   constructTof();

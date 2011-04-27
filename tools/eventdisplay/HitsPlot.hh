@@ -4,15 +4,18 @@
 #include <QVector>
 
 #include "PerdaixDisplay.hh"
+#include "EventDestination.hh"
 
 class Hit;
-class Track;
+class Particle;
 class TLine;
 class TMarker;
 class TLatex;
+class TGraph;
 
 class HitsPlot :
-  public PerdaixDisplay
+  public PerdaixDisplay,
+  public EventDestination
 {
   
 public:
@@ -20,7 +23,7 @@ public:
   ~HitsPlot();
   
 public:
-  void drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* track = 0);
+  void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
 
 private:
   void drawHits();
@@ -31,6 +34,8 @@ private:
   QVector<TLine*>     m_lines;
   QVector<TMarker*>   m_markers;
   TLatex*             m_fitInfo;
+  QList<TGraph*>      m_trajectoriesXZ;
+  QList<TGraph*>      m_trajectoriesYZ;
 
 };
 

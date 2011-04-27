@@ -1,7 +1,9 @@
 #include "TOFPositionCorrelationPlot.hh"
 #include "BrokenLine.hh"
 
-#include "TrackInformation.hh"
+#include "Particle.hh"
+#include "Track.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
 #include "TOFCluster.hh"
 
@@ -21,9 +23,8 @@ TOFPositionCorrelationPlot::TOFPositionCorrelationPlot(unsigned short id)
 {
   setTitle(QString("tof position correlation 0x%1").arg(id, 0, 16));
   TH2D* histogram = new TH2D(qPrintable(title()), "", 45, -450, 450, 90, -450, 450);
-  histogram->GetXaxis()->SetTitle("y_{tracker} / mm");
-  histogram->GetYaxis()->SetTitle("y_{TOF} / mm");
-  setHistogram(histogram);
+  setAxisTitle("y_{tracker} / mm", "y_{TOF} / mm", "");
+  addHistogram(histogram);
   TF1* function = new TF1(qPrintable(QString("tof correlation Function %1").arg(id)), "pol1");
   function->SetRange(-450, 450);
   function->SetParameters(0, 1);
@@ -37,19 +38,24 @@ TOFPositionCorrelationPlot::~TOFPositionCorrelationPlot()
   delete m_correlationGraph;
 }
 
-void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
-  foreach(Hit* hit, clusters)
+  const QVector<Hit*>::const_iterator endIt = clusters.end();
+  for (QVector<Hit*>::const_iterator it = clusters.begin(); it != endIt; ++it) {
+    Hit* hit = *it;
     if (hit->type() == Hit::tof && (hit->detId()-hit->channel()) == m_id)
       histogram()->Fill(track->y(hit->position().z()), static_cast<TOFCluster*>(hit)->yEstimate(false));
+  }
 }
 
 void TOFPositionCorrelationPlot::draw(TCanvas* canvas)
@@ -62,12 +68,12 @@ void TOFPositionCorrelationPlot::draw(TCanvas* canvas)
 
 void TOFPositionCorrelationPlot::finalize()
 {
-  int nBins = histogram()->GetXaxis()->GetNbins();
+  int nBins = xAxis()->GetNbins();
   for (int i = 0; i < nBins; ++i) {
     TF1 f("tofPositionCorreletionFitFunction", "gaus");
     TH1D* h = histogram()->ProjectionY("_py", i+1, i+1);
     if (h->GetEntries() > 10) {
-      double x = histogram()->GetXaxis()->GetBinCenter(i+1);
+      double x = xAxis()->GetBinCenter(i+1);
       double sigma = 100;
       f.SetParameters(h->GetMaximum(), x, sigma);
       f.SetRange(x - 5 * sigma, x + 5 * sigma);

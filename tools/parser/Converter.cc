@@ -8,13 +8,21 @@
 #include "DetectorID.h"
 #include "TrackerDataBlock.h"
 #include "TRDDataBlock.h"
+#include "PMTDataBlock.h"
 #include "TOFDataBlock.h"
 #include "Setup.hh"
+#include "DetectorElement.hh"
 
-#include "CLHEP/Units/SystemOfUnits.h"
+#include "MCSingleFile.hh"
+#include "MCEventInformation.hh"
+#include "MCEvent.h"
+#include "MCParticle.h"
+#include "MCDigi.h"
 
 #include <TVector3.h>
 #include <QDebug>
+
+#include <CLHEP/Units/SystemOfUnits.h>
 
 #include <iostream>
 
@@ -34,25 +42,45 @@ const int tdcChannelToSipm[64] = {
 
 Converter::Converter()
 {
+  Setup* setup = Setup::instance();
+  const ElementIterator elementStartIt = setup->firstElement();
+  const ElementIterator elementEndIt = setup->lastElement();
+  for (ElementIterator elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+    DetectorElement* element = *elementIt;
+    unsigned short elementId = element->id();
+    unsigned short nChannels = element->nChannels();
+    QString group;
+    if (element->type() == DetectorElement::tracker)
+      group = "tracker";
+    if (element->type() == DetectorElement::trd)
+      group = "trd";
+    if (element->type() == DetectorElement::tof)
+      group = "tof";
+    for (int i = 0; i < nChannels; i++) {
+      unsigned short id = elementId | i;
+      m_positions[id] = setup->configFilePosition(group, id);
+      m_counterPositions[id] = setup->configFilePosition(group+"back", id);
+    }
+  }
 }
 
 Converter::~Converter()
 {
 }
 
-SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int eventNo)
+SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MCSingleFile* mcFile)
 {
-  const RawEvent* event = file->getRawEvent(eventNo);
+  const RawEvent* event = file->getNextRawEvent();
 
-  // construct new simple event
+  // fill simple event basics
   unsigned int eventId = event->GetEventID();
-  unsigned int runStartTime = file->getStartTime(); // convert ms to s for 
+  unsigned int runStartTime = file->getStartTime(); // convert ms to s for
   unsigned int eventTime = event->GetTime();
-  SimpleEvent* simpleEvent = new SimpleEvent(eventId, runStartTime, eventTime, SimpleEvent::RawData);
+
+  SimpleEvent* simpleEvent = new SimpleEvent(eventId, runStartTime, eventTime, mcFile? SimpleEvent::MonteCarlo : SimpleEvent::Data);
 
   // loop over all present detector IDs
-  QList<DetectorID*> detIDs = event->GetIDs();
-  foreach(DetectorID* id, detIDs) {
+  foreach(DetectorID* id, event->GetIDs()) {
 
     //get event data from detector, distinguish types of detectors
     DataBlock* dataBlock = event->GetBlock(id);
@@ -68,6 +96,7 @@ SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int
     // get tracker and trd data from block
     int nArrays = 8;
     int nTrd = 2;
+    int nPmt = 4;
     int nMax = 0;
     const quint16* values;
     if (id->IsTracker()) {
@@ -77,6 +106,10 @@ SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int
     else if (id->IsTRD()) {
       nMax = nTrd;
       values = ((TRDDataBlock*) dataBlock)->GetRawData();
+    }
+    else if (id->IsPMT()) {
+      nMax = nPmt;
+      values = ((PMTDataBlock*) dataBlock)->GetRawData();
     }
 
     //get calibration for non-tof detectors
@@ -91,15 +124,14 @@ SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int
     // process data
     unsigned short detId = id->GetID16();
     std::map<unsigned short, TOFSipmHit*> tofHitMap; // maps channel to sipm hits
-    Setup* setup = Setup::instance();
 
     for (int i = 0; i < nValues; i++) {
 
       if (id->IsTracker()) {
         int amplitude = static_cast<int>(temp[i]);
 
-        TVector3 pos = setup->configFilePosition("tracker", detId | i);
-        TVector3 counterPos = setup->configFilePosition("trackerback", detId | i);
+        TVector3& pos = m_positions[detId | i];
+        TVector3& counterPos = m_counterPositions[detId | i];
 
         simpleEvent->addHit(new Hit(Hit::tracker, detId | i, amplitude, pos, counterPos));
       } // tracker
@@ -107,8 +139,8 @@ SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int
       else if (id->IsTRD()) {
         int amplitude = static_cast<int>(temp[i]);
 
-        TVector3 pos = setup->configFilePosition("trd", detId | i);
-        TVector3 counterPos = setup->configFilePosition("trdback", detId | i);
+        TVector3& pos = m_positions[detId | i];
+        TVector3& counterPos = m_counterPositions[detId | i];
 
         simpleEvent->addHit(new Hit(Hit::trd, detId | i, amplitude, pos, counterPos));
       } // trd
@@ -122,9 +154,8 @@ SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int
 
         unsigned short fullDetId = detId | bar | sipm;
 
-        TVector3 pos = setup->configFilePosition("tof", fullDetId);
-        TVector3 counterPos = setup->configFilePosition("tofback", fullDetId);
-
+        TVector3& pos = m_positions[fullDetId];
+        TVector3& counterPos = m_counterPositions[fullDetId];
 
         if (!tofHitMap[channel]) {
           tofHitMap[channel] = new TOFSipmHit(fullDetId, pos, counterPos);
@@ -133,6 +164,14 @@ SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int
         tofHitMap[channel]->addLevelChange(value);
       } // tof
 
+      else if (id->IsPMT()) {
+        int amplitude = static_cast<int>(temp[i]);
+
+        if (i == 4) {
+          simpleEvent->setSensorData(SensorTypes::BEAM_CHERENKOV1, amplitude);
+        }
+      } // pmt
+
     } // all hits
 
     std::map<unsigned short, TOFSipmHit*>::iterator tofHitIt = tofHitMap.begin();
@@ -140,5 +179,134 @@ SimpleEvent* Converter::generateSimpleEvent(const SingleFile* file, unsigned int
       tofHitIt->second->processTDCHits();
   } // foreach(DetectorID...)
 
+  delete event;
+
+  if (mcFile) {
+    const MCEventInformation* mcInfo = generateNextMCEventInformation(mcFile);
+    simpleEvent->setMCInformation(mcInfo);
+  }
+
   return simpleEvent;
 }
+
+
+const MCEventInformation* Converter::generateNextMCEventInformation(const MCSingleFile* mcFile)
+{
+  //generate new mcEventInfo
+  MCEventInformation* mcEventInfo = new MCEventInformation();
+
+  //get MCEvent
+  const MCEvent* mcEvent = mcFile->getNextMCEvent() ;
+
+  //read MC data
+  QVector<MCParticle*> particles = mcEvent->GetParticles();
+
+  //get info on primary and store it
+  MCParticle* primarySim = particles.at(0);
+  const MCSimpleEventParticle* primary = constructMCSimpleEventParticle (primarySim);
+  mcEventInfo->setPrimary(primary);
+
+  //get all secondaries
+  for (int i = 1; i < particles.size(); ++i)
+  {
+    MCParticle* secondaryMC = particles.at(i);
+    const MCSimpleEventParticle* secondary = constructMCSimpleEventParticle (secondaryMC);
+    mcEventInfo->addSecondary(secondary);
+  }
+
+
+  //get all digis:
+  const QVector<const MCSimpleEventDigi*> digis = getAllMCDigis(mcEvent);
+
+  foreach (const MCSimpleEventDigi* digi, digis)
+    mcEventInfo->addMcDigis(digi);
+
+
+  delete mcEvent;
+
+  return mcEventInfo;
+}
+
+const MCSimpleEventParticle* Converter::constructMCSimpleEventParticle(MCParticle* mcParticle)
+{
+  //create MCSimpleEventParticle
+  MCSimpleEventParticle* se_particle = new MCSimpleEventParticle();
+
+  //trackID
+  se_particle->trackID = mcParticle->GetTrackID();
+
+  //parenttrackID
+  se_particle->parentTrackID = mcParticle->GetParentTrackID();
+
+  //pdgID
+  se_particle->pdgID = mcParticle->GetPDGID();
+
+  QVector<MCParticle::DetectorHit> hits = mcParticle->GetHits();
+  //momentum
+  HepGeom::Vector3D<double> mom = hits.at(0).preStep.momentum / CLHEP::GeV;
+  se_particle->initialMomentum.SetXYZ(mom.x(), mom.y(), mom.z());
+  //position
+  HepGeom::Vector3D<double> pos = hits.at(0).preStep.position;
+  se_particle->initialPosition.SetXYZ(pos.x(), pos.y(), pos.z());
+
+
+  //trajectory
+  const QVector<HepGeom::Point3D<double> >& trajectory = mcParticle->GetTrajectory();
+  for (int i = 0; i < trajectory.size(); ++i){
+    const HepGeom::Point3D<double>& point = trajectory.at(i);
+    se_particle->trajectory.push_back( TVector3(point.x(), point.y(), point.z()) );
+  }
+
+  return se_particle;
+}
+
+
+const QVector<const MCSimpleEventDigi*> Converter::getAllMCDigis(const MCEvent* mcEvent)
+{
+  //get all digis of MCEvent:
+  QVector<MCDigi*> mcDigis = mcEvent->GetDigis();
+  //qDebug("read %i digis from raw MC file", mcDigis.size());
+  QVector<const MCSimpleEventDigi*> seDigis;
+  //loop over all digis and convert:
+  for (int i = 0; i < mcDigis.size(); ++i)
+  {
+    MCDigi* mcDigi = mcDigis.at(i);
+    quint16 completeChannelID16bit = static_cast<quint16>(mcDigi->GetDetectorID() & 0xFFFF);
+    DetectorID* id = DetectorID::Get(mcDigi->GetDetectorID());
+
+    Hit::ModuleType moduleType = Hit::none;
+    if (id->IsTracker())
+      moduleType = Hit::tracker;
+    else if (id->IsTRD())
+      moduleType = Hit::trd;
+    else if (id->IsTOF())
+      moduleType = Hit::tof;
+
+    //qDebug("got digi type %i with id 0x%x", moduleType, completeChannelID16bit);
+    MCSimpleEventDigi* seDigi = new MCSimpleEventDigi(moduleType, completeChannelID16bit);
+
+    //convert all Signals:
+    const QVector<MCDigi::Signal>& mcDigiSignals = mcDigi->GetMCValues();
+    for (int j = 0; j < mcDigiSignals.size(); ++j)
+    {
+      const MCDigi::Signal& mcSignal = mcDigiSignals.at(j);
+      MCDigiSignal* seSignal = new MCDigiSignal();
+
+      seSignal->trackID = mcSignal._trackId;
+      const HepGeom::Point3D<double>& pos = mcSignal._position;
+      seSignal->hitPosition.SetXYZ(pos.x(), pos.y(), pos.z());
+      seSignal->time = mcSignal._time;
+      seSignal->energyDeposition = mcSignal._energyDeposit / CLHEP::keV;
+
+      seDigi->AddSignal(seSignal);
+    }
+
+    seDigis << seDigi;
+  }
+
+  return seDigis;
+
+
+
+}
+

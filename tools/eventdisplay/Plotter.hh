@@ -3,13 +3,15 @@
 
 #include <TQtWidget.h>
 
+#include "Track.hh"
+
 #include <QString>
 
+class AnalysisProcessor;
 class TCanvas;
 class Corrections;
 class DataChain;
 class TrackFinding;
-class Track;
 class HitsPlot;
 class QLabel;
 class QPlainTextEdit;
@@ -24,7 +26,7 @@ public:
   void setFileList(const QString& listName);
   void addFileList(const QString& listName);
   void addRootFile(const QString&);
-  void drawEvent(unsigned int i, bool drawTrack, int fitMethod, QPlainTextEdit& infoTextBox);
+  void drawEvent(unsigned int i, Track::Type type, QPlainTextEdit& infoTextBox);
   void saveCanvas(const QString& fileName);
   void setPositionLabel(QLabel* label);
 public slots:
@@ -38,6 +40,7 @@ private:
   TrackFinding* m_trackFinding;
   Corrections* m_corrections;
   Track* m_track;
+  AnalysisProcessor* m_processor;
   HitsPlot* m_hitsPlot;
   QLabel* m_positionLabel;
 };

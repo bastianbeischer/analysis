@@ -14,20 +14,23 @@ INCLUDEPATH += \
   $$TOPLEVEL/processing \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/setup \
+  $$TOPLEVEL/particle \
   $$TOPLEVEL/tracking
 
 LIBS += \
   -L$$TOPLEVEL/lib \
+  -lglobal \
   -lSimpleEvent \
   -lprocessing \
+  -lparticle \
   -ltracking \
   -lrootplot \
-  -lsetup
+  -lsetup \
+  -lglobal
 
 CLASSES = \
   AlbedosVsMomentumPlot \
   AnalysisPlot \
-  AnalysisThread \
   BendingAnglePlot \
   BendingAnglePositionPlot \
   BendingPositionPlot \
@@ -35,9 +38,9 @@ CLASSES = \
   BetaPlot \
   Chi2PerNdfPlot \
   Chi2Plot \
+  Chi2VsMomentumPlot \
   ClusterLengthPlot \
   ClusterShapePlot \
-  EventQueue \
   GeometricOccupancyPlot \
   GeometricOccupancyProjectionPlot \
   MainWindow \
@@ -46,6 +49,7 @@ CLASSES = \
   ResidualPlot \
   SignalHeightPlot \
   SingleLayerTrackingEfficiencyPlot \
+  MultiLayerTrackingEfficiencyPlot \
   CutStatisticsPlot \
   TOFPositionCorrelationPlot \
   TOFTimeDifferencePlot \
@@ -58,7 +62,6 @@ CLASSES = \
   TRDDistanceWireToTrackPlot \
   TRDEfficiencyPlot \
   TRDEnergyDepositionOverMomentumPlot \
-  TRDFitPlot \
   TRDMoPVTimeEvolutionPlot \
   TRDOccupancyPlot \
   TRDSpectrumPlot \
@@ -67,9 +70,24 @@ CLASSES = \
   TotalEnergyDepositionTRDvsTrackerPlot \
   TOFEfficiencyPlot \
   TrackingEfficiencyVsMomentumPlot \
-  TimeOverThresholdMomentumCorrelation \
-  TimeOverThresholdPlot \
-  TOFAlignment
+  TOTMomentumCorrelation \
+  TOTBetaCorrelation \
+  TOTPlot \
+  TOTLayerPlot \
+  TOTIonizationCorrelation \
+  TOTTemperatureCorrelationPlot \
+  TOTTimeCorrelationPlot \
+  TOFAlignment \
+  TemperatureTimePlot \
+  ChannelTriggerProbabilityPlot \
+  TOFTimeShiftTriggerPlot \
+  HeightTimePlot \
+  TriggerRateTimePlot \
+  SensorTimePlot \
+  MCTotalEnergyDepositionTRDvsTrackerPlot \
+  MCTRDSpectrumPlot \
+  MCRigidityResolution \
+  PMTPlot
 
 SOURCES += \
   main.cc

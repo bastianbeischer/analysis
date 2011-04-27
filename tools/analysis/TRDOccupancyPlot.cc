@@ -2,6 +2,8 @@
 
 #include "Setup.hh"
 #include "DetectorElement.hh"
+#include "Particle.hh"
+#include "Track.hh"
 #include "Hit.hh"
 #include "Cluster.hh"
 #include "SimpleEvent.hh"
@@ -40,13 +42,10 @@ TRDOccupancyPlot::TRDOccupancyPlot(TrdOccupancyType occupancyType, bool onlyOnTr
   setTitle(tempTitle);
 
   TH2D* histogram = new TH2D(qPrintable(title()), qPrintable(title() + ";x / mm;z /mm"),200,-120,120,200,-550, -250);
-  setHistogram(histogram);
+  addHistogram(histogram);
 
   //initialize all needed ellipses
   initializeEllipses();
-
-  //connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
-  //m_updateTimer.start(3000);
 }
 
 TRDOccupancyPlot::~TRDOccupancyPlot()
@@ -55,27 +54,26 @@ TRDOccupancyPlot::~TRDOccupancyPlot()
   m_ellipses.clear();
 }
 
-void TRDOccupancyPlot::processEvent(const QVector<Hit*>& clustersOnTrack, Track*, SimpleEvent* event)
+void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
 
-  QVector<Hit*> clustersToAnalyze;
+  const QVector<Hit*>& clustersToAnalyze = m_onlyOnTrack ? track->hits() : hits;
 
-  if (m_onlyOnTrack){
-    //only use clusters on track
-    clustersToAnalyze = clustersOnTrack;
-  }else{
-    //use all clusters of the event
-    clustersToAnalyze = QVector<Hit*>::fromStdVector(event->hits());
-  }
+  const QVector<Hit*>::const_iterator endIt = clustersToAnalyze.end();
+  for (QVector<Hit*>::const_iterator it = clustersToAnalyze.begin(); it != endIt; ++it) {
+    Hit* clusterHit = *it;
 
-
-  foreach(Hit* clusterHit, clustersToAnalyze){
     //only trd:
     if(clusterHit->type() != Hit::trd)
       continue;
 
     Cluster* cluster = static_cast<Cluster*>(clusterHit);
-    foreach(Hit* hit, cluster->hits()){
+
+    std::vector<Hit*>& subHits = cluster->hits();
+    const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+    for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
+      Hit* hit = *it;
       m_hits[hit->detId()]++;
       m_signalHeightSum[hit->detId()] += hit->signalHeight();
     
@@ -177,8 +175,9 @@ void TRDOccupancyPlot::initializeEllipses()
   //create for each trd channel an ellipses
   Setup* setup = Setup::instance();
 
-  DetectorElement* element = setup->firstElement();
-  while(element) {
+  const ElementIterator endIt = setup->lastElement();
+  for (ElementIterator it = setup->firstElement(); it != endIt; ++it) {
+    DetectorElement* element = *it;
     if (element->type() == DetectorElement::trd){
       for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++){
         unsigned short detID = element->id() | tubeNo;
@@ -186,6 +185,5 @@ void TRDOccupancyPlot::initializeEllipses()
         m_ellipses.insert(detID, new TEllipse(posTRDChan.x(),posTRDChan.z(), 3.0)) ;
       }
     }
-    element = setup->nextElement();
   }
 }

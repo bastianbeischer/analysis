@@ -1,6 +1,6 @@
 #include "ResidualPlot.hh"
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Setup.hh"
 #include "Layer.hh"
 #include "Setup.hh"
@@ -10,6 +10,7 @@
 #include "BrokenLine.hh"
 #include "CenteredBrokenLine.hh"
 #include "CenteredBrokenLine2D.hh"
+#include "Particle.hh"
 #include "Track.hh"
 #include "TH2D.h"
 
@@ -33,36 +34,39 @@ ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer)
 
   unsigned short nElements = layer->nElements();
   unsigned short nChannels = layer->elements().first()->nChannels();
-  TH2D* histogram = new TH2D(qPrintable(title()+QString::number(id())), "", nElements*nChannels, 0, nElements*nChannels, 200, -max, max);
+  TH2D* histogram = new TH2D(qPrintable(title()), "", nElements*nChannels, 0, nElements*nChannels, 200, -max, max);
 
-  histogram->GetXaxis()->SetTitle("channel number");
-  histogram->GetYaxis()->SetTitle("residue / mm");
-  setHistogram(histogram);
+  setAxisTitle("channel number", "residue / mm", "");
+  addHistogram(histogram);
 }
 
 ResidualPlot::~ResidualPlot()
 {
 }
 
-void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* /*event*/)
+void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* /*event*/)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   // only select tracks which didn't pass through the magnet
-  if ((flags & TrackInformation::MagnetCollision))
+  if ((flags & ParticleInformation::MagnetCollision))
     return;
 
   // remove hits in this layer from hits for track fit
   QVector<Hit*> hitsForFit;
   QVector<Hit*> hitsInThisLayer;
 
-  foreach(Hit* hit, hits) {
+  const QVector<Hit*>::const_iterator endIt = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+    Hit* hit = *it;
     double z = round(hit->position().z()*100)/100.;
     if (fabs(z - m_layer->z()) > 5) {
       hitsForFit.push_back(hit);
@@ -85,8 +89,9 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleE
 
   // fit and fill histograms
   if (mytrack->fit(hitsForFit)) {
-    mytrack->process();
-    foreach(Hit* hit, hitsInThisLayer) {
+    QVector<Hit*>::const_iterator layerEndIt = hitsInThisLayer.end();
+    for (QVector<Hit*>::const_iterator it = hitsInThisLayer.begin(); it != layerEndIt; ++it) {
+      Hit* hit = *it;
       double z = m_layer->z();
       double hitX = hit->position().x();
       double hitY = hit->position().y();

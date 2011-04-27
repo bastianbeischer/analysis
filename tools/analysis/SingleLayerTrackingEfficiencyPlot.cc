@@ -7,8 +7,9 @@
 #include "Layer.hh"
 #include "TrackFinding.hh"
 #include "Setup.hh"
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 
 SingleLayerTrackingEfficiencyPlot::SingleLayerTrackingEfficiencyPlot() :
   AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
@@ -27,22 +28,23 @@ SingleLayerTrackingEfficiencyPlot::SingleLayerTrackingEfficiencyPlot() :
   double y1 = m_nLayers+0.5;
   
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, x0, x1, nBinsY, y0, y1);
-  histogram->GetXaxis()->SetTitle("rigidity / GV");
-  histogram->GetYaxis()->SetTitle("layer number");
-  setHistogram(histogram);
+  setAxisTitle("rigidity / GV", "layer number", "");
+  addHistogram(histogram);
 
   m_normHisto = new TH2D(qPrintable(title() + "_norm"), "", nBinsX, x0, x1, nBinsY, y0, y1);
 
-  Layer* layer = Setup::instance()->firstLayer();
   int i = 0;
-  while (layer) {
+  Setup* setup = Setup::instance();
+  const LayerIterator endIt = setup->lastLayer();
+  for (LayerIterator it = setup->firstLayer(); it != endIt; ++it) {
+    Layer* layer = *it;
     double layerZ = floor(layer->z());
     if (layerZ > -240 && layerZ < 240) {
       m_layerZ[i] = layerZ;
       i++;
     }
-    layer = Setup::instance()->nextLayer();
   }
+  setDrawOption(COLZTEXT);
 }
 
 SingleLayerTrackingEfficiencyPlot::~SingleLayerTrackingEfficiencyPlot()
@@ -51,19 +53,23 @@ SingleLayerTrackingEfficiencyPlot::~SingleLayerTrackingEfficiencyPlot()
   delete [] m_layerZ;
 }
 
-void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
+void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if ( !(flags & TrackInformation::InsideMagnet) || !(flags & TrackInformation::Chi2Good) )
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if ( !(flags & ParticleInformation::InsideMagnet) )
     return;
 
   for (int i = 0; i < m_nLayers; i++) {
     // determine if the layer has a hit matching the track
     bool beenHit = false;
-    foreach(Hit* hit, hits) {
+    const QVector<Hit*>::const_iterator endIt = hits.end();
+    for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+      Hit* hit = *it;
       if (floor(hit->position().z()) == m_layerZ[i]) {
         if (TrackFinding::isInCorridor(track, hit, 10.)) {
           beenHit = true;
@@ -74,17 +80,10 @@ void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, 
 
     // fill histograms
     if (beenHit)
-      histogram()->Fill(track->p(), i+1);
-    m_normHisto->Fill(track->p(), i+1);
+      histogram()->Fill(track->rigidity(), i+1);
+    m_normHisto->Fill(track->rigidity(), i+1);
   }
 }
-
-void SingleLayerTrackingEfficiencyPlot::draw(TCanvas* can)
-{
-  H2DPlot::draw(can);
-  histogram()->SetDrawOption("col.z.text");
-}
-
 
 void SingleLayerTrackingEfficiencyPlot::finalize()
 {

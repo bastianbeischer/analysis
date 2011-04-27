@@ -2,7 +2,8 @@
 
 #include <TH1D.h>
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
+#include "Particle.hh"
 #include "Track.hh"
 #include "Hit.hh"
 #include "Cluster.hh"
@@ -15,8 +16,7 @@ TotalSignalHeightPlot::TotalSignalHeightPlot() :
   int bins = 1000;
   setTitle(QString("sum of all signal heights"));
   TH1D* histogram = new TH1D(qPrintable(title()), "", bins, 0, maximum);
-  histogram->GetXaxis()->SetTitle("signal height / adc counts");
-  histogram->GetYaxis()->SetTitle("entries");
+  setAxisTitle("signal height / adc counts", "entries");
   addHistogram(histogram);
 }
 
@@ -24,17 +24,22 @@ TotalSignalHeightPlot::~TotalSignalHeightPlot()
 {
 }
 
-void TotalSignalHeightPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
+void TotalSignalHeightPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if(!track)
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   double sum = 0;
-  foreach(Hit* hit, hits) {
+
+  const QVector<Hit*>::const_iterator endIt = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+    Hit* hit = *it;
     if (hit->type() == Hit::tracker) {
       Cluster* cluster = static_cast<Cluster*>(hit);
       sum += cluster->signalHeight();

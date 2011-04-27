@@ -6,22 +6,25 @@ CONFIG += debug
 TOPLEVEL = ..
 
 CLASSES += \
-  Track \
-  TrackInformation \
-  TrackFinding \
-  StraightLine \
   BrokenLine \
+  BrokenLineMatrix \
   CenteredBrokenLine \
   CenteredBrokenLine2D \
-  Matrix \
-  StraightLineMatrix \
-  BrokenLineMatrix \
   CenteredBrokenLineMatrix \
-  CenteredBrokenLineMatrix2D
+  CenteredBrokenLineMatrix2D \
+  Matrix \
+  StraightLine \
+  StraightLineMatrix \
+  Track \
+  TrackFinding
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \
   $$TOPLEVEL/global
+
+DEPENDPATH += $$INCLUDEPATH
+
+LIBS += -L$$TOPLEVEL/lib -lSimpleEvent
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

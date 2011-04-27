@@ -5,10 +5,11 @@
 #include "H2DPlot.hh"
 
 class TF2;
+class PostAnalysisCanvas;
 
 class TimeDifferenceFunction : public PostAnalysisPlot, public H2DPlot {
 public:
-  TimeDifferenceFunction(TCanvas*);
+  TimeDifferenceFunction(PostAnalysisCanvas*);
   virtual ~TimeDifferenceFunction();
   virtual void draw(TCanvas*);
   TF2* function();

@@ -8,8 +8,9 @@
 #include <TAxis.h>
 
 #include "Cluster.hh"
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "TRDCalculations.hh"
 
 TRDEnergyDepositionOverMomentumPlot::TRDEnergyDepositionOverMomentumPlot(AnalysisPlot::Topic topic) :
@@ -18,37 +19,37 @@ TRDEnergyDepositionOverMomentumPlot::TRDEnergyDepositionOverMomentumPlot(Analysi
 {
   setTitle("TRD energy deposition over momentum");
   //  setMultiGraphTitle(qPrintable(title() + ";rigidity / GV; energy deposition / (ADCCounts per mm per tube "));
-
   TH2D* histo = new TH2D(qPrintable(title()), qPrintable(title()), 200, -10, 10, 200, 0, 60);
-  histo->GetXaxis()->SetTitle("R / GV");
-  histo->GetYaxis()->SetTitle("dE/dx");
-  setHistogram(histo);
+  setAxisTitle("R / GV", "dE/dx", "");
+  addHistogram(histo);
 }
 
 TRDEnergyDepositionOverMomentumPlot::~TRDEnergyDepositionOverMomentumPlot()
 {
 }
 
-void TRDEnergyDepositionOverMomentumPlot::processEvent(const QVector<Hit*>& hits,Track* track, SimpleEvent* /*event*/)
+void TRDEnergyDepositionOverMomentumPlot::processEvent(const QVector<Hit*>& /*hits*/,Particle* particle, SimpleEvent* /*event*/)
 {
+  const Track* track = particle->track();
+
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;
 
   //check if all tracker layers have a hit
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   //check if track was inside of magnet
-  if (!(flags & TrackInformation::InsideMagnet))
+  if (!(flags & ParticleInformation::InsideMagnet))
     return;
 
   //get the reconstructed momentum
-  double p = track->p(); //GeV
+  double rigidity = track->rigidity(); //GeV
 
   //only use following momenta
-  if(p < -10 || p > 10)
+  if(rigidity < -10 || rigidity > 10)
     return;
 
   //loop over all hits and count tracker hits
@@ -57,24 +58,30 @@ void TRDEnergyDepositionOverMomentumPlot::processEvent(const QVector<Hit*>& hits
 
 
   //TODO: check for off track hits ?!?
-  foreach(Hit* clusterHit, hits){
-    if (clusterHit->type() == Hit::trd)
-      trdClusterHitsOnTrack.push_back(clusterHit);
+  unsigned int nTrdHits = 0;
+  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+    if ((*it)->type() == Hit::trd)
+      nTrdHits++;
   }
 
-
-  //filter: only use events with 6 trd hits
-  if (trdClusterHitsOnTrack.size() < 6)
+  if (nTrdHits < 6)
     return;
 
   QVector<double> energyDepPerTubePerDistance;
 
-  foreach(Hit* clusterHit, trdClusterHitsOnTrack){
-    Cluster* cluster = static_cast<Cluster*>(clusterHit);
-    foreach(Hit* hit, cluster->hits()){
-      double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+    Cluster* cluster = static_cast<Cluster*>(*it);
+    if (cluster->type() != Hit::trd) 
+      continue;
+    
+    std::vector<Hit*>& subHits = cluster->hits();
+    const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+    for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
+      Hit* subHit = *it;
+      double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(subHit, track);
       if(distanceInTube > 0)
-        energyDepPerTubePerDistance << (hit->signalHeight() / distanceInTube);
+        energyDepPerTubePerDistance << (subHit->signalHeight() / distanceInTube);
     }
   }
 
@@ -85,7 +92,7 @@ void TRDEnergyDepositionOverMomentumPlot::processEvent(const QVector<Hit*>& hits
   meanEnergyDepPerTubePerDistance /= energyDepPerTubePerDistance.size();
 
   //qDebug() << "mean of " << energyDepPerTubePerDistance << " is " <<  meanEnergyDepPerTubePerDistance;
-  histogram()->Fill(p, meanEnergyDepPerTubePerDistance);
+  histogram()->Fill(rigidity, meanEnergyDepPerTubePerDistance);
 }
 
 void TRDEnergyDepositionOverMomentumPlot::finalize()

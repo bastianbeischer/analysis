@@ -1,7 +1,6 @@
 #include "CenteredBrokenLine.hh"
 
 #include "CenteredBrokenLineMatrix.hh"
-#include "TrackInformation.hh"
 #include "Hit.hh"
 #include "Constants.hh"
 

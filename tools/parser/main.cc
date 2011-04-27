@@ -4,7 +4,6 @@
 #include <QRegExp>
 #include <QString>
 #include <QStringList>
-#include <QProcess>
 #include <QDebug>
 
 int main(int argc, char** argv)
@@ -21,7 +20,9 @@ int main(int argc, char** argv)
     output = argv[2];
   }
   else {
-    output = output.replace(QRegExp("\\..*$"), ".root");
+    QRegExp rx("\\.([^\\.]+)$");
+    rx.setMinimal(true);
+    output = output.replace(rx, ".root");
   }
 
   DataManager dm;

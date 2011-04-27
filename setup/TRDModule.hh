@@ -8,11 +8,11 @@ class TRDModule :
 {
   
 public:
-  explicit TRDModule(unsigned short detId);
+  explicit TRDModule(unsigned short detId, const Setup* setup);
   ~TRDModule();
   
 public:
-  QVector<Hit*> findClusters(); // these clusters have to be deleted by hand!
+  QVector<Hit*> findClusters(const QVector<Hit*>&); // these clusters have to be deleted by hand!
 
 };
 

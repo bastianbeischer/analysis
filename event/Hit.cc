@@ -11,7 +11,8 @@ Hit::Hit() :
   m_signalHeight(0.),
   m_position(TVector3()),
   m_counterPosition(TVector3()),
-  m_angle(0.)
+  m_angle(0.),
+  m_resolution(0.)
 {
 }
 
@@ -22,7 +23,8 @@ Hit::Hit(ModuleType typ, unsigned short detId, double signalHeight, TVector3 pos
   m_signalHeight(signalHeight),
   m_position(position),
   m_counterPosition(counterPosition),
-  m_angle(0.)
+  m_angle(0.),
+  m_resolution(0.)
 {
   calculateAngle();
 }
@@ -34,7 +36,8 @@ Hit::Hit(const Hit& other) :
   m_signalHeight(other.m_signalHeight),
   m_position(other.m_position),
   m_counterPosition(other.m_counterPosition),
-  m_angle(other.m_angle)
+  m_angle(other.m_angle),
+  m_resolution(other.m_resolution)
 {
 }
 
@@ -65,6 +68,13 @@ double Hit::resolutionEstimate() const
   if (m_type == trd)     return 6./sqrt(12);
   if (m_type == tof)     return 50./sqrt(12);
   return 0;
+}
+
+double Hit::resolution() const
+{
+  if (m_resolution == 0.)
+    return resolutionEstimate();
+  return m_resolution;
 }
 
 unsigned short Hit::device() const

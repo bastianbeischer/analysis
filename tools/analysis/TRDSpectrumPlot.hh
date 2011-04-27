@@ -15,12 +15,10 @@ public:
   TRDSpectrumPlot(AnalysisPlot::Topic, unsigned short, TRDSpectrumType, double lowerMomentum = -10, double upperMomentum = 10);
   ~TRDSpectrumPlot();
 
-  virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
+  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
   virtual void finalize();
   virtual void update();
   virtual void draw(TCanvas*);
-
-  TF1* landauFit(){return m_landauFit;}
 
 private:
   unsigned short m_id;

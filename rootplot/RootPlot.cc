@@ -6,7 +6,15 @@
 #include <TF1.h>
 
 RootPlot::RootPlot()
-{}
+  : m_title(QString())
+  , m_drawOption(UndefinedDrawOption)
+  , m_type(Undefined)
+  , m_drawn(false)
+  , m_latex(QVector<TLatex*>())
+  , m_legend(QVector<TLegend*>())
+  , m_function(QVector<TF1*>())
+{
+}
 
 RootPlot::~RootPlot()
 {
@@ -70,4 +78,34 @@ TF1* RootPlot::function(int i)
 {
   Q_ASSERT(0 <= i && i < m_function.size());
   return m_function[i];
+}
+
+QString RootPlot::drawOption(DrawOption option)
+{
+  switch (option) {
+    case BLANK: return "";
+    case COLZ: return "COL Z";
+    case SCAT: return "SCAT";
+    case CONT4Z: return "CONT4 Z";
+    case LEGO: return "LEGO";
+    case LEGO2: return "LEGO2";
+    case SURF1: return "SURF1";
+    case COLZTEXT: return "COL Z TEXT";
+    case AP: return "AP";
+    case AC: return "AC";
+    case ALP: return "ALP";
+    case ACP: return "ACP";
+    default: return QString();
+  }
+  return QString();
+}
+  
+RootPlot::DrawOption RootPlot::drawOption()
+{
+  return m_drawOption;
+}
+  
+void RootPlot::setDrawOption(DrawOption option)
+{
+  m_drawOption = option;
 }

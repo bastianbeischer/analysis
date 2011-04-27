@@ -1,8 +1,10 @@
 #include "TOFEfficiencyPlot.hh"
 #include "BrokenLine.hh"
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
+#include "Particle.hh"
+#include "Track.hh"
 #include "TOFCluster.hh"
 #include "TOFSipmHit.hh"
 #include "Constants.hh"
@@ -26,10 +28,9 @@ TOFEfficiencyPlot::TOFEfficiencyPlot(unsigned short id)
     20, -200, 200, 10, -25, 25);
   TH2D* histogram = new TH2D(qPrintable(title()), "",
     20, -200, 200, 10, -25, 25);
-  histogram->GetXaxis()->SetTitle("y_{tracker} / mm");
-  histogram->GetYaxis()->SetTitle("x_{tracker} / mm");
-  histogram->GetZaxis()->SetTitle("efficiency");
-  setHistogram(histogram);
+  setAxisTitle("y_{tracker} / mm", "x_{tracker} / mm", "efficiency");
+  setDrawOption(LEGO2);
+  addHistogram(histogram);
 }
 
 TOFEfficiencyPlot::~TOFEfficiencyPlot()
@@ -37,17 +38,21 @@ TOFEfficiencyPlot::~TOFEfficiencyPlot()
   delete m_normalizationHistogram;
 }
 
-void TOFEfficiencyPlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void TOFEfficiencyPlot::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
-  foreach(Hit* cluster, clusters) {
+  const QVector<Hit*>::const_iterator endIt = clusters.end();
+  for (QVector<Hit*>::const_iterator it = clusters.begin(); it != endIt; ++it) {
+    Hit* cluster = *it;
     if (cluster->type() == Hit::tof && (m_id & 0xFFFC) == cluster->detId()) {
       TOFCluster* tofCluster= static_cast<TOFCluster*>(cluster);
       double x = track->x(cluster->position().z()) - cluster->position().x();
@@ -64,12 +69,6 @@ void TOFEfficiencyPlot::processEvent(const QVector<Hit*>& clusters, Track* track
   }
 }
 
-void TOFEfficiencyPlot::draw(TCanvas* canvas)
-{
-  H2DPlot::draw(canvas);
-  histogram()->Draw("lego2");
-}
-
 void TOFEfficiencyPlot::update()
 {
   ++m_updateCounter;
@@ -81,6 +80,6 @@ void TOFEfficiencyPlot::update()
 
 void TOFEfficiencyPlot::finalize()
 {
-  histogram()->GetZaxis()->SetRangeUser(-0.25, 1.25);
+  zAxis()->SetRangeUser(-0.25, 1.25);
   histogram()->Divide(m_normalizationHistogram);
 }

@@ -20,6 +20,9 @@ public:
   virtual void       processHits();
 
 public:
+  double resolutionEstimate() const;
+  
+public:
   void               addHit(Hit* hit) {m_hits.push_back(hit);}
   std::vector<Hit*>& hits() {return m_hits;}
 

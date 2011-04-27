@@ -7,11 +7,11 @@
 #include "Layer.hh"
 #include "CenteredBrokenLine.hh"
 #include "DataChain.hh"
-#include "TrackInformation.hh"
 #include "TrackFinding.hh"
 #include "Manager.hh"
 #include "Setup.hh"
 #include "Corrections.hh"
+#include "AnalysisProcessor.hh"
 
 #include "millepede.h"
 
@@ -19,16 +19,14 @@
 
 DataInterface::DataInterface() :
   m_chain(new DataChain),
-  m_trackFinding(new TrackFinding),
-  m_corrections(new Corrections())
+  m_processor(new AnalysisProcessor)
 {
+  m_processor->setTrackType(Track::CenteredBrokenLine);
 }
 
 DataInterface::~DataInterface()
 {
   delete m_chain;
-  delete m_trackFinding;
-  delete m_corrections;
 }
 
 void DataInterface::addFiles(const char* listName)
@@ -38,6 +36,9 @@ void DataInterface::addFiles(const char* listName)
 
 void DataInterface::process(AlignmentMatrix* matrix)
 {
+  m_processor->clearDestinations();
+  m_processor->addDestination(matrix);
+
   unsigned int nEntries = m_chain->nEntries();
   std::cout << std::endl;
   std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
@@ -49,38 +50,10 @@ void DataInterface::process(AlignmentMatrix* matrix)
 
   for (unsigned int i = 0; i < nEntries; i++) {
     SimpleEvent* event = m_chain->event(i);
+    m_processor->process(event);
+    delete event;
+    FITLOC();
     
-    // retrieve data
-    QVector<Hit*> clusters;
-    QVector<Hit*> hits = QVector<Hit*>::fromStdVector(event->hits());
-    if (event->contentType() == SimpleEvent::Clusters)
-      clusters = hits;
-    else
-      clusters = Setup::instance()->generateClusters(hits);
-
-    // corrections (previous alignment, time shift, ...)
-    m_corrections->preFitCorrections(clusters);
-
-    // track finding
-    QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
-
-    // fit in millepede
-    CenteredBrokenLine track;
-    if (track.fit(trackClusters)) {
-      m_corrections->postFitCorrections(&track);
-      track.process();
-      TrackInformation::Flags flags = track.information()->flags();
-      if ( (flags & TrackInformation::AllTrackerLayers) &&
-          !(flags & TrackInformation::MagnetCollision) ) {
-        matrix->fillMatrixFromTrack(&track);
-        FITLOC();
-      }
-    }
-    
-    // delete clusters if necessary
-    if (event->contentType() == SimpleEvent::RawData)
-      qDeleteAll(clusters);
-
     if ( i > iFactors*nEntries/100. ) {
       std::cout << "#" << std::flush;
       iFactors++;

@@ -3,8 +3,9 @@
 #include <TLatex.h>
 #include <TH1D.h>
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
+#include "Particle.hh"
 #include "Track.hh"
 
 Chi2PerNdfPlot::Chi2PerNdfPlot() :
@@ -17,8 +18,7 @@ Chi2PerNdfPlot::Chi2PerNdfPlot() :
   double x1 = 10.;
 
   TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, x0, x1);
-  histogram->GetXaxis()->SetTitle("#chi^{2} / ndf");
-  histogram->GetYaxis()->SetTitle("entries");
+  setAxisTitle("#chi^{2} / ndf", "");
   addHistogram(histogram);
 
   addLatex(RootPlot::newLatex(.55, .85));
@@ -29,14 +29,19 @@ Chi2PerNdfPlot::~Chi2PerNdfPlot()
 {
 }
 
-void Chi2PerNdfPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent* /*event*/)
+void Chi2PerNdfPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* /*event*/)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if(!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
+    return;
+
+  if (particle->type() != Particle::Helium)
     return;
 
   histogram()->Fill(track->chi2() / track->ndf());

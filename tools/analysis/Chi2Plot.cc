@@ -5,8 +5,9 @@
 #include <TH1D.h>
 #include <TMath.h>
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
+#include "Particle.hh"
 #include "Track.hh"
 
 double chisquare(double* x, double* p)
@@ -29,8 +30,7 @@ Chi2Plot::Chi2Plot(unsigned short ndf) :
   double x1 = 100.;
 
   TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, x0, x1);
-  histogram->GetXaxis()->SetTitle("#chi^{2}");
-  histogram->GetYaxis()->SetTitle("entries");
+  setAxisTitle("#chi^{2}", "");
   addHistogram(histogram);
 
   TF1* chi2function = new TF1("chi2function", chisquare, x0, x1, 2);
@@ -48,14 +48,16 @@ Chi2Plot::~Chi2Plot()
 {
 }
 
-void Chi2Plot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent* /*event*/)
+void Chi2Plot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* /*event*/)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if(!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   if (track->ndf() == m_ndf)
@@ -71,5 +73,5 @@ void Chi2Plot::update()
 void Chi2Plot::finalize()
 {
   histogram()->Scale(1./histogram()->Integral("WIDTH"));
-  histogram()->GetYaxis()->SetRangeUser(0, 0.1);
+  yAxis()->SetRangeUser(0, 0.1);
 }

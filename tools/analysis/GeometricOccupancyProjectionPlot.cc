@@ -1,7 +1,8 @@
 #include "GeometricOccupancyProjectionPlot.hh"
+#include "Particle.hh"
 #include "Track.hh"
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
 
 #include <TH1.h>
@@ -16,21 +17,23 @@ GeometricOccupancyProjectionPlot::GeometricOccupancyProjectionPlot(double zPosit
 {
   setTitle(QString("occupancy projection %1").arg(zPosition));
   TH1D* histogram = new TH1D(qPrintable(title()), "", 240, -120, 120);
-  histogram->GetXaxis()->SetTitle("x / mm");
+  setAxisTitle("x / mm", "");
   addHistogram(histogram);
 }
 
 GeometricOccupancyProjectionPlot::~GeometricOccupancyProjectionPlot()
 {}
 
-void GeometricOccupancyProjectionPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
+void GeometricOccupancyProjectionPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   histogram()->Fill(track->x(m_zPosition));

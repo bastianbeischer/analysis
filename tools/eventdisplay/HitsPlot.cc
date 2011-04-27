@@ -2,10 +2,13 @@
 
 #include "Hit.hh"
 #include "TOFSipmHit.hh"
+#include "Particle.hh"
 #include "Track.hh"
 #include "BrokenLine.hh"
 #include "CenteredBrokenLine.hh"
 #include "StraightLine.hh"
+#include "SimpleEvent.hh"
+#include "MCSimpleEventParticle.hh"
 #include "TOFCluster.hh"
 #include "DetectorElement.hh"
 #include "Setup.hh"
@@ -13,6 +16,8 @@
 #include <TCanvas.h>
 #include <TList.h>
 #include <TLine.h>
+#include <TVector3.h>
+#include <TGraph.h>
 #include <TLatex.h>
 #include <TH2D.h>
 #include <TBox.h>
@@ -26,6 +31,7 @@
 
 HitsPlot::HitsPlot()
   : PerdaixDisplay()
+  , EventDestination()
   , m_fitInfo(0)
 {
 }
@@ -33,6 +39,9 @@ HitsPlot::HitsPlot()
 HitsPlot::~HitsPlot()
 {
   clearHits();
+
+  qDeleteAll(m_trajectoriesXZ);
+  qDeleteAll(m_trajectoriesYZ);
 }
 
 void HitsPlot::clearHits()
@@ -47,9 +56,10 @@ void HitsPlot::clearHits()
   m_fitInfo = 0;
 }
 
-void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* track)
+void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
-  canvas->cd();
+  const Track* track = particle->track();
+
   clearHits();
 
   TPaletteAxis* palette = (TPaletteAxis*) histogram()->GetListOfFunctions()->FindObject("palette");
@@ -60,7 +70,7 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
 
     double y0 = 0., slopeY = 0.;
     if (track->type() == Track::StraightLine) {
-      StraightLine* straightLine = static_cast<StraightLine*>(track);
+      const StraightLine* straightLine = static_cast<const StraightLine*>(track);
       double x0 = straightLine->x0();
       double slopeX = straightLine->slopeX();
       double x_min = x0 + z_min * slopeX;
@@ -82,7 +92,7 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
 
       // lower line
       if (track->type() == Track::BrokenLine) {
-        BrokenLine* brokenLine = static_cast<BrokenLine*>(track);
+        const BrokenLine* brokenLine = static_cast<const BrokenLine*>(track);
         zIntersection = brokenLine->zIntersection();
         x0 = brokenLine->lowerX0();
         slopeX = brokenLine->lowerSlopeX();
@@ -90,7 +100,7 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
         slopeY = brokenLine->slopeY();
       }
       else if (track->type() == Track::CenteredBrokenLine) {
-        CenteredBrokenLine* centeredBrokenLine = static_cast<CenteredBrokenLine*>(track);
+        const CenteredBrokenLine* centeredBrokenLine = static_cast<const CenteredBrokenLine*>(track);
         zIntersection = centeredBrokenLine->zIntersection();
         x0 = centeredBrokenLine->x0();
         slopeX = centeredBrokenLine->lowerSlopeX();
@@ -107,13 +117,13 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
 
       // upper line
       if (track->type() == Track::BrokenLine) {
-        BrokenLine* brokenLine = static_cast<BrokenLine*>(track);
+        const BrokenLine* brokenLine = static_cast<const BrokenLine*>(track);
         zIntersection = brokenLine->zIntersection();
         x0 = brokenLine->upperX0();
         slopeX = brokenLine->upperSlopeX();
       }
       else if (track->type() == Track::CenteredBrokenLine) {
-        CenteredBrokenLine* centeredBrokenLine = static_cast<CenteredBrokenLine*>(track);
+        const CenteredBrokenLine* centeredBrokenLine = static_cast<const CenteredBrokenLine*>(track);
         zIntersection = centeredBrokenLine->zIntersection();
         x0 = centeredBrokenLine->x0();
         slopeX = centeredBrokenLine->upperSlopeX();
@@ -232,6 +242,58 @@ void HitsPlot::drawEvent(TCanvas* canvas, const QVector<Hit*>& hits, Track* trac
     m_hits.push_back(box);
   }
 
-  canvas->Modified();
-  canvas->Update();
+  if( event->contentType() == SimpleEvent::MonteCarlo){
+
+    qDeleteAll(m_trajectoriesXZ);
+    m_trajectoriesXZ.clear();
+
+    qDeleteAll(m_trajectoriesYZ);
+    m_trajectoriesYZ.clear();
+
+
+    //read all particles:
+    const MCEventInformation* mcInfo = event->MCInformation();
+
+    QList<const MCSimpleEventParticle*> allMCParticles;
+    //qDebug("draw traj: add primary");
+    allMCParticles << mcInfo->primary();
+    //qDebug("draw traj: added primary");
+    //qDebug("draw traj: adding %i secondaries",  mcInfo->secondaries().size());
+    for (unsigned int i = 0; i < mcInfo->secondaries().size(); ++i)
+    {
+      //qDebug("draw traj: add a secondary");
+      allMCParticles << mcInfo->secondaries().at(i) ;
+      //qDebug("draw traj: added a secondary");
+    }
+
+    //now draw all trajectories
+    for (int i = 0; i < allMCParticles.size(); ++i)
+    {
+      const MCSimpleEventParticle* particle = allMCParticles.at(i);
+      const std::vector<TVector3>& trajectory = particle->trajectory;
+      QVector<double> x,y,z;
+      for (unsigned int j = 0; j < trajectory.size(); ++j){
+        double zCoord = trajectory.at(j).Z();
+        //if (zCoord < 300 && zCoord > -600) {
+          x << trajectory.at(j).X();
+          y << 0.5*trajectory.at(j).Y();
+          z << zCoord;
+        //}
+      }
+
+      TGraph* traj = new TGraph(x.size(),&*x.begin(), &*z.begin());
+      traj->SetLineColor(8);
+      traj->SetLineStyle(5);
+      traj->Draw("same L");
+      m_trajectoriesXZ.push_back(traj);
+
+      traj = new TGraph(y.size(),&*y.begin(), &*z.begin());
+      traj->SetLineColor(46);
+      traj->SetLineStyle(5);
+      traj->Draw("same L");
+      m_trajectoriesYZ.push_back(traj);
+    }
+
+  }
+
 }

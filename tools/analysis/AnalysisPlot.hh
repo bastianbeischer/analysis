@@ -2,25 +2,26 @@
 #define AnalysisPlot_hh
 
 #include "RootPlot.hh"
+#include "EventDestination.hh"
 
 #include <QMutex>
 
 class Hit;
-class Track;
+class Particle;
 class SimpleEvent;
 
-class AnalysisPlot : virtual public RootPlot {
+class AnalysisPlot : virtual public RootPlot, public EventDestination {
 public:
   enum Topic {TopicBegin, SignalHeightTracker = TopicBegin, SignalHeightTRD,
               ClusterShapeTracker, ClusterShapeTRD, TimeOverThreshold, Tracking, Occupancy,
               ResidualsTracker, ResidualsTRD, MomentumReconstruction, EfficiencyTOF,
               ResolutionTOF, CalibrationTOF, MiscellaneousTracker, MiscellaneousTRD,
-              MiscellaneousTOF, TopicEnd};
+              MiscellaneousTOF, SlowControl, MonteCarloTracker, MonteCarloTRD, MonteCarloTOF,
+              MonteCarlo, Testbeam, TopicEnd};
 public:
   AnalysisPlot(Topic);
   virtual ~AnalysisPlot();
   Topic topic() const;
-  virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0) = 0;
 protected:
   QMutex m_mutex;
 private:

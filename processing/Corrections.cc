@@ -1,16 +1,18 @@
 #include "Corrections.hh"
 
+#include "SimpleEvent.hh"
 #include "Hit.hh"
 #include "TOFSipmHit.hh"
 #include "TOFCluster.hh"
 #include "Setup.hh"
 #include "DetectorElement.hh"
 #include "TOFBar.hh"
-#include "Track.hh"
-#include "TrackInformation.hh"
+#include "Particle.hh"
 #include "Constants.hh"
+#include "SensorTypes.hh"
+#include "SimpleEvent.hh"
 
-#include <QProcess>
+#include <QStringList>
 #include <QSettings>
 #include <QDebug>
 
@@ -18,23 +20,21 @@
 #include <cmath>
 
 Corrections::Corrections(Flags flags)
-  : m_trdSettings(0)
+  : m_tofTotScalingPrefix("TimeOverThresholdScaling/")
+  , m_trdSettings(0)
   , m_tofSettings(0)
   , m_flags(flags)
 {
-  QStringList envVariables = QProcess::systemEnvironment();
-  QStringList filteredVars = envVariables.filter(QRegExp("^PERDAIXANA_PATH=*"));
-  QString path = "";
-  if (filteredVars.size() != 0) {
-    QString entry = filteredVars.first();
-    path = entry.split("=").at(1);
-    path += "/conf/";
-  }
-  else {
+  char* env = getenv("PERDAIXANA_PATH");
+  if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
+  QString path(env);
+  path += "/conf/";
   m_trdSettings = new QSettings(path + "TRDCorrections.conf", QSettings::IniFormat);
   m_tofSettings = new QSettings(path + "TOFCorrections.conf", QSettings::IniFormat);
+  
+  loadTotScaling();
 }
 
 Corrections::~Corrections()
@@ -43,19 +43,26 @@ Corrections::~Corrections()
   delete m_tofSettings;
 }
 
-void Corrections::preFitCorrections(QVector<Hit*>& hits)
+void Corrections::preFitCorrections(SimpleEvent* event)
 {
-  foreach(Hit* hit, hits) {
+  const std::vector<Hit*>::const_iterator hitsEnd = event->hits().end();
+  for (std::vector<Hit*>::const_iterator it = event->hits().begin(); it != hitsEnd; ++it) {
+    Hit* hit = *it;
     if (m_flags & Alignment) alignment(hit);
     if (m_flags & TimeShifts) timeShift(hit);
     if (m_flags & TrdMopv) trdMopv(hit);
-    if (m_flags & TofTimeOverThreshold) tofTimeOverThreshold(hit);
+    if (m_flags & TofTimeOverThreshold) {
+      tofTot(hit, event);
+    }
   }
 }
 
-void Corrections::postFitCorrections(Track* track)
+void Corrections::postFitCorrections(Particle* particle)
 {
-  if (m_flags & PhotonTravelTime) photonTravelTime(track);
+  for (int i = 0; i < 5; i++) {
+    if (m_flags & PhotonTravelTime) photonTravelTime(particle); // multiple scattering needs "beta"
+    if (m_flags & MultipleScattering) multipleScattering(particle); // should be done first
+  }
 }
 
 void Corrections::alignment(Hit* hit)
@@ -82,7 +89,27 @@ void Corrections::timeShift(Hit* hit)
       TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(*it);
       DetectorElement* element = setup->element(cluster->detId() - cluster->channel());
       double timeShift = static_cast<TOFBar*>(element)->timeShift((*it)->channel());
-      tofHit->applyTimeShift(timeShift);
+      
+      unsigned short id = element->id();
+      double barTimeShift = 0;
+      if (id == 0x8000 || id == 0x8010) {
+        barTimeShift = 0;
+      } else if (id == 0x8004 || id == 0x8014) {
+        barTimeShift = -.424683288999999964;
+      } else if (id == 0x8008 || id == 0x8018) {
+        barTimeShift = -.154683288999999974;
+      } else if (id == 0x800c || id == 0x801c) {
+        barTimeShift = -0.324999999999999872e-1;
+      } else if (id == 0x8020 || id == 0x8030) {
+        barTimeShift = -.120693492999999999;
+      } else if (id == 0x8024 || id == 0x8034) {
+        barTimeShift = 0.303989795999999979;
+      } else if (id == 0x8028 || id == 0x8038) {
+        barTimeShift = -.343510203999999986;
+      } else if (id == 0x802c || id == 0x803c) {
+        barTimeShift = 0.269306507000000028;
+      }
+      tofHit->applyTimeShift(timeShift + barTimeShift);
     }
     cluster->processHits();
   }
@@ -112,8 +139,19 @@ void Corrections::trdMopv(Hit* hit)
   }
 }
 
-void Corrections::tofTimeOverThreshold(Hit*)
+void Corrections::tofTot(Hit* hit, SimpleEvent* event)
 {
+  if (hit->type() == Hit::tof) {
+    TOFCluster* cluster = static_cast<TOFCluster*> (hit);
+    std::vector<Hit*>::const_iterator it = cluster->hits().begin();
+    std::vector<Hit*>::const_iterator itEnd = cluster->hits().end();
+    for (; it != itEnd; ++it) {
+      double temperature = event->sensorData(Setup::instance()->sensorForId((*it)->detId()));
+      double scalingFactor = totScalingFactor((*it)->detId(), temperature);
+      TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(*it);
+      tofSipmHit->setTimeOverThreshold(tofSipmHit->timeOverThreshold() * scalingFactor);
+    }
+  }
 }
 
 double Corrections::trdScalingFactor(unsigned int channel)
@@ -140,35 +178,70 @@ double Corrections::photonTravelTime(double bending, double nonBending, double* 
 
 double Corrections::photonTravelTimeDifference(double bending, double nonBending, double* p)
 {
-  double p1[numberOfPhotonTravelTimeParameters];
-  double p2[numberOfPhotonTravelTimeParameters];
+  double p1[nPhotonTravelTimeParameters];
+  double p2[nPhotonTravelTimeParameters];
   p1[0] = p2[0] = p[1];
-  for (int i = 1; i < numberOfPhotonTravelTimeParameters; ++i) {
+  for (int i = 1; i < nPhotonTravelTimeParameters; ++i) {
     p1[i] = p[i+1];
-    p2[i] = p[i+numberOfPhotonTravelTimeParameters];
+    p2[i] = p[i+nPhotonTravelTimeParameters];
   }
   return p[0] + photonTravelTime(bending, nonBending, p1) - photonTravelTime(bending, -nonBending, p2);
 }
 
-void Corrections::photonTravelTime(Track* track)
+void Corrections::multipleScattering(Particle* particle)
 {
+  Track* track = particle->track();
+
+  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+    Hit* hit = *it;
+    if (hit->type() == Hit::tracker) {
+      double p = track->rigidity();
+      double sipmRes = hit->resolutionEstimate();
+      double beta = particle->beta();
+      // double m = particle->mass();
+      // double beta = p / sqrt(p*p + m*m);
+      double z = hit->position().z();
+      z = round(z);
+      double parameter = 0;
+      if (qAbs(z) == 236) parameter = 11e-3;
+      else if (qAbs(z) == 218) parameter = 7.4e-3;
+      else if (qAbs(z) == 69) parameter = 35e-3;
+      else if (qAbs(z) == 51) parameter = 31e-3;
+
+      double mscPart = 1/(p*beta) * parameter;
+      double newRes = sqrt(sipmRes*sipmRes + mscPart*mscPart);
+      hit->setResolution(newRes);
+    }
+  }
+  track->fit(track->hits());
+}
+
+void Corrections::photonTravelTime(Particle* particle)
+{
+  Track* track = particle->track();
+
   if (!track || !track->fitGood())
     return;
-  foreach (Hit* cluster, track->hits()) {
+
+  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+    Hit* cluster = *it;
     if (!strcmp(cluster->ClassName(), "TOFCluster")) {
       TOFCluster* tofCluster = static_cast<TOFCluster*>(cluster);
       int id = tofCluster->detId();
-      double p[numberOfPhotonTravelTimeDifferenceParameters];
-      for (int i = 0; i < numberOfPhotonTravelTimeDifferenceParameters; ++i) {
-        p[i] = m_tofSettings->value(QString("PhotonTravelTimeConstants/%1_c%2").arg(id, 0, 16).arg(i)).toDouble();
+      double p[nPhotonTravelTimeDifferenceParameters];
+      QList<QVariant> plist = m_tofSettings->value(QString("PhotonTravelTimeConstants/%1").arg(id, 0, 16)).toList();
+      for (int i = 0; i < nPhotonTravelTimeDifferenceParameters; ++i) {
+        p[i] = plist[i].toDouble();
         //qDebug() << p[i];
       }
-      double p1[numberOfPhotonTravelTimeParameters];
-      double p2[numberOfPhotonTravelTimeParameters];
+      double p1[nPhotonTravelTimeParameters];
+      double p2[nPhotonTravelTimeParameters];
       p1[0] = p2[0] = p[1];
-      for (int i = 1; i < numberOfPhotonTravelTimeParameters; ++i) {
+      for (int i = 1; i < nPhotonTravelTimeParameters; ++i) {
         p1[i] = p[i+1];
-        p2[i] = p[i+numberOfPhotonTravelTimeParameters];
+        p2[i] = p[i+nPhotonTravelTimeParameters];
         //qDebug() << i << p1[i] << p2[i];
       }
       for (unsigned int i = 0; i < tofCluster->hits().size(); ++i) {
@@ -187,3 +260,39 @@ void Corrections::photonTravelTime(Track* track)
   }
 }
 
+void Corrections::setTotScaling(const unsigned int tofId, const QList<QVariant> parameter)
+{
+  m_tofSettings->setValue(m_tofTotScalingPrefix + QString::number(tofId, 16), parameter);
+  m_tofSettings->sync();
+}
+
+void Corrections::loadTotScaling()
+{
+  QString prefix = m_tofTotScalingPrefix;
+  prefix.remove("/");
+  if (!m_tofSettings->childGroups().contains(prefix)) {
+    const QString& fileName =  m_tofSettings->fileName();
+    qDebug() << QString("ERROR: %1 does not contain any %2").arg(fileName, prefix);
+    Q_ASSERT(false);
+  }
+  for (unsigned int tofId = 0x8000; tofId <= 0x803f; ++tofId) {
+    QString key = QString(m_tofTotScalingPrefix + "%1").arg(tofId, 0, 16);
+    QList<QVariant> parameters = m_tofSettings->value(key).toList();
+    for (int parameter = 0; parameter < parameters.size(); ++parameter) {
+      m_totScalings[tofChannel(tofId)][parameter] = parameters[parameter].toDouble();
+    }
+  }
+}
+
+double Corrections::totScalingFactor(const unsigned int tofId, const double temperature)
+{
+  double value = m_totScalings[tofChannel(tofId)][0] + m_totScalings[tofChannel(tofId)][1] * temperature;
+  return (value == 0) ? 0 : Constants::idealTot / value;
+  //TODO: some kind of information if the temperature value is valid for this scaling
+}
+
+unsigned int Corrections::tofChannel(unsigned int tofId)
+{
+  const unsigned int firstTofId = 0x8000;
+  return tofId - firstTofId;
+}

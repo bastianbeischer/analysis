@@ -1,8 +1,10 @@
 #include "BendingAnglePositionPlot.hh"
 #include "BrokenLine.hh"
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
+#include "Particle.hh"
+#include "Track.hh"
 
 #include <TH2.h>
 #include <TAxis.h>
@@ -18,12 +20,10 @@ BendingAnglePositionPlot::BendingAnglePositionPlot(double cut)
 {
   setTitle(QString("position of tracks with abs(alpha) > %1 rad").arg(cut));
   TH2D* histogram = new TH2D(qPrintable(title()), "", 30, -250, 250, 24, -120, 120);
-  histogram->GetXaxis()->SetTitle("y / mm");
-  histogram->GetYaxis()->SetTitle("x / mm");
-  setHistogram(histogram);
+  setAxisTitle("y / mm", "x / mm", "");
+  addHistogram(histogram);
   m_normHisto = new TH2D(qPrintable(title()+"_all"), "", 30, -250, 250, 24, -120, 120);
-  m_normHisto->GetXaxis()->SetTitle("y / mm");
-  m_normHisto->GetYaxis()->SetTitle("x / mm");
+  setDrawOption(LEGO);
 }
 
 BendingAnglePositionPlot::~BendingAnglePositionPlot()
@@ -31,20 +31,16 @@ BendingAnglePositionPlot::~BendingAnglePositionPlot()
   delete m_normHisto;
 }
 
-void BendingAnglePositionPlot::draw(TCanvas* canvas)
+void BendingAnglePositionPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
-  canvas->cd();
-  histogram()->Draw("lego");
-}
+  const Track* track = particle->track();
 
-void BendingAnglePositionPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
-{
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   double alpha = track->bendingAngle();

@@ -67,7 +67,9 @@ QVector<Hit*> TrackFinding::findTrack(const QVector<Hit*>& hits)
   straightLine.setX0(offsetMax);
 
   QVector<Hit*> hitsForFit;
-  foreach(Hit* hit, hits) {
+  const QVector<Hit*>::const_iterator hitsEnd = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != hitsEnd; ++it) {
+    Hit* hit = *it;
     if ( (hit->type() == Hit::tracker && isInCorridor(&straightLine, hit, 250)) ||
          (hit->type() == Hit::trd && isInCorridor(&straightLine, hit, 10)) )
       hitsForFit.push_back(hit);
@@ -78,7 +80,9 @@ QVector<Hit*> TrackFinding::findTrack(const QVector<Hit*>& hits)
 
   CenteredBrokenLine cbl;
   if (cbl.fit(hitsForFit)) {
-    foreach(Hit* hit, hits) {
+    const QVector<Hit*>::const_iterator hitsEnd = hits.end();
+    for (QVector<Hit*>::const_iterator it = hits.begin(); it != hitsEnd; ++it) {
+      Hit* hit = *it;
       double maxPull = 0.;
       if (hit->type() == Hit::tracker)
         maxPull = m_trackerPull;
@@ -99,7 +103,7 @@ QVector<Hit*> TrackFinding::findTrack(const QVector<Hit*>& hits)
 }
 
 
-bool TrackFinding::isInCorridor(Track* track, Hit* hit, double maxPull)
+bool TrackFinding::isInCorridor(const Track* track, Hit* hit, double maxPull)
 {
   Q_ASSERT(track);
 

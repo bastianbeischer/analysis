@@ -2,8 +2,9 @@
 
 #include <TH1D.h>
 
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "SimpleEvent.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
@@ -27,8 +28,9 @@ TotalEnergyDepositionPlot::~TotalEnergyDepositionPlot()
 {
 }
 
-void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent* event)
+void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
 {
+  //const Track* track = particle->track();
 
   /*
   //check if everything worked and a track has been fit
@@ -39,7 +41,7 @@ void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, Track* track,
     return;
 
   //check if track was inside of magnet
-  if (!(track->information()->flags() & TrackInformation::InsideMagnet))
+  if (!(particle->information()->flags() & ParticleInformation::InsideMagnet))
     return;
 
 
@@ -52,7 +54,7 @@ void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, Track* track,
     */
 
 
-  if (track->beta() < 1.5 || track->beta() < 0)
+  if (particle->beta() < 1.5 || particle->beta() < 0)
     return;
 
   double signalSum = 0;
@@ -60,7 +62,10 @@ void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, Track* track,
 
   int trdCluster = 0;
 
-  foreach(Hit* clusterHit, event->hits()){
+  std::vector<Hit*>& eventHits = event->hits();
+  std::vector<Hit*>::const_iterator endIt = eventHits.end();
+  for (std::vector<Hit*>::const_iterator it = eventHits.begin(); it != endIt; ++it) {
+    Hit* clusterHit = *it;
     Cluster* cluster = static_cast<Cluster*>(clusterHit);
     if (cluster->type() == Hit::trd){
       signalSum += cluster->signalHeight();

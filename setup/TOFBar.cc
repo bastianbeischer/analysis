@@ -6,30 +6,40 @@
 
 #include <QString>
 
-TOFBar::TOFBar(unsigned short detId)
-  : DetectorElement(tof, detId, 4)
+TOFBar::TOFBar(unsigned short detId, const Setup* setup)
+  : DetectorElement(tof, detId, 4, setup)
 {
   m_timeShifts = QVector<double>(m_nChannels, 0);
   for(unsigned short channel = 0; channel < m_nChannels; ++channel)
-    m_timeShifts[channel] = Setup::instance()->configFileTimeShift(m_id | channel);
+    m_timeShifts[channel] = setup->configFileTimeShift(m_id | channel);
 }
 
 TOFBar::~TOFBar()
 {
 }
 
-QVector<Hit*> TOFBar::findClusters()
+QVector<Hit*> TOFBar::findClusters(const QVector<Hit*>& rawhits)
 {
   QVector<Hit*> clusters;
-  if(m_hits.size() >= 3) {
+
+  // count valid hits (non 0-pointers)
+  int validHits = 0;
+  foreach(Hit* hit, rawhits)
+    if (hit) ++validHits;
+
+  // create cluster if we have at least 3 valid hits.
+  if(validHits >= 3) {
     TOFCluster* tofCluster = new TOFCluster;
-    foreach(Hit* hit, m_hits) {
-      TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
-      tofCluster->addHit(new TOFSipmHit(*tofHit));
+    foreach(Hit* hit, rawhits) {
+      if (hit) {
+        TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
+        tofCluster->addHit(new TOFSipmHit(*tofHit));
+      }
     }
     tofCluster->processHits();
     clusters.push_back(tofCluster);
   }
+
   return clusters;
 }
 

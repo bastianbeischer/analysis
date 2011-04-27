@@ -129,14 +129,11 @@ void Strategy::fixDetector(unsigned short detId)
 void Strategy::fixLayer(unsigned short layerNumber)
 {
   Setup* setup = Setup::instance();
-  unsigned int i = 1;
-  Layer* layer = setup->firstLayer();
-  while(layer != 0 && i != layerNumber) {
-    i++;
-    layer = setup->nextLayer();
-  }
-  
-  std::cout << "fixing layer: " << i << " at " << layer->z() << " with detIds: ";
+  LayerIterator it = setup->firstLayer();
+  it += (layerNumber-1);
+  Layer* layer = *it;
+
+  std::cout << "fixing layer: " << layerNumber << " at " << layer->z() << " with detIds: ";
 
   foreach(DetectorElement* element, layer->elements()) {
     unsigned short detId = element->id();

@@ -2,9 +2,11 @@
 #include "BrokenLine.hh"
 #include "Constants.hh"
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
 #include "TOFCluster.hh"
+#include "Particle.hh"
+#include "Track.hh"
 
 #include <TH2.h>
 #include <TAxis.h>
@@ -26,7 +28,7 @@ BetaMomentumCorrelationPlot::BetaMomentumCorrelationPlot()
   : AnalysisPlot(AnalysisPlot::MomentumReconstruction)
   , H2DPlot()
 {
-  setTitle(QString("1 / beta vs momentum"));
+  setTitle(QString("beta vs momentum"));
   int nBinsX = 120;
   double xMin = -6;
   double xMax = 6;
@@ -34,9 +36,9 @@ BetaMomentumCorrelationPlot::BetaMomentumCorrelationPlot()
   double yMin = -10;
   double yMax = 10;
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, xMin, xMax, nBinsY, yMin, yMax);
-  histogram->GetXaxis()->SetTitle("R / GV");
-  histogram->GetYaxis()->SetTitle("1 / #beta");
-  setHistogram(histogram);
+  addHistogram(histogram);
+  setAxisTitle("R / GV", "1 / #beta", "");
+
   TF1* function = 0;
   TLegend* legend = new TLegend(.12, .72, .23, .88);
   legend->SetMargin(.7);
@@ -93,13 +95,22 @@ BetaMomentumCorrelationPlot::~BetaMomentumCorrelationPlot()
 {
 }
 
-void BetaMomentumCorrelationPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
+void BetaMomentumCorrelationPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & (TrackInformation::AllTrackerLayers | TrackInformation::InsideMagnet)))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & (ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet)))
     return;
-  histogram()->Fill(track->p(), 1./track->beta());
+  
+  if (!(flags & ParticleInformation::Chi2Good))
+    return;
+
+  // if (particle->type() != Particle::Helium)
+  //   return;
+
+  histogram()->Fill(track->rigidity(), 1./particle->beta());
 }

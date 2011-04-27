@@ -27,10 +27,8 @@ ClusterShapePlot::ClusterShapePlot(unsigned short id) :
   double x0 = -5.5;
   double x1 = 5.5;
   TH1D* histogram = new TH1D(qPrintable(title()),"", nBins, x0, x1);
-  histogram->GetXaxis()->SetTitle("strip no. relative to maximum");
-  histogram->GetYaxis()->SetTitle("mean amplitude");
+  setAxisTitle("strip no. relative to maximum", "mean amplitude");
   histogram->GetXaxis()->SetNdivisions(520);
-  histogram->GetYaxis()->SetTitleOffset(1.5);
   addHistogram(histogram);
 
   TH1D* normHist = new TH1D(qPrintable(title() + "_normHisto"), "", nBins, x0, x1);
@@ -56,10 +54,11 @@ ClusterShapePlot::~ClusterShapePlot()
   delete m_eventCountAxis;
 }
 
-void ClusterShapePlot::processEvent(const QVector<Hit*>& hits, Track*, SimpleEvent*)
+void ClusterShapePlot::processEvent(const QVector<Hit*>& hits, Particle*, SimpleEvent*)
 {
-  foreach(Hit* hit, hits) {
-    Cluster* cluster = static_cast<Cluster*>(hit);
+  const QVector<Hit*>::const_iterator endIt = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+    Cluster* cluster = static_cast<Cluster*>(*it);
     unsigned short element = cluster->detId() - cluster->channel();
     if (element == m_id) {
       std::vector<Hit*>& subHits = cluster->hits();

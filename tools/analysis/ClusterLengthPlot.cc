@@ -1,7 +1,8 @@
 #include "ClusterLengthPlot.hh"
 
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include <TH1D.h>
 #include <TLatex.h>
 
@@ -15,10 +16,8 @@ ClusterLengthPlot::ClusterLengthPlot(AnalysisPlot::Topic topic, unsigned short i
 {
   setTitle(QString("cluster length 0x%1").arg(m_id,0,16));
   TH1D* histogram = new TH1D(qPrintable(title()), "", 11, -0.5, 10.5);
-  histogram->GetXaxis()->SetTitle("cluster length");
-  histogram->GetYaxis()->SetTitle("entries");
+  setAxisTitle("cluster length", "");
   histogram->GetXaxis()->SetNdivisions(520);
-  histogram->GetYaxis()->SetTitleOffset(1.5);
   addHistogram(histogram);
 
   addLatex(RootPlot::newLatex(0.65, 0.75));
@@ -29,18 +28,21 @@ ClusterLengthPlot::~ClusterLengthPlot()
 {
 }
 
-void ClusterLengthPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
+void ClusterLengthPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if (!track)
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
-  foreach(Hit* hit, hits) {
-    Cluster* cluster = static_cast<Cluster*>(hit);
-    if (hit->detId() - hit->channel() == m_id)
+  const QVector<Hit*>::const_iterator endIt = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+    Cluster* cluster = static_cast<Cluster*>(*it);
+    if (cluster->detId() - cluster->channel() == m_id)
       histogram()->Fill(cluster->hits().size());
   }
 }

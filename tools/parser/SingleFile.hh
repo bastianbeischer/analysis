@@ -9,6 +9,7 @@ class DetectorID;
 class PERDaixFiberModule;
 class PERDaixTOFModule;
 class PERDaixTRDModule;
+class PERDaixPMTModule;
 class QString;
 class RawEvent;
 class RunFile;
@@ -23,29 +24,24 @@ public:
   ~SingleFile();
   
 public:
-  unsigned int    getNumberOfEvents()                                      const {return m_rawEvents.size();}
-  const RawEvent* getRawEvent(unsigned int eventNo)                        const {return m_rawEvents.at(eventNo);}
+  unsigned int    getNumberOfEvents() const;
+  const RawEvent* getNextRawEvent() const;
   Calibration*    getCalibrationForDetector(DetectorID* id, int whichCali) const;
   unsigned int    getStartTime() const;
   unsigned int    getStopTime() const;
 
 private:
   void init();
-  void cleanupLists();
   void calibrate();
   void open(QString fileName);
 
 private:
   RunFile*                      m_runFile;
 
-  QMap<quint16, quint16>        m_hpePairs;
-
-  QList<const RawEvent*>        m_calibrationEvents;
-  QList<const RawEvent*>        m_rawEvents;
-
   QList<PERDaixFiberModule*>    m_fiberModules;
   QList<PERDaixTRDModule*>      m_trdModules;
   QList<PERDaixTOFModule*>      m_tofModules;
+  QList<PERDaixPMTModule*>      m_pmtModules;
 
 };
 

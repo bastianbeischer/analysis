@@ -5,6 +5,7 @@
 #include "PERDaixFiberModule.h"
 #include "PERDaixTRDModule.h"
 #include "PERDaixTOFModule.h"
+#include "PERDaixPMTModule.h"
 #include "SimpleEvent.hh"
 
 #include <iostream>
@@ -24,7 +25,9 @@ SingleFile::SingleFile(QString fileName)
 SingleFile::~SingleFile()
 {
   delete m_runFile;
-  cleanupLists();
+  qDeleteAll(m_fiberModules);
+  qDeleteAll(m_trdModules);
+  qDeleteAll(m_tofModules);
 }
 
 void SingleFile::init()
@@ -32,36 +35,52 @@ void SingleFile::init()
   m_runFile = 0;
 
   // ugly hardcoded
-  m_hpePairs[0x6100]=0x7A00;
-  m_hpePairs[0x6400]=0x7F00;
-  m_hpePairs[0x6000]=0x7B00;
-  m_hpePairs[0x6200]=0x7900;
-  m_hpePairs[0x6500]=0x7E00;
-  m_hpePairs[0x6700]=0x7800;
-  m_hpePairs[0x6600]=0x7D00;
-  m_hpePairs[0x3300]=0x3000;
-  m_hpePairs[0x3700]=0x3100;
-  m_hpePairs[0x6300]=0x7C00;
+  QList< QPair<quint16, quint16> > hpePairs;
+  hpePairs.append(QPair<quint16,quint16>(0x6100,0x7A00));
+  hpePairs.append(QPair<quint16,quint16>(0x6400,0x7F00));
+  hpePairs.append(QPair<quint16,quint16>(0x6000,0x7B00));
+  hpePairs.append(QPair<quint16,quint16>(0x6200,0x7900));
+  hpePairs.append(QPair<quint16,quint16>(0x6500,0x7E00));
+  hpePairs.append(QPair<quint16,quint16>(0x6700,0x7800));
+  hpePairs.append(QPair<quint16,quint16>(0x6600,0x7D00));
+  hpePairs.append(QPair<quint16,quint16>(0x3300,0x3000));
+  hpePairs.append(QPair<quint16,quint16>(0x3700,0x3100));
+  hpePairs.append(QPair<quint16,quint16>(0x6300,0x7C00));
+  for (QList< QPair<quint16, quint16> >::iterator iter = hpePairs.begin(); iter != hpePairs.end(); iter++) {
+    quint16 value1 = iter->first;
+    quint16 value2 = iter->second;
+    DetectorID* id1 = DetectorID::Get(value1,DetectorID::TYPE_TRACKER_MODULE);
+    DetectorID* id2 = DetectorID::Get(value2,DetectorID::TYPE_TRACKER_MODULE);
+    m_fiberModules.push_back(new PERDaixFiberModule(id1,id2));
+  }
+
+  m_trdModules.push_back(new PERDaixTRDModule(DetectorID::Get(0x3200, DetectorID::TYPE_TRD_MODULE)));
+  m_trdModules.push_back(new PERDaixTRDModule(DetectorID::Get(0x3400, DetectorID::TYPE_TRD_MODULE)));
+  m_trdModules.push_back(new PERDaixTRDModule(DetectorID::Get(0x3500, DetectorID::TYPE_TRD_MODULE)));
+  m_trdModules.push_back(new PERDaixTRDModule(DetectorID::Get(0x3600, DetectorID::TYPE_TRD_MODULE)));
+
+  m_tofModules.push_back(new PERDaixTOFModule(DetectorID::Get(0x8000, DetectorID::TYPE_TOF_MODULE)));
+
+  m_pmtModules.push_back(new PERDaixPMTModule(DetectorID::Get(0x4000, DetectorID::TYPE_PMT_MODULE)));
 }
 
-void SingleFile::cleanupLists()
+unsigned int SingleFile::getNumberOfEvents() const
 {
-  foreach(const RawEvent* event, m_calibrationEvents) delete event;
-  foreach(const RawEvent* event, m_rawEvents)         delete event;
-  foreach(PERDaixFiberModule* module, m_fiberModules) delete module;
-  foreach(PERDaixTRDModule* module, m_trdModules)     delete module;
-  foreach(PERDaixTOFModule* module, m_tofModules)     delete module;
-  m_calibrationEvents.clear();
-  m_rawEvents.clear();
-  m_fiberModules.clear();
-  m_trdModules.clear();
-  m_tofModules.clear();
+  return m_runFile->GetNumberOfEvents() - m_runFile->GetNumberOfCalibrationEvents();
+}
+
+const RawEvent* SingleFile::getNextRawEvent() const
+{
+  return (const RawEvent*) m_runFile->ReadNextEvent();
 }
 
 void SingleFile::open(QString fileName)
 {
+  if (m_runFile) {
+    m_runFile->Close();
+    delete m_runFile;
+  }
   m_runFile = new RunFile(fileName, RunFile::MODE_READING);
-  //  m_runId = m_runFile->GetRunId();
   
   int nCalibrationEvents = m_runFile->GetNumberOfCalibrationEvents();
   int nEvents = m_runFile->GetNumberOfEvents() - nCalibrationEvents;
@@ -71,47 +90,14 @@ void SingleFile::open(QString fileName)
     return;
   }
 
-  const RawEvent* event = (const RawEvent*) m_runFile->ReadNextEvent();
-  
-  unsigned int i = 0;
-  while (event != NULL) {
-    if (i < m_runFile->GetNumberOfCalibrationEvents())
-      m_calibrationEvents.push_back(event);
-    else
-      m_rawEvents.push_back(event);
-    event = (RawEvent*) m_runFile->ReadNextEvent();
-    i++;
-  }
-
-  for (QMap<quint16, quint16>::iterator iter = m_hpePairs.begin(); iter != m_hpePairs.end(); iter++) {
-    quint16 value1 = iter.key();
-    quint16 value2 = iter.value();
-    DetectorID* id1 = DetectorID::Get(value1,DetectorID::TYPE_TRACKER_MODULE);
-    DetectorID* id2 = DetectorID::Get(value2,DetectorID::TYPE_TRACKER_MODULE);
-    m_fiberModules.push_back(new PERDaixFiberModule(id1,id2));
-  }
-
-  if (!m_rawEvents.size()) {
-      qDebug() << "m_rawEvents.size() == 0" << "SKIPPING FILE";
-      return;
-  }
-
-  Q_ASSERT(m_rawEvents.size());
-  foreach(DetectorID* id, m_rawEvents.first()->GetIDs()) {
-    if (id->IsTRD())
-      m_trdModules.push_back(new PERDaixTRDModule(id));
-    else if (id->IsTOF())
-      m_tofModules.push_back(new PERDaixTOFModule(id));
-  }
-  
   calibrate();
 }
 
 
 void SingleFile::calibrate()
 {
-  for (int i = 0; i < m_calibrationEvents.size(); i++) {
-    const RawEvent* event = m_calibrationEvents.at(i);
+  for (unsigned int i = 0; i < m_runFile->GetNumberOfCalibrationEvents(); i++) {
+    const RawEvent* event = (const RawEvent*) m_runFile->ReadNextEvent();
     QList<DetectorID*> detIDs = event->GetIDs();
 
     QMap<DetectorID*, DataBlock*> dataBlockMap;
@@ -125,6 +111,10 @@ void SingleFile::calibrate()
     foreach(PERDaixTRDModule* module, m_trdModules) {
       module->ProcessCalibrationEvent((TRDDataBlock*) dataBlockMap[module->GetBoardID()]);
     }
+    foreach(PERDaixPMTModule* module, m_pmtModules) {
+      module->ProcessCalibrationEvent((PMTDataBlock*) dataBlockMap[module->GetBoardID()]);
+    }
+    delete event;
   }
 
   foreach(PERDaixFiberModule* module, m_fiberModules)  module->ProcessCalibrationData();
@@ -136,15 +126,20 @@ Calibration* SingleFile::getCalibrationForDetector(DetectorID* id, int whichCali
 {
   if(id->IsTracker()) {
     foreach(PERDaixFiberModule* module, m_fiberModules) {
-      if (module->GetBoardID(PERDaixFiberModule::BOARD_0) == id)
+      if (module->GetBoardID(PERDaixFiberModule::BOARD_0)->GetID16() == id->GetID16())
         return (Calibration*) module->GetCalibrations().at(whichCali);
-      else if (module->GetBoardID(PERDaixFiberModule::BOARD_1) == id)
+      else if (module->GetBoardID(PERDaixFiberModule::BOARD_1)->GetID16() == id->GetID16())
         return (Calibration*) module->GetCalibrations().at(whichCali+8);
     }
   }
   else if(id->IsTRD()) {
     foreach(PERDaixTRDModule* module, m_trdModules)
-      if (module->GetBoardID() == id)
+      if (module->GetBoardID()->GetID16() == id->GetID16())
+        return (Calibration*) module->GetCalibrations().at(whichCali);
+  }
+  else if(id->IsPMT()) {
+    foreach(PERDaixPMTModule* module, m_pmtModules)
+      if (module->GetBoardID()->GetID16() == id->GetID16())
         return (Calibration*) module->GetCalibrations().at(whichCali);
   }
 

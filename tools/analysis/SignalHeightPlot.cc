@@ -2,8 +2,9 @@
 
 #include <TH1D.h>
 
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
 
 SignalHeightPlot::SignalHeightPlot(AnalysisPlot::Topic topic, unsigned short id) :
@@ -23,8 +24,7 @@ SignalHeightPlot::SignalHeightPlot(AnalysisPlot::Topic topic, unsigned short id)
 
   setTitle(QString("signal height 0x%1").arg(m_id,0,16));
   TH1D* histogram = new TH1D(qPrintable(title()), "", bins, 0, maximum);
-  histogram->GetXaxis()->SetTitle("signal height / adc counts");
-  histogram->GetYaxis()->SetTitle("entries");
+  setAxisTitle("signal height / adc counts", "");
   addHistogram(histogram);
 }
 
@@ -32,16 +32,20 @@ SignalHeightPlot::~SignalHeightPlot()
 {
 }
 
-void SignalHeightPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent*)
+void SignalHeightPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if(!track)
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
-  foreach(Hit* hit, hits) {
+  const QVector<Hit*>::const_iterator endIt = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+    Hit* hit = *it;
     if (hit->detId() - hit->channel() == m_id)
       histogram()->Fill(hit->signalHeight());
   }

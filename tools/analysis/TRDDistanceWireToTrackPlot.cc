@@ -5,9 +5,11 @@
 #include <TH1D.h>
 
 #include "Cluster.hh"
+#include "SimpleEvent.hh"
 #include "Constants.hh"
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "TRDCalculations.hh"
 
 TRDDistanceWireToTrackPlot::TRDDistanceWireToTrackPlot(AnalysisPlot::Topic topic) :
@@ -18,53 +20,62 @@ TRDDistanceWireToTrackPlot::TRDDistanceWireToTrackPlot(AnalysisPlot::Topic topic
   TH1D* histogram = new TH1D(qPrintable(title()), qPrintable(title() + ";distance / mm; entries"), 100, -15, 15);
   histogram->SetStats(true);
   addHistogram(histogram);
+  TH1D* histogramMC = new TH1D(qPrintable(title() + " MC"), qPrintable(title() + " MC;distance / mm; entries"), 100, -15, 15);
+  histogramMC->SetLineColor(kRed);
+  addHistogram(histogramMC);
 }
 
 TRDDistanceWireToTrackPlot::~TRDDistanceWireToTrackPlot()
 {
 }
 
-void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& hits,Track* track, SimpleEvent* /*event*/)
+void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent* event)
 {
+  const Track* track = particle->track();
+
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;
 
   //filter: only use events with 8 tracker hits:
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
-  //loop over all hits and count tracker hits
-  //also find all clusters on track
-  QVector<Cluster*> trdClustersOnTrack;
-
-  //TODO: check for off track hits, atm this is Bastians criteria for on track
-  foreach(Hit* clusterHit, hits){
-    if (clusterHit->type() == Hit::trd){
-      Cluster* cluster = static_cast<Cluster*>(clusterHit);
+  //TODO: check for off track hits ?!?
+  unsigned int nTrdHits = 0;
+  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+    Hit* hit = *it;
+    if (hit->type() == Hit::trd) {
+      Cluster* cluster = static_cast<Cluster*>(hit);
       //check if event contains trd clusters with more than 2 sub hits
       if (cluster->hits().size() > 2)
         return;
 
-      trdClustersOnTrack << cluster;
+      nTrdHits++;
     }
   }
 
-  // cut on number of trd hits
-  if (trdClustersOnTrack.size() < 6)
+  if (nTrdHits < 6)
     return;
 
-  foreach(Cluster* cluster, trdClustersOnTrack){
-    //foreach(Hit* hit, cluster->hits()){
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+    Cluster* cluster = static_cast<Cluster*>(*it);
+    if (cluster->type() == Hit::trd) {
       double distanceWireToTrack = TRDCalculations::distanceTrackToWire(cluster, track);
-      //if(fabs(distanceWireToTrack) > 10)
-
+      if (event->contentType() == SimpleEvent::MonteCarlo)
+        histogram(1)->Fill(distanceWireToTrack);
+      else
         histogram(0)->Fill(distanceWireToTrack);
-    //}
+    }
   }
 }
 
 void TRDDistanceWireToTrackPlot::finalize()
 {
+  if (histogram(0)->Integral("width") > 0)
+    histogram(0)->Scale(1./histogram(0)->Integral("width"));
+  if (histogram(1)->Integral("width") > 0)
+    histogram(1)->Scale(1./histogram(1)->Integral("width"));
 }

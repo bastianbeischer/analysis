@@ -20,7 +20,7 @@ public:
 
   QVector<Hit*> findTrack(const QVector<Hit*>& hits);
 
-  static bool isInCorridor(Track* track, Hit* hit, double maxPull);
+  static bool isInCorridor(const Track* track, Hit* hit, double maxPull);
 
 private:
   double m_maxSlope;

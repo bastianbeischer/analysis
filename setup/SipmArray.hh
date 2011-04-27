@@ -8,11 +8,11 @@ class SipmArray :
 {
   
 public:
-  explicit SipmArray(unsigned short detId);
+  explicit SipmArray(unsigned short detId, const Setup* setup);
   ~SipmArray();
   
 public:
-  QVector<Hit*> findClusters(); // these clusters have to be deleted by hand!
+  QVector<Hit*> findClusters(const QVector<Hit*>&); // these clusters have to be deleted by hand!
 
 };
 

@@ -8,8 +8,10 @@ CONFIG += ordered
 
 SUBDIRS = \
   event \
+  global \
   tracking \
   setup \
+  particle \
   processing \
   alignment \
   rootplot \

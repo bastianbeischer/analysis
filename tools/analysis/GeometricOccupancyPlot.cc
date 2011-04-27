@@ -1,8 +1,10 @@
 #include "GeometricOccupancyPlot.hh"
 #include "BrokenLine.hh"
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
+#include "Particle.hh"
+#include "Track.hh"
 
 #include <TH2.h>
 #include <TAxis.h>
@@ -14,22 +16,23 @@ GeometricOccupancyPlot::GeometricOccupancyPlot(double zPosition)
 {
   setTitle(QString("occupancy %1").arg(zPosition));
   TH2D* histogram = new TH2D(qPrintable(title()), "", 100, -250, 250, 120, -120, 120);
-  histogram->GetXaxis()->SetTitle("y / mm");
-  histogram->GetYaxis()->SetTitle("x / mm");
-  setHistogram(histogram);
+  setAxisTitle("y / mm", "x / mm", "");
+  addHistogram(histogram);
 }
 
 GeometricOccupancyPlot::~GeometricOccupancyPlot()
 {}
 
-void GeometricOccupancyPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
+void GeometricOccupancyPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   histogram()->Fill(track->y(m_zPosition), track->x(m_zPosition));

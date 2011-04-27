@@ -4,8 +4,9 @@
 #include <TLatex.h>
 #include <TLegend.h>
 
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 
 TrackerLayerStatisticsPlot::TrackerLayerStatisticsPlot() :
   AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
@@ -14,8 +15,7 @@ TrackerLayerStatisticsPlot::TrackerLayerStatisticsPlot() :
   setTitle("tracker layer statistics");
   TH1D* histogram = new TH1D(qPrintable(title()+"_1"), "", 9, -0.5, 8.5);
   histogram->GetXaxis()->SetNdivisions(9);
-  histogram->GetXaxis()->SetTitle("number of layers");
-  histogram->GetYaxis()->SetTitle("relative entries");
+  setAxisTitle("number of layers", "relative entries");
   addHistogram(histogram);
   histogram = new TH1D(qPrintable(title()+"_2"), "", 9, -0.5, 8.5);
   histogram->SetLineColor(kRed);
@@ -40,13 +40,15 @@ TrackerLayerStatisticsPlot::~TrackerLayerStatisticsPlot()
 {
 }
 
-void TrackerLayerStatisticsPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent*)
+void TrackerLayerStatisticsPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if (!track || !track->fitGood())
     return;
 
-  const TrackInformation* info = track->information();
-  QMap<double, int> hitsInLayers = info->hitsInLayers();
+  const ParticleInformation* info = particle->information();
+  const QMap<double,int>& hitsInLayers = info->hitsInLayers();
   unsigned short nLayers = info->numberOfTrackerLayers();
 
   histogram(0)->Fill(0);
@@ -55,7 +57,9 @@ void TrackerLayerStatisticsPlot::processEvent(const QVector<Hit*>& /*hits*/, Tra
   }
   histogram(1)->Fill(nLayers);
 
-  foreach(int count, hitsInLayers) {
+  const QMap<double,int>::const_iterator endIt = hitsInLayers.end();
+  for(QMap<double,int>::const_iterator it = hitsInLayers.begin(); it != endIt; ++it) {
+    int count = it.value();
     if (count != 1)
       return;
   }
@@ -76,5 +80,5 @@ void TrackerLayerStatisticsPlot::finalize()
   histogram(0)->Scale(factor);
   histogram(1)->Scale(factor);
   histogram(2)->Scale(factor);
-  histogram(0)->GetYaxis()->SetRangeUser(0., 1.05);
+  yAxis()->SetRangeUser(0., 1.05);
 }

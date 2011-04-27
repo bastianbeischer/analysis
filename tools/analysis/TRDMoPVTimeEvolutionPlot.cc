@@ -9,8 +9,9 @@
 #include <TFitResult.h>
 #include <TLegend.h>
 
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "SimpleEvent.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
@@ -33,14 +34,14 @@ TRDMoPVTimeEvolutionPlot::TRDMoPVTimeEvolutionPlot(AnalysisPlot::Topic topic) :
   setTitle("MoPV time evolution");
 
   //add a graph for each module:
-  Setup* setup = Setup::instance();
-
-  DetectorElement* element = setup->firstElement();
 
   TLegend* legend = new TLegend();
-
   int color = 0;
-  while(element) {
+
+  Setup* setup = Setup::instance();
+  const ElementIterator endIt = setup->lastElement();
+  for (ElementIterator it = setup->firstElement(); it != endIt; ++it) {
+    DetectorElement* element = *it;
     if (element->type() == DetectorElement::trd){
       TGraphErrors* g = new TGraphErrors();
 
@@ -52,43 +53,31 @@ TRDMoPVTimeEvolutionPlot::TRDMoPVTimeEvolutionPlot(AnalysisPlot::Topic topic) :
 
       m_mopvGraphs.insert(element->id(),g);
     }
-    element = setup->nextElement();
   }
-  multiGraph()->SetTitle(qPrintable(title() + ";Run;MoPV"));
+  setAxisTitle("Run", "MoPV");
 
   addLegend(legend);
-
-  // //initilize sensors data
-  // m_SensorsData = new SensorsData();
-  // QString sensorsDataFileName = "/media/winsystem/data/sensor_data/sensors.root" ;
-  // if ( !m_SensorsData->setFile( qPrintable(sensorsDataFileName)) )
-  //   qDebug("couldn locate sensors data file specified: %s", qPrintable(sensorsDataFileName) );
-
-  // m_TrdTemperatureSensorNames << "TRD_TUBE_TOP_HOT_TEMP" << "TRD_TUBE_TOP_COLD_TEMP" << "TRD_TUBE_BOTTOM_HOT_TEMP" << "TRD_TUBE_BOTTOM_COLD_TEMP" ;
-
-  // foreach(QString trdTempSensname, m_TrdTemperatureSensorNames)
-  //   m_TRDTempMaps << QMap<unsigned int, float> (m_SensorsData->getValues(SensorsData::SENSORS, qPrintable(trdTempSensname))) ;
-
-  // delete m_SensorsData;
 }
 
 TRDMoPVTimeEvolutionPlot::~TRDMoPVTimeEvolutionPlot()
 {
   for (int i = 0; i < m_binningMap.size(); i++)
-         qDeleteAll(m_binningMap.values().at(i));
+    qDeleteAll(m_binningMap.values().at(i));
 
   //qDeleteAll(m_mopvGraphs);
 }
 
-void TRDMoPVTimeEvolutionPlot::processEvent(const QVector<Hit*>& hits, Track* track, SimpleEvent* event)
+void TRDMoPVTimeEvolutionPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent* event)
 {
+  const Track* track = particle->track();
+
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;
 
   //check if all tracker layers have a hit
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   //check if track was inside of magnet
@@ -96,79 +85,40 @@ void TRDMoPVTimeEvolutionPlot::processEvent(const QVector<Hit*>& hits, Track* tr
   //    return;
 
 
-  //loop over all hits and count tracker hits
-  //also find all clusters on track
-  QVector<Hit*> trdClusterHitsOnTrack;
-
-
-  //TODO: check for off track hits ?!?
-  foreach(Hit* clusterHit, hits){
-    if (clusterHit->type() == Hit::trd)
-      trdClusterHitsOnTrack.push_back(clusterHit);
-  }
-
-
-  //if(trdClusterHitsOnTrack.size() < 6)
-  //  return;
-
   QDateTime runTime = QDateTime::fromTime_t(event->runStartTime()) ;
   QDateTime eventTime = runTime.addMSecs(event->eventTime()) ;
 
   unsigned int binValue = eventTime.toTime_t() / (m_timeBinLength) * (m_timeBinLength) + (0.5*m_timeBinLength);
 
-  // //get temperatures for the event
-  // QVector < double > trdTempsOfEvent;
-  // for (int i = 0; i < m_TRDTempMaps.size(); i++) {
-  //   double aTRDtemp = m_TRDTempMaps.at(i).lowerBound(eventTime.toTime_t()).value() ;
-  //   if (! (aTRDtemp == aTRDtemp) ) {
-  //     qDebug("sensor didnt return a temp, out of range?");
-  //     return;
-  //   }else{
-  //     //qDebug("got %f", aTRDtemp);
-  //     trdTempsOfEvent << aTRDtemp ;
-  //   }
-  // }
-
-  // //qDebug() << "got temperatures: " << trdTempsOfEvent;
-
-  // //calculate the mean temperature
-  // double meanTRDTemp = 0. ;
-  // foreach(double temp, trdTempsOfEvent)
-  //   meanTRDTemp += temp;
-
-  // meanTRDTemp /= trdTempsOfEvent.size();
-
-  // double p0 = 13.92;
-  // double p1 = -0.1077;
-  // double p2 = 0.003786;
-
-  foreach(Hit* clusterHit, trdClusterHitsOnTrack){
-    Cluster* cluster = static_cast<Cluster*>(clusterHit);
-    foreach(Hit* hit, cluster->hits()){
+  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+    Cluster* cluster = static_cast<Cluster*>(*it);
+    if (cluster->type() != Hit::trd) 
+      continue;
+    
+    std::vector<Hit*>& subHits = cluster->hits();
+    const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+    for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
+      Hit* subHit = *it;
       //check if the id of the plot has been hit (difference between module mode and channel mode
-      double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
+      double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(subHit, track);
       if(distanceInTube > 0){
-
-        // //correct for temp dependency
-        // double signalHeigt = hit->signalHeight();
-        // double newSignalHeight = signalHeigt * (p0 / (p0 + p1*meanTRDTemp + p2*meanTRDTemp*meanTRDTemp)) ;
-        // hit->setSignalHeight(newSignalHeight);
 
         //now lock, to be threadsafe
         QMutexLocker locker(&m_mutex);
 
         QMap < unsigned short, TH1* >& histoMapOfRunFile = m_binningMap[binValue] ;
-        unsigned int moduleID = hit->detId() & 0xFFF0;
+        unsigned int moduleID = subHit->detId() & 0xFFF0;
         if ( !histoMapOfRunFile.contains(moduleID) ){
           //qDebug() << "trdSpectrumHisto_for_run" + QString::number(runFile) + "_module_0x" + QString::number(moduleID,16);
           TH1D* histo = new TH1D(qPrintable("trdSpectrumHisto_for_bin" + QString::number(binValue) + "_module_0x" + QString::number(moduleID,16)) ,
                                  "egal", 50, 0, 50);
           histoMapOfRunFile.insert(moduleID, histo);
-          //qDebug("fill %f", hit->signalHeight() / (distanceInTube));
-          histo->Fill(hit->signalHeight() / (distanceInTube) );
+          //qDebug("fill %f", subHit->signalHeight() / (distanceInTube));
+          histo->Fill(subHit->signalHeight() / (distanceInTube) );
         } else {
-          histoMapOfRunFile[moduleID]->Fill(hit->signalHeight() / (distanceInTube) );
-          //qDebug("fill %f", hit->signalHeight() / (distanceInTube));
+          histoMapOfRunFile[moduleID]->Fill(subHit->signalHeight() / (distanceInTube) );
+          //qDebug("fill %f", subHit->signalHeight() / (distanceInTube));
         }
         //qDebug("histo now contains entries %f", histoMapOfRunFile[moduleID]->GetEntries());
         m_graphNeedsUpdate = true;
@@ -223,14 +173,12 @@ void TRDMoPVTimeEvolutionPlot::updateGraph()
     }
   }
 
-  TAxis* multiAxis = multiGraph()->GetXaxis();
-  if (multiAxis) {
-    multiGraph()->GetXaxis()->SetLimits(m_binningMap.keys().first(), m_binningMap.keys().last()) ;
-    m_graphNeedsUpdate = false ;
+  if (m_drawn) {
+    m_multiGraph->GetXaxis()->SetLimits(m_binningMap.keys().first(), m_binningMap.keys().last()) ;
+    m_graphNeedsUpdate = false;
   } else {
-    m_graphNeedsUpdate = true ;
+    m_graphNeedsUpdate = true;
   }
-
 }
 
 

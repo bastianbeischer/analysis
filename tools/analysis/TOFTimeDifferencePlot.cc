@@ -1,7 +1,9 @@
 #include "TOFTimeDifferencePlot.hh"
 #include "BrokenLine.hh"
 
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
+#include "Particle.hh"
+#include "Track.hh"
 #include "Hit.hh"
 #include "TOFCluster.hh"
 #include "TOFSipmHit.hh"
@@ -26,10 +28,9 @@ TOFTimeDifferencePlot::TOFTimeDifferencePlot(unsigned short id)
     20, -200, 200, 10, -25, 25);
   TH2D* histogram = new TH2D(qPrintable(title()), "",
     20, -200, 200, 10, -25, 25);
-  histogram->GetXaxis()->SetTitle("y_{tracker} / mm");
-  histogram->GetYaxis()->SetTitle("x_{tracker} / mm");
-  histogram->GetZaxis()->SetTitle("(t_{left} - t_{right}) / ns");
-  setHistogram(histogram);
+  setAxisTitle("y_{tracker} / mm", "x_{tracker} / mm", "(t_{left} - t_{right}) / ns");
+  addHistogram(histogram);
+  setDrawOption(SURF1);
 }
 
 TOFTimeDifferencePlot::~TOFTimeDifferencePlot()
@@ -37,17 +38,21 @@ TOFTimeDifferencePlot::~TOFTimeDifferencePlot()
   delete m_normalizationHistogram;
 }
 
-void TOFTimeDifferencePlot::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void TOFTimeDifferencePlot::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
-  foreach(Hit* cluster, clusters) {
+  const QVector<Hit*>::const_iterator endIt = clusters.end();
+  for (QVector<Hit*>::const_iterator it = clusters.begin(); it != endIt; ++it) {
+    Hit* cluster = *it;
     if (cluster->type() == Hit::tof && cluster->detId() - cluster->channel() == m_id) {
       TOFCluster* tofCluster= static_cast<TOFCluster*>(cluster);
       double t[4];
@@ -98,15 +103,9 @@ void TOFTimeDifferencePlot::update()
   }
 }
 
-void TOFTimeDifferencePlot::draw(TCanvas* canvas)
-{
-  H2DPlot::draw(canvas);
-  histogram()->Draw("SURF1");
-}
-
 void TOFTimeDifferencePlot::finalize()
 {
-  histogram()->GetZaxis()->SetRangeUser(-1, 1);
+  zAxis()->SetRangeUser(-1, 1);
   for (int binX = 1; binX < m_normalizationHistogram->GetXaxis()->GetNbins(); ++binX)
     for (int binY = 1; binY < m_normalizationHistogram->GetYaxis()->GetNbins(); ++binY) {
       double value = Constants::sigmaSipm / sqrt(m_normalizationHistogram->GetBinContent(binX, binY));

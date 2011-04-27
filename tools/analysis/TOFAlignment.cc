@@ -1,12 +1,14 @@
 #include "TOFAlignment.hh"
 #include "BrokenLine.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 #include "Hit.hh"
 #include "Constants.hh"
 #include "TOFCluster.hh"
 #include "TOFSipmHit.hh"
 #include "Setup.hh"
 #include "TOFBar.hh"
+#include "Particle.hh"
+#include "Track.hh"
 
 #include <TH1.h>
 #include <TVector3.h>
@@ -26,20 +28,24 @@ TOFAlignment::TOFAlignment()
 TOFAlignment::~TOFAlignment()
 {}
 
-void TOFAlignment::processEvent(const QVector<Hit*>& clusters, Track* track, SimpleEvent*)
+void TOFAlignment::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 
-  if (track->p() < 2)
+  if (track->rigidity() < 2)
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
+  ParticleInformation::Flags flags = particle->information()->flags();
 
   QString output;
   int counter = 0;
-  foreach(Hit* cluster, clusters) {
+  const QVector<Hit*>::const_iterator endIt = clusters.end();
+  for (QVector<Hit*>::const_iterator it = clusters.begin(); it != endIt; ++it) {
+    Hit* cluster = *it;
     if (cluster->type() == Hit::tof) {
       TOFCluster* tofCluster= static_cast<TOFCluster*>(cluster);
       for (unsigned int i = 0; i < tofCluster->hits().size(); ++i) {

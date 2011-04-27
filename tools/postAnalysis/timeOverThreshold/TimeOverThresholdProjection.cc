@@ -1,4 +1,5 @@
 #include "TimeOverThresholdProjection.hh"
+#include "PostAnalysisCanvas.hh"
 
 #include <TH1.h>
 #include <TH2.h>
@@ -14,21 +15,16 @@
 #include <QDebug>
 #include <QStringList>
 
-TimeOverThresholdProjection::TimeOverThresholdProjection(TCanvas* canvas, int ch)
+TimeOverThresholdProjection::TimeOverThresholdProjection(PostAnalysisCanvas* canvas, int ch)
   : PostAnalysisPlot()
   , H1DPlot()
 {
-  QString title;
-  TH1D* histogram = 0;
-  for (int i = 0; i < canvas->GetListOfPrimitives()->GetSize(); ++i) {
-    if (!strcmp(canvas->GetListOfPrimitives()->At(i)->ClassName(), "TH2D")) {
-      title = QString(canvas->GetName()).replace("canvas", QString("0x%1 histogram").arg(ch | 0x8000, 0, 16));
-      TH2D* h = static_cast<TH2D*>(canvas->GetListOfPrimitives()->At(i));
-      histogram = h->ProjectionY(qPrintable(title + "projection"), ch+1, ch+1);
-    }
-  }
+  TH2D* histogram2D = canvas->histograms2D().at(0);
+  QString title = QString(canvas->name()).replace("canvas", QString("0x%1 histogram").arg(ch | 0x8000, 0, 16));
+  TH1D* histogram = histogram2D->ProjectionY(qPrintable(title + "projection"), ch+1, ch+1);
+
   setTitle(title);
-  histogram->GetXaxis()->SetTitle("time over threshold / ns");
+  setAxisTitle("time over threshold / ns", "");
   addHistogram(histogram);
   
   TLatex* latex = 0;

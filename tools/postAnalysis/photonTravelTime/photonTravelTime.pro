@@ -5,24 +5,26 @@ CONFIG += debug
 
 TOPLEVEL = ../../..
 
-FORMS+= \
-  MainWindow.ui
-
 INCLUDEPATH += \
   $$TOPLEVEL/event \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/setup \
+  $$TOPLEVEL/particle \
   $$TOPLEVEL/tracking \
   $$TOPLEVEL/global \
-  $$TOPLEVEL/processing
+  $$TOPLEVEL/processing \
+  $$TOPLEVEL/tools/postAnalysis/postAnalysis
 
 LIBS += \
   -L$$TOPLEVEL/lib \
   -lSimpleEvent \
+  -lparticle \
   -ltracking \
   -lrootplot \
   -lsetup \
-  -lprocessing
+  -lprocessing \
+  -lglobal \
+  -lpostAnalysis
 
 CLASSES = \
   MainWindow \

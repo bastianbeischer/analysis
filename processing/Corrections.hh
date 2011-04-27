@@ -1,18 +1,28 @@
 #ifndef Corrections_hh
 #define Corrections_hh
 
+#include "Constants.hh"
+
 #include <QFlags>
 #include <QVector>
+#include <QString>
+#include <QVariant>
+#include <QList>
+#include <QMap>
+#include <QList>
 
 class QSettings;
+class SimpleEvent;
 class Hit;
-class Track;
+class Particle;
+class SimpleEvent;
 
 class Corrections
 {
   
 public:
-  enum Flag {None = 0x0, Alignment = 0x1<<0, TimeShifts = 0x1<<1, TrdMopv = 0x1<<2, TofTimeOverThreshold = 0x1<<3, PhotonTravelTime = 0x1<<4};
+  enum Flag {None = 0x0, Alignment = 0x1<<0, TimeShifts = 0x1<<1, TrdMopv = 0x1<<2, TofTimeOverThreshold = 0x1<<3, 
+             MultipleScattering = 0x1<<4, PhotonTravelTime = 0x1<<5};
   Q_DECLARE_FLAGS(Flags, Flag);
 
 public:
@@ -24,30 +34,39 @@ public:
   Flags flags() const {return m_flags;}
 
 public:
-  void preFitCorrections(QVector<Hit*>&);
-  void postFitCorrections(Track*);
+  void preFitCorrections(SimpleEvent*);
+  void postFitCorrections(Particle*);
 
-  static const int numberOfPhotonTravelTimeParameters = 3;
-  static const int numberOfPhotonTravelTimeDifferenceParameters = 6;
+  static const int nPhotonTravelTimeParameters = 3;
+  static const int nPhotonTravelTimeDifferenceParameters = 6;
   static double photonTravelTime(double bending, double nonBending, double* p);
   static double photonTravelTimeDifference(double bending, double nonBending, double* p);
+  static const int nTotScalingParameters = 2;
 
 private:
   void alignment(Hit*);
   void timeShift(Hit*);
   void trdMopv(Hit*);
-  void tofTimeOverThreshold(Hit*);
-  void photonTravelTime(Track*); 
+  void tofTot(Hit* hit, SimpleEvent* event);
+  void multipleScattering(Particle*);
+  void photonTravelTime(Particle*); 
 
 public:
   double trdScalingFactor(unsigned int);
   void setTrdScalingFactor(unsigned int, double);
-
+  void setTotScaling(const unsigned int tofId, const QList<QVariant> param);
+  
+private:
+  QString m_tofTotScalingPrefix;
+  double m_totScalings[Constants::nTofChannels][nTotScalingParameters];
+  void loadTotScaling();
+  double totScalingFactor(const unsigned int tofId, const double temperature);
+  unsigned int tofChannel(unsigned int id);
+  
 private:
   QSettings* m_trdSettings;
   QSettings* m_tofSettings;
   Flags      m_flags;
-
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Corrections::Flags);

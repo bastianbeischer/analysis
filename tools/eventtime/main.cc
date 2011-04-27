@@ -50,6 +50,7 @@ int main(int argc, char* argv[])
         std::cerr << '.' << std::flush;
       //if (it == 20000) break;
     }
+    delete event;
   }
   std::cerr << std::endl;
   //h->Smooth(4);

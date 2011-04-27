@@ -1,10 +1,13 @@
 #ifndef AlignmentMatrix_hh
 #define AlignmentMatrix_hh
 
-class Track;
+#include "EventDestination.hh"
+
+class Particle;
 class TestbeamSetup;
 
-class AlignmentMatrix
+class AlignmentMatrix :
+  public EventDestination
 {
 
 public:
@@ -12,7 +15,7 @@ public:
   ~AlignmentMatrix();
 
 public:
-  void fillMatrixFromTrack(Track* track);
+  void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
   void resetArrays();
   void init();
 

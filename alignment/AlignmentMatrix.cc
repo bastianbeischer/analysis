@@ -3,7 +3,9 @@
 #include "Manager.hh"
 #include "Strategy.hh"
 #include "Hit.hh"
+#include "Particle.hh"
 #include "Track.hh"
+#include "ParticleInformation.hh"
 #include "Parameters.hh"
 #include "Setup.hh"
 #include "DetectorElement.hh"
@@ -14,6 +16,7 @@
 #include <cmath>
 
 AlignmentMatrix::AlignmentMatrix() :
+  EventDestination(),
   m_nGlobal(0),
   m_nLocal(0),
   m_globalDerivatives(0),
@@ -51,9 +54,20 @@ void AlignmentMatrix::resetArrays()
     m_localDerivatives[i] = 0.;
 }
 
-void AlignmentMatrix::fillMatrixFromTrack(Track* track)
+void AlignmentMatrix::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
-  QVector<Hit*> hits = track->hits();
+  const Track* track = particle->track();
+
+  if (!track || !track->fitGood())
+    return;
+
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if ( !(flags & ParticleInformation::AllTrackerLayers) ||
+       (flags & ParticleInformation::MagnetCollision) ) {
+    return;
+  }
+
+  const QVector<Hit*>& hits = track->hits();
   
   foreach(Hit* hit, hits) {
     //resetArrays();

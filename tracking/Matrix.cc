@@ -79,7 +79,7 @@ int Matrix::fit(const QVector<Hit*>& hits)
     TMatrixD RotTrans(2,2);
     RotTrans.Transpose(Rot);
 
-    double sigmaV = hit->resolutionEstimate();
+    double sigmaV = hit->resolution();
     TMatrixD V1(2,2);
     V1(0,0) = 0.;
     V1(0,1) = 0.;
@@ -132,7 +132,9 @@ bool Matrix::checkInvertability(const QVector<Hit*>& hits) const
 
   QMap<double,int> anglesTop;
   QMap<double,int> anglesBottom;
-  foreach(Hit* hit, hits) {
+  const QVector<Hit*>::const_iterator hitsEnd = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != hitsEnd; ++it) {
+    Hit* hit = *it;
     double angle = round(hit->angle()*180./M_PI * 10.)/10.;
     if (hit->position().z() > 0.) {
       anglesTop[angle]++;

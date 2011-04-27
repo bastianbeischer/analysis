@@ -18,7 +18,7 @@ public:
   TRDMoPVTimeEvolutionPlot(AnalysisPlot::Topic);
   ~TRDMoPVTimeEvolutionPlot();
 
-  virtual void processEvent(const QVector<Hit*>&, Track* = 0, SimpleEvent* = 0);
+  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
   virtual void finalize();
 
   void update();
@@ -36,9 +36,6 @@ private:
 
   QMap < unsigned int, QMap < unsigned short, TH1* > > m_binningMap;
   QMap < unsigned int, TGraphErrors* > m_mopvGraphs;
-
-  //SensorsData* m_SensorsData;
-  //QStringList m_TrdTemperatureSensorNames;
 
   QVector < QMap<unsigned int, float> > m_TRDTempMaps;
 

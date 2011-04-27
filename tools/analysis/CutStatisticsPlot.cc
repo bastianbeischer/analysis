@@ -3,8 +3,9 @@
 #include <TH1D.h>
 #include <TLatex.h>
 
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 
 CutStatisticsPlot::CutStatisticsPlot() :
   AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
@@ -12,12 +13,10 @@ CutStatisticsPlot::CutStatisticsPlot() :
 {
   setTitle("cut statistics");
   TH1D* histogram = new TH1D(qPrintable(title()), "", 8, -0.5, 7.5);
-  histogram->GetXaxis()->SetNdivisions(8);
-  histogram->GetYaxis()->SetNdivisions(520);
-  histogram->SetMinimum(0.);
-  histogram->GetXaxis()->SetTitle("cut number");
-  histogram->GetYaxis()->SetTitle("relative entries after cut");
-  histogram->GetYaxis()->SetTitleOffset(1.5);
+  //histogram->GetXaxis()->SetNdivisions(8);
+  //histogram->GetYaxis()->SetNdivisions(520);
+  //histogram->SetMinimum(0.);
+  setAxisTitle("cut number", "relative entries after cut");
   addHistogram(histogram);
   addLatex(RootPlot::newLatex(0., 0.));
   addLatex(RootPlot::newLatex(1., 0.));
@@ -35,20 +34,22 @@ CutStatisticsPlot::~CutStatisticsPlot()
 {
 }
 
-void CutStatisticsPlot::processEvent(const QVector<Hit*>& /*hits*/, Track* track, SimpleEvent*)
+void CutStatisticsPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   histogram()->Fill(0);
   if (!track || !track->fitGood())
     return;
   histogram()->Fill(1);
-  TrackInformation::Flags flags = track->information()->flags();
-  if (!(flags & TrackInformation::InsideMagnet))
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::InsideMagnet))
     return;
   histogram()->Fill(2);
-  if (!(flags & TrackInformation::AllTrackerLayers))
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
   histogram()->Fill(3);
-  if ((flags & TrackInformation::Albedo))
+  if ((flags & ParticleInformation::Albedo))
     return;
   histogram()->Fill(4);
 }
@@ -65,5 +66,5 @@ void CutStatisticsPlot::update()
 void CutStatisticsPlot::finalize()
 {
   histogram(0)->Scale(1./histogram()->GetBinContent(3));
-  histogram(0)->GetYaxis()->SetRangeUser(0., 1.05*histogram()->GetMaximum());
+  yAxis()->SetRangeUser(0., 1.05 * histogram()->GetMaximum());
 }

@@ -2,8 +2,9 @@
 
 #include <TH1D.h>
 
+#include "Particle.hh"
 #include "Track.hh"
-#include "TrackInformation.hh"
+#include "ParticleInformation.hh"
 
 AlbedosVsMomentumPlot::AlbedosVsMomentumPlot() :
   AnalysisPlot(AnalysisPlot::MomentumReconstruction),
@@ -12,6 +13,7 @@ AlbedosVsMomentumPlot::AlbedosVsMomentumPlot() :
   m_totalHisto(0)
 {
   setTitle("Albedos vs Momentum");
+  setAxisTitle("R / GV", "");
 
   int nBins = 100;
   TH1D* histogram = 0;
@@ -23,28 +25,20 @@ AlbedosVsMomentumPlot::AlbedosVsMomentumPlot() :
   // ratio histo
   histoTitle = title();
   histogram = new TH1D(qPrintable(histoTitle), qPrintable(histoTitle), nBins, lowerBound, upperBound);
-  histogram->GetXaxis()->SetTitle("R / GV");
-  histogram->GetYaxis()->SetTitle("entries");
   histogram->SetLineColor(kBlack);
   addHistogram(histogram);
 
   // total histo
   histoTitle = title() + " - All";
   histogram = new TH1D(qPrintable(histoTitle), qPrintable(histoTitle), nBins, lowerBound, upperBound);
-  histogram->GetXaxis()->SetTitle("R / GV");
-  histogram->GetYaxis()->SetTitle("entries");
   histogram->SetLineColor(kBlack);
   m_totalHisto = histogram;
 
   // albedo histo
   histoTitle = title() + " - Albedos";
   histogram = new TH1D(qPrintable(histoTitle), qPrintable(histoTitle), nBins, lowerBound, upperBound);
-  histogram->GetXaxis()->SetTitle("R / GV");
-  histogram->GetYaxis()->SetTitle("entries");
   histogram->SetLineColor(kRed);
   m_albedoHisto = histogram;
-
-  // addLatex(RootPlot::newLatex(.15, .85));
 }
 
 AlbedosVsMomentumPlot::~AlbedosVsMomentumPlot()
@@ -53,20 +47,22 @@ AlbedosVsMomentumPlot::~AlbedosVsMomentumPlot()
   delete m_totalHisto;
 }
 
-void AlbedosVsMomentumPlot::processEvent(const QVector<Hit*>&, Track* track, SimpleEvent*)
+void AlbedosVsMomentumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
+  const Track* track = particle->track();
+
   if (!track || !track->fitGood())
     return;
 
-  TrackInformation::Flags flags = track->information()->flags();
-  if ( !(flags & TrackInformation::AllTrackerLayers) || !(flags & TrackInformation::InsideMagnet) )
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) )
     return;
 
-  double pt = track->pt();
-  m_totalHisto->Fill(pt);
+  double rigidity = track->rigidity();
+  m_totalHisto->Fill(rigidity);
 
-  if (flags & TrackInformation::Albedo)
-    m_albedoHisto->Fill(pt);
+  if (flags & ParticleInformation::Albedo)
+    m_albedoHisto->Fill(rigidity);
 }
 
 void AlbedosVsMomentumPlot::update()
