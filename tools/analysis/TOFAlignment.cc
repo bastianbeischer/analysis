@@ -39,8 +39,6 @@ void TOFAlignment::processEvent(const QVector<Hit*>& clusters, Particle* particl
   if (track->rigidity() < 2)
     return;
 
-  ParticleInformation::Flags flags = particle->information()->flags();
-
   QString output;
   int counter = 0;
   const QVector<Hit*>::const_iterator endIt = clusters.end();
