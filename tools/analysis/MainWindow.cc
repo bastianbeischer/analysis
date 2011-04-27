@@ -67,6 +67,7 @@
 #include "MCRigidityResolution.hh"
 #include "PMTPlot.hh"
 #include "ZSquareTRDPlot.hh"
+#include "TOFBarShiftPlot.hh"
 
 #include <QFileDialog>
 #include <QVBoxLayout>
@@ -578,6 +579,23 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8024, 0x8034));
     m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8028, 0x8038));
     m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x802c, 0x803c));
+
+    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8000, 0x8010, 0x8020, 0x8030));
+    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8000, 0x8010, 0x8024, 0x8034));
+    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8000, 0x8010, 0x8028, 0x8038));
+    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8000, 0x8010, 0x802c, 0x803c));
+    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8004, 0x8014, 0x8020, 0x8030));
+    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8004, 0x8014, 0x8024, 0x8034));
+    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8004, 0x8014, 0x8028, 0x8038));
+    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8004, 0x8014, 0x802c, 0x803c));
+    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8008, 0x8018, 0x8020, 0x8030));
+    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8008, 0x8018, 0x8024, 0x8034));
+    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8008, 0x8018, 0x8028, 0x8038));
+    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8008, 0x8018, 0x802c, 0x803c));
+    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x800c, 0x801c, 0x8020, 0x8030));
+    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x800c, 0x801c, 0x8024, 0x8034));
+    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x800c, 0x801c, 0x8028, 0x8038));
+    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x800c, 0x801c, 0x802c, 0x803c));
   }
   if (m_ui.miscellaneousTrackerCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TotalSignalHeightPlot);
