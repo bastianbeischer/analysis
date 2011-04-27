@@ -9,6 +9,10 @@
 #include "TRDModule.hh"
 #include "TOFBar.hh"
 
+#include "FieldManager.hh"
+#include "InhomField.hh"
+#include "UniformField.hh"
+
 #include <QStringList>
 #include <QSettings>
 #include <QMutex>
@@ -74,6 +78,24 @@ void Setup::construct()
         }
       } // elements
       layer->sortIdsByPosition();
+    }
+    else if (list[0] == "field") {
+      QString type = list[1];
+      if (type == "uniform") {
+        QList<QVariant> values = m_settings->value(key).toList();
+        double Bx = values[0].toDouble();
+        double By = values[1].toDouble();
+        double Bz = values[2].toDouble();
+        FieldManager::instance()->setField(new UniformField(TVector3(Bx, By, Bz)));
+      }
+      else if (type == "inhom") {
+        QString fieldMap = m_settings->value(key).toString();
+        FieldManager::instance()->setField(new InhomField(qPrintable(fieldMap)));
+      }
+      else {
+        // shouldn't happen
+        Q_ASSERT(false);
+      }
     }
   } // layers
 }
