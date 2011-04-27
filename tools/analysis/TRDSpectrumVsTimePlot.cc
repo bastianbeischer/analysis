@@ -14,13 +14,9 @@
 
 #include <QDateTime>
 #include <QString>
-#include <QDebug>
-#include <QVariant>
-#include <QSettings>
 #include <math.h>
 
-TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumType spectrumType, 
-	QDateTime first, QDateTime last, double lowerMom, double upperMom):
+TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumType spectrumType, QDateTime first, QDateTime last, double lowerMom, double upperMom) :
   AnalysisPlot(AnalysisPlot:: SignalHeightTRD),
   H2DPlot(),
   m_id(id),
@@ -34,10 +30,10 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumType 
     strType = "time vs complete TRD";
     break;
   case TRDSpectrumVsTimePlot::module:
-    strType = "time vs Module";
+    strType = "time vs module";
     break;
   case TRDSpectrumVsTimePlot::channel:
-    strType = "time vsChannel";
+    strType = "time vs channel";
     break;
   }
 
@@ -51,11 +47,11 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumType 
   int t2 = last.toTime_t();
   t2+= 120 - (t2 % 60);
   const unsigned int nTimeBins = (t2 - t1) / 60;
-  const unsigned int nTotBins = 100;
-  const double minTot = 0;
-  const double maxTot = 20;
+  const unsigned int nSignalHeightBins = 100;
+  const double minSignalHeight = 0;
+  const double maxSignalHeight = 20;
 
-  TH2D* histogram = new TH2D(qPrintable(title()),qPrintable(title() + ";ADCCs per length in tube / (1/mm);entries vs time"), nTimeBins,t1,t2,nTotBins,minTot,maxTot);
+  TH2D* histogram = new TH2D(qPrintable(title()),qPrintable(title() + ";ADCCs per length in tube / (1/mm);entries vs time"), nTimeBins,t1,t2,nSignalHeightBins,minSignalHeight,maxSignalHeight);
   histogram->GetXaxis()->SetTimeDisplay(1);
   histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");
   setAxisTitle("Time", "ADC Counts", "");
