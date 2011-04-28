@@ -29,13 +29,13 @@ TRDSpectrumVsTemperaturePlot::TRDSpectrumVsTemperaturePlot(unsigned int id, TRDS
   switch(m_spectrumType)
   {
     case TRDSpectrumVsTemperaturePlot::completeTRD:
-      strType = "temperatur vs complete TRD";
+      strType = "temperature vs complete TRD";
     break;
     case TRDSpectrumVsTemperaturePlot::module:
-      strType = "temperatur vs Module";
+      strType = "temperature vs module";
     break;
     case TRDSpectrumVsTemperaturePlot::channel:
-      strType = "temperatur vs Channel";
+      strType = "temperature vs channel";
     break;
   }
 
@@ -93,9 +93,15 @@ void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>& , Particle*
   if (nTrdHits < 6)
     return;
 
+  // TODO: temp sensormap
   double mean = 0.;
   int count = 0;
-
+  for (unsigned int i = SensorTypes::TRD_TUBE_TOP_HOT_TEMP; i <= SensorTypes::TRD_TUBE_BOTTOM_COLD_TEMP; i++) {
+    mean += event->sensorData((SensorTypes::Type)i);
+    count++;
+  }
+  mean /= count;
+ 
   for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
     Hit* hit = *it;
     if (hit->type() != Hit::trd)
@@ -112,12 +118,6 @@ void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>& , Particle*
          (m_spectrumType == TRDSpectrumVsTemperaturePlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
         double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
         if(distanceInTube > 0)
-          // TODO: temp sensormap
-          for (unsigned int i = SensorTypes::TRD_TUBE_TOP_HOT_TEMP; i <= SensorTypes::TRD_TUBE_BOTTOM_COLD_TEMP; i++) {
-            mean += event->sensorData((SensorTypes::Type)i);
-            count++;
-          }
-          mean /= count;
           histogram(0)->Fill(mean, subHit->signalHeight() / (distanceInTube));
       }
     }
