@@ -93,7 +93,6 @@ bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*
       return passesCuts(totSum / nTofHits);
     }
     else {
-      qDebug("no tof hits");
       return false;
     }
   }
