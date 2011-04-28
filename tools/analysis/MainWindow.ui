@@ -2046,11 +2046,14 @@ over threshold</string>
               <rect>
                <x>120</x>
                <y>0</y>
-               <width>31</width>
+               <width>41</width>
                <height>22</height>
               </rect>
              </property>
              <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
               <string>min</string>
              </property>
             </widget>
@@ -2059,11 +2062,14 @@ over threshold</string>
               <rect>
                <x>190</x>
                <y>0</y>
-               <width>31</width>
+               <width>41</width>
                <height>22</height>
               </rect>
              </property>
              <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
               <string>max</string>
              </property>
             </widget>
@@ -2072,11 +2078,14 @@ over threshold</string>
               <rect>
                <x>190</x>
                <y>30</y>
-               <width>31</width>
+               <width>41</width>
                <height>22</height>
               </rect>
              </property>
              <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
               <string>max</string>
              </property>
             </widget>
@@ -2085,11 +2094,14 @@ over threshold</string>
               <rect>
                <x>120</x>
                <y>30</y>
-               <width>31</width>
+               <width>41</width>
                <height>22</height>
               </rect>
              </property>
              <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
               <string>min</string>
              </property>
             </widget>
@@ -2098,11 +2110,14 @@ over threshold</string>
               <rect>
                <x>120</x>
                <y>80</y>
-               <width>31</width>
+               <width>41</width>
                <height>22</height>
               </rect>
              </property>
              <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
               <string>min</string>
              </property>
             </widget>
@@ -2111,11 +2126,14 @@ over threshold</string>
               <rect>
                <x>190</x>
                <y>80</y>
-               <width>31</width>
+               <width>41</width>
                <height>22</height>
               </rect>
              </property>
              <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
               <string>max</string>
              </property>
             </widget>
@@ -2124,11 +2142,14 @@ over threshold</string>
               <rect>
                <x>120</x>
                <y>120</y>
-               <width>31</width>
+               <width>41</width>
                <height>22</height>
               </rect>
              </property>
              <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
               <string>min</string>
              </property>
             </widget>
@@ -2137,11 +2158,14 @@ over threshold</string>
               <rect>
                <x>190</x>
                <y>120</y>
-               <width>31</width>
+               <width>41</width>
                <height>22</height>
               </rect>
              </property>
              <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
               <string>max</string>
              </property>
             </widget>
