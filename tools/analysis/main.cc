@@ -1,4 +1,3 @@
-#include "Plotter.hh"
 #include "MainWindow.hh"
 #include "RootStyle.hh"
 

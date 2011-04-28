@@ -1,22 +1,23 @@
-#include "TRDSpectrumVsTimePlot.hh"
+#include "TRDSpectrumVsTemperaturePlot.hh"
 
 #include "Particle.hh"
-#include "Track.hh"
 #include "ParticleInformation.hh"
+#include "Track.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
 #include "SimpleEvent.hh"
-
 #include "TRDCalculations.hh"
 
 #include <TH2D.h>
 #include <TAxis.h>
 
-#include <QDateTime>
 #include <QString>
+#include <QDebug>
+#include <QVariant>
+#include <QSettings>
 #include <math.h>
 
-TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumType spectrumType, QDateTime first, QDateTime last, double lowerMom, double upperMom) :
+TRDSpectrumVsTemperaturePlot::TRDSpectrumVsTemperaturePlot(unsigned int id, TRDSpectrumType spectrumType, double lowerMom, double upperMom):
   AnalysisPlot(AnalysisPlot:: SignalHeightTRD),
   H2DPlot(),
   m_id(id),
@@ -25,44 +26,42 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumType 
   m_upperMomentum(upperMom)
 {
   QString strType;
-  switch(m_spectrumType){
-  case TRDSpectrumVsTimePlot::completeTRD:
-    strType = "time vs complete TRD";
+  switch(m_spectrumType)
+  {
+    case TRDSpectrumVsTemperaturePlot::completeTRD:
+      strType = "temperature vs complete TRD";
     break;
-  case TRDSpectrumVsTimePlot::module:
-    strType = "time vs module";
+    case TRDSpectrumVsTemperaturePlot::module:
+      strType = "temperature vs module";
     break;
-  case TRDSpectrumVsTimePlot::channel:
-    strType = "time vs channel";
+    case TRDSpectrumVsTemperaturePlot::channel:
+      strType = "temperature vs channel";
     break;
   }
 
-  if(m_spectrumType == TRDSpectrumVsTimePlot::completeTRD)
+  if(m_spectrumType == TRDSpectrumVsTemperaturePlot::completeTRD)
     setTitle(strType + QString(" spectrum (%1 GeV to %2 Gev)").arg(m_lowerMomentum).arg(m_upperMomentum));
   else
     setTitle(strType + QString(" spectrum 0x%1 (%2 GeV to %3 Gev)").arg(m_id,0,16).arg(m_lowerMomentum).arg(m_upperMomentum));
 
-  int t1 = first.toTime_t();
-  t1-= (t1 % 60) + 60;
-  int t2 = last.toTime_t();
-  t2+= 120 - (t2 % 60);
-  const unsigned int nTimeBins = qMin((t2 - t1) / 60, 500);
-  const unsigned int nSignalHeightBins = 100;
-  const double minSignalHeight = 0;
-  const double maxSignalHeight = 20;
 
-  TH2D* histogram = new TH2D(qPrintable(title()),qPrintable(title() + ";ADCCs per length in tube / (1/mm);entries vs time"), nTimeBins,t1,t2,nSignalHeightBins,minSignalHeight,maxSignalHeight);
-  histogram->GetXaxis()->SetTimeDisplay(1);
-  histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");
-  setAxisTitle("Time", "ADC Counts", "");
+  const unsigned int nTemperatureBins = 100;
+  const double minTemperature = -25;
+  const double maxTemperature = 35;
+  const unsigned int nSpecBins = 100;
+  const double minSpec = 0;
+  const double maxSpec = 20;
+
+  TH2D* histogram = new TH2D(qPrintable(title()),qPrintable(title() + ";ADCCs per length in tube / (1/mm);entries vs Temperature"), nTemperatureBins, minTemperature, maxTemperature, nSpecBins, minSpec, maxSpec);
+  setAxisTitle("temperature /  #circC", "ADCC's", "");
   addHistogram(histogram);
 }
 
-TRDSpectrumVsTimePlot::~TRDSpectrumVsTimePlot()
+TRDSpectrumVsTemperaturePlot::~TRDSpectrumVsTemperaturePlot()
 {
 }
 
-void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& , Particle* particle, SimpleEvent* event)
+void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>& , Particle* particle, SimpleEvent* event)
 {
   const Track* track = particle->track();
 
@@ -94,6 +93,15 @@ void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& , Particle* partic
   if (nTrdHits < 6)
     return;
 
+  // TODO: temp sensormap
+  double mean = 0.;
+  int count = 0;
+  for (unsigned int i = SensorTypes::TRD_TUBE_TOP_HOT_TEMP; i <= SensorTypes::TRD_TUBE_BOTTOM_COLD_TEMP; i++) {
+    mean += event->sensorData((SensorTypes::Type)i);
+    count++;
+  }
+  mean /= count;
+ 
   for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
     Hit* hit = *it;
     if (hit->type() != Hit::trd)
@@ -105,15 +113,13 @@ void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& , Particle* partic
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       Hit* subHit = *it;
       //check if the id of the plot has been hit (difference between module mode and channel mode
-      if(m_spectrumType == TRDSpectrumVsTimePlot::completeTRD ||  // one spectrum for whole trd
-         (m_spectrumType == TRDSpectrumVsTimePlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
-         (m_spectrumType == TRDSpectrumVsTimePlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
+      if(m_spectrumType == TRDSpectrumVsTemperaturePlot::completeTRD ||  // one spectrum for whole trd
+         (m_spectrumType == TRDSpectrumVsTemperaturePlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
+         (m_spectrumType == TRDSpectrumVsTemperaturePlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
         double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
         if(distanceInTube > 0)
-          histogram(0)->Fill(event->time(), subHit->signalHeight() / (distanceInTube));
+          histogram(0)->Fill(mean, subHit->signalHeight() / (distanceInTube));
       }
     }
   }
 }
-
-

@@ -65,6 +65,7 @@ CLASSES = \
   TRDOccupancyPlot \
   TRDSpectrumPlot \
   TRDSpectrumVsTimePlot \
+  TRDSpectrumVsTemperaturePlot \
   TimeResolutionPlot \
   TotalEnergyDepositionPlot \
   TotalEnergyDepositionTRDvsTrackerPlot \
