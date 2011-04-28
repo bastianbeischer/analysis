@@ -46,7 +46,7 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumType 
   t1-= (t1 % 60) + 60;
   int t2 = last.toTime_t();
   t2+= 120 - (t2 % 60);
-  const unsigned int nTimeBins = (t2 - t1) / 60;
+  const unsigned int nTimeBins = qMin((t2 - t1) / 60, 500);
   const unsigned int nSignalHeightBins = 100;
   const double minSignalHeight = 0;
   const double maxSignalHeight = 20;
