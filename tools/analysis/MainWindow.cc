@@ -42,6 +42,7 @@
 #include "TRDEnergyDepositionOverMomentumPlot.hh"
 #include "TRDSpectrumPlot.hh"
 #include "TRDSpectrumVsTimePlot.hh"
+#include "TRDSpectrumVsTemperaturePlot.hh"
 #include "TRDOccupancyPlot.hh"
 #include "TRDEfficiencyPlot.hh"
 #include "TotalEnergyDepositionPlot.hh"
@@ -459,6 +460,22 @@ void MainWindow::setupPlots()
         m_ui.plotter->addPlot(trdModuleSpectrumPlot);
         for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++){
           TRDSpectrumVsTimePlot* trdChannelSpectrumPlot = new TRDSpectrumVsTimePlot(element->id() | tubeNo,TRDSpectrumVsTimePlot::channel, first, last);
+          m_ui.plotter->addPlot(trdChannelSpectrumPlot);
+        }
+      }
+    }
+
+    m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot(0 /* doesnt matter */,TRDSpectrumVsTemperaturePlot::completeTRD));
+    m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot(0 /* doesnt matter */,TRDSpectrumVsTemperaturePlot::completeTRD, -3, -1.5));
+    m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot(0 /* doesnt matter */,TRDSpectrumVsTemperaturePlot::completeTRD, 1.5, 3));
+
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
+      if (element->type() == DetectorElement::trd){
+        TRDSpectrumVsTemperaturePlot* trdModuleSpectrumPlot = new TRDSpectrumVsTemperaturePlot(element->id(),TRDSpectrumVsTemperaturePlot::module);
+        m_ui.plotter->addPlot(trdModuleSpectrumPlot);
+        for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++){
+          TRDSpectrumVsTemperaturePlot* trdChannelSpectrumPlot = new TRDSpectrumVsTemperaturePlot(element->id() | tubeNo,TRDSpectrumVsTemperaturePlot::channel);
           m_ui.plotter->addPlot(trdChannelSpectrumPlot);
         }
       }
