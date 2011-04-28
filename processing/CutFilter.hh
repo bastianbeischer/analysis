@@ -27,8 +27,7 @@ public:
   void setMax(double max);
   bool passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent* event);
 
-public:
-//private:
+private:
   Type m_type;
   bool m_minIsSet;
   double m_min;
