@@ -3,19 +3,26 @@
 #include "H2DPlot.hh"
 
 #include <QApplication>
+#include <QVBoxLayout>
 #include <QDebug>
 
 #include <TPad.h>
 #include <TROOT.h>
 #include <TFile.h>
 
+#include <TQtWidget.h>
+
 #include <iostream>
 
 Plotter::Plotter(QWidget* parent)
-  : TQtWidget(parent)
+  : QWidget(parent)
+  , m_layout(new QVBoxLayout)
+  , m_rootWidget(new TQtWidget)
   , m_updateTimer(this)
   , m_selectedPlot(-1)
 {
+  m_layout->addWidget(m_rootWidget);
+  setLayout(m_layout);
   gROOT->cd();
   setMouseTracking(true);
   connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
@@ -24,6 +31,8 @@ Plotter::Plotter(QWidget* parent)
 
 Plotter::~Plotter()
 {
+  delete m_layout;
+  delete m_rootWidget;
   qDeleteAll(m_plots);
 }
   
@@ -41,7 +50,7 @@ void Plotter::mousePressEvent(QMouseEvent* event)
 {
   if (event->button() == Qt::MidButton)
     unzoom();
-  TQtWidget::mousePressEvent(event);
+  QWidget::mousePressEvent(event);
 }
 
 void Plotter::mouseMoveEvent(QMouseEvent* event)
@@ -51,12 +60,12 @@ void Plotter::mouseMoveEvent(QMouseEvent* event)
   double x = gPad->AbsPixeltoX(event->x());
   double y = gPad->AbsPixeltoY(event->y());
   emit(positionChanged(x, y));
-  TQtWidget::mouseMoveEvent(event);
+  QWidget::mouseMoveEvent(event);
 }
 
 void Plotter::saveCanvas(const QString& fileName)
 {
-  GetCanvas()->SaveAs(qPrintable(fileName));
+  m_rootWidget->GetCanvas()->SaveAs(qPrintable(fileName));
 }
 
 void Plotter::saveForPostAnalysis(const QString& fileName)
@@ -65,12 +74,12 @@ void Plotter::saveForPostAnalysis(const QString& fileName)
   TFile file(qPrintable(fileName), "RECREATE");
   for (unsigned int i = 0; i < numberOfPlots(); ++i) {
     selectPlot(i, true);
-    GetCanvas()->SetName(qPrintable(plotTitle(i) + " canvas"));
-    GetCanvas()->Write();
+    m_rootWidget->GetCanvas()->SetName(qPrintable(plotTitle(i) + " canvas"));
+    m_rootWidget->GetCanvas()->Write();
   }
   file.Close();
   selectPlot(savedSelectedPlot);
-  GetCanvas()->SetName("tqtwidget");
+  m_rootWidget->GetCanvas()->SetName("tqtwidget");
 }
 
 void Plotter::update()
@@ -122,9 +131,17 @@ void Plotter::selectPlot(int i, bool inhibitDraw)
     gPad->Clear();
   } else {
     emit(titleChanged(m_plots[i]->title()));
-    m_plots[i]->draw(GetCanvas());
-    if (!inhibitDraw)
+    m_plots[i]->draw(m_rootWidget->GetCanvas());
+    if (!inhibitDraw) {
+      if (m_layout->count() > 1)
+        m_layout->removeWidget(m_plots[m_selectedPlot]->secondaryWidget());
+      QWidget* secondaryWidget = m_plots[i]->secondaryWidget();
+      if (secondaryWidget) {
+        m_layout->insertWidget(0, secondaryWidget);
+        secondaryWidget->show();
+      }
       updateCanvas();
+    }
   }
   m_selectedPlot = i;
 }

@@ -1,7 +1,8 @@
 #include "AnalysisPlot.hh"
 
 AnalysisPlot::AnalysisPlot(Topic topic)
-  : m_topic(topic)
+  : m_secondaryWidget(0)
+  , m_topic(topic)
 {
 }
 

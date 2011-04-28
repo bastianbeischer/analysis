@@ -3,14 +3,16 @@
 
 #include "AnalysisPlot.hh"
 
-#include <TQtWidget.h>
-
+#include <QWidget>
 #include <QVector>
 #include <QTimer>
 
+class QVBoxLayout;
+class TQtWidget;
+
 class AnalysisPlot;
 
-class Plotter : public TQtWidget
+class Plotter : public QWidget
 {
 Q_OBJECT
 public:
@@ -46,6 +48,8 @@ protected:
   void mouseMoveEvent(QMouseEvent* event);
   void updateCanvas();
 private:
+  QVBoxLayout* m_layout;
+  TQtWidget* m_rootWidget;
   QTimer m_updateTimer;
   QVector<AnalysisPlot*> m_plots;
   int m_selectedPlot;
