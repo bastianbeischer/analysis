@@ -12,8 +12,8 @@
 Cut::Cut(Type type) :
   m_type(type)
 {
-  m_min = false;
-  m_max = false;
+  m_minIsSet = false;
+  m_maxIsSet = false;
 }
 
 Cut::~Cut() {
@@ -52,7 +52,6 @@ bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*
     ParticleInformation::Flags flags = particle->information()->flags();
     if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
       return false;
-    
     return passesCuts(fabs(track->rigidity()));
   }
   if (m_type == beta) {
@@ -91,9 +90,10 @@ bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*
       }
     }
     if (nTofHits > 0) {
-      return totSum / nTofHits;
+      return passesCuts(totSum / nTofHits);
     }
     else {
+      qDebug("no tof hits");
       return false;
     }
   }
