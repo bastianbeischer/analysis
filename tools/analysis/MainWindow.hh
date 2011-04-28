@@ -8,6 +8,7 @@
 #include "ParticleFilter.hh"
 #include "EventReader.hh"
 #include "RootPlot.hh"
+#include "CutFilter.hh"
 
 #include <QMainWindow>
 #include <QString>
@@ -55,7 +56,7 @@ private slots:
   void update();
 private:
   void setupPlots();
-  void setupAnalysis(Track::Type&, Corrections::Flags&, ParticleFilter::Types&);
+  void setupAnalysis(Track::Type&, Corrections::Flags&, ParticleFilter::Types&, CutFilter&);
   void startAnalysis();
   void changeTopicGroupStatus(QVector<QCheckBox*>&);
   void removeListWidgetItem(int);

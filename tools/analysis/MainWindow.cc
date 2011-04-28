@@ -673,7 +673,7 @@ void MainWindow::setupPlots()
   }
 }
 
-void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes)
+void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes, CutFilter& cutFilter)
 {
   if (m_ui.alignmentCorrectionCheckBox->isChecked())
     flags|= Corrections::Alignment;
@@ -700,7 +700,21 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
     filterTypes |= Particle::Muon;
   if (m_ui.antiMuonCheckBox->isChecked())
     filterTypes |= Particle::AntiMuon;
+  
+  if (m_ui.rigidityCutCheckBox->isChecked()) {
+    Cut cut(Cut::rigidity);
+    QString minText = m_ui.rigidityLineEditMin->text();
+    QString maxText = m_ui.rigidityLineEditMax->text();
+    if (minText.length() > 0) {
+      cut.setMin(minText.toDouble());
+    }
+    if (maxText.length() > 0) {
+      cut.setMax(maxText.toDouble());
+    }
+    cutFilter.addCut(cut);
 
+  }
+  
   if (m_ui.trackComboBox->currentText() == "centered broken line") {
     type = Track::CenteredBrokenLine;
   } else if (m_ui.trackComboBox->currentText() == "centered broken line 2D") {
@@ -766,7 +780,8 @@ void MainWindow::analyzeButtonClicked()
     Track::Type type = Track::None;
     Corrections::Flags flags;
     ParticleFilter::Types filterTypes;
-    setupAnalysis(type, flags, filterTypes);
+    CutFilter cutFilter;
+    setupAnalysis(type, flags, filterTypes, cutFilter);
     setupPlots();
 
     qDeleteAll(m_processors);
@@ -778,6 +793,7 @@ void MainWindow::analyzeButtonClicked()
       processor->setTrackType(type);
       processor->setCorrectionFlags(flags);
       processor->setParticleFilter(filterTypes);
+      processor->setCutFilter(cutFilter);
       m_processors.append(processor);
     }      
     m_reader->start(m_processors, m_ui.firstEventSpinBox->value(), m_ui.lastEventSpinBox->value());

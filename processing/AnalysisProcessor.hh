@@ -6,6 +6,7 @@
 #include "Track.hh"
 #include "Corrections.hh"
 #include "ParticleFilter.hh"
+#include "CutFilter.hh"
 
 class Particle;
 class TrackFinding;
@@ -20,6 +21,7 @@ public:
   void setTrackType(Track::Type);
   void setCorrectionFlags(Corrections::Flags);
   void setParticleFilter(ParticleFilter::Types);
+  void setCutFilter(CutFilter cuts);
 
   void process(SimpleEvent*);
 
@@ -29,6 +31,7 @@ private:
   TrackFinding* m_trackFinding;
   Corrections* m_corrections;
   ParticleIdentifier* m_identifier;
+  CutFilter* m_cuts;
 };
 
 #endif
