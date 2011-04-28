@@ -1710,7 +1710,10 @@ reconstruction</string>
             </font>
            </property>
            <property name="currentIndex">
-            <number>2</number>
+            <number>0</number>
+           </property>
+           <property name="usesScrollButtons">
+            <bool>false</bool>
            </property>
            <widget class="QWidget" name="CorrectionsTab">
             <property name="contextMenuPolicy">
@@ -1990,20 +1993,20 @@ over threshold</string>
              <property name="geometry">
               <rect>
                <x>10</x>
-               <y>10</y>
-               <width>87</width>
+               <y>0</y>
+               <width>171</width>
                <height>20</height>
               </rect>
              </property>
              <property name="text">
-              <string>Rigidity</string>
+              <string>Rigidity / GV</string>
              </property>
             </widget>
             <widget class="QCheckBox" name="betaCutCheckBox">
              <property name="geometry">
               <rect>
                <x>10</x>
-               <y>80</y>
+               <y>30</y>
                <width>87</width>
                <height>20</height>
               </rect>
@@ -2016,85 +2019,130 @@ over threshold</string>
              <property name="geometry">
               <rect>
                <x>10</x>
-               <y>100</y>
-               <width>111</width>
+               <y>60</y>
+               <width>201</width>
                <height>20</height>
               </rect>
              </property>
              <property name="text">
-              <string>TRD Deposition</string>
+              <string>TRD Deposition / ADC-Counts</string>
              </property>
             </widget>
             <widget class="QCheckBox" name="tofTotCutCheckBox">
              <property name="geometry">
               <rect>
                <x>10</x>
-               <y>120</y>
-               <width>181</width>
+               <y>100</y>
+               <width>211</width>
                <height>20</height>
               </rect>
              </property>
              <property name="text">
-              <string>TOF Time Over Threshold</string>
+              <string>TOF Time Over Threshold / ns</string>
              </property>
             </widget>
             <widget class="QLineEdit" name="rigidityLineEditMin">
              <property name="geometry">
               <rect>
-               <x>60</x>
-               <y>30</y>
-               <width>41</width>
+               <x>120</x>
+               <y>0</y>
+               <width>31</width>
                <height>22</height>
               </rect>
+             </property>
+             <property name="text">
+              <string>min</string>
              </property>
             </widget>
             <widget class="QLineEdit" name="rigidityLineEditMax">
              <property name="geometry">
               <rect>
-               <x>140</x>
-               <y>30</y>
-               <width>41</width>
+               <x>190</x>
+               <y>0</y>
+               <width>31</width>
                <height>22</height>
               </rect>
              </property>
+             <property name="text">
+              <string>max</string>
+             </property>
             </widget>
-            <widget class="QLabel" name="label">
+            <widget class="QLineEdit" name="betaLineEditMax">
              <property name="geometry">
               <rect>
                <x>190</x>
                <y>30</y>
-               <width>21</width>
-               <height>16</height>
+               <width>31</width>
+               <height>22</height>
               </rect>
              </property>
              <property name="text">
-              <string>GV</string>
+              <string>max</string>
              </property>
             </widget>
-            <widget class="QLabel" name="label_2">
+            <widget class="QLineEdit" name="betaLineEditMin">
              <property name="geometry">
               <rect>
-               <x>30</x>
+               <x>120</x>
                <y>30</y>
                <width>31</width>
-               <height>16</height>
+               <height>22</height>
               </rect>
              </property>
              <property name="text">
-              <string>Min</string>
+              <string>min</string>
              </property>
             </widget>
-            <widget class="QLabel" name="label_3">
+            <widget class="QLineEdit" name="trdDepositionLineEditMin">
              <property name="geometry">
               <rect>
-               <x>110</x>
-               <y>30</y>
+               <x>120</x>
+               <y>80</y>
                <width>31</width>
-               <height>16</height>
+               <height>22</height>
               </rect>
              </property>
              <property name="text">
-              <string>Max</string>
+              <string>min</string>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="trdDepositionLineEditMax">
+             <property name="geometry">
+              <rect>
+               <x>190</x>
+               <y>80</y>
+               <width>31</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>max</string>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="tofTotLineEditMin">
+             <property name="geometry">
+              <rect>
+               <x>120</x>
+               <y>120</y>
+               <width>31</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>min</string>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="tofTotLineEditMax">
+             <property name="geometry">
+              <rect>
+               <x>190</x>
+               <y>120</y>
+               <width>31</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>max</string>
              </property>
             </widget>
            </widget>

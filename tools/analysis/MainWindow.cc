@@ -705,14 +705,65 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
     Cut cut(Cut::rigidity);
     QString minText = m_ui.rigidityLineEditMin->text();
     QString maxText = m_ui.rigidityLineEditMax->text();
-    if (minText.length() > 0) {
-      cut.setMin(minText.toDouble());
+    bool minIsNumber = false;
+    double min = minText.toDouble(&minIsNumber);
+    if (minIsNumber) {
+      cut.setMin(min);
     }
-    if (maxText.length() > 0) {
-      cut.setMax(maxText.toDouble());
+    bool maxIsNumber = false;
+    double max = maxText.toDouble(&maxIsNumber);
+    if (maxIsNumber) {
+      cut.setMax(max);
     }
     cutFilter.addCut(cut);
-
+  }
+  if (m_ui.betaCutCheckBox->isChecked()) {
+    Cut cut(Cut::beta);
+    QString minText = m_ui.betaLineEditMin->text();
+    QString maxText = m_ui.betaLineEditMax->text();
+    bool minIsNumber = false;
+    double min = minText.toDouble(&minIsNumber);
+    if (minIsNumber) {
+      cut.setMin(min);
+    }
+    bool maxIsNumber = false;
+    double max = maxText.toDouble(&maxIsNumber);
+    if (maxIsNumber) {
+      cut.setMax(max);
+    }
+    cutFilter.addCut(cut);
+  }
+  if (m_ui.trdDepositionCutCheckBox->isChecked()) {
+    Cut cut(Cut::trdDeposition);
+    QString minText = m_ui.trdDepositionLineEditMin->text();
+    QString maxText = m_ui.trdDepositionLineEditMax->text();
+    bool minIsNumber = false;
+    double min = minText.toDouble(&minIsNumber);
+    if (minIsNumber) {
+      cut.setMin(min);
+    }
+    bool maxIsNumber = false;
+    double max = maxText.toDouble(&maxIsNumber);
+    if (maxIsNumber) {
+      cut.setMax(max);
+    }
+    cutFilter.addCut(cut);
+  }
+  if (m_ui.tofTotCutCheckBox->isChecked()) {
+    Cut cut(Cut::tofTimeOverThreshold);
+    QString minText = m_ui.tofTotLineEditMin->text();
+    QString maxText = m_ui.tofTotLineEditMax->text();
+    bool minIsNumber = false;
+    double min = minText.toDouble(&minIsNumber);
+    if (minIsNumber) {
+      cut.setMin(min);
+    }
+    bool maxIsNumber = false;
+    double max = maxText.toDouble(&maxIsNumber);
+    if (maxIsNumber) {
+      cut.setMax(max);
+    }
+    cutFilter.addCut(cut);
   }
   
   if (m_ui.trackComboBox->currentText() == "centered broken line") {
