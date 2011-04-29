@@ -37,10 +37,10 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumPlot:
     break;
   }
 
-  if(m_spectrumType == TRDSpectrumPlot::completeTRD)
-    setTitle(strType + QString(" spectrum (%1 GeV to %2 Gev)").arg(m_lowerMomentum).arg(m_upperMomentum));
+  if(m_spectrumType == TRDSpectrumVsTimePlot::completeTRD)
+    setTitle(strType + QString(" spectrum (%1 GeV to %2 GeV)").arg(m_lowerMomentum).arg(m_upperMomentum));
   else
-    setTitle(strType + QString(" spectrum 0x%1 (%2 GeV to %3 Gev)").arg(m_id,0,16).arg(m_lowerMomentum).arg(m_upperMomentum));
+    setTitle(strType + QString(" spectrum 0x%1 (%2 GeV to %3 GeV)").arg(m_id,0,16).arg(m_lowerMomentum).arg(m_upperMomentum));
 
   int t1 = first.toTime_t();
   t1-= (t1 % 60) + 60;
@@ -51,10 +51,10 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumPlot:
   const double minSignalHeight = 0;
   const double maxSignalHeight = 20;
 
-  TH2D* histogram = new TH2D(qPrintable(title()),qPrintable(title() + ";ADCCs per length in tube / (1/mm);entries vs time"), nTimeBins,t1,t2,nSignalHeightBins,minSignalHeight,maxSignalHeight);
+  TH2D* histogram = new TH2D(qPrintable(title()),"", nTimeBins,t1,t2,nSignalHeightBins,minSignalHeight,maxSignalHeight);
   histogram->GetXaxis()->SetTimeDisplay(1);
   histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");
-  setAxisTitle("Time", "ADC Counts", "");
+  setAxisTitle("Time", "ADCCs per length", "");
   addHistogram(histogram);
 }
 

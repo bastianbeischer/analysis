@@ -39,21 +39,21 @@ TRDSpectrumVsTemperaturePlot::TRDSpectrumVsTemperaturePlot(unsigned int id, TRDS
     break;
   }
 
-  if(m_spectrumType == TRDSpectrumPlot::completeTRD)
-    setTitle(strType + QString(" spectrum (%1 GeV to %2 Gev)").arg(m_lowerMomentum).arg(m_upperMomentum));
+  if(m_spectrumType == TRDSpectrumVsTemperaturePlot::completeTRD)
+    setTitle(strType + QString(" spectrum (%1 GeV to %2 GeV)").arg(m_lowerMomentum).arg(m_upperMomentum));
   else
-    setTitle(strType + QString(" spectrum 0x%1 (%2 GeV to %3 Gev)").arg(m_id,0,16).arg(m_lowerMomentum).arg(m_upperMomentum));
+    setTitle(strType + QString(" spectrum 0x%1 (%2 GeV to %3 GeV)").arg(m_id,0,16).arg(m_lowerMomentum).arg(m_upperMomentum));
 
 
-  const unsigned int nTemperatureBins = 100;
+  const unsigned int nTemperatureBins = 200;
   const double minTemperature = -25;
-  const double maxTemperature = 35;
+  const double maxTemperature = 25;
   const unsigned int nSpecBins = 100;
   const double minSpec = 0;
   const double maxSpec = 20;
 
-  TH2D* histogram = new TH2D(qPrintable(title()),qPrintable(title() + ";ADCCs per length in tube / (1/mm);entries vs Temperature"), nTemperatureBins, minTemperature, maxTemperature, nSpecBins, minSpec, maxSpec);
-  setAxisTitle("temperature /  #circC", "ADCC's", "");
+  TH2D* histogram = new TH2D(qPrintable(title()),"", nTemperatureBins, minTemperature, maxTemperature, nSpecBins, minSpec, maxSpec);
+  setAxisTitle("temperature /  #circC", "ADCCs per length", "");
   addHistogram(histogram);
 }
 
