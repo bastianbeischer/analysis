@@ -40,6 +40,7 @@ CLASSES = \
   Chi2VsMomentumPlot \
   DetectorIDSpinBox \
   PlotCollection \
+  TRDCombinedPlot \
   ClusterLengthPlot \
   ClusterShapePlot \
   GeometricOccupancyPlot \

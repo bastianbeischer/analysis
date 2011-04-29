@@ -12,6 +12,7 @@
 #include "AnalysisProcessor.hh"
 #include "EventReader.hh"
 
+#include "TRDCombinedPlot.hh"
 #include "BendingPositionPlot.hh"
 #include "BendingAnglePlot.hh"
 #include "ResidualPlot.hh"
@@ -438,17 +439,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, -3, -1.5));
     m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, 1.5, 3));
     
-    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
-      DetectorElement* element = *elementIt;
-      if (element->type() == DetectorElement::trd){
-        TRDSpectrumPlot* trdModuleSpectrumPlot = new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, element->id(),TRDSpectrumPlot::module);
-        m_ui.plotter->addPlot(trdModuleSpectrumPlot);
-        for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++){
-          TRDSpectrumPlot* trdChannelSpectrumPlot = new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, element->id() | tubeNo,TRDSpectrumPlot::channel);
-          m_ui.plotter->addPlot(trdChannelSpectrumPlot);
-        }
-      }
-    }
+    m_ui.plotter->addPlot(new TRDCombinedPlot);
 
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumVsTimePlot::completeTRD,first,last));
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumVsTimePlot::completeTRD,first,last, -3, -1.5));
