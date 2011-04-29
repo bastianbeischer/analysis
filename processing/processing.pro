@@ -15,6 +15,7 @@ CLASSES += \
   DataChain \
   LimitedEventQueue \
   ProcessingThread \
+  Cut \
   CutFilter
 
 INCLUDEPATH += \
