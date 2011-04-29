@@ -19,6 +19,7 @@ AnalysisProcessor::AnalysisProcessor()
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections)
   , m_identifier(new ParticleIdentifier)
+  , m_cuts(new CutFilter)
 {
 }
 
@@ -58,6 +59,11 @@ void AnalysisProcessor::setParticleFilter(ParticleFilter::Types types)
   m_filter->setTypes(types);
 }
 
+void AnalysisProcessor::setCutFilter(CutFilter cuts)
+{
+  m_cuts->setCuts(cuts);
+}
+
 void AnalysisProcessor::process(SimpleEvent* event)
 {
   m_corrections->preFitCorrections(event);
@@ -81,6 +87,7 @@ void AnalysisProcessor::process(SimpleEvent* event)
   m_identifier->identify(m_particle);
 
   if (m_filter->passes(m_particle))
-    foreach (EventDestination* destination, m_destinations)
-      destination->processEvent(clusters, m_particle, event);
+    if (m_cuts->passes(clusters, m_particle, event))
+      foreach (EventDestination* destination, m_destinations)
+        destination->processEvent(clusters, m_particle, event);
 }

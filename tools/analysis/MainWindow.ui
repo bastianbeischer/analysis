@@ -108,8 +108,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>183</width>
-             <height>716</height>
+             <width>213</width>
+             <height>846</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -1712,7 +1712,13 @@ reconstruction</string>
            <property name="currentIndex">
             <number>0</number>
            </property>
+           <property name="usesScrollButtons">
+            <bool>false</bool>
+           </property>
            <widget class="QWidget" name="CorrectionsTab">
+            <property name="contextMenuPolicy">
+             <enum>Qt::DefaultContextMenu</enum>
+            </property>
             <attribute name="title">
              <string>Corrections</string>
             </attribute>
@@ -1979,6 +1985,191 @@ over threshold</string>
              </item>
             </layout>
            </widget>
+           <widget class="QWidget" name="cutTab">
+            <attribute name="title">
+             <string>Cuts</string>
+            </attribute>
+            <widget class="QCheckBox" name="rigidityCutCheckBox">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>0</y>
+               <width>171</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Rigidity / GV</string>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="betaCutCheckBox">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>30</y>
+               <width>87</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>Beta</string>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="trdDepositionCutCheckBox">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>60</y>
+               <width>201</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>TRD Deposition / ADC-Counts</string>
+             </property>
+            </widget>
+            <widget class="QCheckBox" name="tofTotCutCheckBox">
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>100</y>
+               <width>211</width>
+               <height>20</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string>TOF Time Over Threshold / ns</string>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="rigidityLineEditMin">
+             <property name="geometry">
+              <rect>
+               <x>120</x>
+               <y>0</y>
+               <width>41</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
+              <string>min</string>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="rigidityLineEditMax">
+             <property name="geometry">
+              <rect>
+               <x>190</x>
+               <y>0</y>
+               <width>41</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
+              <string>max</string>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="betaLineEditMax">
+             <property name="geometry">
+              <rect>
+               <x>190</x>
+               <y>30</y>
+               <width>41</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
+              <string>max</string>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="betaLineEditMin">
+             <property name="geometry">
+              <rect>
+               <x>120</x>
+               <y>30</y>
+               <width>41</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
+              <string>min</string>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="trdDepositionLineEditMin">
+             <property name="geometry">
+              <rect>
+               <x>120</x>
+               <y>80</y>
+               <width>41</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
+              <string>min</string>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="trdDepositionLineEditMax">
+             <property name="geometry">
+              <rect>
+               <x>190</x>
+               <y>80</y>
+               <width>41</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
+              <string>max</string>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="tofTotLineEditMin">
+             <property name="geometry">
+              <rect>
+               <x>120</x>
+               <y>120</y>
+               <width>41</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
+              <string>min</string>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="tofTotLineEditMax">
+             <property name="geometry">
+              <rect>
+               <x>190</x>
+               <y>120</y>
+               <width>41</width>
+               <height>22</height>
+              </rect>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="placeholderText">
+              <string>max</string>
+             </property>
+            </widget>
+           </widget>
           </widget>
           <widget class="QWidget" name="widget" native="true">
            <property name="sizePolicy">
@@ -2073,7 +2264,7 @@ over threshold</string>
      <x>0</x>
      <y>0</y>
      <width>1207</width>
-     <height>21</height>
+     <height>19</height>
     </rect>
    </property>
    <property name="font">
