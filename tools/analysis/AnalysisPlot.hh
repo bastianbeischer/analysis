@@ -9,6 +9,7 @@
 class Hit;
 class Particle;
 class SimpleEvent;
+class QWidget;
 
 class AnalysisPlot : virtual public RootPlot, public EventDestination {
 public:
@@ -22,8 +23,10 @@ public:
   AnalysisPlot(Topic);
   virtual ~AnalysisPlot();
   Topic topic() const;
+  QWidget* secondaryWidget() const {return m_secondaryWidget;}
 protected:
   QMutex m_mutex;
+  QWidget* m_secondaryWidget;
 private:
   Topic m_topic;
 };

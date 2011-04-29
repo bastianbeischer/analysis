@@ -3,14 +3,16 @@
 
 #include "AnalysisPlot.hh"
 
-#include <TQtWidget.h>
-
+#include <QWidget>
 #include <QVector>
 #include <QTimer>
 
+class QVBoxLayout;
+class TQtWidget;
+
 class AnalysisPlot;
 
-class Plotter : public TQtWidget
+class Plotter : public QWidget
 {
 Q_OBJECT
 public:
@@ -34,6 +36,7 @@ public:
   void setLogZ(bool);
   void saveCanvas(const QString& fileName);
   void saveForPostAnalysis(const QString&);
+  static TCanvas* canvas();
 public slots:
   void update();
   void finalizeAnalysis();
@@ -46,6 +49,8 @@ protected:
   void mouseMoveEvent(QMouseEvent* event);
   void updateCanvas();
 private:
+  QVBoxLayout* m_layout;
+  static TQtWidget* s_rootWidget;
   QTimer m_updateTimer;
   QVector<AnalysisPlot*> m_plots;
   int m_selectedPlot;

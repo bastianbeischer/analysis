@@ -38,6 +38,8 @@ CLASSES = \
   Chi2PerNdfPlot \
   Chi2Plot \
   Chi2VsMomentumPlot \
+  DetectorIDSpinBox \
+  PlotCollection \
   ClusterLengthPlot \
   ClusterShapePlot \
   GeometricOccupancyPlot \

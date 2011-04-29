@@ -71,6 +71,7 @@
 #include "ZSquareTRDPlot.hh"
 #include "TOFBarShiftPlot.hh"
 
+#include <QCloseEvent>
 #include <QFileDialog>
 #include <QVBoxLayout>
 #include <QDateTime>
