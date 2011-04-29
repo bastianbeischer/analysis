@@ -36,6 +36,7 @@ public:
   void setLogZ(bool);
   void saveCanvas(const QString& fileName);
   void saveForPostAnalysis(const QString&);
+  static TCanvas* canvas();
 public slots:
   void update();
   void finalizeAnalysis();
@@ -49,7 +50,7 @@ protected:
   void updateCanvas();
 private:
   QVBoxLayout* m_layout;
-  TQtWidget* m_rootWidget;
+  static TQtWidget* s_rootWidget;
   QTimer m_updateTimer;
   QVector<AnalysisPlot*> m_plots;
   int m_selectedPlot;

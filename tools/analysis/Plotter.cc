@@ -14,14 +14,16 @@
 
 #include <iostream>
 
+TQtWidget* Plotter::s_rootWidget = 0;
+
 Plotter::Plotter(QWidget* parent)
   : QWidget(parent)
   , m_layout(new QVBoxLayout)
-  , m_rootWidget(new TQtWidget)
   , m_updateTimer(this)
   , m_selectedPlot(-1)
 {
-  m_layout->addWidget(m_rootWidget);
+  s_rootWidget = new TQtWidget;
+  m_layout->addWidget(s_rootWidget);
   setLayout(m_layout);
   gROOT->cd();
   setMouseTracking(true);
@@ -32,7 +34,7 @@ Plotter::Plotter(QWidget* parent)
 Plotter::~Plotter()
 {
   delete m_layout;
-  delete m_rootWidget;
+  delete s_rootWidget;
   qDeleteAll(m_plots);
 }
   
@@ -65,7 +67,7 @@ void Plotter::mouseMoveEvent(QMouseEvent* event)
 
 void Plotter::saveCanvas(const QString& fileName)
 {
-  m_rootWidget->GetCanvas()->SaveAs(qPrintable(fileName));
+  s_rootWidget->GetCanvas()->SaveAs(qPrintable(fileName));
 }
 
 void Plotter::saveForPostAnalysis(const QString& fileName)
@@ -74,12 +76,12 @@ void Plotter::saveForPostAnalysis(const QString& fileName)
   TFile file(qPrintable(fileName), "RECREATE");
   for (unsigned int i = 0; i < numberOfPlots(); ++i) {
     selectPlot(i, true);
-    m_rootWidget->GetCanvas()->SetName(qPrintable(plotTitle(i) + " canvas"));
-    m_rootWidget->GetCanvas()->Write();
+    s_rootWidget->GetCanvas()->SetName(qPrintable(plotTitle(i) + " canvas"));
+    s_rootWidget->GetCanvas()->Write();
   }
   file.Close();
   selectPlot(savedSelectedPlot);
-  m_rootWidget->GetCanvas()->SetName("tqtwidget");
+  s_rootWidget->GetCanvas()->SetName("tqtwidget");
 }
 
 void Plotter::update()
@@ -131,10 +133,11 @@ void Plotter::selectPlot(int i, bool inhibitDraw)
     gPad->Clear();
   } else {
     emit(titleChanged(m_plots[i]->title()));
-    m_plots[i]->draw(m_rootWidget->GetCanvas());
+    m_plots[i]->draw(s_rootWidget->GetCanvas());
     if (!inhibitDraw) {
-      if (m_layout->count() > 1)
-        m_layout->removeWidget(m_plots[m_selectedPlot]->secondaryWidget());
+      if (m_layout->count() > 1) {
+        m_layout->itemAt(0)->widget()->close();
+      }
       QWidget* secondaryWidget = m_plots[i]->secondaryWidget();
       if (secondaryWidget) {
         m_layout->insertWidget(0, secondaryWidget);
@@ -224,4 +227,9 @@ void Plotter::setDrawOption(RootPlot::DrawOption option)
     return;
   m_plots[m_selectedPlot]->setDrawOption(option);
   selectPlot(m_selectedPlot);
+}
+
+TCanvas* Plotter::canvas()
+{
+  return s_rootWidget->GetCanvas();
 }
