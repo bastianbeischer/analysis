@@ -163,6 +163,18 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.positronCheckBox);
   m_controlWidgets.append(m_ui.muonCheckBox);
   m_controlWidgets.append(m_ui.antiMuonCheckBox);
+  m_controlWidgets.append(m_ui.rigidityCutCheckBox);
+  m_controlWidgets.append(m_ui.rigidityLineEditMax);
+  m_controlWidgets.append(m_ui.rigidityLineEditMin);
+  m_controlWidgets.append(m_ui.betaCutCheckBox);
+  m_controlWidgets.append(m_ui.betaLineEditMax);
+  m_controlWidgets.append(m_ui.betaLineEditMin);
+  m_controlWidgets.append(m_ui.tofTotCutCheckBox);
+  m_controlWidgets.append(m_ui.tofTotLineEditMax);
+  m_controlWidgets.append(m_ui.tofTotLineEditMin);
+  m_controlWidgets.append(m_ui.trdDepositionCutCheckBox);
+  m_controlWidgets.append(m_ui.trdDepositionLineEditMax);
+  m_controlWidgets.append(m_ui.trdDepositionLineEditMin);
 
   connect(m_reader, SIGNAL(started()), this, SLOT(toggleControlWidgetsStatus()));
   connect(m_reader, SIGNAL(finished()), this, SLOT(toggleControlWidgetsStatus()));
