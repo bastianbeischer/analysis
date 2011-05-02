@@ -5,19 +5,23 @@
 #include <TLegend.h>
 #include <TF1.h>
 
+#include <QWidget>
+
 RootPlot::RootPlot()
   : m_title(QString())
   , m_drawOption(UndefinedDrawOption)
   , m_type(Undefined)
   , m_drawn(false)
-  , m_latex(QVector<TLatex*>())
-  , m_legend(QVector<TLegend*>())
-  , m_function(QVector<TF1*>())
+  , m_secondaryWidget(0)
+  , m_latex()
+  , m_legend()
+  , m_function()
 {
 }
 
 RootPlot::~RootPlot()
 {
+  delete m_secondaryWidget;
   qDeleteAll(m_latex);
   qDeleteAll(m_legend);
   qDeleteAll(m_function);
