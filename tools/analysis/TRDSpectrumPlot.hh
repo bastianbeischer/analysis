@@ -12,7 +12,7 @@ class TRDSpectrumPlot : public AnalysisPlot, public H1DPlot
 public:
   enum TRDSpectrumType{completeTRD, module, channel};
 
-  TRDSpectrumPlot(AnalysisPlot::Topic, unsigned short, TRDSpectrumType, double lowerMomentum = -10, double upperMomentum = 10);
+  TRDSpectrumPlot(unsigned short, TRDSpectrumType, double lowerMomentum = -10, double upperMomentum = 10);
   ~TRDSpectrumPlot();
 
   virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);

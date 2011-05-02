@@ -13,8 +13,8 @@
 #include "TRDCalculations.hh"
 #include "Corrections.hh"
 
-TRDSpectrumPlot::TRDSpectrumPlot(AnalysisPlot::Topic topic, unsigned short id, TRDSpectrumType spectrumType, double lowerMom, double upperMom) :
-  AnalysisPlot(topic),
+TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType, double lowerMom, double upperMom) :
+  AnalysisPlot(AnalysisPlot::SignalHeightTRD),
   H1DPlot(),
   m_id(id),
   m_spectrumType(spectrumType),

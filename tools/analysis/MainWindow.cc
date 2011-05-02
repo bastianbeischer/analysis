@@ -13,6 +13,8 @@
 #include "EventReader.hh"
 
 #include "TRDCombinedSpectrumPlot.hh"
+#include "TRDCombinedSpectrumVsTimePlot.hh"
+#include "TRDCombinedSpectrumVsTemperaturePlot.hh"
 #include "BendingPositionPlot.hh"
 #include "BendingAnglePlot.hh"
 #include "ResidualPlot.hh"
@@ -447,43 +449,21 @@ void MainWindow::setupPlots()
         m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightTRD, element->id()));
     }
 
-    m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
-    m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, -3, -1.5));
-    m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, 1.5, 3));
-    
+    m_ui.plotter->addPlot(new TRDSpectrumPlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
+    m_ui.plotter->addPlot(new TRDSpectrumPlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, -3, -1.5));
+    m_ui.plotter->addPlot(new TRDSpectrumPlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, 1.5, 3));
     m_ui.plotter->addPlot(new TRDCombinedSpectrumPlot);
 
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD,first,last));
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD,first,last, -3, -1.5));
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD,first,last, 1.5, 3));
+    m_ui.plotter->addPlot(new TRDCombinedSpectrumVsTimePlot(first, last));
 
-    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
-      DetectorElement* element = *elementIt;
-      if (element->type() == DetectorElement::trd){
-        TRDSpectrumVsTimePlot* trdModuleSpectrumPlot = new TRDSpectrumVsTimePlot(element->id(),TRDSpectrumPlot::module, first, last);
-        m_ui.plotter->addPlot(trdModuleSpectrumPlot);
-        for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++){
-          TRDSpectrumVsTimePlot* trdChannelSpectrumPlot = new TRDSpectrumVsTimePlot(element->id() | tubeNo,TRDSpectrumPlot::channel, first, last);
-          m_ui.plotter->addPlot(trdChannelSpectrumPlot);
-        }
-      }
-    }
 
     m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
     m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, -3, -1.5));
     m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, 1.5, 3));
-
-    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
-      DetectorElement* element = *elementIt;
-      if (element->type() == DetectorElement::trd){
-        TRDSpectrumVsTemperaturePlot* trdModuleSpectrumPlot = new TRDSpectrumVsTemperaturePlot(element->id(),TRDSpectrumPlot::module);
-        m_ui.plotter->addPlot(trdModuleSpectrumPlot);
-        for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++){
-          TRDSpectrumVsTemperaturePlot* trdChannelSpectrumPlot = new TRDSpectrumVsTemperaturePlot(element->id() | tubeNo,TRDSpectrumPlot::channel);
-          m_ui.plotter->addPlot(trdChannelSpectrumPlot);
-        }
-      }
-    }
+    m_ui.plotter->addPlot(new TRDCombinedSpectrumVsTemperaturePlot);
  
   }
   if (m_ui.clusterShapeTrackerCheckBox->isChecked()) {

@@ -1,11 +1,11 @@
-#include "TRDCombinedSpectrumPlot.hh"
+#include "TRDCombinedSpectrumVsTemperaturePlot.hh"
 
 #include "DetectorSelectionWidget.hh"
-#include "TRDSpectrumPlot.hh"
+#include "TRDSpectrumVsTemperaturePlot.hh"
 #include "Setup.hh"
 #include "DetectorElement.hh"
 
-TRDCombinedSpectrumPlot::TRDCombinedSpectrumPlot() :
+TRDCombinedSpectrumVsTemperaturePlot::TRDCombinedSpectrumVsTemperaturePlot() :
   PlotCollection(AnalysisPlot::SignalHeightTRD)
 {
   QVector<unsigned short> moduleIDs;
@@ -17,9 +17,9 @@ TRDCombinedSpectrumPlot::TRDCombinedSpectrumPlot() :
     DetectorElement* element = *elementIt;
     if (element->type() == DetectorElement::trd){
       moduleIDs.append(element->id());
-      addPlot(new TRDSpectrumPlot(element->id(),TRDSpectrumPlot::module));
+      addPlot(new TRDSpectrumVsTemperaturePlot(element->id(),TRDSpectrumPlot::module));
       for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++) {
-        addPlot(new TRDSpectrumPlot(element->id() | tubeNo,TRDSpectrumPlot::channel));
+        addPlot(new TRDSpectrumVsTemperaturePlot(element->id() | tubeNo,TRDSpectrumPlot::channel));
       }
     }
   }
@@ -28,9 +28,9 @@ TRDCombinedSpectrumPlot::TRDCombinedSpectrumPlot() :
   m_secondaryWidget = selectionWidget;
   connect(selectionWidget, SIGNAL(selectPlot(int)), this, SLOT(selectPlot(int)));
 
-  setTitle("spectrum - all modules");
+  setTitle("spectrum vs temperature - all modules");
 }
 
-TRDCombinedSpectrumPlot::~TRDCombinedSpectrumPlot()
+TRDCombinedSpectrumVsTemperaturePlot::~TRDCombinedSpectrumVsTemperaturePlot()
 {
 }

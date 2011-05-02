@@ -41,6 +41,8 @@ CLASSES = \
   DetectorIDSpinBox \
   PlotCollection \
   TRDCombinedSpectrumPlot \
+  TRDCombinedSpectrumVsTimePlot \
+  TRDCombinedSpectrumVsTemperaturePlot \
   DetectorSelectionWidget \
   ClusterLengthPlot \
   ClusterShapePlot \
