@@ -13,6 +13,8 @@ CLASSES += \
   RootQtWidget \
   H1DPlot \
   H2DPlot \
+  DetectorIDSpinBox \
+  DetectorSelectionWidget \
   GraphPlot \
   PerdaixDisplay
 

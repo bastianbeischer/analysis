@@ -38,12 +38,10 @@ CLASSES = \
   Chi2PerNdfPlot \
   Chi2Plot \
   Chi2VsMomentumPlot \
-  DetectorIDSpinBox \
   PlotCollection \
   TRDCombinedSpectrumPlot \
   TRDCombinedSpectrumVsTimePlot \
   TRDCombinedSpectrumVsTemperaturePlot \
-  DetectorSelectionWidget \
   ClusterLengthPlot \
   ClusterShapePlot \
   GeometricOccupancyPlot \
