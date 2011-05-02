@@ -52,7 +52,6 @@ CLASSES = \
   MomentumSpectrumPlot \
   Plotter \
   ResidualPlot \
-  RootQtWidget \
   SignalHeightPlot \
   SingleLayerTrackingEfficiencyPlot \
   MultiLayerTrackingEfficiencyPlot \

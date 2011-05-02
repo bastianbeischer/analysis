@@ -10,6 +10,7 @@ INCLUDEPATH+= \
 
 CLASSES += \
   RootPlot \
+  RootQtWidget \
   H1DPlot \
   H2DPlot \
   GraphPlot \
