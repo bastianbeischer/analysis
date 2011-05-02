@@ -17,7 +17,7 @@
 #include <QSettings>
 #include <math.h>
 
-TRDSpectrumVsTemperaturePlot::TRDSpectrumVsTemperaturePlot(unsigned int id, TRDSpectrumType spectrumType, double lowerMom, double upperMom):
+TRDSpectrumVsTemperaturePlot::TRDSpectrumVsTemperaturePlot(unsigned int id, TRDSpectrumPlot::TRDSpectrumType spectrumType, double lowerMom, double upperMom):
   AnalysisPlot(AnalysisPlot:: SignalHeightTRD),
   H2DPlot(),
   m_id(id),
@@ -28,18 +28,18 @@ TRDSpectrumVsTemperaturePlot::TRDSpectrumVsTemperaturePlot(unsigned int id, TRDS
   QString strType;
   switch(m_spectrumType)
   {
-    case TRDSpectrumVsTemperaturePlot::completeTRD:
+    case TRDSpectrumPlot::completeTRD:
       strType = "temperature vs complete TRD";
     break;
-    case TRDSpectrumVsTemperaturePlot::module:
+    case TRDSpectrumPlot::module:
       strType = "temperature vs module";
     break;
-    case TRDSpectrumVsTemperaturePlot::channel:
+    case TRDSpectrumPlot::channel:
       strType = "temperature vs channel";
     break;
   }
 
-  if(m_spectrumType == TRDSpectrumVsTemperaturePlot::completeTRD)
+  if(m_spectrumType == TRDSpectrumPlot::completeTRD)
     setTitle(strType + QString(" spectrum (%1 GeV to %2 Gev)").arg(m_lowerMomentum).arg(m_upperMomentum));
   else
     setTitle(strType + QString(" spectrum 0x%1 (%2 GeV to %3 Gev)").arg(m_id,0,16).arg(m_lowerMomentum).arg(m_upperMomentum));
@@ -113,9 +113,9 @@ void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>& , Particle*
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       Hit* subHit = *it;
       //check if the id of the plot has been hit (difference between module mode and channel mode
-      if(m_spectrumType == TRDSpectrumVsTemperaturePlot::completeTRD ||  // one spectrum for whole trd
-         (m_spectrumType == TRDSpectrumVsTemperaturePlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
-         (m_spectrumType == TRDSpectrumVsTemperaturePlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
+      if(m_spectrumType == TRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
+         (m_spectrumType == TRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
+         (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
         double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
         if(distanceInTube > 0)
           histogram(0)->Fill(mean, subHit->signalHeight() / (distanceInTube));
