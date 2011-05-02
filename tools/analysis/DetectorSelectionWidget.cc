@@ -17,15 +17,15 @@ DetectorSelectionWidget::DetectorSelectionWidget(const QVector<unsigned short>& 
 
   QHBoxLayout* layout = new QHBoxLayout(this);
 
-  m_channelSpinBox->setMinimum(0);
-  m_channelSpinBox->setMaximum(nChannels-1);
-  m_channelSpinBox->setEnabled(false);
-
   layout->addWidget(new QLabel("Module"));
   layout->addWidget(m_moduleSpinBox);
   layout->addWidget(m_individualChannelCheckBox);
   layout->addWidget(new QLabel("Channel"));
   layout->addWidget(m_channelSpinBox);
+
+  m_channelSpinBox->setMinimum(0);
+  m_channelSpinBox->setMaximum(nChannels-1);
+  m_channelSpinBox->setEnabled(false);
 
   connect(m_individualChannelCheckBox, SIGNAL(stateChanged(int)), this, SLOT(setChannelSpinBoxState(int)));
   connect(m_moduleSpinBox, SIGNAL(valueChanged(int)), this, SLOT(selectedPlotChanged()));
