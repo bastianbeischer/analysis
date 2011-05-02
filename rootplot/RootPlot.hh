@@ -26,6 +26,9 @@ public:
   static TLatex* newLatex(double rx, double ry);
   static QString drawOption(DrawOption);
   virtual void draw(TCanvas*);
+  virtual void positionChanged(double, double) {}
+  virtual void finalize() {}
+  virtual void update() {}
   virtual void unzoom() {}
   virtual void clear() {}
   void setTitle(const QString& title) {m_title = title;}
@@ -36,8 +39,6 @@ public:
   TLegend* legend(int i = 0);
   void addFunction(TF1*);
   TF1* function(int i = 0);
-  virtual void finalize() {}
-  virtual void update() {}
   DrawOption drawOption();
   void setDrawOption(DrawOption);
   Type type() {return m_type;}

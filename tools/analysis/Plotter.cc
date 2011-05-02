@@ -51,6 +51,8 @@ void Plotter::canvasPositionChanged(double x, double y)
 {
   if (m_selectedPlot < 0)
     return;
+  
+  m_plots[m_selectedPlot]->positionChanged(x,y);
   emit(positionChanged(x, y));
 }
 

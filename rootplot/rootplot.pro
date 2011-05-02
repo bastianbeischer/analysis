@@ -13,6 +13,8 @@ CLASSES += \
   RootQtWidget \
   H1DPlot \
   H2DPlot \
+  H2DProjectionPlot \
+  ProjectionControlWidget \
   DetectorIDSpinBox \
   DetectorSelectionWidget \
   GraphPlot \
