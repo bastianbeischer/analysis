@@ -16,12 +16,10 @@ TRDCombinedPlot::TRDCombinedPlot() :
   for (ElementIterator elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
     DetectorElement* element = *elementIt;
     if (element->type() == DetectorElement::trd){
-      TRDSpectrumPlot* trdModuleSpectrumPlot = new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, element->id(),TRDSpectrumPlot::module);
       moduleIDs.append(element->id());
-      addPlot(trdModuleSpectrumPlot);
-      for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++){
-        TRDSpectrumPlot* trdChannelSpectrumPlot = new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, element->id() | tubeNo,TRDSpectrumPlot::channel);
-        addPlot(trdChannelSpectrumPlot);
+      addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, element->id(),TRDSpectrumPlot::module));
+      for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++) {
+        addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, element->id() | tubeNo,TRDSpectrumPlot::channel));
       }
     }
   }
@@ -30,7 +28,7 @@ TRDCombinedPlot::TRDCombinedPlot() :
   m_secondaryWidget = selectionWidget;
   connect(selectionWidget, SIGNAL(selectPlot(int)), this, SLOT(selectPlot(int)));
 
-  setTitle("TRD spectrum composite plot");
+  setTitle("TRD spectrum plot collection");
 }
 
 TRDCombinedPlot::~TRDCombinedPlot()
