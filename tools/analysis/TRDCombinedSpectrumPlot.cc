@@ -1,11 +1,11 @@
-#include "TRDCombinedPlot.hh"
+#include "TRDCombinedSpectrumPlot.hh"
 
 #include "DetectorSelectionWidget.hh"
 #include "TRDSpectrumPlot.hh"
 #include "Setup.hh"
 #include "DetectorElement.hh"
 
-TRDCombinedPlot::TRDCombinedPlot() :
+TRDCombinedSpectrumPlot::TRDCombinedSpectrumPlot() :
   PlotCollection(AnalysisPlot::SignalHeightTRD)
 {
   QVector<unsigned short> moduleIDs;
@@ -31,6 +31,6 @@ TRDCombinedPlot::TRDCombinedPlot() :
   setTitle("TRD spectrum plot collection");
 }
 
-TRDCombinedPlot::~TRDCombinedPlot()
+TRDCombinedSpectrumPlot::~TRDCombinedSpectrumPlot()
 {
 }

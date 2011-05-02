@@ -40,7 +40,7 @@ CLASSES = \
   Chi2VsMomentumPlot \
   DetectorIDSpinBox \
   PlotCollection \
-  TRDCombinedPlot \
+  TRDCombinedSpectrumPlot \
   DetectorSelectionWidget \
   ClusterLengthPlot \
   ClusterShapePlot \

@@ -12,7 +12,7 @@
 #include "AnalysisProcessor.hh"
 #include "EventReader.hh"
 
-#include "TRDCombinedPlot.hh"
+#include "TRDCombinedSpectrumPlot.hh"
 #include "BendingPositionPlot.hh"
 #include "BendingAnglePlot.hh"
 #include "ResidualPlot.hh"
@@ -451,7 +451,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, -3, -1.5));
     m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, 1.5, 3));
     
-    m_ui.plotter->addPlot(new TRDCombinedPlot);
+    m_ui.plotter->addPlot(new TRDCombinedSpectrumPlot);
 
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD,first,last));
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD,first,last, -3, -1.5));
