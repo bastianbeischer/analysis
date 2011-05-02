@@ -41,6 +41,7 @@ CLASSES = \
   DetectorIDSpinBox \
   PlotCollection \
   TRDCombinedPlot \
+  DetectorSelectionWidget \
   ClusterLengthPlot \
   ClusterShapePlot \
   GeometricOccupancyPlot \
