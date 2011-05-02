@@ -10,31 +10,30 @@
 #include <TROOT.h>
 #include <TFile.h>
 
-#include <TQtWidget.h>
+#include "RootQtWidget.hh"
 
 #include <iostream>
 
-TQtWidget* Plotter::s_rootWidget = 0;
+RootQtWidget* Plotter::s_rootWidget = 0;
 
 Plotter::Plotter(QWidget* parent)
   : QWidget(parent)
-  , m_layout(new QVBoxLayout)
+  , m_layout(new QVBoxLayout(this))
   , m_updateTimer(this)
   , m_selectedPlot(-1)
 {
-  s_rootWidget = new TQtWidget;
+  s_rootWidget = new RootQtWidget(this);
   m_layout->addWidget(s_rootWidget);
-  setLayout(m_layout);
   gROOT->cd();
   setMouseTracking(true);
   connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
+  connect(s_rootWidget, SIGNAL(unzoomButtonPressed()), this, SLOT(unzoom()));
+  connect(s_rootWidget, SIGNAL(positionChanged(double, double)), this, SLOT(canvasPositionChanged(double, double)));
   m_updateTimer.setInterval(500);
 }
 
 Plotter::~Plotter()
 {
-  delete m_layout;
-  delete s_rootWidget;
   qDeleteAll(m_plots);
 }
   
@@ -48,21 +47,11 @@ unsigned int Plotter::numberOfPlots()
   return m_plots.size();
 }
 
-void Plotter::mousePressEvent(QMouseEvent* event)
-{
-  if (event->button() == Qt::MidButton)
-    unzoom();
-  QWidget::mousePressEvent(event);
-}
-
-void Plotter::mouseMoveEvent(QMouseEvent* event)
+void Plotter::canvasPositionChanged(double x, double y)
 {
   if (m_selectedPlot < 0)
     return;
-  double x = gPad->AbsPixeltoX(event->x());
-  double y = gPad->AbsPixeltoY(event->y());
   emit(positionChanged(x, y));
-  QWidget::mouseMoveEvent(event);
 }
 
 void Plotter::saveCanvas(const QString& fileName)
@@ -88,14 +77,7 @@ void Plotter::update()
 {
   if (0 <= m_selectedPlot && m_selectedPlot < m_plots.size())
     m_plots[m_selectedPlot]->update();
-  gPad->Modified();
-  gPad->Update();
-}
-
-void Plotter::updateCanvas()
-{
-  gPad->Modified();
-  gPad->Update();
+  s_rootWidget->updateCanvas();
 }
 
 void Plotter::addPlot(AnalysisPlot* plot)
@@ -143,7 +125,7 @@ void Plotter::selectPlot(int i, bool inhibitDraw)
         m_layout->insertWidget(0, secondaryWidget);
         secondaryWidget->show();
       }
-      updateCanvas();
+      s_rootWidget->updateCanvas();
     }
   }
   m_selectedPlot = i;
@@ -161,7 +143,7 @@ void Plotter::finalizeAnalysis()
     plot->finalize();
     plot->update();
   }
-  updateCanvas();
+  s_rootWidget->updateCanvas();
 }
 
 void Plotter::toggleUpdateTimer()
@@ -177,34 +159,9 @@ void Plotter::unzoom()
   if (m_selectedPlot < 0)
     return;
   m_plots[m_selectedPlot]->unzoom();
-  updateCanvas();
+  s_rootWidget->updateCanvas();
 }
 
-void Plotter::setGrid(bool b)
-{
-  gPad->SetGridx(b);
-  gPad->SetGridy(b);
-  updateCanvas();
-}
-
-void Plotter::setLogX(bool b)
-{
-  gPad->SetLogx(b);
-  updateCanvas();
-}
-
-void Plotter::setLogY(bool b)
-{
-  gPad->SetLogy(b);
-  updateCanvas();
-}
-
-void Plotter::setLogZ(bool b)
-{
-  gPad->SetLogz(b);
-  updateCanvas();
-}
-  
 RootPlot::Type Plotter::selectedPlotType()
 {
   if (m_selectedPlot < 0) {
@@ -229,7 +186,7 @@ void Plotter::setDrawOption(RootPlot::DrawOption option)
   selectPlot(m_selectedPlot);
 }
 
-TCanvas* Plotter::canvas()
+RootQtWidget* Plotter::rootWidget()
 {
-  return s_rootWidget->GetCanvas();
+  return s_rootWidget;
 }

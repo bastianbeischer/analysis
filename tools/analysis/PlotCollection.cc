@@ -2,7 +2,7 @@
 
 #include "Plotter.hh"
 
-#include <TQtWidget.h>
+#include "RootQtWidget.hh"
 
 PlotCollection::PlotCollection(AnalysisPlot::Topic topic) :
   QObject(),
@@ -39,12 +39,11 @@ void PlotCollection::draw(TCanvas* can)
   if (m_selectedPlot >= 0 && m_selectedPlot < m_plots.size())
     m_plots[m_selectedPlot]->draw(can);
   RootPlot::draw(can);
-  gPad->Modified();
-  gPad->Update();
+  Plotter::rootWidget()->updateCanvas();
 }
 
 void PlotCollection::selectPlot(int plot)
 {
   m_selectedPlot = plot;
-  draw(Plotter::canvas());
+  draw(Plotter::rootWidget()->GetCanvas());
 }

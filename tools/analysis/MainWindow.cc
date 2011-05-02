@@ -12,6 +12,7 @@
 #include "AnalysisProcessor.hh"
 #include "EventReader.hh"
 
+#include "RootQtWidget.hh"
 #include "TRDCombinedSpectrumPlot.hh"
 #include "TRDCombinedSpectrumVsTimePlot.hh"
 #include "TRDCombinedSpectrumVsTemperaturePlot.hh"
@@ -210,10 +211,10 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.selectTrackerButton, SIGNAL(clicked()), this, SLOT(selectTrackerButtonClicked()));
   connect(m_ui.selectTrdButton, SIGNAL(clicked()), this, SLOT(selectTrdButtonClicked()));
   connect(m_ui.selectTofButton, SIGNAL(clicked()), this, SLOT(selectTofButtonClicked()));
-  connect(m_ui.gridCheckBox, SIGNAL(stateChanged(int)), this, SLOT(gridCheckBoxChanged(int)));
-  connect(m_ui.logXCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logXCheckBoxChanged(int)));
-  connect(m_ui.logYCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logYCheckBoxChanged(int)));
-  connect(m_ui.logZCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logZCheckBoxChanged(int)));
+  connect(m_ui.gridCheckBox, SIGNAL(stateChanged(int)), m_ui.plotter->rootWidget(), SLOT(setGrid(int)));
+  connect(m_ui.logXCheckBox, SIGNAL(stateChanged(int)), m_ui.plotter->rootWidget(), SLOT(setLogX(int)));
+  connect(m_ui.logYCheckBox, SIGNAL(stateChanged(int)), m_ui.plotter->rootWidget(), SLOT(setLogY(int)));
+  connect(m_ui.logZCheckBox, SIGNAL(stateChanged(int)), m_ui.plotter->rootWidget(), SLOT(setLogZ(int)));
   connect(m_ui.listWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(listWidgetItemChanged(QListWidgetItem*)));
   connect(m_ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(listWidgetCurrentRowChanged(int)));
 
@@ -1013,26 +1014,6 @@ void MainWindow::closeEvent(QCloseEvent* event)
 {
   m_reader->stop();
   event->accept();
-}
-
-void MainWindow::gridCheckBoxChanged(int value)
-{
-  m_ui.plotter->setGrid(value);
-}
-
-void MainWindow::logXCheckBoxChanged(int value)
-{
-  m_ui.plotter->setLogX(value);
-}
-
-void MainWindow::logYCheckBoxChanged(int value)
-{
-  m_ui.plotter->setLogY(value);
-}
-
-void MainWindow::logZCheckBoxChanged(int value)
-{
-  m_ui.plotter->setLogZ(value);
 }
 
 void MainWindow::firstOrLastEventChanged(int)
