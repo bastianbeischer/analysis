@@ -39,6 +39,8 @@ void PlotCollection::draw(TCanvas* can)
   if (m_selectedPlot >= 0 && m_selectedPlot < m_plots.size())
     m_plots[m_selectedPlot]->draw(can);
   RootPlot::draw(can);
+  gPad->Modified();
+  gPad->Update();
 }
 
 void PlotCollection::selectPlot(int plot)
