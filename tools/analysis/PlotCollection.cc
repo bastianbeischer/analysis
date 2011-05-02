@@ -34,6 +34,12 @@ void PlotCollection::update()
     plot->update();
 }
 
+void PlotCollection::unzoom()
+{
+  if (m_selectedPlot >= 0 && m_selectedPlot < m_plots.size())
+    m_plots[m_selectedPlot]->unzoom();
+}
+
 void PlotCollection::draw(TCanvas* can)
 {
   if (m_selectedPlot >= 0 && m_selectedPlot < m_plots.size())

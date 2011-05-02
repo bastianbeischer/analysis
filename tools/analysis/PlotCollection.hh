@@ -18,6 +18,7 @@ public:
   void processEvent(const QVector<Hit*>&, Particle*, SimpleEvent*);
   void finalize();
   void update();
+  void unzoom();
   void draw(TCanvas*);
 
 protected slots:
