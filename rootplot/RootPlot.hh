@@ -42,14 +42,15 @@ public:
   void setDrawOption(DrawOption);
   Type type() {return m_type;}
   bool drawn() const {return m_drawn;}
+  void setSecondaryWidget(QWidget* widget);
   QWidget* secondaryWidget() const {return m_secondaryWidget;}
 protected:
   QString m_title;
   DrawOption m_drawOption;
   Type m_type;
   bool m_drawn;
-  QWidget* m_secondaryWidget;
 private:
+  QWidget* m_secondaryWidget;
   QVector<TLatex*> m_latex;
   QVector<TLegend*> m_legend;
   QVector<TF1*> m_function;

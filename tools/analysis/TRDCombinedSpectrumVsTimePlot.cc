@@ -25,7 +25,7 @@ TRDCombinedSpectrumVsTimePlot::TRDCombinedSpectrumVsTimePlot(const QDateTime& fi
   }
 
   DetectorSelectionWidget* selectionWidget = new DetectorSelectionWidget(moduleIDs, 16);
-  m_secondaryWidget = selectionWidget;
+  setSecondaryWidget(selectionWidget);
   connect(selectionWidget, SIGNAL(selectPlot(int)), this, SLOT(selectPlot(int)));
 
   setTitle("spectrum vs time - all modules");

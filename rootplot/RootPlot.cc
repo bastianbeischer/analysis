@@ -113,3 +113,10 @@ void RootPlot::setDrawOption(DrawOption option)
 {
   m_drawOption = option;
 }
+
+void RootPlot::setSecondaryWidget(QWidget* widget)
+{
+  if (m_secondaryWidget)
+    delete m_secondaryWidget;
+  m_secondaryWidget = widget;
+}
