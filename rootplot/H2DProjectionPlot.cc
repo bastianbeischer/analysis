@@ -11,8 +11,12 @@
 H2DProjectionPlot::H2DProjectionPlot() :
   QObject(),
   H2DPlot(),
-  m_controlWidget(new ProjectionControlWidget),
-  m_projectionWidget(new RootQtWidget)
+  m_projectionHistX(0),
+  m_projectionHistY(0),
+  m_controlWidget(new ProjectionControlWidget(this)),
+  m_projectionWidget(new RootQtWidget),
+  m_type(y),
+  m_numberOfBins(32)
 {
   m_projectionWidget->hide();
 
@@ -20,28 +24,50 @@ H2DProjectionPlot::H2DProjectionPlot() :
   QVBoxLayout* layout = new QVBoxLayout(secondaryWidget());
   layout->addWidget(m_controlWidget);
   layout->addWidget(m_projectionWidget);
-
-  connect(m_controlWidget, SIGNAL(showProjectionChanged(int)), this, SLOT(toggleProjectionWidget(int)));
 }
 
 H2DProjectionPlot::~H2DProjectionPlot()
 {
+  delete m_projectionHistX;
+  delete m_projectionHistY;
 }
 
-void H2DProjectionPlot::toggleProjectionWidget(int state)
+void H2DProjectionPlot::setProjectionWidgetState(bool state)
 {
   state ? m_projectionWidget->show() : m_projectionWidget->hide();
 }
 
-void H2DProjectionPlot::positionChanged(double x, double y)
+void H2DProjectionPlot::setProjectionType(ProjectionType type)
+{
+  m_type = type;
+}
+
+void H2DProjectionPlot::setNumberOfBins(int bins)
+{
+  m_numberOfBins = bins;
+}
+
+void H2DProjectionPlot::positionChanged(double posX, double posY)
 {
   RootQtWidget* widget = projectionWidget();
   if (widget->isVisible()) {
-    int bin = histogram()->FindBin(x,y);
+    int bin = histogram()->FindBin(posX,posY);
     int binx, biny, binz;
     histogram()->GetBinXYZ(bin, binx, biny, binz);
-    int nChannels = 32;
-    TH1D* proj = histogram()->ProjectionY(qPrintable(title() + "_pr"), binx - nChannels/2, binx + nChannels/2);
+    TH1D* proj = 0;
+    switch(m_type) {
+    case (x): 
+      m_projectionHistX = histogram()->ProjectionX(qPrintable(title() + "_px"), biny - m_numberOfBins/2, biny + m_numberOfBins/2);
+      proj = m_projectionHistX;
+      break;
+    case (y) :
+      m_projectionHistY = histogram()->ProjectionY(qPrintable(title() + "_py"), binx - m_numberOfBins/2, binx + m_numberOfBins/2);
+      proj = m_projectionHistY;
+      break;
+    default:
+      Q_ASSERT(false);
+      break;
+    }
     TVirtualPad* prevPad = gPad;
     TCanvas* can = widget->GetCanvas();
     can->cd();
