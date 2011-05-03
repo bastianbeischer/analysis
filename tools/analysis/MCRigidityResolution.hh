@@ -7,6 +7,8 @@
 #include <QMap>
 #include <QPair>
 
+class ParticleProperties;
+
 class MCRigidityResolution : public AnalysisPlot, public H1DPlot
 {
 public:
@@ -16,11 +18,13 @@ public:
   virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
   virtual void update();
   virtual void finalize();
+  void saveHistos();
 private:
-  const int m_pdgID;
+  const ParticleProperties* m_particle;
   const double m_rigidityRangeLower;
   const double m_rigidityRangeUppper;
   const int m_numberOfBins;
+
 
   QMap < int, TH1D*> m_resolutionHistos;
 };
