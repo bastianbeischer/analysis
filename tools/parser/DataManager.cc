@@ -11,6 +11,7 @@
 #include <TROOT.h>
 
 #include "Converter.hh"
+#include "PreAnalysis.hh"
 #include "SensorsData.hh"
 #include "SimpleEvent.hh"
 #include "SingleFile.hh"
@@ -130,6 +131,7 @@ void DataManager::processFiles()
 {
   std::cout << "Starting conversion to Simple Events." << std::endl;
   Converter converter;
+  PreAnalysis preAna;
   int totalNumberOfEvents = 0;
   int currentGlobalEvent = 0;
   foreach(SingleFile* inputFile, m_inputFiles) {
@@ -154,6 +156,8 @@ void DataManager::processFiles()
       m_currentEvent = converter.generateNextSimpleEvent(inputFile, mcInputFile);
       if (!mcInputFile)
         addSensorData(m_currentEvent);
+
+      m_currentEvent = preAna.generateCompressedEvent(m_currentEvent);
 
       m_outputTree->Fill();
       delete m_currentEvent;

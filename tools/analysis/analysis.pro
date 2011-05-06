@@ -35,6 +35,7 @@ CLASSES = \
   BendingPositionPlot \
   BetaMomentumCorrelationPlot \
   BetaPlot \
+  BeamProfilePlot \
   Chi2PerNdfPlot \
   Chi2Plot \
   Chi2VsMomentumPlot \

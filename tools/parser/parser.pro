@@ -19,7 +19,8 @@ CLASSES = \
   DataManager \
   SingleFile \
   MCSingleFile \
-  SensorsData
+  SensorsData \
+  PreAnalysis
 
 SOURCES += \
   main.cc
