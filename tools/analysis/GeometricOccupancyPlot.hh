@@ -2,9 +2,9 @@
 #define GeometricOccupancyPlot_hh
 
 #include "AnalysisPlot.hh"
-#include "H2DPlot.hh"
+#include "H2DProjectionPlot.hh"
 
-class GeometricOccupancyPlot : public AnalysisPlot, public H2DPlot {
+class GeometricOccupancyPlot : public AnalysisPlot, public H2DProjectionPlot {
 public:
   explicit GeometricOccupancyPlot(double zPosition);
   virtual ~GeometricOccupancyPlot();

@@ -11,7 +11,7 @@
 
 GeometricOccupancyPlot::GeometricOccupancyPlot(double zPosition)
   : AnalysisPlot(AnalysisPlot::Occupancy)
-  , H2DPlot()
+  , H2DProjectionPlot()
   , m_zPosition(zPosition)
 {
   setTitle(QString("occupancy %1").arg(zPosition));
