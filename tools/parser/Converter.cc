@@ -174,6 +174,8 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
 
     } // all hits
 
+    delete dataBlock;
+
     std::map<unsigned short, TOFSipmHit*>::iterator tofHitIt = tofHitMap.begin();
     for (; tofHitIt != tofHitMap.end(); ++tofHitIt)
       tofHitIt->second->processTDCHits();

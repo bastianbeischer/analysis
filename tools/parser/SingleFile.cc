@@ -28,6 +28,7 @@ SingleFile::~SingleFile()
   qDeleteAll(m_fiberModules);
   qDeleteAll(m_trdModules);
   qDeleteAll(m_tofModules);
+  qDeleteAll(m_pmtModules);
 }
 
 void SingleFile::init()
@@ -114,6 +115,8 @@ void SingleFile::calibrate()
     foreach(PERDaixPMTModule* module, m_pmtModules) {
       module->ProcessCalibrationEvent((PMTDataBlock*) dataBlockMap[module->GetBoardID()]);
     }
+
+    qDeleteAll(dataBlockMap);
     delete event;
   }
 
