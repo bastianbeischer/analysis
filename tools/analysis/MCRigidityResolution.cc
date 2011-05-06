@@ -18,13 +18,15 @@
 MCRigidityResolution::MCRigidityResolution(int pdgID)
   : AnalysisPlot(AnalysisPlot::MonteCarloTracker)
   , H1DPlot()
-  , m_pdgID(pdgID)
-  , m_rigidityRangeLower(0.05)
-  , m_rigidityRangeUppper(10.05)
-  , m_numberOfBins(100)
+  , m_particle(ParticleDB::instance()->lookupPdgId(pdgID))
+  , m_rigidityRangeLower(-0.025)
+  , m_rigidityRangeUppper(10.025)
+  , m_numberOfBins(201)
 {
-  const ParticleProperties* partProps = ParticleDB::instance()->lookupPdgId(m_pdgID);
-  QString particleName = partProps->name();
+
+  Q_ASSERT(m_particle);
+
+  QString particleName = m_particle->name();
 
   setTitle("rigidity resolution for " + particleName);
 
@@ -39,10 +41,10 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
   TF1* expectedRes = new TF1(qPrintable("expected resolution for " + title()), "sqrt(([2]*[1]*x)**2 + ([3]*sqrt(1+[0]*[0]/([1]*[1]*x*x)))**2)", 0, 20);
   expectedRes->SetParNames("mass/GeV", "abs(charge)", "a", "b");
 
-  expectedRes->FixParameter(0, partProps->mass());
-  expectedRes->FixParameter(1, qAbs(partProps->charge()));
+  expectedRes->FixParameter(0, m_particle->mass());
+  expectedRes->FixParameter(1, qAbs(m_particle->charge()));
 
-  switch (partProps->type())
+  switch (m_particle->type())
   {
   case Particle::Proton: //case Particle::AntiProton:
     expectedRes->SetParameter(2, 0.077);
@@ -81,7 +83,7 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
   addFunction(expectedRes);
   addFunction(fittedRes);
 
-  TLatex* ltx = new TLatex(5,0.3,"#sigma_{R}/R = #sqrt{(a*c*R)^{2}+(b/#beta)^{2}}");
+  TLatex* ltx = new TLatex(5,0.3,"#sigma_{R}/R = #sqrt{(azR)^{2}+(b/#beta)^{2}}");
   ltx->SetTextSizePixels(50);
   TLatex* ltxa = new TLatex(6,0.2,qPrintable("a_{old} = " + QString::number(expectedRes->GetParameter("a"))));
   ltxa->SetTextSizePixels(50);
@@ -121,14 +123,14 @@ void MCRigidityResolution::processEvent(const QVector<Hit*>& /*hits*/, Particle*
     return;
 
   //only use selected pdgID
-  if (event->MCInformation()->primary()->pdgID != m_pdgID)
+  if (event->MCInformation()->primary()->pdgID != (m_particle->pdgId()))
     return;
 
 
   //get mc rigidity
   double mcMom = event->MCInformation()->primary()->initialMomentum.Mag();
 
-  double mcRigidity = m_pdgID==1000020040 ? mcMom/2. : mcMom;
+  double mcRigidity = mcMom / qAbs(m_particle->charge());
 
   //get the reconstructed momentum
   double rigidity = track->rigidity(); //GeV
@@ -152,17 +154,18 @@ void MCRigidityResolution::update()
   QMap<int, TH1D*>::const_iterator i;
   for (i = m_resolutionHistos.constBegin(); i != m_resolutionHistos.constEnd(); ++i) {
     TH1D* hist = i.value();
-    if (hist->GetEntries() > 10) {
-      TF1* fit = new TF1("gausfit","gaus");
-      hist->Fit(fit,"QN");
-      double inverseSigma = fit->GetParameter(2);
-      double inverseSigmaErr = fit->GetParError(2);
-      double rigidityRes = inverseSigma ;
-      double rigidityResErr = inverseSigmaErr ;
+    if (hist->GetEntries() < 10)
+      continue;
+    double axisMax = hist->GetXaxis()->GetXmax();
+    TF1* fit = new TF1("gausfit","gaus", -3./5.*axisMax, 3./5.*axisMax);
+    hist->Fit(fit,"QN");
+    double inverseSigma = fit->GetParameter(2);
+    double inverseSigmaErr = fit->GetParError(2);
+    double rigidityRes = inverseSigma ;
+    double rigidityResErr = inverseSigmaErr ;
 
-      histogram()->SetBinContent(i.key(), rigidityRes);
-      histogram()->SetBinError(i.key(), rigidityResErr);
-    }
+    histogram()->SetBinContent(i.key(), rigidityRes);
+    histogram()->SetBinError(i.key(), rigidityResErr);
   }
 
   if (histogram()->GetEntries() > 3)
@@ -172,4 +175,18 @@ void MCRigidityResolution::update()
 void MCRigidityResolution::finalize()
 {
   update();
+  //saveHistos();
 }
+
+void MCRigidityResolution::saveHistos()
+{
+  QMap<int, TH1D*>::const_iterator i;
+  for (i = m_resolutionHistos.constBegin(); i != m_resolutionHistos.constEnd(); ++i) {
+    TH1D* hist = i.value();
+    if (hist->GetEntries() < 10)
+      continue;
+    double mcRig = histogram()->GetBinCenter(i.key());
+    hist->SaveAs(qPrintable(QString("rigres_for_%1_at_%2GV.root").arg(m_particle->name()).arg(mcRig)));
+  }
+}
+
