@@ -2053,9 +2053,6 @@ over threshold</string>
              <property name="text">
               <string/>
              </property>
-             <property name="placeholderText">
-              <string>min</string>
-             </property>
             </widget>
             <widget class="QLineEdit" name="rigidityLineEditMax">
              <property name="geometry">
@@ -2068,9 +2065,6 @@ over threshold</string>
              </property>
              <property name="text">
               <string/>
-             </property>
-             <property name="placeholderText">
-              <string>max</string>
              </property>
             </widget>
             <widget class="QLineEdit" name="betaLineEditMax">
@@ -2085,9 +2079,6 @@ over threshold</string>
              <property name="text">
               <string/>
              </property>
-             <property name="placeholderText">
-              <string>max</string>
-             </property>
             </widget>
             <widget class="QLineEdit" name="betaLineEditMin">
              <property name="geometry">
@@ -2100,9 +2091,6 @@ over threshold</string>
              </property>
              <property name="text">
               <string/>
-             </property>
-             <property name="placeholderText">
-              <string>min</string>
              </property>
             </widget>
             <widget class="QLineEdit" name="trdDepositionLineEditMin">
@@ -2117,9 +2105,6 @@ over threshold</string>
              <property name="text">
               <string/>
              </property>
-             <property name="placeholderText">
-              <string>min</string>
-             </property>
             </widget>
             <widget class="QLineEdit" name="trdDepositionLineEditMax">
              <property name="geometry">
@@ -2132,9 +2117,6 @@ over threshold</string>
              </property>
              <property name="text">
               <string/>
-             </property>
-             <property name="placeholderText">
-              <string>max</string>
              </property>
             </widget>
             <widget class="QLineEdit" name="tofTotLineEditMin">
@@ -2149,9 +2131,6 @@ over threshold</string>
              <property name="text">
               <string/>
              </property>
-             <property name="placeholderText">
-              <string>min</string>
-             </property>
             </widget>
             <widget class="QLineEdit" name="tofTotLineEditMax">
              <property name="geometry">
@@ -2164,9 +2143,6 @@ over threshold</string>
              </property>
              <property name="text">
               <string/>
-             </property>
-             <property name="placeholderText">
-              <string>max</string>
              </property>
             </widget>
            </widget>
