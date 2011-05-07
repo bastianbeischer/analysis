@@ -10,7 +10,7 @@ class TOFChannelSelectionWidget :
   Q_OBJECT
 
 public:
-  TOFChannelSelectionWidget(const QVector<unsigned short>&, QWidget* = 0);
+  TOFChannelSelectionWidget(const QStringList&, QWidget* = 0);
   ~TOFChannelSelectionWidget();
   
 signals:

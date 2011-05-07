@@ -1,15 +1,15 @@
 #include "TOFChannelSelectionWidget.hh"
 
-#include "DetectorIDSpinBox.hh"
+#include "StringSpinBox.hh"
 
 #include <QLabel>
 #include <QHBoxLayout>
 
-TOFChannelSelectionWidget::TOFChannelSelectionWidget(const QVector<unsigned short>& moduleIDs, QWidget* parent) :
+TOFChannelSelectionWidget::TOFChannelSelectionWidget(const QStringList& moduleIDs, QWidget* parent) :
   QWidget(parent)
 {
   QHBoxLayout* layout = new QHBoxLayout(this);
-  DetectorIDSpinBox* spinBox = new DetectorIDSpinBox(moduleIDs);
+  StringSpinBox* spinBox = new StringSpinBox(moduleIDs);
   layout->addWidget(new QLabel("channel: "));
   layout->addWidget(spinBox);
   

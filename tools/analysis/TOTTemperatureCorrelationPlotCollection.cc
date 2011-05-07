@@ -9,7 +9,7 @@
 TOTTemperatureCorrelationPlotCollection::TOTTemperatureCorrelationPlotCollection() :
   PlotCollection(AnalysisPlot::TimeOverThreshold)
 {
-  QVector<unsigned short> moduleIDs;
+  QStringList moduleIDs;
 
   Setup* setup = Setup::instance();
   const ElementIterator elementStartIt = setup->firstElement();
@@ -18,7 +18,7 @@ TOTTemperatureCorrelationPlotCollection::TOTTemperatureCorrelationPlotCollection
     DetectorElement* element = *elementIt;
     if (element->type() == DetectorElement::tof){
       for(unsigned short tubeNo = 0; tubeNo < 4; tubeNo++) {
-        moduleIDs.append(element->id() | tubeNo);
+        moduleIDs.append("0x" + QString::number(element->id() | tubeNo, 16));
         addPlot(new TOTTemperatureCorrelationPlot(element->id() | tubeNo));
       }
     }
