@@ -1,6 +1,6 @@
 #include "Plotter.hh"
 #include "AnalysisPlot.hh"
-#include "H2DPlot.hh"
+#include "PlotCollection.hh"
 
 #include <QApplication>
 #include <QVBoxLayout>
@@ -67,8 +67,15 @@ void Plotter::saveForPostAnalysis(const QString& fileName)
   TFile file(qPrintable(fileName), "RECREATE");
   for (unsigned int i = 0; i < numberOfPlots(); ++i) {
     selectPlot(i, true);
-    s_rootWidget->GetCanvas()->SetName(qPrintable(plotTitle(i) + " canvas"));
-    s_rootWidget->GetCanvas()->Write();
+    AnalysisPlot* plot = m_plots.at(i);
+    PlotCollection* pc = dynamic_cast<PlotCollection*>(plot);
+    if (pc) {
+      pc->saveForPostAnalysis(s_rootWidget->GetCanvas());
+    }
+    else {
+      s_rootWidget->GetCanvas()->SetName(qPrintable(plotTitle(i) + " canvas"));
+      s_rootWidget->GetCanvas()->Write();
+    }
   }
   file.Close();
   selectPlot(savedSelectedPlot);
