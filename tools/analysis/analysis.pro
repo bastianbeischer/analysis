@@ -81,6 +81,8 @@ CLASSES = \
   TOTPlot \
   TOTLayerPlot \
   TOTIonizationCorrelation \
+  TOTTemperatureCorrelationPlotCollection \
+  TOTTimeCorrelationPlotCollection \
   TOTTemperatureCorrelationPlot \
   TOTTimeCorrelationPlot \
   TOFAlignment \

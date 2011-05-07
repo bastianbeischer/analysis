@@ -17,6 +17,7 @@ CLASSES += \
   ProjectionControlWidget \
   DetectorIDSpinBox \
   DetectorSelectionWidget \
+  TOFChannelSelectionWidget \
   GraphPlot \
   PerdaixDisplay
 
