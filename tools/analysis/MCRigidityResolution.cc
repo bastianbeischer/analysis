@@ -1,5 +1,8 @@
 #include "MCRigidityResolution.hh"
 
+#include <QHBoxLayout>
+#include <QLabel>
+
 #include <TH1D.h>
 #include <TF1.h>
 #include <TLatex.h>
@@ -12,12 +15,16 @@
 #include "ParticleProperties.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
+#include "RootQtWidget.hh"
+
+#include "StringSpinBox.hh"
 
 #include "TF1.h"
 
 MCRigidityResolution::MCRigidityResolution(int pdgID)
   : AnalysisPlot(AnalysisPlot::MonteCarloTracker)
   , H1DPlot()
+  , QObject()
   , m_particle(ParticleDB::instance()->lookupPdgId(pdgID))
   , m_rigidityRangeLower(-0.025)
   , m_rigidityRangeUppper(10.025)
@@ -93,6 +100,8 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
   addLatex(ltx);
   addLatex(ltxa);
   addLatex(ltxb);
+
+  setupSecondaryWidget();
 }
 
 MCRigidityResolution::~MCRigidityResolution()
@@ -100,6 +109,55 @@ MCRigidityResolution::~MCRigidityResolution()
   qDeleteAll(m_resolutionHistos);
 }
 
+
+void MCRigidityResolution::setupSecondaryWidget()
+{
+  QWidget* secondaryWidget = new QWidget();
+  QHBoxLayout* layout = new QHBoxLayout(secondaryWidget);
+
+  QStringList rigList;
+  for (int i = 1; i <= histogram()->GetNbinsX(); ++i) {
+    double mcRig = histogram()->GetBinCenter(i);
+    rigList << QString::number(mcRig, 'f',2);
+  }
+
+  m_rigDistributionWidget = new RootQtWidget();
+
+  StringSpinBox* spinBox = new StringSpinBox(rigList);
+  layout->addWidget(new QLabel("rigidity: "));
+  layout->addWidget(spinBox);
+  layout->addWidget(m_rigDistributionWidget);
+  connect(spinBox, SIGNAL(valueChanged(int)), this, SIGNAL(loadRigHisto(int)));
+
+  setSecondaryWidget(secondaryWidget);
+
+  loadRigHisto(2.0);
+}
+
+void MCRigidityResolution::loadRigHisto(double rig)
+{
+  RootQtWidget* widget = m_rigDistributionWidget;
+  if (widget->isVisible()) {
+    int bin = histogram()->FindBin(rig);
+    loadRigHisto(bin);
+  }
+}
+void MCRigidityResolution::loadRigHisto(int bin)
+{
+  RootQtWidget* widget = m_rigDistributionWidget;
+  if (widget->isVisible()) {
+    TH1D* hist = m_resolutionHistos.value(bin);
+
+    TVirtualPad* prevPad = gPad;
+    TCanvas* can = m_rigDistributionWidget->GetCanvas();
+    can->cd();
+    can->Clear();
+    hist->Draw();
+    can->Modified();
+    can->Update();
+    prevPad->cd();
+  }
+}
 
 void MCRigidityResolution::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent* event)
 {

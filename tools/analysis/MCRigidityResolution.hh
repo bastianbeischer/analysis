@@ -8,8 +8,10 @@
 #include <QPair>
 
 class ParticleProperties;
+class RootQtWidget;
+class QObject;
 
-class MCRigidityResolution : public AnalysisPlot, public H1DPlot
+class MCRigidityResolution : public AnalysisPlot, public H1DPlot, public QObject
 {
 public:
   MCRigidityResolution(int pdgID = 11);
@@ -25,8 +27,15 @@ private:
   const double m_rigidityRangeUppper;
   const int m_numberOfBins;
 
+  void setupSecondaryWidget();
+
+  RootQtWidget* m_rigDistributionWidget;
 
   QMap < int, TH1D*> m_resolutionHistos;
+
+public slots:
+  void loadRigHisto(double rig);
+  void loadRigHisto(int bin);
 };
 
 #endif // MCRIGIDITYRESOLUTION_HH
