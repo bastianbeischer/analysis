@@ -64,23 +64,28 @@ TRDSpectrumPlot::~TRDSpectrumPlot()
 void TRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent*)
 {
   const Track* track = particle->track();
+  const ParticleInformation::Flags pFlags = particle->information()->flags();
 
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;
 
-  if (track->chi2() / track->ndf() > 10)
+  if (pFlags & ParticleInformation::Chi2Good)
     return;
 
-  //check if track was inside of magnet
-  if (!(particle->information()->flags() & ParticleInformation::InsideMagnet))
-    return;
+  //check if straight line fit has been used:
+  if (! (track->type() == Track::StraightLine)){
+    //check if track was inside of magnet
+    if (!(pFlags & ParticleInformation::InsideMagnet))
+      return;
 
-  //get the reconstructed momentum
-  double rigidity = track->rigidity(); //GeV
+    //get the reconstructed momentum
+    double rigidity = track->rigidity(); //GeV
 
-  if(rigidity < m_lowerMomentum || rigidity > m_upperMomentum)
-    return;
+    if(rigidity < m_lowerMomentum || rigidity > m_upperMomentum)
+      return;
+  }
+
 
   //TODO: check for off track hits ?!?
   unsigned int nTrdHits = 0;

@@ -48,6 +48,17 @@ void PlotCollection::draw(TCanvas* can)
   Plotter::rootWidget()->updateCanvas();
 }
 
+void PlotCollection::saveForPostAnalysis(TCanvas* can)
+{
+  int prevSelectedPlot = m_selectedPlot;
+  for (m_selectedPlot = 0; m_selectedPlot < m_plots.size(); m_selectedPlot++) {
+    draw(can);
+    can->SetName(qPrintable(m_plots.at(m_selectedPlot)->title() + " canvas"));
+    can->Write();
+  }
+  selectPlot(prevSelectedPlot);
+}
+
 void PlotCollection::selectPlot(int plot)
 {
   m_selectedPlot = plot;
