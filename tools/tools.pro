@@ -10,7 +10,8 @@ SUBDIRS  = \
   analysis \
   postAnalysis \
   presentation \
-  tofAlignment
+  tofAlignment \
+	eventcounter
 
 macx {
   message("skipping parser on MacOS X")
