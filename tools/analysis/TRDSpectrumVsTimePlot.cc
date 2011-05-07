@@ -27,13 +27,13 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumPlot:
   QString strType;
   switch(m_spectrumType){
   case TRDSpectrumPlot::completeTRD:
-    strType = "time vs complete TRD";
+    strType = "complete TRD vs time";
     break;
   case TRDSpectrumPlot::module:
-    strType = "time vs module";
+    strType = "module vs time";
     break;
   case TRDSpectrumPlot::channel:
-    strType = "time vs channel";
+    strType = "channel vs time";
     break;
   }
 

@@ -29,13 +29,13 @@ TRDSpectrumVsTemperaturePlot::TRDSpectrumVsTemperaturePlot(unsigned int id, TRDS
   switch(m_spectrumType)
   {
     case TRDSpectrumPlot::completeTRD:
-      strType = "temperature vs complete TRD";
+      strType = "complete TRD vs temperature";
     break;
     case TRDSpectrumPlot::module:
-      strType = "temperature vs module";
+      strType = "module vs temperature";
     break;
     case TRDSpectrumPlot::channel:
-      strType = "temperature vs channel";
+      strType = "channel vs temperature";
     break;
   }
 
