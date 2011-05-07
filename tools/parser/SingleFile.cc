@@ -87,7 +87,7 @@ void SingleFile::open(QString fileName)
   int nEvents = m_runFile->GetNumberOfEvents() - nCalibrationEvents;
   std::cout << qPrintable(fileName) << ": contains " << nEvents << " regular events and " << nCalibrationEvents << " calibration events" << std::endl;
   if (nEvents == 0) {
-    qDebug() << "SKIPPING FILE!!";
+    qDebug() << "File doesn't contain a valid header. Trying to read as many events as possible. Progress bar will be wrong!";
     return;
   }
 

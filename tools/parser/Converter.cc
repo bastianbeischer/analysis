@@ -71,6 +71,8 @@ Converter::~Converter()
 SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MCSingleFile* mcFile)
 {
   const RawEvent* event = file->getNextRawEvent();
+  if (!event)
+    return 0;
 
   // fill simple event basics
   unsigned int eventId = event->GetEventID();

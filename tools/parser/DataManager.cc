@@ -151,9 +151,8 @@ void DataManager::processFiles()
     //TODO not very nice to have 2 lists
     MCSingleFile* mcInputFile = m_inputMCFiles.at(i) ;
 
-    unsigned int Nevents = inputFile->getNumberOfEvents();
-    for (unsigned int iEvent = 0; iEvent < Nevents; iEvent++) {
-      m_currentEvent = converter.generateNextSimpleEvent(inputFile, mcInputFile);
+    m_currentEvent = converter.generateNextSimpleEvent(inputFile, mcInputFile);
+    while (m_currentEvent) {
       if (!mcInputFile)
         addSensorData(m_currentEvent);
 
@@ -167,6 +166,7 @@ void DataManager::processFiles()
         iFactors++;
       }
       currentGlobalEvent++;
+      m_currentEvent = converter.generateNextSimpleEvent(inputFile, mcInputFile);
     }
   }
 
