@@ -40,9 +40,9 @@ CLASSES = \
   Chi2Plot \
   Chi2VsMomentumPlot \
   PlotCollection \
-  TRDCombinedSpectrumPlot \
-  TRDCombinedSpectrumVsTimePlot \
-  TRDCombinedSpectrumVsTemperaturePlot \
+  TRDSpectrumPlotCollection \
+  TRDSpectrumVsTimePlotCollection \
+  TRDSpectrumVsTemperaturePlotCollection \
   ClusterLengthPlot \
   ClusterShapePlot \
   GeometricOccupancyPlot \

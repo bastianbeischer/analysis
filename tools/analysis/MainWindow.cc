@@ -13,9 +13,9 @@
 #include "EventReader.hh"
 
 #include "RootQtWidget.hh"
-#include "TRDCombinedSpectrumPlot.hh"
-#include "TRDCombinedSpectrumVsTimePlot.hh"
-#include "TRDCombinedSpectrumVsTemperaturePlot.hh"
+#include "TRDSpectrumPlotCollection.hh"
+#include "TRDSpectrumVsTimePlotCollection.hh"
+#include "TRDSpectrumVsTemperaturePlotCollection.hh"
 #include "BendingPositionPlot.hh"
 #include "BendingAnglePlot.hh"
 #include "ResidualPlot.hh"
@@ -456,18 +456,18 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDSpectrumPlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
     m_ui.plotter->addPlot(new TRDSpectrumPlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, -3, -1.5));
     m_ui.plotter->addPlot(new TRDSpectrumPlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, 1.5, 3));
-    m_ui.plotter->addPlot(new TRDCombinedSpectrumPlot);
+    m_ui.plotter->addPlot(new TRDSpectrumPlotCollection);
 
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD,first,last));
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD,first,last, -3, -1.5));
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD,first,last, 1.5, 3));
-    m_ui.plotter->addPlot(new TRDCombinedSpectrumVsTimePlot(first, last));
+    m_ui.plotter->addPlot(new TRDSpectrumVsTimePlotCollection(first, last));
 
 
     m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
     m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, -3, -1.5));
     m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, 1.5, 3));
-    m_ui.plotter->addPlot(new TRDCombinedSpectrumVsTemperaturePlot);
+    m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlotCollection);
  
   }
   if (m_ui.clusterShapeTrackerCheckBox->isChecked()) {
