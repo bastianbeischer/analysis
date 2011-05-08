@@ -8,6 +8,7 @@
 #include "SimpleEvent.hh"
 #include "DataDescription.hh"
 
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 
@@ -64,8 +65,12 @@ void DataChain::addFileList(const char* listName)
     char filename[256];
     file >> filename;
     if (file.eof()) break;
-
-    addRootFile(filename);
+    char* env = getenv("PERDAIXDATA_PATH");
+    if (env == 0) {
+      qFatal("ERROR: You need to set PERDAIXDATA_PATH environment variable to the toplevel location of the data!");
+    }
+    QString fullname = QString(env) + "/" + QString(filename);
+    addRootFile(qPrintable(fullname));
   }
   
   std::cout << "DONE: Chain contains " << m_chain->GetEntries() << " events" << std::endl;
