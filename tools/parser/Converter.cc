@@ -169,9 +169,10 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
       else if (id->IsPMT()) {
         int amplitude = static_cast<int>(temp[i]);
 
-        if (i == 4) {
+        if (i == 8)
           simpleEvent->setSensorData(SensorTypes::BEAM_CHERENKOV1, amplitude);
-        }
+        if (i == 16)
+          simpleEvent->setSensorData(SensorTypes::BEAM_CHERENKOV2, amplitude);
       } // pmt
 
     } // all hits
@@ -309,8 +310,5 @@ const QVector<const MCSimpleEventDigi*> Converter::getAllMCDigis(const MCEvent* 
   }
 
   return seDigis;
-
-
-
 }
 
