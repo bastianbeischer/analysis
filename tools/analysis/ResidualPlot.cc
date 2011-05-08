@@ -53,8 +53,11 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, S
     return;
 
   ParticleInformation::Flags flags = particle->information()->flags();
-  if (!(flags & ParticleInformation::AllTrackerLayers))
+  if (track->type() != Track::StraightLine && !(flags & ParticleInformation::AllTrackerLayers))
     return;
+
+  // if (!(flags & ParticleInformation::Chi2Good))
+  //   return;
 
   // only select tracks which didn't pass through the magnet
   if ((flags & ParticleInformation::MagnetCollision))
@@ -88,7 +91,7 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, S
   else mytrack = 0;
 
   // fit and fill histograms
-  if (mytrack->fit(hitsForFit)) {
+  if (mytrack->fit(hitsForFit) && mytrack->chi2() / mytrack->ndf() < 10) {
     QVector<Hit*>::const_iterator layerEndIt = hitsInThisLayer.end();
     for (QVector<Hit*>::const_iterator it = hitsInThisLayer.begin(); it != layerEndIt; ++it) {
       Hit* hit = *it;
