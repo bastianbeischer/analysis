@@ -19,12 +19,4 @@ INCLUDEPATH += \
 
 DEPENDPATH += $${INCLUDEPATH}
 
-LIBS += -L$${PERDAIX_LIB_DIR} -lperdaixdataformats -lperdaixusb -lperdaixglobal -lperdaixsipm -lperdaixtof -lquickusb -lusb
-
-linux-g++-64 {
-  LIBS -= -lquickusb -lusb
-}
-
-macx {
-  LIBS -= -lquickusb -lusb
-}
+LIBS += -L$${PERDAIX_LIB_DIR} -lperdaixdataformats -lperdaixusb -lperdaixglobal -lperdaixsipm -lperdaixtof
