@@ -1,4 +1,4 @@
-!exists($(PERDAIX10_PATH)) {
+!exists($(PERDAIX10PATH)) {
     error(Please set PERDAIX10_PATH environment variable!)
 }
 
@@ -6,15 +6,15 @@
     error(Please set CLHEP_BASE_DIR environment variable!)
 }
 
-PERDAIX_LIB_DIR = $(PERDAIX10_PATH)/lib
+PERDAIX_LIB_DIR = $(PERDAIX10PATH)/lib
 
 INCLUDEPATH += \
 	./include \
-	$(PERDAIX10_PATH)/flightsoftware/libraries/dataformats \
-	$(PERDAIX10_PATH)/flightsoftware/libraries/global \
-	$(PERDAIX10_PATH)/flightsoftware/libraries/sipm \
-	$(PERDAIX10_PATH)/flightsoftware/libraries/perdaixusb \
-        $(PERDAIX10_PATH)/flightsoftware/libraries/tof \
+	$(PERDAIX10PATH)/flightsoftware/libraries/dataformats \
+	$(PERDAIX10PATH)/flightsoftware/libraries/global \
+	$(PERDAIX10PATH)/flightsoftware/libraries/sipm \
+	$(PERDAIX10PATH)/flightsoftware/libraries/perdaixusb \
+        $(PERDAIX10PATH)/flightsoftware/libraries/tof \
         $(CLHEP_BASE_DIR)/include
 
 DEPENDPATH += $${INCLUDEPATH}
