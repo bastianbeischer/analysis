@@ -19,22 +19,23 @@ public:
   virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
   virtual void update();
   virtual void finalize();
+  void positionChanged(double, double);
   void saveHistos();
+
+public slots:
+  void loadRigHisto(double rig);
+  void loadRigHisto(int bin);
+
 private:
   const ParticleProperties* m_particle;
   const double m_rigidityRangeLower;
   const double m_rigidityRangeUppper;
   const int m_numberOfBins;
 
-  void setupSecondaryWidget();
-
   RootQtWidget* m_rigDistributionWidget;
 
-  QMap < int, TH1D*> m_resolutionHistos;
+  QMap<int, TH1D*> m_resolutionHistos;
 
-public slots:
-  void loadRigHisto(double rig);
-  void loadRigHisto(int bin);
 };
 
 #endif // MCRIGIDITYRESOLUTION_HH
