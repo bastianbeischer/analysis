@@ -18,7 +18,7 @@ int main(int argc, char** argv)
   RunFile runfile(input, RunFile::MODE_READING);
 
   int nCalibEvents = runfile.GetNumberOfCalibrationEvents();
-  int nEvents = runfile.GetNumberOfCalibrationEvents() - nCalibEvents;;
+  int nEvents = runfile.GetNumberOfEvents() - nCalibEvents;;
   if (nEvents == 0) {
     qDebug() << "File doesn't contain a valid header. Trying to read as many events as possible.";
 
