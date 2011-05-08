@@ -1,7 +1,12 @@
 #include "MCRigidityResolution.hh"
 
+#include <QHBoxLayout>
+#include <QLabel>
+
 #include <TH1D.h>
 #include <TF1.h>
+#include <TFitResult.h>
+#include <TFitResultPtr.h>
 #include <TLatex.h>
 
 #include "SimpleEvent.hh"
@@ -12,16 +17,21 @@
 #include "ParticleProperties.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
+#include "RootQtWidget.hh"
+
+#include "StringSpinBox.hh"
 
 #include "TF1.h"
 
 MCRigidityResolution::MCRigidityResolution(int pdgID)
-  : AnalysisPlot(AnalysisPlot::MonteCarloTracker)
+  : QObject()
+  , AnalysisPlot(AnalysisPlot::MonteCarloTracker)
   , H1DPlot()
   , m_particle(ParticleDB::instance()->lookupPdgId(pdgID))
   , m_rigidityRangeLower(-0.025)
   , m_rigidityRangeUppper(10.025)
   , m_numberOfBins(201)
+  , m_rigDistributionWidget(new RootQtWidget)
 {
 
   Q_ASSERT(m_particle);
@@ -65,12 +75,12 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
   }
 
   for (int i = 1; i <= hist->GetNbinsX(); ++i) {
-    QString histTitle = QString("resolutionhist_%1_%2").arg(particleName).arg(i);
     double mcRig = hist->GetBinCenter(i);
+    QString histTitle = QString("rigidity resolution for %1 at %2 GV").arg(particleName).arg(mcRig);
     double inverseRigRange = expectedRes->Eval(mcRig)*5;
     int resolutionBins = 100;
     m_resolutionHistos.insert(i, new TH1D(qPrintable(histTitle)
-                                         , qPrintable(histTitle)
+                                         , qPrintable(histTitle+";1/R;entries")
                                          , resolutionBins, -inverseRigRange, inverseRigRange));
 
   }
@@ -93,6 +103,8 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
   addLatex(ltx);
   addLatex(ltxa);
   addLatex(ltxb);
+
+  setSecondaryWidget(m_rigDistributionWidget);
 }
 
 MCRigidityResolution::~MCRigidityResolution()
@@ -100,6 +112,41 @@ MCRigidityResolution::~MCRigidityResolution()
   qDeleteAll(m_resolutionHistos);
 }
 
+void MCRigidityResolution::positionChanged(double posX, double)
+{
+  loadRigHisto(posX);
+}
+
+void MCRigidityResolution::loadRigHisto(double rig)
+{
+  RootQtWidget* widget = m_rigDistributionWidget;
+  if (widget->isVisible()) {
+    int bin = histogram()->FindBin(rig);
+    loadRigHisto(bin);
+  }
+}
+void MCRigidityResolution::loadRigHisto(int bin)
+{
+  RootQtWidget* widget = m_rigDistributionWidget;
+  if (widget->isVisible()) {
+    if (! m_resolutionHistos.contains(bin))
+      return;
+
+    TH1D* hist = m_resolutionHistos.value(bin);
+
+    TVirtualPad* prevPad = gPad;
+    TCanvas* can = m_rigDistributionWidget->GetCanvas();
+    can->cd();
+    can->Clear();
+    hist->Draw();
+    TF1* fit = hist->GetFunction("gaus");
+    if (fit)
+      fit->Draw("same");
+    can->Modified();
+    can->Update();
+    prevPad->cd();
+  }
+}
 
 void MCRigidityResolution::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent* event)
 {
@@ -130,12 +177,12 @@ void MCRigidityResolution::processEvent(const QVector<Hit*>& /*hits*/, Particle*
   //get mc rigidity
   double mcMom = event->MCInformation()->primary()->initialMomentum.Mag();
 
-  double mcRigidity = mcMom / qAbs(m_particle->charge());
+  double mcRigidity = mcMom / m_particle->charge();
 
   //get the reconstructed momentum
   double rigidity = track->rigidity(); //GeV
 
-  double inverseDifference = 1./rigidity - 1./mcRigidity; // 1 /GV
+  double inverseDifference = 1./rigidity; //1./rigidity - 1./mcRigidity; // 1 /GV
 
   //get bin
   int bin = histogram()->FindBin(mcRigidity);
@@ -156,11 +203,11 @@ void MCRigidityResolution::update()
     TH1D* hist = i.value();
     if (hist->GetEntries() < 10)
       continue;
-    double axisMax = hist->GetXaxis()->GetXmax();
-    TF1* fit = new TF1("gausfit","gaus", -3./5.*axisMax, 3./5.*axisMax);
-    hist->Fit(fit,"QN");
-    double inverseSigma = fit->GetParameter(2);
-    double inverseSigmaErr = fit->GetParError(2);
+    //double axisMax = hist->GetXaxis()->GetXmax();
+    //TF1* fit = new TF1("gausfit","gaus", -axisMax, axisMax);
+    TFitResultPtr r = hist->Fit("gaus","Q0S");
+    double inverseSigma = r->Parameter(2);
+    double inverseSigmaErr = r->ParError(2);
     double rigidityRes = inverseSigma ;
     double rigidityResErr = inverseSigmaErr ;
 
@@ -189,4 +236,3 @@ void MCRigidityResolution::saveHistos()
     hist->SaveAs(qPrintable(QString("rigres_for_%1_at_%2GV.root").arg(m_particle->name()).arg(mcRig)));
   }
 }
-

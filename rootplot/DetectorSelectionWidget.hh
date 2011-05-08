@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-class DetectorIDSpinBox;
+class StringSpinBox;
 class QSpinBox;
 class QCheckBox;
 
@@ -14,7 +14,7 @@ class DetectorSelectionWidget :
   Q_OBJECT
 
 public:
-  DetectorSelectionWidget(const QVector<unsigned short>&, const int&);
+  DetectorSelectionWidget(const QStringList&, const int&);
   ~DetectorSelectionWidget();
   
 signals:
@@ -25,7 +25,7 @@ private slots:
   void setChannelSpinBoxState(int);
 
 private:
-  DetectorIDSpinBox* m_moduleSpinBox;
+  StringSpinBox* m_moduleSpinBox;
   QSpinBox* m_channelSpinBox;
   QCheckBox* m_individualChannelCheckBox;
   

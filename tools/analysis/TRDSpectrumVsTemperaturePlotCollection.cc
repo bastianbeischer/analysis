@@ -8,7 +8,7 @@
 TRDSpectrumVsTemperaturePlotCollection::TRDSpectrumVsTemperaturePlotCollection() :
   PlotCollection(AnalysisPlot::SignalHeightTRD)
 {
-  QVector<unsigned short> moduleIDs;
+  QStringList moduleIDs;
 
   Setup* setup = Setup::instance();
   const ElementIterator elementStartIt = setup->firstElement();
@@ -16,7 +16,7 @@ TRDSpectrumVsTemperaturePlotCollection::TRDSpectrumVsTemperaturePlotCollection()
   for (ElementIterator elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
     DetectorElement* element = *elementIt;
     if (element->type() == DetectorElement::trd){
-      moduleIDs.append(element->id());
+      moduleIDs.append("0x" + QString::number(element->id(), 16));
       addPlot(new TRDSpectrumVsTemperaturePlot(element->id(),TRDSpectrumPlot::module));
       for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++) {
         addPlot(new TRDSpectrumVsTemperaturePlot(element->id() | tubeNo,TRDSpectrumPlot::channel));

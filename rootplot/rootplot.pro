@@ -15,7 +15,7 @@ CLASSES += \
   H2DPlot \
   H2DProjectionPlot \
   ProjectionControlWidget \
-  DetectorIDSpinBox \
+  StringSpinBox \
   DetectorSelectionWidget \
   TOFChannelSelectionWidget \
   GraphPlot \

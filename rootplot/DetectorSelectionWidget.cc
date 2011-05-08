@@ -1,6 +1,6 @@
 #include "DetectorSelectionWidget.hh"
 
-#include "DetectorIDSpinBox.hh"
+#include "StringSpinBox.hh"
 
 #include <QLabel>
 #include <QWidget>
@@ -8,13 +8,11 @@
 #include <QSpinBox>
 #include <QCheckBox>
 
-DetectorSelectionWidget::DetectorSelectionWidget(const QVector<unsigned short>& moduleIDs, const int& nChannels) :
-  m_moduleSpinBox(new DetectorIDSpinBox(moduleIDs)),
+DetectorSelectionWidget::DetectorSelectionWidget(const QStringList& moduleIDs, const int& nChannels) :
+  m_moduleSpinBox(new StringSpinBox(moduleIDs)),
   m_channelSpinBox(new QSpinBox),
   m_individualChannelCheckBox(new QCheckBox("show individual channels"))
 {
-  m_moduleSpinBox = new DetectorIDSpinBox(moduleIDs);
-
   QHBoxLayout* layout = new QHBoxLayout(this);
 
   layout->addStretch();

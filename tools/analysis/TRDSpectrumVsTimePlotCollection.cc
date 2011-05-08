@@ -8,7 +8,7 @@
 TRDSpectrumVsTimePlotCollection::TRDSpectrumVsTimePlotCollection(const QDateTime& first, const QDateTime& last) :
   PlotCollection(AnalysisPlot::SignalHeightTRD)
 {
-  QVector<unsigned short> moduleIDs;
+  QStringList moduleIDs;
 
   Setup* setup = Setup::instance();
   const ElementIterator elementStartIt = setup->firstElement();
@@ -16,7 +16,7 @@ TRDSpectrumVsTimePlotCollection::TRDSpectrumVsTimePlotCollection(const QDateTime
   for (ElementIterator elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
     DetectorElement* element = *elementIt;
     if (element->type() == DetectorElement::trd){
-      moduleIDs.append(element->id());
+      moduleIDs.append("0x" + QString::number(element->id(), 16));
       addPlot(new TRDSpectrumVsTimePlot(element->id(),TRDSpectrumPlot::module, first, last));
       for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++) {
         addPlot(new TRDSpectrumVsTimePlot(element->id() | tubeNo,TRDSpectrumPlot::channel, first, last));
