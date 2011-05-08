@@ -127,7 +127,7 @@ void MCRigidityResolution::setupSecondaryWidget()
   layout->addWidget(new QLabel("rigidity: "));
   layout->addWidget(spinBox);
   layout->addWidget(m_rigDistributionWidget);
-  connect(spinBox, SIGNAL(valueChanged(int)), this, SIGNAL(loadRigHisto(int)));
+  connect(spinBox, SIGNAL(valueChanged(int)), this, SLOT(loadRigHisto(int)));
 
   setSecondaryWidget(secondaryWidget);
 
