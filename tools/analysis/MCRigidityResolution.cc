@@ -22,9 +22,9 @@
 #include "TF1.h"
 
 MCRigidityResolution::MCRigidityResolution(int pdgID)
-  : AnalysisPlot(AnalysisPlot::MonteCarloTracker)
+  : QObject()
+  , AnalysisPlot(AnalysisPlot::MonteCarloTracker)
   , H1DPlot()
-  , QObject()
   , m_particle(ParticleDB::instance()->lookupPdgId(pdgID))
   , m_rigidityRangeLower(-0.025)
   , m_rigidityRangeUppper(10.025)

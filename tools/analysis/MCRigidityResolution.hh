@@ -9,9 +9,8 @@
 
 class ParticleProperties;
 class RootQtWidget;
-class QObject;
 
-class MCRigidityResolution : public AnalysisPlot, public H1DPlot, public QObject
+class MCRigidityResolution : public QObject, public AnalysisPlot, public H1DPlot
 {
 public:
   MCRigidityResolution(int pdgID = 11);
