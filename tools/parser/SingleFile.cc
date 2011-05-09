@@ -122,6 +122,7 @@ void SingleFile::calibrate()
 
   foreach(PERDaixFiberModule* module, m_fiberModules)  module->ProcessCalibrationData();
   foreach(PERDaixTRDModule* module, m_trdModules)  module->ProcessCalibrationData();
+  foreach(PERDaixPMTModule* module, m_pmtModules)  module->ProcessCalibrationData();
 }
 
 // return pointer to calibration for calibration "whichCali" on hpe/ufe board with id "id"
