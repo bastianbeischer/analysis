@@ -12,6 +12,8 @@ PMTCorrelationPlot::PMTCorrelationPlot() :
   setTitle("cherenkov correlation");
   TH2D* histogram = new TH2D(qPrintable(title()), "", 150, -500, 3000, 150, -500, 3000);
   addHistogram(histogram);
+
+  setAxisTitle("beam cherenkov 1 / ADC counts", "beam cherenkov 2 / ADC counts", "counts");
 }
 
 PMTCorrelationPlot::~PMTCorrelationPlot()

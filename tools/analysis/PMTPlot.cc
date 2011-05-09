@@ -13,6 +13,8 @@ PMTPlot::PMTPlot(SensorTypes::Type type) :
   setTitle(SensorTypes::convertToString(m_type));
   TH1D* histogram = new TH1D(qPrintable(title()), "", 500, -500, 3000);
   addHistogram(histogram);
+
+  setAxisTitle("signal height / ADC counts", "counts");
 }
 
 PMTPlot::~PMTPlot()
