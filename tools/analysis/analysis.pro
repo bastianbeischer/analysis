@@ -96,6 +96,7 @@ CLASSES = \
   MCTRDSpectrumPlot \
   MCRigidityResolution \
   PMTPlot \
+  PMTCorrelationPlot \
   ZSquareTRDPlot \
   TOFBarShiftPlot
 

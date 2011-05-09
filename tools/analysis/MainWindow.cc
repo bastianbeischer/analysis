@@ -74,6 +74,7 @@
 #include "MCTRDSpectrumPlot.hh"
 #include "MCRigidityResolution.hh"
 #include "PMTPlot.hh"
+#include "PMTCorrelationPlot.hh"
 #include "BeamProfilePlot.hh"
 #include "ZSquareTRDPlot.hh"
 #include "TOFBarShiftPlot.hh"
@@ -675,6 +676,7 @@ void MainWindow::setupPlots()
     QVector<SensorTypes::Type> beamSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::beamSensors());
     foreach(SensorTypes::Type sensor, beamSensors)
       m_ui.plotter->addPlot(new PMTPlot(sensor));
+    m_ui.plotter->addPlot(new PMTCorrelationPlot);
     m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Horizontal));
     m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Vertical));
   }
