@@ -91,7 +91,7 @@ void AlignmentMatrix::processEvent(const QVector<Hit*>&, Particle* particle, Sim
     float xi = useTangens ? sin(angle)/cos(angle) : cos(angle)/sin(angle);
 
     // specify resolution
-    double sigmaV = hit->resolutionEstimate();
+    double sigmaV = hit->resolution();
 
     // detector ID
     unsigned short detId = hit->detId() - hit->channel();
