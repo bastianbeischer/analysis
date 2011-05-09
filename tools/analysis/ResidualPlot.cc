@@ -53,7 +53,7 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, S
     return;
 
   ParticleInformation::Flags flags = particle->information()->flags();
-  if (track->type() != Track::StraightLine && !(flags & ParticleInformation::AllTrackerLayers))
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
   // if (!(flags & ParticleInformation::Chi2Good))
@@ -91,7 +91,7 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, S
   else mytrack = 0;
 
   // fit and fill histograms
-  if (mytrack->fit(hitsForFit) && mytrack->chi2() / mytrack->ndf() < 10) {
+  if (mytrack->fit(hitsForFit)) {
     QVector<Hit*>::const_iterator layerEndIt = hitsInThisLayer.end();
     for (QVector<Hit*>::const_iterator it = hitsInThisLayer.begin(); it != layerEndIt; ++it) {
       Hit* hit = *it;
