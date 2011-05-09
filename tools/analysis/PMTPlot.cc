@@ -11,7 +11,7 @@ PMTPlot::PMTPlot(SensorTypes::Type type) :
   m_type(type)
 {
   setTitle(SensorTypes::convertToString(m_type));
-  TH1D* histogram = new TH1D(qPrintable(title()), "", 500, -500, 2000);
+  TH1D* histogram = new TH1D(qPrintable(title()), "", 500, -500, 3000);
   addHistogram(histogram);
 }
 
