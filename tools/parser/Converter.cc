@@ -169,7 +169,7 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
       else if (id->IsPMT()) {
         int amplitude = static_cast<int>(temp[i]);
 
-        if (i == 8)
+        if (i == 18)
           simpleEvent->setSensorData(SensorTypes::BEAM_CHERENKOV1, amplitude);
         if (i == 16)
           simpleEvent->setSensorData(SensorTypes::BEAM_CHERENKOV2, amplitude);
