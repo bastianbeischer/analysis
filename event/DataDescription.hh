@@ -24,10 +24,10 @@ public:
   const std::string& comment() const {return m_comment;}
   const std::string& softwareVersionHash() const {return m_softwareVersionHash;}
   long numberOfRuns() const {return m_numberOfRuns;}
-  const std::string& runFileName(int i) {assert(i < m_numberOfRuns); return m_runFileNames[i];}
-  const std::string& runFileSoftwareVersionHash(int i) {assert(i < m_numberOfRuns); return m_runFileSoftwareVersionHash[i];}
+  const std::string& runFileName(int i = 0) const {assert(i < m_numberOfRuns); return m_runFileNames[i];}
+  const std::string& runFileSoftwareVersionHash(int i = 0) const {assert(i < m_numberOfRuns); return m_runFileSoftwareVersionHash[i];}
 
-  long numberOfEventsInRunFile(int i) const;
+  long numberOfEventsInRunFile(int i = 0) const;
   long eventNumberInRunFile(long eventNumber) const;
   int runFileForEventNumber(long eventNumber) const;
   const std::string& runFileNameForEventNumber(long eventNumber) const;
