@@ -25,7 +25,7 @@ void MainWindow::setupAnalysis()
   PostAnalysisCanvas* canvas = 0;
   TFile file(qPrintable(m_analysisFile));
   gROOT->cd();
-  QString name = "time vs complete TRD spectrum (-10 GeV to 10 GeV)";
+  QString name = "complete TRD vs time spectrum (-10 GeV to 10 GeV) canvas";
   canvas = addCanvas(&file, qPrintable(name));
   addPlot(new MoPVScaling(canvas));
   file.Close();
