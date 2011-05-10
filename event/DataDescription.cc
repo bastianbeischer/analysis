@@ -38,7 +38,7 @@ const std::string DataDescription::calculateSoftwareVersionHash()
   FILE* file = popen("cd $PERDAIXANA_PATH && git rev-parse HEAD | tr -d '\n'", "r");
   char line[41];
   if (fscanf(file, "%s", line) != 1)
-    std::cerr << "Could not read SHA1 hash!";
+    std::cerr << "Could not read SHA1 hash!" << std::endl;
   pclose(file);
   return line;
 }
