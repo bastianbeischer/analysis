@@ -52,6 +52,7 @@ CLASSES = \
   Plotter \
   ResidualPlot \
   SignalHeightPlot \
+  SignalHeight2DPlot \
   SingleLayerTrackingEfficiencyPlot \
   MultiLayerTrackingEfficiencyPlot \
   CutStatisticsPlot \

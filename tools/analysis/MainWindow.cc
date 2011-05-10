@@ -28,6 +28,7 @@
 #include "AlbedosVsMomentumPlot.hh"
 #include "TOFPositionCorrelationPlot.hh"
 #include "MomentumSpectrumPlot.hh"
+#include "SignalHeight2DPlot.hh"
 #include "SignalHeightPlot.hh"
 #include "ClusterLengthPlot.hh"
 #include "ClusterShapePlot.hh"
@@ -440,6 +441,7 @@ void MainWindow::setupPlots()
   QDateTime last = m_reader->time(m_ui.lastEventSpinBox->value());
 
   if (m_ui.signalHeightTrackerCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new SignalHeight2DPlot);
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tracker)
