@@ -17,6 +17,7 @@ QMutex DataChain::s_mutex;
 DataChain::DataChain()
   : m_chain(0)
   , m_event(0)
+  , m_currentEntry(-1)
 {
   init();
 }
@@ -24,6 +25,7 @@ DataChain::DataChain()
 DataChain::DataChain(const char* listName)
   : m_chain(0)
   , m_event(0)
+  , m_currentEntry(-1)
 {
   setFileList(listName);
 }
@@ -31,6 +33,9 @@ DataChain::DataChain(const char* listName)
 DataChain::~DataChain()
 {
   delete m_chain;
+  for (std::map<TTree*, const DataDescription*>::iterator it = m_descriptionBuffer.begin(); it != m_descriptionBuffer.end(); it++) {
+    delete it->second;
+  }
 }
 
 void DataChain::init()
@@ -104,6 +109,13 @@ SimpleEvent* DataChain::event(unsigned int i)
   m_currentEntry = i;
   m_event = 0;
   m_chain->GetEntry(i); 
+  TTree* tree = m_chain->GetTree();
+  const DataDescription* desc = m_descriptionBuffer[tree];
+  if (!desc) {
+    desc = new DataDescription(*currentDescription()); // create a copy because the original vanishes when the TChain closes its TFile
+    m_descriptionBuffer[tree] = desc;
+  }
+  m_event->setDescription(desc);
   return m_event;
 }
 

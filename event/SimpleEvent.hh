@@ -9,6 +9,8 @@
 
 #include <map>
 
+class DataDescription;
+
 class SimpleEvent :
   public TObject
 {
@@ -31,6 +33,7 @@ public:
   ContentType contentType() const {return m_contentType;}
   float sensorData(SensorTypes::Type type);
   const MCEventInformation* MCInformation() const {return m_mcEventInformation;}
+  const DataDescription* description() const {return m_description;}
 
   void setEventId(unsigned int id) {m_eventId = id;}
   void setRunStartTime(unsigned int time) {m_runStartTime = time;}
@@ -38,6 +41,7 @@ public:
   void setContentType(ContentType type) {m_contentType = type;}
   void setSensorData(SensorTypes::Type type, float data);
   void setMCInformation(const MCEventInformation* mcInfo);
+  void setDescription(const DataDescription* desc) {m_description = desc;}
 
   void addHit(Hit* hit) {m_hits.push_back(hit);}
 
@@ -49,6 +53,7 @@ private:
   std::vector<Hit*> m_hits;
   float m_sensorSet[SensorTypes::N_SENSOR_TYPES];
   const MCEventInformation* m_mcEventInformation;
+  const DataDescription* m_description; //!
 
   ClassDef( SimpleEvent, 1 );
  

@@ -53,6 +53,7 @@ private:
 
   int              m_currentEntry;
   std::vector<int> m_offsets;
+  std::map<TTree*, const DataDescription*> m_descriptionBuffer;
 
 };
 
