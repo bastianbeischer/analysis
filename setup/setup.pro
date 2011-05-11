@@ -13,6 +13,8 @@ CLASSES += \
   SipmArray \
   TRDModule \
   TOFBar \
+  Settings \
+  SettingsManager \
   FieldManager \
   InhomField \
   MagneticField \
