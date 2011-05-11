@@ -7,7 +7,7 @@
 #include "SimpleEvent.hh"
 #include "SensorTypes.hh"
  
-const int PMTPlot::s_threshold = 150.;
+const int PMTPlot::s_threshold = 200.;
 
 PMTPlot::PMTPlot(SensorTypes::Type type) :
   AnalysisPlot(AnalysisPlot::Testbeam),
