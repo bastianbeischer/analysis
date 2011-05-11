@@ -88,7 +88,6 @@ void SingleFile::open(QString fileName)
   std::cout << qPrintable(fileName) << ": contains " << nEvents << " regular events and " << nCalibrationEvents << " calibration events" << std::endl;
   if (nEvents == 0) {
     qDebug() << "File doesn't contain a valid header. Trying to read as many events as possible. Progress bar will be wrong!";
-    return;
   }
 
   calibrate();
