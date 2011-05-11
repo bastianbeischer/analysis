@@ -5,7 +5,8 @@ Settings::Settings() :
   m_name(""),
   m_firstRun(0),
   m_lastRun(0),
-  m_momentum(0)
+  m_momentum(0),
+  m_magnet(false)
 {
 }
 

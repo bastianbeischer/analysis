@@ -71,6 +71,7 @@ void SettingsManager::readSettings()
     int firstRun = m_configFile->value("first_run").toInt();
     int lastRun = m_configFile->value("last_run").toInt();
     double momentum = m_configFile->value("momentum").toDouble();
+    bool magnet = m_configFile->value("magnet").toString() == "yes" ? true : false;
 
     Settings* settings = new Settings;
     settings->setIdentifier(identifier);
@@ -78,6 +79,8 @@ void SettingsManager::readSettings()
     settings->setFirstRun(firstRun);
     settings->setLastRun(lastRun);
     settings->setMomentum(momentum);
+    settings->setMagnet(magnet);
+    
     m_settings.append(settings);
   }
 }
