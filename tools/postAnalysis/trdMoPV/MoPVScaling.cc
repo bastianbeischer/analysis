@@ -38,7 +38,9 @@ TGraphErrors* MoPVScaling::generateMoPVGraph(TH2D* histogram)
 
   for (int bin = 1; bin < histogram->GetNbinsX()+1; ++bin) {
     TH1* projectionHistogram = histogram->ProjectionY("_py", bin, bin);
-    //int nEntries = projectionHistogram->GetEntries();
+    int nEntries = projectionHistogram->GetEntries();
+    if (nEntries < 30)
+        continue;
     //which fit range ?!?, use same as TRD spectrum ?!?
     TF1* function = new TF1(qPrintable(QString(histogram->GetTitle()) + "Function"), "landau", histogram->GetYaxis()->GetXmin(), histogram->GetYaxis()->GetXmax());
     projectionHistogram->Fit(function, "EQN0");
