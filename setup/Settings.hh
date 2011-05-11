@@ -8,9 +8,13 @@ class Settings
 {
   
 public:
+  enum Situation {Unknown=-1, KirunaMuons, KirunaFloat, Testbeam11};
+
+public:
   Settings();
   ~Settings();
 
+  void setSituation(const Situation& situation) {m_situation = situation;}
   void setIdentifier(const int& identifier) {m_identifier = identifier;}
   void setName(const QString& name) {m_name = name;}
   void setFirstRun(const int& firstRun) {m_firstRun = firstRun;}
@@ -18,6 +22,7 @@ public:
   void setMomentum(const double& momentum) {m_momentum = momentum;}
   void setMagnet(const bool& magnet) {m_magnet = magnet;}
 
+  Situation situation() const {return m_situation;}
   int identifier() const {return m_identifier;}
   const QString& name() const {return m_name;}
   int firstRun() const {return m_firstRun;}
@@ -26,6 +31,7 @@ public:
   bool magnet() const {return m_magnet;}
   
 private:
+  Situation m_situation;
   int m_identifier;
   QString m_name;
   int m_firstRun;

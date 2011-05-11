@@ -1,6 +1,7 @@
 #include "Settings.hh"
 
 Settings::Settings() :
+  m_situation(Unknown),
   m_identifier(0),
   m_name(""),
   m_firstRun(0),

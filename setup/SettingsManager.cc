@@ -72,6 +72,12 @@ void SettingsManager::readSettings()
     int lastRun = m_configFile->value("last_run").toInt();
     double momentum = m_configFile->value("momentum").toDouble();
     bool magnet = m_configFile->value("magnet").toString() == "yes" ? true : false;
+    QString situationString = m_configFile->value("situation").toString().toLower();
+    Settings::Situation situation;
+    if (situationString == "unknown") situation = Settings::Unknown;
+    else if (situationString == "kirunamuons") situation = Settings::KirunaMuons;
+    else if (situationString == "kirunafloat") situation = Settings::KirunaFloat;
+    else if (situationString == "testbeam11") situation = Settings::Testbeam11;
 
     Settings* settings = new Settings;
     settings->setIdentifier(identifier);
@@ -80,6 +86,7 @@ void SettingsManager::readSettings()
     settings->setLastRun(lastRun);
     settings->setMomentum(momentum);
     settings->setMagnet(magnet);
+    settings->setSituation(situation);
     
     m_settings.append(settings);
   }
