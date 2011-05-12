@@ -5,13 +5,11 @@ CONFIG  += ordered
 SUBDIRS  = \
   alignment \
   eventdisplay \
-  parser \
   preAnalysis \
   analysis \
   postAnalysis \
   presentation \
-  tofAlignment \
-	eventcounter
+  tofAlignment
 
 exists($(PERDAIX10PATH)) {
   SUBDIRS+= \
