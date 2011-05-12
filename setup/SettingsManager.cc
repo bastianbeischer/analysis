@@ -83,5 +83,6 @@ void SettingsManager::readSettings()
     settings->setSituation(situation);
     
     m_settings.append(settings);
+    m_configFile->endGroup();
   }
 }
