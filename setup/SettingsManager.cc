@@ -49,12 +49,6 @@ const Settings* SettingsManager::settingsForRun(int run) const
     int firstRun = settings->firstRun();
     int lastRun = settings->lastRun();
     if (run >= firstRun && run <= lastRun) {
-      static int alreadyDone = 0;
-      if (!alreadyDone) {
-        qDebug() << settings;
-        alreadyDone = 1;
-        qDebug() << settings->momentum();
-      }
       return settings;
     }
   }
