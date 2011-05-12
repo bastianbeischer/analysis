@@ -9,6 +9,8 @@
 #include <TFitResultPtr.h>
 #include <TLatex.h>
 
+#include "SettingsManager.hh"
+#include "Settings.hh"
 #include "SimpleEvent.hh"
 #include "Track.hh"
 #include "Particle.hh"
@@ -81,7 +83,7 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
     int resolutionBins = 100;
     m_resolutionHistos.insert(i, new TH1D(qPrintable(histTitle)
                                          , qPrintable(histTitle+";1/R;entries")
-                                         , resolutionBins, -inverseRigRange, inverseRigRange));
+                                         , resolutionBins, 1.-inverseRigRange, 1.+inverseRigRange));
 
   }
 
@@ -150,8 +152,12 @@ void MCRigidityResolution::loadRigHisto(int bin)
 
 void MCRigidityResolution::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent* event)
 {
+
+  //get settings if present
+  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+
   //only accept mc events:
-  if (event->contentType() != SimpleEvent::MonteCarlo)
+  if (!(event->contentType() == SimpleEvent::MonteCarlo || settings))
     return;
 
   //get track
@@ -170,14 +176,21 @@ void MCRigidityResolution::processEvent(const QVector<Hit*>& /*hits*/, Particle*
     return;
 
   //only use selected pdgID
-  if (event->MCInformation()->primary()->pdgID != (m_particle->pdgId()))
-    return;
+  //if (event->MCInformation()->primary()->pdgID != (m_particle->pdgId()))
+  //  return;
 
 
   //get mc rigidity
-  double mcMom = event->MCInformation()->primary()->initialMomentum.Mag();
-
-  double mcRigidity = mcMom / m_particle->charge();
+  double genMom = 0;
+  double genRigidity = 0;
+  if (event->contentType() == SimpleEvent::MonteCarlo) {
+    genMom = event->MCInformation()->primary()->initialMomentum.Mag();
+    genRigidity = genMom / m_particle->charge();
+  }
+  else if(settings) {
+    genMom = settings->momentum() * -1.; //settings->polarity();
+    genRigidity = genMom;
+  }
 
   //get the reconstructed momentum
   double rigidity = track->rigidity(); //GeV
@@ -185,12 +198,12 @@ void MCRigidityResolution::processEvent(const QVector<Hit*>& /*hits*/, Particle*
   double inverseDifference = 1./rigidity; //1./rigidity - 1./mcRigidity; // 1 /GV
 
   //get bin
-  int bin = histogram()->FindBin(mcRigidity);
+  int bin = histogram()->FindBin(qAbs(genRigidity));
 
 
   if (m_resolutionHistos.contains(bin)) {
     TH1D* hist = m_resolutionHistos.value(bin);
-    hist->Fill(inverseDifference * mcRigidity); //already multiply here with mcRigidity !!!!
+    hist->Fill(inverseDifference * genRigidity); //already multiply here with mcRigidity !!!!
   }
 }
 
@@ -205,7 +218,7 @@ void MCRigidityResolution::update()
       continue;
     //double axisMax = hist->GetXaxis()->GetXmax();
     //TF1* fit = new TF1("gausfit","gaus", -axisMax, axisMax);
-    TFitResultPtr r = hist->Fit("gaus","Q0S");
+    TFitResultPtr r = hist->Fit("gaus","Q0SR",0, 0, 1.5);
     double inverseSigma = r->Parameter(2);
     double inverseSigmaErr = r->ParError(2);
     double rigidityRes = inverseSigma ;
