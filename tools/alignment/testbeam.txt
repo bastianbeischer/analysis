@@ -23,15 +23,15 @@ fixLayer     9
 fixLayer     10
 
 # TRACKER
-fixLayer     11
-fixLayer     12
-#fixLayer      13
-#fixLayer      14
-#fixLayer      15
-#fixLayer      16
-fixLayer     17
-fixLayer     18
+#fixLayer     11
+#fixLayer     12
+fixLayer      13
+fixLayer      14
+fixLayer      15
+fixLayer      16
+#fixLayer     17
+#fixLayer     18
 
-readDataFrom ../../lists/testbeam/10gev_neg_center.txt
-readDataFrom ../../lists/testbeam/10gev_neg_upward.txt
-readDataFrom ../../lists/testbeam/10gev_neg_downward.txt
+readDataFrom ../../lists/testbeam/spatialResolution/10gev_neg_center.txt
+readDataFrom ../../lists/testbeam/spatialResolution/10gev_neg_upward.txt
+readDataFrom ../../lists/testbeam/spatialResolution/10gev_neg_downward.txt
