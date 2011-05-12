@@ -64,6 +64,7 @@ void SettingsManager::readSettings()
     QString name = m_configFile->value("name").toString();
     int firstRun = m_configFile->value("first_run").toInt();
     int lastRun = m_configFile->value("last_run").toInt();
+    int polarity = m_configFile->value("polarity").toString() == "positive" ? 1 : -1;
     double momentum = m_configFile->value("momentum").toDouble();
     bool magnet = m_configFile->value("magnet").toString() == "yes" ? true : false;
     QString situationString = m_configFile->value("situation").toString().toLower();
@@ -80,6 +81,7 @@ void SettingsManager::readSettings()
     settings->setLastRun(lastRun);
     settings->setMomentum(momentum);
     settings->setMagnet(magnet);
+    settings->setPolarity(polarity);
     settings->setSituation(situation);
     
     m_settings.append(settings);
