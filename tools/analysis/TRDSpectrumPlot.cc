@@ -75,7 +75,7 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* part
   case none:
     break;
   case bothBelow:
-    if (c1Signal > m_cerenkov1Limit || c2Signal > m_cerenkov2Limit)
+    if (c1Signal >= m_cerenkov1Limit || c2Signal >= m_cerenkov2Limit)
       return;
     break;
   case bothAbove:
@@ -83,11 +83,11 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* part
       return;
     break;
   case c1AboveC2Below:
-    if (!(c1Signal > m_cerenkov1Limit && c2Signal < m_cerenkov2Limit))
+    if (c1Signal < m_cerenkov1Limit || c2Signal >= m_cerenkov2Limit)
       return;
     break;
   case c1BelowC2Above:
-    if (!(c1Signal < m_cerenkov1Limit && c2Signal > m_cerenkov2Limit))
+    if (c1Signal >= m_cerenkov1Limit || c2Signal < m_cerenkov2Limit)
       return;
     break;
   }
