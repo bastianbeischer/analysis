@@ -44,6 +44,7 @@ void Track::calculateTransverseRigidity()
   else {
     const MagneticField* field = FieldManager::instance()->field();
     double B_estimate = field->fieldEstimate(); // tesla
+    B_estimate *= 0.93;
 
     double z0_magnet = field->z0(); // mm
     double z1_magnet = field->z1(); // mm
