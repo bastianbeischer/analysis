@@ -21,7 +21,12 @@ Matrix::~Matrix()
 
 int Matrix::fit(const QVector<Hit*>& hits)
 {
-  unsigned int nHits = hits.size();
+  QVector<Hit*> filteredHits;
+  foreach(Hit* hit, hits)
+    if (hit->type() != Hit::tof)
+      filteredHits.append(hit);
+
+  unsigned int nHits = filteredHits.size();
 
   // basic dimensions of matrices
   m_nRow = nHits;
@@ -38,7 +43,7 @@ int Matrix::fit(const QVector<Hit*>& hits)
   TMatrixD CombineXandY(1,2);
 
   for (unsigned int i = 0; i < m_nRow; i++) {
-    Hit* hit = hits.at(i);
+    Hit* hit = filteredHits.at(i);
 
     TVector3 pos = hit->position();
 
