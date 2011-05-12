@@ -14,6 +14,7 @@
 
 #include "RootQtWidget.hh"
 #include "TRDSpectrumPlotCollection.hh"
+#include "TRDSpectrumCerenkovPlotCollection.hh"
 #include "TRDSpectrumVsTimePlotCollection.hh"
 #include "TRDSpectrumVsTemperaturePlotCollection.hh"
 #include "BendingPositionPlot.hh"
@@ -675,6 +676,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MCRigidityResolution(1000020040));
   }
   if (m_ui.testbeamCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new TRDSpectrumCerenkovPlotCollection());
     QVector<SensorTypes::Type> beamSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::beamSensors());
     foreach(SensorTypes::Type sensor, beamSensors)
       m_ui.plotter->addPlot(new PMTPlot(sensor));
