@@ -37,7 +37,7 @@ DataManager::DataManager() :
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
   QString path(env);
-  QString sensorFileName = path + "/tools/parser/sensors.root";
+  QString sensorFileName = path + "/tools/parser/kiruna.root";
   QString testbeamFileName = path + "/tools/parser/testbeam.root";
   m_sensorsData = new SensorsData(SensorsData::SENSORS, qPrintable(sensorFileName));
   m_atcData = new SensorsData(SensorsData::ATC, qPrintable(sensorFileName));
