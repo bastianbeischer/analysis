@@ -1,4 +1,4 @@
-#include "TRDSpectrumCerenkovPlotCollection.hh"
+#include "TRDSpectrumCherenkovPlotCollection.hh"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -8,12 +8,12 @@
 #include "TRDSpectrumPlot.hh"
 
 
-TRDSpectrumCerenkovPlotCollection::TRDSpectrumCerenkovPlotCollection() :
+TRDSpectrumCherenkovPlotCollection::TRDSpectrumCherenkovPlotCollection() :
   PlotCollection(AnalysisPlot::Testbeam)
 {
   QComboBox* comboBox = new QComboBox();
 
-  comboBox->addItem("no cerenkov cut");
+  comboBox->addItem("no cherenkov cut");
   addPlot(new TRDSpectrumPlot(0 /*doesnt matter*/, TRDSpectrumPlot::completeTRD, -100, 100, TRDSpectrumPlot::none));
   comboBox->addItem("below both");
   addPlot(new TRDSpectrumPlot(0 /*doesnt matter*/, TRDSpectrumPlot::completeTRD, -100, 100, TRDSpectrumPlot::bothBelow));
@@ -28,16 +28,16 @@ TRDSpectrumCerenkovPlotCollection::TRDSpectrumCerenkovPlotCollection() :
 
   QHBoxLayout* layout = new QHBoxLayout(selectionWidget);
   layout->addStretch();
-  layout->addWidget(new QLabel("cerenkov cut settings"));
+  layout->addWidget(new QLabel("cherenkov cut settings"));
   layout->addWidget(comboBox);
   layout->addStretch();
 
   setSecondaryWidget(selectionWidget);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPlot(int)));
 
-  setTitle("TRD spectra - cerenkov cuts");
+  setTitle("TRD spectra - cherenkov cuts");
 }
 
-TRDSpectrumCerenkovPlotCollection::~TRDSpectrumCerenkovPlotCollection()
+TRDSpectrumCherenkovPlotCollection::~TRDSpectrumCherenkovPlotCollection()
 {
 }
