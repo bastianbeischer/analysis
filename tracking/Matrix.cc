@@ -31,7 +31,7 @@ int Matrix::fit(const QVector<Hit*>& hits)
   // basic dimensions of matrices
   m_nRow = nHits;
 
-  if (!checkInvertability(hits)) {
+  if (!checkInvertability(filteredHits)) {
     return 0;
   }
 
