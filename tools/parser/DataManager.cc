@@ -184,7 +184,7 @@ void DataManager::processFiles()
 void DataManager::addSensorData(SimpleEvent* event)
 {
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
-  if (settings->situation() == Settings::Testbeam11) {
+  if (settings && settings->situation() == Settings::Testbeam11) {
     readKeys(m_testbeamData, event);
   }
   else {
