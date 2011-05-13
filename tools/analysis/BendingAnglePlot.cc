@@ -34,7 +34,6 @@ void BendingAnglePlot::processEvent(const QVector<Hit*>& /*clusters*/, Particle*
 {
   const Track* track = particle->track();
 
-  // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 

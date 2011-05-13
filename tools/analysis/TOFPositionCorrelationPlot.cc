@@ -42,7 +42,6 @@ void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, Par
 {
   const Track* track = particle->track();
 
-  // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 

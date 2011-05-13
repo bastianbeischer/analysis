@@ -31,7 +31,6 @@ ZSquareTRDPlot::~ZSquareTRDPlot()
 
 void ZSquareTRDPlot::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
 {
-  // QMutexLocker locker(&m_mutex);
   const Track* track = particle->track();
   if (!track || !track->fitGood())
     return;

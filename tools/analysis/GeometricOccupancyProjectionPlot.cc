@@ -28,7 +28,6 @@ void GeometricOccupancyProjectionPlot::processEvent(const QVector<Hit*>&, Partic
 {
   const Track* track = particle->track();
 
-  // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 

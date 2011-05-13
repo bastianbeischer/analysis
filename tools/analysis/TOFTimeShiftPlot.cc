@@ -39,7 +39,6 @@ void TOFTimeShiftPlot::processEvent(const QVector<Hit*>& hits, Particle* particl
 {
   const Track* track = particle->track();
 
-  // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 

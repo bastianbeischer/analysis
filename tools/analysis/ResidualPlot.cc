@@ -48,7 +48,6 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, S
 {
   const Track* track = particle->track();
 
-  // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 

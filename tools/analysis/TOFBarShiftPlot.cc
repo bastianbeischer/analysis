@@ -53,7 +53,6 @@ void TOFBarShiftPlot::processEvent(const QVector<Hit*>& hits, Particle* particle
   const Track* track = particle->track();
   const TimeOfFlight* tof = particle->timeOfFlight();
 
-  // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
   ParticleInformation::Flags flags = particle->information()->flags();

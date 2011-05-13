@@ -50,7 +50,6 @@ void BeamProfilePlot::processEvent(const QVector<Hit*>&, Particle* particle, Sim
 {
   const Track* track = particle->track();
 
-  // QMutexLocker locker(&m_mutex);
   if(!track || !track->fitGood())
     return;
 
