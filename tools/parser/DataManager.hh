@@ -31,6 +31,7 @@ private:
   void initializeOutput();
   void processFiles();
   void addSensorData(SimpleEvent*);
+  void readKeys(SensorsData*, SimpleEvent*);
   void saveAndCloseOutput();
 
 private:
@@ -41,6 +42,7 @@ private:
   SensorsData*       m_sensorsData;
   SensorsData*       m_atcData;
   SensorsData*       m_ebassData;
+  SensorsData*       m_testbeamData;
   QString            m_outputFileName;
   SimpleEvent*       m_currentEvent;
   TFile*             m_outputFile;

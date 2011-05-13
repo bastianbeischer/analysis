@@ -18,11 +18,15 @@
 #include "MCSingleFile.hh"
 #include "DataDescription.hh"
 
+#include "SettingsManager.hh"
+#include "Settings.hh"
+
 DataManager::DataManager() :
   m_description(0),
   m_sensorsData(0),
   m_atcData(0),
   m_ebassData(0),
+  m_testbeamData(0),
   m_outputFileName("output.root"),
   m_currentEvent(0),
   m_outputFile(0),
@@ -34,9 +38,11 @@ DataManager::DataManager() :
   }
   QString path(env);
   QString sensorFileName = path + "/tools/parser/sensors.root";
+  QString testbeamFileName = path + "/tools/parser/testbeam.root";
   m_sensorsData = new SensorsData(SensorsData::SENSORS, qPrintable(sensorFileName));
   m_atcData = new SensorsData(SensorsData::ATC, qPrintable(sensorFileName));
   m_ebassData = new SensorsData(SensorsData::EBASS, qPrintable(sensorFileName));
+  m_testbeamData = new SensorsData(SensorsData::SENSORS, qPrintable(testbeamFileName));
 }
 
 DataManager::~DataManager()
@@ -177,28 +183,23 @@ void DataManager::processFiles()
 
 void DataManager::addSensorData(SimpleEvent* event)
 {
-  if (m_sensorsData->good()) {
-    int nKeys = m_sensorsData->numberOfKeys();
-    const char** keys = m_sensorsData->keys();
-    float* values = m_sensorsData->values(event->time());
-    for (int iKey = 0; iKey < nKeys; iKey++) {
-      event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
-    }
+  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+  if (settings->situation() == Settings::Testbeam11) {
+    readKeys(m_testbeamData, event);
   }
-
-  if (m_atcData->good()) {
-    int nKeys = m_atcData->numberOfKeys();
-    const char** keys = m_atcData->keys();
-    float* values = m_atcData->values(event->time());
-    for (int iKey = 0; iKey < nKeys; iKey++) {
-      event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
-    }
+  else {
+    readKeys(m_sensorsData, event);
+    readKeys(m_atcData, event);
+    readKeys(m_ebassData, event);
   }
+}
 
-  if (m_ebassData->good()) {
-    int nKeys = m_ebassData->numberOfKeys();
-    const char** keys = m_ebassData->keys();
-    float* values = m_ebassData->values(event->time());
+void DataManager::readKeys(SensorsData* data, SimpleEvent* event)
+{
+  if (data->good()) {
+    int nKeys = data->numberOfKeys();
+    const char** keys = data->keys();
+    float* values = data->values(event->time());
     for (int iKey = 0; iKey < nKeys; iKey++) {
       event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
     }
