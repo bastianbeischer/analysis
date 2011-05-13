@@ -41,6 +41,7 @@ CLASSES = \
   Chi2VsMomentumPlot \
   PlotCollection \
   TRDSpectrumPlotCollection \
+  TRDSpectrumCherenkovPlotCollection \
   TRDSpectrumVsTimePlotCollection \
   TRDSpectrumVsTemperaturePlotCollection \
   ClusterLengthPlot \

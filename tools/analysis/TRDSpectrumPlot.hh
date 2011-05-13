@@ -11,8 +11,9 @@ class TRDSpectrumPlot : public AnalysisPlot, public H1DPlot
   
 public:
   enum TRDSpectrumType{completeTRD, module, channel};
+  enum CherenkovCut{bothAbove, bothBelow, c1AboveC2Below, c1BelowC2Above, none};
 
-  TRDSpectrumPlot(unsigned short, TRDSpectrumType, double lowerMomentum = -10, double upperMomentum = 10);
+  TRDSpectrumPlot(unsigned short, TRDSpectrumType, double lowerMomentum = -100, double upperMomentum = 100, CherenkovCut cCut = none, double c1Limit = 200, double c2Limit = 200);
   ~TRDSpectrumPlot();
 
   virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
@@ -29,6 +30,9 @@ private:
   const double m_landauFitRange_upper;
   const double m_lowerMomentum;
   const double m_upperMomentum;
+  const CherenkovCut m_cherenkovCut;
+  const double m_cherenkov1Limit;
+  const double m_cherenkov2Limit;
 
   TMarker* m_fitRangeMarker_lower;
   TMarker* m_fitRangeMarker_upper;

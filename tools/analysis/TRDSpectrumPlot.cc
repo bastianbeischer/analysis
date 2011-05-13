@@ -9,11 +9,12 @@
 #include "ParticleInformation.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
+#include "SimpleEvent.hh"
 
 #include "TRDCalculations.hh"
 #include "Corrections.hh"
 
-TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType, double lowerMom, double upperMom) :
+TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType, double lowerMom, double upperMom, CherenkovCut cCut, double c1Limit, double c2Limit) :
   AnalysisPlot(AnalysisPlot::SignalHeightTRD),
   H1DPlot(),
   m_id(id),
@@ -22,6 +23,9 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   m_landauFitRange_upper(3.0),
   m_lowerMomentum(lowerMom),
   m_upperMomentum(upperMom),
+  m_cherenkovCut(cCut),
+  m_cherenkov1Limit(c1Limit),
+  m_cherenkov2Limit(c2Limit),
   m_fitRangeMarker_lower(new TMarker(m_landauFitRange_lower, 0,2)),
   m_fitRangeMarker_upper(new TMarker(m_landauFitRange_upper, 0,2))
 {
@@ -61,8 +65,33 @@ TRDSpectrumPlot::~TRDSpectrumPlot()
   delete m_fitRangeMarker_upper;
 }
 
-void TRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent*)
+void TRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent* event)
 {
+
+  double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
+  double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
+
+  switch (m_cherenkovCut) {
+  case none:
+    break;
+  case bothBelow:
+    if (c1Signal >= m_cherenkov1Limit || c2Signal >= m_cherenkov2Limit)
+      return;
+    break;
+  case bothAbove:
+    if (c1Signal < m_cherenkov1Limit || c2Signal < m_cherenkov2Limit)
+      return;
+    break;
+  case c1AboveC2Below:
+    if (c1Signal < m_cherenkov1Limit || c2Signal >= m_cherenkov2Limit)
+      return;
+    break;
+  case c1BelowC2Above:
+    if (c1Signal >= m_cherenkov1Limit || c2Signal < m_cherenkov2Limit)
+      return;
+    break;
+  }
+
   const Track* track = particle->track();
   const ParticleInformation::Flags pFlags = particle->information()->flags();
 
