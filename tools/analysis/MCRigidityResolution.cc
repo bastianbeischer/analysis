@@ -160,6 +160,12 @@ void MCRigidityResolution::processEvent(const QVector<Hit*>& /*hits*/, Particle*
   if (!(event->contentType() == SimpleEvent::MonteCarlo || settings))
     return;
 
+  // if settings present accept only testbeam events
+  if (settings) {
+    if (settings->situation() != Settings::Testbeam11)
+      return;
+  }
+
   //get track
   Track* track = particle->track();
 
@@ -175,20 +181,31 @@ void MCRigidityResolution::processEvent(const QVector<Hit*>& /*hits*/, Particle*
   if (!(particle->information()->flags() & ParticleInformation::InsideMagnet))
     return;
 
-  //only use selected pdgID
-  //if (event->MCInformation()->primary()->pdgID != (m_particle->pdgId()))
-  //  return;
+  //only use selected pdgID for MCEvents:
+  if (event->contentType() == SimpleEvent::MonteCarlo) {
+    if (event->MCInformation()->primary()->pdgID != (m_particle->pdgId()))
+      return;
+  }
 
+  //only electrons for testbeam atm (tagged via cherenkov)
+  if (settings) {
+    if (m_particle->pdgId() != settings->polarity() * (-11))
+      return;
+    double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
+    double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
+    if (!(c1Signal > 200 || c2Signal > 200))
+      return;
+  }
 
   //get mc rigidity
   double genMom = 0;
   double genRigidity = 0;
   if (event->contentType() == SimpleEvent::MonteCarlo) {
-    genMom = event->MCInformation()->primary()->initialMomentum.Mag();
-    genRigidity = genMom / m_particle->charge();
+    genMom = event->MCInformation()->primary()->initialMomentum.Mag() * m_particle->charge();
+    genRigidity = genMom / qAbs(m_particle->charge());
   }
   else if(settings) {
-    genMom = settings->momentum() * -1.; //settings->polarity();
+    genMom = settings->momentum() * settings->polarity();
     genRigidity = genMom;
   }
 
