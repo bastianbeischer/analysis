@@ -54,7 +54,7 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   m_fitRangeMarker_lower->SetMarkerColor(kRed);
   m_fitRangeMarker_upper->SetMarkerColor(kRed);
 
-  TH1D* histogram = new TH1D(qPrintable(title()), qPrintable(title() + ";ADCCs per length in tube / (1/mm);entries"), 50, 0, 15);
+  TH1D* histogram = new TH1D(qPrintable(title()+QString::number(m_cherenkovCut)), qPrintable(title() + ";ADCCs per length in tube / (1/mm);entries"), 50, 0, 15);
   addHistogram(histogram);
 }
 
