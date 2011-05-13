@@ -20,6 +20,7 @@ public:
   void setFirstRun(const int& firstRun) {m_firstRun = firstRun;}
   void setLastRun(const int& lastRun) {m_lastRun = lastRun;}
   void setMomentum(const double& momentum) {m_momentum = momentum;}
+  void setPolarity(const int& polarity) {m_polarity = polarity;}
   void setMagnet(const bool& magnet) {m_magnet = magnet;}
 
   Situation situation() const {return m_situation;}
@@ -28,6 +29,7 @@ public:
   int firstRun() const {return m_firstRun;}
   int lastRun() const {return m_lastRun;}
   double momentum() const {return m_momentum;}
+  int polarity() const {return m_polarity;}
   bool magnet() const {return m_magnet;}
   
 private:
@@ -37,6 +39,7 @@ private:
   int m_firstRun;
   int m_lastRun;
   double m_momentum;
+  int m_polarity;
   bool m_magnet;
   
 };

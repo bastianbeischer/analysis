@@ -7,6 +7,7 @@ Settings::Settings() :
   m_firstRun(0),
   m_lastRun(0),
   m_momentum(0),
+  m_polarity(0),
   m_magnet(false)
 {
 }
