@@ -1,5 +1,5 @@
-#ifndef MCRIGIDITYRESOLUTION_HH
-#define MCRIGIDITYRESOLUTION_HH
+#ifndef RigidityResolutionPlot_hh
+#define RigidityResolutionPlot_hh
 
 #include "AnalysisPlot.hh"
 #include "H1DPlot.hh"
@@ -10,23 +10,24 @@
 class ParticleProperties;
 class RootQtWidget;
 
-class MCRigidityResolution : public QObject, public AnalysisPlot, public H1DPlot
+class RigidityResolutionPlot : public AnalysisPlot, public H1DPlot
 {
 public:
-  MCRigidityResolution(int pdgID = 11);
-  ~MCRigidityResolution();
+  RigidityResolutionPlot(AnalysisPlot::Topic, int pdgID = 11);
+  ~RigidityResolutionPlot();
 
   virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
-  virtual void update();
-  virtual void finalize();
+  void update();
+  void finalize();
   void positionChanged(double, double);
-  void saveHistos();
-
-public slots:
-  void loadRigHisto(double rig);
-  void loadRigHisto(int bin);
 
 private:
+  virtual double referenceRigidity(SimpleEvent*) const = 0;
+  void loadRigHisto(double rig);
+  void loadRigHisto(int bin);
+  void saveHistos();
+
+protected:
   const ParticleProperties* m_particle;
   const double m_rigidityRangeLower;
   const double m_rigidityRangeUppper;
@@ -38,4 +39,4 @@ private:
 
 };
 
-#endif // MCRIGIDITYRESOLUTION_HH
+#endif // RigidityResolutionPlot_hh

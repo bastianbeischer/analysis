@@ -96,7 +96,9 @@ CLASSES = \
   SensorTimePlot \
   MCTotalEnergyDepositionTRDvsTrackerPlot \
   MCTRDSpectrumPlot \
-  MCRigidityResolution \
+  RigidityResolutionPlot \
+  MCRigidityResolutionPlot \
+  TestbeamRigidityResolutionPlot \
   PMTPlot \
   PMTCorrelationPlot \
   ZSquareTRDPlot \

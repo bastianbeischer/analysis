@@ -1,4 +1,4 @@
-#include "MCRigidityResolution.hh"
+#include "RigidityResolutionPlot.hh"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -9,8 +9,6 @@
 #include <TFitResultPtr.h>
 #include <TLatex.h>
 
-#include "SettingsManager.hh"
-#include "Settings.hh"
 #include "SimpleEvent.hh"
 #include "Track.hh"
 #include "Particle.hh"
@@ -25,9 +23,8 @@
 
 #include "TF1.h"
 
-MCRigidityResolution::MCRigidityResolution(int pdgID)
-  : QObject()
-  , AnalysisPlot(AnalysisPlot::MonteCarloTracker)
+RigidityResolutionPlot::RigidityResolutionPlot(AnalysisPlot::Topic topic, int pdgID)
+  : AnalysisPlot(topic)
   , H1DPlot()
   , m_particle(ParticleDB::instance()->lookupPdgId(pdgID))
   , m_rigidityRangeLower(-0.025)
@@ -77,9 +74,9 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
   }
 
   for (int i = 1; i <= hist->GetNbinsX(); ++i) {
-    double mcRig = hist->GetBinCenter(i);
-    QString histTitle = QString("rigidity resolution for %1 at %2 GV").arg(particleName).arg(mcRig);
-    double inverseRigRange = expectedRes->Eval(mcRig)*5;
+    double genRig = hist->GetBinCenter(i);
+    QString histTitle = QString("rigidity resolution for %1 at %2 GV").arg(particleName).arg(genRig);
+    double inverseRigRange = expectedRes->Eval(genRig)*5;
     int resolutionBins = 100;
     m_resolutionHistos.insert(i, new TH1D(qPrintable(histTitle)
                                          , qPrintable(histTitle+";1/R;entries")
@@ -109,17 +106,17 @@ MCRigidityResolution::MCRigidityResolution(int pdgID)
   setSecondaryWidget(m_rigDistributionWidget);
 }
 
-MCRigidityResolution::~MCRigidityResolution()
+RigidityResolutionPlot::~RigidityResolutionPlot()
 {
   qDeleteAll(m_resolutionHistos);
 }
 
-void MCRigidityResolution::positionChanged(double posX, double)
+void RigidityResolutionPlot::positionChanged(double posX, double)
 {
   loadRigHisto(posX);
 }
 
-void MCRigidityResolution::loadRigHisto(double rig)
+void RigidityResolutionPlot::loadRigHisto(double rig)
 {
   RootQtWidget* widget = m_rigDistributionWidget;
   if (widget->isVisible()) {
@@ -127,7 +124,7 @@ void MCRigidityResolution::loadRigHisto(double rig)
     loadRigHisto(bin);
   }
 }
-void MCRigidityResolution::loadRigHisto(int bin)
+void RigidityResolutionPlot::loadRigHisto(int bin)
 {
   RootQtWidget* widget = m_rigDistributionWidget;
   if (widget->isVisible()) {
@@ -150,22 +147,8 @@ void MCRigidityResolution::loadRigHisto(int bin)
   }
 }
 
-void MCRigidityResolution::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent* event)
+void RigidityResolutionPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent* event)
 {
-
-  //get settings if present
-  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
-
-  //only accept mc events:
-  if (!(event->contentType() == SimpleEvent::MonteCarlo || settings))
-    return;
-
-  // if settings present accept only testbeam events
-  if (settings) {
-    if (settings->situation() != Settings::Testbeam11)
-      return;
-  }
-
   //get track
   Track* track = particle->track();
 
@@ -181,50 +164,21 @@ void MCRigidityResolution::processEvent(const QVector<Hit*>& /*hits*/, Particle*
   if (!(particle->information()->flags() & ParticleInformation::InsideMagnet))
     return;
 
-  //only use selected pdgID for MCEvents:
-  if (event->contentType() == SimpleEvent::MonteCarlo) {
-    if (event->MCInformation()->primary()->pdgID != (m_particle->pdgId()))
-      return;
-  }
-
-  //only electrons for testbeam atm (tagged via cherenkov)
-  if (settings) {
-    if (m_particle->pdgId() != settings->polarity() * (-11))
-      return;
-    double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
-    double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
-    if (!(c1Signal > 200 || c2Signal > 200))
-      return;
-  }
-
-  //get mc rigidity
-  double genMom = 0;
-  double genRigidity = 0;
-  if (event->contentType() == SimpleEvent::MonteCarlo) {
-    genMom = event->MCInformation()->primary()->initialMomentum.Mag() * m_particle->charge();
-    genRigidity = genMom / qAbs(m_particle->charge());
-  }
-  else if(settings) {
-    genMom = settings->momentum() * settings->polarity();
-    genRigidity = genMom;
-  }
-
-  //get the reconstructed momentum
+  // get the reconstructed momentum
   double rigidity = track->rigidity(); //GeV
 
-  double inverseDifference = 1./rigidity; //1./rigidity - 1./mcRigidity; // 1 /GV
+  // and the reference
+  double refRigidity = referenceRigidity(event);
 
-  //get bin
-  int bin = histogram()->FindBin(qAbs(genRigidity));
-
-
+  //get bin and fill
+  int bin = histogram()->FindBin(qAbs(refRigidity));
   if (m_resolutionHistos.contains(bin)) {
     TH1D* hist = m_resolutionHistos.value(bin);
-    hist->Fill(inverseDifference * genRigidity); //already multiply here with mcRigidity !!!!
+    hist->Fill(refRigidity/rigidity);
   }
 }
 
-void MCRigidityResolution::update()
+void RigidityResolutionPlot::update()
 {
   histogram()->Reset();
 
@@ -238,7 +192,7 @@ void MCRigidityResolution::update()
     TFitResultPtr r = hist->Fit("gaus","Q0SR",0, 0, 1.5);
     double inverseSigma = r->Parameter(2);
     double inverseSigmaErr = r->ParError(2);
-    double rigidityRes = inverseSigma ;
+    double rigidityRes = inverseSigma;
     double rigidityResErr = inverseSigmaErr ;
 
     histogram()->SetBinContent(i.key(), rigidityRes);
@@ -249,20 +203,20 @@ void MCRigidityResolution::update()
     histogram()->Fit(function(1),"q0");
 }
 
-void MCRigidityResolution::finalize()
+void RigidityResolutionPlot::finalize()
 {
   update();
   //saveHistos();
 }
 
-void MCRigidityResolution::saveHistos()
+void RigidityResolutionPlot::saveHistos()
 {
   QMap<int, TH1D*>::const_iterator i;
   for (i = m_resolutionHistos.constBegin(); i != m_resolutionHistos.constEnd(); ++i) {
     TH1D* hist = i.value();
     if (hist->GetEntries() < 10)
       continue;
-    double mcRig = histogram()->GetBinCenter(i.key());
-    hist->SaveAs(qPrintable(QString("rigres_for_%1_at_%2GV.root").arg(m_particle->name()).arg(mcRig)));
+    double genRig = histogram()->GetBinCenter(i.key());
+    hist->SaveAs(qPrintable(QString("rigres_for_%1_at_%2GV.root").arg(m_particle->name()).arg(genRig)));
   }
 }
