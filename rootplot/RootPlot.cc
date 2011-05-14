@@ -99,6 +99,7 @@ QString RootPlot::drawOption(DrawOption option)
     case AC: return "AC";
     case ALP: return "ALP";
     case ACP: return "ACP";
+    case ALX: return "ALX";
     default: return QString();
   }
   return QString();
