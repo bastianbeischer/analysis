@@ -50,7 +50,7 @@ TRDSpectrumVsTemperaturePlot::TRDSpectrumVsTemperaturePlot(unsigned int id, TRDS
   const double maxTemperature = 34;
   const unsigned int nSpecBins = 100;
   const double minSpec = 0;
-  const double maxSpec = 20;
+  const double maxSpec = 15;
 
   TH2D* histogram = new TH2D(qPrintable(title()),"", nTemperatureBins, minTemperature, maxTemperature, nSpecBins, minSpec, maxSpec);
   setAxisTitle("temperature /  #circC", "ADCCs per length", "");

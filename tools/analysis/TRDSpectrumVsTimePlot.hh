@@ -12,7 +12,7 @@
 class TRDSpectrumVsTimePlot: public AnalysisPlot, public H2DPlot {
 
 public:
-  TRDSpectrumVsTimePlot(unsigned short, TRDSpectrumPlot::TRDSpectrumType, QDateTime, QDateTime, double = -10, double = 10 );
+  TRDSpectrumVsTimePlot(unsigned short, TRDSpectrumPlot::TRDSpectrumType, QDateTime, QDateTime, double = -100, double = 100 );
   ~TRDSpectrumVsTimePlot();
 
   void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
