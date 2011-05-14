@@ -24,7 +24,7 @@ public:
   
 public:
   void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
-
+  void setDrawAllClusters(bool);
 private:
   void drawHits();
   void clearHits();
@@ -36,7 +36,7 @@ private:
   TLatex*             m_fitInfo;
   QList<TGraph*>      m_trajectoriesXZ;
   QList<TGraph*>      m_trajectoriesYZ;
-
+  bool m_drawAllClusters;
 };
 
 #endif /* HitsPlot_hh */

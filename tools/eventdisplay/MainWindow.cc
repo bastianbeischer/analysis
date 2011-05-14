@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.eventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(update()));
   connect(m_ui.eventListSpinBox, SIGNAL(valueChanged(int)), this, SLOT(eventSpinBoxValueChanged(int)));
   connect(m_ui.drawTrackCheckBox, SIGNAL(stateChanged(int)), this, SLOT(update()));
+  connect(m_ui.allClustersCheckBox, SIGNAL(stateChanged(int)), this, SLOT(update()));
   connect(m_ui.slopeBinsSpinBox, SIGNAL(valueChanged(int)), this, SLOT(update()));
   connect(m_ui.offsetBinsSpinBox, SIGNAL(valueChanged(int)), this, SLOT(update()));
   connect(m_ui.trackerPullSpinBox, SIGNAL(valueChanged(double)), this, SLOT(update()));
@@ -115,6 +116,7 @@ void MainWindow::update()
   
   bool drawTracks = m_ui.drawTrackCheckBox->isChecked();
   m_ui.fitMethodComboBox->setEnabled(drawTracks);
+  m_ui.allClustersCheckBox->setEnabled(drawTracks);
 
   Track::Type type = Track::None;
   int index = m_ui.fitMethodComboBox->currentIndex();
@@ -122,7 +124,7 @@ void MainWindow::update()
   else if (index == 0) type = Track::CenteredBrokenLine;
   else if (index == 1) type = Track::StraightLine;
   else if (index == 2) type = Track::BrokenLine;
-  m_ui.plotter->drawEvent(m_ui.eventSpinBox->value(), type, *m_ui.textEdit);
+  m_ui.plotter->drawEvent(m_ui.eventSpinBox->value(), type, m_ui.allClustersCheckBox->isChecked(), *m_ui.textEdit);
 }
 
 void MainWindow::saveButtonClicked()
