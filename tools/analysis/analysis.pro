@@ -44,6 +44,7 @@ CLASSES = \
   TRDSpectrumCherenkovPlotCollection \
   TRDSpectrumVsTimePlotCollection \
   TRDSpectrumVsTemperaturePlotCollection \
+  TRDSpectrumVsPressurePlotCollection \
   ClusterLengthPlot \
   ClusterShapePlot \
   GeometricOccupancyPlot \
@@ -73,6 +74,7 @@ CLASSES = \
   TRDSpectrumPlot \
   TRDSpectrumVsTimePlot \
   TRDSpectrumVsTemperaturePlot \
+  TRDSpectrumVsPressurePlot \
   TimeResolutionPlot \
   TotalEnergyDepositionPlot \
   TotalEnergyDepositionTRDvsTrackerPlot \
