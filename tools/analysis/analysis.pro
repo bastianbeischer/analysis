@@ -89,6 +89,7 @@ CLASSES = \
   TOTTimeCorrelationPlot \
   TOFAlignment \
   TemperatureTimePlot \
+  PressureTimePlot \
   ChannelTriggerProbabilityPlot \
   TOFTimeShiftTriggerPlot \
   HeightTimePlot \

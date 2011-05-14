@@ -68,6 +68,7 @@
 #include "TOFAlignment.hh"
 #include "TOTTimeCorrelationPlot.hh"
 #include "TemperatureTimePlot.hh"
+#include "PressureTimePlot.hh"
 #include "ChannelTriggerProbabilityPlot.hh"
 #include "TOFTimeShiftTriggerPlot.hh"
 #include "TriggerRateTimePlot.hh"
@@ -660,6 +661,7 @@ void MainWindow::setupPlots()
     QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());
     foreach(SensorTypes::Type sensor, temperatureSensors)
       m_ui.plotter->addPlot(new TemperatureTimePlot(sensor, first, last));
+    m_ui.plotter->addPlot(new PressureTimePlot(SensorTypes::TRD_PRESSURE, first, last));
     m_ui.plotter->addPlot(new TriggerRateTimePlot(first, last));
     m_ui.plotter->addPlot(new HeightTimePlot(first, last));
   }
