@@ -1,6 +1,8 @@
 #include "TrackFinding.hh"
 
+#include "Constants.hh"
 #include "Hit.hh"
+#include "TOFCluster.hh"
 #include "StraightLine.hh"
 #include "CenteredBrokenLine.hh"
 #include "BrokenLine.hh"
@@ -8,6 +10,8 @@
 #include <TH2I.h>
 #include <cmath>
 #include <iostream>
+
+#include <QDebug>
 
 int TrackFinding::s_histCounter = 0;
 
@@ -88,8 +92,13 @@ QVector<Hit*> TrackFinding::findTrack(const QVector<Hit*>& hits)
         maxPull = m_trackerPull;
       if (hit->type() == Hit::trd)
         maxPull = m_trdPull;
-      if (hit->type() == Hit::tof)
+      if (hit->type() == Hit::tof) {
+        TOFCluster* tofCluster = static_cast<TOFCluster*>(*it);
+        int nHits = tofCluster->hits().size();
+        if (nHits < 3 || tofCluster->signalHeight() / 10. < nHits * Constants::minimalTotPerSipm)
+          continue;
         maxPull = m_tofPull;
+      }
 
       if (isInCorridor(&cbl, hit, maxPull))
         hitsOnTrack.push_back(hit);
