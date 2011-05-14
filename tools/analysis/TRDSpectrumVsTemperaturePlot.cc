@@ -46,8 +46,8 @@ TRDSpectrumVsTemperaturePlot::TRDSpectrumVsTemperaturePlot(unsigned int id, TRDS
 
 
   const unsigned int nTemperatureBins = 200;
-  const double minTemperature = -25;
-  const double maxTemperature = 25;
+  const double minTemperature = 26;
+  const double maxTemperature = 34;
   const unsigned int nSpecBins = 100;
   const double minSpec = 0;
   const double maxSpec = 20;
