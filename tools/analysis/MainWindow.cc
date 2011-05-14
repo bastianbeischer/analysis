@@ -17,6 +17,7 @@
 #include "TRDSpectrumCherenkovPlotCollection.hh"
 #include "TRDSpectrumVsTimePlotCollection.hh"
 #include "TRDSpectrumVsTemperaturePlotCollection.hh"
+#include "TRDSpectrumVsPressurePlotCollection.hh"
 #include "BendingPositionPlot.hh"
 #include "BendingAnglePlot.hh"
 #include "ResidualPlot.hh"
@@ -49,6 +50,7 @@
 #include "TRDSpectrumPlot.hh"
 #include "TRDSpectrumVsTimePlot.hh"
 #include "TRDSpectrumVsTemperaturePlot.hh"
+#include "TRDSpectrumVsPressurePlot.hh"
 #include "TRDOccupancyPlot.hh"
 #include "TRDEfficiencyPlot.hh"
 #include "TotalEnergyDepositionPlot.hh"
@@ -465,15 +467,13 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDSpectrumPlotCollection);
 
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD,first,last));
-    m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD,first,last, -3, -1.5));
-    m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD,first,last, 1.5, 3));
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlotCollection(first, last));
 
-
     m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
-    m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, -3, -1.5));
-    m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, 1.5, 3));
-    m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlotCollection);
+    m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlotCollection());
+
+    m_ui.plotter->addPlot(new TRDSpectrumVsPressurePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
+    m_ui.plotter->addPlot(new TRDSpectrumVsPressurePlotCollection());
  
   }
   if (m_ui.clusterShapeTrackerCheckBox->isChecked()) {
