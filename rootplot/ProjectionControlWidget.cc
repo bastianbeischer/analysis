@@ -29,7 +29,6 @@ ProjectionControlWidget::ProjectionControlWidget(H2DProjectionPlot* plot, QWidge
   layout->addWidget(m_spinBox);
   layout->addStretch();
 
-  connect(m_spinBox, SIGNAL(valueChanged(int)), m_projectionPlot, SLOT(setNumberOfBins(int)));
   connect(m_comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeProjectionType(int)));
 }
 
