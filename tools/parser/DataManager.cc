@@ -58,6 +58,7 @@ DataManager::~DataManager()
   delete m_sensorsData;
   delete m_atcData;
   delete m_ebassData;
+  delete m_testbeamData;
   delete m_outputFile;
 }
 

@@ -75,7 +75,8 @@
 #include "HeightTimePlot.hh"
 #include "MCTotalEnergyDepositionTRDvsTrackerPlot.hh"
 #include "MCTRDSpectrumPlot.hh"
-#include "MCRigidityResolution.hh"
+#include "MCRigidityResolutionPlot.hh"
+#include "TestbeamRigidityResolutionPlot.hh"
 #include "PMTPlot.hh"
 #include "PMTCorrelationPlot.hh"
 #include "BeamProfilePlot.hh"
@@ -672,10 +673,10 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MCTRDSpectrumPlot(0 /* doesnt matter */,MCTRDSpectrumPlot::completeTRD));
   }
   if (m_ui.mcTrackerCheckBox->isChecked()) {
-    m_ui.plotter->addPlot(new MCRigidityResolution(-11));
-    m_ui.plotter->addPlot(new MCRigidityResolution(11));
-    m_ui.plotter->addPlot(new MCRigidityResolution(2212));
-    m_ui.plotter->addPlot(new MCRigidityResolution(1000020040));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(-11));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(11));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(2212));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(1000020040));
   }
   if (m_ui.testbeamCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TRDSpectrumCherenkovPlotCollection());
@@ -685,6 +686,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new PMTCorrelationPlot);
     m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Horizontal));
     m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Vertical));
+    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(11));
   }
 }
 
