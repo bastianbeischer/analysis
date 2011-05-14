@@ -19,9 +19,7 @@ ProjectionControlWidget::ProjectionControlWidget(H2DProjectionPlot* plot, QWidge
   m_comboBox->setCurrentIndex(0);
 
   m_spinBox->setMinimum(1);
-  m_spinBox->setValue(32);
-  m_spinBox->setSingleStep(10);
-  m_spinBox->setMaximum(1024);
+  m_spinBox->setValue(1);
   m_spinBox->setEnabled(false);
 
   QHBoxLayout* layout = new QHBoxLayout(this);
@@ -63,4 +61,9 @@ void ProjectionControlWidget::changeProjectionType(int index)
     Q_ASSERT(false);
     break;
   }
+}
+  
+QSpinBox* ProjectionControlWidget::spinBox()
+{
+  return m_spinBox;
 }

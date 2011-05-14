@@ -16,17 +16,14 @@ class ProjectionControlWidget :
 public:
   ProjectionControlWidget(H2DProjectionPlot*, QWidget* = 0);
   ~ProjectionControlWidget();
-  
+  QSpinBox* spinBox();
 private slots:
   void switchState(bool);
   void changeProjectionType(int);
-
 private:
   H2DProjectionPlot* m_projectionPlot;
-
   QComboBox* m_comboBox;
   QSpinBox* m_spinBox;
-
 };
 
 #endif /* ProjectionControlWidget_hh */

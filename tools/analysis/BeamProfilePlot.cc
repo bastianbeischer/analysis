@@ -2,6 +2,8 @@
 
 #include "Particle.hh"
 #include "ParticleInformation.hh"
+#include "ProjectionControlWidget.hh"
+#include <QSpinBox>
 
 #include <TH2D.h>
 
@@ -11,6 +13,7 @@ BeamProfilePlot::BeamProfilePlot(Type type) :
   H2DProjectionPlot(),
   m_type(type)
 {
+  controlWidget()->spinBox()->setMaximum(1024);
   int nBinsX = 0, nBinsY = 0;
   double x0 = 0., x1 = 0.;
   double y0 = 0., y1 = 0.;  

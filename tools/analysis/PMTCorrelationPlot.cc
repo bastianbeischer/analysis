@@ -6,6 +6,10 @@
 
 #include "SimpleEvent.hh"
 #include "SensorTypes.hh"
+#include "ProjectionControlWidget.hh"
+
+#include <QSpinBox>
+
 
 PMTCorrelationPlot::PMTCorrelationPlot() :
   AnalysisPlot(AnalysisPlot::Testbeam),
@@ -13,6 +17,9 @@ PMTCorrelationPlot::PMTCorrelationPlot() :
   m_c1Threshold(200),
   m_c2Threshold(200)
 {
+  controlWidget()->spinBox()->setMaximum(1024);
+  controlWidget()->spinBox()->setValue(10);
+
   setTitle("cherenkov correlation");
   TH2D* histogram = new TH2D(qPrintable(title()), "", 150, -500, 3000, 150, -500, 3000);
   addHistogram(histogram);

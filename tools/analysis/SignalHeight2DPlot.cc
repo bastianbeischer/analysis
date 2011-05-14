@@ -6,6 +6,9 @@
 #include "ParticleInformation.hh"
 #include "Setup.hh"
 #include "DetectorElement.hh"
+#include "ProjectionControlWidget.hh"
+
+#include <QSpinBox>
 
 #include <TH2D.h>
 #include <TH1D.h>
@@ -18,6 +21,7 @@ SignalHeight2DPlot::SignalHeight2DPlot() :
   H2DProjectionPlot(),
   m_normHisto(0)
 {
+  controlWidget()->spinBox()->setMaximum(200);
   Setup* setup = Setup::instance();
   const ElementIterator elementStartIt = setup->firstElement();
   const ElementIterator elementEndIt = setup->lastElement();

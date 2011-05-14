@@ -13,6 +13,9 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "TH2D.h"
+#include "ProjectionControlWidget.hh"
+
+#include <QSpinBox>
 
 #include <TVector3.h>
 
@@ -24,6 +27,9 @@ ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer)
   , H2DProjectionPlot()
   , m_layer(layer)
 {
+  controlWidget()->spinBox()->setMaximum(1024);
+  controlWidget()->spinBox()->setSingleStep(10);
+  controlWidget()->spinBox()->setValue(32);
   setTitle(QString("Residuals layer at %1").arg(layer->z()));
 
   double max = 0.;

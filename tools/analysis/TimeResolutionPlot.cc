@@ -10,6 +10,7 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "TimeOfFlight.hh"
+#include "ProjectionControlWidget.hh"
 
 #include <TH2.h>
 #include <TVector3.h>
@@ -17,15 +18,17 @@
 #include <TF1.h>
 
 #include <QDebug>
+#include <QSpinBox>
 
 TimeResolutionPlot::TimeResolutionPlot(unsigned short idTop1, unsigned short idTop2, unsigned short idBottom1, unsigned short idBottom2)
   : AnalysisPlot(AnalysisPlot::ResolutionTOF)
-  , H2DPlot()
+  , H2DProjectionPlot()
   , m_idTop1(idTop1)
   , m_idTop2(idTop2)
   , m_idBottom1(idBottom1)
   , m_idBottom2(idBottom2)
 {
+  controlWidget()->spinBox()->setMaximum(64);
   QString title = QString("time resolution 0x%1 0x%2 0x%3 0x%4")
     .arg(m_idTop1, 0, 16)
     .arg(m_idTop2, 0, 16)

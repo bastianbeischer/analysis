@@ -8,6 +8,10 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "Constants.hh"
+#include "ProjectionControlWidget.hh"
+
+#include <QSpinBox>
+
 
 #include <TH2D.h>
 #include <TAxis.h>
@@ -17,8 +21,9 @@
 
 TOTPlot::TOTPlot()
   : AnalysisPlot(TimeOverThreshold)
-  , H2DPlot()
+  , H2DProjectionPlot()
 {
+  controlWidget()->spinBox()->setMaximum(64);
   QString title = QString("time over threshold");
   setTitle(title);
   TH2D* histogram = new TH2D(qPrintable(title), "", 64, -0.5, 63.5, 150, 0, 150);

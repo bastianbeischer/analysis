@@ -9,13 +9,8 @@ class ProjectionControlWidget;
 class RootQtWidget;
 class TH1D;
 
-class H2DProjectionPlot :
-  public QObject,
-  public H2DPlot
-{
-  
-  Q_OBJECT
-
+class H2DProjectionPlot : public QObject, public H2DPlot {
+Q_OBJECT
 public:
   enum ProjectionType {x, y};
 
@@ -27,12 +22,12 @@ public:
   void positionChanged(double, double);
 
 protected:
+  ProjectionControlWidget* controlWidget() const {return m_controlWidget;}
   RootQtWidget* projectionWidget() const {return m_projectionWidget;}
 
 public slots:
   void setProjectionWidgetState(bool);
   void setProjectionType(ProjectionType type);
-  void setNumberOfBins(int);
 
 private:
   TH1D* m_projectionHistX;
@@ -42,8 +37,6 @@ private:
   RootQtWidget* m_projectionWidget;
   
   ProjectionType m_type;
-  int m_numberOfBins;
-
 };
 
 #endif /* H2DProjectionPlot_hh */

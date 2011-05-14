@@ -2,9 +2,9 @@
 #define TimeResolutionPlot_hh
 
 #include "AnalysisPlot.hh"
-#include "H2DPlot.hh"
+#include "H2DProjectionPlot.hh"
 
-class TimeResolutionPlot : public AnalysisPlot, public H2DPlot {
+class TimeResolutionPlot : public AnalysisPlot, public H2DProjectionPlot {
 public:
   TimeResolutionPlot(unsigned short, unsigned short, unsigned short, unsigned short);
   virtual ~TimeResolutionPlot();
