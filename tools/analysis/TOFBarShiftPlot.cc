@@ -10,6 +10,9 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "TimeOfFlight.hh"
+#include "Settings.hh"
+#include "SettingsManager.hh"
+#include "SimpleEvent.hh"
 
 #include <TH1.h>
 #include <TVector3.h>
@@ -48,7 +51,7 @@ TOFBarShiftPlot::TOFBarShiftPlot(unsigned short idTop1, unsigned short idTop2, u
 TOFBarShiftPlot::~TOFBarShiftPlot()
 {}
 
-void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
 {
   const Track* track = particle->track();
   if (!track || !track->fitGood())
@@ -56,11 +59,18 @@ void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, Particle* particle, Sim
   const TimeOfFlight* tof = particle->timeOfFlight();
   const QVector<Hit*>& hits = track->hits();
 
+  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+
   ParticleInformation::Flags flags = particle->information()->flags();
   if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
     return;
-  if (track->rigidity() < 1)
+   if (!(flags & ParticleInformation::Chi2Good))
     return;
+  if (!settings && !(flags & ParticleInformation::InsideMagnet))
+    return;
+  if (settings && settings->situation() != Settings::Testbeam11 && !(flags & ParticleInformation::InsideMagnet))
+    return;
+ 
   bool idTop1 = false, idTop2 = false, idBottom1 = false, idBottom2 = false;
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
@@ -75,13 +85,34 @@ void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, Particle* particle, Sim
     double l = track->trackLength();
     double d = Constants::upperTofPosition - Constants::lowerTofPosition;
     double lCorrection = (d - l) / Constants::speedOfLight;
-    double m = particle->mass();
-    double rigidity = track->rigidity();
+    double rigidity = 0;
+    double m = 0;
+    if (settings && settings->situation() == Settings::Testbeam11) {
+      rigidity = settings->momentum();
+      if (settings->polarity() < 0) {
+        if (event->sensorData(SensorTypes::BEAM_CHERENKOV1) > 200 || event->sensorData(SensorTypes::BEAM_CHERENKOV2) > 200) {
+          m = Constants::electronMass;
+        } else {
+          m = Constants::pionMass;
+        }
+      } else {
+        if (event->sensorData(SensorTypes::BEAM_CHERENKOV1) > 200 || event->sensorData(SensorTypes::BEAM_CHERENKOV2) > 200) {
+          m = Constants::electronMass;
+        } else {
+          m = Constants::protonMass; //could also be a pion, doesn't matter
+        }
+      }
+    } else {
+      rigidity = track->rigidity();
+      m = particle->mass();
+    }
+    if (rigidity < 1)
+      return;
     double t = tof->timeOfFlight();
     double pCorrection = (t + lCorrection) * (1 - sqrt(rigidity*rigidity + m*m) / rigidity);
     double yu = track->y(Constants::upperTofPosition);
     double yl = track->y(Constants::lowerTofPosition);
-    if (qAbs(yu) < 50. && qAbs(yl) < 50.)
+    if (qAbs(yu) < 25. && qAbs(yl) < 25.)
       histogram()->Fill(t + lCorrection + pCorrection);
   }
 }
