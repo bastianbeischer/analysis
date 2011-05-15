@@ -17,6 +17,7 @@
 #include "TRDSpectrumCherenkovPlotCollection.hh"
 #include "TRDSpectrumVsTimePlotCollection.hh"
 #include "TRDSpectrumVsTemperaturePlotCollection.hh"
+#include "TRDSpectrumVsPressurePlotCollection.hh"
 #include "BendingPositionPlot.hh"
 #include "BendingAnglePlot.hh"
 #include "ResidualPlot.hh"
@@ -49,6 +50,7 @@
 #include "TRDSpectrumPlot.hh"
 #include "TRDSpectrumVsTimePlot.hh"
 #include "TRDSpectrumVsTemperaturePlot.hh"
+#include "TRDSpectrumVsPressurePlot.hh"
 #include "TRDOccupancyPlot.hh"
 #include "TRDEfficiencyPlot.hh"
 #include "TotalEnergyDepositionPlot.hh"
@@ -68,6 +70,7 @@
 #include "TOFAlignment.hh"
 #include "TOTTimeCorrelationPlot.hh"
 #include "TemperatureTimePlot.hh"
+#include "PressureTimePlot.hh"
 #include "ChannelTriggerProbabilityPlot.hh"
 #include "TOFTimeShiftTriggerPlot.hh"
 #include "TriggerRateTimePlot.hh"
@@ -464,15 +467,13 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDSpectrumPlotCollection);
 
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD,first,last));
-    m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD,first,last, -3, -1.5));
-    m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD,first,last, 1.5, 3));
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlotCollection(first, last));
 
-
     m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
-    m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, -3, -1.5));
-    m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, 1.5, 3));
-    m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlotCollection);
+    m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlotCollection());
+
+    m_ui.plotter->addPlot(new TRDSpectrumVsPressurePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
+    m_ui.plotter->addPlot(new TRDSpectrumVsPressurePlotCollection());
  
   }
   if (m_ui.clusterShapeTrackerCheckBox->isChecked()) {
@@ -661,6 +662,7 @@ void MainWindow::setupPlots()
     QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());
     foreach(SensorTypes::Type sensor, temperatureSensors)
       m_ui.plotter->addPlot(new TemperatureTimePlot(sensor, first, last));
+    m_ui.plotter->addPlot(new PressureTimePlot(SensorTypes::TRD_PRESSURE, first, last));
     m_ui.plotter->addPlot(new TriggerRateTimePlot(first, last));
     m_ui.plotter->addPlot(new HeightTimePlot(first, last));
   }

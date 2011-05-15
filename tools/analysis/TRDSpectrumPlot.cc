@@ -43,9 +43,9 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   }
 
   if(m_spectrumType == TRDSpectrumPlot::completeTRD)
-    setTitle(strType + QString(" spectrum (%1 GeV to %2 Gev)").arg(m_lowerMomentum).arg(m_upperMomentum));
+    setTitle(strType + QString(" spectrum (%1 GeV to %2 GeV)").arg(m_lowerMomentum).arg(m_upperMomentum));
   else
-    setTitle(strType + QString(" spectrum 0x%1 (%2 GeV to %3 Gev)").arg(m_id,0,16).arg(m_lowerMomentum).arg(m_upperMomentum));
+    setTitle(strType + QString(" spectrum 0x%1 (%2 GeV to %3 GeV)").arg(m_id,0,16).arg(m_lowerMomentum).arg(m_upperMomentum));
 
   //initialize fit function:
   m_landauFit = new TF1(qPrintable(title() + "LandauFit"),"landau",0,150);
@@ -54,7 +54,9 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   m_fitRangeMarker_lower->SetMarkerColor(kRed);
   m_fitRangeMarker_upper->SetMarkerColor(kRed);
 
-  TH1D* histogram = new TH1D(qPrintable(title()+QString::number(m_cherenkovCut)), qPrintable(title() + ";ADCCs per length in tube / (1/mm);entries"), 50, 0, 15);
+  TH1D* histogram = new TH1D(qPrintable(title()+QString::number(m_cherenkovCut)), "", 50, 0, 15);
+  setAxisTitle("ADCCs per length in tube / (1/mm)", "entries");
+
   addHistogram(histogram);
 }
 

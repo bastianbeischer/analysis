@@ -1,4 +1,4 @@
-#include "TRDSpectrumVsTemperaturePlot.hh"
+#include "TRDSpectrumVsPressurePlot.hh"
 
 #include "Particle.hh"
 #include "ParticleInformation.hh"
@@ -17,7 +17,7 @@
 #include <QSettings>
 #include <math.h>
 
-TRDSpectrumVsTemperaturePlot::TRDSpectrumVsTemperaturePlot(unsigned int id, TRDSpectrumPlot::TRDSpectrumType spectrumType, double lowerMom, double upperMom):
+TRDSpectrumVsPressurePlot::TRDSpectrumVsPressurePlot(unsigned int id, TRDSpectrumPlot::TRDSpectrumType spectrumType, double lowerMom, double upperMom):
   AnalysisPlot(AnalysisPlot:: SignalHeightTRD),
   H2DPlot(),
   m_id(id),
@@ -29,13 +29,13 @@ TRDSpectrumVsTemperaturePlot::TRDSpectrumVsTemperaturePlot(unsigned int id, TRDS
   switch(m_spectrumType)
   {
     case TRDSpectrumPlot::completeTRD:
-      strType = "complete TRD vs temperature";
+      strType = "complete TRD vs pressure";
     break;
     case TRDSpectrumPlot::module:
-      strType = "module vs temperature";
+      strType = "module vs pressure";
     break;
     case TRDSpectrumPlot::channel:
-      strType = "channel vs temperature";
+      strType = "channel vs pressure";
     break;
   }
 
@@ -45,23 +45,23 @@ TRDSpectrumVsTemperaturePlot::TRDSpectrumVsTemperaturePlot(unsigned int id, TRDS
     setTitle(strType + QString(" spectrum 0x%1 (%2 GeV to %3 GeV)").arg(m_id,0,16).arg(m_lowerMomentum).arg(m_upperMomentum));
 
 
-  const unsigned int nTemperatureBins = 200;
-  const double minTemperature = 26;
-  const double maxTemperature = 34;
+  const unsigned int nPressureBins = 200;
+  const double minPressure = 1070;
+  const double maxPressure = 1115;
   const unsigned int nSpecBins = 100;
   const double minSpec = 0;
   const double maxSpec = 15;
 
-  TH2D* histogram = new TH2D(qPrintable(title()),"", nTemperatureBins, minTemperature, maxTemperature, nSpecBins, minSpec, maxSpec);
-  setAxisTitle("temperature /  #circC", "ADCCs per length", "");
+  TH2D* histogram = new TH2D(qPrintable(title()),"", nPressureBins, minPressure, maxPressure, nSpecBins, minSpec, maxSpec);
+  setAxisTitle("pressure /  mBar", "ADCCs per length", "");
   addHistogram(histogram);
 }
 
-TRDSpectrumVsTemperaturePlot::~TRDSpectrumVsTemperaturePlot()
+TRDSpectrumVsPressurePlot::~TRDSpectrumVsPressurePlot()
 {
 }
 
-void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>& , Particle* particle, SimpleEvent* event)
+void TRDSpectrumVsPressurePlot::processEvent(const QVector<Hit*>& , Particle* particle, SimpleEvent* event)
 {
   const Track* track = particle->track();
   const ParticleInformation::Flags pFlags = particle->information()->flags();
@@ -99,13 +99,7 @@ void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>& , Particle*
     return;
 
   // TODO: temp sensormap
-  double mean = 0.;
-  int count = 0;
-  for (unsigned int i = SensorTypes::TRD_TUBE_TOP_HOT_TEMP; i <= SensorTypes::TRD_TUBE_BOTTOM_COLD_TEMP; i++) {
-    mean += event->sensorData((SensorTypes::Type)i);
-    count++;
-  }
-  mean /= count;
+  double pressure = event->sensorData(SensorTypes::TRD_PRESSURE);
  
   for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
     Hit* hit = *it;
@@ -123,7 +117,7 @@ void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>& , Particle*
          (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
         double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
         if(distanceInTube > 0)
-          histogram(0)->Fill(mean, subHit->signalHeight() / (distanceInTube));
+          histogram(0)->Fill(pressure, subHit->signalHeight() / (distanceInTube));
       }
     }
   }

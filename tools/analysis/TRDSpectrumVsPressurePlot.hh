@@ -1,5 +1,5 @@
-#ifndef TRDSpectrumVSTemperaturePlot_hh
-#define TRDSpectrumVSTemperaturePlot_hh
+#ifndef TRDSpectrumVsPressurePlot_hh
+#define TRDSpectrumVsPressurePlot_hh
 
 #include "AnalysisPlot.hh"
 #include "H2DPlot.hh"
@@ -10,11 +10,11 @@
 #include <QVector>
 #include <QMap>
 
-class TRDSpectrumVsTemperaturePlot: public AnalysisPlot, public H2DPlot {
+class TRDSpectrumVsPressurePlot: public AnalysisPlot, public H2DPlot {
 
 public:
-  TRDSpectrumVsTemperaturePlot(unsigned int, TRDSpectrumPlot::TRDSpectrumType, double lowerMomentum = -100, double upperMomentum = 100 );
-  ~TRDSpectrumVsTemperaturePlot();
+  TRDSpectrumVsPressurePlot(unsigned int, TRDSpectrumPlot::TRDSpectrumType, double lowerMomentum = -100, double upperMomentum = 100 );
+  ~TRDSpectrumVsPressurePlot();
 
   virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
 
@@ -27,4 +27,4 @@ private:
 
 };
 
-#endif // TRDSPECTRUMVSTEMPERATUREPLOT_H
+#endif // TRDSpectrumVsPressurePlot_hh
