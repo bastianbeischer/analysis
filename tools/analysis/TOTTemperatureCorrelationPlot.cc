@@ -42,9 +42,12 @@ TOTTemperatureCorrelationPlot::~TOTTemperatureCorrelationPlot()
 {
 }
 
-void TOTTemperatureCorrelationPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void TOTTemperatureCorrelationPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
 {
   const Track* track = particle->track();
+  if (!track || !track->fitGood())
+    return;
+  const QVector<Hit*>& hits = track->hits(); 
 
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {

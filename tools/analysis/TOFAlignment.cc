@@ -28,16 +28,14 @@ TOFAlignment::TOFAlignment()
 TOFAlignment::~TOFAlignment()
 {}
 
-void TOFAlignment::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
+void TOFAlignment::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
   const Track* track = particle->track();
-
   if (!track || !track->fitGood())
     return;
-
+  const QVector<Hit*>& clusters = track->hits();
   if (track->rigidity() < 2)
     return;
-
   QString output;
   int counter = 0;
   const QVector<Hit*>::const_iterator endIt = clusters.end();

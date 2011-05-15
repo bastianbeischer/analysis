@@ -2,9 +2,7 @@
 #include "BrokenLine.hh"
 #include "Particle.hh"
 #include "ParticleInformation.hh"
-#include "TimeOfFlight.hh"
 #include "Hit.hh"
-#include "TOFCluster.hh"
 #include "Constants.hh"
 
 #include <TH2.h>
@@ -29,16 +27,8 @@ ZSquareTRDPlot::~ZSquareTRDPlot()
 {
 }
 
-void ZSquareTRDPlot::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
+void ZSquareTRDPlot::processEvent(const QVector<Hit*>& clusters, Particle*, SimpleEvent*)
 {
-  const Track* track = particle->track();
-  if (!track || !track->fitGood())
-    return;
-
-  ParticleInformation::Flags flags = particle->information()->flags();
-  if (!(flags & (ParticleInformation::Chi2Good)))
-    return;
-
   QVector<Hit*>::const_iterator endIt = clusters.end();
   int nUpperTrd = 0;
   int nLowerTrd = 0;
@@ -56,12 +46,5 @@ void ZSquareTRDPlot::processEvent(const QVector<Hit*>& clusters, Particle* parti
       }
     }
   }
-  double s = Constants::upperTofPosition - Constants::lowerTofPosition;
-  double c = Constants::speedOfLight;
-  double t = particle->timeOfFlight()->timeOfFlight();
-  double m = Constants::protonMass;
-  double pCut = 1.5; //GeV
-  if (2 < t && t < s / c * sqrt(pCut*pCut + m*m) / pCut)
-  //if (track->rigidity() > pCut)
-    histogram()->Fill(upperSum/nUpperTrd, lowerSum/nLowerTrd);
+  histogram()->Fill(upperSum/nUpperTrd, lowerSum/nLowerTrd);
 }

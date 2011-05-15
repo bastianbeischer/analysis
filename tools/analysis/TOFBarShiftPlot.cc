@@ -48,13 +48,14 @@ TOFBarShiftPlot::TOFBarShiftPlot(unsigned short idTop1, unsigned short idTop2, u
 TOFBarShiftPlot::~TOFBarShiftPlot()
 {}
 
-void TOFBarShiftPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
+void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
   const Track* track = particle->track();
-  const TimeOfFlight* tof = particle->timeOfFlight();
-
   if (!track || !track->fitGood())
     return;
+  const TimeOfFlight* tof = particle->timeOfFlight();
+  const QVector<Hit*>& hits = track->hits();
+
   ParticleInformation::Flags flags = particle->information()->flags();
   if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
     return;

@@ -31,12 +31,12 @@ TOTBetaCorrelation::~TOTBetaCorrelation()
 {}
 
 
-void TOTBetaCorrelation::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
+void TOTBetaCorrelation::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
   const Track* track = particle->track();
-
   if (!track || !track->fitGood())
     return;
+  const QVector<Hit*>& clusters = track->hits();
   ParticleInformation::Flags flags = particle->information()->flags();
   if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
     return;

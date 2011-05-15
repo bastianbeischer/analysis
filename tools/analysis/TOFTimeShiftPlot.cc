@@ -28,19 +28,21 @@ TOFTimeShiftPlot::TOFTimeShiftPlot(unsigned short topBarId, unsigned short botto
   double max = 10;
   TH2D* histogram = new TH2D(qPrintable(title), "", 8, -0.5, 7.5, nBins, min-.5*(max-min)/nBins, max-.5*(max-min)/nBins);
   setAxisTitle("channel", "#Deltat / ns", "");
-  //histogram->GetXaxis()->SetRangeUser(0.5, 7.5);
+  histogram->GetXaxis()->SetRangeUser(0.5, 7.5);
   addHistogram(histogram);
 }
 
 TOFTimeShiftPlot::~TOFTimeShiftPlot()
 {}
 
-void TOFTimeShiftPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
+void TOFTimeShiftPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
   const Track* track = particle->track();
 
   if (!track || !track->fitGood())
     return;
+  
+  const QVector<Hit*>& hits = track->hits();
 
   ParticleInformation::Flags flags = particle->information()->flags();
   if (!(flags & ParticleInformation::AllTrackerLayers))

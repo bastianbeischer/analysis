@@ -34,17 +34,16 @@ ChannelTriggerProbabilityPlot::~ChannelTriggerProbabilityPlot()
   delete m_normalizationHistogram;
 }
 
-void ChannelTriggerProbabilityPlot::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
+void ChannelTriggerProbabilityPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
   const Track* track = particle->track();
-  const TimeOfFlight* tof = particle->timeOfFlight();
-
   if (!track || !track->fitGood())
     return;
+  const TimeOfFlight* tof = particle->timeOfFlight();
+  const QVector<Hit*>& clusters = track->hits();
   ParticleInformation::Flags flags = particle->information()->flags();
   if (!(flags & ParticleInformation::Chi2Good))
     return;
-
   const QVector<Hit*>::const_iterator endIt = clusters.end();
   for (QVector<Hit*>::const_iterator it = clusters.begin(); it != endIt; ++it) {
     Hit* cluster = *it;

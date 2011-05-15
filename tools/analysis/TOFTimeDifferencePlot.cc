@@ -38,12 +38,12 @@ TOFTimeDifferencePlot::~TOFTimeDifferencePlot()
   delete m_normalizationHistogram;
 }
 
-void TOFTimeDifferencePlot::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
+void TOFTimeDifferencePlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
   const Track* track = particle->track();
-
   if (!track || !track->fitGood())
     return;
+  const QVector<Hit*>& clusters = track->hits();
 
   ParticleInformation::Flags flags = particle->information()->flags();
   if (!(flags & ParticleInformation::AllTrackerLayers))

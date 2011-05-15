@@ -11,6 +11,8 @@
 #include "Track.hh"
 #include "TimeOfFlight.hh"
 #include "ProjectionControlWidget.hh"
+#include "Settings.hh"
+#include "SettingsManager.hh"
 
 #include <TH2.h>
 #include <TVector3.h>
@@ -44,18 +46,20 @@ TimeResolutionPlot::TimeResolutionPlot(unsigned short idTop1, unsigned short idT
 TimeResolutionPlot::~TimeResolutionPlot()
 {}
 
-void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
+void TimeResolutionPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
 {
   const Track* track = particle->track();
-  const TimeOfFlight* tof = particle->timeOfFlight();
-
   if (!track || !track->fitGood())
     return;
+  const TimeOfFlight* tof = particle->timeOfFlight();
+  const QVector<Hit*>& hits = track->hits();
+
+  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+
   ParticleInformation::Flags flags = particle->information()->flags();
-  if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
+  if (!(flags & ParticleInformation::Chi2Good))
     return;
-  if (track->rigidity() < 1)
-    return;
+  //if (!settings && !(flags & ParticleInformation::InsideMagnet)) return;
   bool idTop1 = false, idTop2 = false, idBottom1 = false, idBottom2 = false;
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
@@ -71,7 +75,9 @@ void TimeResolutionPlot::processEvent(const QVector<Hit*>& hits, Particle* parti
     double d = Constants::upperTofPosition - Constants::lowerTofPosition;
     double lCorrection = (d - l) / Constants::speedOfLight;
     double m = particle->mass();
-    double rigidity = track->rigidity();
+    double rigidity = (settings && settings->situation() == Settings::Testbeam11) ? settings->momentum() : track->rigidity();
+    if (rigidity < 1)
+      return;
     double t = tof->timeOfFlight();
     double pCorrection = (t + lCorrection) * (1 - sqrt(rigidity*rigidity + m*m) / rigidity);
     double yu = track->y(Constants::upperTofPosition);
