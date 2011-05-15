@@ -17,7 +17,7 @@
 
 TOFTimeShiftPlot::TOFTimeShiftPlot(unsigned short topBarId, unsigned short bottomBarId)
   : AnalysisPlot(AnalysisPlot::CalibrationTOF)
-  , H2DPlot()
+  , H2DProjectionPlot()
   , m_topBarId(topBarId)
   , m_bottomBarId(bottomBarId)
 {

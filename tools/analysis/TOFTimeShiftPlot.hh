@@ -2,9 +2,9 @@
 #define TOFTimeShiftPlot_hh
 
 #include "AnalysisPlot.hh"
-#include "H2DPlot.hh"
+#include "H2DProjectionPlot.hh"
 
-class TOFTimeShiftPlot : public AnalysisPlot, public H2DPlot {
+class TOFTimeShiftPlot : public AnalysisPlot, public H2DProjectionPlot {
 public:
   TOFTimeShiftPlot(unsigned short topBarId, unsigned short bottomBarId);
   virtual ~TOFTimeShiftPlot();
