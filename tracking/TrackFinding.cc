@@ -97,6 +97,8 @@ QVector<Hit*> TrackFinding::findTrack(const QVector<Hit*>& hits)
         int nHits = tofCluster->hits().size();
         if (nHits < 3 || tofCluster->signalHeight() / 10. < nHits * Constants::minimalTotPerSipm)
           continue;
+        if (qAbs(cbl.x(tofCluster->position().z()) - tofCluster->position().x()) > 1.1 * Constants::tofBarWidth / 2.)
+          continue;
         maxPull = m_tofPull;
       }
 
