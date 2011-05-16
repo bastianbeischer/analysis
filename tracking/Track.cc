@@ -79,10 +79,8 @@ TVector3 Track::meanFieldAlongTrack()
 
 double Track::rigidity() const
 {
-  double z = 100.;
-  double sx = slopeX(z);
-  double sy = slopeY(z);
-  double rigidity = sqrt((sx*sx + sy*sy + 1)/(sx*sx + 1)) * m_transverseRigidity;
+  double theta = fabs(atan(slopeY(0.)));
+  double rigidity = m_transverseRigidity/cos(theta);
   return rigidity;
 }
 
