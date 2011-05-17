@@ -687,6 +687,8 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Horizontal));
     m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Vertical));
     m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(11));
+    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(-11));
+    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(2212));
   }
 }
 

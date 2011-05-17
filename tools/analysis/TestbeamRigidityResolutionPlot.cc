@@ -22,13 +22,21 @@ void TestbeamRigidityResolutionPlot::processEvent(const QVector<Hit*>& hits, Par
     return;
 
   //only electrons for testbeam atm (tagged via cherenkov)
-  if (m_particle->pdgId() != settings->polarity() * (-11))
+  if (m_particle->charge() != settings->polarity())
     return;
 
-  // double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
-  // double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
-  // if (!(c1Signal > 200 || c2Signal > 200))
-  //   return;
+  double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
+  double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
+
+  if (m_particle->type() == Particle::Electron || m_particle->type() == Particle::Positron) {
+    if (c1Signal < 200 || c2Signal < 200) // throw away all particles which DO NOT produce cherenkov light
+      return;
+  }
+
+  if (m_particle->type() == Particle::Proton) {
+    if (c1Signal > 200 || c2Signal > 200)  // throw away all particles which DO produce cherenkov light
+      return;
+  }
 
   RigidityResolutionPlot::processEvent(hits, particle, event);
 }
