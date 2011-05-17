@@ -22,7 +22,6 @@
 #include "BendingAnglePlot.hh"
 #include "ResidualPlot.hh"
 #include "GeometricOccupancyPlot.hh"
-#include "GeometricOccupancyProjectionPlot.hh"
 #include "BendingAnglePositionPlot.hh"
 #include "Chi2Plot.hh"
 #include "Chi2PerNdfPlot.hh"
@@ -538,7 +537,6 @@ void MainWindow::setupPlots()
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       m_ui.plotter->addPlot(new GeometricOccupancyPlot(layer->z()));
-      m_ui.plotter->addPlot(new GeometricOccupancyProjectionPlot(layer->z()));
     }
   }
   if (m_ui.residualsTrackerCheckBox->isChecked()) {

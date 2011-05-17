@@ -48,7 +48,6 @@ CLASSES = \
   ClusterLengthPlot \
   ClusterShapePlot \
   GeometricOccupancyPlot \
-  GeometricOccupancyProjectionPlot \
   MainWindow \
   MomentumSpectrumPlot \
   Plotter \

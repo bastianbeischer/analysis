@@ -35,7 +35,7 @@ void GeometricOccupancyPlot::processEvent(const QVector<Hit*>&, Particle* partic
     return;
 
   ParticleInformation::Flags flags = particle->information()->flags();
-  if (!(flags & ParticleInformation::AllTrackerLayers))
+  if (!(flags & ParticleInformation::Chi2Good))
     return;
 
   histogram()->Fill(track->y(m_zPosition), track->x(m_zPosition));
