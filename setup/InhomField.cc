@@ -110,13 +110,12 @@ void InhomField::readData()
     return;
   }
   
-  // MAKE SURE THAT DATA IN THE TABLE IS ALREADY IN MM!!
+  // read two lines of header informaiton
   double disX, disY, disZ;
-  file >> m_z0 >> m_z1 >> m_fieldEstimate >> disX >> disY >> disZ;
-  
-  double x0,x1,y0,y1,z0,z1;
+  double x0, x1, y0, y1, z0, z1;
   int nBins_x, nBins_y, nBins_z;
   int mirror;
+  file >> m_z0 >> m_z1 >> m_fieldEstimate >> disX >> disY >> disZ;
   file >> x0 >> x1 >> y0 >> y1 >> z0 >> z1 >> nBins_x >> nBins_y >> nBins_z >> mirror;
 
   m_axis_x = new Axis(x0,x1,nBins_x);
@@ -142,7 +141,7 @@ void InhomField::readData()
    } 
   }
 
-  // read the data (only contains all x, y >= 0, z >= 0)
+  // read the data
   double x, y, z, f_x, f_y, f_z;
   int nX, nY, nZ;
   while (true) {
