@@ -164,6 +164,10 @@ void RigidityResolutionPlot::processEvent(const QVector<Hit*>& /*hits*/, Particl
   if (!(particle->information()->flags() & ParticleInformation::InsideMagnet))
     return;
 
+  //check if track collided with the magnet material
+  if (particle->information()->flags() & ParticleInformation::MagnetCollision)
+    return;
+
   // get the reconstructed momentum
   double rigidity = track->rigidity(); //GeV
 
