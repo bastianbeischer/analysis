@@ -30,7 +30,7 @@ double MCRigidityResolutionPlot::referenceRigidity(SimpleEvent* event) const
   //get mc rigidity
   double genMom = 0;
   double genRigidity = 0;
-  genMom = event->MCInformation()->primary()->initialMomentum.Mag() * m_particle->charge();
-  genRigidity = genMom / qAbs(m_particle->charge());
+  genMom = event->MCInformation()->primary()->initialMomentum.Mag();
+  genRigidity = genMom / m_particle->charge();
   return genRigidity;
 }
