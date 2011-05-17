@@ -3,6 +3,7 @@
 #include "PostAnalysisPlot.hh"
 #include "PostAnalysisCanvas.hh"
 #include "MoPVScaling.hh"
+#include "MoPVConstant.hh"
 
 #include "Setup.hh"
 
@@ -37,6 +38,33 @@ void MainWindow::setupAnalysis()
   Setup* setup = Setup::instance();
   const ElementIterator elementStartIt = setup->firstElement();
   const ElementIterator elementEndIt = setup->lastElement();
+  ElementIterator elementIt;
+
+  //add module spectra:
+  QList<PostAnalysisCanvas*> mopvModules;
+  for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+    DetectorElement* element = *elementIt;
+    if (element->type() == DetectorElement::trd) {
+      QString cTitle = QString("Module spectrum 0x%1 (-100 GeV to 100 GeV) canvas").arg(QString::number(element->id(),16));
+      mopvModules << addCanvas(&file, qPrintable(cTitle));
+    }
+  }
+  addPlot(new MoPVConstant(mopvModules));
+
+  //add channel spectra:
+  QList<PostAnalysisCanvas*> mopvChannels;
+  for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+    DetectorElement* element = *elementIt;
+    if (element->type() == DetectorElement::trd) {
+      for(int i = 0; i < 15; i++) {
+        QString cTitle = QString("Channel spectrum 0x%1 (-100 GeV to 100 GeV) canvas").arg(QString::number(element->id() + i,16));
+        mopvModules << addCanvas(&file, qPrintable(cTitle));
+      }
+    }
+  }
+  addPlot(new MoPVConstant(mopvModules));
+
+  return;
 
   //vs time:
   QString name = "complete TRD vs time spectrum (-100 GeV to 100 GeV) canvas";
@@ -44,7 +72,6 @@ void MainWindow::setupAnalysis()
   addPlot(new MoPVScaling(canvas));
 
   QList<PostAnalysisCanvas*> mopvVsTimeModules;
-  ElementIterator elementIt;
   for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
     DetectorElement* element = *elementIt;
     if (element->type() == DetectorElement::trd) {

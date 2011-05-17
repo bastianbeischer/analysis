@@ -28,7 +28,8 @@ LIBS += \
 
 CLASSES = \
   MainWindow \
-  MoPVScaling
+  MoPVScaling \
+  MoPVConstant
 
 SOURCES = \
   main.cc
