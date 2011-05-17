@@ -189,7 +189,7 @@ void RigidityResolutionPlot::update()
       continue;
     //double axisMax = hist->GetXaxis()->GetXmax();
     //TF1* fit = new TF1("gausfit","gaus", -axisMax, axisMax);
-    TFitResultPtr r = hist->Fit("gaus","Q0SR",0, 0, 1.5);
+    TFitResultPtr r = hist->Fit("gaus","Q0S");
     double inverseSigma = r->Parameter(2);
     double inverseSigmaErr = r->ParError(2);
     double rigidityRes = inverseSigma;
