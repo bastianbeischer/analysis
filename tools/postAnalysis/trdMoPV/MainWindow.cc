@@ -54,6 +54,7 @@ void MainWindow::setupAnalysis()
   }
   addPlot(new MoPVScaling(mopvVsTimeModules));
 
+
   //vs temperature:
   name = "complete TRD vs temperature spectrum (-100 GeV to 100 GeV) canvas";
   canvas = addCanvas(&file, qPrintable(name));
@@ -68,6 +69,22 @@ void MainWindow::setupAnalysis()
     }
   }
   addPlot(new MoPVScaling(mopvVsTemperatureModules));
+
+
+  //vs pressure
+  name = "complete TRD vs pressure spectrum (-100 GeV to 100 GeV) canvas";
+  canvas = addCanvas(&file, qPrintable(name));
+  addPlot(new MoPVScaling(canvas));
+
+  QList<PostAnalysisCanvas*> mopvVsPressureModules;
+  for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+    DetectorElement* element = *elementIt;
+    if (element->type() == DetectorElement::trd) {
+      QString cTitle = QString("module vs pressure spectrum 0x%1 (-100 GeV to 100 GeV) canvas").arg(QString::number(element->id(),16));
+      mopvVsPressureModules << addCanvas(&file, qPrintable(cTitle));
+    }
+  }
+  addPlot(new MoPVScaling(mopvVsPressureModules));
 
   file.Close();
 }

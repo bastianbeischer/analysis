@@ -19,10 +19,11 @@ MoPVScaling::MoPVScaling(PostAnalysisCanvas* canvas)
 {
   TH2D* histogram = canvas->histograms2D().at(0);
   TGraph* graph = generateMoPVGraph(histogram);
+  graph->Fit("pol1");
   QString title = QString(canvas->name()).replace("canvas", "graph");
   setTitle(title);
   addGraph(graph, "L");
-  setAxisTitle("time", "trd mopv");
+  setAxisTitle(histogram->GetXaxis()->GetTitle(), "trd mopv");
 }
 
 MoPVScaling::MoPVScaling(QList<PostAnalysisCanvas*> canvasList)
@@ -32,12 +33,14 @@ MoPVScaling::MoPVScaling(QList<PostAnalysisCanvas*> canvasList)
 {
   //TODO is first name ok?
   QString title = QString(canvasList.first()->name()).replace("canvas", "graph");
-  setTitle(title);
-  setAxisTitle("time", "trd mopv");
+  setTitle(title.replace("\\dx\\d\\d\\d\\d",""));
+  setAxisTitle(canvasList.first()->histograms2D().at(0)->GetXaxis()->GetTitle(), "trd mopv");
 
   foreach (PostAnalysisCanvas* canvas, canvasList) {
     TH2D* histogram = canvas->histograms2D().at(0);
     TGraph* graph = generateMoPVGraph(histogram);
+    if (!graph)
+      continue;
     graph->SetLineColor(RootStyle::rootColor(m_colorCounter++));
     graph->SetLineWidth(1);
     graph->SetDrawOption("LX");
@@ -92,7 +95,9 @@ TGraphErrors* MoPVScaling::generateMoPVGraph(TH2D* histogram)
     y << mpv;
     yErr << mpvErr;
   }
-  
+
+  if (x.size() == 0)
+    return 0;
   return new TGraphErrors(x.size(), &x[0], &y[0], &xErr[0], &yErr[0]);
 
 }
