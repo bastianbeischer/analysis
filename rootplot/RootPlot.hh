@@ -15,7 +15,7 @@ class RootPlot
 public:
   enum DrawOption {
     UndefinedDrawOption,
-    BLANK,
+    BLANK, E1X0,
     COLZ, SCAT, CONT4Z, LEGO, LEGO2, SURF1, COLZTEXT,
     AP, AC, ALP, ACP, ALX
   };
