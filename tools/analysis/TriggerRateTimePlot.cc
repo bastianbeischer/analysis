@@ -48,6 +48,8 @@ void TriggerRateTimePlot::draw(TCanvas* canvas)
     H1DPlot::draw(canvas);
   } else {
     H1DPlot::draw(canvas);
+    //TODO check this, especially for older data !!!
+    xAxis()->SetTimeOffset(3600, "gmt"); //dont understand this, but works at testbeam
     xAxis()->SetTimeDisplay(1);
     xAxis()->SetTimeFormat("%d-%H:%M");
     gPad->Modified();
