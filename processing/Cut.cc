@@ -113,19 +113,14 @@ bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*
   return false;
 }
 
-double Cut::sumOfSignalHeights(const Hit::ModuleType type, const Track* /*track*/, const QVector<Hit*>& clusters)
+double Cut::sumOfSignalHeights(const Hit::ModuleType type, const Track* track, const QVector<Hit*>& /*clusters*/)
 {
   double sumSignal = 0;
-  const QVector<Hit*>::const_iterator endIt = clusters.end();
-  for (QVector<Hit*>::const_iterator clusterIt = clusters.begin(); clusterIt != endIt; ++clusterIt) {
+  const QVector<Hit*>::const_iterator endIt = track->hits().constEnd();
+  for (QVector<Hit*>::const_iterator clusterIt = track->hits().constBegin(); clusterIt != endIt; ++clusterIt) {
     Hit* hit = *clusterIt;
     if (hit->type() == type) {
-      Cluster* cluster = static_cast<Cluster*>(hit);
-      std::vector<Hit*>& subHits = cluster->hits();
-      std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
-      for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
-        sumSignal+= (*it)->signalHeight();
-      }
+      sumSignal += hit->signalHeight();
     }
   }
   return sumSignal;
