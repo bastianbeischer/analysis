@@ -56,7 +56,7 @@ MomentumSpectrumPlot::~MomentumSpectrumPlot()
 {
 }
 
-void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
+void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
   const Track* track = particle->track();
 
@@ -65,11 +65,6 @@ void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle
 
   ParticleInformation::Flags flags = particle->information()->flags();
   if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
-    return;
-
-  double cherenkov1 = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
-  double cherenkov2 = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
-  if (cherenkov1 < 200 || cherenkov2 < 200)
     return;
 
   double rigidity = track->rigidity();
