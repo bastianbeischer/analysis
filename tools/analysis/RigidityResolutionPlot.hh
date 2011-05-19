@@ -28,9 +28,6 @@ private:
   void saveHistos();
 
 protected:
-  void initialize(); // called by child class constructors
-
-protected:
   const ParticleProperties* m_particle;
   const double m_rigidityRangeLower;
   const double m_rigidityRangeUppper;

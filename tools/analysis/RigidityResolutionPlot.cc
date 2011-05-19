@@ -32,17 +32,12 @@ RigidityResolutionPlot::RigidityResolutionPlot(AnalysisPlot::Topic topic, int pd
   , m_numberOfBins(201)
   , m_rigDistributionWidget(new RootQtWidget)
 {
-  setSecondaryWidget(m_rigDistributionWidget);
-}
 
-RigidityResolutionPlot::~RigidityResolutionPlot()
-{
-  qDeleteAll(m_resolutionHistos);
-}
-
-void RigidityResolutionPlot::initialize()
-{
   Q_ASSERT(m_particle);
+
+  QString particleName = m_particle->name();
+
+  setTitle("rigidity resolution for " + particleName);
 
   TH1D* hist = new TH1D(qPrintable(title()), qPrintable(title())
                         , m_numberOfBins
@@ -80,7 +75,7 @@ void RigidityResolutionPlot::initialize()
 
   for (int i = 1; i <= hist->GetNbinsX(); ++i) {
     double genRig = hist->GetBinCenter(i);
-    QString histTitle = title() + QString(" at %2 GV").arg(genRig);
+    QString histTitle = QString("rigidity resolution for %1 at %2 GV").arg(particleName).arg(genRig);
     double inverseRigRange = expectedRes->Eval(genRig)*5;
     int resolutionBins = 100;
     m_resolutionHistos.insert(i, new TH1D(qPrintable(histTitle)
@@ -107,6 +102,13 @@ void RigidityResolutionPlot::initialize()
   addLatex(ltx);
   addLatex(ltxa);
   addLatex(ltxb);
+
+  setSecondaryWidget(m_rigDistributionWidget);
+}
+
+RigidityResolutionPlot::~RigidityResolutionPlot()
+{
+  qDeleteAll(m_resolutionHistos);
 }
 
 void RigidityResolutionPlot::positionChanged(double posX, double)
