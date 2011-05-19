@@ -8,6 +8,8 @@
 TestbeamRigidityResolutionPlot::TestbeamRigidityResolutionPlot(int pdgID) :
   RigidityResolutionPlot(AnalysisPlot::Testbeam, pdgID)
 {
+  setTitle("testbeam rigidity resolution for " + m_particle->name());
+  initialize();
 }
 
 TestbeamRigidityResolutionPlot::~TestbeamRigidityResolutionPlot()

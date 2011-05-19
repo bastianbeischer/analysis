@@ -6,6 +6,8 @@
 MCRigidityResolutionPlot::MCRigidityResolutionPlot(int pdgID) :
   RigidityResolutionPlot(AnalysisPlot::MonteCarloTracker, pdgID)
 {
+  setTitle("mc rigidity resolution for " + m_particle->name());
+  initialize();
 }
 
 MCRigidityResolutionPlot::~MCRigidityResolutionPlot()
