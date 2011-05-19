@@ -14,7 +14,7 @@
 #include "TRDCalculations.hh"
 #include "Corrections.hh"
 
-TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType, double lowerMom, double upperMom, CherenkovCut cCut, double c1Limit, double c2Limit) :
+TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType, double lowerMom, double upperMom) :
   AnalysisPlot(AnalysisPlot::SignalHeightTRD),
   H1DPlot(),
   m_id(id),
@@ -23,9 +23,6 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   m_landauFitRange_upper(3.0),
   m_lowerMomentum(lowerMom),
   m_upperMomentum(upperMom),
-  m_cherenkovCut(cCut),
-  m_cherenkov1Limit(c1Limit),
-  m_cherenkov2Limit(c2Limit),
   m_fitRangeMarker_lower(new TMarker(m_landauFitRange_lower, 0,2)),
   m_fitRangeMarker_upper(new TMarker(m_landauFitRange_upper, 0,2))
 {
@@ -54,7 +51,7 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   m_fitRangeMarker_lower->SetMarkerColor(kRed);
   m_fitRangeMarker_upper->SetMarkerColor(kRed);
 
-  TH1D* histogram = new TH1D(qPrintable(title()+QString::number(m_cherenkovCut)), "", 50, 0, 15);
+  TH1D* histogram = new TH1D(qPrintable(title()), "", 50, 0, 15);
   setAxisTitle("ADCCs per length in tube / (1/mm)", "entries");
 
   addHistogram(histogram);
@@ -69,31 +66,6 @@ TRDSpectrumPlot::~TRDSpectrumPlot()
 
 void TRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent* event)
 {
-
-  double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
-  double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
-
-  switch (m_cherenkovCut) {
-  case none:
-    break;
-  case bothBelow:
-    if (c1Signal >= m_cherenkov1Limit || c2Signal >= m_cherenkov2Limit)
-      return;
-    break;
-  case bothAbove:
-    if (c1Signal < m_cherenkov1Limit || c2Signal < m_cherenkov2Limit)
-      return;
-    break;
-  case c1AboveC2Below:
-    if (c1Signal < m_cherenkov1Limit || c2Signal >= m_cherenkov2Limit)
-      return;
-    break;
-  case c1BelowC2Above:
-    if (c1Signal >= m_cherenkov1Limit || c2Signal < m_cherenkov2Limit)
-      return;
-    break;
-  }
-
   const Track* track = particle->track();
   const ParticleInformation::Flags pFlags = particle->information()->flags();
 

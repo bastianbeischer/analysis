@@ -71,6 +71,7 @@ CLASSES = \
   TRDMoPVTimeEvolutionPlot \
   TRDOccupancyPlot \
   TRDSpectrumPlot \
+  TRDSpectrumCherenkovPlot \
   TRDSpectrumVsTimePlot \
   TRDSpectrumVsTemperaturePlot \
   TRDSpectrumVsPressurePlot \
