@@ -71,7 +71,6 @@ void DataChain::addFileList(const char* listName)
     file.getline(filename,256);
     if (file.eof()) break;
     QString fullname(filename);
-    std::cout << qPrintable(fullname) << std::endl;
     if (fullname.endsWith(".txt"))
       addFileList(qPrintable(fullname));
     else if (fullname.endsWith(".root")) {
