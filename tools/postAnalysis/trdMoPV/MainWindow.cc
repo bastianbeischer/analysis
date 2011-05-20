@@ -56,13 +56,13 @@ void MainWindow::setupAnalysis()
   for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
     DetectorElement* element = *elementIt;
     if (element->type() == DetectorElement::trd) {
-      for(int i = 0; i < 15; i++) {
+      for(int i = 0; i < 16; i++) {
         QString cTitle = QString("Channel spectrum 0x%1 (-100 GeV to 100 GeV) canvas").arg(QString::number(element->id() + i,16));
-        mopvModules << addCanvas(&file, qPrintable(cTitle));
+        mopvChannels << addCanvas(&file, qPrintable(cTitle));
       }
     }
   }
-  addPlot(new MoPVConstant(mopvModules));
+  addPlot(new MoPVConstant(mopvChannels));
 
   return;
 
