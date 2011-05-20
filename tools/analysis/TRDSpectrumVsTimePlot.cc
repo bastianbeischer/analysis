@@ -50,9 +50,9 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumPlot:
   int t2 = last.toTime_t();
   t2+= 2*secsPerBin - (t2 % secsPerBin);
   const unsigned int nTimeBins = qMin((t2 - t1) / secsPerBin, 500);
-  const unsigned int nSignalHeightBins = 100;
+  const unsigned int nSignalHeightBins = 200;
   const double minSignalHeight = 0;
-  const double maxSignalHeight = 15;
+  const double maxSignalHeight = 20;
 
   TH2D* histogram = new TH2D(qPrintable(title()),"", nTimeBins,t1,t2,nSignalHeightBins,minSignalHeight,maxSignalHeight);
   histogram->GetXaxis()->SetTimeDisplay(1);
@@ -115,7 +115,9 @@ void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& , Particle* partic
       if(m_spectrumType == TRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
          (m_spectrumType == TRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
          (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
-        double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
+        double distanceInTube = TRDSpectrumPlot::fixedMeanLengthInTube; //default length in trd tube, if no real calcultaion is performed
+        if(TRDSpectrumPlot::calculateLengthInTube)
+            distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
         if(distanceInTube > 0)
           histogram(0)->Fill(event->time(), subHit->signalHeight() / (distanceInTube));
       }

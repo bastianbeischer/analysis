@@ -20,6 +20,9 @@ public:
   virtual void update();
   virtual void draw(TCanvas*);
 
+  static const double fixedMeanLengthInTube;
+  static const bool calculateLengthInTube;
+
 private:
   unsigned short m_id;
   TRDSpectrumType m_spectrumType;

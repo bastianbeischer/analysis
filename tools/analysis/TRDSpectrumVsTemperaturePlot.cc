@@ -48,9 +48,9 @@ TRDSpectrumVsTemperaturePlot::TRDSpectrumVsTemperaturePlot(unsigned int id, TRDS
   const unsigned int nTemperatureBins = 200;
   const double minTemperature = 26;
   const double maxTemperature = 34;
-  const unsigned int nSpecBins = 100;
+  const unsigned int nSpecBins = 200;
   const double minSpec = 0;
-  const double maxSpec = 15;
+  const double maxSpec = 20;
 
   TH2D* histogram = new TH2D(qPrintable(title()),"", nTemperatureBins, minTemperature, maxTemperature, nSpecBins, minSpec, maxSpec);
   setAxisTitle("temperature /  #circC", "ADCCs per length", "");
@@ -121,7 +121,9 @@ void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>& , Particle*
       if(m_spectrumType == TRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
          (m_spectrumType == TRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
          (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
-        double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
+        double distanceInTube = TRDSpectrumPlot::fixedMeanLengthInTube; //default length in trd tube, if no real calcultaion is performed
+        if(TRDSpectrumPlot::calculateLengthInTube)
+            distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
         if(distanceInTube > 0)
           histogram(0)->Fill(mean, subHit->signalHeight() / (distanceInTube));
       }

@@ -14,6 +14,9 @@
 #include "TRDCalculations.hh"
 #include "Corrections.hh"
 
+const double TRDSpectrumPlot::fixedMeanLengthInTube = 4;
+const bool TRDSpectrumPlot::calculateLengthInTube = true;
+
 TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType, double lowerMom, double upperMom) :
   AnalysisPlot(AnalysisPlot::SignalHeightTRD),
   H1DPlot(),
@@ -45,13 +48,13 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
     setTitle(strType + QString(" spectrum 0x%1 (%2 GeV to %3 GeV)").arg(m_id,0,16).arg(m_lowerMomentum).arg(m_upperMomentum));
 
   //initialize fit function:
-  m_landauFit = new TF1(qPrintable(title() + "LandauFit"),"landau",0,150);
+  m_landauFit = new TF1(qPrintable(title() + "LandauFit"),"landau",0,20);
   m_landauFit->SetLineColor(kRed);
 
   m_fitRangeMarker_lower->SetMarkerColor(kRed);
   m_fitRangeMarker_upper->SetMarkerColor(kRed);
 
-  TH1D* histogram = new TH1D(qPrintable(title()), "", 50, 0, 15);
+  TH1D* histogram = new TH1D(qPrintable(title()), "", 200, 0, 20);
   setAxisTitle("ADCCs per length in tube / (1/mm)", "entries");
 
   addHistogram(histogram);
@@ -64,7 +67,7 @@ TRDSpectrumPlot::~TRDSpectrumPlot()
   delete m_fitRangeMarker_upper;
 }
 
-void TRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent* event)
+void TRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent*)
 {
   const Track* track = particle->track();
   const ParticleInformation::Flags pFlags = particle->information()->flags();
@@ -98,8 +101,9 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* part
       nTrdHits++;
   }
 
-  if (nTrdHits < 6)
-    return;
+  //trd layer cut
+  //if (nTrdHits < 6)
+  //  return;
 
   for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
     Hit* hit = *it;
@@ -115,7 +119,9 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* part
       if(m_spectrumType == TRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
          (m_spectrumType == TRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
          (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
-        double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
+        double distanceInTube = TRDSpectrumPlot::fixedMeanLengthInTube; //default length in trd tube, if no real calcultaion is performed
+        if(TRDSpectrumPlot::calculateLengthInTube)
+            distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
         if(distanceInTube > 0)
           histogram(0)->Fill(subHit->signalHeight() / (distanceInTube));
       } // fits into category
@@ -125,7 +131,7 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* part
 
 void TRDSpectrumPlot::finalize()
 {
-  if (histogram(0)->GetEntries() > 10) {
+  if (histogram(0)->GetEntries() > 30) {
     histogram(0)->Fit(m_landauFit,"Q0","",m_landauFitRange_lower,m_landauFitRange_upper);
 
     m_fitRangeMarker_lower->SetX(m_landauFitRange_lower);

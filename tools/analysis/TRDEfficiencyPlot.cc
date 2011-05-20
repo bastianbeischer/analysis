@@ -96,7 +96,7 @@ void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* pa
     //get distance
     double distance = TRDCalculations::distanceTrackToWire(pos2D, track);
     //check if tube has been punched by track:
-    if (fabs(distance) < 2) {
+    if (fabs(distance) < 1) {
       //was on track +1
       m_wasOnTrack[i.key()]++;
       //now check wheter the tube has seen a signal:

@@ -48,9 +48,9 @@ TRDSpectrumVsPressurePlot::TRDSpectrumVsPressurePlot(unsigned int id, TRDSpectru
   const unsigned int nPressureBins = 200;
   const double minPressure = 1070;
   const double maxPressure = 1115;
-  const unsigned int nSpecBins = 100;
+  const unsigned int nSpecBins = 200;
   const double minSpec = 0;
-  const double maxSpec = 15;
+  const double maxSpec = 20;
 
   TH2D* histogram = new TH2D(qPrintable(title()),"", nPressureBins, minPressure, maxPressure, nSpecBins, minSpec, maxSpec);
   setAxisTitle("pressure /  mBar", "ADCCs per length", "");
@@ -115,7 +115,9 @@ void TRDSpectrumVsPressurePlot::processEvent(const QVector<Hit*>& , Particle* pa
       if(m_spectrumType == TRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
          (m_spectrumType == TRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
          (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
-        double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
+        double distanceInTube = TRDSpectrumPlot::fixedMeanLengthInTube; //default length in trd tube, if no real calcultaion is performed
+        if(TRDSpectrumPlot::calculateLengthInTube)
+            distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
         if(distanceInTube > 0)
           histogram(0)->Fill(pressure, subHit->signalHeight() / (distanceInTube));
       }
