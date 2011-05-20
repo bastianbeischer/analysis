@@ -71,6 +71,8 @@ void DataChain::addFileList(const char* listName)
     file >> filename;
     if (file.eof()) break;
     QString fullname(filename);
+    if (fullname.startsWith("#"))
+      continue;
     if (fullname.endsWith(".txt"))
       addFileList(qPrintable(fullname));
     else {
