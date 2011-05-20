@@ -49,7 +49,7 @@ void MainWindow::setupAnalysis()
       mopvModules << addCanvas(&file, qPrintable(cTitle));
     }
   }
-  addPlot(new MoPVConstant(mopvModules));
+  addPlot(new MoPVConstant(mopvModules, true));
 
   //add channel spectra:
   QList<PostAnalysisCanvas*> mopvChannels;
@@ -62,7 +62,7 @@ void MainWindow::setupAnalysis()
       }
     }
   }
-  addPlot(new MoPVConstant(mopvChannels));
+  addPlot(new MoPVConstant(mopvChannels, false));
 
   return;
 
