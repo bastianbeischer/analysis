@@ -39,7 +39,7 @@ bool MoPVConstant::fitMoPV(TH1D* hist, double& mopv, double& mopvErr)
     return false;
   TF1* fit = new TF1("fitMopv","landau");
 
-  hist->Fit(fit, "QN0");
+  hist->Fit(fit, "QN0R", "", 0.1, 3);
 
   mopv = fit->GetParameter(1);
   mopvErr = fit->GetParError(1);
