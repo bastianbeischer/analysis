@@ -10,6 +10,7 @@
 #include <QList>
 #include <QMap>
 #include <QList>
+#include <QPair>
 
 class QSettings;
 class SimpleEvent;
@@ -21,8 +22,8 @@ class Corrections
 {
   
 public:
-  enum Flag {None = 0x0, Alignment = 0x1<<0, TimeShifts = 0x1<<1, TrdMopv = 0x1<<2, TofTimeOverThreshold = 0x1<<3, 
-             MultipleScattering = 0x1<<4, PhotonTravelTime = 0x1<<5};
+  enum Flag {None = 0x0, Alignment = 0x1<<0, TimeShifts = 0x1<<1, TrdMopv = 0x1<<2, TrdPressure = 0x1<<3, TofTimeOverThreshold = 0x1<<4,
+             MultipleScattering = 0x1<<5, PhotonTravelTime = 0x1<<6};
   Q_DECLARE_FLAGS(Flags, Flag);
 
 public:
@@ -47,6 +48,7 @@ private:
   void alignment(Hit*);
   void timeShift(Hit*);
   void trdMopv(Hit*);
+  void trdPressure(Hit*, SimpleEvent* event);
   void tofTot(Hit* hit, SimpleEvent* event);
   void multipleScattering(Particle*);
   void photonTravelTime(Particle*); 
@@ -54,6 +56,9 @@ private:
 public:
   double trdScalingFactor(unsigned int);
   void setTrdScalingFactor(unsigned int, double);
+  double trdPressureDependendFactor(double P);
+  void setTrdPressureDependendFactor(QPair<double,double> P0, double dM_dP);
+  void getTrdPressureDependendFactor(QPair<double,double>& P0, double& dM_dP);
   void setTotScaling(const unsigned int tofId, const QList<QVariant> param);
   
 private:

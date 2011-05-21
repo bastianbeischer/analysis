@@ -51,9 +51,8 @@ void Corrections::preFitCorrections(SimpleEvent* event)
     if (m_flags & Alignment) alignment(hit);
     if (m_flags & TimeShifts) timeShift(hit);
     if (m_flags & TrdMopv) trdMopv(hit);
-    if (m_flags & TofTimeOverThreshold) {
-      tofTot(hit, event);
-    }
+    if (m_flags & TrdPressure) trdPressure(hit, event);
+    if (m_flags & TofTimeOverThreshold) tofTot(hit, event);
   }
 }
 
@@ -139,6 +138,32 @@ void Corrections::trdMopv(Hit* hit)
   }
 }
 
+void Corrections::trdPressure(Hit* hit, SimpleEvent* event)
+{
+  //only process TRD hits
+  if ( hit->type() != Hit::trd )
+    return;
+
+  //TODO use smoothed trd pressure here:
+  double pressure = event->sensorData(SensorTypes::TRD_PRESSURE);
+  double trdScalingFactor = this->trdPressureDependendFactor(pressure);
+
+  if (strcmp(hit->ClassName(), "Hit") == 0) {
+    hit->setSignalHeight(hit->signalHeight() * trdScalingFactor);
+  }
+  else if (strcmp(hit->ClassName(), "Cluster") == 0) {
+    Cluster* cluster = static_cast<Cluster*>(hit);
+    double clusterAmplitude = 0;
+    for (std::vector<Hit*>::iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
+      Hit* trdHit = *it;
+      double newHitAmplitude = trdHit->signalHeight() * trdScalingFactor;
+      trdHit->setSignalHeight(newHitAmplitude);
+      clusterAmplitude += newHitAmplitude;
+    }
+    cluster->setSignalHeight(clusterAmplitude);
+  }
+}
+
 void Corrections::tofTot(Hit* hit, SimpleEvent* event)
 {
   if (hit->type() == Hit::tof) {
@@ -163,6 +188,29 @@ void Corrections::setTrdScalingFactor(unsigned int channel, double value)
 {
   m_trdSettings->setValue( "ConstScaleFactor/" + QString::number(channel,16), value);
   m_trdSettings->sync();
+}
+
+double Corrections::trdPressureDependendFactor(double P)
+{
+  double P0 = m_trdSettings->value( "PressureDependency/P0", 1100).toDouble();
+  double M0 = m_trdSettings->value( "PressureDependency/M0", 1).toDouble();
+  double dM_dP = m_trdSettings->value( "PressureDependency/dM_dP", 0).toDouble();
+  return M0 / ( M0 + (P-P0) * dM_dP);
+}
+
+void Corrections::setTrdPressureDependendFactor(QPair<double,double> P0, double dM_dP)
+{
+  m_trdSettings->setValue( "PressureDependency/P0", P0.first);
+  m_trdSettings->setValue( "PressureDependency/M0", P0.second);
+  m_trdSettings->setValue( "PressureDependency/dM_dP", dM_dP);
+  m_trdSettings->sync();
+}
+
+void Corrections::getTrdPressureDependendFactor(QPair<double,double>& P0, double& dM_dP)
+{
+  P0.first = m_trdSettings->value( "PressureDependency/P0", 1100).toDouble();
+  P0.second = m_trdSettings->value( "PressureDependency/M0", 1).toDouble();
+  dM_dP = m_trdSettings->value( "PressureDependency/dM_dP", 0).toDouble();
 }
 
 double Corrections::photonTravelTime(double bending, double nonBending, double* p)
