@@ -64,8 +64,6 @@ void MainWindow::setupAnalysis()
   }
   addPlot(new MoPVConstant(mopvChannels, false));
 
-  return;
-
   //vs time:
   QString name = "complete TRD vs time spectrum (-100 GeV to 100 GeV) canvas";
   canvas = addCanvas(&file, qPrintable(name));

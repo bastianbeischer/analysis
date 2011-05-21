@@ -9,17 +9,21 @@
 #include <TLatex.h>
 
 #include <QList>
+#include <QRegExp>
 
 #include <math.h>
 
 MoPVScaling::MoPVScaling(PostAnalysisCanvas* canvas)
-  : PostAnalysisPlot()
+  : QObject()
+  , PostAnalysisPlot()
   , GraphPlot()
   , m_colorCounter(0)
+  , m_dependencyFit(0)
 {
   TH2D* histogram = canvas->histograms2D().at(0);
   TGraph* graph = generateMoPVGraph(histogram);
-  graph->Fit("pol1");
+  m_dependencyFit = new TF1("dependencyFit", "pol1");
+  graph->Fit(m_dependencyFit);
   QString title = QString(canvas->name()).replace("canvas", "graph");
   setTitle(title);
   addGraph(graph, "L");
@@ -27,13 +31,15 @@ MoPVScaling::MoPVScaling(PostAnalysisCanvas* canvas)
 }
 
 MoPVScaling::MoPVScaling(QList<PostAnalysisCanvas*> canvasList)
-  : PostAnalysisPlot()
+  : QObject()
+  , PostAnalysisPlot()
   , GraphPlot()
   , m_colorCounter(0)
+  , m_dependencyFit(0)
 {
   //TODO is first name ok?
   QString title = QString(canvasList.first()->name()).replace("canvas", "graph");
-  setTitle(title.replace("\\dx\\d\\d\\d\\d",""));
+  setTitle(title.replace(QRegExp("\\dx\\d\\d\\d."),""));
   setAxisTitle(canvasList.first()->histograms2D().at(0)->GetXaxis()->GetTitle(), "trd mopv");
 
   foreach (PostAnalysisCanvas* canvas, canvasList) {
@@ -99,5 +105,8 @@ TGraphErrors* MoPVScaling::generateMoPVGraph(TH2D* histogram)
   if (x.size() == 0)
     return 0;
   return new TGraphErrors(x.size(), &x[0], &y[0], &xErr[0], &yErr[0]);
+}
 
+void MoPVScaling::saveDependency()
+{
 }

@@ -29,6 +29,7 @@ LIBS += \
 CLASSES = \
   MainWindow \
   MoPVScaling \
+  MoPVScalingPressure \
   MoPVConstant
 
 SOURCES = \
