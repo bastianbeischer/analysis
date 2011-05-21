@@ -702,6 +702,8 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
     flags|= Corrections::PhotonTravelTime;
   if (m_ui.trdMopValueCorrectionCheckBox->isChecked())
     flags|= Corrections::TrdMopv;
+  if (m_ui.trdPressureDependencyCorrectionCheckBox->isChecked())
+    flags|= Corrections::TrdPressure;
   if (m_ui.timeOverThresholdCorrectionCheckBox->isChecked())
     flags|= Corrections::TofTimeOverThreshold;
 
