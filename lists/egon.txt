@@ -1,1 +1,22 @@
-clusters/egon1.root
+# Same settings used for for fileListDavid.
+# Moved to Cathedral. Due to the low temperatures
+# during the transport PERDaix still has to warm
+# up in the Cathedral. The run files in this file
+# list is during the 2 hour long warm-up phase.
+# Lower temperatures lead to higher overvoltages
+# at the SiPMs.
+# The temperature in the Cathedral is approx. two
+# degrees lower than in the Basilica.
+20101118/run_1290088918.root
+20101118/run_1290089519.root
+20101118/run_1290090119.root
+20101118/run_1290090720.root
+20101118/run_1290091320.root
+20101118/run_1290091920.root
+20101118/run_1290092521.root
+20101118/run_1290093121.root
+20101118/run_1290093721.root
+20101118/run_1290094322.root
+20101118/run_1290094923.root
+20101118/run_1290095523.root
+20101118/run_1290096124.root
