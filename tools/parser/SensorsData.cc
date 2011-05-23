@@ -87,7 +87,7 @@ float SensorsData::previousValue(const char* id, unsigned int time, int& diff)
 
   long entry = exactEntry;
   m_tree->GetEntry(entry);
-  while(entry >= 0 && entry < N && isnan(m_var)) {
+  while(entry >= 0 && entry < N && std::isnan(m_var)) {
     m_tree->GetEntry(entry);
     entry--;
   }
@@ -118,7 +118,7 @@ float SensorsData::nextValue(const char* id, unsigned int time, int& diff)
 
   long entry = exactEntry;
   m_tree->GetEntry();
-  while(entry >= 0 && entry < N && isnan(m_var)) {
+  while(entry >= 0 && entry < N && std::isnan(m_var)) {
     m_tree->GetEntry(entry);
     entry++;
   }
