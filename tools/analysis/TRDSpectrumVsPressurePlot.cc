@@ -99,7 +99,7 @@ void TRDSpectrumVsPressurePlot::processEvent(const QVector<Hit*>& , Particle* pa
     return;
 
   // TODO: temp sensormap
-  double pressure = event->sensorData(SensorTypes::TRD_PRESSURE);
+  double pressure = event->sensorData(SensorTypes::TRD_PRESSURE_SMOOTHED);
  
   for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
     Hit* hit = *it;
