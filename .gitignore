@@ -3,6 +3,7 @@ Makefile
 /bin
 /lib
 /data
+/tables
 /test
 /TAGS
 /plots
