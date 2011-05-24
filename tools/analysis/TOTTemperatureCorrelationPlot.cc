@@ -18,7 +18,7 @@
 #include <QDebug>
 #include <QVariant>
 #include <QSettings>
-#include <math.h>
+#include <cmath>
 
 TOTTemperatureCorrelationPlot::TOTTemperatureCorrelationPlot(unsigned int id)
   : AnalysisPlot(TimeOverThreshold)
@@ -63,7 +63,7 @@ void TOTTemperatureCorrelationPlot::processEvent(const QVector<Hit*>&, Particle*
         if (tofHit->detId() == m_id) {
           double temperature = event->sensorData(Setup::instance()->sensorForId(m_id));
           TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
-          if (!isnan(temperature))
+          if (!std::isnan(temperature))
             histogram()->Fill(temperature, tofSipmHit->timeOverThreshold());
         }
       }

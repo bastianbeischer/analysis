@@ -8,7 +8,7 @@
 #include <THStack.h>
 #include <TPad.h>
 
-#include <math.h>
+#include <cmath>
 
 #include <QDebug>
 
@@ -40,7 +40,7 @@ SensorTimePlot::~SensorTimePlot()
 void SensorTimePlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
 {
   double value = event->sensorData(m_type);
-  if (!isnan(value)) {
+  if (!std::isnan(value)) {
     double t = event->time();
     histogram()->Fill(t, value);
     m_normalizationHistogram->Fill(t);
