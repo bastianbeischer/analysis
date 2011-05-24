@@ -111,6 +111,7 @@ namespace SensorTypes {
     else if (strcmp(string, "BEAM_TRIGGER") == 0) return BEAM_TRIGGER;
     else if (strcmp(string, "BEAM_CHERENKOV1") == 0) return BEAM_CHERENKOV1;
     else if (strcmp(string, "BEAM_CHERENKOV2") == 0) return BEAM_CHERENKOV2;
+    else if (strcmp(string, "TRD_PRESSURE_SMOOTHED") == 0) return TRD_PRESSURE_SMOOTHED;
 
     // we should never come to this point -> assert
     assert(false);
@@ -217,6 +218,7 @@ namespace SensorTypes {
     case BEAM_TRIGGER: return "BEAM_TRIGGER";
     case BEAM_CHERENKOV1: return "BEAM_CHERENKOV1";
     case BEAM_CHERENKOV2: return "BEAM_CHERENKOV2";
+    case TRD_PRESSURE_SMOOTHED: return "TRD_PRESSURE_SMOOTHED";
     default: return "none";
     }
   }

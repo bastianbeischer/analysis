@@ -70,9 +70,7 @@ void AlignmentMatrix::processEvent(const QVector<Hit*>&, Particle* particle, Sim
   const QVector<Hit*>& hits = track->hits();
   
   foreach(Hit* hit, hits) {
-    //resetArrays();
-    
-    // use only tracker hits for alignment
+    // use only tracker and trd hits for alignment
     if(hit->type() == Hit::tof)
       continue;
 

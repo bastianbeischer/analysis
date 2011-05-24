@@ -68,12 +68,12 @@ void DataChain::addFileList(const char* listName)
   while (true) {
     // read filename from list
     char filename[256];
-    file >> filename;
+    file.getline(filename,256);
     if (file.eof()) break;
     QString fullname(filename);
     if (fullname.endsWith(".txt"))
       addFileList(qPrintable(fullname));
-    else {
+    else if (fullname.endsWith(".root")) {
       char* env = getenv("PERDAIXDATA_PATH");
       if (env == 0) {
         qFatal("ERROR: You need to set PERDAIXDATA_PATH environment variable to the toplevel location of the data!");

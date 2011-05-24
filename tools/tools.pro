@@ -19,7 +19,3 @@ exists($(PERDAIX10PATH)) {
   message ("Set PERDAIX10PATH environment variable to build parser and eventcounter!")
 }
 
-macx {
-  message("skipping parser on MacOS X")
-  SUBDIRS-=parser
-}

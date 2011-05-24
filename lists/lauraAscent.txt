@@ -1,1 +1,17 @@
-clusters/lauraAscent1.root
+# Data during ascent from 09:17
+# until 10:59. During the whole
+# flight the settings were kept
+# constant.
+20101123flight/run_1290500236.root
+20101123flight/run_1290500836.root
+20101123flight/run_1290501436.root
+20101123flight/run_1290502037.root
+20101123flight/run_1290502638.root
+20101123flight/run_1290503238.root
+20101123flight/run_1290503838.root
+20101123flight/run_1290504385.root
+20101123flight/run_1290504389.root
+20101123flight/run_1290504393.root
+20101123flight/run_1290504589.root
+20101123flight/run_1290505190.root
+20101123flight/run_1290505790.root
