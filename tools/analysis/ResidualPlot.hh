@@ -20,8 +20,10 @@ public:
   void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
 
 private:
-  const Layer* m_layer;
   virtual Track* referenceTrack(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+
+private:
+  const Layer* m_layer;
 
 };
 
