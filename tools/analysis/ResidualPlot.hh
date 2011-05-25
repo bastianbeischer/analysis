@@ -8,6 +8,7 @@
 
 class Layer;
 class Particle;
+class Track;
 
 class ResidualPlot : public AnalysisPlot, public H2DProjectionPlot {
   
@@ -20,6 +21,7 @@ public:
 
 private:
   const Layer* m_layer;
+  virtual Track* referenceTrack(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
 
 };
 

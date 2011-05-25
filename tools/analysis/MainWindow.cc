@@ -77,6 +77,7 @@
 #include "MCTotalEnergyDepositionTRDvsTrackerPlot.hh"
 #include "MCTRDSpectrumPlot.hh"
 #include "MCRigidityResolutionPlot.hh"
+#include "ResidualPlotMC.hh"
 #include "TestbeamRigidityResolutionPlot.hh"
 #include "PMTPlot.hh"
 #include "PMTCorrelationPlot.hh"
@@ -669,12 +670,22 @@ void MainWindow::setupPlots()
   }
   if (m_ui.mcTRDCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new MCTRDSpectrumPlot(0 /* doesnt matter */,MCTRDSpectrumPlot::completeTRD));
+    for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
+      Layer* layer = *layerIt;
+      if (layer->z() > -520 && layer->z() < -240)
+        m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisPlot::MonteCarloTRD, layer));
+    }
   }
   if (m_ui.mcTrackerCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(-11));
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(11));
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(2212));
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(1000020040));
+    for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
+      Layer* layer = *layerIt;
+      if (layer->z() > -240 && layer->z() < 240)
+        m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisPlot::MonteCarloTracker, layer));
+    }
   }
   if (m_ui.testbeamCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TRDSpectrumCherenkovPlotCollection());
