@@ -3,17 +3,23 @@
 #include "Particle.hh"
 #include "ParticleInformation.hh"
 #include "ProjectionControlWidget.hh"
+
+#include <QWidget>
 #include <QSpinBox>
+#include <QLayout>
+#include <QLineEdit>
+#include <QPushButton>
 
 #include <TH2D.h>
 
+#include <iostream>
 
 BeamProfilePlot::BeamProfilePlot(Type type) :
-  AnalysisPlot(AnalysisPlot::Testbeam),
   H2DProjectionPlot(),
-  m_type(type)
+  AnalysisPlot(AnalysisPlot::Testbeam),
+  m_type(type),
+  m_fileNameLineEdit(new QLineEdit("beamprofile.root"))
 {
-  controlWidget()->spinBox()->setMaximum(1024);
   int nBinsX = 0, nBinsY = 0;
   double x0 = 0., x1 = 0.;
   double y0 = 0., y1 = 0.;  
@@ -43,6 +49,14 @@ BeamProfilePlot::BeamProfilePlot(Type type) :
   }
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, x0, x1, nBinsY, y0, y1);
   addHistogram(histogram);
+
+  ProjectionControlWidget* controlWidget = this->controlWidget();
+  QPushButton* saveButton = new QPushButton("save");
+  controlWidget->spinBox()->setMaximum(1024);
+  controlWidget->layout()->addWidget(m_fileNameLineEdit);
+  controlWidget->layout()->addWidget(saveButton);
+  
+  connect(saveButton, SIGNAL(clicked()), this, SLOT(saveHistograms()));
 }
 
 BeamProfilePlot::~BeamProfilePlot()
@@ -64,4 +78,10 @@ void BeamProfilePlot::processEvent(const QVector<Hit*>&, Particle* particle, Sim
     histogram()->Fill(track->y(0), track->slopeY(0));
   else if (m_type == Vertical)
     histogram()->Fill(track->x(0), track->slopeX(0));
+}
+
+void BeamProfilePlot::saveHistograms()
+{
+  QString fileName = m_fileNameLineEdit->text();
+  std::cout << qPrintable(fileName) << std::endl;
 }
