@@ -71,8 +71,8 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, S
   // remove hits in this layer from hits for track fit
   QVector<Hit*> hitsInThisLayer;
 
-  const QVector<Hit*>::const_iterator endIt = hits.end();
-  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+  const QVector<Hit*>::const_iterator endIt = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != endIt; ++it) {
     Hit* hit = *it;
     double z = round(hit->position().z()*100)/100.;
     if (fabs(z - m_layer->z()) <= 5)
@@ -125,15 +125,15 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, S
   }
 }
 
-Track* ResidualPlot::referenceTrack(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* /*event*/)
+Track* ResidualPlot::referenceTrack(const QVector<Hit*>&, Particle* particle, SimpleEvent* /*event*/)
 {
   const Track* track = particle->track();
 
   // remove hits in this layer from hits for track fit
   QVector<Hit*> hitsForFit;
 
-  const QVector<Hit*>::const_iterator endIt = hits.end();
-  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+  const QVector<Hit*>::const_iterator endIt = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != endIt; ++it) {
     Hit* hit = *it;
     double z = round(hit->position().z()*100)/100.;
     if (fabs(z - m_layer->z()) > 5)
