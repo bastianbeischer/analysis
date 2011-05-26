@@ -1,14 +1,18 @@
 #ifndef BeamProfilePlot_hh
 #define BeamProfilePlot_hh
 
-#include "AnalysisPlot.hh"
 #include "H2DProjectionPlot.hh"
+#include "AnalysisPlot.hh"
+
+class QLineEdit;
 
 class BeamProfilePlot :
-  public AnalysisPlot,
-  public H2DProjectionPlot
+  public H2DProjectionPlot,
+  public AnalysisPlot
 {
   
+Q_OBJECT
+
 public:
   enum Type {Horizontal, Vertical};
 
@@ -18,8 +22,12 @@ public:
   
   void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
 
+private slots:
+  void saveHistograms();
+
 private:
   Type m_type;
+  QLineEdit* m_fileNameLineEdit;
 
 };
 
