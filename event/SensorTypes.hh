@@ -3,122 +3,122 @@
 
 #include <vector>
 
+// expansion macro for enum value definition
+#define ENUM_VALUE(name,assign) name assign,
+
+/// declare the access function and define enum values
+#define DECLARE_ENUM(EnumType,ENUM_DEF) \
+  enum EnumType { \
+    ENUM_DEF(ENUM_VALUE) \
+  }; \
+  const char* convertToString(EnumType); \
+  EnumType convertFromString(const char*); \
+
+#define SENSOR_TYPES(XX) \
+  XX(TRD_PRESSURE, = 0) /*first of our own sensors*/ \
+  XX(TOF_VOLTAGE,) \
+  XX(HPE_0x3000_TEMP,) \
+  XX(HPE_0x3001_TEMP,) \
+  XX(HPE_0x3100_TEMP,) \
+  XX(HPE_0x3101_TEMP,) \
+  XX(HPE_0x3300_TEMP,) \
+  XX(HPE_0x3301_TEMP,) \
+  XX(HPE_0x3700_TEMP,) \
+  XX(HPE_0x3701_TEMP,) \
+  XX(HPE_0x6000_TEMP,) \
+  XX(HPE_0x6001_TEMP,) \
+  XX(HPE_0x6100_TEMP,) \
+  XX(HPE_0x6101_TEMP,) \
+  XX(HPE_0x6200_TEMP,) \
+  XX(HPE_0x6201_TEMP,) \
+  XX(HPE_0x6300_TEMP,) \
+  XX(HPE_0x6301_TEMP,) \
+  XX(HPE_0x6400_TEMP,) \
+  XX(HPE_0x6401_TEMP,) \
+  XX(HPE_0x6500_TEMP,) \
+  XX(HPE_0x6501_TEMP,) \
+  XX(HPE_0x6600_TEMP,) \
+  XX(HPE_0x6601_TEMP,) \
+  XX(HPE_0x6700_TEMP,) \
+  XX(HPE_0x6701_TEMP,) \
+  XX(HPE_0x7800_TEMP,) \
+  XX(HPE_0x7801_TEMP,) \
+  XX(HPE_0x7900_TEMP,) \
+  XX(HPE_0x7901_TEMP,) \
+  XX(HPE_0x7a00_TEMP,) \
+  XX(HPE_0x7a01_TEMP,) \
+  XX(HPE_0x7b00_TEMP,) \
+  XX(HPE_0x7b01_TEMP,) \
+  XX(HPE_0x7c00_TEMP,) \
+  XX(HPE_0x7c01_TEMP,) \
+  XX(HPE_0x7d00_TEMP,) \
+  XX(HPE_0x7d01_TEMP,) \
+  XX(HPE_0x7e00_TEMP,) \
+  XX(HPE_0x7e01_TEMP,) \
+  XX(HPE_0x7f00_TEMP,) \
+  XX(HPE_0x7f01_TEMP,) \
+  XX(TOF_1_TEMP,) \
+  XX(TOF_2_TEMP,) \
+  XX(TOF_3_TEMP,) \
+  XX(TOF_4_TEMP,) \
+  XX(TOF_5_TEMP,) \
+  XX(TOF_6_TEMP,) \
+  XX(TOF_7_TEMP,) \
+  XX(TOF_8_TEMP,) \
+  XX(TRIGGER_BOARD_TEMP,) \
+  XX(TRACKER_1_VOLTAGE,) \
+  XX(TRACKER_2_VOLTAGE,) \
+  XX(TRACKER_3_VOLTAGE,) \
+  XX(TRD_VOLTAGE,) \
+  XX(CPU_TEMP,) \
+  XX(PC_TEMP,) \
+  XX(TDC_TEMP,) \
+  XX(TRIGGER_RATE,) \
+  XX(TRD_UFE_BOTTOM_COLD_TEMP,) \
+  XX(TRD_UFE_TOP_COLD_TEMP,) \
+  XX(TRACKER_UFE_BOTTOM_COLD_TEMP,) \
+  XX(TRACKER_UFE_TOP_COLD_TEMP,) \
+  XX(TRACKER_UFE_TOP_HOT_TEMP,) \
+  XX(TRACKER_UFE_BOTTOM_HOT_TEMP,) \
+  XX(TRD_UFE_TOP_HOT_TEMP,) \
+  XX(TRD_UFE_BOTTOM_HOT_TEMP,) \
+  XX(POWER_UFE_TEMP,) \
+  XX(USB_BOARD_TEMP,) \
+  XX(POWER_MID_TEMP,) \
+  XX(TRD_TUBE_TOP_HOT_TEMP,) \
+  XX(TRD_TUBE_TOP_COLD_TEMP,) \
+  XX(TRD_GAS_COLD_TEMP,) \
+  XX(TRD_GAS_HOT_TEMP,) \
+  XX(TRD_TUBE_BOTTOM_HOT_TEMP,) \
+  XX(TRD_TUBE_BOTTOM_COLD_TEMP,) \
+  XX(POWER_GAS_TEMP,) \
+  XX(OUTLET_TEMP,) \
+  XX(INLET_TEMP,) \
+  XX(BAT_BOTTOM_TEMP,) \
+  XX(BAT_TOP_TEMP,) \
+  XX(ATC_LATITUDE,) /*first of ATC sensors*/ \
+  XX(ATC_LONGITUDE,) \
+  XX(ATC_HEIGHT,) \
+  XX(ATC_HORIZONTAL_SPEED,) \
+  XX(ATC_HEADING,) \
+  XX(EBASS_LATITUDE,) /*first of EBASS sensors*/ \
+  XX(EBASS_LONGITUDE,) \
+  XX(EBASS_HEIGHT,) \
+  XX(EBASS_HORIZONTAL_SPEED,) \
+  XX(EBASS_HEADING,) \
+  XX(EBASS_TEMP_OUT,) \
+  XX(EBASS_TEMP_GAS,) \
+  XX(EBASS_PRESSURE,) \
+  XX(BEAM_TRIGGER,) /*first of Testbam 2011 sensors*/ \
+  XX(BEAM_CHERENKOV1,) \
+  XX(BEAM_CHERENKOV2,) \
+  XX(TRD_PRESSURE_SMOOTHED,) \
+  XX(N_SENSOR_TYPES,) /* end marker */
+  
 namespace SensorTypes
 {
-  enum Type {
-    // Our own sensors
-    START = 0,
-    TRD_PRESSURE = START,
-    TOF_VOLTAGE,
-    HPE_0x3000_TEMP,
-    HPE_0x3001_TEMP,
-    HPE_0x3100_TEMP,
-    HPE_0x3101_TEMP,
-    HPE_0x3300_TEMP,
-    HPE_0x3301_TEMP,
-    HPE_0x3700_TEMP,
-    HPE_0x3701_TEMP,
-    HPE_0x6000_TEMP,
-    HPE_0x6001_TEMP,
-    HPE_0x6100_TEMP,
-    HPE_0x6101_TEMP,
-    HPE_0x6200_TEMP,
-    HPE_0x6201_TEMP,
-    HPE_0x6300_TEMP,
-    HPE_0x6301_TEMP,
-    HPE_0x6400_TEMP,
-    HPE_0x6401_TEMP,
-    HPE_0x6500_TEMP,
-    HPE_0x6501_TEMP,
-    HPE_0x6600_TEMP,
-    HPE_0x6601_TEMP,
-    HPE_0x6700_TEMP,
-    HPE_0x6701_TEMP,
-    HPE_0x7800_TEMP,
-    HPE_0x7801_TEMP,
-    HPE_0x7900_TEMP,
-    HPE_0x7901_TEMP,
-    HPE_0x7a00_TEMP,
-    HPE_0x7a01_TEMP,
-    HPE_0x7b00_TEMP,
-    HPE_0x7b01_TEMP,
-    HPE_0x7c00_TEMP,
-    HPE_0x7c01_TEMP,
-    HPE_0x7d00_TEMP,
-    HPE_0x7d01_TEMP,
-    HPE_0x7e00_TEMP,
-    HPE_0x7e01_TEMP,
-    HPE_0x7f00_TEMP,
-    HPE_0x7f01_TEMP,
-    TOF_1_TEMP,
-    TOF_2_TEMP,
-    TOF_3_TEMP,
-    TOF_4_TEMP,
-    TOF_5_TEMP,
-    TOF_6_TEMP,
-    TOF_7_TEMP,
-    TOF_8_TEMP,
-    TRIGGER_BOARD_TEMP,
-    TRACKER_1_VOLTAGE,
-    TRACKER_2_VOLTAGE,
-    TRACKER_3_VOLTAGE,
-    TRD_VOLTAGE,
-    CPU_TEMP,
-    PC_TEMP,
-    TDC_TEMP,
-    TRIGGER_RATE,
-    TRD_UFE_BOTTOM_COLD_TEMP,
-    TRD_UFE_TOP_COLD_TEMP,
-    TRACKER_UFE_BOTTOM_COLD_TEMP,
-    TRACKER_UFE_TOP_COLD_TEMP,
-    TRACKER_UFE_TOP_HOT_TEMP,
-    TRACKER_UFE_BOTTOM_HOT_TEMP,
-    TRD_UFE_TOP_HOT_TEMP,
-    TRD_UFE_BOTTOM_HOT_TEMP,
-    POWER_UFE_TEMP,
-    USB_BOARD_TEMP,
-    POWER_MID_TEMP,
-    TRD_TUBE_TOP_HOT_TEMP,
-    TRD_TUBE_TOP_COLD_TEMP,
-    TRD_GAS_COLD_TEMP,
-    TRD_GAS_HOT_TEMP,
-    TRD_TUBE_BOTTOM_HOT_TEMP,
-    TRD_TUBE_BOTTOM_COLD_TEMP,
-    POWER_GAS_TEMP,
-    OUTLET_TEMP,
-    INLET_TEMP,
-    BAT_BOTTOM_TEMP,
-    BAT_TOP_TEMP,
+  DECLARE_ENUM(Type,SENSOR_TYPES)
 
-    // ATC sensors
-    ATC_LATITUDE,
-    ATC_LONGITUDE,
-    ATC_HEIGHT,
-    ATC_HORIZONTAL_SPEED,
-    ATC_HEADING,
-
-    // EBASS sensors
-    EBASS_LATITUDE,
-    EBASS_LONGITUDE,
-    EBASS_HEIGHT,
-    EBASS_HORIZONTAL_SPEED,
-    EBASS_HEADING,
-    EBASS_TEMP_OUT,
-    EBASS_TEMP_GAS,
-    EBASS_PRESSURE,
-
-    // TESTBEAM 2011
-    BEAM_TRIGGER,
-    BEAM_CHERENKOV1,
-    BEAM_CHERENKOV2,
-    TRD_PRESSURE_SMOOTHED,
-
-    N_SENSOR_TYPES = TRD_PRESSURE_SMOOTHED + 1,
-    END = N_SENSOR_TYPES
-  };
-
-  Type convertFromString(const char* string);
-  const char* convertToString(SensorTypes::Type);
   std::vector<SensorTypes::Type> temperatureSensors();
   std::vector<SensorTypes::Type> beamSensors();
 }

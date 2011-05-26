@@ -76,13 +76,13 @@ SimpleEvent::~SimpleEvent()
 
 void SimpleEvent::setSensorData(SensorTypes::Type type, float data)
 {
-  assert(type >= SensorTypes::START && type < SensorTypes::N_SENSOR_TYPES);
+  assert(type >= 0 && type < SensorTypes::N_SENSOR_TYPES);
   m_sensorSet[type] = data;
 }
 
 float SimpleEvent::sensorData(SensorTypes::Type type)
 {
-  assert(type >= SensorTypes::START && type < SensorTypes::N_SENSOR_TYPES);
+  assert(type >= 0 && type < SensorTypes::N_SENSOR_TYPES);
   return m_sensorSet[type];
 }
 
