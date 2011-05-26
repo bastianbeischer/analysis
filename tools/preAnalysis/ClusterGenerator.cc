@@ -66,7 +66,7 @@ void ClusterGenerator::process(SimpleEvent* sourceEvent)
   }
 
   // copy sensor  data
-  for (unsigned int i = SensorTypes::START; i < SensorTypes::END; i++) {
+  for (unsigned int i = 0; i < SensorTypes::N_SENSOR_TYPES; i++) {
     destinationEvent->setSensorData((SensorTypes::Type)i, sourceEvent->sensorData((SensorTypes::Type)i) );
   }
 
