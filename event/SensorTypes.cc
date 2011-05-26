@@ -23,6 +23,7 @@
   EnumType convertFromString(const char* string) \
   { \
     ENUM_DEF(ENUM_STRCMP) \
+    assert(false); \
     return (EnumType)0; \
   }
 
