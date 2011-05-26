@@ -16,8 +16,7 @@
 #include "MCSimpleEventParticle.hh"
 #include <TVector3.h>
 #include <iostream>
-
-#include <iostream>
+#include <TFile.h>
 
 BeamProfilePlot::BeamProfilePlot(Type type) :
   H2DProjectionPlot(),
@@ -88,5 +87,9 @@ void BeamProfilePlot::processEvent(const QVector<Hit*>&, Particle* particle, Sim
 void BeamProfilePlot::saveHistograms()
 {
   QString fileName = m_fileNameLineEdit->text();
-  std::cout << qPrintable(fileName) << std::endl;
+  TFile file(qPrintable(fileName),"UPDATE");
+  file.cd();
+  histogram()->Write(histogram()->GetName(), TObject::kOverwrite);
+  std::cout << histogram()->GetName() <<"  has been saved to: "<< qPrintable(fileName)<< std::endl;
+  file.Close();
 }
