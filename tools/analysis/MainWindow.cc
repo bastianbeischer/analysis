@@ -166,6 +166,7 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.alignmentCorrectionCheckBox);
   m_controlWidgets.append(m_ui.timeShiftCorrectionCheckBox);
   m_controlWidgets.append(m_ui.trdMopValueCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.trdPressureDependencyCorrectionCheckBox);
   m_controlWidgets.append(m_ui.timeOverThresholdCorrectionCheckBox);
   m_controlWidgets.append(m_ui.multipleScatteringCorrectionCheckBox);
   m_controlWidgets.append(m_ui.photonTravelTimeCorrectionCheckBox);
