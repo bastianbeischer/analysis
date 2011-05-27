@@ -4,6 +4,7 @@
 #include "PostAnalysisCanvas.hh"
 #include "MoPVScaling.hh"
 #include "MoPVScalingPressure.hh"
+#include "MoPVScalingTemperature.hh"
 #include "MoPVConstant.hh"
 
 #include "Setup.hh"
@@ -85,7 +86,7 @@ void MainWindow::setupAnalysis()
   //vs temperature:
   name = "complete TRD vs temperature spectrum (-100 GeV to 100 GeV) canvas";
   canvas = addCanvas(&file, qPrintable(name));
-  addPlot(new MoPVScaling(canvas));
+  addPlot(new MoPVScalingTemperature(canvas));
 
   QList<PostAnalysisCanvas*> mopvVsTemperatureModules;
   for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {

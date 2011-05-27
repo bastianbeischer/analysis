@@ -30,6 +30,7 @@ CLASSES = \
   MainWindow \
   MoPVScaling \
   MoPVScalingPressure \
+  MoPVScalingTemperature \
   MoPVConstant
 
 SOURCES = \
