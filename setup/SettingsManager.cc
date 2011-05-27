@@ -72,7 +72,7 @@ void SettingsManager::readSettings()
     Settings::Situation situation;
     if (situationString == "unknown") situation = Settings::Unknown;
     else if (situationString == "kirunamuons") situation = Settings::KirunaMuons;
-    else if (situationString == "kirunafloat") situation = Settings::KirunaFloat;
+    else if (situationString == "kirunaflight") situation = Settings::KirunaFlight;
     else if (situationString == "testbeam11") situation = Settings::Testbeam11;
 
     Settings* settings = new Settings;
