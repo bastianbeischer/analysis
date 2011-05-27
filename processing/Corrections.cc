@@ -52,6 +52,7 @@ void Corrections::preFitCorrections(SimpleEvent* event)
     if (m_flags & TimeShifts) timeShift(hit);
     if (m_flags & TrdMopv) trdMopv(hit);
     if (m_flags & TrdPressure) trdPressure(hit, event);
+    if (m_flags & TrdTemperature) trdTemperature(hit, event);
     if (m_flags & TofTimeOverThreshold) tofTot(hit, event);
   }
 }
@@ -144,9 +145,40 @@ void Corrections::trdPressure(Hit* hit, SimpleEvent* event)
   if ( hit->type() != Hit::trd )
     return;
 
-  //TODO use smoothed trd pressure here:
-  double pressure = event->sensorData(SensorTypes::TRD_PRESSURE);
+  double pressure = event->sensorData(SensorTypes::TRD_PRESSURE_SMOOTHED);
   double trdScalingFactor = this->trdPressureDependendFactor(pressure);
+
+  if (strcmp(hit->ClassName(), "Hit") == 0) {
+    hit->setSignalHeight(hit->signalHeight() * trdScalingFactor);
+  }
+  else if (strcmp(hit->ClassName(), "Cluster") == 0) {
+    Cluster* cluster = static_cast<Cluster*>(hit);
+    double clusterAmplitude = 0;
+    for (std::vector<Hit*>::iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
+      Hit* trdHit = *it;
+      double newHitAmplitude = trdHit->signalHeight() * trdScalingFactor;
+      trdHit->setSignalHeight(newHitAmplitude);
+      clusterAmplitude += newHitAmplitude;
+    }
+    cluster->setSignalHeight(clusterAmplitude);
+  }
+}
+
+void Corrections::trdTemperature(Hit* hit, SimpleEvent* event)
+{
+  //only process TRD hits
+  if ( hit->type() != Hit::trd )
+    return;
+
+  double temperature = 0.;
+  int count = 0;
+  for (unsigned int i = SensorTypes::TRD_TUBE_TOP_HOT_TEMP; i <= SensorTypes::TRD_TUBE_BOTTOM_COLD_TEMP; i++) {
+    temperature += event->sensorData((SensorTypes::Type)i);
+    count++;
+  }
+  temperature /= count;
+
+  double trdScalingFactor = this->trdTemperatureDependendFactor(temperature);
 
   if (strcmp(hit->ClassName(), "Hit") == 0) {
     hit->setSignalHeight(hit->signalHeight() * trdScalingFactor);
@@ -211,6 +243,29 @@ void Corrections::getTrdPressureDependendFactor(QPair<double,double>& P0, double
   P0.first = m_trdSettings->value( "PressureDependency/P0", 1100).toDouble();
   P0.second = m_trdSettings->value( "PressureDependency/M0", 1).toDouble();
   dM_dP = m_trdSettings->value( "PressureDependency/dM_dP", 0).toDouble();
+}
+
+double Corrections::trdTemperatureDependendFactor(double T)
+{
+  double T0 = m_trdSettings->value( "TemperatureDependency/T0", 30).toDouble();
+  double M0 = m_trdSettings->value( "TemperatureDependency/M0", 1).toDouble();
+  double dM_dT = m_trdSettings->value( "TemperatureDependency/dM_dT", 0).toDouble();
+  return M0 / ( M0 + (T-T0) * dM_dT);
+}
+
+void Corrections::setTrdTemperatureDependendFactor(QPair<double,double> T0, double dM_dT)
+{
+  m_trdSettings->setValue( "TemperatureDependency/T0", T0.first);
+  m_trdSettings->setValue( "TemperatureDependency/M0", T0.second);
+  m_trdSettings->setValue( "TemperatureDependency/dM_dT", dM_dT);
+  m_trdSettings->sync();
+}
+
+void Corrections::getTrdTemperatureDependendFactor(QPair<double,double>& T0, double& dM_dT)
+{
+  T0.first = m_trdSettings->value( "TemperatureDependency/T0", 30).toDouble();
+  T0.second = m_trdSettings->value( "TemperatureDependency/M0", 1).toDouble();
+  dM_dT = m_trdSettings->value( "TemperatureDependency/dM_dT", 0).toDouble();
 }
 
 double Corrections::photonTravelTime(double bending, double nonBending, double* p)

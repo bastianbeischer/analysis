@@ -22,8 +22,8 @@ class Corrections
 {
   
 public:
-  enum Flag {None = 0x0, Alignment = 0x1<<0, TimeShifts = 0x1<<1, TrdMopv = 0x1<<2, TrdPressure = 0x1<<3, TofTimeOverThreshold = 0x1<<4,
-             MultipleScattering = 0x1<<5, PhotonTravelTime = 0x1<<6};
+  enum Flag {None = 0x0, Alignment = 0x1<<0, TimeShifts = 0x1<<1, TrdMopv = 0x1<<2, TrdPressure = 0x1<<3, TrdTemperature = 0x1<<4,
+             TofTimeOverThreshold = 0x1<<5, MultipleScattering = 0x1<<6, PhotonTravelTime = 0x1<<7};
   Q_DECLARE_FLAGS(Flags, Flag);
 
 public:
@@ -49,6 +49,7 @@ private:
   void timeShift(Hit*);
   void trdMopv(Hit*);
   void trdPressure(Hit*, SimpleEvent* event);
+  void trdTemperature(Hit*, SimpleEvent* event);
   void tofTot(Hit* hit, SimpleEvent* event);
   void multipleScattering(Particle*);
   void photonTravelTime(Particle*); 
@@ -59,6 +60,9 @@ public:
   double trdPressureDependendFactor(double P);
   void setTrdPressureDependendFactor(QPair<double,double> P0, double dM_dP);
   void getTrdPressureDependendFactor(QPair<double,double>& P0, double& dM_dP);
+  double trdTemperatureDependendFactor(double T);
+  void setTrdTemperatureDependendFactor(QPair<double,double> T0, double dM_dT);
+  void getTrdTemperatureDependendFactor(QPair<double,double>& T0, double& dM_dT);
   void setTotScaling(const unsigned int tofId, const QList<QVariant> param);
   
 private:
