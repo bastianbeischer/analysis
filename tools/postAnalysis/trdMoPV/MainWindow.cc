@@ -3,6 +3,7 @@
 #include "PostAnalysisPlot.hh"
 #include "PostAnalysisCanvas.hh"
 #include "MoPVScaling.hh"
+#include "MoPVScalingPressure.hh"
 #include "MoPVConstant.hh"
 
 #include "Setup.hh"
@@ -34,6 +35,7 @@ void MainWindow::setupAnalysis()
   //add info plots
   addCanvas(&file, "TRD_GAS_COLD_TEMP canvas");
   addCanvas(&file, "TRD_PRESSURE canvas");
+  addCanvas(&file, "TRD_PRESSURE_SMOOTHED canvas");
 
   Setup* setup = Setup::instance();
   const ElementIterator elementStartIt = setup->firstElement();
@@ -99,7 +101,7 @@ void MainWindow::setupAnalysis()
   //vs pressure
   name = "complete TRD vs pressure spectrum (-100 GeV to 100 GeV) canvas";
   canvas = addCanvas(&file, qPrintable(name));
-  addPlot(new MoPVScaling(canvas));
+  addPlot(new MoPVScalingPressure(canvas));
 
   QList<PostAnalysisCanvas*> mopvVsPressureModules;
   for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
