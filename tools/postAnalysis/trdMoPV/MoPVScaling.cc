@@ -22,12 +22,14 @@ MoPVScaling::MoPVScaling(PostAnalysisCanvas* canvas)
 {
   TH2D* histogram = canvas->histograms2D().at(0);
   TGraph* graph = generateMoPVGraph(histogram);
-  m_dependencyFit = new TF1("dependencyFit", "pol1");
-  graph->Fit(m_dependencyFit);
-  QString title = QString(canvas->name()).replace("canvas", "graph");
-  setTitle(title);
-  addGraph(graph, "L");
-  setAxisTitle(histogram->GetXaxis()->GetTitle(), "trd mopv");
+  if (graph) {
+    m_dependencyFit = new TF1("dependencyFit", "pol1");
+    graph->Fit(m_dependencyFit);
+    QString title = QString(canvas->name()).replace("canvas", "graph");
+    setTitle(title);
+    addGraph(graph, "L");
+    setAxisTitle(histogram->GetXaxis()->GetTitle(), "trd mopv");
+  }
 }
 
 MoPVScaling::MoPVScaling(QList<PostAnalysisCanvas*> canvasList)
