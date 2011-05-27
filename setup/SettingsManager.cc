@@ -62,12 +62,13 @@ void SettingsManager::readSettings()
 
     int identifier = group.toInt();
     QString name = m_configFile->value("name").toString();
+    QString situationString = m_configFile->value("situation", "unknown").toString().toLower();
     int firstRun = m_configFile->value("first_run").toInt();
     int lastRun = m_configFile->value("last_run").toInt();
-    int polarity = m_configFile->value("polarity").toString() == "positive" ? 1 : -1;
-    double momentum = m_configFile->value("momentum").toDouble();
-    bool magnet = m_configFile->value("magnet").toString() == "yes" ? true : false;
-    QString situationString = m_configFile->value("situation").toString().toLower();
+    int polarity = m_configFile->value("polarity", 0).toString() == "positive" ? 1 : -1;
+    double momentum = m_configFile->value("momentum", 0.).toDouble();
+    bool magnet = m_configFile->value("magnet", "yes").toString() == "yes" ? true : false;
+
     Settings::Situation situation;
     if (situationString == "unknown") situation = Settings::Unknown;
     else if (situationString == "kirunamuons") situation = Settings::KirunaMuons;
