@@ -7,11 +7,14 @@
 #include <TH2D.h>
 #include <TF1.h>
 #include <TLatex.h>
+#include <TSpline.h>
 
 #include <QList>
 #include <QRegExp>
 
 #include <math.h>
+
+#include <QDebug>
 
 MoPVScaling::MoPVScaling(PostAnalysisCanvas* canvas)
   : QObject()
@@ -19,6 +22,7 @@ MoPVScaling::MoPVScaling(PostAnalysisCanvas* canvas)
   , GraphPlot()
   , m_colorCounter(0)
   , m_dependencyFit(0)
+  , m_spline(0)
 {
   TH2D* histogram = canvas->histograms2D().at(0);
   TGraph* graph = generateMoPVGraph(histogram);
@@ -27,8 +31,9 @@ MoPVScaling::MoPVScaling(PostAnalysisCanvas* canvas)
     graph->Fit(m_dependencyFit);
     QString title = QString(canvas->name()).replace("canvas", "graph");
     setTitle(title);
-    addGraph(graph, "L");
+    addGraph(graph, "p");
     setAxisTitle(histogram->GetXaxis()->GetTitle(), "trd mopv");
+    m_spline = new TSpline3("spline", graph);
   }
 }
 
@@ -38,6 +43,7 @@ MoPVScaling::MoPVScaling(QList<PostAnalysisCanvas*> canvasList)
   , GraphPlot()
   , m_colorCounter(0)
   , m_dependencyFit(0)
+  , m_spline(0)
 {
   //TODO is first name ok?
   QString title = QString(canvasList.first()->name()).replace("canvas", "graph");
@@ -59,6 +65,13 @@ MoPVScaling::MoPVScaling(QList<PostAnalysisCanvas*> canvasList)
 
 MoPVScaling::~MoPVScaling()
 {
+}
+
+void MoPVScaling::draw(TCanvas* canv)
+{
+  GraphPlot::draw(canv);
+  if (m_spline)
+    m_spline->Draw("same");
 }
 
 TGraphErrors* MoPVScaling::generateMoPVGraph(TH2D* histogram)

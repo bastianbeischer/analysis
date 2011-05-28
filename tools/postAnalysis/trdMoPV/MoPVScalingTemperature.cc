@@ -24,7 +24,6 @@ MoPVScalingTemperature::MoPVScalingTemperature(PostAnalysisCanvas* canvas)
   layout->addStretch();
   setSecondaryWidget(secWidget);
   connect(m_pushButton, SIGNAL(pressed()), this, SLOT(saveDependency()));
-  qDebug("set sec widg");
 }
 
 
