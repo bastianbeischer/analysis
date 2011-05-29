@@ -3,6 +3,8 @@
 
 #include "MoPVScaling.hh"
 
+class QPushButton;
+
 class MoPVScalingPressure : public MoPVScaling
 {
   Q_OBJECT

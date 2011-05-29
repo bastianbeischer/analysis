@@ -6,7 +6,6 @@
 
 #include <QList>
 #include <QObject>
-class QPushButton;
 
 class PostAnalysisCanvas;
 class TMultiGraph;
