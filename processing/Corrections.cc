@@ -12,8 +12,11 @@
 #include "SensorTypes.hh"
 #include "SimpleEvent.hh"
 
+#include <TSpline.h>
+
 #include <QStringList>
 #include <QSettings>
+#include <QMap>
 #include <QDebug>
 
 #include <cstring>
@@ -24,6 +27,7 @@ Corrections::Corrections(Flags flags)
   , m_trdSettings(0)
   , m_tofSettings(0)
   , m_flags(flags)
+  , m_TRDSplineTime(0)
 {
   char* env = getenv("PERDAIXANA_PATH");
   if (env == 0) {
@@ -35,10 +39,13 @@ Corrections::Corrections(Flags flags)
   m_tofSettings = new QSettings(path + "TOFCorrections.conf", QSettings::IniFormat);
   
   loadTotScaling();
+  readTRDTimeDependendCorrections();
 }
 
 Corrections::~Corrections()
 {
+  writeTRDTimeDependendCorrections();
+  delete m_TRDSplineTime;
   delete m_trdSettings;
   delete m_tofSettings;
 }
@@ -51,6 +58,7 @@ void Corrections::preFitCorrections(SimpleEvent* event)
     if (m_flags & Alignment) alignment(hit);
     if (m_flags & TimeShifts) timeShift(hit);
     if (m_flags & TrdMopv) trdMopv(hit);
+    if (m_flags & TrdTime) trdTime(hit, event);
     if (m_flags & TrdPressure) trdPressure(hit, event);
     if (m_flags & TrdTemperature) trdTemperature(hit, event);
     if (m_flags & TofTimeOverThreshold) tofTot(hit, event);
@@ -132,6 +140,31 @@ void Corrections::trdMopv(Hit* hit)
       Hit* trdHit = *it;
       double trdScalingFactor = this->trdScalingFactor(trdHit->detId());
       double newHitAmplitude = trdHit->signalHeight() * trdScalingFactor;
+      trdHit->setSignalHeight(newHitAmplitude);
+      clusterAmplitude += newHitAmplitude;
+    }
+    cluster->setSignalHeight(clusterAmplitude);
+  }
+}
+
+void Corrections::trdTime(Hit* hit, SimpleEvent* event)
+{
+  //only process TRD hits
+  if ( hit->type() != Hit::trd )
+    return;
+
+  double time = event->time();
+  double trdTimeFactor = this->trdTimeDependendFactor(time);
+
+  if (strcmp(hit->ClassName(), "Hit") == 0) {
+    hit->setSignalHeight(hit->signalHeight() * trdTimeFactor);
+  }
+  else if (strcmp(hit->ClassName(), "Cluster") == 0) {
+    Cluster* cluster = static_cast<Cluster*>(hit);
+    double clusterAmplitude = 0;
+    for (std::vector<Hit*>::iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
+      Hit* trdHit = *it;
+      double newHitAmplitude = trdHit->signalHeight() * trdTimeFactor;
       trdHit->setSignalHeight(newHitAmplitude);
       clusterAmplitude += newHitAmplitude;
     }
@@ -266,6 +299,58 @@ void Corrections::getTrdTemperatureDependendFactor(QPair<double,double>& T0, dou
   T0.first = m_trdSettings->value( "TemperatureDependency/T0", 30).toDouble();
   T0.second = m_trdSettings->value( "TemperatureDependency/M0", 1).toDouble();
   dM_dT = m_trdSettings->value( "TemperatureDependency/dM_dT", 0).toDouble();
+}
+
+void Corrections::addTrdTimeDependendFactor(double time, double factor)
+{
+  m_TRDMapTime.insert(time, factor);
+  //TODO needed?
+  writeTRDTimeDependendCorrections();
+}
+
+double Corrections::trdTimeDependendFactor(double time)
+{
+  if (m_TRDSplineTime)
+    return m_TRDSplineTime->Eval(time);
+  else
+    return 1;
+}
+
+void Corrections::writeTRDTimeDependendCorrections()
+{
+  QMap<double, double> ::const_iterator it = m_TRDMapTime.constBegin();
+  int i = 0;
+  m_trdSettings->beginWriteArray("TimeDependendCorrection");
+  for (it = m_TRDMapTime.constBegin(); it != m_TRDMapTime.constEnd(); it++) {
+    m_trdSettings->setArrayIndex(i);
+    m_trdSettings->setValue("time", it.key());
+    m_trdSettings->setValue("factor", it.value());
+    i++;
+  }
+  m_trdSettings->endArray();
+  m_trdSettings->sync();
+}
+
+void Corrections::readTRDTimeDependendCorrections()
+{
+  int size = m_trdSettings->beginReadArray("TimeDependendCorrection");
+   for (int i = 0; i < size; ++i) {
+       m_trdSettings->setArrayIndex(i);
+       double time = m_trdSettings->value("time").toDouble();
+       double factor = m_trdSettings->value("factor").toDouble();
+       m_TRDMapTime.insert(time, factor);
+   }
+   m_trdSettings->endArray();
+   //create the interpolation spline
+   if (m_TRDSplineTime) {
+     delete m_TRDSplineTime;
+     m_TRDSplineTime = 0;
+   }
+   if (m_TRDMapTime.size() > 1) {
+     QVector<double> times(m_TRDMapTime.keys().toVector());
+     QVector<double> factors(m_TRDMapTime.values().toVector());
+     m_TRDSplineTime = new TSpline3("trdTimeSpline", &(*times.begin()), &(*factors.begin()), times.size());
+   }
 }
 
 double Corrections::photonTravelTime(double bending, double nonBending, double* p)

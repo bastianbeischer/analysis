@@ -166,6 +166,7 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.alignmentCorrectionCheckBox);
   m_controlWidgets.append(m_ui.timeShiftCorrectionCheckBox);
   m_controlWidgets.append(m_ui.trdMopValueCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.trdTimeDependencyCorrectionCheckBox);
   m_controlWidgets.append(m_ui.trdPressureDependencyCorrectionCheckBox);
   m_controlWidgets.append(m_ui.trdTemperatureDependencyCorrectionCheckBox);
   m_controlWidgets.append(m_ui.timeOverThresholdCorrectionCheckBox);
@@ -705,6 +706,8 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
     flags|= Corrections::PhotonTravelTime;
   if (m_ui.trdMopValueCorrectionCheckBox->isChecked())
     flags|= Corrections::TrdMopv;
+  if (m_ui.trdTimeDependencyCorrectionCheckBox->isChecked())
+    flags|= Corrections::TrdTime;
   if (m_ui.trdPressureDependencyCorrectionCheckBox->isChecked())
     flags|= Corrections::TrdPressure;
   if (m_ui.trdTemperatureDependencyCorrectionCheckBox->isChecked())

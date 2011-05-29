@@ -17,13 +17,15 @@ class SimpleEvent;
 class Hit;
 class Particle;
 class SimpleEvent;
+class TSpline3;
 
 class Corrections
 {
   
 public:
-  enum Flag {None = 0x0, Alignment = 0x1<<0, TimeShifts = 0x1<<1, TrdMopv = 0x1<<2, TrdPressure = 0x1<<3, TrdTemperature = 0x1<<4,
-             TofTimeOverThreshold = 0x1<<5, MultipleScattering = 0x1<<6, PhotonTravelTime = 0x1<<7};
+  enum Flag {None = 0x0, Alignment = 0x1<<0, TimeShifts = 0x1<<1, TrdMopv = 0x1<<2, TrdTime = 0x1<<3
+             , TrdPressure = 0x1<<4, TrdTemperature = 0x1<<5
+             , TofTimeOverThreshold = 0x1<<6, MultipleScattering = 0x1<<7, PhotonTravelTime = 0x1<<8};
   Q_DECLARE_FLAGS(Flags, Flag);
 
 public:
@@ -48,6 +50,7 @@ private:
   void alignment(Hit*);
   void timeShift(Hit*);
   void trdMopv(Hit*);
+  void trdTime(Hit*, SimpleEvent* event);
   void trdPressure(Hit*, SimpleEvent* event);
   void trdTemperature(Hit*, SimpleEvent* event);
   void tofTot(Hit* hit, SimpleEvent* event);
@@ -63,6 +66,8 @@ public:
   double trdTemperatureDependendFactor(double T);
   void setTrdTemperatureDependendFactor(QPair<double,double> T0, double dM_dT);
   void getTrdTemperatureDependendFactor(QPair<double,double>& T0, double& dM_dT);
+  void addTrdTimeDependendFactor(double time, double factor);
+  double trdTimeDependendFactor(double time);
   void setTotScaling(const unsigned int tofId, const QList<QVariant> param);
   
 private:
@@ -71,11 +76,15 @@ private:
   void loadTotScaling();
   double totScalingFactor(const unsigned int tofId, const double temperature);
   unsigned int tofChannel(unsigned int id);
+  void readTRDTimeDependendCorrections();
+  void writeTRDTimeDependendCorrections();
   
 private:
   QSettings* m_trdSettings;
   QSettings* m_tofSettings;
   Flags      m_flags;
+  TSpline3*   m_TRDSplineTime;
+  QMap<double, double> m_TRDMapTime;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Corrections::Flags);
