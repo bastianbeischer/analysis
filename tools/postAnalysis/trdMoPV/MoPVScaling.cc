@@ -33,7 +33,7 @@ MoPVScaling::MoPVScaling(PostAnalysisCanvas* canvas)
     setTitle(title);
     addGraph(graph, "p");
     setAxisTitle(histogram->GetXaxis()->GetTitle(), "trd mopv");
-    m_spline = new TSpline3("spline", graph);
+    m_spline = new TSpline3("spline", graph, "b1e1", 0., 0.);
   }
 }
 

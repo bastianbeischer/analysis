@@ -349,7 +349,7 @@ void Corrections::readTRDTimeDependendCorrections()
    if (m_TRDMapTime.size() > 1) {
      QVector<double> times(m_TRDMapTime.keys().toVector());
      QVector<double> factors(m_TRDMapTime.values().toVector());
-     m_TRDSplineTime = new TSpline3("trdTimeSpline", &(*times.begin()), &(*factors.begin()), times.size());
+     m_TRDSplineTime = new TSpline3("trdTimeSpline", &(*times.begin()), &(*factors.begin()), times.size(), "b1e1", 0., 0.);
    }
 }
 
