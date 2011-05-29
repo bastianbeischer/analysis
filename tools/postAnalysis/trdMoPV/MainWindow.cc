@@ -3,6 +3,7 @@
 #include "PostAnalysisPlot.hh"
 #include "PostAnalysisCanvas.hh"
 #include "MoPVScaling.hh"
+#include "MoPVScalingTime.hh"
 #include "MoPVScalingPressure.hh"
 #include "MoPVScalingTemperature.hh"
 #include "MoPVConstant.hh"
@@ -70,7 +71,7 @@ void MainWindow::setupAnalysis()
   //vs time:
   QString name = "complete TRD vs time spectrum (-100 GeV to 100 GeV) canvas";
   canvas = addCanvas(&file, qPrintable(name));
-  addPlot(new MoPVScaling(canvas));
+  addPlot(new MoPVScalingTime(canvas));
 
   QList<PostAnalysisCanvas*> mopvVsTimeModules;
   for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
