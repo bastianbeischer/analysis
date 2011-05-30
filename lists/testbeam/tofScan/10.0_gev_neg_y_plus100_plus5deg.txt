@@ -1,6 +1,4 @@
 testbeam/20110520/run_1305915924.root
-testbeam/20110520/run_1305916524.root
 testbeam/20110520/run_1305916586.root
-testbeam/20110520/run_1305917186.root
 testbeam/20110520/run_1305917215.root
 testbeam/20110520/run_1305917816.root

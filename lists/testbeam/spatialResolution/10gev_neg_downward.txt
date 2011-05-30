@@ -1,8 +1,3 @@
-testbeam/20110508/run_1304848145.root
-testbeam/20110508/run_1304848583.root
-testbeam/20110508/run_1304848610.root
-testbeam/20110508/run_1304849211.root
-testbeam/20110508/run_1304849982.root
 testbeam/20110508/run_1304850014.root
 testbeam/20110508/run_1304850615.root
 testbeam/20110508/run_1304851215.root
@@ -13,4 +8,3 @@ testbeam/20110508/run_1304853617.root
 testbeam/20110508/run_1304854217.root
 testbeam/20110508/run_1304854818.root
 testbeam/20110508/run_1304855301.root
-testbeam/20110508/run_1304855770.root
