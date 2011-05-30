@@ -27,7 +27,8 @@ SensorTimePlot::SensorTimePlot(SensorTypes::Type type, QDateTime first, QDateTim
   TH1D* histogram = 0;
   
   histogram = new TH1D(qPrintable(title()), "", nBins, t1, t2);
-  addHistogram(histogram);
+  addHistogram(histogram, H1DPlot::L);
+  setDrawOption(H1DPlot::L);
   
   m_normalizationHistogram = new TH1D(qPrintable(title() + "normalization"), "", nBins, t1, t2);
 }
