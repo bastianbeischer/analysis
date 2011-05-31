@@ -32,7 +32,8 @@ public:
   void addFileList(const QString& fileName);
   void addRootFile(const QString& file);
 
-  QDateTime time(int eventNumber);
+  QDateTime startTime();
+  QDateTime stopTime();
 signals:
   void numberOfEventsChanged(int);
 protected:

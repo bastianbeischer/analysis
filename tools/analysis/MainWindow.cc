@@ -442,8 +442,8 @@ void MainWindow::setupPlots()
   m_activePlots.clear();
   m_ui.listWidget->clear();
     
-  QDateTime first = m_reader->time(m_ui.firstEventSpinBox->value());
-  QDateTime last = m_reader->time(m_ui.lastEventSpinBox->value());
+  QDateTime first = m_reader->startTime();
+  QDateTime last = m_reader->stopTime();
 
   if (m_ui.signalHeightTrackerCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new SignalHeight2DPlot);

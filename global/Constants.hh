@@ -27,6 +27,8 @@ namespace Constants
 
   const double TRDTubeRadius = 3.0;        //mm
 
+  const int runLength = 600; // seconds
+
 }
 
 #endif
