@@ -677,10 +677,12 @@ void MainWindow::setupPlots()
     }
   }
   if (m_ui.mcTrackerCheckBox->isChecked()) {
-    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(-11));
-    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(11));
-    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(2212));
-    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(1000020040));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Positron));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Electron));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Proton));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::PiMinus));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::PiPlus));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Helium));
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       if (layer->z() > -240 && layer->z() < 240)
@@ -695,9 +697,11 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new PMTCorrelationPlot);
     m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Horizontal));
     m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Vertical));
-    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(11));
-    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(-11));
-    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(2212));
+    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::Positron));
+    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::Electron));
+    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::Proton));
+    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::PiMinus));
+    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::PiPlus));
   }
 }
 

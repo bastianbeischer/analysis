@@ -3,12 +3,14 @@
 
 #include "RigidityResolutionPlot.hh"
 
+#include "Particle.hh"
+
 class MCRigidityResolutionPlot :
   public RigidityResolutionPlot
 {
   
 public:
-  MCRigidityResolutionPlot(int pdgID = 11);
+  MCRigidityResolutionPlot(const Particle::Type& = Particle::Electron);
   ~MCRigidityResolutionPlot();
   
   void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
