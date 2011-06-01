@@ -21,6 +21,7 @@ public:
   void unzoom();
   void draw(TCanvas*);
   void saveForPostAnalysis(TCanvas*);
+  void positionChanged(double, double);
 
 protected slots:
   void selectPlot(int);

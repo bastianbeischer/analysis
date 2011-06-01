@@ -40,6 +40,12 @@ void PlotCollection::unzoom()
     m_plots[m_selectedPlot]->unzoom();
 }
 
+void PlotCollection::positionChanged(double x, double y)
+{
+  if (m_selectedPlot >= 0 && m_selectedPlot < m_plots.size())
+    m_plots[m_selectedPlot]->positionChanged(x,y);
+}
+
 void PlotCollection::draw(TCanvas* can)
 {
   if (m_selectedPlot >= 0 && m_selectedPlot < m_plots.size())
