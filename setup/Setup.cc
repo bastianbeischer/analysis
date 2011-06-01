@@ -213,7 +213,7 @@ SensorTypes::Type Setup::sensorForId(unsigned short id)
     return tofSensorForId(id);
   //TODO: Tracker, TRD
   Q_ASSERT(false);
-  return SensorTypes::END;
+  return SensorTypes::N_SENSOR_TYPES;
 }
 
 SensorTypes::Type Setup::tofSensorForId(unsigned short id)

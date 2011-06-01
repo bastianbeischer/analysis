@@ -4,11 +4,16 @@
 
 #include "RootQtWidget.hh"
 
+#include <QLayout>
+
 PlotCollection::PlotCollection(AnalysisPlot::Topic topic) :
   QObject(),
   AnalysisPlot(topic),
   m_selectedPlot(0)
 {
+  QWidget* widget = new QWidget;
+  widget->setLayout(new QVBoxLayout);
+  setSecondaryWidget(widget);
 }
 
 PlotCollection::~PlotCollection()
@@ -40,10 +45,33 @@ void PlotCollection::unzoom()
     m_plots[m_selectedPlot]->unzoom();
 }
 
+void PlotCollection::positionChanged(double x, double y)
+{
+  if (m_selectedPlot >= 0 && m_selectedPlot < m_plots.size())
+    m_plots[m_selectedPlot]->positionChanged(x,y);
+}
+
 void PlotCollection::draw(TCanvas* can)
 {
   if (m_selectedPlot >= 0 && m_selectedPlot < m_plots.size())
     m_plots[m_selectedPlot]->draw(can);
+
+  QWidget* collectionSecWidget = secondaryWidget();
+  if (collectionSecWidget != 0) {
+    QLayout* layout = collectionSecWidget->layout();
+    if (layout->count() > 1) {
+      QWidget* prevWidget = layout->itemAt(1)->widget();
+      layout->removeWidget(prevWidget);
+      prevWidget->close();
+    }
+
+    QWidget* plotSecWidget = m_plots[m_selectedPlot]->secondaryWidget();
+    if (plotSecWidget != 0) {
+      layout->addWidget(plotSecWidget);
+      plotSecWidget->show();
+    }
+  }
+
   RootPlot::draw(can);
   Plotter::rootWidget()->updateCanvas();
 }

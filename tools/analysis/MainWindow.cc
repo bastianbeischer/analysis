@@ -78,6 +78,7 @@
 #include "MCTotalEnergyDepositionTRDvsTrackerPlot.hh"
 #include "MCTRDSpectrumPlot.hh"
 #include "MCRigidityResolutionPlot.hh"
+#include "ResidualPlotMC.hh"
 #include "TestbeamRigidityResolutionPlot.hh"
 #include "PMTPlot.hh"
 #include "PMTCorrelationPlot.hh"
@@ -445,8 +446,8 @@ void MainWindow::setupPlots()
   m_activePlots.clear();
   m_ui.listWidget->clear();
     
-  QDateTime first = m_reader->time(m_ui.firstEventSpinBox->value());
-  QDateTime last = m_reader->time(m_ui.lastEventSpinBox->value());
+  QDateTime first = m_reader->startTime();
+  QDateTime last = m_reader->stopTime();
 
   if (m_ui.signalHeightTrackerCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new SignalHeight2DPlot);
@@ -674,12 +675,22 @@ void MainWindow::setupPlots()
   }
   if (m_ui.mcTRDCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new MCTRDSpectrumPlot(0 /* doesnt matter */,MCTRDSpectrumPlot::completeTRD));
+    for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
+      Layer* layer = *layerIt;
+      if (layer->z() > -520 && layer->z() < -240)
+        m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisPlot::MonteCarloTRD, layer));
+    }
   }
   if (m_ui.mcTrackerCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(-11));
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(11));
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(2212));
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(1000020040));
+    for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
+      Layer* layer = *layerIt;
+      if (layer->z() > -240 && layer->z() < 240)
+        m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisPlot::MonteCarloTracker, layer));
+    }
   }
   if (m_ui.testbeamCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::MagnetInstalled, first, last));
@@ -960,16 +971,16 @@ void MainWindow::saveCanvasDialogActionTriggered()
 
 void MainWindow::saveAllCanvasDialogActionTriggered()
 {
+  QStringList fileFormatEndings;
+  fileFormatEndings << "svg" << "pdf" << "eps" << "root" << "png";
   QFileDialog dialog(this, "save all canvases displayed", ".");
   dialog.setFileMode(QFileDialog::DirectoryOnly);
   if (dialog.exec())
     for (int i = 0; i < m_ui.listWidget->count(); ++i) {
       m_ui.listWidget->setCurrentRow(i);
       QString directoryName = dialog.selectedFiles().first();
-      m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".svg");
-      m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".pdf");
-      m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".root");
-      m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".png");
+      foreach (QString fileFormatEnding, fileFormatEndings)
+        m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + "." + fileFormatEnding);
     }
 }
 

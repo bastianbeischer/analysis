@@ -8,7 +8,7 @@ class Settings
 {
   
 public:
-  enum Situation {Unknown=-1, KirunaMuons, KirunaFloat, Testbeam11};
+  enum Situation {Unknown=-1, KirunaMuons, KirunaFlight, Testbeam11};
 
 public:
   Settings();

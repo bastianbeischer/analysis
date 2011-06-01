@@ -1,16 +1,19 @@
 #include "DataChain.hh"
 
 #include <QMutexLocker>
+#include <QRegExp>
 
 #include <TFile.h>
 #include <TList.h>
 
 #include "SimpleEvent.hh"
 #include "DataDescription.hh"
+#include "Constants.hh"
 
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 
 QMutex DataChain::s_mutex;
 
@@ -104,7 +107,16 @@ void DataChain::addRootFile(const char* filename)
   std::cout << " with " << nEntries << " events";
   if (desc) {
     std::cout << " (version: " << desc->softwareVersionHash() << ")" << std::endl;
+    for (int i = 0; i < desc->numberOfRuns(); i++) {
+      QString name(desc->runFileName(i).c_str());
+      QRegExp re("run_(\\d+)");
+      if(name.contains(re)) {
+        unsigned int time = re.cap(1).toUInt();
+        m_runNumbers.push_back(time);
+      }
+    }
   }
+  std::sort(m_runNumbers.begin(), m_runNumbers.end());
 }
 
 SimpleEvent* DataChain::event(unsigned int i)
@@ -173,10 +185,10 @@ QDateTime DataChain::time(int eventNumber)
 
 QDateTime DataChain::startTime()
 {
-  return time(0);
+  return QDateTime::fromTime_t(m_runNumbers.front());
 }
 
 QDateTime DataChain::stopTime()
 {
-  return time(nEntries() - 1);
+  return QDateTime::fromTime_t(m_runNumbers.back() + Constants::runLength);
 }

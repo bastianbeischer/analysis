@@ -33,7 +33,7 @@ void TestbeamRigidityResolutionPlot::processEvent(const QVector<Hit*>& hits, Par
       return;
   }
 
-  if (m_particle->type() == Particle::Proton) {
+  if (m_particle->type() == Particle::Proton || m_particle->type() == Particle::PiPlus || m_particle->type() == Particle::PiMinus) {
     if (c1Signal > 200 || c2Signal > 200)  // throw away all particles which DO produce cherenkov light
       return;
   }

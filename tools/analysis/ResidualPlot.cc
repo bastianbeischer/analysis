@@ -33,9 +33,9 @@ ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer)
   setTitle(QString("Residuals layer at %1").arg(layer->z()));
 
   double max = 0.;
-  if (topic == AnalysisPlot::ResidualsTracker)
+  if (topic == AnalysisPlot::ResidualsTracker || topic == AnalysisPlot::MonteCarloTracker)
     max = 3.;
-  if (topic == AnalysisPlot::ResidualsTRD)
+  if (topic == AnalysisPlot::ResidualsTRD || topic == AnalysisPlot::MonteCarloTRD)
     max = 10.;
 
   unsigned short nElements = layer->nElements();
@@ -50,7 +50,7 @@ ResidualPlot::~ResidualPlot()
 {
 }
 
-void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* /*event*/)
+void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
   const Track* track = particle->track();
 
@@ -65,38 +65,24 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, S
   //   return;
 
   // only select tracks which didn't pass through the magnet
-  if ((flags & ParticleInformation::MagnetCollision))
-    return;
+  //if ((flags & ParticleInformation::MagnetCollision))
+  //  return;
 
   // remove hits in this layer from hits for track fit
-  QVector<Hit*> hitsForFit;
   QVector<Hit*> hitsInThisLayer;
 
-  const QVector<Hit*>::const_iterator endIt = hits.end();
-  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+  const QVector<Hit*>::const_iterator endIt = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != endIt; ++it) {
     Hit* hit = *it;
     double z = round(hit->position().z()*100)/100.;
-    if (fabs(z - m_layer->z()) > 5) {
-      hitsForFit.push_back(hit);
-    }
-    else {
+    if (fabs(z - m_layer->z()) <= 5)
       hitsInThisLayer.push_back(hit);
-    }
   }
 
-  Track* mytrack = 0;
-  if (track->type() == Track::StraightLine)
-    mytrack = new StraightLine;
-  else if (track->type() == Track::BrokenLine)
-    mytrack = new BrokenLine;
-  else if (track->type() == Track::CenteredBrokenLine)
-    mytrack = new CenteredBrokenLine;
-  else if (track->type() == Track::CenteredBrokenLine2D)
-    mytrack = new CenteredBrokenLine2D;
-  else mytrack = 0;
+  Track* mytrack = referenceTrack(hits, particle, event);
 
   // fit and fill histograms
-  if (mytrack->fit(hitsForFit)) {
+  if (mytrack) {
     QVector<Hit*>::const_iterator layerEndIt = hitsInThisLayer.end();
     for (QVector<Hit*>::const_iterator it = hitsInThisLayer.begin(); it != layerEndIt; ++it) {
       Hit* hit = *it;
@@ -135,6 +121,42 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, S
 
       histogram()->Fill(index*nChannels + channel, res);
     }
+    delete mytrack;
   }
-  delete mytrack;
+}
+
+Track* ResidualPlot::referenceTrack(const QVector<Hit*>&, Particle* particle, SimpleEvent* /*event*/)
+{
+  const Track* track = particle->track();
+
+  // remove hits in this layer from hits for track fit
+  QVector<Hit*> hitsForFit;
+
+  const QVector<Hit*>::const_iterator endIt = track->hits().end();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != endIt; ++it) {
+    Hit* hit = *it;
+    double z = round(hit->position().z()*100)/100.;
+    if (fabs(z - m_layer->z()) > 5)
+      hitsForFit.push_back(hit);
+  }
+
+  Track* mytrack = 0;
+  if (track->type() == Track::StraightLine)
+    mytrack = new StraightLine;
+  else if (track->type() == Track::BrokenLine)
+    mytrack = new BrokenLine;
+  else if (track->type() == Track::CenteredBrokenLine)
+    mytrack = new CenteredBrokenLine;
+  else if (track->type() == Track::CenteredBrokenLine2D)
+    mytrack = new CenteredBrokenLine2D;
+  else mytrack = 0;
+
+  if (!mytrack)
+    return 0;
+  else if(mytrack->fit(hitsForFit))
+    return mytrack;
+  else {
+    delete mytrack;
+    return 0;
+  }
 }

@@ -52,6 +52,7 @@ CLASSES = \
   MomentumSpectrumPlot \
   Plotter \
   ResidualPlot \
+  ResidualPlotMC \
   SignalHeightPlot \
   SignalHeight2DPlot \
   SingleLayerTrackingEfficiencyPlot \

@@ -127,7 +127,9 @@ void Plotter::selectPlot(int i, bool inhibitDraw)
     m_plots[i]->draw(s_rootWidget->GetCanvas());
     if (!inhibitDraw) {
       if (m_layout->count() > 1) {
-        m_layout->itemAt(0)->widget()->close();
+        QWidget* prevWidget = m_layout->itemAt(0)->widget();
+        m_layout->removeWidget(prevWidget);
+        prevWidget->close();
       }
       QWidget* secondaryWidget = m_plots[i]->secondaryWidget();
       if (secondaryWidget) {

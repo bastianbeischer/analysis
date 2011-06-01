@@ -9,8 +9,6 @@
 
 #include <cmath>
 
-#include <QDebug>
-
 SensorTimePlot::SensorTimePlot(SensorTypes::Type type, QDateTime first, QDateTime last)
   : AnalysisPlot(AnalysisPlot::SlowControl)
   , H1DPlot()
@@ -26,7 +24,9 @@ SensorTimePlot::SensorTimePlot(SensorTypes::Type type, QDateTime first, QDateTim
   TH1D* histogram = 0;
   
   histogram = new TH1D(qPrintable(title()), "", nBins, t1, t2);
-  addHistogram(histogram);
+  histogram->SetMarkerSize(0.5);
+  addHistogram(histogram, H1DPlot::P);
+  setDrawOption(H1DPlot::P);
   
   m_normalizationHistogram = new TH1D(qPrintable(title() + "normalization"), "", nBins, t1, t2);
 }

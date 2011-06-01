@@ -5,4 +5,3 @@ testbeam/20110514/run_1305408653.root
 testbeam/20110514/run_1305409253.root
 testbeam/20110514/run_1305409854.root
 testbeam/20110515/run_1305410454.root
-testbeam/20110515/run_1305411055.root

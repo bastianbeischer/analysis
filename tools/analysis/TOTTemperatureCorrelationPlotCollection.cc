@@ -5,6 +5,7 @@
 #include "TOTTemperatureCorrelationPlot.hh"
 #include "TOFChannelSelectionWidget.hh"
 
+#include <QLayout>
 
 TOTTemperatureCorrelationPlotCollection::TOTTemperatureCorrelationPlotCollection() :
   PlotCollection(AnalysisPlot::TimeOverThreshold)
@@ -25,7 +26,7 @@ TOTTemperatureCorrelationPlotCollection::TOTTemperatureCorrelationPlotCollection
   }
 
   TOFChannelSelectionWidget* widget = new TOFChannelSelectionWidget(moduleIDs);
-  setSecondaryWidget(widget);
+  secondaryWidget()->layout()->addWidget(widget);
   connect(widget, SIGNAL(channelChanged(int)), this, SLOT(selectPlot(int)));
 
   setTitle("temperature correlation - all channels");
