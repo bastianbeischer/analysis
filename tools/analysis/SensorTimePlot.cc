@@ -10,8 +10,6 @@
 
 #include <cmath>
 
-#include <QDebug>
-
 SensorTimePlot::SensorTimePlot(SensorTypes::Type type, QDateTime first, QDateTime last)
   : AnalysisPlot(AnalysisPlot::SlowControl)
   , H1DPlot()
@@ -61,7 +59,6 @@ void SensorTimePlot::finalize()
 
 void SensorTimePlot::draw(TCanvas* canvas)
 {
-  qDebug() << "draw with option " << H1DPlot::drawOption();
   if (m_drawn) {
     H1DPlot::draw(canvas);
   } else {
