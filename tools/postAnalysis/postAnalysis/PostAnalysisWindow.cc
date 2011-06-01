@@ -106,36 +106,60 @@ void PostAnalysisWindow::addPlot(PostAnalysisPlot* plot)
 
 void PostAnalysisWindow::saveButtonClicked()
 {
-  QString fileEnding;
-  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "svg;;pdf;;root;;png", &fileEnding);
+  QStringList fileFormatEndings;
+  fileFormatEndings << "svg" << "pdf" << "eps" << "root" << "png";
+  QStringList filters;
+  foreach(QString ending, fileFormatEndings) {
+    QString description = ending.toUpper();
+    filters.append( description + "(*." + ending + ")" );
+  }
+  QString selectedFilter;
+  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "All Files(*.*);;" + filters.join(";;"), &selectedFilter);
+
   if (fileName.isEmpty())
     return;
-  fileEnding.prepend('.');
-  if (!fileName.endsWith(fileEnding))
-    fileName.append(fileEnding);
-  m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(fileName));
+
+  // if file name contains an ending, use that. Otherwise use selected filter
+  QString fileEnding;
+  if (fileName.contains('.')) {
+    fileEnding = fileName.split('.').last().toLower();
+  }
+  else {
+    fileEnding = selectedFilter.split("(").first().toLower();
+  }
+
+  // if filter == all, save all endings, otherwise use previously determined ending
+  if(fileEnding == "all files"){
+    foreach(QString fileFormatEnding, fileFormatEndings)
+      m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(fileName + "." + fileFormatEnding));
+  }
+  else{
+    if (!fileEnding.startsWith('.'))
+      fileEnding.prepend('.');
+    if (!fileName.endsWith(fileEnding))
+      fileName.append(fileEnding);
+    m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(fileName));
+  }
 }
 
 void PostAnalysisWindow::saveAllButtonClicked()
 {
+  QStringList fileFormatEndings;
+  fileFormatEndings << "svg" << "pdf" << "eps" << "root" << "png";
   QFileDialog dialog(this, "save all canvases displayed", ".");
   dialog.setFileMode(QFileDialog::DirectoryOnly);
   if (dialog.exec()) {
     for (int i = 0; i < m_ui->canvasListWidget->count(); ++i) {
       m_ui->canvasListWidget->setCurrentRow(i);
       QString directoryName = dialog.selectedFiles().first();
-      m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(directoryName + '/' + m_ui->titleLabel->text() + ".svg"));
-      m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(directoryName + '/' + m_ui->titleLabel->text() + ".pdf"));
-      m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(directoryName + '/' + m_ui->titleLabel->text() + ".root"));
-      m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(directoryName + '/' + m_ui->titleLabel->text() + ".png"));
+      foreach (QString fileFormatEnding, fileFormatEndings)
+        m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(directoryName + '/' + m_ui->titleLabel->text() + "." + fileFormatEnding));
     }
     for (int i = 0; i < m_ui->plotListWidget->count(); ++i) {
       m_ui->plotListWidget->setCurrentRow(i);
       QString directoryName = dialog.selectedFiles().first();
-      m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(directoryName + '/' + m_ui->titleLabel->text() + ".svg"));
-      m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(directoryName + '/' + m_ui->titleLabel->text() + ".pdf"));
-      m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(directoryName + '/' + m_ui->titleLabel->text() + ".root"));
-      m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(directoryName + '/' + m_ui->titleLabel->text() + ".png"));
+      foreach (QString fileFormatEnding, fileFormatEndings)
+        m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(directoryName + '/' + m_ui->titleLabel->text() + "." + fileFormatEnding));
     }
   }
 }
