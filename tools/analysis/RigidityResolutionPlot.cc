@@ -67,6 +67,10 @@ RigidityResolutionPlot::RigidityResolutionPlot(AnalysisPlot::Topic topic, int pd
     expectedRes->SetParameter(2, 0.04195);
     expectedRes->SetParameter(3, 0.3024);
     break;
+  case Particle::PiPlus: case Particle::PiMinus:
+    expectedRes->SetParameter(2, 0.0759);
+    expectedRes->SetParameter(3, 0.2356);
+    break;
   default:
     expectedRes->SetParameter(2, 0.077);
     expectedRes->SetParameter(3, 0.3175);
