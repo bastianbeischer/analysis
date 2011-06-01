@@ -9,14 +9,14 @@ class TOTLayer : public AnalysisPlot
 {
 public:
   enum Layer {Lower, Upper, All};
-  TOTLayer(Layer type);
+  TOTLayer(Layer layer);
   virtual ~TOTLayer() { };
   virtual TOTLayer* create(Layer layer) const = 0;
   QString getPlotName();
 protected:
   QString m_plotName;
   Layer m_layer;
-  QString layerName(Layer type);
+  QString layerName(Layer layer);
   bool checkLayer(double z);
 };
 
