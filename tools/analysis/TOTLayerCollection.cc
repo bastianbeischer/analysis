@@ -7,11 +7,14 @@
 #include <QComboBox>
 
 #include "StringSpinBox.hh"
+#include <QString>
 
 TOTLayerCollection::TOTLayerCollection(TOTLayer* plot) :
   PlotCollection(AnalysisPlot::TimeOverThreshold)
 {  
   QComboBox* comboBox = new QComboBox();
+  
+  QString plotName = plot->getPlotName();
   
   comboBox->addItem("All Layers");
   addPlot(plot->create(TOTLayer::All));
@@ -33,7 +36,7 @@ TOTLayerCollection::TOTLayerCollection(TOTLayer* plot) :
   secondaryWidget()->layout()->addWidget(selectionWidget);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPlot(int)));
   
-  setTitle("time over threshold per layer");
+  setTitle(plotName);
 }
 
 TOTLayerCollection::~TOTLayerCollection()

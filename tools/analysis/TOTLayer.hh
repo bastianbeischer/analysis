@@ -12,7 +12,9 @@ public:
   TOTLayer(Layer type);
   virtual ~TOTLayer() { };
   virtual TOTLayer* create(Layer layer) const = 0;
+  QString getPlotName();
 protected:
+  QString m_plotName;
   Layer m_layer;
   QString layerName(Layer type);
   bool checkLayer(double z);

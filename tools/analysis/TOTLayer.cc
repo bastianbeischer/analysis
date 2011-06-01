@@ -10,7 +10,7 @@ QString TOTLayer::layerName(Layer layer)
   switch (layer) {
     case Lower: return "lower";
     case Upper: return "upper";
-    case All:   return "all";
+    case All:   return "total";
   }
   return QString();
 }
@@ -27,3 +27,7 @@ bool TOTLayer::checkLayer(double z)
   return false;
 }
 
+QString TOTLayer::getPlotName()
+{
+  return m_plotName;
+}

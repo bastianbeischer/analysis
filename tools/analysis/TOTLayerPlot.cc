@@ -17,7 +17,9 @@
 #include <QDebug>
 
 TOTLayerPlot::TOTLayerPlot() : H1DPlot() , TOTLayer(TOTLayer::All)
-{}
+{
+  m_plotName = "time over threshold per layer";
+}
 
 TOTLayerPlot::TOTLayerPlot(TOTLayer::Layer layer)
   : H1DPlot()
@@ -72,3 +74,4 @@ void TOTLayerPlot::processEvent(const QVector<Hit*>&, Particle* particle, Simple
     histogram()->Fill(totSum / nTofHits);
   }
 } 
+
