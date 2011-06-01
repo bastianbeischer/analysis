@@ -97,6 +97,7 @@ CLASSES = \
   HeightTimePlot \
   TriggerRateTimePlot \
   SensorTimePlot \
+  SettingTimePlot \
   MCTotalEnergyDepositionTRDvsTrackerPlot \
   MCTRDSpectrumPlot \
   RigidityResolutionPlot \

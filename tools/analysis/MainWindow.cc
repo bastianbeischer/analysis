@@ -70,6 +70,7 @@
 #include "TOTTimeCorrelationPlot.hh"
 #include "TemperatureTimePlot.hh"
 #include "PressureTimePlot.hh"
+#include "SettingTimePlot.hh"
 #include "ChannelTriggerProbabilityPlot.hh"
 #include "TOFTimeShiftTriggerPlot.hh"
 #include "TriggerRateTimePlot.hh"
@@ -681,6 +682,10 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(1000020040));
   }
   if (m_ui.testbeamCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::MagnetInstalled, first, last));
+    m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::Momentum, first, last));
+    m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::Polarity, first, last));
+    m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::AbsMomentum, first, last));
     m_ui.plotter->addPlot(new TRDSpectrumCherenkovPlotCollection());
     QVector<SensorTypes::Type> beamSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::beamSensors());
     foreach(SensorTypes::Type sensor, beamSensors)
