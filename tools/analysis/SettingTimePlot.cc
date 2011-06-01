@@ -39,7 +39,8 @@ SettingTimePlot::SettingTimePlot(SettingType type, QDateTime first, QDateTime la
   TH1D* histogram = 0;
   
   histogram = new TH1D(qPrintable(title()), "", nBins, t1, t2);
-  addHistogram(histogram);
+  addHistogram(histogram, H1DPlot::P);
+  setDrawOption(H1DPlot::P);
   
   m_normalizationHistogram = new TH1D(qPrintable(title() + "normalization"), "", nBins, t1, t2);
 }
