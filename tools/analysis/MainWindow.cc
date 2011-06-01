@@ -502,9 +502,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Upper, Hit::tracker));
     m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Lower, Hit::tracker));
     m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::All, Hit::tracker));
-    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::Upper));
-    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::Lower));
-    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::All));
+    m_ui.plotter->addPlot(new TOTLayerCollection(new TOTMomentumCorrelation()));
     m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::Upper));
     m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::Lower));
     m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::All));
