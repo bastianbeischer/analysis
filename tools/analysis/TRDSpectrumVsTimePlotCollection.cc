@@ -5,6 +5,8 @@
 #include "Setup.hh"
 #include "DetectorElement.hh"
 
+#include <QLayout>
+
 TRDSpectrumVsTimePlotCollection::TRDSpectrumVsTimePlotCollection(const QDateTime& first, const QDateTime& last) :
   PlotCollection(AnalysisPlot::SignalHeightTRD)
 {
@@ -25,7 +27,7 @@ TRDSpectrumVsTimePlotCollection::TRDSpectrumVsTimePlotCollection(const QDateTime
   }
 
   DetectorSelectionWidget* selectionWidget = new DetectorSelectionWidget(moduleIDs, 16);
-  setSecondaryWidget(selectionWidget);
+  secondaryWidget()->layout()->addWidget(selectionWidget);
   connect(selectionWidget, SIGNAL(selectPlot(int)), this, SLOT(selectPlot(int)));
 
   setTitle("spectrum vs time - all modules");

@@ -32,7 +32,7 @@ TRDSpectrumCherenkovPlotCollection::TRDSpectrumCherenkovPlotCollection() :
   layout->addWidget(comboBox);
   layout->addStretch();
 
-  setSecondaryWidget(selectionWidget);
+  secondaryWidget()->layout()->addWidget(selectionWidget);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPlot(int)));
 
   setTitle("TRD spectra - cherenkov cuts");

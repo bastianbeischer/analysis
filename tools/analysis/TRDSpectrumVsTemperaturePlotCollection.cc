@@ -5,6 +5,8 @@
 #include "Setup.hh"
 #include "DetectorElement.hh"
 
+#include <QLayout>
+
 TRDSpectrumVsTemperaturePlotCollection::TRDSpectrumVsTemperaturePlotCollection() :
   PlotCollection(AnalysisPlot::SignalHeightTRD)
 {
@@ -25,7 +27,7 @@ TRDSpectrumVsTemperaturePlotCollection::TRDSpectrumVsTemperaturePlotCollection()
   }
 
   DetectorSelectionWidget* selectionWidget = new DetectorSelectionWidget(moduleIDs, 16);
-  setSecondaryWidget(selectionWidget);
+  secondaryWidget()->layout()->addWidget(selectionWidget);
   connect(selectionWidget, SIGNAL(selectPlot(int)), this, SLOT(selectPlot(int)));
 
   setTitle("spectrum vs temperature - all modules");
