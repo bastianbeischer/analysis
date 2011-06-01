@@ -22,7 +22,7 @@
 
 TOTTemperatureCorrelationPlot::TOTTemperatureCorrelationPlot(unsigned int id)
   : AnalysisPlot(TimeOverThreshold)
-  , H2DPlot()
+  , H2DProjectionPlot()
   , m_id(id)
 {
   QString title = QString("time over threshold temperature correlation 0x%1").arg(0x8000 | id, 0, 16);
