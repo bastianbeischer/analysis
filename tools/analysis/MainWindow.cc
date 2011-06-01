@@ -956,16 +956,16 @@ void MainWindow::saveCanvasDialogActionTriggered()
 
 void MainWindow::saveAllCanvasDialogActionTriggered()
 {
+  QStringList fileFormatEndings;
+  fileFormatEndings << "svg" << "pdf" << "eps" << "root" << "png";
   QFileDialog dialog(this, "save all canvases displayed", ".");
   dialog.setFileMode(QFileDialog::DirectoryOnly);
   if (dialog.exec())
     for (int i = 0; i < m_ui.listWidget->count(); ++i) {
       m_ui.listWidget->setCurrentRow(i);
       QString directoryName = dialog.selectedFiles().first();
-      m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".svg");
-      m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".pdf");
-      m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".root");
-      m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".png");
+      foreach (QString fileFormatEnding, fileFormatEndings)
+        m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + "." + fileFormatEnding);
     }
 }
 
