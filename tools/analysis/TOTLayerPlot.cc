@@ -16,10 +16,12 @@
 #include <QString>
 #include <QDebug>
 
-TOTLayerPlot::TOTLayerPlot(TofLayer layer)
-  : AnalysisPlot(TimeOverThreshold)
-  , H1DPlot()
-  , m_layer(layer)
+TOTLayerPlot::TOTLayerPlot() : H1DPlot() , TOTLayer(TOTLayer::All)
+{}
+
+TOTLayerPlot::TOTLayerPlot(TOTLayer::Layer layer)
+  : H1DPlot()
+  , TOTLayer(layer)
 {
   QString title = QString("time over threshold "+layerName(layer)+" layer");
   setTitle(title);
@@ -30,6 +32,11 @@ TOTLayerPlot::TOTLayerPlot(TofLayer layer)
 
 TOTLayerPlot::~TOTLayerPlot()
 {}
+
+TOTLayerPlot* TOTLayerPlot::create(TOTLayer::Layer layer) const
+{ 
+  return new TOTLayerPlot(layer); 
+}
 
 void TOTLayerPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
@@ -65,25 +72,3 @@ void TOTLayerPlot::processEvent(const QVector<Hit*>&, Particle* particle, Simple
     histogram()->Fill(totSum / nTofHits);
   }
 } 
-
-QString TOTLayerPlot::layerName(TofLayer layer)
-{
-  switch (layer) {
-    case Lower: return "lower";
-    case Upper: return "upper";
-    case All: return "total";
-  }
-  return QString();
-}
-
-bool TOTLayerPlot::checkLayer(double z)
-{
-  if (m_layer == Upper && z > 0) {
-    return true;
-  } else if (m_layer == Lower && z < 0) {
-    return true;
-  } else if (m_layer == All) {
-    return true;
-  }
-  return false;
-}
