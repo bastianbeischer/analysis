@@ -34,7 +34,7 @@
 #include "ClusterLengthPlot.hh"
 #include "ClusterShapePlot.hh"
 #include "BetaPlot.hh"
-#include "TOFTimeShiftPlot.hh"
+#include "TOFTimeShiftPlotCollection.hh"
 #include "BetaMomentumCorrelationPlot.hh"
 #include "CutStatisticsPlot.hh"
 #include "TrackerLayerStatisticsPlot.hh"
@@ -601,14 +601,8 @@ void MainWindow::setupPlots()
       if (element->type() == DetectorElement::tof)
         m_ui.plotter->addPlot(new TOFTimeDifferencePlot(element->id()));
     }
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8000, 0x8010));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8004, 0x8014));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8008, 0x8018));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x800c, 0x801c));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x802c, 0x803c));
+
+    m_ui.plotter->addPlot(new TOFTimeShiftPlotCollection);
 
     m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8000, 0x8010, 0x8020, 0x8030));
     m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8000, 0x8010, 0x8024, 0x8034));
@@ -688,7 +682,7 @@ void MainWindow::setupPlots()
     }
   }
   if (m_ui.testbeamCheckBox->isChecked()) {
-    m_ui.plotter->addPlot(new TRDSpectrumCherenkovPlotCollection());
+    m_ui.plotter->addPlot(new TRDSpectrumCherenkovPlotCollection);
     QVector<SensorTypes::Type> beamSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::beamSensors());
     foreach(SensorTypes::Type sensor, beamSensors)
       m_ui.plotter->addPlot(new PMTPlot(sensor));

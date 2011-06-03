@@ -15,20 +15,24 @@
 #include <iostream>
 #include <QDebug>
 
-TOFTimeShiftPlot::TOFTimeShiftPlot(unsigned short topBarId, unsigned short bottomBarId)
+TOFTimeShiftPlot::TOFTimeShiftPlot(unsigned short topBarId, unsigned short bottomBarId, unsigned short referenceChannel)
   : AnalysisPlot(AnalysisPlot::CalibrationTOF)
   , H2DProjectionPlot()
   , m_topBarId(topBarId)
   , m_bottomBarId(bottomBarId)
+  , m_referenceChannel(referenceChannel)
 {
-  QString title = QString("time shift 0x%1 0x%2").arg(topBarId, 0, 16).arg(bottomBarId, 0, 16);
+  QString title = QString("time shift 0x%1 0x%2 ch 0x%3").arg(topBarId, 0, 16).arg(bottomBarId, 0, 16).arg(referenceChannel, 0, 16);
   setTitle(title);
   int nBins = 100;
   double min = -10;
   double max = 10;
   TH2D* histogram = new TH2D(qPrintable(title), "", 8, -0.5, 7.5, nBins, min-.5*(max-min)/nBins, max-.5*(max-min)/nBins);
+  for (unsigned int ch = 0; ch < 8; ++ch) {
+    unsigned int id = (ch < 4) ? (topBarId | ch) : (bottomBarId | (ch - 4));
+    histogram->GetXaxis()->SetBinLabel(ch + 1, qPrintable(QString("0x%4").arg(id, 0, 16)));
+  }
   setAxisTitle("channel", "#Deltat / ns", "");
-  histogram->GetXaxis()->SetRangeUser(0.5, 7.5);
   addHistogram(histogram);
 }
 
@@ -45,7 +49,7 @@ void TOFTimeShiftPlot::processEvent(const QVector<Hit*>&, Particle* particle, Si
   const QVector<Hit*>& hits = track->hits();
 
   ParticleInformation::Flags flags = particle->information()->flags();
-  if (!(flags & ParticleInformation::AllTrackerLayers))
+  if (!(flags & ParticleInformation::Chi2Good))
     return;
   double t[8];
   for (int i = 0; i < 8; ++i)
@@ -58,7 +62,7 @@ void TOFTimeShiftPlot::processEvent(const QVector<Hit*>&, Particle* particle, Si
       const TVector3& position = cluster->position();
       if (qAbs(track->y(position.z())) > 10)
         continue;
-      if (qAbs(track->x(position.z())-position.x()) > 20)
+      if (qAbs(track->x(position.z())-position.x()) > 15)
         continue;
       foreach(Hit* hit, cluster->hits()) {
         TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
@@ -68,9 +72,12 @@ void TOFTimeShiftPlot::processEvent(const QVector<Hit*>&, Particle* particle, Si
     }
   }
 
-  for (int i = 0; i < 8; ++i) {
-    if (t[i] < 0)
-      continue;
-    histogram()->Fill(i, t[i]-t[0]);
+  for (int ch = 0; ch < 8; ++ch)
+    if (t[ch] < 0)
+      return;
+
+  for (unsigned int ch = 0; ch < 8; ++ch) {
+    if (ch != m_referenceChannel)
+      histogram()->Fill(ch, t[ch]-t[m_referenceChannel]);
   }
 }
