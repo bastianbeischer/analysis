@@ -3,8 +3,8 @@
 #include "SimpleEvent.hh"
 #include "ParticleProperties.hh"
 
-MCRigidityResolutionPlot::MCRigidityResolutionPlot(int pdgID) :
-  RigidityResolutionPlot(AnalysisPlot::MonteCarloTracker, pdgID)
+MCRigidityResolutionPlot::MCRigidityResolutionPlot(const Particle::Type& type) :
+  RigidityResolutionPlot(AnalysisPlot::MonteCarloTracker, type)
 {
 }
 

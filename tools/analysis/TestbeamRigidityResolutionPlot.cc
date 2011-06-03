@@ -5,8 +5,8 @@
 #include "SettingsManager.hh"
 #include "Settings.hh"
 
-TestbeamRigidityResolutionPlot::TestbeamRigidityResolutionPlot(int pdgID) :
-  RigidityResolutionPlot(AnalysisPlot::Testbeam, pdgID)
+TestbeamRigidityResolutionPlot::TestbeamRigidityResolutionPlot(const Particle::Type& type) :
+  RigidityResolutionPlot(AnalysisPlot::Testbeam, type)
 {
 }
 
@@ -33,7 +33,7 @@ void TestbeamRigidityResolutionPlot::processEvent(const QVector<Hit*>& hits, Par
       return;
   }
 
-  if (m_particle->type() == Particle::Proton) {
+  if (m_particle->type() == Particle::Proton || m_particle->type() == Particle::PiPlus || m_particle->type() == Particle::PiMinus) {
     if (c1Signal > 200 || c2Signal > 200)  // throw away all particles which DO produce cherenkov light
       return;
   }

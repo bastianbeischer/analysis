@@ -4,6 +4,8 @@
 #include "AnalysisPlot.hh"
 #include "H1DPlot.hh"
 
+#include "Particle.hh"
+
 #include <QMap>
 #include <QPair>
 
@@ -13,7 +15,7 @@ class RootQtWidget;
 class RigidityResolutionPlot : public AnalysisPlot, public H1DPlot
 {
 public:
-  RigidityResolutionPlot(AnalysisPlot::Topic, int pdgID = 11);
+  RigidityResolutionPlot(AnalysisPlot::Topic, const Particle::Type& = Particle::Electron);
   ~RigidityResolutionPlot();
 
   virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);

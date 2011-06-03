@@ -5,6 +5,8 @@
 #include "TOTTimeCorrelationPlot.hh"
 #include "TOFChannelSelectionWidget.hh"
 
+#include <QLayout>
+
 TOTTimeCorrelationPlotCollection::TOTTimeCorrelationPlotCollection(const QDateTime& first, const QDateTime& last) :
   PlotCollection(AnalysisPlot::TimeOverThreshold)
 {
@@ -24,7 +26,7 @@ TOTTimeCorrelationPlotCollection::TOTTimeCorrelationPlotCollection(const QDateTi
   }
 
   TOFChannelSelectionWidget* widget = new TOFChannelSelectionWidget(moduleIDs);
-  setSecondaryWidget(widget);
+  secondaryWidget()->layout()->addWidget(widget);
   connect(widget, SIGNAL(channelChanged(int)), this, SLOT(selectPlot(int)));
 
   setTitle("time correlation - all channels");

@@ -23,10 +23,10 @@
 
 #include "TF1.h"
 
-RigidityResolutionPlot::RigidityResolutionPlot(AnalysisPlot::Topic topic, int pdgID)
+RigidityResolutionPlot::RigidityResolutionPlot(AnalysisPlot::Topic topic, const Particle::Type& type)
   : AnalysisPlot(topic)
   , H1DPlot()
-  , m_particle(ParticleDB::instance()->lookupPdgId(pdgID))
+  , m_particle(ParticleDB::instance()->lookupType(type))
   , m_rigidityRangeLower(-0.025)
   , m_rigidityRangeUppper(10.025)
   , m_numberOfBins(201)
@@ -66,6 +66,10 @@ RigidityResolutionPlot::RigidityResolutionPlot(AnalysisPlot::Topic topic, int pd
   case Particle::Helium:
     expectedRes->SetParameter(2, 0.04195);
     expectedRes->SetParameter(3, 0.3024);
+    break;
+  case Particle::PiPlus: case Particle::PiMinus:
+    expectedRes->SetParameter(2, 0.0759);
+    expectedRes->SetParameter(3, 0.2356);
     break;
   default:
     expectedRes->SetParameter(2, 0.077);
@@ -193,7 +197,9 @@ void RigidityResolutionPlot::update()
       continue;
     //double axisMax = hist->GetXaxis()->GetXmax();
     //TF1* fit = new TF1("gausfit","gaus", -axisMax, axisMax);
-    TFitResultPtr r = hist->Fit("gaus","Q0S");
+    double mean = hist->GetMean();
+    double rms = hist->GetRMS();
+    TFitResultPtr r = hist->Fit("gaus","Q0SR", 0, mean-2*rms, mean+2*rms);
     double inverseSigma = r->Parameter(2);
     double inverseSigmaErr = r->ParError(2);
     double rigidityRes = inverseSigma;
