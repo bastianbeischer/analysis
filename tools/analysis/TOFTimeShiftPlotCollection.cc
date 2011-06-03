@@ -3,6 +3,7 @@
 #include "TOFTimeShiftPlot.hh"
 #include "TOFChannelSelectionWidget.hh"
 
+#include <QLayout>
 
 TOFTimeShiftPlotCollection::TOFTimeShiftPlotCollection() :
   PlotCollection(AnalysisPlot::CalibrationTOF)
@@ -36,9 +37,8 @@ TOFTimeShiftPlotCollection::TOFTimeShiftPlotCollection() :
   } */
 
   TOFChannelSelectionWidget* widget = new TOFChannelSelectionWidget(moduleIDs);
-  setSecondaryWidget(widget);
   connect(widget, SIGNAL(channelChanged(int)), this, SLOT(selectPlot(int)));
-
+  secondaryWidget()->layout()->addWidget(widget);
   setTitle("time shift collection");
 }
 
