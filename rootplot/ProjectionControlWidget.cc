@@ -36,25 +36,29 @@ ProjectionControlWidget::~ProjectionControlWidget()
 {
 }
 
-void ProjectionControlWidget::switchState(bool state)
+void ProjectionControlWidget::setProjectionType(H2DProjectionPlot::ProjectionType type)
 {
-  m_projectionPlot->setProjectionWidgetState(state);
-  m_spinBox->setEnabled(state);
+  switch (type) {
+    case H2DProjectionPlot::NoProjection: m_comboBox->setCurrentIndex(0); break;
+    case H2DProjectionPlot::ProjectionOnY: m_comboBox->setCurrentIndex(1); break;
+    case H2DProjectionPlot::ProjectionOnX: m_comboBox->setCurrentIndex(2); break;
+  }
 }
 
 void ProjectionControlWidget::changeProjectionType(int index)
 {
   switch (index) {
   case 0:
-    switchState(false);
+    m_projectionPlot->setProjectionType(H2DProjectionPlot::NoProjection);
+    m_spinBox->setEnabled(false);
     break;
   case 1:
-    m_projectionPlot->setProjectionType(H2DProjectionPlot::y);
-    switchState(true);
+    m_projectionPlot->setProjectionType(H2DProjectionPlot::ProjectionOnY);
+    m_spinBox->setEnabled(true);
     break;
   case 2:
-    m_projectionPlot->setProjectionType(H2DProjectionPlot::x);
-    switchState(true);
+    m_projectionPlot->setProjectionType(H2DProjectionPlot::ProjectionOnX);
+    m_spinBox->setEnabled(true);
     break;
   default:
     Q_ASSERT(false);

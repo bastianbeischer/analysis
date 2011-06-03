@@ -12,7 +12,9 @@ PlotCollection::PlotCollection(AnalysisPlot::Topic topic) :
   m_selectedPlot(0)
 {
   QWidget* widget = new QWidget;
-  widget->setLayout(new QVBoxLayout);
+  QVBoxLayout* layout = new QVBoxLayout;
+  layout->setContentsMargins(0, 0, 0, 0);
+  widget->setLayout(layout);
   setSecondaryWidget(widget);
 }
 

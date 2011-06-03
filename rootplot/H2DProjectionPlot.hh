@@ -12,7 +12,7 @@ class TH1D;
 class H2DProjectionPlot : public QObject, public H2DPlot {
 Q_OBJECT
 public:
-  enum ProjectionType {x, y};
+  enum ProjectionType {NoProjection, ProjectionOnX, ProjectionOnY};
 
 public:
   H2DProjectionPlot();
@@ -26,7 +26,6 @@ protected:
   RootQtWidget* projectionWidget() const {return m_projectionWidget;}
 
 public slots:
-  void setProjectionWidgetState(bool);
   void setProjectionType(ProjectionType type);
 
 private:

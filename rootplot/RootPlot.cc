@@ -21,7 +21,8 @@ RootPlot::RootPlot()
 
 RootPlot::~RootPlot()
 {
-  delete m_secondaryWidget;
+  if (m_secondaryWidget)
+    delete m_secondaryWidget;
   qDeleteAll(m_latex);
   qDeleteAll(m_legend);
   qDeleteAll(m_function);

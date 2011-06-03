@@ -9,6 +9,7 @@
 #include "TOFBar.hh"
 #include "Particle.hh"
 #include "Track.hh"
+#include "ProjectionControlWidget.hh"
 
 #include <TH2.h>
 #include <TVector3.h>
@@ -34,6 +35,7 @@ TOFTimeShiftPlot::TOFTimeShiftPlot(unsigned short topBarId, unsigned short botto
   }
   setAxisTitle("channel", "#Deltat / ns", "");
   addHistogram(histogram);
+  controlWidget()->setProjectionType(ProjectionOnY);
 }
 
 TOFTimeShiftPlot::~TOFTimeShiftPlot()

@@ -22,6 +22,7 @@ Plotter::Plotter(QWidget* parent)
   , m_updateTimer(this)
   , m_selectedPlot(-1)
 {
+  m_layout->setContentsMargins(0, 0, 0, 0);
   s_rootWidget = new RootQtWidget(this);
   m_layout->addWidget(s_rootWidget);
   gROOT->cd();

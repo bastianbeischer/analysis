@@ -5,6 +5,7 @@
 RootQtWidget::RootQtWidget(QWidget* parent) :
   TQtWidget(parent)
 {
+  setContentsMargins(0, 0, 0, 0);
 }
 
 RootQtWidget::~RootQtWidget()

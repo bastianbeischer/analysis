@@ -16,30 +16,30 @@ H2DProjectionPlot::H2DProjectionPlot() :
   m_projectionHistY(0),
   m_controlWidget(new ProjectionControlWidget(this)),
   m_projectionWidget(new RootQtWidget),
-  m_type(y)
+  m_type(NoProjection)
 {
   m_projectionWidget->hide();
 
-  setSecondaryWidget(new QWidget);
-  QVBoxLayout* layout = new QVBoxLayout(secondaryWidget());
+  QVBoxLayout* layout = new QVBoxLayout;
   layout->setContentsMargins(0, 0, 0, 0);
   layout->addWidget(m_controlWidget);
   layout->addWidget(m_projectionWidget);
+  QWidget* widget = new QWidget;
+  widget->setLayout(layout);
+  setSecondaryWidget(widget);
 }
 
 H2DProjectionPlot::~H2DProjectionPlot()
 {
-  delete m_projectionHistX;
-  delete m_projectionHistY;
-}
-
-void H2DProjectionPlot::setProjectionWidgetState(bool state)
-{
-  state ? m_projectionWidget->show() : m_projectionWidget->hide();
+  if (m_projectionHistX)
+    delete m_projectionHistX;
+  if (m_projectionHistY)
+    delete m_projectionHistY;
 }
 
 void H2DProjectionPlot::setProjectionType(ProjectionType type)
 {
+  m_projectionWidget->setVisible(type != NoProjection);
   m_type = type;
 }
 
@@ -53,11 +53,11 @@ void H2DProjectionPlot::positionChanged(double posX, double posY)
     histogram()->GetBinXYZ(bin, binx, biny, binz);
     TH1D* proj = 0;
     switch(m_type) {
-    case (x): 
+    case (ProjectionOnX): 
       m_projectionHistX = histogram()->ProjectionX(qPrintable(title() + "_px"), biny - numberOfBins/2, biny + numberOfBins/2);
       proj = m_projectionHistX;
       break;
-    case (y) :
+    case (ProjectionOnY) :
       m_projectionHistY = histogram()->ProjectionY(qPrintable(title() + "_py"), binx - numberOfBins/2, binx + numberOfBins/2);
       proj = m_projectionHistY;
       break;
