@@ -7,14 +7,12 @@ class StringSpinBox;
 class QSpinBox;
 class QCheckBox;
 
-class DetectorSelectionWidget :
-  public QWidget
+class DetectorSelectionWidget : public QWidget
 {
-  
   Q_OBJECT
 
 public:
-  DetectorSelectionWidget(const QStringList&, const int&);
+  DetectorSelectionWidget(const QStringList&, int);
   ~DetectorSelectionWidget();
   
 signals:

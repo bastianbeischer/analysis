@@ -8,7 +8,7 @@
 #include <QSpinBox>
 #include <QCheckBox>
 
-DetectorSelectionWidget::DetectorSelectionWidget(const QStringList& moduleIDs, const int& nChannels) :
+DetectorSelectionWidget::DetectorSelectionWidget(const QStringList& moduleIDs, int nChannels) :
   m_moduleSpinBox(new StringSpinBox(moduleIDs)),
   m_channelSpinBox(new QSpinBox),
   m_individualChannelCheckBox(new QCheckBox("show individual channels"))
