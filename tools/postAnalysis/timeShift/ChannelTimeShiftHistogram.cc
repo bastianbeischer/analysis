@@ -19,43 +19,44 @@
 ChannelTimeShiftHistogram::ChannelTimeShiftHistogram(PostAnalysisCanvas* canvas, int ch)
   : PostAnalysisPlot()
   , H1DPlot()
-  , m_line(0)
+  , m_lines()
 {
   TH2* histogram = canvas->histograms2D().at(0);
   histogram->Draw("COLZ");
-  QString title = QString("%1 channel %2").arg(canvas->name()).arg(ch);
+  QString title = QString("%1 channel %2").arg(histogram->GetName()).arg(ch);
   setTitle(title);
-  addHistogram(histogram->ProjectionY(qPrintable(title+"originalProjection"), ch+1, ch+1));
-  TH1D* projection = histogram->ProjectionY(qPrintable(title+"modifiedProjection"), ch+1, ch+1);
-  if (ch > 0) projection->Smooth(10);
-  //if (ch > 0) projection->Rebin(2);
-  projection->SetName(qPrintable(title));
-  projection->SetLineColor(kRed);
+  TH1D* originalProjection = histogram->ProjectionY(qPrintable(title+"originalProjection"), ch+1, ch+1);
+  originalProjection->GetXaxis()->SetRangeUser(-4, 4);
+  addHistogram(originalProjection);
+  TH1D* modifiedProjection = histogram->ProjectionY(qPrintable(title+"modifiedProjection"), ch+1, ch+1);
+  if (modifiedProjection->GetEntries() > 0) modifiedProjection->Smooth(10);
+  //if (modifiedProjection->GetEntries()) modifiedProjection->Rebin(2);
+  modifiedProjection->SetName(qPrintable(title));
+  modifiedProjection->SetLineColor(kRed);
   setAxisTitle("#Deltat / ns", "");
-  TF1* function = new TF1(qPrintable(title + "Function"), "gaus", projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
-  projection->Fit(function, "QN0");
-  if (ch > 0) {
+  TF1* function = new TF1(qPrintable(title + "Function"), "gaus", modifiedProjection->GetXaxis()->GetXmin(), modifiedProjection->GetXaxis()->GetXmax());
+  if (modifiedProjection->GetEntries() > 0) {
+    modifiedProjection->Fit(function, "QN0");
     for (int i = 0; i < 5; ++i) {
       double mean = function->GetParameter(1);
       double sigma = qMax(0.5, function->GetParameter(2));
       function->SetRange(mean - sigma, mean + sigma);
-      projection->Fit(function, "RQN0");
+      modifiedProjection->Fit(function, "RQN0");
     }
   }
-  function->SetRange(projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
+  function->SetRange(modifiedProjection->GetXaxis()->GetXmin(), modifiedProjection->GetXaxis()->GetXmax());
   function->SetNpx(1000);
   QStringList stringList = title.split(" ");
   int id = (stringList[ch < 4 ? 2 : 3].remove(0, 2).toInt(0, 16)) | (ch - (ch < 4 ? 0 : 4));
-  std::cout << "0x" <<std::hex << id << "=" << -function->GetParameter(1) << std::endl;
-  projection->GetXaxis()->SetRangeUser(-3, 3);
-  addHistogram(projection);
+  qDebug() << qPrintable(QString("0x%1=%2").arg(id, 0, 16).arg(-function->GetParameter(1)));
+  addHistogram(modifiedProjection);
   addFunction(function);
   TLatex* latex = 0;
   latex = RootPlot::newLatex(0.15, 0.85);
   latex->SetTextColor(kRed);
   latex->SetTitle(qPrintable(QString("mean  = %1%2 ns")
-    .arg(projection->GetMean() < 0 ? '-' : ' ')
-    .arg(qAbs(projection->GetMean()), 0, 'f', 3, ' ')));
+    .arg(modifiedProjection->GetMean() < 0 ? '-' : ' ')
+    .arg(qAbs(modifiedProjection->GetMean()), 0, 'f', 3, ' ')));
   addLatex(latex);
   latex = RootPlot::newLatex(0.15, 0.82);
   latex->SetTextColor(kRed);
@@ -63,20 +64,30 @@ ChannelTimeShiftHistogram::ChannelTimeShiftHistogram(PostAnalysisCanvas* canvas,
     .arg(function->GetParameter(1) < 0 ? '-' : ' ')
     .arg(qAbs(function->GetParameter(1)), 0, 'f', 3, ' ')));
   addLatex(latex);
-  //m_line = new TLine(projection->GetMean(), 0, projection->GetMean(), 1.05 * projection->GetMaximum());
-  m_line = new TLine(0.4, 0, 0.4, 1.05 * projection->GetMaximum());
-  m_line->SetLineColor(kGreen);
-  m_line->SetLineStyle(2);
-  m_line->SetLineWidth(2);
+  TLine* line = 0;
+  line = new TLine(modifiedProjection->GetMean(), 0, modifiedProjection->GetMean(), 1.05 * qMax(modifiedProjection->GetMaximum(), originalProjection->GetMaximum()));
+  line->SetLineColor(kRed);
+  line->SetLineStyle(2);
+  line->SetLineWidth(2);
+  m_lines.append(line);
+
+  for (int i = -4; i < 4; ++i) {
+    line = new TLine(i+0.4, 0.1, i+0.4, 1.05 * qMax(modifiedProjection->GetMaximum(), originalProjection->GetMaximum()));
+    line->SetLineColor(kGreen);
+    line->SetLineStyle(2);
+    line->SetLineWidth(2);
+    m_lines.append(line);
+  }
 }
 
 ChannelTimeShiftHistogram::~ChannelTimeShiftHistogram()
 {
-  delete m_line;
+  qDeleteAll(m_lines);
 }
   
 void ChannelTimeShiftHistogram::draw(TCanvas* canvas)
 {
   H1DPlot::draw(canvas);
-  m_line->Draw();
+  foreach (TLine* line, m_lines)
+    line->Draw();
 }

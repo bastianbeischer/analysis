@@ -23,7 +23,7 @@ TOFTimeShiftPlot::TOFTimeShiftPlot(unsigned short topBarId, unsigned short botto
   , m_bottomBarId(bottomBarId)
   , m_referenceChannel(referenceChannel)
 {
-  QString title = QString("time shift 0x%1 0x%2 ch 0x%3").arg(topBarId, 0, 16).arg(bottomBarId, 0, 16).arg(referenceChannel, 0, 16);
+  QString title = QString("time shift 0x%1 0x%2 ch %3").arg(topBarId, 0, 16).arg(bottomBarId, 0, 16).arg(referenceChannel);
   setTitle(title);
   int nBins = 100;
   double min = -10;

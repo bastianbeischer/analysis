@@ -4,6 +4,8 @@
 #include "PostAnalysisPlot.hh"
 #include "H1DPlot.hh"
 
+#include <QVector>
+
 class PostAnalysisCanvas;
 class TLine;
 
@@ -13,7 +15,7 @@ public:
   virtual ~ChannelTimeShiftHistogram();
   virtual void draw(TCanvas*);
 private:
-  TLine* m_line;
+  QVector<TLine*> m_lines;
 };
 
 #endif
