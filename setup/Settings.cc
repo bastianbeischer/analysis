@@ -19,3 +19,10 @@ Settings::~Settings()
 {
 }
 
+bool Settings::isAboveThreshold(const double& mass) const
+{
+  double dndp = 4.51819e-4;
+  double energy = sqrt(m_momentum*m_momentum + mass*mass);
+  double threshold = (energy/m_momentum - 1)/dndp;
+  return m_pressure > threshold;
+}

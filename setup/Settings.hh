@@ -32,7 +32,9 @@ public:
   int polarity() const {return m_polarity;}
   double pressure() const {return m_pressure;}
   bool magnet() const {return m_magnet;}
-  
+
+  bool isAboveThreshold(const double&) const;
+
 private:
   Situation m_situation;
   int m_identifier;
