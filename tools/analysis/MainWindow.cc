@@ -62,6 +62,7 @@
 #include "TOTBetaCorrelation.hh"
 #include "TOTPlot.hh"
 #include "TOTLayerPlot.hh"
+#include "TOTLayerCollection.hh"
 #include "TOTIonizationCorrelation.hh"
 #include "TOTTemperatureCorrelationPlotCollection.hh"
 #include "TOTTimeCorrelationPlotCollection.hh"
@@ -494,21 +495,11 @@ void MainWindow::setupPlots()
   }
   if (m_ui.timeOverThresholdCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TOTPlot);
-    m_ui.plotter->addPlot(new TOTLayerPlot(TOTLayerPlot::Upper));
-    m_ui.plotter->addPlot(new TOTLayerPlot(TOTLayerPlot::Lower));
-    m_ui.plotter->addPlot(new TOTLayerPlot(TOTLayerPlot::All));
-    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Upper, Hit::trd));
-    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Lower, Hit::trd));
-    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::All, Hit::trd));
-    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Upper, Hit::tracker));
-    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Lower, Hit::tracker));
-    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::All, Hit::tracker));
-    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::Upper));
-    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::Lower));
-    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::All));
-    m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::Upper));
-    m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::Lower));
-    m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::All));
+    m_ui.plotter->addPlot(new TOTLayerCollection(new TOTLayerPlot()));
+    m_ui.plotter->addPlot(new TOTLayerCollection(new TOTIonizationCorrelation(Hit::trd)));
+    m_ui.plotter->addPlot(new TOTLayerCollection(new TOTIonizationCorrelation(Hit::tracker)));
+    m_ui.plotter->addPlot(new TOTLayerCollection(new TOTMomentumCorrelation()));
+    m_ui.plotter->addPlot(new TOTLayerCollection(new TOTBetaCorrelation()));
     m_ui.plotter->addPlot(new TOTTemperatureCorrelationPlotCollection);
     m_ui.plotter->addPlot(new TOTTimeCorrelationPlotCollection(first, last));
     // for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {

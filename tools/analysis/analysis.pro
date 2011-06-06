@@ -83,8 +83,10 @@ CLASSES = \
   TrackingEfficiencyVsMomentumPlot \
   TOTMomentumCorrelation \
   TOTBetaCorrelation \
+  TOTLayer \
   TOTPlot \
   TOTLayerPlot \
+  TOTLayerCollection \
   TOTIonizationCorrelation \
   TOTTemperatureCorrelationPlotCollection \
   TOTTimeCorrelationPlotCollection \

@@ -2,7 +2,7 @@
 #define TOTTimeCorrelationPlot_hh
 
 #include "AnalysisPlot.hh"
-#include "H2DPlot.hh"
+#include "H2DProjectionPlot.hh"
 #include "SensorTypes.hh"
 
 #include <QVector>
@@ -13,7 +13,7 @@ class Hit;
 class Particle;
 class SimpleEvent;
 
-class TOTTimeCorrelationPlot : public AnalysisPlot, public H2DPlot {
+class TOTTimeCorrelationPlot : public AnalysisPlot, public H2DProjectionPlot {
 public:
   TOTTimeCorrelationPlot(unsigned int tofChannel, QDateTime first, QDateTime last);
   ~TOTTimeCorrelationPlot();

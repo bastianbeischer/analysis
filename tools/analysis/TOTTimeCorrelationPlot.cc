@@ -22,7 +22,7 @@
 
 TOTTimeCorrelationPlot::TOTTimeCorrelationPlot(unsigned int id, QDateTime first, QDateTime last)
   : AnalysisPlot(TimeOverThreshold)
-  , H2DPlot()
+  , H2DProjectionPlot()
   , m_id(id)
 {
   QString title = QString("time over threshold time correlation 0x%1").arg(0x8000 | id, 0, 16);

@@ -15,12 +15,16 @@
 
 #include <QDebug>
 
-TOTBetaCorrelation::TOTBetaCorrelation(TofLayer layer)
-  : AnalysisPlot(AnalysisPlot::TimeOverThreshold)
-  , H2DPlot()
-  , m_layer(layer)
+TOTBetaCorrelation::TOTBetaCorrelation() : H2DPlot() , TOTLayer(TOTLayer::All)
 {
-  QString htitle = "time over threshold beta correlation " + layerName(layer) + " tof";
+  m_plotName = "time over threshold beta correlation";
+}
+
+TOTBetaCorrelation::TOTBetaCorrelation(TOTLayer::Layer layer)
+  : H2DPlot()
+  , TOTLayer(layer)
+{
+  QString htitle = m_plotName + " " + layerName(layer) + " tof";
   setTitle(htitle);
   TH2D* histogram = new TH2D(qPrintable(htitle), "", 100, 0, 1.6, 150, 0, 100);
   setAxisTitle("beta", "sum time over threshold / ns", "");
@@ -30,6 +34,10 @@ TOTBetaCorrelation::TOTBetaCorrelation(TofLayer layer)
 TOTBetaCorrelation::~TOTBetaCorrelation()
 {}
 
+TOTBetaCorrelation* TOTBetaCorrelation::create(TOTLayer::Layer layer) const
+{ 
+  return new TOTBetaCorrelation(layer); 
+}
 
 void TOTBetaCorrelation::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
@@ -63,28 +71,6 @@ void TOTBetaCorrelation::processEvent(const QVector<Hit*>&, Particle* particle, 
   }
   if (nTofHits > 0)
     histogram()->Fill(particle->beta(), totSum / nTofHits);
-}
-
-QString TOTBetaCorrelation::layerName(TofLayer layer)
-{
-  switch (layer) {
-    case Lower: return "lower";
-    case Upper: return "upper";
-    case All: return "all";
-  }
-  return QString();
-}
-
-bool TOTBetaCorrelation::checkLayer(double z)
-{
-  if (m_layer == Upper && z > 0) {
-    return true;
-  } else if (m_layer == Lower && z < 0) {
-    return true;
-  } else if (m_layer == All) {
-    return true;
-  }
-  return false;
 }
   
 void TOTBetaCorrelation::finalize()
