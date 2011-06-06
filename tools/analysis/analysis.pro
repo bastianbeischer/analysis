@@ -101,6 +101,7 @@ CLASSES = \
   SettingTimePlot \
   MCTotalEnergyDepositionTRDvsTrackerPlot \
   MCTRDSpectrumPlot \
+  MCTRDCalibrationPlot \
   RigidityResolutionPlot \
   MCRigidityResolutionPlot \
   TestbeamRigidityResolutionPlot \

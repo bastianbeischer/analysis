@@ -78,6 +78,7 @@
 #include "MCTotalEnergyDepositionTRDvsTrackerPlot.hh"
 #include "MCTRDSpectrumPlot.hh"
 #include "MCRigidityResolutionPlot.hh"
+#include "MCTRDCalibrationPlot.hh"
 #include "ResidualPlotMC.hh"
 #include "TestbeamRigidityResolutionPlot.hh"
 #include "PMTPlot.hh"
@@ -680,6 +681,7 @@ void MainWindow::setupPlots()
       if (layer->z() > -520 && layer->z() < -240)
         m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisPlot::MonteCarloTRD, layer));
     }
+    m_ui.plotter->addPlot(new MCTRDCalibrationPlot());
   }
   if (m_ui.mcTrackerCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(-11));
