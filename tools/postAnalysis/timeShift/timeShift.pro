@@ -25,7 +25,8 @@ LIBS += \
 CLASSES = \
   MainWindow \
   ChannelTimeShiftHistogram \
-  BarTimeShiftHistogram
+  BarTimeShiftHistogram \
+  TimeShiftContainer
 
 SOURCES = \
   main.cc

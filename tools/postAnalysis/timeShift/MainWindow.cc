@@ -5,6 +5,7 @@
 #include "BarTimeShiftHistogram.hh"
 #include "RootStyle.hh"
 #include "PostAnalysisCanvas.hh"
+#include "TimeShiftContainer.hh"
 
 #include <TCanvas.h>
 #include <TFile.h>
@@ -28,21 +29,19 @@ void MainWindow::setupAnalysis()
   TFile file(qPrintable(m_analysisFile));
   gROOT->cd();
 
-  unsigned int bars[][2] = {
-    {0x8000, 0x8010}, {0x8004, 0x8014}, {0x8008, 0x8018}, {0x800c, 0x801c},
-    {0x8020, 0x8030}, {0x8024, 0x8034}, {0x8028, 0x8038}, {0x802c, 0x803c}
-  };
-
   for (int refCh = 0; refCh < 8; ++refCh) {
     for (unsigned int bar = 0; bar < 8; ++bar) {
       for (int ch = 0; ch < 8; ++ch) {
         QString title = QString("time shift 0x%1 0x%2 ch %3 canvas")
-          .arg(bars[bar][0], 0, 16).arg(bars[bar][1], 0, 16).arg(refCh);
+          .arg(TimeShiftContainer::s_bars[bar][0], 0, 16).arg(TimeShiftContainer::s_bars[bar][1], 0, 16).arg(refCh);
         canvas = addCanvas(&file, qPrintable(title));
         addPlot(new ChannelTimeShiftHistogram(canvas, ch));
       }
     }
   }
+  TimeShiftContainer::instance()->dump();
+  TimeShiftContainer::instance()->shiftOnFirstChannel();
+  TimeShiftContainer::instance()->dump();
 
   QVector<PostAnalysisCanvas*> canvases;
   canvases.append(addCanvas(&file, "bar shift 0x8000 0x8010 0x8020 0x8030 canvas"));
@@ -63,4 +62,5 @@ void MainWindow::setupAnalysis()
   canvases.append(addCanvas(&file, "bar shift 0x800c 0x801c 0x802c 0x803c canvas"));
   addPlot(new BarTimeShiftHistogram(canvases));
   file.Close();
+  TimeShiftContainer::instance()->printResults();
 }

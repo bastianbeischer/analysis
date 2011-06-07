@@ -1,5 +1,6 @@
 #include "ChannelTimeShiftHistogram.hh"
 #include "PostAnalysisCanvas.hh"
+#include "TimeShiftContainer.hh"
 
 #include <TH1.h>
 #include <TH2.h>
@@ -35,8 +36,11 @@ ChannelTimeShiftHistogram::ChannelTimeShiftHistogram(PostAnalysisCanvas* canvas,
   modifiedProjection->SetLineColor(kRed);
   setAxisTitle("#Deltat / ns", "");
   TF1* function = new TF1(qPrintable(title + "Function"), "gaus", modifiedProjection->GetXaxis()->GetXmin(), modifiedProjection->GetXaxis()->GetXmax());
+  function->SetParameters(modifiedProjection->GetMaximum(), modifiedProjection->GetMean(), modifiedProjection->GetRMS());
+  function->FixParameter(1, modifiedProjection->GetMean());
   if (modifiedProjection->GetEntries() > 0) {
     modifiedProjection->Fit(function, "QN0");
+    function->ReleaseParameter(1);
     for (int i = 0; i < 5; ++i) {
       double mean = function->GetParameter(1);
       double sigma = qMax(0.5, function->GetParameter(2));
@@ -48,7 +52,9 @@ ChannelTimeShiftHistogram::ChannelTimeShiftHistogram(PostAnalysisCanvas* canvas,
   function->SetNpx(1000);
   QStringList stringList = title.split(" ");
   int id = (stringList[ch < 4 ? 2 : 3].remove(0, 2).toInt(0, 16)) | (ch - (ch < 4 ? 0 : 4));
-  qDebug() << qPrintable(QString("0x%1=%2").arg(id, 0, 16).arg(-function->GetParameter(1)));
+  int refCh = stringList[5].toInt();
+  //qDebug() << qPrintable(QString("0x%1=%2").arg(id, 0, 16).arg(-function->GetParameter(1)));
+  TimeShiftContainer::instance()->setData(id, refCh, -function->GetParameter(1));
   addHistogram(modifiedProjection);
   addFunction(function);
   TLatex* latex = 0;
