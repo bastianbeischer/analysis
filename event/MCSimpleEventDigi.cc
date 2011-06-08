@@ -3,7 +3,6 @@
 
 ClassImp(MCSimpleEventDigi);
 
-
 MCSimpleEventDigi::MCSimpleEventDigi()
   : TObject()
 {
@@ -22,7 +21,7 @@ MCSimpleEventDigi::MCSimpleEventDigi(const MCSimpleEventDigi& other) :
 {
   m_signals.clear();
 
-  const std::vector <const MCDigiSignal*> otherMcDigiSignals = other.Signals();
+  const std::vector <const MCDigiSignal*> otherMcDigiSignals = other.digiSignals();
   for (unsigned int i = 0; i < otherMcDigiSignals.size(); i++) {
     const MCDigiSignal* otherMcDigiSignal = otherMcDigiSignals.at(i);
     m_signals.push_back(new MCDigiSignal( *otherMcDigiSignal ));
@@ -37,7 +36,7 @@ MCSimpleEventDigi::~MCSimpleEventDigi()
 }
 
 
-double MCSimpleEventDigi::SignalSum() const
+double MCSimpleEventDigi::signalSum() const
 {
   //sum up all signals (check if thy belong to one channel, atm only for trd true)
   if (m_signals.size() == 0)
