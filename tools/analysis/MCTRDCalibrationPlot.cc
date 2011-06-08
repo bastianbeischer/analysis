@@ -46,11 +46,11 @@ void MCTRDCalibrationPlot::processEvent(const QVector<Hit*>&, Particle*, SimpleE
     const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       trdHits << *it;
-      qDebug("trd hit id = 0x%x at pos (%f %f %f)", (*it)->detId(), (*it)->position().x(), (*it)->position().y(), (*it)->position().z());
+      //qDebug("trd hit id = 0x%x at pos (%f %f %f)", (*it)->detId(), (*it)->position().x(), (*it)->position().y(), (*it)->position().z());
     }
   }
 
-  qDebug("trdhits: %i", trdHits.size());
+  //qDebug("trdhits: %i", trdHits.size());
 
   std::vector<const MCSimpleEventDigi*>::const_iterator itDigi;
   for (itDigi = mcDigis.begin(); itDigi != mcDigis.end(); ++itDigi) {
@@ -79,8 +79,8 @@ void MCTRDCalibrationPlot::processEvent(const QVector<Hit*>&, Particle*, SimpleE
     //end bugfix
 
 
-    TVector3 pos = (*itDigi)->Signals().at(0)->hitPosition;
-    qDebug("trd digi id = 0x%x at pos (%f %f %f)", channelID, pos.x(), pos.y(), pos.z());
+    //TVector3 pos = (*itDigi)->Signals().at(0)->hitPosition;
+    //qDebug("trd digi id = 0x%x at pos (%f %f %f)", channelID, pos.x(), pos.y(), pos.z());
 
     //find corresponding hit
     double signal = 0.;
