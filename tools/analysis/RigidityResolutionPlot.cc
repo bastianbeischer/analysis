@@ -23,10 +23,10 @@
 
 #include "TF1.h"
 
-RigidityResolutionPlot::RigidityResolutionPlot(AnalysisPlot::Topic topic, int pdgID)
+RigidityResolutionPlot::RigidityResolutionPlot(AnalysisPlot::Topic topic, const Particle::Type& type)
   : AnalysisPlot(topic)
   , H1DPlot()
-  , m_particle(ParticleDB::instance()->lookupPdgId(pdgID))
+  , m_particle(ParticleDB::instance()->lookupType(type))
   , m_rigidityRangeLower(-0.025)
   , m_rigidityRangeUppper(10.025)
   , m_numberOfBins(201)
@@ -197,7 +197,9 @@ void RigidityResolutionPlot::update()
       continue;
     //double axisMax = hist->GetXaxis()->GetXmax();
     //TF1* fit = new TF1("gausfit","gaus", -axisMax, axisMax);
-    TFitResultPtr r = hist->Fit("gaus","Q0S");
+    double mean = hist->GetMean();
+    double rms = hist->GetRMS();
+    TFitResultPtr r = hist->Fit("gaus","Q0SR", 0, mean-2*rms, mean+2*rms);
     double inverseSigma = r->Parameter(2);
     double inverseSigmaErr = r->ParError(2);
     double rigidityRes = inverseSigma;

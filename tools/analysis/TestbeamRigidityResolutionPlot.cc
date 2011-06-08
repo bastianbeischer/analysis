@@ -5,8 +5,8 @@
 #include "SettingsManager.hh"
 #include "Settings.hh"
 
-TestbeamRigidityResolutionPlot::TestbeamRigidityResolutionPlot(int pdgID) :
-  RigidityResolutionPlot(AnalysisPlot::Testbeam, pdgID)
+TestbeamRigidityResolutionPlot::TestbeamRigidityResolutionPlot(const Particle::Type& type) :
+  RigidityResolutionPlot(AnalysisPlot::Testbeam, type)
 {
 }
 
