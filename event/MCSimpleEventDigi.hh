@@ -27,6 +27,8 @@ public:
   void DetID(unsigned short id) {m_detID = id;}
   void Type(Hit::ModuleType type) {m_type = type;}
 
+  double SignalSum() const;
+
 
 private:
   Hit::ModuleType m_type;
