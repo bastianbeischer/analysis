@@ -14,14 +14,14 @@ MCTRDCalibrationPlot::MCTRDCalibrationPlot()
   , H2DPlot()
 {
   setTitle("MC TRD Calibration");
-  TH2D* histogram = new TH2D(qPrintable(title()), "", 100, 0, 100, 100, -100, 3000);
+  TH2D* histogram = new TH2D(qPrintable(title()), "", 1000, -5, 100, 1000, -5, 100);
   setAxisTitle("MC energy deposition / keV", "MC Signal ADCCs", "");
   addHistogram(histogram);
 }
 
 void MCTRDCalibrationPlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
 {
-  qDebug("new event");
+  //qDebug("new event");
   if (event->contentType() != SimpleEvent::MonteCarlo)
     return;
 
@@ -92,7 +92,7 @@ void MCTRDCalibrationPlot::processEvent(const QVector<Hit*>&, Particle*, SimpleE
       }
     }
 
-    qDebug("Filling %f, %f", enDep, signal);
+    //qDebug("Filling %f, %f", enDep, signal);
     histogram()->Fill(enDep, signal);
   }
 
