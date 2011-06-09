@@ -20,12 +20,12 @@
 
 TOFTimeShiftTriggerPlot::TOFTimeShiftTriggerPlot()
   : AnalysisPlot(AnalysisPlot::CalibrationTOF)
-  , H2DPlot()
+  , H2DProjectionPlot()
 {
   setTitle("time shift tigger");
-  int nBins = 100;
-  double min = -10;
-  double max = 10;
+  int nBins = 80;
+  double min = -6;
+  double max = 2;
   TH2D* histogram = new TH2D(qPrintable(title()), "", Constants::nTofChannels, 0, Constants::nTofChannels,
     nBins, min-.5*(max-min)/nBins, max-.5*(max-min)/nBins);
   setAxisTitle("", "#Deltat / ns", "");
@@ -63,6 +63,18 @@ void TOFTimeShiftTriggerPlot::processEvent(const QVector<Hit*>&, Particle* parti
         }
       }
     }
+  }
+}
+
+void TOFTimeShiftTriggerPlot::finalize()
+{
+  double nBinsY = histogram()->GetYaxis()->GetNbins();
+  for (int binX = 1; binX <= Constants::nTofChannels; ++binX) {
+    double sum = 0;
+    for (int binY = 1; binY <= nBinsY; ++binY)
+      sum+= histogram()->GetBinContent(binX, binY);
+    for (int binY = 1; binY <= nBinsY; ++binY)
+      histogram()->SetBinContent(binX, binY, histogram()->GetBinContent(binX, binY) / sum);
   }
 }
 

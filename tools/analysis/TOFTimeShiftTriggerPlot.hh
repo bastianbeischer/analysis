@@ -2,14 +2,15 @@
 #define TOFTimeShiftTriggerPlot_hh
 
 #include "AnalysisPlot.hh"
-#include "H2DPlot.hh"
+#include "H2DProjectionPlot.hh"
 
-class TOFTimeShiftTriggerPlot : public AnalysisPlot, public H2DPlot {
+class TOFTimeShiftTriggerPlot : public AnalysisPlot, public H2DProjectionPlot {
 public:
   TOFTimeShiftTriggerPlot();
   virtual ~TOFTimeShiftTriggerPlot();
   virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
-  void draw(TCanvas* canvas);
+  virtual void finalize();
+  virtual void draw(TCanvas* canvas);
 };
 
 #endif
