@@ -66,6 +66,7 @@ void SettingsManager::readSettings()
     int firstRun = m_configFile->value("first_run").toInt();
     int lastRun = m_configFile->value("last_run").toInt();
     int polarity = m_configFile->value("polarity", 0).toString() == "positive" ? 1 : -1;
+    double pressure = m_configFile->value("pressure", 0.).toDouble();
     double momentum = m_configFile->value("momentum", 0.).toDouble();
     bool magnet = m_configFile->value("magnet", "yes").toString() == "yes" ? true : false;
 
@@ -81,6 +82,7 @@ void SettingsManager::readSettings()
     settings->setFirstRun(firstRun);
     settings->setLastRun(lastRun);
     settings->setMomentum(momentum);
+    settings->setPressure(pressure);
     settings->setMagnet(magnet);
     settings->setPolarity(polarity);
     settings->setSituation(situation);
