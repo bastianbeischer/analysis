@@ -28,15 +28,15 @@ void TestbeamRigidityResolutionPlot::processEvent(const QVector<Hit*>& hits, Par
   double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
   double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
 
-  if (m_particle->type() == Particle::Electron || m_particle->type() == Particle::Positron) {
-    if (c1Signal < 200 || c2Signal < 200) // throw away all particles which DO NOT produce cherenkov light
-      return;
-  }
+  double threshold = 200;
+  if ( (c1Signal < threshold && c2Signal > threshold) || (c1Signal > threshold && c2Signal < threshold) ) // throw away all events where cherenkov info is inconsistent
+    return;
 
-  if (m_particle->type() == Particle::Proton || m_particle->type() == Particle::PiPlus || m_particle->type() == Particle::PiMinus) {
-    if (c1Signal > 200 || c2Signal > 200)  // throw away all particles which DO produce cherenkov light
-      return;
-  }
+  bool aboveThreshold = settings->isAboveThreshold(m_particle->mass());
+  if (aboveThreshold && c1Signal < threshold && c2Signal < threshold) // throw away all particles which DO NOT produce cherenkov light
+    return;
+  else if (!aboveThreshold && c1Signal > threshold && c2Signal > threshold)  // throw away all particles which DO produce cherenkov light
+    return;
 
   RigidityResolutionPlot::processEvent(hits, particle, event);
 }
