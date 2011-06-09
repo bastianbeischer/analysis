@@ -1,5 +1,6 @@
 #include "TimeShiftContainer.hh"
 
+#include <QSettings>
 #include <QDebug>
 #include <iostream>
 #include <cmath>
@@ -12,10 +13,13 @@ unsigned int TimeShiftContainer::s_bars[8][2] = {
 };
 
 TimeShiftContainer::TimeShiftContainer()
+  : m_configFile()
 {
-  for (int ch = 0; ch < Constants::nTofChannels; ++ch)
+  for (int ch = 0; ch < Constants::nTofChannels; ++ch) {
+    m_channelShift[ch] = 0;
     for (int barCh = 0; barCh < 2*Constants::nTofSipmsPerBar; ++barCh)
       m_data[ch][barCh] = NAN;
+  }
 }
 
 TimeShiftContainer::~TimeShiftContainer()
@@ -72,7 +76,10 @@ void TimeShiftContainer::printResults()
     double sum = 0.;
     for (int refCh = 0; refCh < 2*Constants::nTofSipmsPerBar; ++refCh)
       sum+= m_data[ch][refCh];
-    std::cout << "0x" << std::hex << (0x8000 + ch) << '=' << (sum / (2*Constants::nTofSipmsPerBar)) << std::endl;
+    std::cout
+      << "0x" << std::hex << (0x8000 + ch) << '='
+      << (sum / (2*Constants::nTofSipmsPerBar) + m_channelShift[ch])
+      << std::endl;
   }
 }
   
@@ -90,4 +97,14 @@ void TimeShiftContainer::setData(int id, int channel, double value)
   Q_ASSERT(0 <= i && i < Constants::nTofChannels);
   Q_ASSERT(0 <= channel && channel <= 2*Constants::nTofSipmsPerBar);
   m_data[i][channel] = value;
+}
+
+void TimeShiftContainer::setConfigFile(const QString& file)
+{
+  QSettings settings(file, QSettings::IniFormat);
+  for (int ch = 0; ch < Constants::nTofChannels; ++ch) {
+    int id = 0x8000 + ch;
+    double shift = settings.value("tofTimeShift/0x" + QString::number(id, 16), 1).toDouble();
+    m_channelShift[ch] = shift;
+  }
 }

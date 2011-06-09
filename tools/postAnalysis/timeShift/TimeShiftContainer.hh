@@ -3,7 +3,7 @@
 
 #include "Constants.hh"
 
-#include <QMultiMap>
+#include <QString>
 
 class TimeShiftContainer {
 public:
@@ -11,6 +11,7 @@ public:
   static TimeShiftContainer* instance();
   double data(int id, int channel);
   void setData(int id, int channel, double);
+  void setConfigFile(const QString&);
   void shiftOnFirstChannel();
   void applyBarShift();
   void dump();
@@ -19,6 +20,8 @@ private:
   TimeShiftContainer();
   ~TimeShiftContainer();
   static TimeShiftContainer* s_instance;
+  QString m_configFile;
+  double m_channelShift[Constants::nTofChannels];
   double m_data[Constants::nTofChannels][2*Constants::nTofSipmsPerBar];
 };
 
