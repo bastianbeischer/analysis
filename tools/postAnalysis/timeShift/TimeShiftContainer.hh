@@ -14,14 +14,16 @@ public:
   void setConfigFile(const QString&);
   void shiftOnFirstChannel();
   void applyBarShift();
+  void finalize();
   void dump();
-  void printResults();
+  void saveToConfigfile(const QString&);
 private:
   TimeShiftContainer();
   ~TimeShiftContainer();
   static TimeShiftContainer* s_instance;
   QString m_configFile;
   double m_channelShift[Constants::nTofChannels];
+  double m_result[Constants::nTofChannels];
   double m_data[Constants::nTofChannels][2*Constants::nTofSipmsPerBar];
 };
 

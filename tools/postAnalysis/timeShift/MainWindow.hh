@@ -10,6 +10,8 @@ public:
   ~MainWindow();
 protected:
   virtual void setupAnalysis();
+private slots:
+  void saveToConfigFile();
 };
 
 #endif

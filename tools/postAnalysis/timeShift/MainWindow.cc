@@ -13,10 +13,14 @@
 
 #include <QDebug>
 #include <QFileDialog>
+#include <QPushButton>
 
 MainWindow::MainWindow(QWidget* parent)
   : PostAnalysisWindow(parent)
 {
+  QPushButton* button = new QPushButton("save to config file...");
+  connect(button, SIGNAL(clicked()), this, SLOT(saveToConfigFile()));
+  addWidget(button);
 }
 
 MainWindow::~MainWindow()
@@ -62,5 +66,16 @@ void MainWindow::setupAnalysis()
   canvases.append(addCanvas(&file, "bar shift 0x800c 0x801c 0x802c 0x803c canvas"));
   addPlot(new BarTimeShiftHistogram(canvases));
   file.Close();
-  TimeShiftContainer::instance()->printResults();
+  TimeShiftContainer::instance()->finalize();
+  TimeShiftContainer::instance()->dump();
+}
+
+void MainWindow::saveToConfigFile()
+{
+  QFileDialog dialog(this, "save time shifts...", ".", "CONF files (*.conf)");
+  dialog.setDefaultSuffix("conf");
+  dialog.setAcceptMode(QFileDialog::AcceptSave);
+  QStringList fileNames;
+  if (dialog.exec())
+    TimeShiftContainer::instance()->saveToConfigfile(dialog.selectedFiles()[0]);
 }
