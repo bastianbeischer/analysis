@@ -14,6 +14,7 @@
 
 #include <QDebug>
 #include <QFileDialog>
+#include <QPushButton>
 
 PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
   : QMainWindow(parent)
@@ -22,6 +23,8 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
   , m_ui(new Ui_postAnalysisWindow)
 {
   m_ui->setupUi(this);
+  m_ui->userControlWidget->hide();
+  m_ui->userControlWidget->layout()->setAlignment(Qt::AlignLeft | Qt::AlignHCenter);
   connect(m_ui->canvasListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectCanvas(QListWidgetItem*)));
   connect(m_ui->canvasListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
     this, SLOT(selectCanvas(QListWidgetItem*, QListWidgetItem*)));
@@ -106,6 +109,7 @@ void PostAnalysisWindow::addPlot(PostAnalysisPlot* plot)
 
 void PostAnalysisWindow::saveButtonClicked()
 {
+  addWidget(new QPushButton());
   QStringList fileFormatEndings;
   fileFormatEndings << "svg" << "pdf" << "eps" << "root" << "png";
   QStringList filters;
@@ -162,4 +166,10 @@ void PostAnalysisWindow::saveAllButtonClicked()
         m_ui->qtWidget->GetCanvas()->SaveAs(qPrintable(directoryName + '/' + m_ui->titleLabel->text() + "." + fileFormatEnding));
     }
   }
+}
+  
+void PostAnalysisWindow::addWidget(QWidget* widget)
+{
+  m_ui->userControlWidget->show();
+  static_cast<QBoxLayout*>(m_ui->userControlWidget->layout())->insertWidget(0, widget);
 }

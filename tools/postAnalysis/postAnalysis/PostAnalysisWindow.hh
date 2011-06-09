@@ -16,6 +16,7 @@ public:
   ~PostAnalysisWindow();
   void setAnalysisFile(const QString&);
 protected:
+  void addWidget(QWidget*);
   virtual void setupAnalysis() = 0;
   PostAnalysisCanvas* addCanvas(TFile*, const QString& name);
   void addPlot(PostAnalysisPlot*);
