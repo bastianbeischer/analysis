@@ -12,7 +12,7 @@
 class PostAnalysisCanvas;
 class TH1D;
 
-class QSpinBox;
+class QDoubleSpinBox;
 class QPushButton;
 
 class MoPVConstant: public QObject, public PostAnalysisPlot, public H1DPlot
@@ -25,7 +25,7 @@ private:
   void saveConstants(double norm);
   QMap<int, QPair<double, double> > m_mopvs;
 
-  QSpinBox* m_spinBox;
+  QDoubleSpinBox* m_spinBox;
   QPushButton* m_pushButton;
 
   bool m_modules;

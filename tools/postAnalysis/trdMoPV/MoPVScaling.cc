@@ -85,7 +85,7 @@ TGraphErrors* MoPVScaling::generateMoPVGraph(TH2D* histogram)
     if (nEntries < 100)
         continue;
     //which fit range ?!?, use same as TRD spectrum ?!?
-    TF1* functionLandau = new TF1(qPrintable(QString(histogram->GetTitle()) + "FunctionLandau"), "landau", 0.1, 3);
+    TF1* functionLandau = new TF1(qPrintable(QString(histogram->GetTitle()) + "FunctionLandau"), "landau", 0.1, 6);
     projectionHistogram->Fit(functionLandau, "EQN0");
 
     double mpv = functionLandau->GetParameter(1);

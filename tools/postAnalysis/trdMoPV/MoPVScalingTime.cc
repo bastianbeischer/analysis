@@ -5,7 +5,7 @@
 #include <QWidget>
 #include <QHBoxLayout>
 #include <QPushButton>
-#include <QSpinBox>
+#include <QDoubleSpinBox>
 
 #include <TSpline.h>
 
@@ -20,7 +20,7 @@ MoPVScalingTime::MoPVScalingTime(PostAnalysisCanvas* canvas)
   m_pushButton = new QPushButton("save time dependend corrections for normalization");
   layout->addWidget(m_pushButton);
   layout->addStretch();
-  m_spinBox = new QSpinBox();
+  m_spinBox = new QDoubleSpinBox();
   m_spinBox->setRange(0.5, 3);
   m_spinBox->setSingleStep(0.01);
   m_spinBox->setValue(1);

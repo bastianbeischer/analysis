@@ -10,7 +10,7 @@
 #include <QStringList>
 #include <QString>
 #include <QPushButton>
-#include <QSpinBox>
+#include <QDoubleSpinBox>
 #include <QHBoxLayout>
 
 #include <QDebug>
@@ -55,7 +55,7 @@ MoPVConstant::MoPVConstant(QList<PostAnalysisCanvas*> canvasList, bool modules)
   m_pushButton = new QPushButton("save tube corrections for normalization");
   layout->addWidget(m_pushButton);
   layout->addStretch();
-  m_spinBox = new QSpinBox();
+  m_spinBox = new QDoubleSpinBox();
   m_spinBox->setRange(0.5, 3);
   m_spinBox->setSingleStep(0.01);
   m_spinBox->setValue(1);
@@ -72,7 +72,7 @@ bool MoPVConstant::fitMoPV(TH1D* hist, double& mopv, double& mopvErr)
     return false;
   TF1* fit = new TF1("fitMopv","landau");
 
-  hist->Fit(fit, "QN0R", "", 0.1, 3);
+  hist->Fit(fit, "QN0R", "", 0.1, 6);
 
   mopv = fit->GetParameter(1);
   mopvErr = fit->GetParError(1);

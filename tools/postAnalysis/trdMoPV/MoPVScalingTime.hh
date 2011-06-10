@@ -4,14 +4,14 @@
 #include "MoPVScaling.hh"
 
 class QPushButton;
-class QSpinBox;
+class QDoubleSpinBox;
 
 class MoPVScalingTime : public MoPVScaling
 {
   Q_OBJECT
 private:
   QPushButton* m_pushButton;
-  QSpinBox* m_spinBox;
+  QDoubleSpinBox* m_spinBox;
 public:
   MoPVScalingTime(PostAnalysisCanvas* canvas);
 public slots:
