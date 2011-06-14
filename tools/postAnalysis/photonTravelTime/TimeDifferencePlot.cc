@@ -36,6 +36,9 @@ TimeDifferencePlot::TimeDifferencePlot(PostAnalysisCanvas* canvas, TimeDifferenc
     }
   }
   h->Add(f->histogram(), -1);
+  h->SetMarkerColor(kRed);
+  setPalette(RootStyle::ResiduePalette);
+  setDrawOption(COLZTEXT);
   addHistogram(h);
 }
 

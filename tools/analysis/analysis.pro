@@ -60,7 +60,9 @@ CLASSES = \
   CutStatisticsPlot \
   TOFPositionCorrelationPlot \
   TOFTimeDifferencePlot \
+  TOFTimeDifferencePlotCollection \
   TOFTimeShiftPlot \
+  TOFTimeShiftPlotCollection \
   TotalSignalHeightPlot \
   TrackerLayerStatisticsPlot \
   TRDCalculations \
@@ -77,6 +79,7 @@ CLASSES = \
   TRDSpectrumVsTemperaturePlot \
   TRDSpectrumVsPressurePlot \
   TimeResolutionPlot \
+  TimeResolutionPlotCollection \
   TotalEnergyDepositionPlot \
   TotalEnergyDepositionTRDvsTrackerPlot \
   TOFEfficiencyPlot \
@@ -90,7 +93,6 @@ CLASSES = \
   TOTTimeCorrelationPlotCollection \
   TOTTemperatureCorrelationPlot \
   TOTTimeCorrelationPlot \
-  TOFAlignment \
   TemperatureTimePlot \
   PressureTimePlot \
   ChannelTriggerProbabilityPlot \
@@ -107,7 +109,7 @@ CLASSES = \
   PMTCorrelationPlot \
   ZSquareTRDPlot \
   TOFBarShiftPlot \
-  TOFTimeShiftPlotCollection
+  TOFBarShiftPlotCollection
 
 SOURCES += \
   main.cc

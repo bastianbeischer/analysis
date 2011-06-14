@@ -104,7 +104,7 @@ void TOFTimeDifferencePlot::update()
 
 void TOFTimeDifferencePlot::finalize()
 {
-  zAxis()->SetRangeUser(-1, 1);
+  zAxis()->SetRangeUser(-4, 4);
   for (int binX = 1; binX < m_normalizationHistogram->GetXaxis()->GetNbins(); ++binX)
     for (int binY = 1; binY < m_normalizationHistogram->GetYaxis()->GetNbins(); ++binY) {
       double value = Constants::sigmaSipm / sqrt(m_normalizationHistogram->GetBinContent(binX, binY));

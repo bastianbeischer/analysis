@@ -54,8 +54,8 @@
 #include "TRDEfficiencyPlot.hh"
 #include "TotalEnergyDepositionPlot.hh"
 #include "TotalEnergyDepositionTRDvsTrackerPlot.hh"
-#include "TimeResolutionPlot.hh"
-#include "TOFTimeDifferencePlot.hh"
+#include "TimeResolutionPlotCollection.hh"
+#include "TOFTimeDifferencePlotCollection.hh"
 #include "TotalSignalHeightPlot.hh"
 #include "TOFEfficiencyPlot.hh"
 #include "TOTMomentumCorrelation.hh"
@@ -66,7 +66,6 @@
 #include "TOTTemperatureCorrelationPlotCollection.hh"
 #include "TOTTimeCorrelationPlotCollection.hh"
 #include "TOTTemperatureCorrelationPlot.hh"
-#include "TOFAlignment.hh"
 #include "TOTTimeCorrelationPlot.hh"
 #include "TemperatureTimePlot.hh"
 #include "PressureTimePlot.hh"
@@ -83,7 +82,7 @@
 #include "PMTCorrelationPlot.hh"
 #include "BeamProfilePlot.hh"
 #include "ZSquareTRDPlot.hh"
-#include "TOFBarShiftPlot.hh"
+#include "TOFBarShiftPlotCollection.hh"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -431,10 +430,10 @@ void MainWindow::setDrawOptionComboBox()
 void MainWindow::setupPlots()
 {
   Setup* setup = Setup::instance();
-  const ElementIterator elementStartIt = setup->firstElement();
-  const ElementIterator elementEndIt = setup->lastElement();
-  const LayerIterator layerStartIt = setup->firstLayer();
-  const LayerIterator layerEndIt = setup->lastLayer();
+  const ElementIterator& elementStartIt = setup->firstElement();
+  const ElementIterator& elementEndIt = setup->lastElement();
+  const LayerIterator& layerStartIt = setup->firstLayer();
+  const LayerIterator& layerEndIt = setup->lastLayer();
   ElementIterator elementIt;
   LayerIterator layerIt;
 
@@ -573,53 +572,14 @@ void MainWindow::setupPlots()
     }
   }
   if (m_ui.resolutionTofCheckBox->isChecked()) {
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x802c, 0x803c));
-    
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x802c, 0x803c));
-
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x802c, 0x803c));
-    
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x802c, 0x803c));
+    m_ui.plotter->addPlot(new TimeResolutionPlotCollection);
   }
   if (m_ui.calibrationTofCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new ChannelTriggerProbabilityPlot);
     m_ui.plotter->addPlot(new TOFTimeShiftTriggerPlot);
-    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
-      DetectorElement* element = *elementIt;
-      if (element->type() == DetectorElement::tof)
-        m_ui.plotter->addPlot(new TOFTimeDifferencePlot(element->id()));
-    }
-
     m_ui.plotter->addPlot(new TOFTimeShiftPlotCollection);
-
-    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8000, 0x8010, 0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8000, 0x8010, 0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8000, 0x8010, 0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8000, 0x8010, 0x802c, 0x803c));
-    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8004, 0x8014, 0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8004, 0x8014, 0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8004, 0x8014, 0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8004, 0x8014, 0x802c, 0x803c));
-    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8008, 0x8018, 0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8008, 0x8018, 0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8008, 0x8018, 0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x8008, 0x8018, 0x802c, 0x803c));
-    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x800c, 0x801c, 0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x800c, 0x801c, 0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x800c, 0x801c, 0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TOFBarShiftPlot(0x800c, 0x801c, 0x802c, 0x803c));
+    m_ui.plotter->addPlot(new TOFTimeDifferencePlotCollection);
+    m_ui.plotter->addPlot(new TOFBarShiftPlotCollection);
   }
   if (m_ui.miscellaneousTrackerCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TotalSignalHeightPlot);
@@ -649,7 +609,6 @@ void MainWindow::setupPlots()
       if (element->type() == DetectorElement::tof)
         m_ui.plotter->addPlot(new TOFPositionCorrelationPlot(element->id()));
     }
-    //m_ui.plotter->addPlot(new TOFAlignment);
   }
   if (m_ui.slowControlCheckBox->isChecked()) {
     QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());
