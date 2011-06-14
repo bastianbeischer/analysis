@@ -18,8 +18,9 @@ public:
   virtual ~TRDTimeCorrectionPlot();
   virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
   virtual void update();
+  virtual void finalize();
   virtual void draw(TCanvas* canvas);
-protected:
+private:
   int m_t1;
   int m_t2;
   TLine* m_line1;
@@ -27,6 +28,7 @@ protected:
   Corrections* m_corr;
   QMap<double, double> m_TrdTimeFactors;
   TSpline3* m_TrdTimeSpline;
+  TH1D* m_normalizationHistogram;
 };
 
 #endif

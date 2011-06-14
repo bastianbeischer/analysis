@@ -1,6 +1,7 @@
 #include "TRDTimeCorrectionPlot.hh"
 
 #include "Corrections.hh"
+#include "SimpleEvent.hh"
 
 #include <TSpline.h>
 #include <TH1D.h>
@@ -30,9 +31,11 @@ TRDTimeCorrectionPlot::TRDTimeCorrectionPlot(QDateTime first, QDateTime last)
   int dur = m_t2-m_t1;
   int t1 = m_t1 - 0.1*dur;
   int t2 = m_t2 + 0.1*dur;
-  int nBins = 10;
+  int nBins = (t2 - t1) / 60 *10;
   
   TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, t1, t2);
+
+  m_normalizationHistogram = new TH1D(qPrintable(title() + "normalization"), "", nBins, t1, t2);
 
   addHistogram(histogram);
 }
@@ -43,8 +46,23 @@ TRDTimeCorrectionPlot::~TRDTimeCorrectionPlot()
   delete m_TrdTimeSpline;
 }
 
-void TRDTimeCorrectionPlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent*)
+void TRDTimeCorrectionPlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
 {
+  double time = event->time();
+  double corrFactor = m_corr->trdTimeDependendFactor(time);
+  histogram()->Fill(time, corrFactor);
+  m_normalizationHistogram->Fill(time);
+
+}
+
+void TRDTimeCorrectionPlot::finalize()
+{
+  //histogram()->Divide(m_normalizationHistogram); //Cannot be used due to a ROOT bug leading to a rebin of the x axis.
+  for (int bin = 1; bin <= xAxis()->GetNbins(); ++bin) {
+    double n = m_normalizationHistogram->GetBinContent(bin);
+    if (n > 0)
+      histogram()->SetBinContent(bin, histogram()->GetBinContent(bin) / n);
+  }
 }
 
 void TRDTimeCorrectionPlot::update()
