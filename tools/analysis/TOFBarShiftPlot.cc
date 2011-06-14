@@ -62,9 +62,7 @@ void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, Particle* particle, Sim
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
 
   ParticleInformation::Flags flags = particle->information()->flags();
-  if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
-    return;
-   if (!(flags & ParticleInformation::Chi2Good))
+  if (!(flags & ParticleInformation::Chi2Good))
     return;
   if (!settings && !(flags & ParticleInformation::InsideMagnet))
     return;

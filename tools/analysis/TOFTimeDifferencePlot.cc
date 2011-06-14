@@ -46,7 +46,7 @@ void TOFTimeDifferencePlot::processEvent(const QVector<Hit*>&, Particle* particl
   const QVector<Hit*>& clusters = track->hits();
 
   ParticleInformation::Flags flags = particle->information()->flags();
-  if (!(flags & ParticleInformation::AllTrackerLayers))
+  if (!(flags & ParticleInformation::Chi2Good))
     return;
 
   const QVector<Hit*>::const_iterator endIt = clusters.end();
@@ -82,7 +82,7 @@ void TOFTimeDifferencePlot::processEvent(const QVector<Hit*>&, Particle* particl
         if (t[i] < -1e6)
           t[i] = 2e6;
       double dt = (t[0] < t[1] ? t[0] : t[1]) - (t[2] < t[3] ? t[2] : t[3]);
-      if (qAbs(dt) < 10) {
+      if (qAbs(dt) < 4.) {
         double bending = track->x(cluster->position().z()) - cluster->position().x();
         double nonBending = track->y(cluster->position().z());
         m_normalizationHistogram->Fill(nonBending, bending);
