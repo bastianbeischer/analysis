@@ -234,7 +234,6 @@ void Corrections::photonTravelTime(Particle* particle)
       QList<QVariant> plist = m_tofSettings->value(QString("PhotonTravelTimeConstants/%1").arg(id, 0, 16)).toList();
       for (int i = 0; i < nPhotonTravelTimeDifferenceParameters; ++i) {
         p[i] = plist[i].toDouble();
-        //qDebug() << p[i];
       }
       double p1[nPhotonTravelTimeParameters];
       double p2[nPhotonTravelTimeParameters];
@@ -242,7 +241,6 @@ void Corrections::photonTravelTime(Particle* particle)
       for (int i = 1; i < nPhotonTravelTimeParameters; ++i) {
         p1[i] = p[i+1];
         p2[i] = p[i+nPhotonTravelTimeParameters];
-        //qDebug() << i << p1[i] << p2[i];
       }
       for (unsigned int i = 0; i < tofCluster->hits().size(); ++i) {
         TOFSipmHit* hit = static_cast<TOFSipmHit*>(tofCluster->hits()[i]);

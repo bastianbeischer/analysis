@@ -52,7 +52,7 @@ TimeDifferenceFunction::TimeDifferenceFunction(PostAnalysisCanvas* canvas)
     }
   }
   addHistogram(h);
-  std::cout << qPrintable(title.mid(29, 6));
+  std::cout << qPrintable(title.mid(31, 4));
   for (int i = 0; i < Corrections::nPhotonTravelTimeDifferenceParameters; ++i)
     std::cout << (i == 0 ? '=' : ',') << m_function->GetParameter(i);
   std::cout << std::endl;
