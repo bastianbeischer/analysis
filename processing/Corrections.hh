@@ -11,13 +11,14 @@
 #include <QMap>
 #include <QList>
 #include <QPair>
+#include <TSpline.h>
 
 class QSettings;
 class SimpleEvent;
 class Hit;
 class Particle;
 class SimpleEvent;
-class TSpline3;
+
 
 class Corrections
 {
@@ -78,6 +79,10 @@ private:
   unsigned int tofChannel(unsigned int id);
   void readTRDTimeDependendCorrections();
   void writeTRDTimeDependendCorrections();
+
+public:
+  TSpline3* getTrdTimeSpline() const {return new TSpline3(*m_TRDSplineTime);}
+  QMap<double, double> getTrdTimeFactors() const {return m_TRDMapTime;}
   
 private:
   QSettings* m_trdSettings;

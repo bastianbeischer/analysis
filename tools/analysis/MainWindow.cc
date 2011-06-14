@@ -45,6 +45,7 @@
 #include "TRDDistanceWireToTrackPlot.hh"
 #include "TRDDistanceInTube.hh"
 #include "TRDMoPVTimeEvolutionPlot.hh"
+#include "TRDTimeCorrectionPlot.hh"
 #include "TRDEnergyDepositionOverMomentumPlot.hh"
 #include "TRDSpectrumPlot.hh"
 #include "TRDSpectrumVsTimePlot.hh"
@@ -643,6 +644,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::numberOfHits, true));
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeights, true));
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits, true));
+    m_ui.plotter->addPlot(new TRDTimeCorrectionPlot(first, last));
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BetaPlot());
