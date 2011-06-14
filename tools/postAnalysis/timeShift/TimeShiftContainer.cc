@@ -78,10 +78,17 @@ void TimeShiftContainer::dump()
 void TimeShiftContainer::finalize()
 {
   for (int ch = 0; ch < Constants::nTofChannels; ++ch) {
-    double sum = 0.;
+    QVector<double> shifts;
     for (int refCh = 0; refCh < 2*Constants::nTofSipmsPerBar; ++refCh)
-      sum+= m_data[ch][refCh];
-    m_result[ch] = (sum / (2*Constants::nTofSipmsPerBar) + m_channelShift[ch]);
+      shifts.append(m_data[ch][refCh]);
+    qSort(shifts);
+    int n = 0;
+    double sum = 0.;
+    for (int i = 2; i < shifts.size() - 2; ++i) {
+      ++n;
+      sum+= shifts[i];
+    }
+    m_result[ch] = sum / n + m_channelShift[ch];
   }
 }
   
