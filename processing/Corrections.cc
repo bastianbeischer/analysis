@@ -310,8 +310,16 @@ void Corrections::addTrdTimeDependendFactor(double time, double factor)
 
 double Corrections::trdTimeDependendFactor(double time)
 {
-  if (m_TRDSplineTime)
-    return m_TRDSplineTime->Eval(time);
+  if (m_TRDSplineTime) {
+    if (m_TRDSplineTime->GetXmin() <= time && time <= m_TRDSplineTime->GetXmax())
+      return m_TRDSplineTime->Eval(time);
+    else if (time < m_TRDSplineTime->GetXmin())
+      return m_TRDSplineTime->eval(m_TRDSplineTime->GetXmin());
+    else if (time > m_TRDSplineTime->GetXmax())
+      return m_TRDSplineTime->eval(m_TRDSplineTime->GetXmax());
+    else
+      return 1;
+  }
   else
     return 1;
 }
