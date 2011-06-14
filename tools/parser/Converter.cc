@@ -305,7 +305,7 @@ const QVector<const MCSimpleEventDigi*> Converter::getAllMCDigis(const MCEvent* 
       seSignal->hitPosition.SetXYZ(pos.x(), pos.y(), pos.z());
       seSignal->time = mcSignal._time;
       seSignal->energyDeposition = mcSignal._energyDeposit / CLHEP::keV;
-      seDigi->AddSignal(seSignal);
+      seDigi->addSignal(seSignal);
     }
 
     seDigis << seDigi;
