@@ -6,6 +6,8 @@
 #include "Cluster.hh"
 #include "Hit.hh"
 #include "SimpleEvent.hh"
+#include "Settings.hh"
+#include "SettingsManager.hh"
 
 #include "TRDCalculations.hh"
 
@@ -77,8 +79,11 @@ void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& , Particle* partic
   if (pFlags & ParticleInformation::Chi2Good)
     return;
 
+  //get settings if present
+  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+
   //check if straight line fit has been used:
-  if (! (track->type() == Track::StraightLine)){
+  if ( (!(track->type() == Track::StraightLine)) && (settings && settings->magnet())){
     //check if track was inside of magnet
     if (!(pFlags & ParticleInformation::InsideMagnet))
       return;

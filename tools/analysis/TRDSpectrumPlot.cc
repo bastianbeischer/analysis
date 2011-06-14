@@ -10,6 +10,8 @@
 #include "Cluster.hh"
 #include "Hit.hh"
 #include "SimpleEvent.hh"
+#include "Settings.hh"
+#include "SettingsManager.hh"
 
 #include "TRDCalculations.hh"
 #include "Corrections.hh"
@@ -67,7 +69,7 @@ TRDSpectrumPlot::~TRDSpectrumPlot()
   delete m_fitRangeMarker_upper;
 }
 
-void TRDSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void TRDSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
 {
   const Track* track = particle->track();
   const ParticleInformation::Flags pFlags = particle->information()->flags();
@@ -79,8 +81,11 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, Sim
   if (pFlags & ParticleInformation::Chi2Good)
     return;
 
+  //get settings if present
+  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+
   //check if straight line fit has been used:
-  if (! (track->type() == Track::StraightLine)){
+  if ( (!(track->type() == Track::StraightLine)) && (settings && settings->magnet())){
     //check if track was inside of magnet
     if (!(pFlags & ParticleInformation::InsideMagnet))
       return;
