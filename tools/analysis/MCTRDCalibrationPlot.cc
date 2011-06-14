@@ -54,15 +54,14 @@ void MCTRDCalibrationPlot::processEvent(const QVector<Hit*>&, Particle*, SimpleE
 
   std::vector<const MCSimpleEventDigi*>::const_iterator itDigi;
   for (itDigi = mcDigis.begin(); itDigi != mcDigis.end(); ++itDigi) {
-    if ((*itDigi)->Type() != Hit::trd)
+    if ((*itDigi)->type() != Hit::trd)
       continue;
-    double enDep = (*itDigi)->SignalSum();
-    unsigned short channelID = (*itDigi)->DetID();
+    double enDep = (*itDigi)->signalSum();
+    unsigned short channelID = (*itDigi)->detID();
 
     //bugfix for atm wrong digiIds:
     //qDebug("channelID 0x%x", channelID);
     unsigned short bitMaskWrong = 3 << 5; // 0b01100000
-    unsigned short bitMaskRight = 3 << 4; // 0b00110000
     unsigned short moduleIDShifted = (channelID & bitMaskWrong);
     //qDebug("wrong module 0x%x", moduleIDShifted);
     moduleIDShifted =  moduleIDShifted >> 1;
