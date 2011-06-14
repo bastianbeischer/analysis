@@ -59,7 +59,7 @@ void MCTRDCalibrationPlot::processEvent(const QVector<Hit*>&, Particle*, SimpleE
     double enDep = (*itDigi)->signalSum();
     unsigned short channelID = (*itDigi)->detID();
 
-    //bugfix for atm wrong digiIds:
+    /* bugfix for atm wrong digiIds:
     //qDebug("channelID 0x%x", channelID);
     unsigned short bitMaskWrong = 3 << 5; // 0b01100000
     unsigned short moduleIDShifted = (channelID & bitMaskWrong);
@@ -75,7 +75,7 @@ void MCTRDCalibrationPlot::processEvent(const QVector<Hit*>&, Particle*, SimpleE
       continue;
     if (channel > 7)
       channelID += 1;
-    //end bugfix
+    */ //end bugfix
 
 
     //TVector3 pos = (*itDigi)->Signals().at(0)->hitPosition;
