@@ -84,11 +84,13 @@ void TRDTimeCorrectionPlot::draw(TCanvas* canvas)
 {
   if (m_drawn) {
     H1DPlot::draw(canvas);
-    m_TrdTimeSpline->Draw("SAME CP");
+    if (m_TrdTimeSpline)
+      m_TrdTimeSpline->Draw("SAME CP");
     yAxis()->SetRangeUser(0, 2);
   } else {
     H1DPlot::draw(canvas);
-    m_TrdTimeSpline->Draw("SAME CP");
+    if (m_TrdTimeSpline)
+      m_TrdTimeSpline->Draw("SAME CP");
     //TODO check this, especially for older data !!!
     xAxis()->SetTimeOffset(3600, "gmt"); //dont understand this, but works at testbeam
     xAxis()->SetTimeDisplay(1);

@@ -362,11 +362,19 @@ void Corrections::readTRDTimeDependendCorrections()
      delete m_TRDSplineTime;
      m_TRDSplineTime = 0;
    }
-   if (m_TRDMapTime.size() > 1) {
+   if (m_TRDMapTime.size() > 2) {
      QVector<double> times(m_TRDMapTime.keys().toVector());
      QVector<double> factors(m_TRDMapTime.values().toVector());
      m_TRDSplineTime = new TSpline3("trdTimeSpline", &(*times.begin()), &(*factors.begin()), times.size(), "b1e1", 0., 0.);
    }
+}
+
+TSpline3* Corrections::getTrdTimeSpline() const
+{
+  if (!m_TRDSplineTime)
+    return 0;
+  else
+    return new TSpline3(*m_TRDSplineTime);
 }
 
 double Corrections::photonTravelTime(double bending, double nonBending, double* p)

@@ -81,7 +81,7 @@ private:
   void writeTRDTimeDependendCorrections();
 
 public:
-  TSpline3* getTrdTimeSpline() const {return new TSpline3(*m_TRDSplineTime);}
+  TSpline3* getTrdTimeSpline() const;
   QMap<double, double> getTrdTimeFactors() const {return m_TRDMapTime;}
   
 private:
