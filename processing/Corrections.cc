@@ -156,12 +156,12 @@ void Corrections::tofTot(Hit* hit, SimpleEvent* event)
 
 double Corrections::trdScalingFactor(unsigned int channel)
 {
-  return m_trdSettings->value( "ConstScaleFactor/" + QString::number(channel,16) , 1.).toDouble();
+  return m_trdSettings->value("ConstScaleFactor/" + QString::number(channel, 16), 1.).toDouble();
 }
 
 void Corrections::setTrdScalingFactor(unsigned int channel, double value)
 {
-  m_trdSettings->setValue( "ConstScaleFactor/" + QString::number(channel,16), value);
+  m_trdSettings->setValue("ConstScaleFactor/" + QString::number(channel, 16), value);
   m_trdSettings->sync();
 }
 

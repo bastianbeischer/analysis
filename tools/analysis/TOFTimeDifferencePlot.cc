@@ -25,9 +25,9 @@ TOFTimeDifferencePlot::TOFTimeDifferencePlot(unsigned short id)
 {
   setTitle(QString("tof time difference position 0x%1").arg(id, 0, 16));
   m_normalizationHistogram = new TH2I(qPrintable(title() + " normalization"),  "",
-    20, -200, 200, 10, -25, 25);
+    40, -200, 200, 10, -25, 25);
   TH2D* histogram = new TH2D(qPrintable(title()), "",
-    20, -200, 200, 10, -25, 25);
+    40, -200, 200, 10, -25, 25);
   setAxisTitle("y_{tracker} / mm", "x_{tracker} / mm", "(t_{left} - t_{right}) / ns");
   addHistogram(histogram);
   setDrawOption(SURF1);
