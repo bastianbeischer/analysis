@@ -6,6 +6,8 @@
 #include "TOFCluster.hh"
 #include "TOFSipmHit.hh"
 #include "Constants.hh"
+#include "Settings.hh"
+#include "SettingsManager.hh"
 
 #include <math.h>
 
@@ -47,7 +49,7 @@ bool Cut::passesCuts(double value)
   return false;
 }
 
-bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent* /*event*/) 
+bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent* event)
 {
   if (m_type == rigidity) {
     const Track* track = particle->track();
@@ -108,6 +110,15 @@ bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*
     if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
       return false;
     return passesCuts(sumOfSignalHeights(Hit::trd, track, clusters));
+  }
+  if (m_type == cherenkov) {
+    //get settings if present
+    const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+    if (!settings || settings->situation() != Settings::Testbeam11)
+      return true;
+    double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
+    double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
+    return (passesCuts(c1Signal) && passesCuts(c2Signal));
   }
   qFatal("m_type does not match any CutType::type!");
   return false;
