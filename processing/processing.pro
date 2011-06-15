@@ -16,7 +16,8 @@ CLASSES += \
   LimitedEventQueue \
   ProcessingThread \
   Cut \
-  CutFilter
+  CutFilter \
+  MCFilter
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \

@@ -13,6 +13,7 @@
 #include <QMainWindow>
 #include <QString>
 #include <QVector>
+#include <QList>
 #include <QTime>
 #include <QTimer>
 
@@ -52,7 +53,7 @@ private slots:
   void update();
 private:
   void setupPlots();
-  void setupAnalysis(Track::Type&, Corrections::Flags&, ParticleFilter::Types&, CutFilter&);
+  void setupAnalysis(Track::Type&, Corrections::Flags&, ParticleFilter::Types&, CutFilter&, QList<int>&);
   void startAnalysis();
   void changeTopicGroupStatus(QVector<QCheckBox*>&);
   void removeListWidgetItem(int);

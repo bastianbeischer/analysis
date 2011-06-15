@@ -696,7 +696,7 @@ void MainWindow::setupPlots()
   }
 }
 
-void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes, CutFilter& cutFilter)
+void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes, CutFilter& cutFilter, QList<int>& mcPdgIDs)
 {
   if (m_ui.alignmentCorrectionCheckBox->isChecked())
     flags|= Corrections::Alignment;
@@ -723,6 +723,27 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
     filterTypes |= Particle::Muon;
   if (m_ui.antiMuonCheckBox->isChecked())
     filterTypes |= Particle::AntiMuon;
+
+  if (m_ui.mcProtonCheckBox->isChecked())
+    mcPdgIDs << 2212;
+  if (m_ui.mcAntiprotonCheckBox->isChecked())
+    mcPdgIDs << -2212;
+  if (m_ui.mcElectronCheckBox->isChecked())
+    mcPdgIDs << 11;
+  if (m_ui.mcPositronCheckBox->isChecked())
+    mcPdgIDs << -11;
+  if (m_ui.mcMuonCheckBox->isChecked())
+    mcPdgIDs << 13;
+  if (m_ui.mcAntiMuonCheckBox->isChecked())
+    mcPdgIDs << -13;
+  if (m_ui.mcPionCheckBox->isChecked())
+    mcPdgIDs << 211;
+  if (m_ui.mcAntiMuonCheckBox->isChecked())
+    mcPdgIDs << -211;
+  if (m_ui.mcHeliumCheckBox->isChecked())
+    mcPdgIDs << 1000020040;
+  if (m_ui.mcGammaCheckBox->isChecked())
+    mcPdgIDs << 22;
   
   if (m_ui.rigidityCutCheckBox->isChecked()) {
     Cut cut(Cut::rigidity);
@@ -855,7 +876,8 @@ void MainWindow::analyzeButtonClicked()
     Corrections::Flags flags;
     ParticleFilter::Types filterTypes;
     CutFilter cutFilter;
-    setupAnalysis(type, flags, filterTypes, cutFilter);
+    QList<int> mcPdgIDs;
+    setupAnalysis(type, flags, filterTypes, cutFilter, mcPdgIDs);
     setupPlots();
 
     qDeleteAll(m_processors);
@@ -868,6 +890,7 @@ void MainWindow::analyzeButtonClicked()
       processor->setCorrectionFlags(flags);
       processor->setParticleFilter(filterTypes);
       processor->setCutFilter(cutFilter);
+      processor->setMCFilter(mcPdgIDs);
       m_processors.append(processor);
     }      
     m_reader->start(m_processors, m_ui.firstEventSpinBox->value(), m_ui.lastEventSpinBox->value());

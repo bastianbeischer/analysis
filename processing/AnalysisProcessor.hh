@@ -11,6 +11,7 @@
 class Particle;
 class TrackFinding;
 class ParticleIdentifier;
+class MCFilter;
 
 class AnalysisProcessor : public EventProcessor {
 public:
@@ -21,6 +22,7 @@ public:
   void setTrackType(Track::Type);
   void setCorrectionFlags(Corrections::Flags);
   void setParticleFilter(ParticleFilter::Types);
+  void setMCFilter(QList<int> pdgIDs);
   void setCutFilter(CutFilter cuts);
 
   void process(SimpleEvent*);
@@ -28,6 +30,7 @@ public:
 private:
   Particle* m_particle;
   ParticleFilter* m_filter;
+  MCFilter* m_mcFilter;
   TrackFinding* m_trackFinding;
   Corrections* m_corrections;
   ParticleIdentifier* m_identifier;
