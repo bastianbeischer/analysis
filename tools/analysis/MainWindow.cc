@@ -696,7 +696,7 @@ void MainWindow::setupPlots()
   }
 }
 
-void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes, CutFilter& cutFilter, QList<int>& mcPdgIDs)
+void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes, CutFilter& cutFilter, MCFilter::Types& mcFilterTypes)
 {
   if (m_ui.alignmentCorrectionCheckBox->isChecked())
     flags|= Corrections::Alignment;
@@ -725,25 +725,25 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
     filterTypes |= Particle::AntiMuon;
 
   if (m_ui.mcProtonCheckBox->isChecked())
-    mcPdgIDs << 2212;
+    mcFilterTypes |= Particle::Proton;
   if (m_ui.mcAntiprotonCheckBox->isChecked())
-    mcPdgIDs << -2212;
+    mcFilterTypes |= Particle::AntiProton;
   if (m_ui.mcElectronCheckBox->isChecked())
-    mcPdgIDs << 11;
+    mcFilterTypes |= Particle::Electron;
   if (m_ui.mcPositronCheckBox->isChecked())
-    mcPdgIDs << -11;
+    mcFilterTypes |= Particle::Positron;
   if (m_ui.mcMuonCheckBox->isChecked())
-    mcPdgIDs << 13;
+    mcFilterTypes |= Particle::Muon;
   if (m_ui.mcAntiMuonCheckBox->isChecked())
-    mcPdgIDs << -13;
+    mcFilterTypes |= Particle::AntiMuon;
   if (m_ui.mcPionCheckBox->isChecked())
-    mcPdgIDs << 211;
+    mcFilterTypes |= Particle::PiPlus;
   if (m_ui.mcAntiMuonCheckBox->isChecked())
-    mcPdgIDs << -211;
+    mcFilterTypes |= Particle::PiMinus;
   if (m_ui.mcHeliumCheckBox->isChecked())
-    mcPdgIDs << 1000020040;
+    mcFilterTypes |= Particle::Helium;
   if (m_ui.mcGammaCheckBox->isChecked())
-    mcPdgIDs << 22;
+    mcFilterTypes |= Particle::Photon;
   
   if (m_ui.rigidityCutCheckBox->isChecked()) {
     Cut cut(Cut::rigidity);
@@ -876,8 +876,8 @@ void MainWindow::analyzeButtonClicked()
     Corrections::Flags flags;
     ParticleFilter::Types filterTypes;
     CutFilter cutFilter;
-    QList<int> mcPdgIDs;
-    setupAnalysis(type, flags, filterTypes, cutFilter, mcPdgIDs);
+    MCFilter::Types mcFilterTypes;
+    setupAnalysis(type, flags, filterTypes, cutFilter, mcFilterTypes);
     setupPlots();
 
     qDeleteAll(m_processors);
@@ -890,7 +890,7 @@ void MainWindow::analyzeButtonClicked()
       processor->setCorrectionFlags(flags);
       processor->setParticleFilter(filterTypes);
       processor->setCutFilter(cutFilter);
-      processor->setMCFilter(mcPdgIDs);
+      processor->setMCFilter(mcFilterTypes);
       m_processors.append(processor);
     }      
     m_reader->start(m_processors, m_ui.firstEventSpinBox->value(), m_ui.lastEventSpinBox->value());

@@ -108,8 +108,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>253</width>
-             <height>850</height>
+             <width>183</width>
+             <height>716</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -1710,7 +1710,7 @@ reconstruction</string>
             </font>
            </property>
            <property name="currentIndex">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="usesScrollButtons">
             <bool>false</bool>
@@ -2515,7 +2515,7 @@ over threshold</string>
      <x>0</x>
      <y>0</y>
      <width>1207</width>
-     <height>25</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="font">

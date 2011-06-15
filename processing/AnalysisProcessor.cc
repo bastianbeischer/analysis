@@ -63,9 +63,9 @@ void AnalysisProcessor::setParticleFilter(ParticleFilter::Types types)
   m_filter->setTypes(types);
 }
 
-void AnalysisProcessor::setMCFilter(QList<int> pdgIDs)
+void AnalysisProcessor::setMCFilter(MCFilter::Types types)
 {
-  m_mcFilter->addPdgID(pdgIDs);
+  m_mcFilter->setTypes(types);
 }
 
 void AnalysisProcessor::setCutFilter(CutFilter cuts)

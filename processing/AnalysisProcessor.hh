@@ -6,12 +6,13 @@
 #include "Track.hh"
 #include "Corrections.hh"
 #include "ParticleFilter.hh"
+#include "MCFilter.hh"
 #include "CutFilter.hh"
 
 class Particle;
 class TrackFinding;
 class ParticleIdentifier;
-class MCFilter;
+
 
 class AnalysisProcessor : public EventProcessor {
 public:
@@ -22,7 +23,7 @@ public:
   void setTrackType(Track::Type);
   void setCorrectionFlags(Corrections::Flags);
   void setParticleFilter(ParticleFilter::Types);
-  void setMCFilter(QList<int> pdgIDs);
+  void setMCFilter(MCFilter::Types);
   void setCutFilter(CutFilter cuts);
 
   void process(SimpleEvent*);

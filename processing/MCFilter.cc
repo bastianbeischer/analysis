@@ -1,26 +1,19 @@
 #include "MCFilter.hh"
 
 #include "SimpleEvent.hh"
+#include "ParticleDB.hh"
+#include "ParticleProperties.hh"
 
-MCFilter::MCFilter()
+MCFilter::MCFilter(Types types) :
+  m_types(types)
 {
 }
 
-
-void MCFilter::addPdgID(int pdgID)
-{
-  m_pdgIDs << pdgID;
-}
-
-void MCFilter::addPdgID(QList<int> pdgIds)
-{
-  m_pdgIDs << pdgIds;
-}
-
-bool MCFilter::passes(const QVector<Hit*>&, Particle*, SimpleEvent* event)
+bool MCFilter::passes(const QVector<Hit*>&, Particle*, SimpleEvent* event) const
 {
  if (event->contentType() != SimpleEvent::MonteCarlo)
    return true;
 
- return m_pdgIDs.contains(event->MCInformation()->primary()->pdgID);
+ const ParticleProperties* particleProps = ParticleDB::instance()->lookupPdgId(event->MCInformation()->primary()->pdgID);
+ return (particleProps->type() & m_types);
 }

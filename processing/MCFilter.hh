@@ -4,19 +4,23 @@
 #include <QVector>
 #include <QList>
 
-class Particle;
+#include "Particle.hh"
+#include <QFlags>
+
 class SimpleEvent;
 class Hit;
 
 class MCFilter
 {
 public:
-  MCFilter();
-  bool passes(const QVector<Hit*>&, Particle*, SimpleEvent*);
-  void addPdgID(int pdgID);
-  void addPdgID(QList<int> pdgIds);
+  Q_DECLARE_FLAGS(Types, Particle::Type);
+public:
+  MCFilter(Types = ~Types(0));
+  void setTypes(Types types) {m_types = types;}
+  Types types() const {return m_types;}
+  bool passes(const QVector<Hit*>&, Particle*, SimpleEvent* event) const;
 private:
-  QList<int> m_pdgIDs;
+  Types m_types;
 };
 
 #endif // MCFILTER_HH
