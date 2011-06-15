@@ -314,9 +314,9 @@ double Corrections::trdTimeDependendFactor(double time)
     if (m_TRDSplineTime->GetXmin() <= time && time <= m_TRDSplineTime->GetXmax())
       return m_TRDSplineTime->Eval(time);
     else if (time < m_TRDSplineTime->GetXmin())
-      return m_TRDSplineTime->eval(m_TRDSplineTime->GetXmin());
+      return m_TRDSplineTime->Eval(m_TRDSplineTime->GetXmin());
     else if (time > m_TRDSplineTime->GetXmax())
-      return m_TRDSplineTime->eval(m_TRDSplineTime->GetXmax());
+      return m_TRDSplineTime->Eval(m_TRDSplineTime->GetXmax());
     else
       return 1;
   }
