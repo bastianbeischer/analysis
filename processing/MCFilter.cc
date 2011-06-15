@@ -11,9 +11,9 @@ MCFilter::MCFilter(Types types) :
 
 bool MCFilter::passes(const QVector<Hit*>&, Particle*, SimpleEvent* event) const
 {
- if (event->contentType() != SimpleEvent::MonteCarlo)
-   return true;
+  if (event->contentType() != SimpleEvent::MonteCarlo)
+    return true;
 
- const ParticleProperties* particleProps = ParticleDB::instance()->lookupPdgId(event->MCInformation()->primary()->pdgID);
- return (particleProps->type() & m_types);
+  const ParticleProperties* particleProps = ParticleDB::instance()->lookupPdgId(event->MCInformation()->primary()->pdgID);
+  return (particleProps->type() & m_types);
 }

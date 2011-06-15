@@ -892,7 +892,7 @@ void MainWindow::analyzeButtonClicked()
       processor->setCutFilter(cutFilter);
       processor->setMCFilter(mcFilterTypes);
       m_processors.append(processor);
-    }      
+    }
     m_reader->start(m_processors, m_ui.firstEventSpinBox->value(), m_ui.lastEventSpinBox->value());
   } else {
     m_reader->stop();
