@@ -757,7 +757,7 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
     mcFilterTypes |= Particle::AntiMuon;
   if (m_ui.mcPionCheckBox->isChecked())
     mcFilterTypes |= Particle::PiPlus;
-  if (m_ui.mcAntiMuonCheckBox->isChecked())
+  if (m_ui.mcAntiPionCheckBox->isChecked())
     mcFilterTypes |= Particle::PiMinus;
   if (m_ui.mcHeliumCheckBox->isChecked())
     mcFilterTypes |= Particle::Helium;
