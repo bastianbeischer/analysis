@@ -32,7 +32,7 @@ DataManager::DataManager() :
   m_outputFile(0),
   m_outputTree(0)
 {
-  char* env = getenv("PERDAIXANA_PATH");
+  const char* env = getenv("PERDAIXANA_PATH");
   if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }

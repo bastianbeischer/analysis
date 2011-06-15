@@ -77,7 +77,7 @@ void DataChain::addFileList(const char* listName)
     if (fullname.endsWith(".txt"))
       addFileList(qPrintable(fullname));
     else if (fullname.endsWith(".root")) {
-      char* env = getenv("PERDAIXDATA_PATH");
+      const char* env = getenv("PERDAIXDATA_PATH");
       if (env == 0) {
         qFatal("ERROR: You need to set PERDAIXDATA_PATH environment variable to the toplevel location of the data!");
       }

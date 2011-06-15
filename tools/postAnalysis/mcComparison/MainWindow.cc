@@ -3,6 +3,7 @@
 #include "PostAnalysisCanvas.hh"
 #include "PostAnalysisPlot.hh"
 #include "RootStyle.hh"
+#include "HistCompare.hh"
 
 #include <TCanvas.h>
 #include <TFile.h>
@@ -42,13 +43,17 @@ void MainWindow::setupAnalysis()
   //for (int i = 0; i < mcFile.GetListOfKeys()->GetSize(); ++i)
   //  std::cout << ((TKey*)mcFile.GetListOfKeys()->At(i))->ReadObj()->GetName() << std::endl;
 
-  PostAnalysisCanvas* dataCanvas = addCanvas(&dataFile, "complete TRD spectrum (-10 GeV to 10 Gev) canvas");
-  PostAnalysisCanvas* mcCanvas = addCanvas(&mcFile, "complete TRD spectrum (-10 GeV to 10 Gev) canvas");
+  PostAnalysisCanvas* dataCanvas = addCanvas(&dataFile, "complete TRD spectrum (-100 GeV to 100 GeV) canvas");
+  PostAnalysisCanvas* mcCanvas = addCanvas(&mcFile, "complete TRD spectrum (-100 GeV to 100 GeV) canvas");
 
   qDebug() << "dataCanvas " << dataCanvas->name() << " got " << dataCanvas->histograms1D().size() << " 1D histos";
   qDebug() << "mcCanvas " << mcCanvas->name() << " got " << mcCanvas->histograms1D().size() << " 1D histos";
 
-  //dataFile.Close();
-  //mcFile.Close();
+  addPlot(new HistCompare(dataCanvas, mcCanvas));
+
+
+
+  dataFile.Close();
+  mcFile.Close();
 }
 

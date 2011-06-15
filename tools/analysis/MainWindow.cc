@@ -107,7 +107,7 @@ MainWindow::MainWindow(QWidget* parent)
 {
   m_ui.setupUi(this);
  
-  char* env = getenv("PERDAIXANA_PATH");
+  const char* env = getenv("PERDAIXANA_PATH");
   if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
@@ -709,7 +709,7 @@ void MainWindow::setupPlots()
   }
 }
 
-void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes, CutFilter& cutFilter)
+void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes, CutFilter& cutFilter, MCFilter::Types& mcFilterTypes)
 {
   if (m_ui.alignmentCorrectionCheckBox->isChecked())
     flags|= Corrections::Alignment;
@@ -742,6 +742,27 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
     filterTypes |= Particle::Muon;
   if (m_ui.antiMuonCheckBox->isChecked())
     filterTypes |= Particle::AntiMuon;
+
+  if (m_ui.mcProtonCheckBox->isChecked())
+    mcFilterTypes |= Particle::Proton;
+  if (m_ui.mcAntiprotonCheckBox->isChecked())
+    mcFilterTypes |= Particle::AntiProton;
+  if (m_ui.mcElectronCheckBox->isChecked())
+    mcFilterTypes |= Particle::Electron;
+  if (m_ui.mcPositronCheckBox->isChecked())
+    mcFilterTypes |= Particle::Positron;
+  if (m_ui.mcMuonCheckBox->isChecked())
+    mcFilterTypes |= Particle::Muon;
+  if (m_ui.mcAntiMuonCheckBox->isChecked())
+    mcFilterTypes |= Particle::AntiMuon;
+  if (m_ui.mcPionCheckBox->isChecked())
+    mcFilterTypes |= Particle::PiPlus;
+  if (m_ui.mcAntiMuonCheckBox->isChecked())
+    mcFilterTypes |= Particle::PiMinus;
+  if (m_ui.mcHeliumCheckBox->isChecked())
+    mcFilterTypes |= Particle::Helium;
+  if (m_ui.mcGammaCheckBox->isChecked())
+    mcFilterTypes |= Particle::Photon;
   
   if (m_ui.rigidityCutCheckBox->isChecked()) {
     Cut cut(Cut::rigidity);
@@ -874,7 +895,8 @@ void MainWindow::analyzeButtonClicked()
     Corrections::Flags flags;
     ParticleFilter::Types filterTypes;
     CutFilter cutFilter;
-    setupAnalysis(type, flags, filterTypes, cutFilter);
+    MCFilter::Types mcFilterTypes;
+    setupAnalysis(type, flags, filterTypes, cutFilter, mcFilterTypes);
     setupPlots();
 
     qDeleteAll(m_processors);
@@ -887,8 +909,9 @@ void MainWindow::analyzeButtonClicked()
       processor->setCorrectionFlags(flags);
       processor->setParticleFilter(filterTypes);
       processor->setCutFilter(cutFilter);
+      processor->setMCFilter(mcFilterTypes);
       m_processors.append(processor);
-    }      
+    }
     m_reader->start(m_processors, m_ui.firstEventSpinBox->value(), m_ui.lastEventSpinBox->value());
   } else {
     m_reader->stop();

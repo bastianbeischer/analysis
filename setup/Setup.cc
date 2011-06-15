@@ -16,6 +16,7 @@
 #include <QStringList>
 #include <QSettings>
 #include <QMutex>
+#include <QDir>
 
 #include <TVector3.h>
 
@@ -29,13 +30,21 @@ Setup::Setup() :
   m_coordinates(0),
   m_settings(0)
 {
-  char* env = getenv("PERDAIXANA_PATH");
+  const char* env = getenv("PERDAIXANA_PATH");
   if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
   QString path(env);
   path += "/conf/";
-  m_coordinates = new QSettings(path+"perdaix_coordinates.conf", QSettings::IniFormat);
+  QDir dir(path);
+  if (!dir.exists("coordinates.conf")) {
+    qFatal("ERROR: coordinates.conf not found. Maybe you need to switch to a configuration, for example: switch_to_config.sh kiruna");
+  }
+  if (!dir.exists("setup.conf")) {
+    qFatal("ERROR: setup.conf not found. Maybe you need to switch to a configuration, for example: switch_to_config.sh kiruna");
+  }
+
+  m_coordinates = new QSettings(path+"coordinates.conf", QSettings::IniFormat);
   m_settings = new QSettings(path+"setup.conf", QSettings::IniFormat);
 
   construct();
