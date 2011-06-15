@@ -35,7 +35,7 @@ Setup::Setup() :
   }
   QString path(env);
   path += "/conf/";
-  m_coordinates = new QSettings(path+"perdaix_coordinates.conf", QSettings::IniFormat);
+  m_coordinates = new QSettings(path+"coordinates.conf", QSettings::IniFormat);
   m_settings = new QSettings(path+"setup.conf", QSettings::IniFormat);
 
   construct();
