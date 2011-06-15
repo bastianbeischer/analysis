@@ -15,6 +15,7 @@
 #include <QStringList>
 #include <QSettings>
 #include <QDebug>
+#include <QDir>
 
 #include <cstring>
 #include <cmath>
@@ -25,12 +26,19 @@ Corrections::Corrections(Flags flags)
   , m_tofSettings(0)
   , m_flags(flags)
 {
-  char* env = getenv("PERDAIXANA_PATH");
+  const char* env = getenv("PERDAIXANA_PATH");
   if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
   QString path(env);
   path += "/conf/";
+  QDir dir(path);
+  if (!dir.exists("TRDCorrections.conf")) {
+    qFatal("ERROR: TRDCorrections.conf not found. Maybe you need to switch to a configuration, for example: switch_to_config.sh kiruna");
+  }
+  if (!dir.exists("TOFCorrections.conf")) {
+    qFatal("ERROR: TOFCorrections.conf not found. Maybe you need to switch to a configuration, for example: switch_to_config.sh kiruna");
+  }
   m_trdSettings = new QSettings(path + "TRDCorrections.conf", QSettings::IniFormat);
   m_tofSettings = new QSettings(path + "TOFCorrections.conf", QSettings::IniFormat);
   

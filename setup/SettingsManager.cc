@@ -3,6 +3,7 @@
 #include <QSettings>
 #include <QStringList>
 #include <QDebug>
+#include <QDir>
 
 #include <cstdlib>
 
@@ -14,12 +15,16 @@ SettingsManager* SettingsManager::s_instance = 0;
 SettingsManager::SettingsManager() :
   m_configFile(0)
 {
-  char* env = getenv("PERDAIXANA_PATH");
+  const char* env = getenv("PERDAIXANA_PATH");
   if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
   QString path(env);
   path += "/conf/";
+  QDir dir(path);
+  if (!dir.exists("settings.conf")) {
+    qFatal("ERROR: settings.conf not found!");
+  }
   m_configFile = new QSettings(path+"settings.conf", QSettings::IniFormat);
 
   readSettings();
