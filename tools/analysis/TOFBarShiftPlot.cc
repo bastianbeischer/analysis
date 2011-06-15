@@ -110,7 +110,7 @@ void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, Particle* particle, Sim
     double pCorrection = (t + lCorrection) * (1 - sqrt(rigidity*rigidity + m*m) / rigidity);
     double yu = track->y(Constants::upperTofPosition);
     double yl = track->y(Constants::lowerTofPosition);
-    if (qAbs(yu) < 25. && qAbs(yl) < 25.)
+    if (qAbs(yu) < 50. && qAbs(yl) < 50.)
       histogram()->Fill(t + lCorrection + pCorrection);
   }
 }

@@ -6,6 +6,7 @@
 #include "RootStyle.hh"
 #include "PostAnalysisCanvas.hh"
 #include "TimeShiftContainer.hh"
+#include "BarShiftPlot.hh"
 
 #include <TCanvas.h>
 #include <TFile.h>
@@ -47,24 +48,19 @@ void MainWindow::setupAnalysis()
   TimeShiftContainer::instance()->shiftOnFirstChannel();
   TimeShiftContainer::instance()->dump();
 
-  QVector<PostAnalysisCanvas*> canvases;
-  canvases.append(addCanvas(&file, "bar shift 0x8000 0x8010 0x8020 0x8030 canvas"));
-  canvases.append(addCanvas(&file, "bar shift 0x8000 0x8010 0x8024 0x8034 canvas"));
-  canvases.append(addCanvas(&file, "bar shift 0x8000 0x8010 0x8028 0x8038 canvas"));
-  canvases.append(addCanvas(&file, "bar shift 0x8000 0x8010 0x802c 0x803c canvas"));
-  canvases.append(addCanvas(&file, "bar shift 0x8004 0x8014 0x8020 0x8030 canvas"));
-  canvases.append(addCanvas(&file, "bar shift 0x8004 0x8014 0x8024 0x8034 canvas"));
-  canvases.append(addCanvas(&file, "bar shift 0x8004 0x8014 0x8028 0x8038 canvas"));
-  canvases.append(addCanvas(&file, "bar shift 0x8004 0x8014 0x802c 0x803c canvas"));
-  canvases.append(addCanvas(&file, "bar shift 0x8008 0x8018 0x8020 0x8030 canvas"));
-  canvases.append(addCanvas(&file, "bar shift 0x8008 0x8018 0x8024 0x8034 canvas"));
-  canvases.append(addCanvas(&file, "bar shift 0x8008 0x8018 0x8028 0x8038 canvas"));
-  canvases.append(addCanvas(&file, "bar shift 0x8008 0x8018 0x802c 0x803c canvas"));
-  canvases.append(addCanvas(&file, "bar shift 0x800c 0x801c 0x8020 0x8030 canvas"));
-  canvases.append(addCanvas(&file, "bar shift 0x800c 0x801c 0x8024 0x8034 canvas"));
-  canvases.append(addCanvas(&file, "bar shift 0x800c 0x801c 0x8028 0x8038 canvas"));
-  canvases.append(addCanvas(&file, "bar shift 0x800c 0x801c 0x802c 0x803c canvas"));
-  addPlot(new BarTimeShiftHistogram(canvases));
+  QVector<BarShiftPlot*> barShiftPlots;
+  for (int upper = 0; upper < 4; ++upper) {
+    for (int lower = 4; lower < 8; ++lower) {
+      QString canvasTitle = QString("bar shift 0x%1 0x%2 0x%3 0x%4 canvas")
+        .arg(TimeShiftContainer::s_bars[upper][0], 0, 16).arg(TimeShiftContainer::s_bars[upper][1], 0, 16)
+        .arg(TimeShiftContainer::s_bars[lower][0], 0, 16).arg(TimeShiftContainer::s_bars[lower][1], 0, 16);
+      canvas = addCanvas(&file, canvasTitle);
+      BarShiftPlot* plot = new BarShiftPlot(canvas);
+      addPlot(plot);
+      barShiftPlots.append(plot);
+    }
+  }
+  addPlot(new BarTimeShiftHistogram(barShiftPlots));
   file.Close();
   TimeShiftContainer::instance()->finalize();
   TimeShiftContainer::instance()->dump();

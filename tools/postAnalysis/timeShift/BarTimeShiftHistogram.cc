@@ -1,6 +1,6 @@
 #include "BarTimeShiftHistogram.hh"
 #include "RootStyle.hh"
-#include "PostAnalysisCanvas.hh"
+#include "BarShiftPlot.hh"
 
 #include <TH1.h>
 #include <TH2.h>
@@ -16,14 +16,14 @@
 #include <QDebug>
 #include <QStringList>
 
-BarTimeShiftHistogram::BarTimeShiftHistogram(const QVector<PostAnalysisCanvas*>& canvases)
+BarTimeShiftHistogram::BarTimeShiftHistogram(const QVector<BarShiftPlot*>& plots)
   : PostAnalysisPlot()
   , H2DPlot()
 {
   setTitle("bar time shift");
   QVector<TH1D*> histograms;
-  foreach(PostAnalysisCanvas* canvas, canvases)
-    histograms.append(canvas->histograms1D().at(0));
+  foreach (BarShiftPlot* plot, plots)
+    histograms.append(plot->histogram());
 
   TH2D* histogram = new TH2D("barShiftHistogram", ";;;#Deltat / ns", 4, 0, 4, 4, 0, 4);
   foreach(TH1D* h, histograms) {
@@ -48,10 +48,10 @@ BarTimeShiftHistogram::BarTimeShiftHistogram(const QVector<PostAnalysisCanvas*>&
   histogram->GetYaxis()->SetBinLabel(3, "8028 8038");
   histogram->GetYaxis()->SetBinLabel(4, "802c 803c");
   histogram->GetZaxis()->SetRangeUser(-0.5, 0.5);
-  histogram->SetMarkerColor(kYellow);
-  addHistogram(histogram);
+  histogram->SetMarkerColor(kRed);
   setPalette(RootStyle::ResiduePalette);
   setDrawOption(COLZTEXT);
+  addHistogram(histogram);
 }
 
 BarTimeShiftHistogram::~BarTimeShiftHistogram()

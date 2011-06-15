@@ -22,7 +22,7 @@ ChannelTimeShiftHistogram::ChannelTimeShiftHistogram(PostAnalysisCanvas* canvas,
   , H1DPlot()
   , m_lines()
 {
-  TH2* histogram = canvas->histograms2D().at(0);
+  TH2D* histogram = canvas->histograms2D().at(0);
   histogram->Draw("COLZ");
   QString title = QString("%1 channel %2").arg(histogram->GetName()).arg(ch);
   setTitle(title);
@@ -71,7 +71,7 @@ ChannelTimeShiftHistogram::ChannelTimeShiftHistogram(PostAnalysisCanvas* canvas,
     .arg(qAbs(function->GetParameter(1)), 0, 'f', 3, ' ')));
   addLatex(latex);
   TLine* line = 0;
-  line = new TLine(modifiedProjection->GetMean(), 0, modifiedProjection->GetMean(), 1.05 * qMax(modifiedProjection->GetMaximum(), originalProjection->GetMaximum()));
+  line = new TLine(modifiedProjection->GetMean(), 0, modifiedProjection->GetMean(), 1.05 * qMax(modifiedProjection->GetMaximum(), modifiedProjection->GetMaximum()));
   line->SetLineColor(kRed);
   line->SetLineStyle(2);
   line->SetLineWidth(2);
