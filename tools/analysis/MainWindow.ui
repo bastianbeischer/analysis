@@ -1798,6 +1798,9 @@ reconstruction</string>
              </item>
              <item>
               <widget class="QCheckBox" name="trdPressureDependencyCorrectionCheckBox">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
                 <string>pressure dependency TRD</string>
                </property>
@@ -1811,6 +1814,9 @@ reconstruction</string>
              </item>
              <item>
               <widget class="QCheckBox" name="trdTemperatureDependencyCorrectionCheckBox">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
                 <string>temperature dependency TRD</string>
                </property>
@@ -2250,15 +2256,15 @@ over threshold</string>
                </property>
               </widget>
              </item>
-             <item row="0" column="3">
-              <widget class="QLineEdit" name="rigidityLineEditMax">
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="rigidityLineEditMin">
                <property name="text">
                 <string/>
                </property>
               </widget>
              </item>
-             <item row="0" column="1">
-              <widget class="QLineEdit" name="rigidityLineEditMin">
+             <item row="0" column="2">
+              <widget class="QLineEdit" name="rigidityLineEditMax">
                <property name="text">
                 <string/>
                </property>
@@ -2278,14 +2284,14 @@ over threshold</string>
                </property>
               </widget>
              </item>
-             <item row="1" column="3">
+             <item row="1" column="2">
               <widget class="QLineEdit" name="betaLineEditMax">
                <property name="text">
                 <string/>
                </property>
               </widget>
              </item>
-             <item row="2" column="0" colspan="4">
+             <item row="2" column="0" colspan="2">
               <widget class="QCheckBox" name="trdDepositionCutCheckBox">
                <property name="text">
                 <string>TRD Deposition / ADC-Counts</string>
@@ -2299,14 +2305,14 @@ over threshold</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="3">
+             <item row="3" column="2">
               <widget class="QLineEdit" name="trdDepositionLineEditMax">
                <property name="text">
                 <string/>
                </property>
               </widget>
              </item>
-             <item row="4" column="0" colspan="4">
+             <item row="4" column="0" colspan="2">
               <widget class="QCheckBox" name="tofTotCutCheckBox">
                <property name="text">
                 <string>TOF Time Over Threshold / ns</string>
@@ -2320,12 +2326,86 @@ over threshold</string>
                </property>
               </widget>
              </item>
-             <item row="5" column="3">
+             <item row="5" column="2">
               <widget class="QLineEdit" name="tofTotLineEditMax">
                <property name="text">
                 <string/>
                </property>
               </widget>
+             </item>
+             <item row="6" column="0" colspan="2">
+              <widget class="QCheckBox" name="cherenkovCutCheckBox">
+               <property name="text">
+                <string>Testbeam Cherenkov Cut</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="2">
+              <widget class="QDoubleSpinBox" name="cherenkovCutDoubleSpinBox">
+               <property name="maximum">
+                <double>2000.000000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>10.000000000000000</double>
+               </property>
+               <property name="value">
+                <double>200.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <item>
+                <spacer name="horizontalSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="cherenkovCutBelowRadioButton">
+                 <property name="text">
+                  <string>below</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="7" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <item>
+                <spacer name="horizontalSpacer_2">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="cherenkovCutAboveRadioButton">
+                 <property name="layoutDirection">
+                  <enum>Qt::LeftToRight</enum>
+                 </property>
+                 <property name="text">
+                  <string>above</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </widget>

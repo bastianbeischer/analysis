@@ -828,6 +828,15 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
     }
     cutFilter.addCut(cut);
   }
+  if (m_ui.cherenkovCutCheckBox->isChecked()) {
+    Cut cut(Cut::cherenkov);
+    double cherenkovLimit = m_ui.cherenkovCutDoubleSpinBox->value();
+    if (m_ui.cherenkovCutBelowRadioButton->isChecked())
+      cut.setMax(cherenkovLimit);
+    else
+      cut.setMin(cherenkovLimit);
+    cutFilter.addCut(cut);
+  }
   
   if (m_ui.trackComboBox->currentText() == "centered broken line") {
     type = Track::CenteredBrokenLine;
