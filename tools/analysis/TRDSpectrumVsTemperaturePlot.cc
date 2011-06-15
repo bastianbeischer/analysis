@@ -126,7 +126,7 @@ void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>& , Particle*
       if(m_spectrumType == TRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
          (m_spectrumType == TRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
          (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
-        double distanceInTube = TRDSpectrumPlot::fixedMeanLengthInTube; //default length in trd tube, if no real calcultaion is performed
+        double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
         if(TRDSpectrumPlot::calculateLengthInTube)
             distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
         if(distanceInTube > 0)

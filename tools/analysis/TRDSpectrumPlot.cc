@@ -16,7 +16,7 @@
 #include "TRDCalculations.hh"
 #include "Corrections.hh"
 
-const double TRDSpectrumPlot::fixedMeanLengthInTube = 4;
+const double TRDSpectrumPlot::meanLengthInTube = 4;
 const bool TRDSpectrumPlot::calculateLengthInTube = true;
 
 TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType, double lowerMom, double upperMom) :
@@ -25,7 +25,7 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   m_id(id),
   m_spectrumType(spectrumType),
   m_landauFitRange_lower(0.1),
-  m_landauFitRange_upper(3.0),
+  m_landauFitRange_upper(3.0*TRDSpectrumPlot::meanLengthInTube),
   m_lowerMomentum(lowerMom),
   m_upperMomentum(upperMom),
   m_fitRangeMarker_lower(new TMarker(m_landauFitRange_lower, 0,2)),
@@ -124,7 +124,7 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, Sim
       if(m_spectrumType == TRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
          (m_spectrumType == TRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
          (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
-        double distanceInTube = TRDSpectrumPlot::fixedMeanLengthInTube; //default length in trd tube, if no real calcultaion is performed
+        double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
         if(TRDSpectrumPlot::calculateLengthInTube)
             distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
         if(distanceInTube > 0)

@@ -20,7 +20,7 @@ public:
   virtual void update();
   virtual void draw(TCanvas*);
 
-  static const double fixedMeanLengthInTube;
+  static const double meanLengthInTube;
   static const bool calculateLengthInTube;
 
 private:

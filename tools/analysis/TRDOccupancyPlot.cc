@@ -88,7 +88,7 @@ void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, Particle* particl
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       Hit* hit = *it;
       //analyse the hit:
-      double distanceInTube = TRDSpectrumPlot::fixedMeanLengthInTube;
+      double distanceInTube = 1.;
 
       if(TRDSpectrumPlot::calculateLengthInTube)
           TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
