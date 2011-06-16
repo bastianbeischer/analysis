@@ -7,14 +7,14 @@
 
 class TimeShiftContainer {
 public:
-  static unsigned int s_bars[8][2];
+  static unsigned int s_bars[Constants::nTofBars/2][2];
   static TimeShiftContainer* instance();
   double data(int id, int channel);
   void setData(int id, int channel, double);
   void setConfigFile(const QString&);
   void shiftOnFirstChannel();
-  void applyBarShift();
-  void finalize();
+  void applyBarShifts(double [Constants::nTofBars/2]);
+  void finalizeChannelShifts();
   void dump();
   void saveToConfigfile(const QString&);
 private:

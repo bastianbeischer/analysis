@@ -44,8 +44,15 @@ void MainWindow::setupAnalysis()
       }
     }
   }
+  qDebug() << "Before channel shifts:";
   TimeShiftContainer::instance()->dump();
+
+  qDebug() << "Shift channels relative to channel 0 of each double layer:";
   TimeShiftContainer::instance()->shiftOnFirstChannel();
+  TimeShiftContainer::instance()->dump();
+
+  qDebug() << "Calculate results (before bar shifts:)"; 
+  TimeShiftContainer::instance()->finalizeChannelShifts();
   TimeShiftContainer::instance()->dump();
 
   QVector<BarShiftPlot*> barShiftPlots;
@@ -60,10 +67,11 @@ void MainWindow::setupAnalysis()
       barShiftPlots.append(plot);
     }
   }
+
+  qDebug() << "Calculate results (after bar shifts:)";
   addPlot(new BarTimeShiftHistogram(barShiftPlots));
-  file.Close();
-  TimeShiftContainer::instance()->finalize();
   TimeShiftContainer::instance()->dump();
+  file.Close();
 }
 
 void MainWindow::saveToConfigFile()

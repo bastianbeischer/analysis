@@ -13,6 +13,7 @@
 
 #include <iostream>
 #include <iomanip>
+#include <cmath>
 
 #include <QDebug>
 #include <QStringList>
@@ -20,18 +21,22 @@
 BarShiftPlot::BarShiftPlot(PostAnalysisCanvas* canvas)
   : PostAnalysisPlot()
   , H1DPlot()
+  , m_dt(NAN)
+  , m_errDt(NAN)
   , m_lines()
 {
   QString title = canvas->name().remove("canvas") + "plot";
   setTitle(title);
 
-  TH1D* originalHistogram = new TH1D(*canvas->histograms1D().at(0));
-  originalHistogram->GetXaxis()->SetRangeUser(-4, 4);
-  originalHistogram->Draw();
+  TH1D* histogram = canvas->histograms1D().at(0);
+  TH1D* originalHistogram = new TH1D(qPrintable(title + "original"), "", histogram->GetXaxis()->GetNbins(), histogram->GetXaxis()->GetXmin(), histogram->GetXaxis()->GetXmax());
+  TH1D* modifiedHistogram = new TH1D(qPrintable(title + "modified"), "", histogram->GetXaxis()->GetNbins(), histogram->GetXaxis()->GetXmin(), histogram->GetXaxis()->GetXmax());
+  originalHistogram->Add(histogram);
+  modifiedHistogram->Add(histogram);
   setAxisTitle("#Deltat / ns", "");
   addHistogram(originalHistogram);
+  addHistogram(modifiedHistogram);
   
-  TH1D* modifiedHistogram = new TH1D(*originalHistogram);
   if (modifiedHistogram->GetEntries() > 100)
     modifiedHistogram->Smooth();
   modifiedHistogram->SetLineColor(kRed);
@@ -45,20 +50,17 @@ BarShiftPlot::BarShiftPlot(PostAnalysisCanvas* canvas)
     function->ReleaseParameter(1);
     for (int i = 0; i < 5; ++i) {
       double mean = function->GetParameter(1);
-      double sigma = qMax(0.5, function->GetParameter(2));
+      double sigma = qMax(0.2, function->GetParameter(2));
       function->SetRange(mean - sigma, mean + sigma);
       modifiedHistogram->Fit(function, "RQN0");
     }
+    //m_dt = function->GetParameter(1);
+    //m_errDt = function->GetParError(1);
   }
+  m_dt = function->GetParameter(1);
+  m_errDt = function->GetParError(1);
   function->SetRange(modifiedHistogram->GetXaxis()->GetXmin(), modifiedHistogram->GetXaxis()->GetXmax());
-
-  //QStringList stringList = title.split(" ");
-  //int id = (stringList[ch < 4 ? 2 : 3].remove(0, 2).toInt(0, 16)) | (ch - (ch < 4 ? 0 : 4));
-  //TimeShiftContainer::instance()->setData(id, refCh, -function->GetParameter(1));
-
-  addHistogram(modifiedHistogram);
   addFunction(function);
-
   
   TLatex* latex = 0;
   latex = RootPlot::newLatex(0.15, 0.85);
@@ -67,18 +69,30 @@ BarShiftPlot::BarShiftPlot(PostAnalysisCanvas* canvas)
     .arg(modifiedHistogram->GetMean() < 0 ? '-' : ' ')
     .arg(qAbs(modifiedHistogram->GetMean()), 0, 'f', 3, ' ')));
   addLatex(latex);
-  latex = RootPlot::newLatex(0.15, 0.82);
-  latex->SetTextColor(kRed);
-  latex->SetTitle(qPrintable(QString("x_fit = %1%2 ns")
-    .arg(function->GetParameter(1) < 0 ? '-' : ' ')
-    .arg(qAbs(function->GetParameter(1)), 0, 'f', 3, ' ')));
-  addLatex(latex);
+  if (!isnan(m_dt)) {
+    latex = RootPlot::newLatex(0.15, 0.82);
+    latex->SetTextColor(kRed);
+    latex->SetTitle(qPrintable(QString("x_fit = %1%2 ns").arg(m_dt < 0 ? '-' : ' ').arg(qAbs(m_dt), 0, 'f', 3, ' ')));
+    addLatex(latex);
+  }
   TLine* line = 0;
-  line = new TLine(modifiedHistogram->GetMean(), 0, modifiedHistogram->GetMean(), 1.05 * qMax(modifiedHistogram->GetMaximum(), modifiedHistogram->GetMaximum()));
+  double x = 0;
+  double max = 1.05 * originalHistogram->GetMaximum();
+  
+  x = modifiedHistogram->GetMean();
+  line = new TLine(x, 0, x, max);
   line->SetLineColor(kRed);
   line->SetLineStyle(2);
   line->SetLineWidth(2);
   m_lines.append(line);
+
+  x = (Constants::upperTofPosition - Constants::lowerTofPosition) / Constants::speedOfLight;
+  line = new TLine(x, 0, x, max);
+  line->SetLineColor(kGreen);
+  line->SetLineStyle(2);
+  line->SetLineWidth(2);
+  m_lines.append(line);
+
 }
 
 BarShiftPlot::~BarShiftPlot()
@@ -91,24 +105,4 @@ void BarShiftPlot::draw(TCanvas* canvas)
   H1DPlot::draw(canvas);
   foreach (TLine* line, m_lines)
     line->Draw();
-}
-
-void BarShiftPlot::dumpMatrix(const TMatrixT<double>& m)
-{
-  int width = 10;
-  int space = 2;
-  std::cout << " _";
-  for (int i = 0; i < (width + space) * m.GetNcols() - 2; ++i) std::cout << ' ';
-  std::cout << "_ " << std::endl;
-  for (int r = 0; r < m.GetNrows(); ++r) {
-    for (int c = 0; c < m.GetNcols(); ++c) {
-      if (c) {
-        for (int i = 0; i < space; ++i) std::cout << ' ';
-      } else {
-        std::cout << (r == m.GetNrows() - 1 ? "|_" : "| ");
-      }
-      std::cout << std::setw(width) << std::showpos << std::fixed << m[r][c];
-    }
-    std::cout << (r == m.GetNrows() - 1 ? "_|" : " |") << std::endl;
-  }
 }

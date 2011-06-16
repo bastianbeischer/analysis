@@ -7,7 +7,7 @@
 
 TimeShiftContainer* TimeShiftContainer::s_instance = 0;
 
-unsigned int TimeShiftContainer::s_bars[8][2] = {
+unsigned int TimeShiftContainer::s_bars[Constants::nTofBars/2][2] = {
   {0x8000, 0x8010}, {0x8004, 0x8014}, {0x8008, 0x8018}, {0x800c, 0x801c},
   {0x8020, 0x8030}, {0x8024, 0x8034}, {0x8028, 0x8038}, {0x802c, 0x803c}
 };
@@ -36,7 +36,7 @@ TimeShiftContainer* TimeShiftContainer::instance()
 
 void TimeShiftContainer::shiftOnFirstChannel()
 {
-  for (int barPair = 0; barPair < 8; ++barPair) {
+  for (int barPair = 0; barPair < Constants::nTofBars/2; ++barPair) {
     int refId = s_bars[barPair][0];
     for (int refCh = 0; refCh < 2*Constants::nTofSipmsPerBar; ++refCh) {
       double value = data(refId, refCh);
@@ -50,14 +50,20 @@ void TimeShiftContainer::shiftOnFirstChannel()
   }
 }
 
-void TimeShiftContainer::applyBarShift()
-{
 
+void TimeShiftContainer::applyBarShifts(double shift[Constants::nTofBars/2])
+{
+  for (int ch = 0; ch < Constants::nTofChannels; ++ch) {
+
+    int bar = (ch / Constants::nTofSipmsPerBar) % 4 + 4 * (ch / 32);
+    //qDebug() << hex << (ch+0x8000) << dec << " -> " << bar;
+    m_result[ch]+= shift[bar];
+  }
 }
   
 void TimeShiftContainer::dump()
 {
-  for (int barPair = 0; barPair < 8; ++barPair) {
+  for (int barPair = 0; barPair < Constants::nTofBars/2; ++barPair) {
     for (int bar = 0; bar < 2; ++bar) {
       for (int barCh = 0; barCh < Constants::nTofSipmsPerBar; ++barCh) {
         int id = s_bars[barPair][bar] + barCh;
@@ -68,14 +74,13 @@ void TimeShiftContainer::dump()
       }
     }
   }
-  
   std::cout << "results:" << std::endl;
   for (int ch = 0; ch < Constants::nTofChannels; ++ch)
     std::cout << "0x" << std::hex << (0x8000 + ch) << '=' << m_result[ch] << std::endl;
-  std::cout << std::endl;
+  std::cout << std::endl << std::endl;
 }
 
-void TimeShiftContainer::finalize()
+void TimeShiftContainer::finalizeChannelShifts()
 {
   for (int ch = 0; ch < Constants::nTofChannels; ++ch) {
     QVector<double> shifts;
