@@ -8,6 +8,7 @@
 #include "EventDestination.hh"
 #include "Particle.hh"
 #include "ParticleFilter.hh"
+#include "MCFilter.hh"
 #include "ParticleIdentifier.hh"
 #include "TimeOfFlight.hh"
 #include "ParticleInformation.hh"
@@ -16,6 +17,7 @@ AnalysisProcessor::AnalysisProcessor()
   : EventProcessor()
   , m_particle(new Particle)
   , m_filter(new ParticleFilter)
+  , m_mcFilter(new MCFilter)
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections)
   , m_identifier(new ParticleIdentifier)
@@ -27,6 +29,7 @@ AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, Tr
   : EventProcessor(destinations)
   , m_particle(new Particle)
   , m_filter(new ParticleFilter)
+  , m_mcFilter(new MCFilter)
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections(flags))
   , m_identifier(new ParticleIdentifier)
@@ -39,6 +42,7 @@ AnalysisProcessor::~AnalysisProcessor()
 {
   delete m_particle;
   delete m_filter;
+  delete m_mcFilter;
   delete m_trackFinding;
   delete m_corrections;
   delete m_identifier;
@@ -57,6 +61,11 @@ void AnalysisProcessor::setCorrectionFlags(Corrections::Flags flags)
 void AnalysisProcessor::setParticleFilter(ParticleFilter::Types types)
 {
   m_filter->setTypes(types);
+}
+
+void AnalysisProcessor::setMCFilter(MCFilter::Types types)
+{
+  m_mcFilter->setTypes(types);
 }
 
 void AnalysisProcessor::setCutFilter(CutFilter cuts)
@@ -87,7 +96,8 @@ void AnalysisProcessor::process(SimpleEvent* event)
   m_identifier->identify(m_particle);
 
   if (m_filter->passes(m_particle))
-    if (m_cuts->passes(clusters, m_particle, event))
-      foreach (EventDestination* destination, m_destinations)
-        destination->processEvent(clusters, m_particle, event);
+    if (m_mcFilter->passes(clusters, m_particle, event))
+      if (m_cuts->passes(clusters, m_particle, event))
+        foreach (EventDestination* destination, m_destinations)
+          destination->processEvent(clusters, m_particle, event);
 }

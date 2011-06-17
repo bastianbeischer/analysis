@@ -3,6 +3,7 @@
 #include <QSettings>
 #include <QStringList>
 #include <QDebug>
+#include <QDir>
 
 #include <cstdlib>
 
@@ -14,12 +15,16 @@ SettingsManager* SettingsManager::s_instance = 0;
 SettingsManager::SettingsManager() :
   m_configFile(0)
 {
-  char* env = getenv("PERDAIXANA_PATH");
+  const char* env = getenv("PERDAIXANA_PATH");
   if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
   QString path(env);
   path += "/conf/";
+  QDir dir(path);
+  if (!dir.exists("settings.conf")) {
+    qFatal("ERROR: settings.conf not found!");
+  }
   m_configFile = new QSettings(path+"settings.conf", QSettings::IniFormat);
 
   readSettings();
@@ -66,6 +71,7 @@ void SettingsManager::readSettings()
     int firstRun = m_configFile->value("first_run").toInt();
     int lastRun = m_configFile->value("last_run").toInt();
     int polarity = m_configFile->value("polarity", 0).toString() == "positive" ? 1 : -1;
+    double pressure = m_configFile->value("pressure", 0.).toDouble();
     double momentum = m_configFile->value("momentum", 0.).toDouble();
     bool magnet = m_configFile->value("magnet", "yes").toString() == "yes" ? true : false;
 
@@ -81,6 +87,7 @@ void SettingsManager::readSettings()
     settings->setFirstRun(firstRun);
     settings->setLastRun(lastRun);
     settings->setMomentum(momentum);
+    settings->setPressure(pressure);
     settings->setMagnet(magnet);
     settings->setPolarity(polarity);
     settings->setSituation(situation);

@@ -17,7 +17,8 @@ public:
     rigidity,
     beta,
     tofTimeOverThreshold,
-    trdDeposition
+    trdDeposition,
+    cherenkov
   };
   
   Cut(Type type);

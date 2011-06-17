@@ -17,7 +17,8 @@ LIBS += \
   -lpostAnalysis
 
 CLASSES = \
-  MainWindow
+  MainWindow \
+  HistCompare
 
 SOURCES = \
   main.cc

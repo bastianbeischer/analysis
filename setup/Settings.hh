@@ -2,7 +2,6 @@
 #define Settings_hh
 
 #include <QString>
-#include <QDebug>
 
 class Settings
 {
@@ -21,6 +20,7 @@ public:
   void setLastRun(const int& lastRun) {m_lastRun = lastRun;}
   void setMomentum(const double& momentum) {m_momentum = momentum;}
   void setPolarity(const int& polarity) {m_polarity = polarity;}
+  void setPressure(const double& pressure) {m_pressure = pressure;}
   void setMagnet(const bool& magnet) {m_magnet = magnet;}
 
   Situation situation() const {return m_situation;}
@@ -30,8 +30,11 @@ public:
   int lastRun() const {return m_lastRun;}
   double momentum() const {return m_momentum;}
   int polarity() const {return m_polarity;}
+  double pressure() const {return m_pressure;}
   bool magnet() const {return m_magnet;}
-  
+
+  bool isAboveThreshold(const double&) const;
+
 private:
   Situation m_situation;
   int m_identifier;
@@ -40,6 +43,7 @@ private:
   int m_lastRun;
   double m_momentum;
   int m_polarity;
+  double m_pressure;
   bool m_magnet;
   
 };

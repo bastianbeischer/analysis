@@ -1720,7 +1720,7 @@ reconstruction</string>
              <enum>Qt::DefaultContextMenu</enum>
             </property>
             <attribute name="title">
-             <string>Corrections</string>
+             <string>Corr.</string>
             </attribute>
             <layout class="QVBoxLayout" name="verticalLayout_6">
              <item>
@@ -1854,7 +1854,7 @@ over threshold</string>
            </widget>
            <widget class="QWidget" name="particleFilterTab">
             <attribute name="title">
-             <string>Particle Filter</string>
+             <string>Part. Filter</string>
             </attribute>
             <layout class="QVBoxLayout" name="verticalLayout_7">
              <item>
@@ -1985,166 +1985,387 @@ over threshold</string>
              </item>
             </layout>
            </widget>
+           <widget class="QWidget" name="mcFitlerTab">
+            <attribute name="title">
+             <string>MC Filter</string>
+            </attribute>
+            <layout class="QGridLayout" name="gridLayout_3">
+             <item row="0" column="0">
+              <widget class="QCheckBox" name="mcProtonCheckBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <family>DejaVu Sans</family>
+                </font>
+               </property>
+               <property name="text">
+                <string>proton</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QCheckBox" name="mcAntiprotonCheckBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <family>DejaVu Sans</family>
+                </font>
+               </property>
+               <property name="text">
+                <string>antiproton</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QCheckBox" name="mcPositronCheckBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <family>DejaVu Sans</family>
+                </font>
+               </property>
+               <property name="text">
+                <string>e+</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QCheckBox" name="mcElectronCheckBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <family>DejaVu Sans</family>
+                </font>
+               </property>
+               <property name="text">
+                <string>e-</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QCheckBox" name="mcPionCheckBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <family>DejaVu Sans</family>
+                </font>
+               </property>
+               <property name="text">
+                <string>pi+</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QCheckBox" name="mcAntiPionCheckBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <family>DejaVu Sans</family>
+                </font>
+               </property>
+               <property name="text">
+                <string>pi-</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QCheckBox" name="mcAntiMuonCheckBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <family>DejaVu Sans</family>
+                </font>
+               </property>
+               <property name="text">
+                <string>mu+</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QCheckBox" name="mcMuonCheckBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <family>DejaVu Sans</family>
+                </font>
+               </property>
+               <property name="text">
+                <string>mu-</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QCheckBox" name="mcHeliumCheckBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <family>DejaVu Sans</family>
+                </font>
+               </property>
+               <property name="text">
+                <string>helium</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QCheckBox" name="mcGammaCheckBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="font">
+                <font>
+                 <family>DejaVu Sans</family>
+                </font>
+               </property>
+               <property name="text">
+                <string>gamma</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
            <widget class="QWidget" name="cutTab">
             <attribute name="title">
              <string>Cuts</string>
             </attribute>
-            <widget class="QCheckBox" name="rigidityCutCheckBox">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>0</y>
-               <width>171</width>
-               <height>20</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>Rigidity / GV</string>
-             </property>
-            </widget>
-            <widget class="QCheckBox" name="betaCutCheckBox">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>30</y>
-               <width>87</width>
-               <height>20</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>Beta</string>
-             </property>
-            </widget>
-            <widget class="QCheckBox" name="trdDepositionCutCheckBox">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>60</y>
-               <width>201</width>
-               <height>20</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>TRD Deposition / ADC-Counts</string>
-             </property>
-            </widget>
-            <widget class="QCheckBox" name="tofTotCutCheckBox">
-             <property name="geometry">
-              <rect>
-               <x>10</x>
-               <y>100</y>
-               <width>211</width>
-               <height>20</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string>TOF Time Over Threshold / ns</string>
-             </property>
-            </widget>
-            <widget class="QLineEdit" name="rigidityLineEditMin">
-             <property name="geometry">
-              <rect>
-               <x>120</x>
-               <y>0</y>
-               <width>41</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-            <widget class="QLineEdit" name="rigidityLineEditMax">
-             <property name="geometry">
-              <rect>
-               <x>190</x>
-               <y>0</y>
-               <width>41</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-            <widget class="QLineEdit" name="betaLineEditMax">
-             <property name="geometry">
-              <rect>
-               <x>190</x>
-               <y>30</y>
-               <width>41</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-            <widget class="QLineEdit" name="betaLineEditMin">
-             <property name="geometry">
-              <rect>
-               <x>120</x>
-               <y>30</y>
-               <width>41</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-            <widget class="QLineEdit" name="trdDepositionLineEditMin">
-             <property name="geometry">
-              <rect>
-               <x>120</x>
-               <y>80</y>
-               <width>41</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-            <widget class="QLineEdit" name="trdDepositionLineEditMax">
-             <property name="geometry">
-              <rect>
-               <x>190</x>
-               <y>80</y>
-               <width>41</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-            <widget class="QLineEdit" name="tofTotLineEditMin">
-             <property name="geometry">
-              <rect>
-               <x>120</x>
-               <y>120</y>
-               <width>41</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-            <widget class="QLineEdit" name="tofTotLineEditMax">
-             <property name="geometry">
-              <rect>
-               <x>190</x>
-               <y>120</y>
-               <width>41</width>
-               <height>22</height>
-              </rect>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
+            <layout class="QGridLayout" name="gridLayout_4">
+             <item row="0" column="0">
+              <widget class="QCheckBox" name="rigidityCutCheckBox">
+               <property name="text">
+                <string>Rigidity / GV</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QLineEdit" name="rigidityLineEditMin">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QLineEdit" name="rigidityLineEditMax">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QCheckBox" name="betaCutCheckBox">
+               <property name="text">
+                <string>Beta</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QLineEdit" name="betaLineEditMin">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QLineEdit" name="betaLineEditMax">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" colspan="2">
+              <widget class="QCheckBox" name="trdDepositionCutCheckBox">
+               <property name="text">
+                <string>TRD Deposition / ADC-Counts</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QLineEdit" name="trdDepositionLineEditMin">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="2">
+              <widget class="QLineEdit" name="trdDepositionLineEditMax">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0" colspan="2">
+              <widget class="QCheckBox" name="tofTotCutCheckBox">
+               <property name="text">
+                <string>TOF Time Over Threshold / ns</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QLineEdit" name="tofTotLineEditMin">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="2">
+              <widget class="QLineEdit" name="tofTotLineEditMax">
+               <property name="text">
+                <string/>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0" colspan="2">
+              <widget class="QCheckBox" name="cherenkovCutCheckBox">
+               <property name="text">
+                <string>Testbeam Cherenkov Cut</string>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="2">
+              <widget class="QDoubleSpinBox" name="cherenkovCutDoubleSpinBox">
+               <property name="maximum">
+                <double>2000.000000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>10.000000000000000</double>
+               </property>
+               <property name="value">
+                <double>200.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <item>
+                <spacer name="horizontalSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="cherenkovCutBelowRadioButton">
+                 <property name="text">
+                  <string>below</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item row="7" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <item>
+                <spacer name="horizontalSpacer_2">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="cherenkovCutAboveRadioButton">
+                 <property name="layoutDirection">
+                  <enum>Qt::LeftToRight</enum>
+                 </property>
+                 <property name="text">
+                  <string>above</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
            </widget>
           </widget>
           <widget class="QWidget" name="widget" native="true">

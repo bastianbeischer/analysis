@@ -62,6 +62,7 @@
 #include "TOTBetaCorrelation.hh"
 #include "TOTPlot.hh"
 #include "TOTLayerPlot.hh"
+#include "TOTLayerCollection.hh"
 #include "TOTIonizationCorrelation.hh"
 #include "TOTTemperatureCorrelationPlotCollection.hh"
 #include "TOTTimeCorrelationPlotCollection.hh"
@@ -102,7 +103,7 @@ MainWindow::MainWindow(QWidget* parent)
 {
   m_ui.setupUi(this);
  
-  char* env = getenv("PERDAIXANA_PATH");
+  const char* env = getenv("PERDAIXANA_PATH");
   if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
@@ -493,21 +494,11 @@ void MainWindow::setupPlots()
   }
   if (m_ui.timeOverThresholdCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TOTPlot);
-    m_ui.plotter->addPlot(new TOTLayerPlot(TOTLayerPlot::Upper));
-    m_ui.plotter->addPlot(new TOTLayerPlot(TOTLayerPlot::Lower));
-    m_ui.plotter->addPlot(new TOTLayerPlot(TOTLayerPlot::All));
-    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Upper, Hit::trd));
-    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Lower, Hit::trd));
-    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::All, Hit::trd));
-    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Upper, Hit::tracker));
-    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Lower, Hit::tracker));
-    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::All, Hit::tracker));
-    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::Upper));
-    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::Lower));
-    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::All));
-    m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::Upper));
-    m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::Lower));
-    m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::All));
+    m_ui.plotter->addPlot(new TOTLayerCollection(new TOTLayerPlot()));
+    m_ui.plotter->addPlot(new TOTLayerCollection(new TOTIonizationCorrelation(Hit::trd)));
+    m_ui.plotter->addPlot(new TOTLayerCollection(new TOTIonizationCorrelation(Hit::tracker)));
+    m_ui.plotter->addPlot(new TOTLayerCollection(new TOTMomentumCorrelation()));
+    m_ui.plotter->addPlot(new TOTLayerCollection(new TOTBetaCorrelation()));
     m_ui.plotter->addPlot(new TOTTemperatureCorrelationPlotCollection);
     m_ui.plotter->addPlot(new TOTTimeCorrelationPlotCollection(first, last));
     // for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
@@ -658,7 +649,7 @@ void MainWindow::setupPlots()
   }
 }
 
-void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes, CutFilter& cutFilter)
+void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes, CutFilter& cutFilter, MCFilter::Types& mcFilterTypes)
 {
   if (m_ui.alignmentCorrectionCheckBox->isChecked())
     flags|= Corrections::Alignment;
@@ -685,6 +676,27 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
     filterTypes |= Particle::Muon;
   if (m_ui.antiMuonCheckBox->isChecked())
     filterTypes |= Particle::AntiMuon;
+
+  if (m_ui.mcProtonCheckBox->isChecked())
+    mcFilterTypes |= Particle::Proton;
+  if (m_ui.mcAntiprotonCheckBox->isChecked())
+    mcFilterTypes |= Particle::AntiProton;
+  if (m_ui.mcElectronCheckBox->isChecked())
+    mcFilterTypes |= Particle::Electron;
+  if (m_ui.mcPositronCheckBox->isChecked())
+    mcFilterTypes |= Particle::Positron;
+  if (m_ui.mcMuonCheckBox->isChecked())
+    mcFilterTypes |= Particle::Muon;
+  if (m_ui.mcAntiMuonCheckBox->isChecked())
+    mcFilterTypes |= Particle::AntiMuon;
+  if (m_ui.mcPionCheckBox->isChecked())
+    mcFilterTypes |= Particle::PiPlus;
+  if (m_ui.mcAntiMuonCheckBox->isChecked())
+    mcFilterTypes |= Particle::PiMinus;
+  if (m_ui.mcHeliumCheckBox->isChecked())
+    mcFilterTypes |= Particle::Helium;
+  if (m_ui.mcGammaCheckBox->isChecked())
+    mcFilterTypes |= Particle::Photon;
   
   if (m_ui.rigidityCutCheckBox->isChecked()) {
     Cut cut(Cut::rigidity);
@@ -748,6 +760,15 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
     if (maxIsNumber) {
       cut.setMax(max);
     }
+    cutFilter.addCut(cut);
+  }
+  if (m_ui.cherenkovCutCheckBox->isChecked()) {
+    Cut cut(Cut::cherenkov);
+    double cherenkovLimit = m_ui.cherenkovCutDoubleSpinBox->value();
+    if (m_ui.cherenkovCutBelowRadioButton->isChecked())
+      cut.setMax(cherenkovLimit);
+    else
+      cut.setMin(cherenkovLimit);
     cutFilter.addCut(cut);
   }
   
@@ -817,7 +838,8 @@ void MainWindow::analyzeButtonClicked()
     Corrections::Flags flags;
     ParticleFilter::Types filterTypes;
     CutFilter cutFilter;
-    setupAnalysis(type, flags, filterTypes, cutFilter);
+    MCFilter::Types mcFilterTypes;
+    setupAnalysis(type, flags, filterTypes, cutFilter, mcFilterTypes);
     setupPlots();
 
     qDeleteAll(m_processors);
@@ -830,8 +852,9 @@ void MainWindow::analyzeButtonClicked()
       processor->setCorrectionFlags(flags);
       processor->setParticleFilter(filterTypes);
       processor->setCutFilter(cutFilter);
+      processor->setMCFilter(mcFilterTypes);
       m_processors.append(processor);
-    }      
+    }
     m_reader->start(m_processors, m_ui.firstEventSpinBox->value(), m_ui.lastEventSpinBox->value());
   } else {
     m_reader->stop();

@@ -3,9 +3,6 @@
 
 #include <TObject.h>
 #include <TVector3.h>
-#include <vector>
-
-#include "Hit.hh"
 
 class MCDigiSignal :
     public TObject
