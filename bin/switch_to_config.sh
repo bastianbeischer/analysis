@@ -9,4 +9,5 @@ cd $DIR
 for i in $(ls $1/*); do
     ln -sf ${i} .;
 done
+ls -alh --color=auto ${PERDAIXANA_PATH}/conf/*.conf
 echo "done"
