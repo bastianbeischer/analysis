@@ -20,7 +20,7 @@ public:
   void applyBarShifts(const QVector<BarShiftPlot*>&);
   void finalizeChannelShifts();
   void dump();
-  void saveToConfigfile(const QString&);
+  void saveToConfigfile(const QString&, bool withBarShift);
 private:
   TimeShiftContainer();
   void dumpMatrix(const TMatrixT<double>&);
@@ -29,6 +29,7 @@ private:
   QString m_configFile;
   double m_channelShift[Constants::nTofChannels];
   double m_result[Constants::nTofChannels];
+  double m_resultWithBarShift[Constants::nTofChannels];
   double m_data[Constants::nTofChannels][2*Constants::nTofSipmsPerBar];
 };
 

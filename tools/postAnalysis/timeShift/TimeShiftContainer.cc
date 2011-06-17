@@ -20,6 +20,7 @@ TimeShiftContainer::TimeShiftContainer()
   for (int ch = 0; ch < Constants::nTofChannels; ++ch) {
     m_channelShift[ch] = 0;
     m_result[ch] = NAN;
+    m_resultWithBarShift[ch] = NAN;
     for (int barCh = 0; barCh < 2*Constants::nTofSipmsPerBar; ++barCh)
       m_data[ch][barCh] = NAN;
   }
@@ -52,7 +53,6 @@ void TimeShiftContainer::shiftOnFirstChannel()
     }
   }
 }
-
  
 void TimeShiftContainer::dump()
 {
@@ -70,6 +70,9 @@ void TimeShiftContainer::dump()
   std::cout << "results:" << std::endl;
   for (int ch = 0; ch < Constants::nTofChannels; ++ch)
     std::cout << "0x" << std::hex << (0x8000 + ch) << '=' << m_result[ch] << std::endl;
+  std::cout << "results with bar shifts:" << std::endl;
+  for (int ch = 0; ch < Constants::nTofChannels; ++ch)
+    std::cout << "0x" << std::hex << (0x8000 + ch) << '=' << m_resultWithBarShift[ch] << std::endl;
   std::cout << std::endl << std::endl;
 }
 
@@ -116,12 +119,12 @@ void TimeShiftContainer::setConfigFile(const QString& file)
   }
 }
 
-void TimeShiftContainer::saveToConfigfile(const QString& file)
+void TimeShiftContainer::saveToConfigfile(const QString& file, bool withBarShift)
 {
   QSettings settings(file, QSettings::IniFormat);
   for (int ch = 0; ch < Constants::nTofChannels; ++ch) {
     int id = 0x8000 + ch;
-    settings.setValue("tofTimeShift/0x" + QString::number(id, 16), m_result[ch]);
+    settings.setValue("tofTimeShift/0x" + QString::number(id, 16), withBarShift ? m_resultWithBarShift[ch] : m_result[ch]);
   }
 }
 
@@ -194,7 +197,7 @@ void TimeShiftContainer::applyBarShifts(const QVector<BarShiftPlot*>& plots)
   for (int ch = 0; ch < Constants::nTofChannels; ++ch) {
     int bar = (ch / Constants::nTofSipmsPerBar) % 4 + 4 * (ch / 32);
     //qDebug() << hex << (ch+0x8000) << dec << " -> " << bar;
-    m_result[ch]+= shift[bar];
+    m_resultWithBarShift[ch] = m_result[ch] + shift[bar];
   }
 }
  

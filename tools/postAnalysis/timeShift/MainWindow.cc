@@ -19,8 +19,12 @@
 MainWindow::MainWindow(QWidget* parent)
   : PostAnalysisWindow(parent)
 {
-  QPushButton* button = new QPushButton("save to config file...");
-  connect(button, SIGNAL(clicked()), this, SLOT(saveToConfigFile()));
+  QPushButton* button = 0;
+  button = new QPushButton("save to config file (with bar shifts)");
+  connect(button, SIGNAL(clicked()), this, SLOT(saveToConfigFileWithBarShift()));
+  addWidget(button);
+  button = new QPushButton("save to config file (without bar shifts)");
+  connect(button, SIGNAL(clicked()), this, SLOT(saveToConfigFileWithoutBarShift()));
   addWidget(button);
 }
 
@@ -75,12 +79,22 @@ void MainWindow::setupAnalysis()
   file.Close();
 }
 
-void MainWindow::saveToConfigFile()
+void MainWindow::saveToConfigFileWithoutBarShift()
+{
+  saveToConfigFile(false);
+}
+
+void MainWindow::saveToConfigFileWithBarShift()
+{
+  saveToConfigFile(true);
+}
+
+void MainWindow::saveToConfigFile(bool withBarShift)
 {
   QFileDialog dialog(this, "save time shifts...", ".", "CONF files (*.conf)");
   dialog.setDefaultSuffix("conf");
   dialog.setAcceptMode(QFileDialog::AcceptSave);
   QStringList fileNames;
   if (dialog.exec())
-    TimeShiftContainer::instance()->saveToConfigfile(dialog.selectedFiles()[0]);
+    TimeShiftContainer::instance()->saveToConfigfile(dialog.selectedFiles()[0], withBarShift);
 }

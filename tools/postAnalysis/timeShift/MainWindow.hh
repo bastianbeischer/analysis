@@ -11,7 +11,10 @@ public:
 protected:
   virtual void setupAnalysis();
 private slots:
-  void saveToConfigFile();
+  void saveToConfigFileWithoutBarShift();
+  void saveToConfigFileWithBarShift();
+private:
+  void saveToConfigFile(bool withBarShift);
 };
 
 #endif
