@@ -99,25 +99,7 @@ void Corrections::timeShift(Hit* hit)
       double timeShift = static_cast<TOFBar*>(element)->timeShift((*it)->channel());
       
       unsigned short id = element->id();
-      double barTimeShift = 0;
-      if (id == 0x8000 || id == 0x8010) {
-        barTimeShift = 0;
-      } else if (id == 0x8004 || id == 0x8014) {
-        barTimeShift = -.424683288999999964;
-      } else if (id == 0x8008 || id == 0x8018) {
-        barTimeShift = -.154683288999999974;
-      } else if (id == 0x800c || id == 0x801c) {
-        barTimeShift = -0.324999999999999872e-1;
-      } else if (id == 0x8020 || id == 0x8030) {
-        barTimeShift = -.120693492999999999;
-      } else if (id == 0x8024 || id == 0x8034) {
-        barTimeShift = 0.303989795999999979;
-      } else if (id == 0x8028 || id == 0x8038) {
-        barTimeShift = -.343510203999999986;
-      } else if (id == 0x802c || id == 0x803c) {
-        barTimeShift = 0.269306507000000028;
-      }
-      tofHit->applyTimeShift(timeShift + barTimeShift);
+      tofHit->applyTimeShift(timeShift);
     }
     cluster->processHits();
   }
