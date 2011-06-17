@@ -19,6 +19,8 @@
 #include <TLatex.h>
 #include <TF1.h>
 
+#include <cmath>
+
 #include <QDebug>
 
 TOFBarShiftPlot::TOFBarShiftPlot(unsigned short idTop1, unsigned short idTop2, unsigned short idBottom1, unsigned short idBottom2)
@@ -108,9 +110,15 @@ void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, Particle* particle, Sim
       return;
     double t = tof->timeOfFlight();
     double pCorrection = (t + lCorrection) * (1 - sqrt(rigidity*rigidity + m*m) / rigidity);
+    double b = Constants::tofBarWidth;
+    double xu = track->x(Constants::upperTofPosition);
+    double xl = track->x(Constants::lowerTofPosition);
+    double upperBarCenter = Constants::tofBarWidth * floor(xu / b) + b / 2.;
+    double lowerBarCenter = Constants::tofBarWidth * floor(xl / b) + b / 2.;
+
     double yu = track->y(Constants::upperTofPosition);
     double yl = track->y(Constants::lowerTofPosition);
-    if (qAbs(yu) < 50. && qAbs(yl) < 50.)
+    if (qAbs(yu) < 50. && qAbs(yl) < 50. && qAbs(xu-upperBarCenter) < 0.8 * b / 2. && qAbs(xl-lowerBarCenter) < 0.8 * b / 2.)
       histogram()->Fill(t + lCorrection + pCorrection);
   }
 }

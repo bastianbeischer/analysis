@@ -155,9 +155,9 @@ void TimeShiftContainer::applyBarShifts(const QVector<BarShiftPlot*>& plots)
       if (plot->title().contains("0x8028 0x8038")) lower = 2;
       if (plot->title().contains("0x802c 0x803c")) lower = 3;
       int barPositionDistance = qAbs(upper - lower);
-      upperBar.append(upper);
-      lowerBar.append(lower);
       if (!isnan(plot->dt())) {
+        upperBar.append(upper);
+        lowerBar.append(lower);
         bVector.append(desiredTimeDifference(barPositionDistance) - plot->dt());
         errBVector.append(plot->errDt());
       }
