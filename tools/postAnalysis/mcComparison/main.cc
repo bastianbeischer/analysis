@@ -15,6 +15,13 @@ int main(int argc, char* argv[])
     window.setMCFile(application.arguments().at(2));
     window.setupAnalysis();
   }
+  if (application.arguments().count() == 4) {
+    window.setAnalysisFile(application.arguments().at(1));
+    window.setMCFile(application.arguments().at(2));
+    window.SetOldMCFile(application.arguments().at(3));
+    window.setupAnalysis();
+  }
+
   window.show();
   return application.exec();
 }
