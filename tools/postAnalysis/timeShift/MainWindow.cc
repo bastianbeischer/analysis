@@ -67,9 +67,10 @@ void MainWindow::setupAnalysis()
       barShiftPlots.append(plot);
     }
   }
-
-  qDebug() << "Calculate results (after bar shifts:)";
   addPlot(new BarTimeShiftHistogram(barShiftPlots));
+  
+  qDebug() << "Calculate results (after bar shifts:)";
+  TimeShiftContainer::instance()->applyBarShifts(barShiftPlots);
   TimeShiftContainer::instance()->dump();
   file.Close();
 }

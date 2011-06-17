@@ -1,9 +1,11 @@
 #include "TimeShiftContainer.hh"
+#include "BarShiftPlot.hh"
 
 #include <QSettings>
 #include <QDebug>
 #include <iostream>
 #include <cmath>
+#include <iomanip>
 
 TimeShiftContainer* TimeShiftContainer::s_instance = 0;
 
@@ -25,6 +27,7 @@ TimeShiftContainer::TimeShiftContainer()
 
 TimeShiftContainer::~TimeShiftContainer()
 {
+  s_instance = 0;
 }
 
 TimeShiftContainer* TimeShiftContainer::instance()
@@ -50,17 +53,7 @@ void TimeShiftContainer::shiftOnFirstChannel()
   }
 }
 
-
-void TimeShiftContainer::applyBarShifts(double shift[Constants::nTofBars/2])
-{
-  for (int ch = 0; ch < Constants::nTofChannels; ++ch) {
-
-    int bar = (ch / Constants::nTofSipmsPerBar) % 4 + 4 * (ch / 32);
-    //qDebug() << hex << (ch+0x8000) << dec << " -> " << bar;
-    m_result[ch]+= shift[bar];
-  }
-}
-  
+ 
 void TimeShiftContainer::dump()
 {
   for (int barPair = 0; barPair < Constants::nTofBars/2; ++barPair) {
@@ -129,5 +122,98 @@ void TimeShiftContainer::saveToConfigfile(const QString& file)
   for (int ch = 0; ch < Constants::nTofChannels; ++ch) {
     int id = 0x8000 + ch;
     settings.setValue("tofTimeShift/0x" + QString::number(id, 16), m_result[ch]);
+  }
+}
+
+double TimeShiftContainer::desiredTimeDifference(int barPositionDistance)
+{
+  double z = (Constants::upperTofPosition - Constants::lowerTofPosition);
+  double x = barPositionDistance * Constants::tofBarWidth;
+  return sqrt(x*x + z*z) / Constants::speedOfLight;
+}
+
+void TimeShiftContainer::applyBarShifts(const QVector<BarShiftPlot*>& plots)
+{
+  QVector<int> upperBar;
+  QVector<int> lowerBar;
+  QVector<double> bVector;
+  QVector<double> errBVector;
+
+  foreach(BarShiftPlot* plot, plots) {
+    if (true || !isnan(plot->dt())) {
+      int upper = 0;
+      int lower = 0;
+      if (plot->title().contains("bar shift 0x8000 0x8010")) upper = 0;
+      if (plot->title().contains("bar shift 0x8004 0x8014")) upper = 1;
+      if (plot->title().contains("bar shift 0x8008 0x8018")) upper = 2;
+      if (plot->title().contains("bar shift 0x800c 0x801c")) upper = 3;
+      if (plot->title().contains("0x8020 0x8030")) lower = 0;
+      if (plot->title().contains("0x8024 0x8034")) lower = 1;
+      if (plot->title().contains("0x8028 0x8038")) lower = 2;
+      if (plot->title().contains("0x802c 0x803c")) lower = 3;
+      int barPositionDistance = qAbs(upper - lower);
+      upperBar.append(upper);
+      lowerBar.append(lower);
+      bVector.append(desiredTimeDifference(barPositionDistance) - plot->dt());
+      errBVector.append(plot->errDt());
+    }
+  }
+
+  int n = bVector.count();
+  TMatrixT<double> b(n, 1);
+  for (int i = 0; i < n; ++i) {
+    b[i][0] = bVector[i];
+  }
+
+  int m = Constants::nTofBars/2;
+  TMatrixT<double> AFull(n, m);
+  for (int i = 0; i < n; ++i) {
+    for (int j = 0; j < m; ++j) {
+      AFull[i][j] = 0;
+    }
+    int j = 0;
+    j = upperBar[i];
+    AFull[i][j] = -1;
+    j = lowerBar[i] + 4;
+    AFull[i][j] = 1;
+  }
+  TMatrixT<double> A;
+  AFull.GetSub(0, n-1, 1, m-1, A);
+  --m;
+  
+  TMatrixT<double> At(m, n);
+  At.Transpose(A);
+  TMatrixT<double> Result = (At * A).Invert() * At * b;
+  //dumpMatrix(A);
+  //dumpMatrix(b);
+  //dumpMatrix(Result);
+  double shift[Constants::nTofBars/2];
+  shift[0] = 0;
+  for (int i = 0; i < Constants::nTofBars/2 - 1; ++i)
+    shift[i+1] = Result[i][0];
+  for (int ch = 0; ch < Constants::nTofChannels; ++ch) {
+    int bar = (ch / Constants::nTofSipmsPerBar) % 4 + 4 * (ch / 32);
+    //qDebug() << hex << (ch+0x8000) << dec << " -> " << bar;
+    m_result[ch]+= shift[bar];
+  }
+}
+ 
+void TimeShiftContainer::dumpMatrix(const TMatrixT<double>& m)
+{
+  int width = 9;
+  int space = 2;
+  std::cout << " _ ";
+  for (int i = 0; i < (width + space) * m.GetNcols() - space + 1; ++i) std::cout << ' ';
+  std::cout << "_ " << std::endl;
+  for (int r = 0; r < m.GetNrows(); ++r) {
+    for (int c = 0; c < m.GetNcols(); ++c) {
+      if (c) {
+        for (int i = 0; i < space; ++i) std::cout << ' ';
+      } else {
+        std::cout << (r == m.GetNrows() - 1 ? "|_ " : "|  ");
+      }
+      std::cout << std::setfill('x') << std::setw(width) << std::showpos << std::fixed << m[r][c];
+    }
+    std::cout << (r == m.GetNrows() - 1 ? " _|" : "  |") << std::endl;
   }
 }
