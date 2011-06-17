@@ -38,14 +38,13 @@ void MainWindow::setupAnalysis()
   TFile file(qPrintable(m_analysisFile));
   gROOT->cd();
 
-  for (int refCh = 0; refCh < 8; ++refCh) {
-    for (unsigned int bar = 0; bar < 8; ++bar) {
-      for (int ch = 0; ch < 8; ++ch) {
-        QString title = QString("time shift 0x%1 0x%2 ch %3 canvas")
-          .arg(TimeShiftContainer::s_bars[bar][0], 0, 16).arg(TimeShiftContainer::s_bars[bar][1], 0, 16).arg(refCh);
-        canvas = addCanvas(&file, qPrintable(title));
+  for (unsigned int bar = 0; bar < 8; ++bar) {
+    for (int refCh = 0; refCh < 8; ++refCh) {
+      QString title = QString("time shift 0x%1 0x%2 ch %3 canvas")
+        .arg(TimeShiftContainer::s_bars[bar][0], 0, 16).arg(TimeShiftContainer::s_bars[bar][1], 0, 16).arg(refCh);
+      canvas = addCanvas(&file, qPrintable(title));
+      for (int ch = 0; ch < 8; ++ch)
         addPlot(new ChannelTimeShiftHistogram(canvas, ch));
-      }
     }
   }
   qDebug() << "Before channel shifts:";
