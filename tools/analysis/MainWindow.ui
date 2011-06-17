@@ -108,8 +108,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>253</width>
-             <height>850</height>
+             <width>204</width>
+             <height>877</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -1804,7 +1804,7 @@ reconstruction</string>
 over threshold</string>
                </property>
                <property name="checked">
-                <bool>false</bool>
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -2461,7 +2461,7 @@ over threshold</string>
      <x>0</x>
      <y>0</y>
      <width>1207</width>
-     <height>25</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="font">
