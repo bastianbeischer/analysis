@@ -51,8 +51,8 @@ void MainWindow::setupAnalysis()
 
     gROOT->cd();
 
-    PostAnalysisCanvas* dataCanvas = addCanvas(&dataFile,"complete TRD spectrum (-100 GeV to 100 GeV)");
-    PostAnalysisCanvas* mcCanvas = addCanvas(&mcFile, "complete TRD spectrum (-100 GeV to 100 GeV)");
+    PostAnalysisCanvas* dataCanvas = addCanvas(&dataFile,"complete TRD spectrum (-100 GeV to 100 GeV) canvas");
+    PostAnalysisCanvas* mcCanvas = addCanvas(&mcFile, "complete TRD spectrum (-100 GeV to 100 GeV) canvas");
     qDebug() << "dataCanvas " << dataCanvas->name() << " got " << dataCanvas->histograms1D().size() << " 1D histos";
     qDebug() << "mcCanvas " << mcCanvas->name() << " got " << mcCanvas->histograms1D().size() << " 1D histos";
 
