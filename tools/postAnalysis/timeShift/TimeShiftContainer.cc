@@ -157,8 +157,10 @@ void TimeShiftContainer::applyBarShifts(const QVector<BarShiftPlot*>& plots)
       int barPositionDistance = qAbs(upper - lower);
       upperBar.append(upper);
       lowerBar.append(lower);
-      bVector.append(desiredTimeDifference(barPositionDistance) - plot->dt());
-      errBVector.append(plot->errDt());
+      if (!isnan(plot->dt())) {
+        bVector.append(desiredTimeDifference(barPositionDistance) - plot->dt());
+        errBVector.append(plot->errDt());
+      }
     }
   }
 
@@ -187,9 +189,9 @@ void TimeShiftContainer::applyBarShifts(const QVector<BarShiftPlot*>& plots)
   TMatrixT<double> At(m, n);
   At.Transpose(A);
   TMatrixT<double> Result = (At * A).Invert() * At * b;
-  //dumpMatrix(A);
-  //dumpMatrix(b);
-  //dumpMatrix(Result);
+  dumpMatrix(A);
+  dumpMatrix(b);
+  dumpMatrix(Result);
   double shift[Constants::nTofBars/2];
   shift[0] = 0;
   for (int i = 0; i < Constants::nTofBars/2 - 1; ++i)

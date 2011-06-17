@@ -37,7 +37,7 @@ BarShiftPlot::BarShiftPlot(PostAnalysisCanvas* canvas)
   addHistogram(originalHistogram);
   addHistogram(modifiedHistogram);
   
-  if (modifiedHistogram->GetEntries() > 100)
+  if (modifiedHistogram->GetEntries() > 200)
     modifiedHistogram->Smooth();
   modifiedHistogram->SetLineColor(kRed);
 
@@ -45,7 +45,7 @@ BarShiftPlot::BarShiftPlot(PostAnalysisCanvas* canvas)
   function->SetNpx(1000);
   function->SetParameters(modifiedHistogram->GetMaximum(), modifiedHistogram->GetMean(), modifiedHistogram->GetRMS());
   function->FixParameter(1, modifiedHistogram->GetMean());
-  if (modifiedHistogram->GetEntries() > 100) {
+  if (modifiedHistogram->GetEntries() > 200) {
     modifiedHistogram->Fit(function, "QN0");
     function->ReleaseParameter(1);
     for (int i = 0; i < 5; ++i) {
@@ -54,11 +54,9 @@ BarShiftPlot::BarShiftPlot(PostAnalysisCanvas* canvas)
       function->SetRange(mean - sigma, mean + sigma);
       modifiedHistogram->Fit(function, "RQN0");
     }
-    //m_dt = function->GetParameter(1);
-    //m_errDt = function->GetParError(1);
+    m_dt = function->GetParameter(1);
+    m_errDt = function->GetParError(1);
   }
-  m_dt = function->GetParameter(1);
-  m_errDt = function->GetParError(1);
   function->SetRange(modifiedHistogram->GetXaxis()->GetXmin(), modifiedHistogram->GetXaxis()->GetXmax());
   addFunction(function);
   
