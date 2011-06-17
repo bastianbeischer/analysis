@@ -8,6 +8,23 @@ TRDSpectrumCherenkovPlot::TRDSpectrumCherenkovPlot(unsigned short id, TRDSpectru
   m_cherenkov1Limit(c1Limit),
   m_cherenkov2Limit(c2Limit)
 {
+  switch (m_cherenkovCut) {
+  case None:
+    setTitle(title() + " no cherenkov cut");
+    break;
+  case BothBelow:
+    setTitle(title() + " below both cherenkovs");
+    break;
+  case BothAbove:
+   setTitle(title() + " above both cherenkovs");
+    break;
+  case C1AboveC2Below:
+    setTitle(title() + " above c1 below c2");
+    break;
+  case C1BelowC2Above:
+    setTitle(title() + " below c1 above c2");
+    break;
+  }
 }
 
 TRDSpectrumCherenkovPlot::~TRDSpectrumCherenkovPlot()
