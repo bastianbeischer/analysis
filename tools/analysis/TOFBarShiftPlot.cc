@@ -118,7 +118,7 @@ void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, Particle* particle, Sim
 
     double yu = track->y(Constants::upperTofPosition);
     double yl = track->y(Constants::lowerTofPosition);
-    if (qAbs(yu) < 50. && qAbs(yl) < 50. && qAbs(xu-upperBarCenter) < 0.8 * b / 2. && qAbs(xl-lowerBarCenter) < 0.8 * b / 2.)
+    if (qAbs(yu) < 100. && qAbs(yl) < 100. && qAbs(xu-upperBarCenter) < 0.9 * b / 2. && qAbs(xl-lowerBarCenter) < 0.9 * b / 2.)
       histogram()->Fill(t + lCorrection + pCorrection);
   }
 }
