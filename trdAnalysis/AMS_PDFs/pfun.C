@@ -10,6 +10,16 @@ Double_t pfun(Double_t *x, Double_t *par) {
   }
 }
 
+
+/**
+  p[0] normalization factor
+  p[1] mopv
+  p[2] sigma of rising landau flank
+  p[3] sigma of falling landau flank
+  p[4] limit above which an exponential decay function is used
+  p[5] exponential factor (should be negative)
+**/
+
 Double_t pfunperdaix(Double_t *x, Double_t *par) {
   if(x[0]<par[1] && x[0] < par[4]){
     return par[0]*TMath::Landau(x[0],par[1],par[2]);
