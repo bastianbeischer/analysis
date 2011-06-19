@@ -45,7 +45,7 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumPlot:
     setTitle(strType + QString(" spectrum 0x%1 (%2 GeV to %3 GeV)").arg(m_id,0,16).arg(m_lowerMomentum).arg(m_upperMomentum));
 
 
-  int secsPerBin = 300;
+  int secsPerBin = 1800;
 
   int t1 = first.toTime_t();
   t1-= (t1 % secsPerBin) + secsPerBin;

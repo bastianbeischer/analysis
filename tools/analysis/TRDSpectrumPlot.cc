@@ -16,7 +16,6 @@
 #include "TRDCalculations.hh"
 #include "Corrections.hh"
 
-const double TRDSpectrumPlot::meanLengthInTube = 4;
 const bool TRDSpectrumPlot::calculateLengthInTube = true;
 
 TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType, double lowerMom, double upperMom) :
@@ -25,7 +24,7 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   m_id(id),
   m_spectrumType(spectrumType),
   m_landauFitRange_lower(0.1),
-  m_landauFitRange_upper(3.0*TRDSpectrumPlot::meanLengthInTube),
+  m_landauFitRange_upper(3.0),
   m_lowerMomentum(lowerMom),
   m_upperMomentum(upperMom),
   m_fitRangeMarker_lower(new TMarker(m_landauFitRange_lower, 0,2)),
@@ -56,7 +55,7 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   m_fitRangeMarker_lower->SetMarkerColor(kRed);
   m_fitRangeMarker_upper->SetMarkerColor(kRed);
 
-  TH1D* histogram = new TH1D(qPrintable(title()), "", 200, 0, 20);
+  TH1D* histogram = new TH1D(qPrintable(title()), "", 250, 0, 20);
   setAxisTitle("ADCCs per length in tube / (1/mm)", "entries");
 
   addHistogram(histogram);
