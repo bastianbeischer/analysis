@@ -12,7 +12,7 @@ class TRDSpectrumPlot : public AnalysisPlot, public H1DPlot
 public:
   enum TRDSpectrumType{completeTRD, module, channel};
 
-  TRDSpectrumPlot(unsigned short, TRDSpectrumType, double lowerMomentum = -100, double upperMomentum = 100);
+  TRDSpectrumPlot(unsigned short, TRDSpectrumType);
   ~TRDSpectrumPlot();
 
   virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
@@ -30,8 +30,6 @@ private:
   TF1* m_landauFit;
   const double m_landauFitRange_lower;
   const double m_landauFitRange_upper;
-  const double m_lowerMomentum;
-  const double m_upperMomentum;
 
   TMarker* m_fitRangeMarker_lower;
   TMarker* m_fitRangeMarker_upper;

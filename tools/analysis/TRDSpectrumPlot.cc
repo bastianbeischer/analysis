@@ -18,7 +18,7 @@
 
 const bool TRDSpectrumPlot::calculateLengthInTube = true;
 
-TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType, double lowerMom, double upperMom) :
+TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType) :
   AnalysisPlot(AnalysisPlot::SignalHeightTRD),
   H1DPlot(),
   m_id(id),
@@ -44,9 +44,9 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   }
 
   if(m_spectrumType == TRDSpectrumPlot::completeTRD)
-    setTitle(strType + QString(" spectrum (%1 GeV to %2 GeV)").arg(m_lowerMomentum).arg(m_upperMomentum));
+    setTitle(strType + QString(" spectrum"));
   else
-    setTitle(strType + QString(" spectrum 0x%1 (%2 GeV to %3 GeV)").arg(m_id,0,16).arg(m_lowerMomentum).arg(m_upperMomentum));
+    setTitle(strType + QString(" spectrum 0x%1").arg(m_id,0,16));
 
   //initialize fit function:
   m_landauFit = new TF1(qPrintable(title() + "LandauFit"),"landau",0,20);
@@ -83,17 +83,11 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, Sim
   //get settings if present
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
 
-  //check if straight line fit has been used:
-  if ( (!(track->type() == Track::StraightLine)) && (settings && settings->magnet())){
+  //check if magnet was installed, if it was or no information was found, check if the particle went through the inner magnet:
+  if (!(settings && !(settings->magnet()))){
     //check if track was inside of magnet
-    if (!(pFlags & ParticleInformation::InsideMagnet))
       return;
-
-    //get the reconstructed momentum
-    double rigidity = track->rigidity(); //GeV
-
-    if(rigidity < m_lowerMomentum || rigidity > m_upperMomentum)
-      return;
+    if (!(pFlags & ParticleInformation::InsideMagnet)  )
   }
 
 

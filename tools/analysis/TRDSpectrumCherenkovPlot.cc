@@ -2,8 +2,8 @@
 
 #include "SimpleEvent.hh"
 
-TRDSpectrumCherenkovPlot::TRDSpectrumCherenkovPlot(unsigned short id, TRDSpectrumType spectrumType, double lowerMom, double upperMom, CherenkovCut cCut, double c1Limit, double c2Limit) :
-  TRDSpectrumPlot(id, spectrumType, lowerMom, upperMom),
+TRDSpectrumCherenkovPlot::TRDSpectrumCherenkovPlot(unsigned short id, TRDSpectrumType spectrumType, CherenkovCut cCut, double c1Limit, double c2Limit) :
+  TRDSpectrumPlot(id, spectrumType),
   m_cherenkovCut(cCut),
   m_cherenkov1Limit(c1Limit),
   m_cherenkov2Limit(c2Limit)

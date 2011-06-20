@@ -49,7 +49,7 @@ void MainWindow::setupAnalysis()
   for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
     DetectorElement* element = *elementIt;
     if (element->type() == DetectorElement::trd) {
-      QString cTitle = QString("Module spectrum 0x%1 (-100 GeV to 100 GeV) canvas").arg(QString::number(element->id(),16));
+      QString cTitle = QString("Module spectrum 0x%1 canvas").arg(QString::number(element->id(),16));
       mopvModules << addCanvas(&file, qPrintable(cTitle));
     }
   }
@@ -61,7 +61,7 @@ void MainWindow::setupAnalysis()
     DetectorElement* element = *elementIt;
     if (element->type() == DetectorElement::trd) {
       for(int i = 0; i < 16; i++) {
-        QString cTitle = QString("Channel spectrum 0x%1 (-100 GeV to 100 GeV) canvas").arg(QString::number(element->id() + i,16));
+        QString cTitle = QString("Channel spectrum 0x%1 canvas").arg(QString::number(element->id() + i,16));
         mopvChannels << addCanvas(&file, qPrintable(cTitle));
       }
     }
@@ -69,7 +69,7 @@ void MainWindow::setupAnalysis()
   addPlot(new MoPVConstant(mopvChannels, false));
 
   //vs time:
-  QString name = "complete TRD vs time spectrum (-100 GeV to 100 GeV) canvas";
+  QString name = "complete TRD vs time spectrum canvas";
   canvas = addCanvas(&file, qPrintable(name));
   addPlot(new MoPVScalingTime(canvas));
 
@@ -77,15 +77,15 @@ void MainWindow::setupAnalysis()
   for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
     DetectorElement* element = *elementIt;
     if (element->type() == DetectorElement::trd) {
-      QString cTitle = QString("module vs time spectrum 0x%1 (-100 GeV to 100 GeV) canvas").arg(QString::number(element->id(),16));
+      QString cTitle = QString("module vs time spectrum 0x%1 canvas").arg(QString::number(element->id(),16));
       mopvVsTimeModules << addCanvas(&file, qPrintable(cTitle));
     }
   }
   addPlot(new MoPVScaling(mopvVsTimeModules));
 
-
+  /*
   //vs temperature:
-  name = "complete TRD vs temperature spectrum (-100 GeV to 100 GeV) canvas";
+  name = "complete TRD vs temperature spectrum canvas";
   canvas = addCanvas(&file, qPrintable(name));
   addPlot(new MoPVScalingTemperature(canvas));
 
@@ -93,7 +93,7 @@ void MainWindow::setupAnalysis()
   for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
     DetectorElement* element = *elementIt;
     if (element->type() == DetectorElement::trd) {
-      QString cTitle = QString("module vs temperature spectrum 0x%1 (-100 GeV to 100 GeV) canvas").arg(QString::number(element->id(),16));
+      QString cTitle = QString("module vs temperature spectrum 0x%1 canvas").arg(QString::number(element->id(),16));
       mopvVsTemperatureModules << addCanvas(&file, qPrintable(cTitle));
     }
   }
@@ -101,7 +101,7 @@ void MainWindow::setupAnalysis()
 
 
   //vs pressure
-  name = "complete TRD vs pressure spectrum (-100 GeV to 100 GeV) canvas";
+  name = "complete TRD vs pressure spectrum canvas";
   canvas = addCanvas(&file, qPrintable(name));
   addPlot(new MoPVScalingPressure(canvas));
 
@@ -109,11 +109,12 @@ void MainWindow::setupAnalysis()
   for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
     DetectorElement* element = *elementIt;
     if (element->type() == DetectorElement::trd) {
-      QString cTitle = QString("module vs pressure spectrum 0x%1 (-100 GeV to 100 GeV) canvas").arg(QString::number(element->id(),16));
+      QString cTitle = QString("module vs pressure spectrum 0x%1 canvas").arg(QString::number(element->id(),16));
       mopvVsPressureModules << addCanvas(&file, qPrintable(cTitle));
     }
   }
   addPlot(new MoPVScaling(mopvVsPressureModules));
+  */
 
   file.Close();
 }
