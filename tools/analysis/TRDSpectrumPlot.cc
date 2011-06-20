@@ -16,17 +16,19 @@
 #include "TRDCalculations.hh"
 #include "Corrections.hh"
 
+#include <QList>
+
 const bool TRDSpectrumPlot::calculateLengthInTube = true;
+const int TRDSpectrumPlot::spectrumDefaultBins = 300;
+const unsigned int TRDSpectrumPlot::m_minTRDLayerCut = 6;
 
 TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType) :
   AnalysisPlot(AnalysisPlot::SignalHeightTRD),
   H1DPlot(),
   m_id(id),
   m_spectrumType(spectrumType),
-  m_landauFitRange_lower(0.1),
-  m_landauFitRange_upper(3.0),
-  m_lowerMomentum(lowerMom),
-  m_upperMomentum(upperMom),
+  m_landauFitRange_lower(2./3./100. *TRDSpectrumPlot::spectrumUpperLimit()),
+  m_landauFitRange_upper(0.2 *TRDSpectrumPlot::spectrumUpperLimit()),
   m_fitRangeMarker_lower(new TMarker(m_landauFitRange_lower, 0,2)),
   m_fitRangeMarker_upper(new TMarker(m_landauFitRange_upper, 0,2))
 {
@@ -55,8 +57,8 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   m_fitRangeMarker_lower->SetMarkerColor(kRed);
   m_fitRangeMarker_upper->SetMarkerColor(kRed);
 
-  TH1D* histogram = new TH1D(qPrintable(title()), "", 250, 0, 20);
-  setAxisTitle("ADCCs per length in tube / (1/mm)", "entries");
+  TH1D* histogram = new TH1D(qPrintable(title()), "", TRDSpectrumPlot::spectrumDefaultBins, 0, TRDSpectrumPlot::spectrumUpperLimit());
+  setAxisTitle(TRDSpectrumPlot::xAxisTitle(), "entries");
 
   addHistogram(histogram);
 }
@@ -68,17 +70,17 @@ TRDSpectrumPlot::~TRDSpectrumPlot()
   delete m_fitRangeMarker_upper;
 }
 
-void TRDSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
+bool TRDSpectrumPlot::globalTRDCUts(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
 {
   const Track* track = particle->track();
   const ParticleInformation::Flags pFlags = particle->information()->flags();
 
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
-    return;
+    return false;
 
   if (pFlags & ParticleInformation::Chi2Good)
-    return;
+    return false;
 
   //get settings if present
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
@@ -86,28 +88,47 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, Sim
   //check if magnet was installed, if it was or no information was found, check if the particle went through the inner magnet:
   if (!(settings && !(settings->magnet()))){
     //check if track was inside of magnet
-      return;
     if (!(pFlags & ParticleInformation::InsideMagnet)  )
+      return false;
   }
 
-
-  //TODO: check for off track hits ?!?
-  unsigned int nTrdHits = 0;
-  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+  //count trd hits which belong to the track and those of the event
+  unsigned int nTrdHitsOnTrack = 0;
+  unsigned int nTotalTRDHits = 0;
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != track->hits().end(); ++it) {
     if ((*it)->type() == Hit::trd)
-      nTrdHits++;
+      ++nTotalTRDHits;
+    if (track->hits().contains(*it))
+      ++nTrdHitsOnTrack;
   }
 
   //trd layer cut
-  //if (nTrdHits < 6)
-  //  return;
 
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+  if (nTrdHitsOnTrack < m_minTRDLayerCut)
+    return false;
+
+  if (nTotalTRDHits > nTrdHitsOnTrack)
+    return false;
+
+  //passed all cuts
+  return true;
+}
+
+void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+{
+
+  if ( ! TRDSpectrumPlot::globalTRDCUts(hits, particle, event))
+      return;
+
+  //now get all relevant energy deposition for this specific plot and all length
+  QList<double> lengthList;
+  QList<double> signalList;
+
+  const Track* track = particle->track();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != track->hits().end(); ++it) {
     Hit* hit = *it;
     if (hit->type() != Hit::trd)
       continue;
-
     Cluster* cluster = static_cast<Cluster*>(hit);
     std::vector<Hit*>& subHits = cluster->hits();
     const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
@@ -120,11 +141,37 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, Sim
         double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
         if(TRDSpectrumPlot::calculateLengthInTube)
             distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
-        if(distanceInTube > 0)
-          histogram(0)->Fill(subHit->signalHeight() / (distanceInTube));
+        if(distanceInTube > 0) {
+          signalList << hit->signalHeight();
+          lengthList << distanceInTube;
+        }
       } // fits into category
     } // subhits in cluster
   } // all hits
+
+  /* now fill the mean of all gathered data
+      - one value for a single tube
+      - normally also one value for a module (except no length is calculated and 2 tubes show a signal)
+      - several signals for the complete trd
+  */
+
+  //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
+  unsigned int hitsWhichAreOnTrack = signalList.size();
+  if (m_spectrumType == TRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < m_minTRDLayerCut)
+    return;
+
+  double lengthSum = 0.;
+  double signalSum = 0.;
+  double meanSignalPerLength = 0.;
+  for (int i = 0; i < signalList.size(); ++i) {
+    signalSum += signalList.at(i);
+    lengthSum += lengthList.at(i);
+    meanSignalPerLength += signalList.at(i) / lengthList.at(i);
+    histogram(0)->Fill(signalList.at(i) / lengthList.at(i));
+  }
+  meanSignalPerLength /= signalList.size();
+
+
 }
 
 void TRDSpectrumPlot::finalize()

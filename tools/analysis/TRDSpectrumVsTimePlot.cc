@@ -1,4 +1,5 @@
 #include "TRDSpectrumVsTimePlot.hh"
+#include "TRDSpectrumPlot.hh"
 
 #include "Particle.hh"
 #include "Track.hh"
@@ -45,16 +46,16 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumPlot:
     setTitle(strType + QString(" spectrum 0x%1").arg(m_id,0,16));
 
 
-  int secsPerBin = 1800;
+  int secsPerBin = 3600;
 
   int t1 = first.toTime_t();
   t1-= (t1 % secsPerBin) + secsPerBin;
   int t2 = last.toTime_t();
   t2+= 2*secsPerBin - (t2 % secsPerBin);
   const unsigned int nTimeBins = qMin((t2 - t1) / secsPerBin, 500);
-  const unsigned int nSignalHeightBins = 200;
+  const unsigned int nSignalHeightBins = TRDSpectrumPlot::spectrumDefaultBins;
   const double minSignalHeight = 0;
-  const double maxSignalHeight = 20;
+  const double maxSignalHeight = TRDSpectrumPlot::spectrumUpperLimit();
 
   TH2D* histogram = new TH2D(qPrintable(title()),"", nTimeBins,t1,t2,nSignalHeightBins,minSignalHeight,maxSignalHeight);
   histogram->GetXaxis()->SetTimeDisplay(1);
@@ -67,46 +68,14 @@ TRDSpectrumVsTimePlot::~TRDSpectrumVsTimePlot()
 {
 }
 
-void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& , Particle* particle, SimpleEvent* event)
+void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
+  //use the global cuts defined in the TRDSpectrumPlot class
+  if ( ! TRDSpectrumPlot::globalTRDCUts(hits, particle, event))
+      return;
+
   const Track* track = particle->track();
-  const ParticleInformation::Flags pFlags = particle->information()->flags();
-
-  //check if everything worked and a track has been fit
-  if (!track || !track->fitGood())
-    return;
-
-  if (pFlags & ParticleInformation::Chi2Good)
-    return;
-
-  //get settings if present
-  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
-
-  //check if straight line fit has been used:
-  if ( (!(track->type() == Track::StraightLine)) && (settings && settings->magnet())){
-    //check if track was inside of magnet
-    if (!(pFlags & ParticleInformation::InsideMagnet))
-      return;
-
-    //get the reconstructed momentum
-    double rigidity = track->rigidity(); //GeV
-
-    if(rigidity < m_lowerMomentum || rigidity > m_upperMomentum)
-      return;
-  }
-
-  //TODO: check for off track hits ?!?
-  unsigned int nTrdHits = 0;
-  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
-    if ((*it)->type() == Hit::trd)
-      nTrdHits++;
-  }
-
-  if (nTrdHits < 6)
-    return;
-
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != track->hits().end(); ++it) {
     Hit* hit = *it;
     if (hit->type() != Hit::trd)
       continue;

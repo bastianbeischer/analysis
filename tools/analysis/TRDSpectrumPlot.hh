@@ -6,6 +6,8 @@
 #include <TF1.h>
 #include <TMarker.h>
 
+#include <QString>
+
 class TRDSpectrumPlot : public AnalysisPlot, public H1DPlot
 {
   
@@ -20,10 +22,17 @@ public:
   virtual void update();
   virtual void draw(TCanvas*);
 
-  static const double meanLengthInTube;
   static const bool calculateLengthInTube;
+  static const int spectrumDefaultBins;
+
+  static double spectrumUpperLimit() {return TRDSpectrumPlot::calculateLengthInTube ? 15 : 50 ;}
+  static QString xAxisTitle() {return TRDSpectrumPlot::calculateLengthInTube ? "energy deposition length in tube / (keV/mm)" : "energy deposition / (1/mm)" ;}
+
+  static bool globalTRDCUts(const QVector<Hit*>&, Particle* particle, SimpleEvent* event);
 
 private:
+  static const unsigned int m_minTRDLayerCut;
+
   unsigned short m_id;
   TRDSpectrumType m_spectrumType;
 
