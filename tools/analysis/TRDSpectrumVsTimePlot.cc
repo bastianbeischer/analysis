@@ -46,12 +46,10 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumPlot:
     setTitle(strType + QString(" spectrum 0x%1").arg(m_id,0,16));
 
 
-  int secsPerBin = 3600;
+  int secsPerBin = 3600*2;
 
   int t1 = first.toTime_t();
-  t1-= (t1 % secsPerBin) + secsPerBin;
   int t2 = last.toTime_t();
-  t2+= 2*secsPerBin - (t2 % secsPerBin);
   const unsigned int nTimeBins = qMin((t2 - t1) / secsPerBin, 500);
   const unsigned int nSignalHeightBins = TRDSpectrumPlot::spectrumDefaultBins;
   const double minSignalHeight = 0;
@@ -60,6 +58,8 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumPlot:
   TH2D* histogram = new TH2D(qPrintable(title()),"", nTimeBins,t1,t2,nSignalHeightBins,minSignalHeight,maxSignalHeight);
   histogram->GetXaxis()->SetTimeDisplay(1);
   histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");
+  histogram->GetXaxis()->SetTimeOffset(3600, "gmt"); //dont understand this, but works at testbeam
+  histogram->GetXaxis()->SetTimeDisplay(1);
   setAxisTitle("Time", "ADCCs per length", "");
   addHistogram(histogram);
 }
