@@ -20,7 +20,7 @@
 
 const bool TRDSpectrumPlot::calculateLengthInTube = true;
 const int TRDSpectrumPlot::spectrumDefaultBins = 300;
-const unsigned int TRDSpectrumPlot::m_minTRDLayerCut = 6;
+const unsigned int TRDSpectrumPlot::minTRDLayerCut = 6;
 
 TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType) :
   AnalysisPlot(AnalysisPlot::SignalHeightTRD),
@@ -104,7 +104,7 @@ bool TRDSpectrumPlot::globalTRDCUts(const QVector<Hit*>&, Particle* particle, Si
 
   //trd layer cut
 
-  if (nTrdHitsOnTrack < m_minTRDLayerCut)
+  if (nTrdHitsOnTrack < TRDSpectrumPlot::minTRDLayerCut)
     return false;
 
   if (nTotalTRDHits > nTrdHitsOnTrack)
@@ -157,7 +157,7 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* particle
 
   //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
   unsigned int hitsWhichAreOnTrack = signalList.size();
-  if (m_spectrumType == TRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < m_minTRDLayerCut)
+  if (m_spectrumType == TRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDSpectrumPlot::minTRDLayerCut)
     return;
 
   double lengthSum = 0.;

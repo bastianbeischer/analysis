@@ -74,6 +74,10 @@ void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& hits, Particle* pa
   if ( ! TRDSpectrumPlot::globalTRDCUts(hits, particle, event))
       return;
 
+  //now get all relevant energy deposition for this specific plot and all length
+  QList<double> lengthList;
+  QList<double> signalList;
+
   const Track* track = particle->track();
   for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != track->hits().end(); ++it) {
     Hit* hit = *it;
@@ -92,11 +96,36 @@ void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& hits, Particle* pa
         double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
         if(TRDSpectrumPlot::calculateLengthInTube)
             distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
-        if(distanceInTube > 0)
-          histogram(0)->Fill(event->time(), subHit->signalHeight() / (distanceInTube));
+        if(distanceInTube > 0) {
+          signalList << hit->signalHeight();
+          lengthList << distanceInTube;
+        }
       }
     }
   }
+
+  /* now fill the mean of all gathered data
+      - one value for a single tube
+      - normally also one value for a module (except no length is calculated and 2 tubes show a signal)
+      - several signals for the complete trd
+  */
+
+  //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
+  unsigned int hitsWhichAreOnTrack = signalList.size();
+  if (m_spectrumType == TRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDSpectrumPlot::minTRDLayerCut)
+    return;
+
+  double lengthSum = 0.;
+  double signalSum = 0.;
+  double meanSignalPerLength = 0.;
+  for (int i = 0; i < signalList.size(); ++i) {
+    signalSum += signalList.at(i);
+    lengthSum += lengthList.at(i);
+    meanSignalPerLength += signalList.at(i) / lengthList.at(i);
+    histogram(0)->Fill(event->time(), signalList.at(i) / lengthList.at(i));
+  }
+  meanSignalPerLength /= signalList.size();
+
 }
 
 

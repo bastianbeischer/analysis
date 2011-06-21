@@ -56,7 +56,7 @@ MoPVConstant::MoPVConstant(QList<PostAnalysisCanvas*> canvasList, bool modules)
   layout->addWidget(m_pushButton);
   layout->addStretch();
   m_spinBox = new QDoubleSpinBox();
-  m_spinBox->setRange(0.5, 3);
+  m_spinBox->setRange(0.1, 3);
   m_spinBox->setSingleStep(0.01);
   m_spinBox->setValue(1);
   layout->addWidget(m_spinBox);
@@ -72,7 +72,7 @@ bool MoPVConstant::fitMoPV(TH1D* hist, double& mopv, double& mopvErr)
     return false;
   TF1* fit = new TF1("fitMopv","landau");
 
-  hist->Fit(fit, "QN0R", "", 0.1, 6);
+  hist->Fit(fit, "QN0R", "", 2./3./100. *hist->GetXaxis()->GetXmax(), 0.2 *hist->GetXaxis()->GetXmax());
 
   mopv = fit->GetParameter(1);
   mopvErr = fit->GetParError(1);
@@ -89,14 +89,15 @@ void MoPVConstant::saveConstants()
 void MoPVConstant::saveConstants(double norm)
 {
   //calculate mopv mean
-  double mopvMean = 0;
-  int nMopvs = 0;
+  QList<double> mopvList;
   QMap<int, QPair<double, double> >::const_iterator it;
-  for (it = m_mopvs.constBegin(); it != m_mopvs.constEnd(); ++it) {
-    mopvMean += it.value().first;
-    ++nMopvs;
-  }
-  mopvMean /= nMopvs;
+  for (it = m_mopvs.constBegin(); it != m_mopvs.constEnd(); ++it)
+    mopvList << it.value().first;
+
+  qSort(mopvList);
+  double mopvMean = mopvList.at(mopvList.size()/2);
+
+  qDebug("mopvMean = %f", mopvMean);
 
   //get corrections class:
   Corrections* corr = new Corrections();
