@@ -51,8 +51,8 @@ void MainWindow::setupAnalysis()
 
     gROOT->cd();
 
-    PostAnalysisCanvas* dataCanvas = addCanvas(&dataFile,"complete TRD spectrum (-100 GeV to 100 GeV) canvas");
-    PostAnalysisCanvas* mcCanvas = addCanvas(&mcFile, "complete TRD spectrum (-100 GeV to 100 GeV) canvas");
+    PostAnalysisCanvas* dataCanvas = addCanvas(&dataFile,"complete TRD spectrum canvas");
+    PostAnalysisCanvas* mcCanvas = addCanvas(&mcFile, "complete TRD spectrum canvas");
     qDebug() << "dataCanvas " << dataCanvas->name() << " got " << dataCanvas->histograms1D().size() << " 1D histos";
     qDebug() << "mcCanvas " << mcCanvas->name() << " got " << mcCanvas->histograms1D().size() << " 1D histos";
 
@@ -74,7 +74,7 @@ void MainWindow::setupAnalysis()
     //    for (int i = 0; i < mcFile.GetListOfKeys()->GetSize(); ++i)
     //    std::cout << ((TKey*)mcFile.GetListOfKeys()->At(i))->ReadObj()->GetName() << std::endl;
 
-    QString dataname = QString("complete TRD spectrum (-100 GeV to 100 GeV) canvas");
+    QString dataname = QString("complete TRD spectrum canvas");
     QString oldmcname = QString("old_mc_canvas");
 
     PostAnalysisCanvas* dataCanvas = addCanvas(&dataFile,"Canvas 1");
