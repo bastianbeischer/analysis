@@ -195,6 +195,24 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.trdDepositionCutCheckBox);
   m_controlWidgets.append(m_ui.trdDepositionLineEditMax);
   m_controlWidgets.append(m_ui.trdDepositionLineEditMin);
+  m_controlWidgets.append(m_ui.cherenkovCutCheckBox);
+  m_controlWidgets.append(m_ui.cherenkovCutBelowRadioButton);
+  m_controlWidgets.append(m_ui.cherenkovCutAboveRadioButton);
+  m_controlWidgets.append(m_ui.cherenkovCutDoubleSpinBox);
+
+  m_controlWidgets.append(m_ui.mcAntiMuonCheckBox);
+  m_controlWidgets.append(m_ui.mcAntiPionCheckBox);
+  m_controlWidgets.append(m_ui.mcAntiprotonCheckBox);
+  m_controlWidgets.append(m_ui.mcElectronCheckBox);
+  m_controlWidgets.append(m_ui.mcGammaCheckBox);
+  m_controlWidgets.append(m_ui.mcHeliumCheckBox);
+  m_controlWidgets.append(m_ui.mcMuonCheckBox);
+  m_controlWidgets.append(m_ui.mcPionCheckBox);
+  m_controlWidgets.append(m_ui.mcPositronCheckBox);
+  m_controlWidgets.append(m_ui.mcProtonCheckBox);
+
+
+
 
   connect(m_reader, SIGNAL(started()), this, SLOT(toggleControlWidgetsStatus()));
   connect(m_reader, SIGNAL(finished()), this, SLOT(toggleControlWidgetsStatus()));
