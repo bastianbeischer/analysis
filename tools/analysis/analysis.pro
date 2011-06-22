@@ -70,7 +70,6 @@ CLASSES = \
   TRDEfficiencyPlot \
   TRDEnergyDepositionOverMomentumPlot \
   TRDTimeCorrectionPlot \
-  TRDMoPVTimeEvolutionPlot \
   TRDOccupancyPlot \
   TRDSpectrumPlot \
   TRDSpectrumCherenkovPlot \
