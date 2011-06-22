@@ -68,6 +68,7 @@ public:
   void setTrdTemperatureDependendFactor(QPair<double,double> T0, double dM_dT);
   void getTrdTemperatureDependendFactor(QPair<double,double>& T0, double& dM_dT);
   void addTrdTimeDependendFactor(double time, double factor);
+  void removeTrdTimeDependendFactors(double startTime, double endTime);
   double trdTimeDependendFactor(double time);
   void setTotScaling(const unsigned int tofId, const QList<QVariant> param);
   

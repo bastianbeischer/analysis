@@ -316,6 +316,16 @@ void Corrections::addTrdTimeDependendFactor(double time, double factor)
   writeTRDTimeDependendCorrections();
 }
 
+void Corrections::removeTrdTimeDependendFactors(double startTime, double endTime)
+{
+  for (QMap<double, double> ::const_iterator it = m_TRDMapTime.constBegin(); it != m_TRDMapTime.constEnd(); it++) {
+    if ( startTime <= it.key() && it.key() <= endTime) {
+      qDebug("remove previous time correction factor at %f", it.key());
+      m_TRDMapTime.remove(it.key());
+    }
+  }
+}
+
 double Corrections::trdTimeDependendFactor(double time)
 {
   if (m_TRDSplineTime) {
