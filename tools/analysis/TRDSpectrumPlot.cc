@@ -118,7 +118,7 @@ bool TRDSpectrumPlot::globalTRDCUts(const QVector<Hit*>&, Particle* particle, Si
   if (nTrdHitsOnTrack < TRDSpectrumPlot::minTRDLayerCut)
     return false;
 
-  if (nTotalTRDHits > nTrdHitsOnTrack)
+  if (nTotalTRDHits-2 > nTrdHitsOnTrack)
     return false;
 
   //passed all cuts
