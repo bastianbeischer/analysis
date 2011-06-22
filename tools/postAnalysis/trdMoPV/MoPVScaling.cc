@@ -23,6 +23,8 @@ MoPVScaling::MoPVScaling(PostAnalysisCanvas* canvas)
   , m_colorCounter(0)
   , m_dependencyFit(0)
   , m_spline(0)
+  , m_startValue(0)
+  , m_endValue(0)
 {
   TH2D* histogram = canvas->histograms2D().at(0);
   TGraph* graph = generateMoPVGraph(histogram);
@@ -76,6 +78,9 @@ void MoPVScaling::draw(TCanvas* canv)
 
 TGraphErrors* MoPVScaling::generateMoPVGraph(TH2D* histogram)
 {
+
+  m_startValue = histogram->GetXaxis()->GetXmin();
+  m_endValue = histogram->GetXaxis()->GetXmax();
 
   QVector<double> x, y, xErr, yErr;
 

@@ -36,6 +36,8 @@ protected slots:
 protected:
   TF1* m_dependencyFit;
   TSpline3* m_spline;
+  double m_startValue;
+  double m_endValue;
 };
 
 #endif

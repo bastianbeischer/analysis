@@ -37,9 +37,11 @@ void MoPVScalingTime::saveCorrectionFactors()
   //get corrections class:
   Corrections* corr = new Corrections();
 
+  //delete old factors, crucial if different time binning is used
+  corr->removeTrdTimeDependendFactors(m_startValue, m_endValue);
+
   //save all time dependend factors
   double time, mopv;
-  //TODO delete old factors?
   for (int i = 0; i < m_spline->GetNp(); i++) {
     m_spline->GetKnot(i, time, mopv);
     double oldFactor = corr->trdTimeDependendFactor(time);
