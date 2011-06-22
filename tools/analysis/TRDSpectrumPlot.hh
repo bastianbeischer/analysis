@@ -27,7 +27,7 @@ public:
   static const unsigned int minTRDLayerCut;
 
   static double spectrumUpperLimit() {return TRDSpectrumPlot::calculateLengthInTube ? 15 : 50 ;}
-  static QString xAxisTitle() {return TRDSpectrumPlot::calculateLengthInTube ? "energy deposition length in tube / (keV/mm)" : "energy deposition / (1/mm)" ;}
+  static QString xAxisTitle() {return TRDSpectrumPlot::calculateLengthInTube ? "energy deposition length in tube / (keV/mm)" : "energy deposition / keV" ;}
 
   static bool globalTRDCUts(const QVector<Hit*>&, Particle* particle, SimpleEvent* event);
 
