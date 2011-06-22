@@ -360,23 +360,44 @@ void Corrections::writeTRDTimeDependendCorrections()
 void Corrections::readTRDTimeDependendCorrections()
 {
   int size = m_trdSettings->beginReadArray("TimeDependendCorrection");
-   for (int i = 0; i < size; ++i) {
-       m_trdSettings->setArrayIndex(i);
-       double time = m_trdSettings->value("time").toDouble();
-       double factor = m_trdSettings->value("factor").toDouble();
-       m_TRDMapTime.insert(time, factor);
-   }
-   m_trdSettings->endArray();
-   //create the interpolation spline
-   if (m_TRDSplineTime) {
-     delete m_TRDSplineTime;
-     m_TRDSplineTime = 0;
-   }
-   if (m_TRDMapTime.size() > 2) {
-     QVector<double> times(m_TRDMapTime.keys().toVector());
-     QVector<double> factors(m_TRDMapTime.values().toVector());
-     m_TRDSplineTime = new TSpline3("trdTimeSpline", &(*times.begin()), &(*factors.begin()), times.size(), "b1e1", 0., 0.);
-   }
+  for (int i = 0; i < size; ++i) {
+     m_trdSettings->setArrayIndex(i);
+     double time = m_trdSettings->value("time").toDouble();
+     double factor = m_trdSettings->value("factor").toDouble();
+     m_TRDMapTime.insert(time, factor);
+  }
+  m_trdSettings->endArray();
+  //create the interpolation spline
+  if (m_TRDSplineTime) {
+    delete m_TRDSplineTime;
+    m_TRDSplineTime = 0;
+  }
+  if (m_TRDMapTime.size() > 2) {
+    QVector<double> times(m_TRDMapTime.keys().toVector());
+    QVector<double> factors(m_TRDMapTime.values().toVector());
+    //insert points in parts ehere there is a calibration gap of t > maxDeltaT and insert linear interpolated points
+    double maxDeltaT = 3600.*7.;
+    bool insertedNewValue = true;
+    while (insertedNewValue) {
+      insertedNewValue = false;
+      for (int i = 0; i < times.size()-1; ++i) {
+        double t1 = times.at(i);
+        double t2 = times.at(i+1);
+        double f1 = factors.at(i);
+        double f2 = factors.at(i+1);
+        double deltaT = t2-t1;
+        if (deltaT > maxDeltaT) {
+          //qDebug("between spline points %i and %i is a time difference of %f > %f", i, i+1, deltaT, maxDeltaT);
+          double m = (f2-f1)/deltaT;
+          times.insert(i+1, t1+deltaT/2.);
+          factors.insert(i+1, f1 + m*deltaT/2);
+          insertedNewValue = true;
+          break;
+        }
+      }
+    }
+    m_TRDSplineTime = new TSpline3("trdTimeSpline", &(*times.begin()), &(*factors.begin()), times.size(), "b1e1", 0., 0.);
+  }
 }
 
 TSpline3* Corrections::getTrdTimeSpline() const
