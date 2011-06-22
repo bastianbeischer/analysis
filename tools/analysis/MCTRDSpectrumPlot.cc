@@ -1,10 +1,8 @@
 #include "MCTRDSpectrumPlot.hh"
 
 #include <TH1D.h>
-
 #include <TCanvas.h>
 #include <TLegend.h>
-
 
 #include "SimpleEvent.hh"
 #include "Particle.hh"
@@ -15,10 +13,11 @@
 #include "Cluster.hh"
 #include "Hit.hh"
 #include "TRDSpectrumPlot.hh"
-
 #include "TRDCalculations.hh"
 #include "Corrections.hh"
 #include "RootStyle.hh"
+
+#include <math.h>
 
 MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType)
   : AnalysisPlot(AnalysisPlot::MonteCarloTRD)
@@ -52,6 +51,7 @@ MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrum
   legend->SetMargin(.7);
   addLegend(legend);
 
+  setDrawOption(H1DPlot::HIST);
 }
 
 MCTRDSpectrumPlot::~MCTRDSpectrumPlot()
@@ -125,7 +125,7 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* partic
     spectrumHisto->SetLineColor(RootStyle::rootColor(m_colorCounter++));
     m_spectrumMap.insert(pdgID, spectrumHisto);
     legend()->AddEntry(spectrumHisto, qPrintable(particleName), "l");
-    addHistogram(spectrumHisto);
+    addHistogram(spectrumHisto, H1DPlot::HIST);
   }
 
   double lengthSum = 0.;

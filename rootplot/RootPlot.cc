@@ -104,6 +104,7 @@ QString RootPlot::drawOption(DrawOption option)
     case P: return "P";
     case L: return "L";
     case C: return "C";
+    case HIST: return "HIST";
     default: return QString();
   }
   return QString();

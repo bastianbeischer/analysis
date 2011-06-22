@@ -60,7 +60,8 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   TH1D* histogram = new TH1D(qPrintable(title()), "", TRDSpectrumPlot::spectrumDefaultBins, 0, TRDSpectrumPlot::spectrumUpperLimit());
   setAxisTitle(TRDSpectrumPlot::xAxisTitle(), "entries");
 
-  addHistogram(histogram);
+  addHistogram(histogram, H1DPlot::HIST);
+  setDrawOption(H1DPlot::HIST);
 }
 
 TRDSpectrumPlot::~TRDSpectrumPlot()
