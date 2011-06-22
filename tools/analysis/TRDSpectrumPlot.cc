@@ -1,7 +1,6 @@
 #include "TRDSpectrumPlot.hh"
 
 #include <TH1D.h>
-
 #include <TMarker.h>
 
 #include "Particle.hh"
@@ -19,8 +18,8 @@
 
 #include <QList>
 
-const bool TRDSpectrumPlot::calculateLengthInTube = true;
-const int TRDSpectrumPlot::spectrumDefaultBins = 300;
+const bool TRDSpectrumPlot::calculateLengthInTube = false;
+const int TRDSpectrumPlot::spectrumDefaultBins = 100;
 const unsigned int TRDSpectrumPlot::minTRDLayerCut = 6;
 
 TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType) :
