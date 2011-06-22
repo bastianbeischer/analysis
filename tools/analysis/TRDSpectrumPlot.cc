@@ -12,9 +12,10 @@
 #include "SimpleEvent.hh"
 #include "Settings.hh"
 #include "SettingsManager.hh"
-
 #include "TRDCalculations.hh"
 #include "Corrections.hh"
+
+#include <math.h>
 
 #include <QList>
 
@@ -51,15 +52,24 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
     setTitle(strType + QString(" spectrum 0x%1").arg(m_id,0,16));
 
   //initialize fit function:
-  m_landauFit = new TF1(qPrintable(title() + "LandauFit"),"landau",0,20);
+  m_landauFit = new TF1(qPrintable(title() + "LandauFit"),"landau", m_landauFitRange_lower, m_landauFitRange_upper);
   m_landauFit->SetLineColor(kRed);
 
   m_fitRangeMarker_lower->SetMarkerColor(kRed);
   m_fitRangeMarker_upper->SetMarkerColor(kRed);
 
-  TH1D* histogram = new TH1D(qPrintable(title()), "", TRDSpectrumPlot::spectrumDefaultBins, 0, TRDSpectrumPlot::spectrumUpperLimit());
-  setAxisTitle(TRDSpectrumPlot::xAxisTitle(), "entries");
+  int nBins = TRDSpectrumPlot::spectrumDefaultBins;
+  double lowerBound = 1e-3;
+  double upperBound = TRDSpectrumPlot::spectrumUpperLimit();
+  double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
+  double p[nBins+1];
+  for (int i = 0; i < nBins+1; i++) {
+    p[i] = pow(lowerBound, delta*i+1);
+  }
 
+  TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, p);
+  histogram->Sumw2();
+  setAxisTitle(TRDSpectrumPlot::xAxisTitle(), "entries");
   addHistogram(histogram, H1DPlot::HIST);
   setDrawOption(H1DPlot::HIST);
 }
@@ -161,16 +171,14 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* particle
   if (m_spectrumType == TRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDSpectrumPlot::minTRDLayerCut)
     return;
 
-  double lengthSum = 0.;
-  double signalSum = 0.;
-  double meanSignalPerLength = 0.;
   for (int i = 0; i < signalList.size(); ++i) {
-    signalSum += signalList.at(i);
-    lengthSum += lengthList.at(i);
-    meanSignalPerLength += signalList.at(i) / lengthList.at(i);
-    histogram(0)->Fill(signalList.at(i) / lengthList.at(i));
+    double value = signalList.at(i) / lengthList.at(i);
+    int iBin = histogram()->FindBin(value);
+    double width = histogram()->GetBinWidth(iBin);
+    double weight = 1./width;
+    histogram()->Fill(value, weight);
   }
-  meanSignalPerLength /= signalList.size();
+
 
 
 }

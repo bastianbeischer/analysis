@@ -121,23 +121,29 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* partic
   {
     const ParticleProperties* properties = ParticleDB::instance()->lookupPdgId(pdgID);
     QString particleName = properties->name();
-    spectrumHisto = new TH1D(qPrintable(particleName + " " + title()), "", TRDSpectrumPlot::spectrumDefaultBins, 0, TRDSpectrumPlot::spectrumUpperLimit());
+    int nBins = TRDSpectrumPlot::spectrumDefaultBins;
+    double lowerBound = 1e-3;
+    double upperBound = TRDSpectrumPlot::spectrumUpperLimit();
+    double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
+    double p[nBins+1];
+    for (int i = 0; i < nBins+1; i++) {
+      p[i] = pow(lowerBound, delta*i+1);
+    }
+    spectrumHisto = new TH1D(qPrintable(particleName + " " + title()), "", nBins, p);
+    spectrumHisto->Sumw2();
     spectrumHisto->SetLineColor(RootStyle::rootColor(m_colorCounter++));
     m_spectrumMap.insert(pdgID, spectrumHisto);
     legend()->AddEntry(spectrumHisto, qPrintable(particleName), "l");
     addHistogram(spectrumHisto, H1DPlot::HIST);
   }
 
-  double lengthSum = 0.;
-  double signalSum = 0.;
-  double meanSignalPerLength = 0.;
   for (int i = 0; i < signalList.size(); ++i) {
-    signalSum += signalList.at(i);
-    lengthSum += lengthList.at(i);
-    meanSignalPerLength += signalList.at(i) / lengthList.at(i);
-    spectrumHisto->Fill(signalList.at(i) / lengthList.at(i));
+    double value = signalList.at(i) / lengthList.at(i);
+    int iBin = histogram()->FindBin(value);
+    double width = histogram()->GetBinWidth(iBin);
+    double weight = 1./width;
+    histogram()->Fill(value, weight);
   }
-  meanSignalPerLength /= signalList.size();
 }
 
 

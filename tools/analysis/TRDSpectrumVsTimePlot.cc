@@ -51,16 +51,23 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumPlot:
   int t1 = first.toTime_t();
   int t2 = last.toTime_t();
   const unsigned int nTimeBins = qMin((t2 - t1) / secsPerBin, 500);
-  const unsigned int nSignalHeightBins = TRDSpectrumPlot::spectrumDefaultBins;
-  const double minSignalHeight = 0;
-  const double maxSignalHeight = TRDSpectrumPlot::spectrumUpperLimit();
 
-  TH2D* histogram = new TH2D(qPrintable(title()),"", nTimeBins,t1,t2,nSignalHeightBins,minSignalHeight,maxSignalHeight);
+  int nBins = TRDSpectrumPlot::spectrumDefaultBins;
+  double lowerBound = 1e-3;
+  double upperBound = TRDSpectrumPlot::spectrumUpperLimit();
+  double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
+  double p[nBins+1];
+  for (int i = 0; i < nBins+1; i++) {
+    p[i] = pow(lowerBound, delta*i+1);
+  }
+
+  TH2D* histogram = new TH2D(qPrintable(title()),"", nTimeBins,t1,t2, nBins, p);
+  histogram->Sumw2();
   histogram->GetXaxis()->SetTimeDisplay(1);
   histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");
   histogram->GetXaxis()->SetTimeOffset(3600, "gmt"); //dont understand this, but works at testbeam
   histogram->GetXaxis()->SetTimeDisplay(1);
-  setAxisTitle("Time", "ADCCs per length", "");
+  setAxisTitle("Time", TRDSpectrumPlot::xAxisTitle(), "");
   addHistogram(histogram);
 }
 
@@ -115,16 +122,13 @@ void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& hits, Particle* pa
   if (m_spectrumType == TRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDSpectrumPlot::minTRDLayerCut)
     return;
 
-  double lengthSum = 0.;
-  double signalSum = 0.;
-  double meanSignalPerLength = 0.;
   for (int i = 0; i < signalList.size(); ++i) {
-    signalSum += signalList.at(i);
-    lengthSum += lengthList.at(i);
-    meanSignalPerLength += signalList.at(i) / lengthList.at(i);
-    histogram(0)->Fill(event->time(), signalList.at(i) / lengthList.at(i));
+    double value = signalList.at(i) / lengthList.at(i);
+    int iBin = histogram()->FindBin(value);
+    double width = histogram()->GetBinWidth(iBin);
+    double weight = 1./width;
+    histogram()->Fill(event->time(), value, weight);
   }
-  meanSignalPerLength /= signalList.size();
 
 }
 
