@@ -10,6 +10,7 @@
 #include <TROOT.h>
 
 #include <iostream>
+#include <math.h>
 
 #include <QString>
 #include <QDebug>
@@ -22,7 +23,7 @@ HistResiduals::HistResiduals(PostAnalysisCanvas* dataC, PostAnalysisCanvas* mcC)
 {
   gROOT->cd();
   setTitle("TRD Spectra Residuals");
-  setAxisTitle("energy Deposition / keV","#-difference");
+  setAxisTitle("energy Deposition / keV","pull");
 
   TH1D* dataHist = dataC->histograms1D().at(0);
   TH1D* mcHist = mcC->histograms1D().at(0);
@@ -38,15 +39,20 @@ HistResiduals::HistResiduals(PostAnalysisCanvas* dataC, PostAnalysisCanvas* mcC)
   mcHistClone->Sumw2();
   mcHistClone->Scale(1. / mcHistClone->GetEntries());
 
-  TH1D* res_hist = new TH1D("res_mcdata_hist", "res_mcdata_hist", mcHistClone->GetNbinsX(), mcHistClone->GetXaxis()->GetXmin(), mcHistClone->GetXaxis()->GetXmax());
+  QVector<double> xValues, xErrors, yValues, yErrors;
 
-  for( int i = 0; i < mcHistClone->GetNbinsX(); i++)
+  for( int i = 1; i < mcHistClone->GetNbinsX()-1; i++)
   {
-    res_hist->SetBinContent(i, dataHistClone->GetBinContent(i) - mcHistClone->GetBinContent(i));
-    res_hist->SetBinError(i,dataHistClone->GetBinError(i));
+    double sigma = sqrt(dataHistClone->GetBinError(i)*dataHistClone->GetBinError(i) + mcHistClone->GetBinError(i)*mcHistClone->GetBinError(i));
+    if (!(sigma > 0))
+      continue;
+    xValues << dataHistClone->GetBinCenter(i);
+    xErrors << 0.;
+    yValues << (dataHistClone->GetBinContent(i) - mcHistClone->GetBinContent(i)) / sigma;
+    yErrors << 0.;
   }
 
-  TGraphErrors* res_mcdata = new TGraphErrors(res_hist);
+  TGraphErrors* res_mcdata = new TGraphErrors(xValues.size(), &*xValues.begin(), &*yValues.begin());
   res_mcdata->SetLineColor(kRed);
   res_mcdata->SetMarkerStyle(24);
 
