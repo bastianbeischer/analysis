@@ -105,8 +105,6 @@ void Corrections::timeShift(Hit* hit)
       TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(*it);
       DetectorElement* element = setup->element(cluster->detId() - cluster->channel());
       double timeShift = static_cast<TOFBar*>(element)->timeShift((*it)->channel());
-      
-      unsigned short id = element->id();
       tofHit->applyTimeShift(timeShift);
     }
     cluster->processHits();
