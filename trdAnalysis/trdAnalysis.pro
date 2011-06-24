@@ -12,21 +12,20 @@ MOC_DIR     = ./.tmp
 UI_DIR      = ./.tmp
 RCC_DIR     = ./.tmp
 
-HEADERS += TRDCalculations.hh \
-           TRDLikelihood.hh \
-           ProtonRejector.hh
+CLASSES += TRDCalculations \
+           TRDElectronIdentifier \
+           TRDElectronIdentifierCutBased #\
+           #TRDLikelihood
 
-SOURCES += TRDCalculations.cc \
-           TRDLikelihood.cc \
-           ProtonRejector.cc
 
 INCLUDEPATH += $$TOPLEVEL/event \
                $$TOPLEVEL/global \
                $$TOPLEVEL/processing \
                $$TOPLEVEL/setup \
+               $$TOPLEVEL/particle \
+               $$TOPLEVEL/rootplot \
+               $$TOPLEVEL/tools/analysis \
                $$TOPLEVEL/tracking
-
-DEPENDPATH += $$INCLUDEPATH
 
 LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
                          -lprocessing \
@@ -34,6 +33,7 @@ LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
                          -lsetup
 
 
+include($$TOPLEVEL/common.pri)
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
 

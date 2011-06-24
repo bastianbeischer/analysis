@@ -29,7 +29,7 @@ public:
   static double spectrumUpperLimit() {return TRDSpectrumPlot::calculateLengthInTube ? 15 : 50 ;}
   static QString xAxisTitle() {return TRDSpectrumPlot::calculateLengthInTube ? "energy deposition length in tube / (keV/mm)" : "energy deposition / keV" ;}
 
-  static bool globalTRDCuts(const QVector<Hit*>&, Particle* particle, SimpleEvent* event);
+  static bool globalTRDCuts(const QVector<Hit*>&, const Particle* particle, const SimpleEvent* event);
 
 private:
 

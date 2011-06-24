@@ -177,9 +177,6 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* particle
     double weight = 1./width;
     histogram()->Fill(value, weight);
   }
-
-
-
 }
 
 void TRDSpectrumPlot::finalize()
