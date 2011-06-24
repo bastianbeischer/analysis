@@ -10,6 +10,8 @@
 
 #include <TMath.h>
 
+#include <QDebug>
+
 TimeOfFlight::TimeOfFlight() :
   m_startTime(0.),
   m_stopTime(0.)
@@ -39,7 +41,11 @@ void TimeOfFlight::calculateTimes(const Track* track)
       const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator subHitsIt = subHits.begin(); subHitsIt != subHitsEndIt; ++subHitsIt) {
         TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(*subHitsIt);
-        double startTime = tofHit->startTime() - tofHit->photonTravelTime();
+        double startTime = tofHit->startTime();
+        if (startTime < Constants::triggerMatchingMinimum || startTime > Constants::triggerMatchingMaximum || tofHit->timeOverThreshold() < Constants::minimalTotPerSipm)
+          continue;
+        //qDebug() << startTime;
+        startTime-= tofHit->photonTravelTime();
         if (z > 0) {
           if (tofHit->position().y() < 0)
             t[0][0].append(startTime);
@@ -124,5 +130,6 @@ double TimeOfFlight::bestTime(QVector<double>& times)
   //if (i < 0)
     //return DBL_MAX;
   Q_ASSERT(i >= 0 && times.size());
+  //qDebug() << times << times[i];
   return times[i];
 }
