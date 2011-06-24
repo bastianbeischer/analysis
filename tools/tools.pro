@@ -8,8 +8,7 @@ SUBDIRS  = \
   preAnalysis \
   analysis \
   postAnalysis \
-  presentation \
-  tofAlignment
+  presentation
 
 exists($(PERDAIX10PATH)) {
   SUBDIRS+= \

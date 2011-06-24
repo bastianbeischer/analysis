@@ -43,11 +43,11 @@ TimeDifferenceFunction::TimeDifferenceFunction(PostAnalysisCanvas* canvas)
   m_function->SetParLimits(4, 0., 10.0);
   m_function->SetParLimits(5, 0., 10.0);
   m_function->SetRange(-150., 150.);
-  histogram->Fit(m_function, "QN0 WW R");
+  histogram->Fit(m_function, "QN0 E R");
   m_function->FixParameter(0, m_function->GetParameter(0));
   m_function->FixParameter(1, m_function->GetParameter(1));
   m_function->SetRange(minY, maxY);
-  histogram->Fit(m_function, "QN0 WW");
+  histogram->Fit(m_function, "QN0 E");
 
   title = QString("%1 histogram").arg(canvas->name());
   setTitle(title);
