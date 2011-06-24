@@ -116,7 +116,7 @@ void Corrections::timeShift(Hit* hit)
 void Corrections::trdMopv(Hit* hit)
 {
   //only process TRD hits
-  if ( hit->type() != Hit::trd )
+  if (hit->type() != Hit::trd)
     return;
 
   if (strcmp(hit->ClassName(), "Hit") == 0) {
@@ -140,7 +140,7 @@ void Corrections::trdMopv(Hit* hit)
 void Corrections::trdTime(Hit* hit, SimpleEvent* event)
 {
   //only process TRD hits
-  if ( hit->type() != Hit::trd )
+  if (hit->type() != Hit::trd)
     return;
 
   double time = event->time();
@@ -165,7 +165,7 @@ void Corrections::trdTime(Hit* hit, SimpleEvent* event)
 void Corrections::trdPressure(Hit* hit, SimpleEvent* event)
 {
   //only process TRD hits
-  if ( hit->type() != Hit::trd )
+  if (hit->type() != Hit::trd)
     return;
 
   double pressure = event->sensorData(SensorTypes::TRD_PRESSURE_SMOOTHED);
@@ -190,7 +190,7 @@ void Corrections::trdPressure(Hit* hit, SimpleEvent* event)
 void Corrections::trdTemperature(Hit* hit, SimpleEvent* event)
 {
   //only process TRD hits
-  if ( hit->type() != Hit::trd )
+  if (hit->type() != Hit::trd)
     return;
 
   double temperature = 0.;
@@ -247,48 +247,48 @@ void Corrections::setTrdScalingFactor(unsigned int channel, double value)
 
 double Corrections::trdPressureDependendFactor(double P)
 {
-  double P0 = m_trdSettings->value( "PressureDependency/P0", 1100).toDouble();
-  double M0 = m_trdSettings->value( "PressureDependency/M0", 1).toDouble();
-  double dM_dP = m_trdSettings->value( "PressureDependency/dM_dP", 0).toDouble();
+  double P0 = m_trdSettings->value("PressureDependency/P0", 1100).toDouble();
+  double M0 = m_trdSettings->value("PressureDependency/M0", 1).toDouble();
+  double dM_dP = m_trdSettings->value("PressureDependency/dM_dP", 0).toDouble();
   return M0 / ( M0 + (P-P0) * dM_dP);
 }
 
 void Corrections::setTrdPressureDependendFactor(QPair<double,double> P0, double dM_dP)
 {
-  m_trdSettings->setValue( "PressureDependency/P0", P0.first);
-  m_trdSettings->setValue( "PressureDependency/M0", P0.second);
-  m_trdSettings->setValue( "PressureDependency/dM_dP", dM_dP);
+  m_trdSettings->setValue("PressureDependency/P0", P0.first);
+  m_trdSettings->setValue("PressureDependency/M0", P0.second);
+  m_trdSettings->setValue("PressureDependency/dM_dP", dM_dP);
   m_trdSettings->sync();
 }
 
 void Corrections::getTrdPressureDependendFactor(QPair<double,double>& P0, double& dM_dP)
 {
-  P0.first = m_trdSettings->value( "PressureDependency/P0", 1100).toDouble();
-  P0.second = m_trdSettings->value( "PressureDependency/M0", 1).toDouble();
-  dM_dP = m_trdSettings->value( "PressureDependency/dM_dP", 0).toDouble();
+  P0.first = m_trdSettings->value("PressureDependency/P0", 1100).toDouble();
+  P0.second = m_trdSettings->value("PressureDependency/M0", 1).toDouble();
+  dM_dP = m_trdSettings->value("PressureDependency/dM_dP", 0).toDouble();
 }
 
 double Corrections::trdTemperatureDependendFactor(double T)
 {
-  double T0 = m_trdSettings->value( "TemperatureDependency/T0", 30).toDouble();
-  double M0 = m_trdSettings->value( "TemperatureDependency/M0", 1).toDouble();
-  double dM_dT = m_trdSettings->value( "TemperatureDependency/dM_dT", 0).toDouble();
+  double T0 = m_trdSettings->value("TemperatureDependency/T0", 30).toDouble();
+  double M0 = m_trdSettings->value("TemperatureDependency/M0", 1).toDouble();
+  double dM_dT = m_trdSettings->value("TemperatureDependency/dM_dT", 0).toDouble();
   return M0 / ( M0 + (T-T0) * dM_dT);
 }
 
 void Corrections::setTrdTemperatureDependendFactor(QPair<double,double> T0, double dM_dT)
 {
-  m_trdSettings->setValue( "TemperatureDependency/T0", T0.first);
-  m_trdSettings->setValue( "TemperatureDependency/M0", T0.second);
-  m_trdSettings->setValue( "TemperatureDependency/dM_dT", dM_dT);
+  m_trdSettings->setValue("TemperatureDependency/T0", T0.first);
+  m_trdSettings->setValue("TemperatureDependency/M0", T0.second);
+  m_trdSettings->setValue("TemperatureDependency/dM_dT", dM_dT);
   m_trdSettings->sync();
 }
 
 void Corrections::getTrdTemperatureDependendFactor(QPair<double,double>& T0, double& dM_dT)
 {
-  T0.first = m_trdSettings->value( "TemperatureDependency/T0", 30).toDouble();
-  T0.second = m_trdSettings->value( "TemperatureDependency/M0", 1).toDouble();
-  dM_dT = m_trdSettings->value( "TemperatureDependency/dM_dT", 0).toDouble();
+  T0.first = m_trdSettings->value("TemperatureDependency/T0", 30).toDouble();
+  T0.second = m_trdSettings->value("TemperatureDependency/M0", 1).toDouble();
+  dM_dT = m_trdSettings->value("TemperatureDependency/dM_dT", 0).toDouble();
 }
 
 void Corrections::addTrdTimeDependendFactor(double time, double factor)
@@ -300,8 +300,8 @@ void Corrections::addTrdTimeDependendFactor(double time, double factor)
 
 void Corrections::removeTrdTimeDependendFactors(double startTime, double endTime)
 {
-  for (QMap<double, double> ::const_iterator it = m_TRDMapTime.constBegin(); it != m_TRDMapTime.constEnd(); it++) {
-    if ( startTime <= it.key() && it.key() <= endTime) {
+  for (QMap<double, double>::const_iterator it = m_TRDMapTime.constBegin(); it != m_TRDMapTime.constEnd(); it++) {
+    if (startTime <= it.key() && it.key() <= endTime) {
       qDebug("remove previous time correction factor at %f", it.key());
       m_TRDMapTime.remove(it.key());
     }
@@ -326,7 +326,7 @@ double Corrections::trdTimeDependendFactor(double time)
 
 void Corrections::writeTRDTimeDependendCorrections()
 {
-  QMap<double, double> ::const_iterator it = m_TRDMapTime.constBegin();
+  QMap<double, double>::const_iterator it = m_TRDMapTime.constBegin();
   int i = 0;
   m_trdSettings->beginWriteArray("TimeDependendCorrection");
   for (it = m_TRDMapTime.constBegin(); it != m_TRDMapTime.constEnd(); it++) {
