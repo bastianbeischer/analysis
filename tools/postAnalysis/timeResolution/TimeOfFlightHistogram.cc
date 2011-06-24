@@ -9,6 +9,7 @@
 #include <TF1.h>
 #include <TLatex.h>
 
+#include <cmath>
 #include <iostream>
 #include <iomanip>
 
@@ -26,30 +27,30 @@ TH2D* TimeOfFlightHistogram::histgram(TCanvas* canvas)
 TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin)
   : PostAnalysisPlot()
   , H1DPlot()
+  , m_y(NAN)
+  , m_sigma(NAN)
 {
   TH2D* histogram = canvas->histograms2D().at(0);
   histogram->Draw("COLZ");
-  QString title = QString("%1 channel %2").arg(canvas->name()).arg(bin);
+  m_y = histogram->GetXaxis()->GetBinCenter(bin);
+  QString title = QString("%1 y=%2mm").arg(canvas->name().remove(" canvas")).arg(m_y);
   setTitle(title);
-  TH1D* projection = histogram->ProjectionY("tmp", bin+1, bin+1);
-  if (bin > 0)
-    projection->Smooth();
+  TH1D* projection = histogram->ProjectionY("tmp", bin, bin);
+  projection->Smooth();
   projection->SetName(qPrintable(title));
   setAxisTitle("#Deltat / ns", "");
   TF1* function = new TF1(qPrintable(title + "Function"), "gaus", projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
   projection->Fit(function, "QN0");
-  if (bin > 0) {
-    for (int i = 0; i < 5; ++i) {
-      double mean = function->GetParameter(1);
-      double sigma = function->GetParameter(2);
-      function->SetRange(mean - 1.5 * sigma, mean + 1.5 * sigma);
-      projection->Fit(function, "RQN0");
-    }
+  function->SetParLimits(1, 2.2, 3.3);
+  for (int i = 0; i < 5; ++i) {
+    double mean = function->GetParameter(1);
+    double sigma = qMax(0.2, function->GetParameter(2));
+    function->SetRange(mean - 1.5 * sigma, mean + 1.5 * sigma);
+    projection->Fit(function, "RQN0");
   }
+  m_sigma = function->GetParameter(2);
   function->SetRange(projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
   QStringList stringList = title.split(" ");
-  //int id = (stringList[ch < 4 ? 2 : 3].remove(0, 2).toInt(0, 16)) | (ch - (ch < 4 ? 0 : 4));
-  //std::cout << "0x" <<std::hex << id << "=" << -m_fitFunction->GetParameter(1) << std::endl;
   addHistogram(projection);
   addFunction(function);
   TLatex* latex = 0;
@@ -63,3 +64,13 @@ TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin
 
 TimeOfFlightHistogram::~TimeOfFlightHistogram()
 {}
+
+double TimeOfFlightHistogram::y()
+{
+  return m_y;
+}
+
+double TimeOfFlightHistogram::sigma()
+{
+  return m_sigma;
+}

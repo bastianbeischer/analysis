@@ -27,7 +27,8 @@ CLASSES = \
   ChannelTimeShiftHistogram \
   BarTimeShiftHistogram \
   TimeShiftContainer \
-  BarShiftPlot
+  BarShiftPlot \
+  AllChannelsTimeShiftPlot
 
 SOURCES = \
   main.cc
