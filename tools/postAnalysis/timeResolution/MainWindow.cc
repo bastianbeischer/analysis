@@ -4,12 +4,13 @@
 #include "PostAnalysisPlot.hh"
 #include "TimeOfFlightHistogram.hh"
 #include "RootStyle.hh"
+#include "TimeResolutionPlot.hh"
 
 #include <TCanvas.h>
 #include <TFile.h>
 #include <TROOT.h>
+#include <TH2.h>
 
-#include <QDebug>
 #include <QFileDialog>
 
 MainWindow::MainWindow(QWidget* parent)
@@ -31,11 +32,15 @@ void MainWindow::setupAnalysis()
   for (int u = 0; u < 4; ++u) {
     for (int l = 0; l < 4; ++l) {
       QString title = QString("time resolution %1 %2 canvas").arg(upper[u]).arg(lower[l]);
-      qDebug() << title;
+      QVector<TimeOfFlightHistogram*> timeOfFlightHistograms;
       canvas = addCanvas(&file, qPrintable(title));
-      for (int bin = 0; bin < 5; ++bin) {
-        addPlot(new TimeOfFlightHistogram(canvas, bin));
+      int nBins = canvas->histograms2D().at(0)->GetXaxis()->GetNbins();
+      for (int bin = 1; bin <= nBins; ++bin) {
+        TimeOfFlightHistogram* h = new TimeOfFlightHistogram(canvas, bin);
+        addPlot(h);
+        timeOfFlightHistograms.append(h);
       }
+      addPlot(new TimeResolutionPlot(timeOfFlightHistograms));
     }
   }
   file.Close();
