@@ -3,7 +3,6 @@
 #include "SensorTypes.hh"
 #include "SimpleEvent.hh"
 
-#include <TH2.h>
 #include <TAxis.h>
 #include <THStack.h>
 #include <TPad.h>

@@ -16,8 +16,8 @@
 #include "TRDSpectrumPlotCollection.hh"
 #include "TRDSpectrumCherenkovPlotCollection.hh"
 #include "TRDSpectrumVsTimePlotCollection.hh"
-#include "TRDSpectrumVsTemperaturePlotCollection.hh"
-#include "TRDSpectrumVsPressurePlotCollection.hh"
+//#include "TRDSpectrumVsTemperaturePlotCollection.hh"
+//#include "TRDSpectrumVsPressurePlotCollection.hh"
 #include "BendingPositionPlot.hh"
 #include "BendingAnglePlot.hh"
 #include "ResidualPlot.hh"
@@ -44,12 +44,12 @@
 #include "TRDClustersOnTrackPlot.hh"
 #include "TRDDistanceWireToTrackPlot.hh"
 #include "TRDDistanceInTube.hh"
-#include "TRDMoPVTimeEvolutionPlot.hh"
+#include "TRDTimeCorrectionPlot.hh"
 #include "TRDEnergyDepositionOverMomentumPlot.hh"
 #include "TRDSpectrumPlot.hh"
 #include "TRDSpectrumVsTimePlot.hh"
-#include "TRDSpectrumVsTemperaturePlot.hh"
-#include "TRDSpectrumVsPressurePlot.hh"
+//#include "TRDSpectrumVsTemperaturePlot.hh"
+//#include "TRDSpectrumVsPressurePlot.hh"
 #include "TRDOccupancyPlot.hh"
 #include "TRDEfficiencyPlot.hh"
 #include "TotalEnergyDepositionPlot.hh"
@@ -70,6 +70,7 @@
 #include "TOTTimeCorrelationPlot.hh"
 #include "TemperatureTimePlot.hh"
 #include "PressureTimePlot.hh"
+#include "SettingTimePlot.hh"
 #include "ChannelTriggerProbabilityPlot.hh"
 #include "TOFTimeShiftTriggerPlot.hh"
 #include "TriggerRateTimePlot.hh"
@@ -77,6 +78,7 @@
 #include "MCTotalEnergyDepositionTRDvsTrackerPlot.hh"
 #include "MCTRDSpectrumPlot.hh"
 #include "MCRigidityResolutionPlot.hh"
+#include "MCTRDCalibrationPlot.hh"
 #include "ResidualPlotMC.hh"
 #include "TestbeamRigidityResolutionPlot.hh"
 #include "PMTPlot.hh"
@@ -167,6 +169,9 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.alignmentCorrectionCheckBox);
   m_controlWidgets.append(m_ui.timeShiftCorrectionCheckBox);
   m_controlWidgets.append(m_ui.trdMopValueCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.trdTimeDependencyCorrectionCheckBox);
+  /*m_controlWidgets.append(m_ui.trdPressureDependencyCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.trdTemperatureDependencyCorrectionCheckBox);*/
   m_controlWidgets.append(m_ui.timeOverThresholdCorrectionCheckBox);
   m_controlWidgets.append(m_ui.multipleScatteringCorrectionCheckBox);
   m_controlWidgets.append(m_ui.photonTravelTimeCorrectionCheckBox);
@@ -188,6 +193,24 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.trdDepositionCutCheckBox);
   m_controlWidgets.append(m_ui.trdDepositionLineEditMax);
   m_controlWidgets.append(m_ui.trdDepositionLineEditMin);
+  m_controlWidgets.append(m_ui.cherenkovCutCheckBox);
+  m_controlWidgets.append(m_ui.cherenkovCutBelowRadioButton);
+  m_controlWidgets.append(m_ui.cherenkovCutAboveRadioButton);
+  m_controlWidgets.append(m_ui.cherenkovCutDoubleSpinBox);
+
+  m_controlWidgets.append(m_ui.mcAntiMuonCheckBox);
+  m_controlWidgets.append(m_ui.mcAntiPionCheckBox);
+  m_controlWidgets.append(m_ui.mcAntiprotonCheckBox);
+  m_controlWidgets.append(m_ui.mcElectronCheckBox);
+  m_controlWidgets.append(m_ui.mcGammaCheckBox);
+  m_controlWidgets.append(m_ui.mcHeliumCheckBox);
+  m_controlWidgets.append(m_ui.mcMuonCheckBox);
+  m_controlWidgets.append(m_ui.mcPionCheckBox);
+  m_controlWidgets.append(m_ui.mcPositronCheckBox);
+  m_controlWidgets.append(m_ui.mcProtonCheckBox);
+
+
+
 
   connect(m_reader, SIGNAL(started()), this, SLOT(toggleControlWidgetsStatus()));
   connect(m_reader, SIGNAL(finished()), this, SLOT(toggleControlWidgetsStatus()));
@@ -462,18 +485,16 @@ void MainWindow::setupPlots()
     }
 
     m_ui.plotter->addPlot(new TRDSpectrumPlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
-    m_ui.plotter->addPlot(new TRDSpectrumPlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, -3, -1.5));
-    m_ui.plotter->addPlot(new TRDSpectrumPlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, 1.5, 3));
     m_ui.plotter->addPlot(new TRDSpectrumPlotCollection);
 
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD,first,last));
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlotCollection(first, last));
 
-    m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
-    m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlotCollection());
+    //m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
+    //m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlotCollection());
 
-    m_ui.plotter->addPlot(new TRDSpectrumVsPressurePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
-    m_ui.plotter->addPlot(new TRDSpectrumVsPressurePlotCollection());
+    //m_ui.plotter->addPlot(new TRDSpectrumVsPressurePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
+    //m_ui.plotter->addPlot(new TRDSpectrumVsPressurePlotCollection());
  
   }
   if (m_ui.clusterShapeTrackerCheckBox->isChecked()) {
@@ -592,6 +613,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::numberOfHits, true));
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeights, true));
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits, true));
+    m_ui.plotter->addPlot(new TRDTimeCorrectionPlot(first, last));
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BetaPlot());
@@ -606,6 +628,7 @@ void MainWindow::setupPlots()
     foreach(SensorTypes::Type sensor, temperatureSensors)
       m_ui.plotter->addPlot(new TemperatureTimePlot(sensor, first, last));
     m_ui.plotter->addPlot(new PressureTimePlot(SensorTypes::TRD_PRESSURE, first, last));
+    m_ui.plotter->addPlot(new PressureTimePlot(SensorTypes::TRD_PRESSURE_SMOOTHED, first, last));
     m_ui.plotter->addPlot(new TriggerRateTimePlot(first, last));
     m_ui.plotter->addPlot(new HeightTimePlot(first, last));
   }
@@ -619,6 +642,7 @@ void MainWindow::setupPlots()
       if (layer->z() > -520 && layer->z() < -240)
         m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisPlot::MonteCarloTRD, layer));
     }
+    m_ui.plotter->addPlot(new MCTRDCalibrationPlot());
   }
   if (m_ui.mcTrackerCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Positron));
@@ -634,7 +658,11 @@ void MainWindow::setupPlots()
     }
   }
   if (m_ui.testbeamCheckBox->isChecked()) {
-    m_ui.plotter->addPlot(new TRDSpectrumCherenkovPlotCollection);
+    m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::MagnetInstalled, first, last));
+    m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::Momentum, first, last));
+    m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::Polarity, first, last));
+    m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::AbsMomentum, first, last));
+    m_ui.plotter->addPlot(new TRDSpectrumCherenkovPlotCollection());
     QVector<SensorTypes::Type> beamSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::beamSensors());
     foreach(SensorTypes::Type sensor, beamSensors)
       m_ui.plotter->addPlot(new PMTPlot(sensor));
@@ -661,6 +689,12 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
     flags|= Corrections::PhotonTravelTime;
   if (m_ui.trdMopValueCorrectionCheckBox->isChecked())
     flags|= Corrections::TrdMopv;
+  if (m_ui.trdTimeDependencyCorrectionCheckBox->isChecked())
+    flags|= Corrections::TrdTime;
+  /*if (m_ui.trdPressureDependencyCorrectionCheckBox->isChecked())
+    flags|= Corrections::TrdPressure;
+  if (m_ui.trdTemperatureDependencyCorrectionCheckBox->isChecked())
+      flags|= Corrections::TrdTemperature;*/
   if (m_ui.timeOverThresholdCorrectionCheckBox->isChecked())
     flags|= Corrections::TofTimeOverThreshold;
 
@@ -691,7 +725,7 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
     mcFilterTypes |= Particle::AntiMuon;
   if (m_ui.mcPionCheckBox->isChecked())
     mcFilterTypes |= Particle::PiPlus;
-  if (m_ui.mcAntiMuonCheckBox->isChecked())
+  if (m_ui.mcAntiPionCheckBox->isChecked())
     mcFilterTypes |= Particle::PiMinus;
   if (m_ui.mcHeliumCheckBox->isChecked())
     mcFilterTypes |= Particle::Helium;

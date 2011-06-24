@@ -108,8 +108,8 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>204</width>
-             <height>877</height>
+             <width>183</width>
+             <height>716</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout">
@@ -1787,6 +1787,16 @@ reconstruction</string>
               </widget>
              </item>
              <item>
+              <widget class="QCheckBox" name="trdTimeDependencyCorrectionCheckBox">
+               <property name="text">
+                <string>time dependency TRD</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QCheckBox" name="timeOverThresholdCorrectionCheckBox">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
@@ -2461,7 +2471,7 @@ over threshold</string>
      <x>0</x>
      <y>0</y>
      <width>1207</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="font">

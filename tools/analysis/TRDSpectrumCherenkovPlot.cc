@@ -2,12 +2,29 @@
 
 #include "SimpleEvent.hh"
 
-TRDSpectrumCherenkovPlot::TRDSpectrumCherenkovPlot(unsigned short id, TRDSpectrumType spectrumType, double lowerMom, double upperMom, CherenkovCut cCut, double c1Limit, double c2Limit) :
-  TRDSpectrumPlot(id, spectrumType, lowerMom, upperMom),
+TRDSpectrumCherenkovPlot::TRDSpectrumCherenkovPlot(unsigned short id, TRDSpectrumType spectrumType, CherenkovCut cCut, double c1Limit, double c2Limit) :
+  TRDSpectrumPlot(id, spectrumType),
   m_cherenkovCut(cCut),
   m_cherenkov1Limit(c1Limit),
   m_cherenkov2Limit(c2Limit)
 {
+  switch (m_cherenkovCut) {
+  case None:
+    setTitle(title() + " no cherenkov cut");
+    break;
+  case BothBelow:
+    setTitle(title() + " below both cherenkovs");
+    break;
+  case BothAbove:
+   setTitle(title() + " above both cherenkovs");
+    break;
+  case C1AboveC2Below:
+    setTitle(title() + " above c1 below c2");
+    break;
+  case C1BelowC2Above:
+    setTitle(title() + " below c1 above c2");
+    break;
+  }
 }
 
 TRDSpectrumCherenkovPlot::~TRDSpectrumCherenkovPlot()

@@ -9,6 +9,7 @@
 #include "Cluster.hh"
 #include "SimpleEvent.hh"
 #include "TRDCalculations.hh"
+#include "TRDSpectrumPlot.hh"
 
 #include <TCanvas.h>
 #include <TList.h>
@@ -60,6 +61,7 @@ void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, Particle* particl
 {
 
   const Track* track = particle->track();
+  const QVector<Hit*> trackHits = track->hits();
   const ParticleInformation::Flags pFlags = particle->information()->flags();
 
   //check if everything worked and a track has been fit
@@ -69,6 +71,7 @@ void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, Particle* particl
   if (pFlags & ParticleInformation::Chi2Good)
     return;
 
+  //loop over all hits of the event
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Hit* clusterHit = *it;
@@ -79,13 +82,18 @@ void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, Particle* particl
 
     Cluster* cluster = static_cast<Cluster*>(clusterHit);
 
+    //loop over all subhits of the cluster, in most cases just one
     std::vector<Hit*>& subHits = cluster->hits();
     const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       Hit* hit = *it;
       //analyse the hit:
-      double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
-      if(!(distanceInTube > 0) && m_onlyOnTrack)
+      double distanceInTube = 1.;
+
+      if(TRDSpectrumPlot::calculateLengthInTube)
+          TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
+
+      if(!(distanceInTube > 0 && trackHits.contains(clusterHit)) && m_onlyOnTrack)
         continue;
 
       double signal = hit->signalHeight() / (distanceInTube);

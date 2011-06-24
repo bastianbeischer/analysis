@@ -89,6 +89,7 @@ QString RootPlot::drawOption(DrawOption option)
 {
   switch (option) {
     case BLANK: return "";
+    case E1X0: return "E1X0";
     case COLZ: return "COL Z";
     case SCAT: return "SCAT";
     case CONT4Z: return "CONT4 Z";
@@ -104,6 +105,7 @@ QString RootPlot::drawOption(DrawOption option)
     case P: return "P";
     case L: return "L";
     case C: return "C";
+    case HIST: return "HIST";
     default: return QString();
   }
   return QString();

@@ -28,7 +28,11 @@ LIBS += \
 
 CLASSES = \
   MainWindow \
-  MoPVScaling
+  MoPVScaling \
+  MoPVScalingTime \
+  MoPVScalingPressure \
+  MoPVScalingTemperature \
+  MoPVConstant
 
 SOURCES = \
   main.cc
