@@ -4,35 +4,51 @@
 #include "H1DPlot.hh"
 
 #include <TH1D.h>
+#include <TROOT.h>
+
+#include <iostream>
 
 #include <QString>
+#include <QList>
 #include <QDebug>
 
 
-HistCompare::HistCompare(PostAnalysisCanvas* dataC, PostAnalysisCanvas* mcC)
+HistCompare::HistCompare(PostAnalysisCanvas* dataC, PostAnalysisCanvas* mcC, PostAnalysisCanvas* oldmcC)
   : QObject()
   , PostAnalysisPlot()
   , H1DPlot()
 {
+  gROOT->cd();
   setTitle("TRD Spectra");
-  setAxisTitle("energy Deposition / keV","#");
-  TH1D* dataHist = dataC->histograms1D().at(0);
-  TH1D* mcHist = mcC->histograms1D().at(0);
+  setAxisTitle("energy Deposition per length / (keV / mm)","#");
+  QList<PostAnalysisCanvas*> postCan;
+  postCan.append(dataC);
+  postCan.append(mcC);
+  postCan.append(oldmcC);
 
-  TH1D* dataHistClone = (TH1D*)dataHist->Clone();
-  dataHistClone->SetName("testbeam");
-  TH1D* mcHistClone = (TH1D*)mcHist->Clone();
-  mcHistClone->SetName("perdaix mc");
+  QList<TH1D*> histos;
+  for(int i = 0; i < postCan.count(); i++)
+  {
+    if(postCan.at(i) != 0){
+      histos.append(postCan.at(i)->histograms1D().at(0));
+    }
+  }
 
-  //dataHistClone->Sumw2();
-  dataHistClone->Scale(1. / dataHistClone->GetEntries());
-  //mcHistClone->Sumw2();
-  mcHistClone->Scale(1. / mcHistClone->GetEntries());
+  double ymax = 0;
+  TH1D* hist_clone[histos.count()];
+  for(int i = 0; i < histos.count(); i++){
+    char title[128];
+    sprintf(title, "hist_clone%d", i);
+    hist_clone[i] = (TH1D*) histos.at(i)->Clone();
+    hist_clone[i]->SetStats(kFALSE);
+    hist_clone[i]->Scale(1./hist_clone[i]->GetEntries());
+    hist_clone[i]->SetLineColor(i+1);
 
-  dataHist->GetXaxis()->SetRangeUser(0, dataHist->GetMaximum()*1.1);
-  mcHistClone->SetLineColor(kRed);
+    ymax = qMax(ymax, hist_clone[i]->GetMaximum());
 
-  addHistogram(dataHistClone);
-  addHistogram(mcHistClone);
+    addHistogram(hist_clone[i]);
+  }
 
+  histogram()->GetYaxis()->SetRangeUser(1e-4, ymax*1.1);
+  histogram()->GetXaxis()->SetRangeUser(0, 10);
 }
