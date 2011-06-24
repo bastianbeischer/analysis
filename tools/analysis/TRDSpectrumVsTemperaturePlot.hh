@@ -13,7 +13,7 @@
 class TRDSpectrumVsTemperaturePlot: public AnalysisPlot, public H2DPlot {
 
 public:
-  TRDSpectrumVsTemperaturePlot(unsigned int, TRDSpectrumPlot::TRDSpectrumType, double lowerMomentum = -100, double upperMomentum = 100 );
+  TRDSpectrumVsTemperaturePlot(unsigned short = 0, TRDSpectrumPlot::TRDSpectrumType = TRDSpectrumPlot::completeTRD);
   ~TRDSpectrumVsTemperaturePlot();
 
   virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
@@ -21,10 +21,6 @@ public:
 private:
   unsigned short m_id;
   TRDSpectrumPlot::TRDSpectrumType m_spectrumType;
-
-  const double m_lowerMomentum;
-  const double m_upperMomentum;
-
 };
 
 #endif // TRDSPECTRUMVSTEMPERATUREPLOT_H

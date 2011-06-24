@@ -33,7 +33,7 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <layout class="QVBoxLayout" name="verticalLayoutLeft">
         <property name="margin">
          <number>0</number>
         </property>

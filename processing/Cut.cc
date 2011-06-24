@@ -58,7 +58,7 @@ bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*
     ParticleInformation::Flags flags = particle->information()->flags();
     if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
       return false;
-    return passesCuts(fabs(track->rigidity()));
+    return passesCuts(track->rigidity());
   }
   if (m_type == beta) {
     const Track* track = particle->track();
@@ -67,7 +67,7 @@ bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*
     ParticleInformation::Flags flags = particle->information()->flags();
     if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
       return false;
-    return passesCuts(fabs(particle->beta()));
+    return passesCuts(particle->beta());
   }
   if (m_type == tofTimeOverThreshold) {
     const Track* track = particle->track();

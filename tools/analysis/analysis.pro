@@ -72,7 +72,7 @@ CLASSES = \
   TRDDistanceWireToTrackPlot \
   TRDEfficiencyPlot \
   TRDEnergyDepositionOverMomentumPlot \
-  TRDMoPVTimeEvolutionPlot \
+  TRDTimeCorrectionPlot \
   TRDOccupancyPlot \
   TRDSpectrumPlot \
   TRDSpectrumCherenkovPlot \
@@ -103,8 +103,10 @@ CLASSES = \
   HeightTimePlot \
   TriggerRateTimePlot \
   SensorTimePlot \
+  SettingTimePlot \
   MCTotalEnergyDepositionTRDvsTrackerPlot \
   MCTRDSpectrumPlot \
+  MCTRDCalibrationPlot \
   RigidityResolutionPlot \
   MCRigidityResolutionPlot \
   TestbeamRigidityResolutionPlot \

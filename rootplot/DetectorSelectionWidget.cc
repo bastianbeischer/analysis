@@ -18,21 +18,24 @@ DetectorSelectionWidget::DetectorSelectionWidget(const QStringList& moduleIDs, i
   layout->addStretch();
   layout->addWidget(new QLabel("Module"));
   layout->addWidget(m_moduleSpinBox);
-  layout->addSpacing(50);
-  layout->addWidget(m_individualChannelCheckBox);
-  layout->addSpacing(50);
-  layout->addWidget(new QLabel("Channel"));
-  layout->addWidget(m_channelSpinBox);
+  if (nChannels > 0) {
+    layout->addSpacing(50);
+    layout->addWidget(m_individualChannelCheckBox);
+    layout->addSpacing(50);
+    layout->addWidget(new QLabel("Channel"));
+    layout->addWidget(m_channelSpinBox);
+  }
   layout->addStretch();
 
   m_channelSpinBox->setMinimum(0);
   m_channelSpinBox->setMaximum(nChannels-1);
   m_channelSpinBox->setEnabled(false);
 
-  connect(m_individualChannelCheckBox, SIGNAL(stateChanged(int)), this, SLOT(setChannelSpinBoxState(int)));
   connect(m_moduleSpinBox, SIGNAL(valueChanged(int)), this, SLOT(selectedPlotChanged()));
+  connect(m_individualChannelCheckBox, SIGNAL(stateChanged(int)), this, SLOT(setChannelSpinBoxState(int)));
   connect(m_channelSpinBox, SIGNAL(valueChanged(int)), this, SLOT(selectedPlotChanged()));
   connect(m_individualChannelCheckBox, SIGNAL(stateChanged(int)), this, SLOT(selectedPlotChanged()));
+
 }
 
 DetectorSelectionWidget::~DetectorSelectionWidget()

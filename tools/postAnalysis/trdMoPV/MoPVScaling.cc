@@ -7,37 +7,56 @@
 #include <TH2D.h>
 #include <TF1.h>
 #include <TLatex.h>
+#include <TSpline.h>
 
 #include <QList>
+#include <QRegExp>
 
 #include <math.h>
 
+#include <QDebug>
+
 MoPVScaling::MoPVScaling(PostAnalysisCanvas* canvas)
-  : PostAnalysisPlot()
+  : QObject()
+  , PostAnalysisPlot()
   , GraphPlot()
   , m_colorCounter(0)
+  , m_dependencyFit(0)
+  , m_spline(0)
+  , m_startValue(0)
+  , m_endValue(0)
 {
   TH2D* histogram = canvas->histograms2D().at(0);
   TGraph* graph = generateMoPVGraph(histogram);
-  QString title = QString(canvas->name()).replace("canvas", "graph");
-  setTitle(title);
-  addGraph(graph, "L");
-  setAxisTitle("time", "trd mopv");
+  if (graph) {
+    m_dependencyFit = new TF1("dependencyFit", "pol1");
+    graph->Fit(m_dependencyFit);
+    QString title = QString(canvas->name()).replace("canvas", "graph");
+    setTitle(title);
+    addGraph(graph, "p");
+    setAxisTitle(histogram->GetXaxis()->GetTitle(), "trd mopv");
+    m_spline = new TSpline3("spline", graph, "b1e1", 0., 0.);
+  }
 }
 
 MoPVScaling::MoPVScaling(QList<PostAnalysisCanvas*> canvasList)
-  : PostAnalysisPlot()
+  : QObject()
+  , PostAnalysisPlot()
   , GraphPlot()
   , m_colorCounter(0)
+  , m_dependencyFit(0)
+  , m_spline(0)
 {
   //TODO is first name ok?
   QString title = QString(canvasList.first()->name()).replace("canvas", "graph");
-  setTitle(title);
-  setAxisTitle("time", "trd mopv");
+  setTitle(title.replace(QRegExp("\\dx\\d\\d\\d."),""));
+  setAxisTitle(canvasList.first()->histograms2D().at(0)->GetXaxis()->GetTitle(), "trd mopv");
 
   foreach (PostAnalysisCanvas* canvas, canvasList) {
     TH2D* histogram = canvas->histograms2D().at(0);
     TGraph* graph = generateMoPVGraph(histogram);
+    if (!graph)
+      continue;
     graph->SetLineColor(RootStyle::rootColor(m_colorCounter++));
     graph->SetLineWidth(1);
     graph->SetDrawOption("LX");
@@ -50,8 +69,18 @@ MoPVScaling::~MoPVScaling()
 {
 }
 
+void MoPVScaling::draw(TCanvas* canv)
+{
+  GraphPlot::draw(canv);
+  if (m_spline)
+    m_spline->Draw("same");
+}
+
 TGraphErrors* MoPVScaling::generateMoPVGraph(TH2D* histogram)
 {
+
+  m_startValue = histogram->GetXaxis()->GetXmin();
+  m_endValue = histogram->GetXaxis()->GetXmax();
 
   QVector<double> x, y, xErr, yErr;
 
@@ -61,7 +90,9 @@ TGraphErrors* MoPVScaling::generateMoPVGraph(TH2D* histogram)
     if (nEntries < 100)
         continue;
     //which fit range ?!?, use same as TRD spectrum ?!?
-    TF1* functionLandau = new TF1(qPrintable(QString(histogram->GetTitle()) + "FunctionLandau"), "landau", histogram->GetYaxis()->GetXmin(), histogram->GetYaxis()->GetXmax());
+    TF1* functionLandau = new TF1(qPrintable(QString(histogram->GetTitle()) + "FunctionLandau"), "landau"
+                                  , 2./3./100. *projectionHistogram->GetXaxis()->GetXmax()
+                                  , 0.2 *projectionHistogram->GetXaxis()->GetXmax());
     projectionHistogram->Fit(functionLandau, "EQN0");
 
     double mpv = functionLandau->GetParameter(1);
@@ -92,7 +123,12 @@ TGraphErrors* MoPVScaling::generateMoPVGraph(TH2D* histogram)
     y << mpv;
     yErr << mpvErr;
   }
-  
-  return new TGraphErrors(x.size(), &x[0], &y[0], &xErr[0], &yErr[0]);
 
+  if (x.size() == 0)
+    return 0;
+  return new TGraphErrors(x.size(), &x[0], &y[0], &xErr[0], &yErr[0]);
+}
+
+void MoPVScaling::saveDependency()
+{
 }

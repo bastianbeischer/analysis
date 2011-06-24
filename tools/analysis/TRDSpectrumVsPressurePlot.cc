@@ -7,6 +7,8 @@
 #include "Hit.hh"
 #include "SimpleEvent.hh"
 #include "TRDCalculations.hh"
+#include "Settings.hh"
+#include "SettingsManager.hh"
 
 #include <TH2D.h>
 #include <TAxis.h>
@@ -17,7 +19,7 @@
 #include <QSettings>
 #include <math.h>
 
-TRDSpectrumVsPressurePlot::TRDSpectrumVsPressurePlot(unsigned int id, TRDSpectrumPlot::TRDSpectrumType spectrumType, double lowerMom, double upperMom):
+TRDSpectrumVsPressurePlot::TRDSpectrumVsPressurePlot(unsigned short id, TRDSpectrumPlot::TRDSpectrumType spectrumType, double lowerMom, double upperMom):
   AnalysisPlot(AnalysisPlot:: SignalHeightTRD),
   H2DPlot(),
   m_id(id),
@@ -39,7 +41,7 @@ TRDSpectrumVsPressurePlot::TRDSpectrumVsPressurePlot(unsigned int id, TRDSpectru
     break;
   }
 
-  if(m_spectrumType == TRDSpectrumPlot::completeTRD)
+  if (m_spectrumType == TRDSpectrumPlot::completeTRD)
     setTitle(strType + QString(" spectrum (%1 GeV to %2 GeV)").arg(m_lowerMomentum).arg(m_upperMomentum));
   else
     setTitle(strType + QString(" spectrum 0x%1 (%2 GeV to %3 GeV)").arg(m_id,0,16).arg(m_lowerMomentum).arg(m_upperMomentum));
@@ -48,12 +50,17 @@ TRDSpectrumVsPressurePlot::TRDSpectrumVsPressurePlot(unsigned int id, TRDSpectru
   const unsigned int nPressureBins = 200;
   const double minPressure = 1070;
   const double maxPressure = 1115;
-  const unsigned int nSpecBins = 100;
-  const double minSpec = 0;
-  const double maxSpec = 15;
+  int nBins = TRDSpectrumPlot::spectrumDefaultBins;
+  double lowerBound = 1e-3;
+  double upperBound = TRDSpectrumPlot::spectrumUpperLimit();
+  double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
+  double p[nBins+1];
+  for (int i = 0; i < nBins+1; i++) {
+    p[i] = pow(lowerBound, delta*i+1);
+  }
 
-  TH2D* histogram = new TH2D(qPrintable(title()),"", nPressureBins, minPressure, maxPressure, nSpecBins, minSpec, maxSpec);
-  setAxisTitle("pressure /  mBar", "ADCCs per length", "");
+  TH2D* histogram = new TH2D(qPrintable(title()),"", nPressureBins, minPressure, maxPressure, nBins, p);
+  setAxisTitle("pressure /  mBar", TRDSpectrumPlot::xAxisTitle(), "");
   addHistogram(histogram);
 }
 
@@ -61,64 +68,59 @@ TRDSpectrumVsPressurePlot::~TRDSpectrumVsPressurePlot()
 {
 }
 
-void TRDSpectrumVsPressurePlot::processEvent(const QVector<Hit*>& , Particle* particle, SimpleEvent* event)
+void TRDSpectrumVsPressurePlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
-  const Track* track = particle->track();
-  const ParticleInformation::Flags pFlags = particle->information()->flags();
-
-  //check if everything worked and a track has been fit
-  if (!track || !track->fitGood())
-    return;
-
-  if (pFlags & ParticleInformation::Chi2Good)
-    return;
-
-  //check if straight line fit has been used:
-  if (! (track->type() == Track::StraightLine)){
-    //check if track was inside of magnet
-    if (!(pFlags & ParticleInformation::InsideMagnet))
+  if (!TRDSpectrumPlot::globalTRDCuts(hits, particle, event))
       return;
-
-    //get the reconstructed momentum
-    double rigidity = track->rigidity(); //GeV
-
-    if(rigidity < m_lowerMomentum || rigidity > m_upperMomentum)
-      return;
-  }
-
-
-  //TODO: check for off track hits ?!?
-  unsigned int nTrdHits = 0;
-  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
-    if ((*it)->type() == Hit::trd)
-      nTrdHits++;
-  }
-
-  if (nTrdHits < 6)
-    return;
 
   // TODO: temp sensormap
-  double pressure = event->sensorData(SensorTypes::TRD_PRESSURE);
+  double pressure = event->sensorData(SensorTypes::TRD_PRESSURE_SMOOTHED);
  
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+  //now get all relevant energy deposition for this specific plot and all length
+  QList<double> lengthList;
+  QList<double> signalList;
+
+  const Track* track = particle->track();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != track->hits().end(); ++it) {
     Hit* hit = *it;
     if (hit->type() != Hit::trd)
       continue;
-
     Cluster* cluster = static_cast<Cluster*>(hit);
     std::vector<Hit*>& subHits = cluster->hits();
     const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       Hit* subHit = *it;
       //check if the id of the plot has been hit (difference between module mode and channel mode
-      if(m_spectrumType == TRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
+      if (m_spectrumType == TRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
          (m_spectrumType == TRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
          (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
-        double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
-        if(distanceInTube > 0)
-          histogram(0)->Fill(pressure, subHit->signalHeight() / (distanceInTube));
-      }
-    }
+        double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
+        if (TRDSpectrumPlot::calculateLengthInTube)
+            distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
+        if (distanceInTube > 0) {
+          signalList << hit->signalHeight();
+          lengthList << distanceInTube;
+        }
+      } // fits into category
+    } // subhits in cluster
+  } // all hits
+
+  /* now fill the mean of all gathered data
+      - one value for a single tube
+      - normally also one value for a module (except no length is calculated and 2 tubes show a signal)
+      - several signals for the complete trd
+  */
+
+  //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
+  unsigned int hitsWhichAreOnTrack = signalList.size();
+  if (m_spectrumType == TRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDSpectrumPlot::minTRDLayerCut)
+    return;
+
+  for (int i = 0; i < signalList.size(); ++i) {
+    double value = signalList.at(i) / lengthList.at(i);
+    int iBin = histogram()->FindBin(value);
+    double width = histogram()->GetBinWidth(iBin);
+    double weight = 1./width;
+    histogram()->Fill(pressure, value, weight);
   }
 }

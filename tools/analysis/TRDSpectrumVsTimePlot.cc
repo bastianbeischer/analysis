@@ -1,4 +1,5 @@
 #include "TRDSpectrumVsTimePlot.hh"
+#include "TRDSpectrumPlot.hh"
 
 #include "Particle.hh"
 #include "Track.hh"
@@ -6,6 +7,8 @@
 #include "Cluster.hh"
 #include "Hit.hh"
 #include "SimpleEvent.hh"
+#include "Settings.hh"
+#include "SettingsManager.hh"
 
 #include "TRDCalculations.hh"
 
@@ -16,13 +19,11 @@
 #include <QString>
 #include <math.h>
 
-TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumPlot::TRDSpectrumType spectrumType, QDateTime first, QDateTime last, double lowerMom, double upperMom) :
-  AnalysisPlot(AnalysisPlot:: SignalHeightTRD),
-  H2DPlot(),
-  m_id(id),
-  m_spectrumType(spectrumType),
-  m_lowerMomentum(lowerMom),
-  m_upperMomentum(upperMom)
+TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(QDateTime first, QDateTime last, unsigned short id, TRDSpectrumPlot::TRDSpectrumType spectrumType)
+  : AnalysisPlot(AnalysisPlot:: SignalHeightTRD)
+  , H2DPlot()
+  , m_id(id)
+  , m_spectrumType(spectrumType)
 {
   QString strType;
   switch(m_spectrumType){
@@ -38,26 +39,32 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumPlot:
   }
 
   if(m_spectrumType == TRDSpectrumPlot::completeTRD)
-    setTitle(strType + QString(" spectrum (%1 GeV to %2 GeV)").arg(m_lowerMomentum).arg(m_upperMomentum));
+    setTitle(strType + " spectrum");
   else
-    setTitle(strType + QString(" spectrum 0x%1 (%2 GeV to %3 GeV)").arg(m_id,0,16).arg(m_lowerMomentum).arg(m_upperMomentum));
+    setTitle(strType + QString(" spectrum 0x%1").arg(m_id,0,16));
 
 
-  int secsPerBin = 300;
+  int secsPerBin = 3600*2;
 
   int t1 = first.toTime_t();
-  t1-= (t1 % secsPerBin) + secsPerBin;
   int t2 = last.toTime_t();
-  t2+= 2*secsPerBin - (t2 % secsPerBin);
   const unsigned int nTimeBins = qMin((t2 - t1) / secsPerBin, 500);
-  const unsigned int nSignalHeightBins = 100;
-  const double minSignalHeight = 0;
-  const double maxSignalHeight = 15;
+  int nBins = TRDSpectrumPlot::spectrumDefaultBins;
+  double lowerBound = 1e-3;
+  double upperBound = TRDSpectrumPlot::spectrumUpperLimit();
+  double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
+  double p[nBins+1];
+  for (int i = 0; i < nBins+1; i++) {
+    p[i] = pow(lowerBound, delta*i+1);
+  }
 
-  TH2D* histogram = new TH2D(qPrintable(title()),"", nTimeBins,t1,t2,nSignalHeightBins,minSignalHeight,maxSignalHeight);
+  TH2D* histogram = new TH2D(qPrintable(title()),"", nTimeBins,t1,t2, nBins, p);
+  histogram->Sumw2();
   histogram->GetXaxis()->SetTimeDisplay(1);
   histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");
-  setAxisTitle("Time", "ADCCs per length", "");
+  histogram->GetXaxis()->SetTimeOffset(3600, "gmt"); //dont understand this, but works at testbeam
+  histogram->GetXaxis()->SetTimeDisplay(1);
+  setAxisTitle("Time", TRDSpectrumPlot::xAxisTitle(), "");
   addHistogram(histogram);
 }
 
@@ -65,43 +72,18 @@ TRDSpectrumVsTimePlot::~TRDSpectrumVsTimePlot()
 {
 }
 
-void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& , Particle* particle, SimpleEvent* event)
+void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
+  //use the global cuts defined in the TRDSpectrumPlot class
+  if ( ! TRDSpectrumPlot::globalTRDCuts(hits, particle, event))
+      return;
+
+  //now get all relevant energy deposition for this specific plot and all length
+  QList<double> lengthList;
+  QList<double> signalList;
+
   const Track* track = particle->track();
-  const ParticleInformation::Flags pFlags = particle->information()->flags();
-
-  //check if everything worked and a track has been fit
-  if (!track || !track->fitGood())
-    return;
-
-  if (pFlags & ParticleInformation::Chi2Good)
-    return;
-
-  //check if straight line fit has been used:
-  if (! (track->type() == Track::StraightLine)){
-    //check if track was inside of magnet
-    if (!(pFlags & ParticleInformation::InsideMagnet))
-      return;
-
-    //get the reconstructed momentum
-    double rigidity = track->rigidity(); //GeV
-
-    if(rigidity < m_lowerMomentum || rigidity > m_upperMomentum)
-      return;
-  }
-
-  //TODO: check for off track hits ?!?
-  unsigned int nTrdHits = 0;
-  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
-    if ((*it)->type() == Hit::trd)
-      nTrdHits++;
-  }
-
-  if (nTrdHits < 6)
-    return;
-
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != track->hits().end(); ++it) {
     Hit* hit = *it;
     if (hit->type() != Hit::trd)
       continue;
@@ -115,12 +97,36 @@ void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& , Particle* partic
       if(m_spectrumType == TRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
          (m_spectrumType == TRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
          (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
-        double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
-        if(distanceInTube > 0)
-          histogram(0)->Fill(event->time(), subHit->signalHeight() / (distanceInTube));
+        double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
+        if(TRDSpectrumPlot::calculateLengthInTube)
+            distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
+        if(distanceInTube > 0) {
+          signalList << hit->signalHeight();
+          lengthList << distanceInTube;
+        }
       }
     }
   }
+
+  /* now fill the mean of all gathered data
+      - one value for a single tube
+      - normally also one value for a module (except no length is calculated and 2 tubes show a signal)
+      - several signals for the complete trd
+  */
+
+  //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
+  unsigned int hitsWhichAreOnTrack = signalList.size();
+  if (m_spectrumType == TRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDSpectrumPlot::minTRDLayerCut)
+    return;
+
+  for (int i = 0; i < signalList.size(); ++i) {
+    double value = signalList.at(i) / lengthList.at(i);
+    int iBin = histogram()->FindBin(value);
+    double width = histogram()->GetBinWidth(iBin);
+    double weight = 1./width;
+    histogram()->Fill(event->time(), value, weight);
+  }
+
 }
 
 

@@ -10,7 +10,7 @@
 #include <TROOT.h>
 #include <TH2.h>
 #include <TF2.h>
-#include <TQtWidget.h>
+#include <RootQtWidget.hh>
 
 #include <QDebug>
 #include <QFileDialog>
@@ -55,6 +55,9 @@ void PostAnalysisWindow::selectCanvas(QListWidgetItem* item)
   m_canvases[m_ui->canvasListWidget->row(item)]->draw(m_ui->qtWidget->GetCanvas());
   plotOptionComboBoxCurrentIndexChanged(m_ui->plotOptionComboBox->currentText());
   m_ui->titleLabel->setText(item->text());
+  if (m_ui->verticalLayoutLeft->count() > 3) {
+    m_ui->verticalLayoutLeft->itemAt(1)->widget()->close();
+  }
 }
 
 void PostAnalysisWindow::selectPlot(QListWidgetItem* item, QListWidgetItem*)
@@ -68,6 +71,14 @@ void PostAnalysisWindow::selectPlot(QListWidgetItem* item)
   m_plots[m_ui->plotListWidget->row(item)]->draw(m_ui->qtWidget->GetCanvas());
   plotOptionComboBoxCurrentIndexChanged(m_ui->plotOptionComboBox->currentText());
   m_ui->titleLabel->setText(item->text());
+  QWidget* secondaryWidget = m_plots[m_ui->plotListWidget->row(item)]->secondaryWidget();
+  if (m_ui->verticalLayoutLeft->count() > 3) {
+    m_ui->verticalLayoutLeft->itemAt(1)->widget()->close();
+  }
+  if (secondaryWidget) {
+    m_ui->verticalLayoutLeft->insertWidget(1, secondaryWidget);
+    secondaryWidget->show();
+  }
 }
 
 void PostAnalysisWindow::plotOptionComboBoxCurrentIndexChanged(const QString& option)

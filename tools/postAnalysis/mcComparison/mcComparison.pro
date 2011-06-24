@@ -18,7 +18,8 @@ LIBS += \
 
 CLASSES = \
   MainWindow \
-  HistCompare
+  HistCompare \
+  HistResiduals
 
 SOURCES = \
   main.cc

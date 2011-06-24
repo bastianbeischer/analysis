@@ -13,7 +13,7 @@
 class TRDSpectrumVsPressurePlot: public AnalysisPlot, public H2DPlot {
 
 public:
-  TRDSpectrumVsPressurePlot(unsigned int, TRDSpectrumPlot::TRDSpectrumType, double lowerMomentum = -100, double upperMomentum = 100 );
+  TRDSpectrumVsPressurePlot(unsigned short = 0, TRDSpectrumPlot:: TRDSpectrumType = TRDSpectrumPlot::completeTRD, double lowerMomentum = -100, double upperMomentum = 100 );
   ~TRDSpectrumVsPressurePlot();
 
   virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);

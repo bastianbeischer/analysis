@@ -1,10 +1,8 @@
 #include "MCTRDSpectrumPlot.hh"
 
 #include <TH1D.h>
-
 #include <TCanvas.h>
 #include <TLegend.h>
-
 
 #include "SimpleEvent.hh"
 #include "Particle.hh"
@@ -14,19 +12,19 @@
 #include "ParticleProperties.hh"
 #include "Cluster.hh"
 #include "Hit.hh"
-
+#include "TRDSpectrumPlot.hh"
 #include "TRDCalculations.hh"
 #include "Corrections.hh"
 #include "RootStyle.hh"
 
-MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType, double lowerMom, double upperMom)
+#include <math.h>
+
+MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType)
   : AnalysisPlot(AnalysisPlot::MonteCarloTRD)
   , H1DPlot()
   , m_colorCounter(0)
   , m_id(id)
   , m_spectrumType(spectrumType)
-  , m_lowerMomentum(lowerMom)
-  , m_upperMomentum(upperMom)
 {
   QString strType;
   switch(m_spectrumType){
@@ -46,56 +44,35 @@ MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrum
   else
     setTitle(QString("MC spectra 0x%1").arg(m_id,0,16));
 
-  setAxisTitle("ADCCs per length in tube / (1/mm)","entries");
+  setAxisTitle(TRDSpectrumPlot::xAxisTitle(), "entries");
 
   TLegend* legend = new TLegend(.72, .72, .98, .98);
   legend->SetFillColor(kWhite);
   legend->SetMargin(.7);
   addLegend(legend);
 
+  setDrawOption(H1DPlot::HIST);
 }
 
 MCTRDSpectrumPlot::~MCTRDSpectrumPlot()
 {
 }
 
-void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent* event)
+void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
-  const Track* track = particle->track();
-
-  //only accept mc events:
+  //only MC Events
   if (event->contentType() != SimpleEvent::MonteCarlo)
     return;
 
-  //check if everything worked and a track has been fit
-  if (!track || !track->fitGood())
-    return;
+  if ( ! TRDSpectrumPlot::globalTRDCuts(hits, particle, event))
+      return;
 
-  if (track->chi2() / track->ndf() > 10)
-    return;
+  //now get all relevant energy deposition for this specific plot and all length
+  QList<double> lengthList;
+  QList<double> signalList;
 
-  //check if track was inside of magnet
-  if (!(particle->information()->flags() & ParticleInformation::InsideMagnet))
-    return;
-
-  //get the reconstructed momentum
-  double rigidity = track->rigidity(); //GeV
-
-  if(rigidity < m_lowerMomentum || rigidity > m_upperMomentum)
-    return;
-
-  //TODO: check for off track hits ?!?
-  unsigned int nTrdHits = 0;
-  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
-    if ((*it)->type() == Hit::trd)
-      nTrdHits++;
-  }
-
-  if (nTrdHits < 6)
-    return;
-
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+  const Track* track = particle->track();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != track->hits().end(); ++it) {
     Hit* hit = *it;
     if (hit->type() != Hit::trd)
       continue;
@@ -109,36 +86,64 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* pa
       if(m_spectrumType == MCTRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
          (m_spectrumType == MCTRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
          (m_spectrumType == MCTRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
-        double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
-        if(distanceInTube > 0)
-        {
-          //get histo:
-          int pdgID = event->MCInformation()->primary()->pdgID;
-
-          TH1D* spectrumHisto = 0;
-
-          QMutexLocker locker(&m_mutex);
-          if (m_spectrumMap.contains(pdgID))
-            spectrumHisto = m_spectrumMap.value(pdgID);
-          else
-          {
-            const ParticleProperties* properties = ParticleDB::instance()->lookupPdgId(pdgID);
-            QString particleName = properties->name();
-            spectrumHisto = new TH1D(qPrintable(particleName + " " + title())
-                                     , qPrintable(particleName +" " + title())
-                                     , 50, 0, 15);
-            spectrumHisto->SetLineColor(RootStyle::rootColor(m_colorCounter++));
-            m_spectrumMap.insert(pdgID, spectrumHisto);
-            legend()->AddEntry(spectrumHisto, qPrintable(particleName), "l");
-            addHistogram(spectrumHisto);
-          }
-
-          spectrumHisto->Fill(subHit->signalHeight() / (distanceInTube));
-
+        double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
+        if(TRDSpectrumPlot::calculateLengthInTube)
+            distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
+        if(distanceInTube > 0) {
+          signalList << hit->signalHeight();
+          lengthList << distanceInTube;
         }
       } // fits into category
     } // subhits in cluster
   } // all hits
+
+
+  /* now fill the mean of all gathered data
+      - one value for a single tube
+      - normally also one value for a module (except no length is calculated and 2 tubes show a signal)
+      - several signals for the complete trd
+  */
+
+  //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
+  unsigned int hitsWhichAreOnTrack = signalList.size();
+  if (m_spectrumType == MCTRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDSpectrumPlot::minTRDLayerCut)
+    return;
+
+  //get histo:
+  int pdgID = event->MCInformation()->primary()->pdgID;
+
+  TH1D* spectrumHisto = 0;
+
+  QMutexLocker locker(&m_mutex);
+  if (m_spectrumMap.contains(pdgID))
+    spectrumHisto = m_spectrumMap.value(pdgID);
+  else
+  {
+    const ParticleProperties* properties = ParticleDB::instance()->lookupPdgId(pdgID);
+    QString particleName = properties->name();
+    int nBins = TRDSpectrumPlot::spectrumDefaultBins;
+    double lowerBound = 1e-3;
+    double upperBound = TRDSpectrumPlot::spectrumUpperLimit();
+    double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
+    double p[nBins+1];
+    for (int i = 0; i < nBins+1; i++) {
+      p[i] = pow(lowerBound, delta*i+1);
+    }
+    spectrumHisto = new TH1D(qPrintable(particleName + " " + title()), "", nBins, p);
+    spectrumHisto->Sumw2();
+    spectrumHisto->SetLineColor(RootStyle::rootColor(m_colorCounter++));
+    m_spectrumMap.insert(pdgID, spectrumHisto);
+    legend()->AddEntry(spectrumHisto, qPrintable(particleName), "l");
+    addHistogram(spectrumHisto, H1DPlot::HIST);
+  }
+
+  for (int i = 0; i < signalList.size(); ++i) {
+    double value = signalList.at(i) / lengthList.at(i);
+    int iBin = histogram()->FindBin(value);
+    double width = histogram()->GetBinWidth(iBin);
+    double weight = 1./width;
+    histogram()->Fill(value, weight);
+  }
 }
 
 
