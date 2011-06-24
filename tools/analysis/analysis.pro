@@ -15,7 +15,8 @@ INCLUDEPATH += \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/particle \
-  $$TOPLEVEL/tracking
+  $$TOPLEVEL/tracking \
+  $$TOPLEVEL/trdAnalysis
 
 LIBS += \
   -L$$TOPLEVEL/lib \
@@ -25,7 +26,8 @@ LIBS += \
   -lparticle \
   -ltracking \
   -lrootplot \
-  -lsetup
+  -lsetup \
+  -ltrdAnalysis
 
 CLASSES = \
   AlbedosVsMomentumPlot \
@@ -65,7 +67,6 @@ CLASSES = \
   TOFTimeShiftPlotCollection \
   TotalSignalHeightPlot \
   TrackerLayerStatisticsPlot \
-  TRDCalculations \
   TRDClustersOnTrackPlot \
   TRDDistanceInTube \
   TRDDistanceWireToTrackPlot \
@@ -113,8 +114,10 @@ CLASSES = \
   TOFBarShiftPlot \
   TOFBarShiftPlotCollection
 
+
 SOURCES += \
   main.cc
+
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

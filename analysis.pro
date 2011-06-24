@@ -15,4 +15,5 @@ SUBDIRS = \
   processing \
   alignment \
   rootplot \
+  trdAnalysis \
   tools
