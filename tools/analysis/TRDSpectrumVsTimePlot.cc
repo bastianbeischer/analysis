@@ -19,13 +19,11 @@
 #include <QString>
 #include <math.h>
 
-TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumPlot::TRDSpectrumType spectrumType, QDateTime first, QDateTime last, double lowerMom, double upperMom) :
-  AnalysisPlot(AnalysisPlot:: SignalHeightTRD),
-  H2DPlot(),
-  m_id(id),
-  m_spectrumType(spectrumType),
-  m_lowerMomentum(lowerMom),
-  m_upperMomentum(upperMom)
+TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(QDateTime first, QDateTime last, unsigned short id, TRDSpectrumPlot::TRDSpectrumType spectrumType)
+  : AnalysisPlot(AnalysisPlot:: SignalHeightTRD)
+  , H2DPlot()
+  , m_id(id)
+  , m_spectrumType(spectrumType)
 {
   QString strType;
   switch(m_spectrumType){
@@ -51,7 +49,6 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(unsigned short id, TRDSpectrumPlot:
   int t1 = first.toTime_t();
   int t2 = last.toTime_t();
   const unsigned int nTimeBins = qMin((t2 - t1) / secsPerBin, 500);
-
   int nBins = TRDSpectrumPlot::spectrumDefaultBins;
   double lowerBound = 1e-3;
   double upperBound = TRDSpectrumPlot::spectrumUpperLimit();
@@ -78,7 +75,7 @@ TRDSpectrumVsTimePlot::~TRDSpectrumVsTimePlot()
 void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
   //use the global cuts defined in the TRDSpectrumPlot class
-  if ( ! TRDSpectrumPlot::globalTRDCUts(hits, particle, event))
+  if ( ! TRDSpectrumPlot::globalTRDCuts(hits, particle, event))
       return;
 
   //now get all relevant energy deposition for this specific plot and all length

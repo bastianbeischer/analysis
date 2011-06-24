@@ -45,7 +45,7 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
     break;
   }
 
-  if(m_spectrumType == TRDSpectrumPlot::completeTRD)
+  if (m_spectrumType == TRDSpectrumPlot::completeTRD)
     setTitle(strType + QString(" spectrum"));
   else
     setTitle(strType + QString(" spectrum 0x%1").arg(m_id,0,16));
@@ -80,7 +80,7 @@ TRDSpectrumPlot::~TRDSpectrumPlot()
   delete m_fitRangeMarker_upper;
 }
 
-bool TRDSpectrumPlot::globalTRDCUts(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
+bool TRDSpectrumPlot::globalTRDCuts(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
 {
   const Track* track = particle->track();
   const ParticleInformation::Flags pFlags = particle->information()->flags();
@@ -127,7 +127,7 @@ bool TRDSpectrumPlot::globalTRDCUts(const QVector<Hit*>&, Particle* particle, Si
 void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
 
-  if ( ! TRDSpectrumPlot::globalTRDCUts(hits, particle, event))
+  if (!TRDSpectrumPlot::globalTRDCuts(hits, particle, event))
       return;
 
   //now get all relevant energy deposition for this specific plot and all length
@@ -145,13 +145,13 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* particle
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       Hit* subHit = *it;
       //check if the id of the plot has been hit (difference between module mode and channel mode
-      if(m_spectrumType == TRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
+      if (m_spectrumType == TRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
          (m_spectrumType == TRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
          (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
         double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
-        if(TRDSpectrumPlot::calculateLengthInTube)
+        if (TRDSpectrumPlot::calculateLengthInTube)
             distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
-        if(distanceInTube > 0) {
+        if (distanceInTube > 0) {
           signalList << hit->signalHeight();
           lengthList << distanceInTube;
         }

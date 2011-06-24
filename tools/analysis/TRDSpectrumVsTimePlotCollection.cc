@@ -19,7 +19,7 @@ TRDSpectrumVsTimePlotCollection::TRDSpectrumVsTimePlotCollection(const QDateTime
     DetectorElement* element = *elementIt;
     if (element->type() == DetectorElement::trd){
       moduleIDs.append("0x" + QString::number(element->id(), 16));
-      addPlot(new TRDSpectrumVsTimePlot(element->id(),TRDSpectrumPlot::module, first, last));
+      addPlot(new TRDSpectrumVsTimePlot(first, last, element->id(),TRDSpectrumPlot::module));
       //for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++) {
       //  addPlot(new TRDSpectrumVsTimePlot(element->id() | tubeNo,TRDSpectrumPlot::channel, first, last));
       //}

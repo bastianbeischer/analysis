@@ -16,8 +16,6 @@
 #include "TRDSpectrumPlotCollection.hh"
 #include "TRDSpectrumCherenkovPlotCollection.hh"
 #include "TRDSpectrumVsTimePlotCollection.hh"
-//#include "TRDSpectrumVsTemperaturePlotCollection.hh"
-//#include "TRDSpectrumVsPressurePlotCollection.hh"
 #include "BendingPositionPlot.hh"
 #include "BendingAnglePlot.hh"
 #include "ResidualPlot.hh"
@@ -48,8 +46,8 @@
 #include "TRDEnergyDepositionOverMomentumPlot.hh"
 #include "TRDSpectrumPlot.hh"
 #include "TRDSpectrumVsTimePlot.hh"
-//#include "TRDSpectrumVsTemperaturePlot.hh"
-//#include "TRDSpectrumVsPressurePlot.hh"
+#include "TRDSpectrumVsTemperaturePlot.hh"
+#include "TRDSpectrumVsPressurePlot.hh"
 #include "TRDOccupancyPlot.hh"
 #include "TRDEfficiencyPlot.hh"
 #include "TotalEnergyDepositionPlot.hh"
@@ -170,8 +168,6 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.timeShiftCorrectionCheckBox);
   m_controlWidgets.append(m_ui.trdMopValueCorrectionCheckBox);
   m_controlWidgets.append(m_ui.trdTimeDependencyCorrectionCheckBox);
-  /*m_controlWidgets.append(m_ui.trdPressureDependencyCorrectionCheckBox);
-  m_controlWidgets.append(m_ui.trdTemperatureDependencyCorrectionCheckBox);*/
   m_controlWidgets.append(m_ui.timeOverThresholdCorrectionCheckBox);
   m_controlWidgets.append(m_ui.multipleScatteringCorrectionCheckBox);
   m_controlWidgets.append(m_ui.photonTravelTimeCorrectionCheckBox);
@@ -484,18 +480,14 @@ void MainWindow::setupPlots()
         m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightTRD, element->id()));
     }
 
-    m_ui.plotter->addPlot(new TRDSpectrumPlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
+    m_ui.plotter->addPlot(new TRDSpectrumPlot());
     m_ui.plotter->addPlot(new TRDSpectrumPlotCollection);
 
-    m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD,first,last));
+    m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(first,last));
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlotCollection(first, last));
 
-    //m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
-    //m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlotCollection());
-
-    //m_ui.plotter->addPlot(new TRDSpectrumVsPressurePlot(0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
-    //m_ui.plotter->addPlot(new TRDSpectrumVsPressurePlotCollection());
- 
+    m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot());
+    m_ui.plotter->addPlot(new TRDSpectrumVsPressurePlot());
   }
   if (m_ui.clusterShapeTrackerCheckBox->isChecked()) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
@@ -636,7 +628,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MCTotalEnergyDepositionTRDvsTrackerPlot());
   }
   if (m_ui.mcTRDCheckBox->isChecked()) {
-    m_ui.plotter->addPlot(new MCTRDSpectrumPlot(0 /* doesnt matter */,MCTRDSpectrumPlot::completeTRD));
+    m_ui.plotter->addPlot(new MCTRDSpectrumPlot());
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       if (layer->z() > -520 && layer->z() < -240)
@@ -691,10 +683,6 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
     flags|= Corrections::TrdMopv;
   if (m_ui.trdTimeDependencyCorrectionCheckBox->isChecked())
     flags|= Corrections::TrdTime;
-  /*if (m_ui.trdPressureDependencyCorrectionCheckBox->isChecked())
-    flags|= Corrections::TrdPressure;
-  if (m_ui.trdTemperatureDependencyCorrectionCheckBox->isChecked())
-      flags|= Corrections::TrdTemperature;*/
   if (m_ui.timeOverThresholdCorrectionCheckBox->isChecked())
     flags|= Corrections::TofTimeOverThreshold;
 

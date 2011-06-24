@@ -64,7 +64,7 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* partic
   if (event->contentType() != SimpleEvent::MonteCarlo)
     return;
 
-  if ( ! TRDSpectrumPlot::globalTRDCUts(hits, particle, event))
+  if ( ! TRDSpectrumPlot::globalTRDCuts(hits, particle, event))
       return;
 
   //now get all relevant energy deposition for this specific plot and all length
