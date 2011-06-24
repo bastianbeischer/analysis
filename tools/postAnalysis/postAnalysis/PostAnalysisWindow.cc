@@ -55,8 +55,8 @@ void PostAnalysisWindow::selectCanvas(QListWidgetItem* item)
   m_canvases[m_ui->canvasListWidget->row(item)]->draw(m_ui->qtWidget->GetCanvas());
   plotOptionComboBoxCurrentIndexChanged(m_ui->plotOptionComboBox->currentText());
   m_ui->titleLabel->setText(item->text());
-  if (m_ui->leftVerticalLayout->count() > 2) {
-    m_ui->leftVerticalLayout->itemAt(1)->widget()->close();
+  if (m_ui->verticalLayoutLeft->count() > 3) {
+    m_ui->verticalLayoutLeft->itemAt(1)->widget()->close();
   }
 }
 
@@ -72,11 +72,11 @@ void PostAnalysisWindow::selectPlot(QListWidgetItem* item)
   plotOptionComboBoxCurrentIndexChanged(m_ui->plotOptionComboBox->currentText());
   m_ui->titleLabel->setText(item->text());
   QWidget* secondaryWidget = m_plots[m_ui->plotListWidget->row(item)]->secondaryWidget();
-  if (m_ui->leftVerticalLayout->count() > 2) {
-    m_ui->leftVerticalLayout->itemAt(1)->widget()->close();
+  if (m_ui->verticalLayoutLeft->count() > 3) {
+    m_ui->verticalLayoutLeft->itemAt(1)->widget()->close();
   }
   if (secondaryWidget) {
-    m_ui->leftVerticalLayout->insertWidget(1, secondaryWidget);
+    m_ui->verticalLayoutLeft->insertWidget(1, secondaryWidget);
     secondaryWidget->show();
   }
 }
