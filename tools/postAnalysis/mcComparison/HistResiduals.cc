@@ -34,10 +34,10 @@ HistResiduals::HistResiduals(PostAnalysisCanvas* dataC, PostAnalysisCanvas* mcC)
   mcHistClone->SetName("perdaix mc");
 
   dataHistClone->Sumw2();
-  dataHistClone->Scale(1. / dataHistClone->Integral("width"));
+  dataHistClone->Scale(1. / dataHistClone->GetSumOfWeights());
 
   mcHistClone->Sumw2();
-  mcHistClone->Scale(1. / mcHistClone->Integral("width"));
+  mcHistClone->Scale(1. / mcHistClone->GetSumOfWeights());
 
   QVector<double> xValues, xErrors, yValues, yErrors;
 
