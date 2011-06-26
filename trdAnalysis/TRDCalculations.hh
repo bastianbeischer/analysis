@@ -13,6 +13,9 @@ public:
   static double distanceTrackToWire(const Hit* hit, const Track* track);
   static double distanceTrackToWire(const QVector2D& trdChanPos2D, const Track* track);
 
+  static unsigned short TRDLayerNo(const Hit* hit);
+  static unsigned short TRDLayerNo(const unsigned int detID);
+
 private:
   TRDCalculations();
 

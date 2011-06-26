@@ -14,7 +14,9 @@ RCC_DIR     = ./.tmp
 
 CLASSES += TRDCalculations \
            TRDElectronIdentifier \
-           TRDElectronIdentifierCutBased #\
+           TRDElectronIdentifierCutBased \
+           TRDElectronIdentifierLikelihood \
+           TRDLikelihoods
            #TRDLikelihood
 
 
