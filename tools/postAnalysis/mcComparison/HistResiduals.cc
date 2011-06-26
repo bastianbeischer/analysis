@@ -33,11 +33,14 @@ HistResiduals::HistResiduals(PostAnalysisCanvas* dataC, PostAnalysisCanvas* mcC)
   TH1D* mcHistClone = (TH1D*) mcHist->Clone();
   mcHistClone->SetName("perdaix mc");
 
+  double lowerIntegralBin = dataHist->FindBin(0.01 * dataHist->GetXaxis()->GetXmax());
+  double upperIntegralBin = dataHist->FindBin(0.4 * dataHist->GetXaxis()->GetXmax());
+
   dataHistClone->Sumw2();
-  dataHistClone->Scale(1. / dataHistClone->Integral("width"));
+  dataHistClone->Scale(1. / dataHistClone->Integral(lowerIntegralBin, upperIntegralBin, "width"));
 
   mcHistClone->Sumw2();
-  mcHistClone->Scale(1. / mcHistClone->Integral("width"));
+  mcHistClone->Scale(1. / mcHistClone->Integral(lowerIntegralBin, upperIntegralBin, "width"));
 
   QVector<double> xValues, xErrors, yValues, yErrors;
 

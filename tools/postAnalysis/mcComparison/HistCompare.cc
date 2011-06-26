@@ -41,7 +41,9 @@ HistCompare::HistCompare(PostAnalysisCanvas* dataC, PostAnalysisCanvas* mcC, Pos
     sprintf(title, "hist_clone%d", i);
     hist_clone[i] = (TH1D*) histos.at(i)->Clone();
     hist_clone[i]->SetStats(kFALSE);
-    hist_clone[i]->Scale(1./hist_clone[i]->Integral("width"));
+    double lowerIntegralBin = hist_clone[i]->FindBin(0.01 * hist_clone[i]->GetXaxis()->GetXmax());
+    double upperIntegralBin = hist_clone[i]->FindBin(0.4 * hist_clone[i]->GetXaxis()->GetXmax());
+    hist_clone[i]->Scale(1./hist_clone[i]->Integral(lowerIntegralBin, upperIntegralBin, "width"));
     hist_clone[i]->SetLineColor(i+1);
 
     ymax = qMax(ymax, hist_clone[i]->GetMaximum());
