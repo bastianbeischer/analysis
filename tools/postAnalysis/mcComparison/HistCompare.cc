@@ -41,7 +41,7 @@ HistCompare::HistCompare(PostAnalysisCanvas* dataC, PostAnalysisCanvas* mcC, Pos
     sprintf(title, "hist_clone%d", i);
     hist_clone[i] = (TH1D*) histos.at(i)->Clone();
     hist_clone[i]->SetStats(kFALSE);
-    hist_clone[i]->Scale(1./hist_clone[i]->GetSumOfWeights());
+    hist_clone[i]->Scale(1./hist_clone[i]->Integral("width"));
     hist_clone[i]->SetLineColor(i+1);
 
     ymax = qMax(ymax, hist_clone[i]->GetMaximum());
@@ -50,5 +50,4 @@ HistCompare::HistCompare(PostAnalysisCanvas* dataC, PostAnalysisCanvas* mcC, Pos
   }
 
   histogram()->GetYaxis()->SetRangeUser(1e-4, ymax*1.1);
-  histogram()->GetXaxis()->SetRangeUser(0, 10);
 }
