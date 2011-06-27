@@ -13,7 +13,7 @@
 #include <QDebug>
 
 
-HistCompare::HistCompare(PostAnalysisCanvas* dataC, PostAnalysisCanvas* mcC, PostAnalysisCanvas* oldmcC)
+HistCompare::HistCompare(QList<PostAnalysisCanvas*> canvases)
   : QObject()
   , PostAnalysisPlot()
   , H1DPlot()
@@ -21,35 +21,26 @@ HistCompare::HistCompare(PostAnalysisCanvas* dataC, PostAnalysisCanvas* mcC, Pos
   gROOT->cd();
   setTitle("TRD Spectra");
   setAxisTitle("energy Deposition per length / (keV / mm)","#");
-  QList<PostAnalysisCanvas*> postCan;
-  postCan.append(dataC);
-  postCan.append(mcC);
-  postCan.append(oldmcC);
 
-  QList<TH1D*> histos;
-  for(int i = 0; i < postCan.count(); i++)
-  {
-    if(postCan.at(i) != 0){
-      histos.append(postCan.at(i)->histograms1D().at(0));
-    }
-  }
+  setDrawOption(H1DPlot::BLANK);
 
   double ymax = 0;
-  TH1D* hist_clone[histos.count()];
-  for(int i = 0; i < histos.count(); i++){
-    char title[128];
-    sprintf(title, "hist_clone%d", i);
-    hist_clone[i] = (TH1D*) histos.at(i)->Clone();
-    hist_clone[i]->SetStats(kFALSE);
-    double lowerIntegralBin = hist_clone[i]->FindBin(0.01 * hist_clone[i]->GetXaxis()->GetXmax());
-    double upperIntegralBin = hist_clone[i]->FindBin(0.4 * hist_clone[i]->GetXaxis()->GetXmax());
-    hist_clone[i]->Scale(1./hist_clone[i]->Integral(lowerIntegralBin, upperIntegralBin, "width"));
-    hist_clone[i]->SetLineColor(i+1);
+  int nColour = 1;
+  foreach (PostAnalysisCanvas* canvas, canvases) {
+    if(canvas != 0){
+     TH1D* histClone = (TH1D*) canvas->histograms1D().at(0)->Clone();
+     histClone->Sumw2();
+     histClone->SetStats(kFALSE);
+     double lowerIntegralBin = histClone->FindBin(0.01 * histClone->GetXaxis()->GetXmax());
+     double upperIntegralBin = histClone->FindBin(0.4 * histClone->GetXaxis()->GetXmax());
+     histClone->Scale(1./histClone->Integral(lowerIntegralBin, upperIntegralBin, "width"));
+     histClone->SetLineColor(nColour++);
 
-    ymax = qMax(ymax, hist_clone[i]->GetMaximum());
+     ymax = qMax(ymax, histClone->GetMaximum());
 
-    addHistogram(hist_clone[i]);
+     histClone->SetMarkerStyle(0);
+     addHistogram(histClone, H1DPlot::BLANK);
+    }
   }
-
   histogram()->GetYaxis()->SetRangeUser(1e-4, ymax*1.1);
 }

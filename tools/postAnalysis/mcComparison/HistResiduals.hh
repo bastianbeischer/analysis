@@ -14,7 +14,7 @@ class HistResiduals: public QObject, public PostAnalysisPlot, public GraphPlot
 {
   Q_OBJECT
 public:
-  HistResiduals(PostAnalysisCanvas* dataC, PostAnalysisCanvas* mcC);
+  HistResiduals(PostAnalysisCanvas* dataC, PostAnalysisCanvas* mcC, bool usePull = false);
 
 };
 
