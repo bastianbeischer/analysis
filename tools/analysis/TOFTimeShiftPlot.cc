@@ -66,6 +66,8 @@ void TOFTimeShiftPlot::processEvent(const QVector<Hit*>&, Particle* particle, Si
         continue;
       if (qAbs(track->x(position.z())-position.x()) > 15)
         continue;
+      if (qAbs(track->y(Constants::upperTofPosition)) > 100 || qAbs(track->y(Constants::lowerTofPosition)) > 100)
+        continue;
       foreach(Hit* hit, cluster->hits()) {
         TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
         int tofChannel = tofHit->detId() - cluster->detId();

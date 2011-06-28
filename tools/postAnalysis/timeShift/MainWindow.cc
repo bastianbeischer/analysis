@@ -7,6 +7,7 @@
 #include "PostAnalysisCanvas.hh"
 #include "TimeShiftContainer.hh"
 #include "BarShiftPlot.hh"
+#include "AllChannelsTimeShiftPlot.hh"
 
 #include <TCanvas.h>
 #include <TFile.h>
@@ -38,6 +39,16 @@ void MainWindow::setupAnalysis()
   TFile file(qPrintable(m_analysisFile));
   gROOT->cd();
 
+  QVector<PostAnalysisCanvas*> canvases[8];
+  for (int refCh = 0; refCh < 8; ++refCh) {
+    for (unsigned int bar = 0; bar < 8; ++bar) {
+      QString title = QString("time shift 0x%1 0x%2 ch %3 canvas")
+        .arg(TimeShiftContainer::s_bars[bar][0], 0, 16).arg(TimeShiftContainer::s_bars[bar][1], 0, 16).arg(refCh);
+      canvases[refCh].append(addCanvas(&file, qPrintable(title)));
+    }
+    addPlot(new AllChannelsTimeShiftPlot(canvases[refCh], refCh));
+  }
+  
   for (unsigned int bar = 0; bar < 8; ++bar) {
     for (int refCh = 0; refCh < 8; ++refCh) {
       QString title = QString("time shift 0x%1 0x%2 ch %3 canvas")
@@ -47,6 +58,7 @@ void MainWindow::setupAnalysis()
         addPlot(new ChannelTimeShiftHistogram(canvas, ch));
     }
   }
+
   qDebug() << "Before channel shifts:";
   //TimeShiftContainer::instance()->dump();
 
