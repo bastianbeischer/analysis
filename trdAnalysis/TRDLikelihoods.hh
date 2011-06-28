@@ -10,7 +10,7 @@ class TF1;
 class TRDLikelihoods
 {
 public:
-    TRDLikelihoods* instance();
+    static TRDLikelihoods* instance();
 
     TF1* getPrototypeLHFunctionTR();
     TF1* getPrototypeLHFunctionNonTR();

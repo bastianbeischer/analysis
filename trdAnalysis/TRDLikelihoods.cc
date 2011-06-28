@@ -56,7 +56,7 @@ TRDLikelihoods::TRDLikelihoods()
   loadLHs();
 }
 
-TF1* TRDLikelihoods::getPrototypeLHFunctionTR()
+TF1* TRDLikelihoods::getPrototypeLHFunctionNonTR()
 {
   /**
     p[0] normalization factor
@@ -71,30 +71,30 @@ TF1* TRDLikelihoods::getPrototypeLHFunctionTR()
 
   //set default values:
   LHFun->SetNpx(1000);
-  LHFun->SetParameters(4.32391,2.23676,1.02281,0.788797,6,-0.1);
+  LHFun->SetParameters(7.5, 0.34, 0.115, 0.135, 9, -0.1);
   for (int i = 4; i < 5; i++)
     LHFun->SetParLimits(i,LHFun->GetParameter(i),LHFun->GetParameter(i));
   LHFun->SetParLimits(5,-0.3,-0.01);
 
   //normalize
   double integral = LHFun->Integral(0,100);
-  LHFun->SetParameter(0, LHFun->GetParameter(0) / integral);
+  //LHFun->SetParameter(0, LHFun->GetParameter(0) / integral);
 
   return LHFun;
 }
 
-TF1* TRDLikelihoods::getPrototypeLHFunctionNonTR()
+TF1* TRDLikelihoods::getPrototypeLHFunctionTR()
 {
-  TF1* LHFun = new TF1("TRDLikelihoodTR","(landau(0)+landau(3))");
+  TF1* LHFun = new TF1("TRDLikelihoodTR","(landau(0)+landau(3))*expo(6)", 0., 100.);
 
   LHFun->SetNpx(1000);
-  LHFun->SetParameters(0.533941,3,0.90618,0.177358,7,4.80789);
-  LHFun->SetParLimits(1,2,3.5);
-  LHFun->SetParLimits(4,6.5,9);
-  LHFun->SetParLimits(5,0.1,2);
+  LHFun->SetParameters(1, 0.51, 0.19, 0.3, 2.3, 0.59, 1, -0.001);
+  //LHFun->SetParLimits(1, 2, 3.5);
+  //LHFun->SetParLimits(4, 6.5, 9);
+  //LHFun->SetParLimits(5, 0.1, 2);
 
   double integral = LHFun->Integral(0,250);
-  LHFun->SetParameter(0, LHFun->GetParameter(0) / integral);
+  //LHFun->SetParameter(0, LHFun->GetParameter(0) / integral);
 
   return LHFun;
 }
