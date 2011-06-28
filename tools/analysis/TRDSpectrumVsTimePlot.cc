@@ -49,9 +49,9 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(QDateTime first, QDateTime last, un
   int t1 = first.toTime_t();
   int t2 = last.toTime_t();
   const unsigned int nTimeBins = qMin((t2 - t1) / secsPerBin, 500);
-  int nBins = TRDSpectrumPlot::spectrumDefaultBins;
+  int nBins = TRDCalculations::spectrumDefaultBins;
   double lowerBound = 1e-3;
-  double upperBound = TRDSpectrumPlot::spectrumUpperLimit();
+  double upperBound = TRDCalculations::spectrumUpperLimit();
   double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
   double p[nBins+1];
   for (int i = 0; i < nBins+1; i++) {
@@ -64,7 +64,7 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(QDateTime first, QDateTime last, un
   histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");
   histogram->GetXaxis()->SetTimeOffset(3600, "gmt"); //dont understand this, but works at testbeam
   histogram->GetXaxis()->SetTimeDisplay(1);
-  setAxisTitle("Time", TRDSpectrumPlot::xAxisTitle(), "");
+  setAxisTitle("Time", TRDCalculations::xAxisTitle(), "");
   addHistogram(histogram);
 }
 
@@ -75,7 +75,7 @@ TRDSpectrumVsTimePlot::~TRDSpectrumVsTimePlot()
 void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
   //use the global cuts defined in the TRDSpectrumPlot class
-  if ( ! TRDSpectrumPlot::globalTRDCuts(hits, particle, event))
+  if ( ! TRDCalculations::globalTRDCuts(hits, particle, event))
       return;
 
   //now get all relevant energy deposition for this specific plot and all length
@@ -98,7 +98,7 @@ void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& hits, Particle* pa
          (m_spectrumType == TRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
          (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
         double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
-        if(TRDSpectrumPlot::calculateLengthInTube)
+        if(TRDCalculations::calculateLengthInTube)
             distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
         if(distanceInTube > 0) {
           signalList << hit->signalHeight();
@@ -116,7 +116,7 @@ void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& hits, Particle* pa
 
   //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
   unsigned int hitsWhichAreOnTrack = signalList.size();
-  if (m_spectrumType == TRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDSpectrumPlot::minTRDLayerCut)
+  if (m_spectrumType == TRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDCalculations::minTRDLayerCut)
     return;
 
   for (int i = 0; i < signalList.size(); ++i) {

@@ -3,7 +3,11 @@
 
 class Hit;
 class Track;
+class Particle;
+class SimpleEvent;
 class QVector2D;
+
+#include <QString>
 
 class TRDCalculations
 {
@@ -15,6 +19,16 @@ public:
 
   static unsigned short TRDLayerNo(const Hit* hit);
   static unsigned short TRDLayerNo(const unsigned int detID);
+
+  static bool globalTRDCuts(const QVector<Hit*>&, const Particle* particle, const SimpleEvent* event);
+  static const int spectrumDefaultBins;
+
+  static double spectrumUpperLimit() {return TRDCalculations::calculateLengthInTube ? 15 : 50 ;}
+  static QString xAxisTitle() {return TRDCalculations::calculateLengthInTube ? "energy deposition length in tube / (keV/mm)" : "energy deposition / keV" ;}
+
+public:
+  static const bool calculateLengthInTube;
+  static const unsigned int minTRDLayerCut;
 
 private:
   TRDCalculations();

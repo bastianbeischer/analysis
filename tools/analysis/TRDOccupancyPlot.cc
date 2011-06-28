@@ -90,7 +90,7 @@ void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, Particle* particl
       //analyse the hit:
       double distanceInTube = 1.;
 
-      if(TRDSpectrumPlot::calculateLengthInTube)
+      if(TRDCalculations::calculateLengthInTube)
           TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
 
       if(!(distanceInTube > 0 && trackHits.contains(clusterHit)) && m_onlyOnTrack)

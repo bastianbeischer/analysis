@@ -22,15 +22,6 @@ public:
   virtual void update();
   virtual void draw(TCanvas*);
 
-  static const bool calculateLengthInTube;
-  static const int spectrumDefaultBins;
-  static const unsigned int minTRDLayerCut;
-
-  static double spectrumUpperLimit() {return TRDSpectrumPlot::calculateLengthInTube ? 15 : 50 ;}
-  static QString xAxisTitle() {return TRDSpectrumPlot::calculateLengthInTube ? "energy deposition length in tube / (keV/mm)" : "energy deposition / keV" ;}
-
-  static bool globalTRDCuts(const QVector<Hit*>&, const Particle* particle, const SimpleEvent* event);
-
 private:
 
   unsigned short m_id;

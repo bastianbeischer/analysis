@@ -44,7 +44,7 @@ MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrum
   else
     setTitle(QString("MC spectra 0x%1").arg(m_id,0,16));
 
-  setAxisTitle(TRDSpectrumPlot::xAxisTitle(), "entries");
+  setAxisTitle(TRDCalculations::xAxisTitle(), "entries");
 
   TLegend* legend = new TLegend(.72, .72, .98, .98);
   legend->SetFillColor(kWhite);
@@ -64,7 +64,7 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* partic
   if (event->contentType() != SimpleEvent::MonteCarlo)
     return;
 
-  if ( ! TRDSpectrumPlot::globalTRDCuts(hits, particle, event))
+  if ( ! TRDCalculations::globalTRDCuts(hits, particle, event))
       return;
 
   //now get all relevant energy deposition for this specific plot and all length
@@ -87,7 +87,7 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* partic
          (m_spectrumType == MCTRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
          (m_spectrumType == MCTRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
         double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
-        if(TRDSpectrumPlot::calculateLengthInTube)
+        if(TRDCalculations::calculateLengthInTube)
             distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
         if(distanceInTube > 0) {
           signalList << hit->signalHeight();
@@ -106,7 +106,7 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* partic
 
   //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
   unsigned int hitsWhichAreOnTrack = signalList.size();
-  if (m_spectrumType == MCTRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDSpectrumPlot::minTRDLayerCut)
+  if (m_spectrumType == MCTRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDCalculations::minTRDLayerCut)
     return;
 
   //get histo:
@@ -121,9 +121,9 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* partic
   {
     const ParticleProperties* properties = ParticleDB::instance()->lookupPdgId(pdgID);
     QString particleName = properties->name();
-    int nBins = TRDSpectrumPlot::spectrumDefaultBins;
+    int nBins = TRDCalculations::spectrumDefaultBins;
     double lowerBound = 1e-3;
-    double upperBound = TRDSpectrumPlot::spectrumUpperLimit();
+    double upperBound = TRDCalculations::spectrumUpperLimit();
     double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
     double p[nBins+1];
     for (int i = 0; i < nBins+1; i++) {

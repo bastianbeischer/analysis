@@ -5,14 +5,24 @@
 #include <Hit.hh>
 #include <Track.hh>
 #include <StraightLine.hh>
+#include <SimpleEvent.hh>
+#include <Particle.hh>
+#include <ParticleInformation.hh>
+
 #include <BrokenLine.hh>
 #include <CenteredBrokenLine.hh>
 #include <Constants.hh>
+#include <Settings.hh>
+#include <SettingsManager.hh>
+
 
 #include <TVector3.h>
 
 #include <QVector2D>
 
+const bool TRDCalculations::calculateLengthInTube = false;
+const unsigned int TRDCalculations::minTRDLayerCut = 6;
+const int TRDCalculations::spectrumDefaultBins = 100;
 
 TRDCalculations::TRDCalculations()
 {
@@ -87,4 +97,48 @@ double TRDCalculations::distanceOnTrackThroughTRDTube(const Hit* hit, const Trac
   double distanceInTube3D = distanceInTube2D * sqrt(slopeYinTRD*slopeYinTRD + 1.0) ;
 
   return distanceInTube3D;
+}
+
+bool TRDCalculations::globalTRDCuts(const QVector<Hit*>&, const Particle* particle, const SimpleEvent* event)
+{
+  const Track* track = particle->track();
+  const ParticleInformation::Flags pFlags = particle->information()->flags();
+
+  //check if everything worked and a track has been fit
+  if (!track || !track->fitGood())
+    return false;
+
+  if (pFlags & ParticleInformation::Chi2Good)
+    return false;
+
+  //get settings if present
+  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+
+  //check if magnet was installed, if it was or no information was found, check if the particle went through the inner magnet:
+  if (!(settings && !(settings->magnet()))){
+    //check if track was inside of magnet
+    if (!(pFlags & ParticleInformation::InsideMagnet)  )
+      return false;
+  }
+
+  //count trd hits which belong to the track and those of the event
+  unsigned int nTrdHitsOnTrack = 0;
+  unsigned int nTotalTRDHits = 0;
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != track->hits().end(); ++it) {
+    if ((*it)->type() == Hit::trd)
+      ++nTotalTRDHits;
+    if (track->hits().contains(*it))
+      ++nTrdHitsOnTrack;
+  }
+
+  //trd layer cut
+
+  if (nTrdHitsOnTrack < TRDCalculations::minTRDLayerCut)
+    return false;
+
+  if (nTotalTRDHits-2 > nTrdHitsOnTrack)
+    return false;
+
+  //passed all cuts
+  return true;
 }

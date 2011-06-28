@@ -48,9 +48,9 @@ TRDSpectrumVsTemperaturePlot::TRDSpectrumVsTemperaturePlot(unsigned short id, TR
   const unsigned int nTemperatureBins = 200;
   const double minTemperature = 26;
   const double maxTemperature = 34;
-  int nBins = TRDSpectrumPlot::spectrumDefaultBins;
+  int nBins = TRDCalculations::spectrumDefaultBins;
   double lowerBound = 1e-3;
-  double upperBound = TRDSpectrumPlot::spectrumUpperLimit();
+  double upperBound = TRDCalculations::spectrumUpperLimit();
   double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
   double p[nBins+1];
   for (int i = 0; i < nBins+1; i++) {
@@ -58,7 +58,7 @@ TRDSpectrumVsTemperaturePlot::TRDSpectrumVsTemperaturePlot(unsigned short id, TR
   }
 
   TH2D* histogram = new TH2D(qPrintable(title()),"", nTemperatureBins, minTemperature, maxTemperature, nBins, p);
-  setAxisTitle("temperature /  #circC", TRDSpectrumPlot::xAxisTitle(), "");
+  setAxisTitle("temperature /  #circC", TRDCalculations::xAxisTitle(), "");
   addHistogram(histogram);
 }
 
@@ -68,7 +68,7 @@ TRDSpectrumVsTemperaturePlot::~TRDSpectrumVsTemperaturePlot()
 
 void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
-  if (!TRDSpectrumPlot::globalTRDCuts(hits, particle, event))
+  if (!TRDCalculations::globalTRDCuts(hits, particle, event))
       return;
 
   // TODO: temp sensormap
@@ -99,7 +99,7 @@ void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>& hits, Parti
            (m_spectrumType == TRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
            (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
           double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
-          if (TRDSpectrumPlot::calculateLengthInTube)
+          if (TRDCalculations::calculateLengthInTube)
               distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
           if (distanceInTube > 0) {
             signalList << hit->signalHeight();
@@ -117,7 +117,7 @@ void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>& hits, Parti
 
     //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
     unsigned int hitsWhichAreOnTrack = signalList.size();
-    if (m_spectrumType == TRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDSpectrumPlot::minTRDLayerCut)
+    if (m_spectrumType == TRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDCalculations::minTRDLayerCut)
       return;
 
     for (int i = 0; i < signalList.size(); ++i) {
