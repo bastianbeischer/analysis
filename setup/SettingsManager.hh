@@ -15,7 +15,7 @@ public:
   ~SettingsManager();
   
   static SettingsManager* instance();
-  const Settings* settingsForEvent(SimpleEvent*) const;
+  const Settings* settingsForEvent(const SimpleEvent*) const;
   const Settings* settingsForRun(int) const;
 
 private:

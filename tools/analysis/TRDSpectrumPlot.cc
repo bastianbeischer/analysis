@@ -80,7 +80,7 @@ TRDSpectrumPlot::~TRDSpectrumPlot()
   delete m_fitRangeMarker_upper;
 }
 
-bool TRDSpectrumPlot::globalTRDCuts(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
+bool TRDSpectrumPlot::globalTRDCuts(const QVector<Hit*>&, const Particle* particle, const SimpleEvent* event)
 {
   const Track* track = particle->track();
   const ParticleInformation::Flags pFlags = particle->information()->flags();
@@ -177,6 +177,9 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* particle
     double weight = 1./width;
     histogram()->Fill(value, weight);
   }
+
+
+
 }
 
 void TRDSpectrumPlot::finalize()
