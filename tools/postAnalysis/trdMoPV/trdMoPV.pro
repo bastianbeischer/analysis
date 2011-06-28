@@ -32,7 +32,8 @@ CLASSES = \
   MoPVScalingTime \
   MoPVScalingPressure \
   MoPVScalingTemperature \
-  MoPVConstant
+  MoPVConstant \
+  LHFit
 
 SOURCES = \
   main.cc
