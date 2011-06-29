@@ -50,6 +50,7 @@
 #include "TRDSpectrumVsPressurePlot.hh"
 #include "TRDOccupancyPlot.hh"
 #include "TRDEfficiencyPlot.hh"
+#include "TRDLikelihoodPlot.hh"
 #include "TotalEnergyDepositionPlot.hh"
 #include "TotalEnergyDepositionTRDvsTrackerPlot.hh"
 #include "TimeResolutionPlotCollection.hh"
@@ -482,6 +483,8 @@ void MainWindow::setupPlots()
 
     m_ui.plotter->addPlot(new TRDSpectrumPlot());
     m_ui.plotter->addPlot(new TRDSpectrumPlotCollection);
+    for (int i = 0; i < 8; ++i)
+      m_ui.plotter->addPlot(new TRDSpectrumPlot(i, TRDSpectrumPlot::layer));
 
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(first,last));
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlotCollection(first, last));
@@ -635,6 +638,7 @@ void MainWindow::setupPlots()
         m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisPlot::MonteCarloTRD, layer));
     }
     m_ui.plotter->addPlot(new MCTRDCalibrationPlot());
+    m_ui.plotter->addPlot(new TRDLikelihoodPlot(AnalysisPlot::MonteCarloTRD));
   }
   if (m_ui.mcTrackerCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Positron));
@@ -659,6 +663,7 @@ void MainWindow::setupPlots()
     foreach(SensorTypes::Type sensor, beamSensors)
       m_ui.plotter->addPlot(new PMTPlot(sensor));
     m_ui.plotter->addPlot(new PMTCorrelationPlot);
+    m_ui.plotter->addPlot(new TRDLikelihoodPlot(AnalysisPlot::Testbeam));
     m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Horizontal));
     m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Vertical));
     m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::Positron));

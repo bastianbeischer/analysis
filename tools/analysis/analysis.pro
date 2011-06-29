@@ -79,6 +79,7 @@ CLASSES = \
   TRDSpectrumVsTimePlot \
   TRDSpectrumVsTemperaturePlot \
   TRDSpectrumVsPressurePlot \
+  TRDLikelihoodPlot \
   TimeResolutionPlot \
   TimeResolutionPlotCollection \
   TotalEnergyDepositionPlot \
