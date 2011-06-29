@@ -12,7 +12,7 @@ class TRDSpectrumPlot : public AnalysisPlot, public H1DPlot
 {
   
 public:
-  enum TRDSpectrumType{completeTRD, module, channel};
+  enum TRDSpectrumType{completeTRD, module, channel, layer};
 
   TRDSpectrumPlot(unsigned short = 0, TRDSpectrumType = completeTRD);
   ~TRDSpectrumPlot();

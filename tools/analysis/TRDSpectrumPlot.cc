@@ -41,10 +41,15 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   case TRDSpectrumPlot::channel:
     strType = "Channel";
     break;
+  case TRDSpectrumPlot::layer:
+    strType = "TRD layer";
+    break;
   }
 
   if (m_spectrumType == TRDSpectrumPlot::completeTRD)
     setTitle(strType + QString(" spectrum"));
+  else if (m_spectrumType == TRDSpectrumPlot::layer)
+    setTitle(strType + QString(" spectrum %1").arg(m_id));
   else
     setTitle(strType + QString(" spectrum 0x%1").arg(m_id,0,16));
 
@@ -103,6 +108,7 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* particle
       //check if the id of the plot has been hit (difference between module mode and channel mode
       if (m_spectrumType == TRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
          (m_spectrumType == TRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
+         (m_spectrumType == TRDSpectrumPlot::layer && TRDCalculations::TRDLayerNo(subHit->detId()) == m_id) ||  // spectrum per layer
          (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
         double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
         if (TRDCalculations::calculateLengthInTube)
