@@ -1,18 +1,23 @@
 #include "TRDElectronIdentifierLikelihood.hh"
 
 #include <QVector>
+#include <math.h>
 
 #include "TRDCalculations.hh"
+#include "TRDLikelihoods.hh"
 #include "SimpleEvent.hh"
 #include "Hit.hh"
 #include "Cluster.hh"
 #include "Particle.hh"
 
+#include <TF1.h>
+
 TRDElectronIdentifierLikelihood::TRDElectronIdentifierLikelihood()
+  : m_logLHCut(0.5)
 {
 }
 
-bool TRDElectronIdentifierLikelihood::isElectronish(const QVector<Hit*>& hits, const Particle* particle, const SimpleEvent* event, bool &ok)
+bool TRDElectronIdentifierLikelihood::isElectronish(const QVector<Hit*>& hits, const Particle* particle, const SimpleEvent* event, bool &ok, double &logLH)
 {
   //use general trd cuts here:
   if (TRDCalculations::globalTRDCuts(hits, particle, event)) {
@@ -52,5 +57,27 @@ bool TRDElectronIdentifierLikelihood::isElectronish(const QVector<Hit*>& hits, c
   ok = true;
 
   //calculate likelihoods:
+  TRDLikelihoods* lhs = TRDLikelihoods::instance();
+  QList<double> lhsNonTR;
+  QList<double> lhsTR;
+  foreach (double signal, values) {
+    lhsNonTR << lhs->getLHFunctionNonTR()->Eval(signal);
+    lhsTR << lhs->getLHFunctionTR()->Eval(signal);
+  }
 
+  //calculate combined likelihoods
+  double nonTRLH = 1.;
+  foreach(double layerLH, lhsNonTR)
+    nonTRLH *= layerLH;
+  nonTRLH = pow(nonTRLH, 1.0 / lhsNonTR.size() );
+
+  double trLH = 1;
+  foreach(double layerLH, lhsTR)
+    trLH *= layerLH;
+  trLH = pow(trLH, 1.0 / lhsTR.size() );
+
+  //log likelihood:
+  logLH = -log(trLH / ( trLH + nonTRLH)) ;
+
+  return logLH < m_logLHCut;
 }
