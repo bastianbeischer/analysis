@@ -17,6 +17,12 @@ TRDElectronIdentifierLikelihood::TRDElectronIdentifierLikelihood()
 {
 }
 
+bool TRDElectronIdentifierLikelihood::isElectronish(const QVector<Hit*>& hits, const Particle* particle, const SimpleEvent* event, bool &ok)
+{
+  double logLH = 0;
+  return isElectronish(hits, particle, event, ok, logLH);
+}
+
 bool TRDElectronIdentifierLikelihood::isElectronish(const QVector<Hit*>& hits, const Particle* particle, const SimpleEvent* event, bool &ok, double &logLH)
 {
   //use general trd cuts here:
