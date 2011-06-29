@@ -2,6 +2,7 @@
 #define TRDLIKELIHOODPLOT_HH
 
 class TRDElectronIdentifierLikelihood;
+class TLine;
 
 #include "AnalysisPlot.hh"
 #include "H1DPlot.hh"
@@ -11,12 +12,20 @@ class TRDLikelihoodPlot: public AnalysisPlot, public H1DPlot
 public:
     TRDLikelihoodPlot(Topic topic);
     virtual void processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event);
+    virtual void update();
     virtual void finalize();
+    virtual void draw(TCanvas* canvas);
 private:
     bool truthMcIsElectron(SimpleEvent* event);
+    int getBinEff(double effWanted, const TH1D* hist, double& eff, double& effErr);
+    double getEff(const TH1D* hist, int upToBin, double& effErr);
+    double getRej(const TH1D* hist, int upToBin, double& rejErr);
 private:
     TH1D* m_NonTRHisto;
     TH1D* m_TRHisto;
+
+    TLine* m_line50;
+    TLine* m_line90;
 
     TRDElectronIdentifierLikelihood* m_EIdentifierLH;
 
