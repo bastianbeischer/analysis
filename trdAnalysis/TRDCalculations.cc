@@ -39,7 +39,7 @@ unsigned short TRDCalculations::TRDLayerNo(const unsigned int detID)
   //returns the trdlayer number counted from top to bottom 0-7
 
   unsigned short trdQuarterID = detID & 0xFF00;
-  unsigned short trdLayerInQuarter = (detID & 0x00F0) > 1;
+  unsigned short trdLayerInQuarter = (detID & 0x00F0) >> 4;
   switch (trdQuarterID) {
     case 0x3400: case 0x3500: return 7-trdLayerInQuarter; break;
     case 0x3200: case 0x3600: return 3-trdLayerInQuarter; break;
