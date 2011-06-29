@@ -2,6 +2,7 @@
 
 #include <TH1D.h>
 #include <TMarker.h>
+#include <TLatex.h>
 
 #include "Particle.hh"
 #include "Track.hh"
@@ -68,6 +69,8 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   setAxisTitle(TRDCalculations::xAxisTitle(), "entries");
   addHistogram(histogram, H1DPlot::HIST);
   setDrawOption(H1DPlot::HIST);
+
+  addLatex(RootPlot::newLatex(0.6, 0.8));
 }
 
 TRDSpectrumPlot::~TRDSpectrumPlot()
@@ -166,6 +169,7 @@ void TRDSpectrumPlot::finalize()
 
 void TRDSpectrumPlot::update()
 {
+  latex()->SetTitle(qPrintable(QString("entries = %1").arg(histogram()->GetEntries())));
 }
 
 void TRDSpectrumPlot::draw(TCanvas* canvas)
