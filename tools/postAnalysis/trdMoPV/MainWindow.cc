@@ -38,6 +38,12 @@ void MainWindow::setupAnalysis()
   //add TRDSpectra and LHFit plots
   PostAnalysisCanvas* completeTRDSpectrumCanvas = addCanvas(&file, "complete TRD spectrum canvas");
   addPlot(new LHFit(completeTRDSpectrumCanvas));
+  //add TRDSpectra for each layer
+  for (int i = 0; i < 8; ++i) {
+    PostAnalysisCanvas* trdLayerSpectrum = addCanvas(&file, "TRD layer spectrum " + QString::number(i) + " canvas");
+    addPlot(new LHFit(trdLayerSpectrum));
+  }
+
 
   //add info plots
   addCanvas(&file, "TRD_GAS_COLD_TEMP canvas");
