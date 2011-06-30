@@ -46,6 +46,9 @@ TRDLikelihoods::TRDLikelihoods()
   : m_LHFunctionTR(getPrototypeLHFunctionTR())
   , m_LHFunctionNonTR(getPrototypeLHFunctionNonTR())
 {
+  for (int i = 0; i < 8; ++i)
+    m_LHFunctionTRLayer << getPrototypeLHFunctionTR();
+
   const char* env = getenv("PERDAIXANA_PATH");
   if (env == 0)
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
@@ -71,13 +74,13 @@ TF1* TRDLikelihoods::getPrototypeLHFunctionNonTR()
 
   //set default values:
   LHFun->SetNpx(1000);
-  LHFun->SetParameters(7.5, 0.34, 0.115, 0.135, 9, -0.1);
+  LHFun->SetParameters(7.5, 0.34, 0.115, 0.135, 7, -0.1);
   for (int i = 4; i < 5; i++)
     LHFun->SetParLimits(i,LHFun->GetParameter(i),LHFun->GetParameter(i));
   LHFun->SetParLimits(5,-0.3,-0.01);
 
   //normalize
-  double integral = LHFun->Integral(0,100);
+  //double integral = LHFun->Integral(0,100);
   //LHFun->SetParameter(0, LHFun->GetParameter(0) / integral);
 
   return LHFun;
@@ -89,31 +92,68 @@ TF1* TRDLikelihoods::getPrototypeLHFunctionTR()
 
   LHFun->SetNpx(1000);
   LHFun->SetParameters(1, 0.51, 0.19, 0.3, 2.3, 0.59, 1, -0.001);
-  //LHFun->SetParLimits(1, 2, 3.5);
-  //LHFun->SetParLimits(4, 6.5, 9);
-  //LHFun->SetParLimits(5, 0.1, 2);
+  LHFun->SetParLimits(0, 0.8, 1.4);
+  LHFun->SetParLimits(1, 0.3, 0.6);
+  LHFun->SetParLimits(3, 0.2, 0.6);
+  LHFun->SetParLimits(4, 2, 4);
+  LHFun->SetParLimits(5, 0.4, 1.5);
+  LHFun->SetParLimits(6, 0.8, 1.4);
 
-  double integral = LHFun->Integral(0,250);
+  //double integral = LHFun->Integral(0,250);
   //LHFun->SetParameter(0, LHFun->GetParameter(0) / integral);
 
   return LHFun;
+}
+
+void TRDLikelihoods::setLHFunctionTR(const TF1* fun)
+{
+  if (m_LHFunctionTR)
+    delete m_LHFunctionTR;
+  m_LHFunctionTR = new TF1(*fun);
+  saveLHs();
+  qDebug("saved LHFunctionTR");
+}
+
+void TRDLikelihoods::setLHFunctionTRLayer(int i, const TF1* fun)
+{
+  if (m_LHFunctionTRLayer.at(i))
+    delete m_LHFunctionTRLayer[i];
+  m_LHFunctionTRLayer[i] = new TF1(*fun);
+  saveLHs();
+  qDebug("saved LHFunctionTR for layer %i", i);
+}
+
+
+void TRDLikelihoods::setLHFunctionNonTR(const TF1* fun)
+{
+  if (m_LHFunctionNonTR)
+    delete m_LHFunctionNonTR;
+  m_LHFunctionNonTR = new TF1(*fun);
+  saveLHs();
+  qDebug("saved LHFunctionNonTR");
 }
 
 void TRDLikelihoods::saveLHs()
 {
   m_trdLikelihoodSettings->beginGroup("TR");
   saveFunctionParameters("default", m_LHFunctionTR);
+  for (int i = 0; i < 8; ++i)
+    saveFunctionParameters(QString::number(i), m_LHFunctionTRLayer.at(i));
   m_trdLikelihoodSettings->endGroup();
 
   m_trdLikelihoodSettings->beginGroup("nonTR");
   saveFunctionParameters("default", m_LHFunctionNonTR);
   m_trdLikelihoodSettings->endGroup();
+
+  m_trdLikelihoodSettings->sync();
 }
 
 void TRDLikelihoods::loadLHs()
 {
   m_trdLikelihoodSettings->beginGroup("TR");
   loadFunctionParameters(m_LHFunctionTR, "default");
+  for (int i = 0; i < 8; ++i)
+    loadFunctionParameters(m_LHFunctionTRLayer.at(i), QString::number(i));
   m_trdLikelihoodSettings->endGroup();
 
   m_trdLikelihoodSettings->beginGroup("nonTR");

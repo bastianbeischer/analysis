@@ -7,6 +7,8 @@ class QString;
 
 class TF1;
 
+#include <QList>
+
 class TRDLikelihoods
 {
 public:
@@ -16,10 +18,12 @@ public:
     TF1* getPrototypeLHFunctionNonTR();
 
     const TF1* getLHFunctionTR() const {return m_LHFunctionTR;}
+    const TF1* getLHFunctionTRLayer(int i) const {return m_LHFunctionTRLayer.at(i);}
     const TF1* getLHFunctionNonTR() const {return m_LHFunctionNonTR;}
 
-    void saveLHFunctionTR(const TF1*);
-    void saveLHFunctionNonTR(const TF1*);
+    void setLHFunctionTR(const TF1*);
+    void setLHFunctionTRLayer(int i, const TF1*);
+    void setLHFunctionNonTR(const TF1*);
 
 private:
     TRDLikelihoods();
@@ -36,6 +40,8 @@ private:
 
     TF1* m_LHFunctionTR;
     TF1* m_LHFunctionNonTR;
+
+    QList<TF1*> m_LHFunctionTRLayer;
 
     QSettings* m_trdLikelihoodSettings;
 };
