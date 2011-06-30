@@ -17,7 +17,7 @@ class LHFit: public QObject, public PostAnalysisPlot, public H1DPlot
 {
   Q_OBJECT
 public:
-  LHFit(PostAnalysisCanvas* canvases);
+  LHFit(PostAnalysisCanvas* canvases, int layer = -1);
 
 private:
   void fit();
@@ -26,6 +26,7 @@ private:
   TF1* m_fit;
   TRDLikelihoods* m_trdLHs;
   QPushButton* m_buttonSave;
+  int m_layer;
 
 private slots:
   void fitTRFunction();

@@ -17,14 +17,18 @@
 #include <QPushButton>
 #include <QHBoxLayout>
 
-LHFit::LHFit(PostAnalysisCanvas* canvas)
+LHFit::LHFit(PostAnalysisCanvas* canvas, int layer)
   : QObject()
   , PostAnalysisPlot()
   , H1DPlot()
   , m_fit()
   , m_trdLHs(TRDLikelihoods::instance())
   , m_buttonSave(0)
+  , m_layer(layer)
 {
+  if (m_layer < 0 || m_layer > 8)
+    m_layer = -1;
+
   gROOT->cd();
   setDrawOption(H1DPlot::BLANK);
 
@@ -46,8 +50,10 @@ LHFit::LHFit(PostAnalysisCanvas* canvas)
   QHBoxLayout* layout = new QHBoxLayout(secWidget);
   layout->addStretch();
   QPushButton* buttonFitNonTR = new QPushButton("fit a non TR function");
-  layout->addWidget(buttonFitNonTR);
-  layout->addStretch();
+  if (layer == -1) {
+    layout->addWidget(buttonFitNonTR);
+    layout->addStretch();
+  }
   QPushButton* buttonFitTR = new QPushButton("fit a TR function");
   layout->addWidget(buttonFitTR);
   layout->addStretch();
@@ -61,15 +67,6 @@ LHFit::LHFit(PostAnalysisCanvas* canvas)
   connect(buttonFitNonTR, SIGNAL(pressed()), this, SLOT(updateSaveButton()));
   connect(buttonFitTR, SIGNAL(pressed()), this, SLOT(updateSaveButton()));
   connect(m_buttonSave, SIGNAL(pressed()), this, SLOT(saveFit()));
-}
-
-void LHFit::fit()
-{
-  TRDLikelihoods* trdLHs = TRDLikelihoods::instance();
-  histogram()->Fit(function(0), "");
-  //histogram()->Fit(function(1), "");
-  trdLHs->setLHFunctionNonTR(function(0));
-  //trdLHs->setLHFunctionTR(function(1));
 }
 
 void LHFit::fitTRFunction()
@@ -97,9 +94,12 @@ void LHFit::saveFit()
   if (!m_fit)
     return;
   bool fitIsTRFun = (QString(m_fit->GetName()) == QString("TRDLikelihoodTR"));
-  if (fitIsTRFun)
-    m_trdLHs->setLHFunctionTR(m_fit);
-  else
+  if (fitIsTRFun) {
+    if (m_layer == -1)
+      m_trdLHs->setLHFunctionTR(m_fit);
+    else
+      m_trdLHs->setLHFunctionTRLayer(m_layer, m_fit);
+  } else
     m_trdLHs->setLHFunctionNonTR(m_fit);
 }
 
