@@ -15,6 +15,7 @@
 #include <QString>
 #include <QDebug>
 #include <QFileDialog>
+#include <QStringList>
 
 #include <iostream>
 
@@ -27,73 +28,46 @@ MainWindow::~MainWindow()
 {
 }
 
-void MainWindow::setAnalysisFile(const QString& file)
+void MainWindow::setupAnalysis(QStringList args)
 {
-  m_dataFile = file;
-}
+  args.removeFirst();
 
-void MainWindow::setMCFile(const QString& file)
-{
-  m_mcFile = file;
-}
+  QList<PostAnalysisCanvas*> allCanvases;
 
-void MainWindow::SetOldMCFile(const QString& file)
-{
-  m_oldmcFile = file;
-}
-
-void MainWindow::setupAnalysis()
-{
-  if( m_oldmcFile.size() == 0)
-  {
-    TFile dataFile(qPrintable(m_dataFile));
-    TFile mcFile(qPrintable(m_mcFile));
-
+  foreach (QString filename, args) {
+    TFile file(qPrintable(filename));
     gROOT->cd();
 
-    PostAnalysisCanvas* dataCanvas = addCanvas(&dataFile,"complete TRD spectrum canvas");
-    PostAnalysisCanvas* mcCanvas = addCanvas(&mcFile, "complete TRD spectrum canvas");
-    qDebug() << "dataCanvas " << dataCanvas->name() << " got " << dataCanvas->histograms1D().size() << " 1D histos";
-    qDebug() << "mcCanvas " << mcCanvas->name() << " got " << mcCanvas->histograms1D().size() << " 1D histos";
+    QString analysisCanvasName = "complete TRD spectrum canvas";
+    QString oldMCCanvasName = "old_mc_canvas";
 
-    addPlot(new HistCompare(dataCanvas, mcCanvas));
-    addPlot(new HistResiduals(dataCanvas, mcCanvas));
+    PostAnalysisCanvas* canvas = 0;
+    //get canvas
+    if (file.Get(qPrintable(analysisCanvasName)))
+      canvas = addCanvas(&file, analysisCanvasName);
+    else if (file.Get(qPrintable(oldMCCanvasName)))
+      canvas = addCanvas(&file, oldMCCanvasName);
+    else
+      continue;
 
-    dataFile.Close();
-    mcFile.Close();
+    qDebug() << "canvas " << canvas->name() << " got " << canvas->histograms1D().size() << " 1D histos";
+    allCanvases << canvas;
+
+    file.Close();
   }
-  else
-  {
-    TFile dataFile(qPrintable(m_dataFile));
-    gROOT->cd();
-    TFile mcFile(qPrintable(m_mcFile));
-    gROOT->cd();
-    TFile oldmcFile(qPrintable(m_oldmcFile));
-    gROOT->cd();
 
-    //    for (int i = 0; i < mcFile.GetListOfKeys()->GetSize(); ++i)
-    //    std::cout << ((TKey*)mcFile.GetListOfKeys()->At(i))->ReadObj()->GetName() << std::endl;
+  if (allCanvases.size() > 2)
+    addPlot(new HistCompare(allCanvases));
 
-    QString dataname = QString("complete TRD spectrum canvas");
-    QString oldmcname = QString("old_mc_canvas");
-
-    PostAnalysisCanvas* dataCanvas = addCanvas(&dataFile,"Canvas 1");
-    //qPrintable(dataname));
-    PostAnalysisCanvas* mcCanvas = addCanvas(&mcFile, "Canvas 1");
-    //qPrintable(dataname) );
-    PostAnalysisCanvas* oldmcCanvas = addCanvas(&oldmcFile, qPrintable(oldmcname) );
-
-    qDebug() << "dataCanvas " << dataCanvas->name() << " got " << dataCanvas->histograms1D().size() << " 1D histos";
-    qDebug() << "mcCanvas " << mcCanvas->name() << " got " << mcCanvas->histograms1D().size() << " 1D histos";
-    qDebug() << "oldmcCanvas " << oldmcCanvas->name() << "got" << mcCanvas->histograms1D().size() << "1D histos";
-
-    addPlot(new HistCompare(dataCanvas, mcCanvas, oldmcCanvas) );
-    addPlot(new HistResiduals(dataCanvas, mcCanvas) );
-    addPlot(new HistResiduals(dataCanvas, oldmcCanvas) );
-
-    dataFile.Close();
-    mcFile.Close();
-    oldmcFile.Close();
+  for (int i = 0; i < allCanvases.size()-1; ++i) {
+    for (int j = i+1; j < allCanvases.size(); ++j) {
+      QList<PostAnalysisCanvas*> twoCanvases;
+      twoCanvases << allCanvases.at(i);
+      twoCanvases << allCanvases.at(j);
+      addPlot(new HistCompare(twoCanvases));
+      addPlot(new HistResiduals(twoCanvases.at(0), twoCanvases.at(1), false));
+      addPlot(new HistResiduals(twoCanvases.at(0), twoCanvases.at(1), true));
+    }
   }
 }
 

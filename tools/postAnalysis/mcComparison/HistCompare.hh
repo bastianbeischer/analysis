@@ -5,6 +5,7 @@
 #include "H1DPlot.hh"
 
 #include <QObject>
+#include <QList>
 
 class PostAnalysisCanvas;
 class TH1D;
@@ -13,7 +14,7 @@ class HistCompare: public QObject, public PostAnalysisPlot, public H1DPlot
 {
   Q_OBJECT
 public:
-  HistCompare(PostAnalysisCanvas* dataC, PostAnalysisCanvas* mcC, PostAnalysisCanvas* oldmcC = 0);
+  HistCompare(QList<PostAnalysisCanvas*> canvases);
 
 };
 

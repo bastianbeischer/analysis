@@ -118,9 +118,12 @@ void TRDSpectrumVsPressurePlot::processEvent(const QVector<Hit*>& hits, Particle
 
   for (int i = 0; i < signalList.size(); ++i) {
     double value = signalList.at(i) / lengthList.at(i);
-    int iBin = histogram()->FindBin(value);
-    double width = histogram()->GetBinWidth(iBin);
+    int iGlobalBin = histogram()->FindBin(pressure, value);
+    int iXBin, iYBin, iZBin;
+    histogram()->GetBinXYZ(iGlobalBin, iXBin, iYBin, iZBin);
+    double width = histogram()->GetYaxis()->GetBinWidth(iYBin);
     double weight = 1./width;
     histogram()->Fill(pressure, value, weight);
   }
+
 }

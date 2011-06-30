@@ -35,6 +35,7 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
     this, SLOT(plotOptionComboBoxCurrentIndexChanged(const QString&)));
   connect(m_ui->saveButton, SIGNAL(clicked()), this, SLOT(saveButtonClicked()));
   connect(m_ui->saveAllButton, SIGNAL(clicked()), this, SLOT(saveAllButtonClicked()));
+  connect(m_ui->logYCheckBox, SIGNAL(stateChanged(int)), this, SLOT(setLogY(int)));
 }
 
 PostAnalysisWindow::~PostAnalysisWindow()
@@ -183,4 +184,11 @@ void PostAnalysisWindow::addWidget(QWidget* widget)
 {
   m_ui->userControlWidget->show();
   static_cast<QBoxLayout*>(m_ui->userControlWidget->layout())->insertWidget(0, widget);
+}
+
+void PostAnalysisWindow::setLogY(int i)
+{
+  m_ui->qtWidget->GetCanvas()->SetLogy(i);
+  gPad->Modified();
+  gPad->Update();
 }
