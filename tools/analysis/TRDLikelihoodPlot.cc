@@ -11,20 +11,23 @@
 #include "Constants.hh"
 #include "Settings.hh"
 #include "SettingsManager.hh"
+#include "RootQtWidget.hh"
 
 TRDLikelihoodPlot::TRDLikelihoodPlot(Topic topic)
   : AnalysisPlot(topic)
   , H1DPlot()
   , m_NonTRHisto(0)
   , m_TRHisto(0)
+  , m_NonTRRejVsTREff(0)
   , m_line50(new TLine)
   , m_line90(new TLine)
   , m_EIdentifierLH(new TRDElectronIdentifierLikelihood())
+  , m_NonTRRejVsTREffWidget(new RootQtWidget)
 {
   setTitle("-log(L) distribution");
 
-  m_NonTRHisto = new TH1D(qPrintable(title() + "_nonTR"), "", 100, 0, 2);
-  m_TRHisto = new TH1D(qPrintable(title() + "_TR"), "", 100, 0, 2);
+  m_NonTRHisto = new TH1D(qPrintable(title() + "_nonTR"), "", 250, 0, 2);
+  m_TRHisto = new TH1D(qPrintable(title() + "_TR"), "", 250, 0, 2);
   m_TRHisto->SetLineColor(kRed);
   setAxisTitle("-ln(L)", "entries");
 
@@ -44,6 +47,10 @@ TRDLikelihoodPlot::TRDLikelihoodPlot(Topic topic)
   m_line90->SetLineColor(kBlue+2);
   m_line90->SetLineStyle(2);
   m_line90->SetLineWidth(2);
+
+  m_NonTRRejVsTREff = new TH1D(qPrintable(title() + "_nonTRRejVsTREff"), ";e eff.; bg rej.", 100, 0, 1);
+
+  setSecondaryWidget(m_NonTRRejVsTREffWidget);
 }
 
 void TRDLikelihoodPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
@@ -98,6 +105,24 @@ void TRDLikelihoodPlot::update()
   m_line90->SetX2(histogram()->GetBinLowEdge(iBineEff90+1));
   m_line90->SetY1(0);
   m_line90->SetY2(yMax);
+
+  updateNonTRRejVsTREffHisto();
+}
+
+void TRDLikelihoodPlot::updateNonTRRejVsTREffHisto()
+{
+  for (int iBin = 1; iBin < m_NonTRRejVsTREff->GetNbinsX(); ++iBin) {
+    double eEffWanted = m_NonTRRejVsTREff->GetBinCenter(iBin);
+    double eEff = 0;
+    double eEffErr = 0;
+    int eEffBin = getBinEff(eEffWanted, m_TRHisto, eEff, eEffErr);
+    double bgRejErr = 0;
+    double bgRej = getRej(m_NonTRHisto, eEffBin, bgRejErr);
+    m_NonTRRejVsTREff->SetBinContent(iBin, bgRej);
+    m_NonTRRejVsTREff->SetBinError(iBin, bgRejErr);
+  }
+  m_NonTRRejVsTREffWidget->GetCanvas()->Modified();
+  m_NonTRRejVsTREffWidget->GetCanvas()->Update();
 }
 
 void TRDLikelihoodPlot::finalize()
@@ -167,4 +192,14 @@ void TRDLikelihoodPlot::draw(TCanvas* canvas)
   H1DPlot::draw(canvas);
   m_line50->Draw("same");
   m_line90->Draw("same");
+
+  TVirtualPad* prevPad = gPad;
+  TCanvas* can = m_NonTRRejVsTREffWidget->GetCanvas();
+  can->cd();
+  can->Clear();
+  can->SetLogy(1);
+  m_NonTRRejVsTREff->Draw();
+  can->Modified();
+  can->Update();
+  prevPad->cd();
 }
