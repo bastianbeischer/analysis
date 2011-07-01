@@ -41,7 +41,7 @@ void MainWindow::setupAnalysis()
   //add TRDSpectra for each layer
   for (int i = 0; i < 8; ++i) {
     PostAnalysisCanvas* trdLayerSpectrum = addCanvas(&file, "TRD layer spectrum " + QString::number(i) + " canvas");
-    addPlot(new LHFit(trdLayerSpectrum));
+    addPlot(new LHFit(trdLayerSpectrum, i));
   }
 
 
