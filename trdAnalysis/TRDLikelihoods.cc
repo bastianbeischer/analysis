@@ -96,7 +96,7 @@ TF1* TRDLikelihoods::getPrototypeLHFunctionTR()
   LHFun->SetParLimits(1, 0.3, 0.6);
   LHFun->SetParLimits(3, 0.2, 0.6);
   LHFun->SetParLimits(4, 2, 5);
-  LHFun->SetParLimits(5, 1, 1);
+  LHFun->SetParLimits(5, 0.3, 0.65);
   LHFun->SetParLimits(6, 0.8, 1.4);
 
   //double integral = LHFun->Integral(0,250);
