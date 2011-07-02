@@ -28,16 +28,18 @@ TRDSpectrumVsPressurePlot::TRDSpectrumVsPressurePlot(unsigned short id, TRDSpect
   m_upperMomentum(upperMom)
 {
   QString strType;
-  switch(m_spectrumType)
-  {
-    case TRDSpectrumPlot::completeTRD:
-      strType = "complete TRD vs pressure";
+  switch(m_spectrumType){
+  case TRDSpectrumPlot::completeTRD:
+    strType = "complete TRD vs time";
     break;
-    case TRDSpectrumPlot::module:
-      strType = "module vs pressure";
+  case TRDSpectrumPlot::module:
+    strType = "module vs time";
     break;
-    case TRDSpectrumPlot::channel:
-      strType = "channel vs pressure";
+  case TRDSpectrumPlot::channel:
+    strType = "channel vs time";
+    break;
+  case TRDSpectrumPlot::layer:
+    strType = "layer vs time";
     break;
   }
 
