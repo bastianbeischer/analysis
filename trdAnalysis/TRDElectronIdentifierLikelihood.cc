@@ -33,6 +33,7 @@ bool TRDElectronIdentifierLikelihood::isElectronish(const QVector<Hit*>& hits, c
 
   //now get all relevant energy deposition for this specific plot and all length
   QList<double> values;
+  QList<int> layers;
 
   const Track* track = particle->track();
   for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != track->hits().end(); ++it) {
@@ -47,8 +48,10 @@ bool TRDElectronIdentifierLikelihood::isElectronish(const QVector<Hit*>& hits, c
       double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
       if (TRDCalculations::calculateLengthInTube)
           distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(subHit, track);
-      if (distanceInTube > 0)
+      if (distanceInTube > 0) {
         values << hit->signalHeight() / distanceInTube;
+        layers << TRDCalculations::TRDLayerNo(subHit->detId());
+      }
     } // subhits in cluster
   } // all hits
 
@@ -66,9 +69,9 @@ bool TRDElectronIdentifierLikelihood::isElectronish(const QVector<Hit*>& hits, c
   TRDLikelihoods* lhs = TRDLikelihoods::instance();
   QList<double> lhsNonTR;
   QList<double> lhsTR;
-  foreach (double signal, values) {
-    lhsNonTR << lhs->getLHFunctionNonTR()->Eval(signal);
-    lhsTR << lhs->getLHFunctionTR()->Eval(signal);
+  for (int i = 0; i < values.size(); ++i) {
+    lhsNonTR << lhs->getLHFunctionNonTR()->Eval(values.at(i));
+    lhsTR << lhs->getLHFunctionTRLayer(layers.at(i))->Eval(values.at(i));
   }
 
   //calculate combined likelihoods
