@@ -88,14 +88,12 @@ void TRDLikelihoodPlot::update()
   double pRej90Err = 0;
   double pRej90 = getRej(m_NonTRHisto, iBineEff90, pRej90Err);
 
-  latex(0)->SetTitle(qPrintable(QString("#splitline{bg_{rej}(e_{eff} = %1)}{ = %2 #pm %3}")
+  latex(0)->SetTitle(qPrintable(QString("#splitline{bg_{rej}(e_{eff} = %1)}{ = %2}")
                                 .arg(QString::number(eEff50, 'g', 3))
-                                .arg(QString::number(pRej50, 'g', 3))
-                                .arg(QString::number(pRej50Err, 'g', 3))));
-  latex(1)->SetTitle(qPrintable(QString("#splitline{bg_{rej}(e_{eff} = %1)}{ = %2 #pm %3}")
+                                .arg(QString::number(pRej50, 'g', 3))));
+  latex(1)->SetTitle(qPrintable(QString("#splitline{bg_{rej}(e_{eff} = %1)}{ = %2}")
                                 .arg(QString::number(eEff90, 'g', 3))
-                                .arg(QString::number(pRej90, 'g', 3))
-                                .arg(QString::number(pRej90Err, 'g', 3))));
+                                .arg(QString::number(pRej90, 'g', 3))));
 
   double yMax = qMax(histogram(0)->GetMaximum(), histogram(1)->GetMaximum()) *1.00;
 
