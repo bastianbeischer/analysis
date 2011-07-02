@@ -14,19 +14,15 @@ double functionNonTR(double *x, double *par)
     p[1] mopv
     p[2] sigma of rising landau flank
     p[3] sigma of falling landau flank
-    p[4] limit above which an exponential decay function is used
-    p[5] exponential factor (should be negative)
+    p[4] linear term in exponential
+    p[5] quadratic term in exponential
+    p[6] cubic term in exponential
   **/
-  if(x[0]<par[1] && x[0] < par[4]){
-    return par[0]*TMath::Landau(x[0],par[1],par[2]);
-  }
-  else if(x[0]>=par[1] && x[0] < par[4]){
-    return par[0]*TMath::Landau(x[0],par[1],par[3]);
-  }else{
-    return par[0]*TMath::Landau(par[4],par[1],par[3]) *exp(par[5]*(x[0]-par[4]));
-  }
+  if (x[0]<par[1])
+    return par[0]*TMath::Landau(x[0],par[1],par[2])*TMath::Exp(par[4]*x[0]+par[5]*x[0]*x[0]+par[6]*x[0]*x[0]*x[0]);
+  else
+    return par[0]*TMath::Landau(x[0],par[1],par[3])*TMath::Exp(par[4]*x[0]+par[5]*x[0]*x[0]+par[6]*x[0]*x[0]*x[0]);
 }
-
 
 
 TRDLikelihoods* TRDLikelihoods::m_instance = 0;
@@ -66,18 +62,15 @@ TF1* TRDLikelihoods::getPrototypeLHFunctionNonTR()
     p[1] mopv
     p[2] sigma of rising landau flank
     p[3] sigma of falling landau flank
-    p[4] limit above which an exponential decay function is used
-    p[5] exponential factor (should be negative)
+    p[4] linear term in exponential
+    p[5] quadratic term in exponential
+    p[6] cubic term in exponential
   **/
 
-  TF1* LHFun = new TF1("TRDLikelihoodNonTR", functionNonTR, 0., 100., 6);
-
+  TF1* LHFun = new TF1("TRDLikelihoodNonTR", functionNonTR, 0., 100., 7);
   //set default values:
   LHFun->SetNpx(1000);
-  LHFun->SetParameters(7.5, 0.34, 0.115, 0.135, 7, -0.1);
-  for (int i = 4; i < 5; i++)
-    LHFun->SetParLimits(i,LHFun->GetParameter(i),LHFun->GetParameter(i));
-  LHFun->SetParLimits(5,-0.3,-0.01);
+  LHFun->SetParameters(7.5, 0.34, 0.115, 0.135, -0.0594475, 0.00140946, -2.07114e-05);
 
   //normalize
   //double integral = LHFun->Integral(0,100);
