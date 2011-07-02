@@ -59,6 +59,7 @@ void TRDLikelihoodPlot::processEvent(const QVector<Hit*>& hits, Particle* partic
   bool isTRParticle = truthMcIsElectron(event, ok);
   if (!ok)
     return;
+
   double lhTR = 0.;
   bool validEvent = false;
   //bool identifiedAsTRParticle =
@@ -142,8 +143,10 @@ void TRDLikelihoodPlot::finalize()
 
 bool TRDLikelihoodPlot::truthMcIsElectron(SimpleEvent* event, bool& ok)
 {
-  if (event->contentType() == SimpleEvent::MonteCarlo)
+  if (event->contentType() == SimpleEvent::MonteCarlo) {
+    ok = true;
     return qAbs(event->MCInformation()->primary()->pdgID) == 11;
+  }
 
   double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
   double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
