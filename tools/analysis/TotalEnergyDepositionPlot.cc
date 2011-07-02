@@ -11,16 +11,14 @@
 
 #include "TRDCalculations.hh"
 
-TotalEnergyDepositionPlot::TotalEnergyDepositionPlot(double lowerMom, double upperMom) :
-    AnalysisPlot(AnalysisPlot::MiscellaneousTRD),
-  H1DPlot(),
-  m_lowerMomentum(lowerMom),
-  m_upperMomentum(upperMom)
+TotalEnergyDepositionPlot::TotalEnergyDepositionPlot()
+  : AnalysisPlot(AnalysisPlot::MiscellaneousTRD)
+  , H1DPlot()
 {
 
-  setTitle(QString("Total Signal Sum (%1 GV to %2 GV)").arg(m_lowerMomentum).arg(m_upperMomentum));
+  setTitle("Total Signal Sum");
 
-  TH1D* histogram = new TH1D(qPrintable(title()), qPrintable(title() + ";dE/dx ;entries"), 300, 0, 1000);
+  TH1D* histogram = new TH1D(qPrintable(title()), qPrintable(title() + ";total signal sum;entries"), 100, 0, 40);
   addHistogram(histogram);
 }
 
@@ -28,53 +26,48 @@ TotalEnergyDepositionPlot::~TotalEnergyDepositionPlot()
 {
 }
 
-void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
+void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
-  //const Track* track = particle->track();
+  if (!TRDCalculations::globalTRDCuts(hits, particle, event))
+      return;
 
-  /*
-  //check if everything worked and a track has been fit
-  if (!track || !track->fitGood())
-    return;
+  //now get all relevant energy deposition for this specific plot and all length
+  QList<double> lengthList;
+  QList<double> signalList;
 
-  if (track->chi2() / track->ndf() > 3)
-    return;
+  const Track* track = particle->track();
+  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != track->hits().end(); ++it) {
+    Hit* hit = *it;
+    if (hit->type() != Hit::trd)
+      continue;
+    Cluster* cluster = static_cast<Cluster*>(hit);
+    std::vector<Hit*>& subHits = cluster->hits();
+    const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+    for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
+      Hit* subHit = *it;
+      double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
+      if (TRDCalculations::calculateLengthInTube)
+          distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(subHit, track);
+      if (distanceInTube > 0) {
+        signalList << subHit->signalHeight();
+        lengthList << distanceInTube;
+      }
+    } // subhits in cluster
+  } // all hits
 
-  //check if track was inside of magnet
-  if (!(particle->information()->flags() & ParticleInformation::InsideMagnet))
-    return;
+  /* now fill the mean of all gathered data
+      - one value for a single tube
+      - normally also one value for a module (except no length is calculated and 2 tubes show a signal)
+      - several signals for the complete trd
+  */
 
-
-
-  //get the reconstructed momentum
-  double p = track->p(); //GeV
-
-  if( p < m_lowerMomentum || p > m_upperMomentum)
-    return;
-    */
-
-
-  if (particle->beta() < 1.5 || particle->beta() < 0)
+  //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
+  unsigned int hitsWhichAreOnTrack = signalList.size();
+  if (hitsWhichAreOnTrack < TRDCalculations::minTRDLayerCut)
     return;
 
   double signalSum = 0;
-  // double distanceSum = 0;
-
-  int trdCluster = 0;
-
-  std::vector<Hit*>& eventHits = event->hits();
-  std::vector<Hit*>::const_iterator endIt = eventHits.end();
-  for (std::vector<Hit*>::const_iterator it = eventHits.begin(); it != endIt; ++it) {
-    Hit* clusterHit = *it;
-    Cluster* cluster = static_cast<Cluster*>(clusterHit);
-    if (cluster->type() == Hit::trd){
-      signalSum += cluster->signalHeight();
-      trdCluster++;
-    }
-  }
-
-
-  if (trdCluster >= 8)
-    histogram(0)->Fill(signalSum);
-
+  for (int i = 0; i < signalList.size(); ++i)
+    signalSum +=  signalList.at(i) / lengthList.at(i);
+  histogram()->Fill(signalSum);
 }

@@ -600,7 +600,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisPlot::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TRDDistanceWireToTrackPlot(AnalysisPlot::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TRDDistanceInTube(AnalysisPlot::MiscellaneousTRD));
-    m_ui.plotter->addPlot(new TotalEnergyDepositionPlot(-100,100));
+    m_ui.plotter->addPlot(new TotalEnergyDepositionPlot());
     m_ui.plotter->addPlot(new TRDEnergyDepositionOverMomentumPlot(AnalysisPlot::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TotalEnergyDepositionTRDvsTrackerPlot());
     m_ui.plotter->addPlot(new TRDEfficiencyPlot());
