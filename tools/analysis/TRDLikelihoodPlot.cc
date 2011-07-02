@@ -26,8 +26,8 @@ TRDLikelihoodPlot::TRDLikelihoodPlot(Topic topic)
 {
   setTitle("-log(L) distribution");
 
-  m_NonTRHisto = new TH1D(qPrintable(title() + "_nonTR"), "", 250, 0, 2);
-  m_TRHisto = new TH1D(qPrintable(title() + "_TR"), "", 250, 0, 2);
+  m_NonTRHisto = new TH1D(qPrintable(title() + "_nonTR"), "", 500, 0, 2);
+  m_TRHisto = new TH1D(qPrintable(title() + "_TR"), "", 500, 0, 2);
   m_TRHisto->SetLineColor(kRed);
   setAxisTitle("-ln(L)", "entries");
 
@@ -55,8 +55,10 @@ TRDLikelihoodPlot::TRDLikelihoodPlot(Topic topic)
 
 void TRDLikelihoodPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
-
-  bool isTRParticle = truthMcIsElectron(event);
+  bool ok = false;
+  bool isTRParticle = truthMcIsElectron(event, ok);
+  if (!ok)
+    return;
   double lhTR = 0.;
   bool validEvent = false;
   //bool identifiedAsTRParticle =
@@ -138,7 +140,7 @@ void TRDLikelihoodPlot::finalize()
   update();
 }
 
-bool TRDLikelihoodPlot::truthMcIsElectron(SimpleEvent* event)
+bool TRDLikelihoodPlot::truthMcIsElectron(SimpleEvent* event, bool& ok)
 {
   if (event->contentType() == SimpleEvent::MonteCarlo)
     return qAbs(event->MCInformation()->primary()->pdgID) == 11;
@@ -149,7 +151,17 @@ bool TRDLikelihoodPlot::truthMcIsElectron(SimpleEvent* event)
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
   bool eAboveCherenkov = settings->isAboveThreshold(Constants::electronMass);
 
-  return (eAboveCherenkov && c1Signal > 200 && c2Signal > 200);
+  if (eAboveCherenkov && c1Signal > 200 && c2Signal > 200) {
+    ok = true;
+    return true;
+  } else if (eAboveCherenkov && c1Signal < 100 && c2Signal < 100) {
+    ok = true;
+    return false;
+  } else {
+    ok = false;
+    return false;
+  }
+
 }
 
 int TRDLikelihoodPlot::getBinEff(double effWanted, const TH1D* hist, double& eff, double& effErr)
