@@ -96,9 +96,9 @@ void TRDSpectrumVsPressurePlot::processEvent(const QVector<Hit*>& hits, Particle
          (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
         double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
         if (TRDCalculations::calculateLengthInTube)
-            distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
+            distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(subHit, track);
         if (distanceInTube > 0) {
-          signalList << hit->signalHeight();
+          signalList << subHit->signalHeight();
           lengthList << distanceInTube;
         }
       } // fits into category
