@@ -43,7 +43,7 @@ LHFit::LHFit(PostAnalysisCanvas* canvas, int layer)
   histogram()->GetYaxis()->SetRangeUser(10e-6, 1.1*histogram()->GetMaximum());
 
   setTitle(canvas->name());
-  setAxisTitle(histogram()->GetXaxis()->GetTitle(),histogram()->GetYaxis()->GetTitle());
+  setAxisTitle(histogram()->GetXaxis()->GetTitle(), histogram()->GetYaxis()->GetTitle());
 
   //setup widget
   QWidget* secWidget = new QWidget();

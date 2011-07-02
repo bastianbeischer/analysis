@@ -1,4 +1,5 @@
 #include "TRDLikelihoods.hh"
+#include "TRDCalculations.hh"
 
 #include <QMutex>
 #include <QMutexLocker>
@@ -39,7 +40,8 @@ TRDLikelihoods* TRDLikelihoods::instance()
 }
 
 TRDLikelihoods::TRDLikelihoods()
-  : m_LHFunctionTR(getPrototypeLHFunctionTR())
+  : m_normalizedToLength(TRDCalculations::calculateLengthInTube)
+  , m_LHFunctionTR(getPrototypeLHFunctionTR())
   , m_LHFunctionNonTR(getPrototypeLHFunctionNonTR())
 {
   for (int i = 0; i < 8; ++i)
@@ -70,7 +72,10 @@ TF1* TRDLikelihoods::getPrototypeLHFunctionNonTR()
   TF1* LHFun = new TF1("TRDLikelihoodNonTR", functionNonTR, 0., 100., 7);
   //set default values:
   LHFun->SetNpx(1000);
-  LHFun->SetParameters(7.5, 0.34, 0.115, 0.135, -0.0594475, 0.00140946, -2.07114e-05);
+  if (m_normalizedToLength)
+    LHFun->SetParameters(7.5, 0.34, 0.115, 0.135, -0.0594475, 0.00140946, -2.07114e-05);
+  else
+    LHFun->SetParameters(1.32391,2.23676,1.02281,0.788797, -0.0594475, 0.00140946, -2.07114e-05);
 
   //normalize
   //double integral = LHFun->Integral(0,100);
@@ -84,13 +89,23 @@ TF1* TRDLikelihoods::getPrototypeLHFunctionTR()
   TF1* LHFun = new TF1("TRDLikelihoodTR","(landau(0)+landau(3))*expo(6)", 0., 100.);
 
   LHFun->SetNpx(1000);
-  LHFun->SetParameters(1, 0.51, 0.19, 0.3, 2.3, 0.59, 1, -0.001);
-  LHFun->SetParLimits(0, 0.8, 1.4);
-  LHFun->SetParLimits(1, 0.3, 0.6);
-  LHFun->SetParLimits(3, 0.2, 0.6);
-  LHFun->SetParLimits(4, 2, 5);
-  LHFun->SetParLimits(5, 0.3, 0.65);
-  LHFun->SetParLimits(6, 0.8, 1.4);
+  if (m_normalizedToLength) {
+    LHFun->SetParameters(1, 0.51, 0.19, 0.3, 2.3, 0.59, 1, -0.001);
+    LHFun->SetParLimits(0, 0.8, 1.4);
+    LHFun->SetParLimits(1, 0.3, 0.6);
+    LHFun->SetParLimits(3, 0.2, 0.6);
+    LHFun->SetParLimits(4, 2, 5);
+    LHFun->SetParLimits(5, 0.3, 0.65);
+    LHFun->SetParLimits(6, 0.8, 1.4);
+  } else {
+    LHFun->SetParameters(0.533941, 2.04519, 0.90618, 0.177358, 13.3248, 4.80789, 0.312408, -0.0432751);
+    LHFun->SetParLimits(0, 0.4, 1);
+    LHFun->SetParLimits(1, 1, 4);
+    LHFun->SetParLimits(3, 0.1, 0.4);
+    LHFun->SetParLimits(4, 7, 15);
+    LHFun->SetParLimits(5, 2, 8);
+    LHFun->SetParLimits(6, 0.2, 0.6);
+  }
 
   //double integral = LHFun->Integral(0,250);
   //LHFun->SetParameter(0, LHFun->GetParameter(0) / integral);

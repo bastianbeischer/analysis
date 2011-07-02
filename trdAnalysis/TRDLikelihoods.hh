@@ -38,6 +38,8 @@ private:
     static TRDLikelihoods* m_instance;
     static QMutex m_mutex;
 
+    bool m_normalizedToLength;
+
     TF1* m_LHFunctionTR;
     TF1* m_LHFunctionNonTR;
 
