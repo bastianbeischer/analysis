@@ -8,6 +8,7 @@
 
 class Hit;
 class Particle;
+class TEllipse;
 class TLine;
 class TMarker;
 class TLatex;
@@ -31,6 +32,7 @@ private:
 
 private:
   QVector<TBox*>      m_hits;
+  QVector<TEllipse*>  m_hitsTRD;
   QVector<TLine*>     m_lines;
   QVector<TMarker*>   m_markers;
   TLatex*             m_fitInfo;

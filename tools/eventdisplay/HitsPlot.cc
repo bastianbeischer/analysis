@@ -21,6 +21,7 @@
 #include <TLatex.h>
 #include <TH2D.h>
 #include <TBox.h>
+#include <TEllipse.h>
 #include <THistPainter.h>
 #include <TPaletteAxis.h>
 #include <TGaxis.h>
@@ -49,6 +50,8 @@ void HitsPlot::clearHits()
 {
   qDeleteAll(m_hits);
   m_hits.clear();
+  qDeleteAll(m_hitsTRD);
+  m_hitsTRD.clear();
   qDeleteAll(m_lines);
   m_lines.clear();
   qDeleteAll(m_markers);
@@ -210,8 +213,12 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, Simpl
       height = heightModule;
     }
     else if (type == Hit::trd) {
-      width = 6.0;
-      height = 0.5*heightModule;
+      TEllipse* circle = new TEllipse(x, z, 3.);
+      circle->SetFillStyle(1001);
+      circle->SetFillColor(color);
+      circle->SetLineColor(color);
+      circle->Draw("SAME");
+      m_hitsTRD.push_back(circle);
     }
     else if (type == Hit::tof) {
       width = 5.;
@@ -222,11 +229,13 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, Simpl
       color = palette->GetValueColor(amplitude*5);
     }
 
-    TBox* box = new TBox(x-0.5*width, z-0.5*height, x+0.5*width, z+0.5*height);
-    box->SetFillStyle(1001);
-    box->SetFillColor(color);
-    box->Draw("SAME");
-    m_hits.push_back(box);
+      if (type != Hit::trd) {
+        TBox* box = new TBox(x-0.5*width, z-0.5*height, x+0.5*width, z+0.5*height);
+        box->SetFillStyle(1001);
+        box->SetFillColor(color);
+        box->Draw("SAME");
+        m_hits.push_back(box);
+      }
   }
 
   if( event->contentType() == SimpleEvent::MonteCarlo){
