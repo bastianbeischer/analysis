@@ -51,6 +51,7 @@
 #include "TRDOccupancyPlot.hh"
 #include "TRDEfficiencyPlot.hh"
 #include "TRDLikelihoodPlot.hh"
+#include "TRDLikelihoodFunctionsPlot.hh"
 #include "TotalEnergyDepositionPlot.hh"
 #include "TotalEnergyDepositionTRDvsTrackerPlot.hh"
 #include "TimeResolutionPlotCollection.hh"
@@ -609,6 +610,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeights, true));
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits, true));
     m_ui.plotter->addPlot(new TRDTimeCorrectionPlot(first, last));
+    m_ui.plotter->addPlot(new TRDLikelihoodFunctionsPlot());
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BetaPlot());

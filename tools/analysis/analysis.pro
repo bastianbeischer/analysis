@@ -80,6 +80,7 @@ CLASSES = \
   TRDSpectrumVsTemperaturePlot \
   TRDSpectrumVsPressurePlot \
   TRDLikelihoodPlot \
+  TRDLikelihoodFunctionsPlot \
   TimeResolutionPlot \
   TimeResolutionPlotCollection \
   TotalEnergyDepositionPlot \
