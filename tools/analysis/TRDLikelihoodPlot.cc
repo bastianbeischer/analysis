@@ -26,8 +26,8 @@ TRDLikelihoodPlot::TRDLikelihoodPlot(Topic topic)
 {
   setTitle("-log(L) distribution");
 
-  m_NonTRHisto = new TH1D(qPrintable(title() + "_nonTR"), "", 500, 0, 2);
-  m_TRHisto = new TH1D(qPrintable(title() + "_TR"), "", 500, 0, 2);
+  m_NonTRHisto = new TH1D(qPrintable(title() + "_nonTR"), "", 500, 0, 3);
+  m_TRHisto = new TH1D(qPrintable(title() + "_TR"), "", 500, 0, 3);
   m_TRHisto->SetLineColor(kRed);
   setAxisTitle("-ln(L)", "entries");
 
