@@ -30,16 +30,16 @@ TRDSpectrumVsPressurePlot::TRDSpectrumVsPressurePlot(unsigned short id, TRDSpect
   QString strType;
   switch(m_spectrumType){
   case TRDSpectrumPlot::completeTRD:
-    strType = "complete TRD vs time";
+    strType = "complete TRD vs pressure";
     break;
   case TRDSpectrumPlot::module:
-    strType = "module vs time";
+    strType = "module vs pressure";
     break;
   case TRDSpectrumPlot::channel:
-    strType = "channel vs time";
+    strType = "channel vs pressure";
     break;
   case TRDSpectrumPlot::layer:
-    strType = "layer vs time";
+    strType = "layer vs pressure";
     break;
   }
 

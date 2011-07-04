@@ -28,16 +28,16 @@ TRDSpectrumVsTemperaturePlot::TRDSpectrumVsTemperaturePlot(unsigned short id, TR
   QString strType;
   switch(m_spectrumType){
   case TRDSpectrumPlot::completeTRD:
-    strType = "complete TRD vs time";
+    strType = "complete TRD vs temperature";
     break;
   case TRDSpectrumPlot::module:
-    strType = "module vs time";
+    strType = "module vs temperature";
     break;
   case TRDSpectrumPlot::channel:
-    strType = "channel vs time";
+    strType = "channel vs temperature";
     break;
   case TRDSpectrumPlot::layer:
-    strType = "layer vs time";
+    strType = "layer vs temperature";
     break;
   }
 
