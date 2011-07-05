@@ -118,7 +118,7 @@ void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& hits, Particle* pa
   */
 
   //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
-  unsigned int hitsWhichAreOnTrack = signalList.size();
+  int hitsWhichAreOnTrack = signalList.size();
   if (m_spectrumType == TRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDCalculations::minTRDLayerCut)
     return;
 

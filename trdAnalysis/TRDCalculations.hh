@@ -28,7 +28,7 @@ public:
 
 public:
   static const bool calculateLengthInTube;
-  static const unsigned int minTRDLayerCut;
+  static const int minTRDLayerCut;
 
 private:
   TRDCalculations();

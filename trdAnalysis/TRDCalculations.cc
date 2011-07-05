@@ -21,7 +21,7 @@
 #include <QVector2D>
 
 const bool TRDCalculations::calculateLengthInTube = true;
-const unsigned int TRDCalculations::minTRDLayerCut = 6;
+const int TRDCalculations::minTRDLayerCut = 6;
 const int TRDCalculations::spectrumDefaultBins = 100;
 
 TRDCalculations::TRDCalculations()

@@ -62,7 +62,7 @@ void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>& hits, Particle
   */
 
   //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
-  unsigned int hitsWhichAreOnTrack = signalList.size();
+  int hitsWhichAreOnTrack = signalList.size();
   if (hitsWhichAreOnTrack < TRDCalculations::minTRDLayerCut)
     return;
 
