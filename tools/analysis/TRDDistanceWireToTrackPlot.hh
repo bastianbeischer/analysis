@@ -12,8 +12,6 @@ public:
   ~TRDDistanceWireToTrackPlot();
 
   virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
-  virtual void finalize();
-
 };
 
 #endif // TRDDISTANCEWIRETOTRACKPLOT_HH

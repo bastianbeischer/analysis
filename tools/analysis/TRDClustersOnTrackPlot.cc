@@ -14,19 +14,18 @@ TRDClustersOnTrackPlot::TRDClustersOnTrackPlot(AnalysisPlot::Topic topic) :
   H1DPlot()
 {
   setTitle("TRD clusters on track");
+  setAxisTitle("number of trd clusters on track", "entries");
   TH1D* histogram = new TH1D(qPrintable(title()), "", 11, -0.5, 10.5);
   histogram->SetStats(true);
+  histogram->Sumw2();
   addHistogram(histogram);
-  TH1D* histogramMC = new TH1D(qPrintable(title()+"MC"), "MC", 11, -0.5, 10.5);
-  histogramMC->SetLineColor(kRed);
-  addHistogram(histogramMC);
 }
 
 TRDClustersOnTrackPlot::~TRDClustersOnTrackPlot()
 {
 }
 
-void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/,Particle* particle ,SimpleEvent* event)
+void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/,Particle* particle ,SimpleEvent*)
 {
   const Track* track = particle->track();
 
@@ -34,9 +33,7 @@ void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/,Particle
   if (!track || !track->fitGood())
     return;
 
-  //check if all tracker layers have a hit
-  ParticleInformation::Flags flags = particle->information()->flags();
-  if (!(flags & ParticleInformation::AllTrackerLayers))
+  if (particle->information()->flags() & ParticleInformation::Chi2Good)
     return;
 
   int nTRDHits = 0;
@@ -46,18 +43,6 @@ void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/,Particle
       ++nTRDHits;
   }
 
-  if (event->contentType() == SimpleEvent::MonteCarlo)
-    histogram(1)->Fill(nTRDHits);
-  else
-    histogram(0)->Fill(nTRDHits);
-
-
+  histogram(0)->Fill(nTRDHits);
 }
 
-void TRDClustersOnTrackPlot::finalize()
-{
-  if (histogram(0)->Integral("width") > 0)
-    histogram(0)->Scale(1./histogram(0)->Integral("width"));
-  if (histogram(1)->Integral("width") > 0)
-    histogram(1)->Scale(1./histogram(1)->Integral("width"));
-}
