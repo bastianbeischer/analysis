@@ -238,7 +238,7 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, Simpl
       }
   }
 
-  if( event->contentType() == SimpleEvent::MonteCarlo){
+  if (event->contentType() == SimpleEvent::MonteCarlo) {
 
     qDeleteAll(m_trajectoriesXZ);
     m_trajectoriesXZ.clear();
@@ -288,6 +288,19 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, Simpl
       traj->SetLineStyle(5);
       traj->Draw("same L");
       m_trajectoriesYZ.push_back(traj);
+    }
+
+    //draw mc signals
+    foreach (const MCSimpleEventDigi* mcDigi, mcInfo->mcDigis()) {
+      if (mcDigi->type() == Hit::trd) {
+        foreach (const MCDigiSignal* mcSignal, mcDigi->digiSignals()) {
+          TMarker* marker = new TMarker(mcSignal->hitPosition.x(),mcSignal->hitPosition.z(), 5);
+          //marker->SetMarkerSize(.5);
+          marker->SetMarkerColor(kRed);
+          marker->Draw("SAME");
+          m_markers << marker;
+        }
+      }
     }
 
   }
