@@ -143,7 +143,7 @@ void TimeShiftContainer::applyBarShifts(const QVector<BarShiftPlot*>& plots)
   QVector<double> errBVector;
 
   foreach(BarShiftPlot* plot, plots) {
-    if (true || !isnan(plot->dt())) {
+    if (true || !std::isnan(plot->dt())) {
       int upper = 0;
       int lower = 0;
       if (plot->title().contains("bar shift 0x8000 0x8010")) upper = 0;
@@ -155,7 +155,7 @@ void TimeShiftContainer::applyBarShifts(const QVector<BarShiftPlot*>& plots)
       if (plot->title().contains("0x8028 0x8038")) lower = 2;
       if (plot->title().contains("0x802c 0x803c")) lower = 3;
       int barPositionDistance = qAbs(upper - lower);
-      if (!isnan(plot->dt())) {
+      if (!std::isnan(plot->dt())) {
         upperBar.append(upper);
         lowerBar.append(lower);
         bVector.append(desiredTimeDifference(barPositionDistance) - plot->dt());

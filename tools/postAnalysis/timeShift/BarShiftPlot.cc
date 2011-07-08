@@ -67,7 +67,7 @@ BarShiftPlot::BarShiftPlot(PostAnalysisCanvas* canvas)
     .arg(modifiedHistogram->GetMean() < 0 ? '-' : ' ')
     .arg(qAbs(modifiedHistogram->GetMean()), 0, 'f', 3, ' ')));
   addLatex(latex);
-  if (!isnan(m_dt)) {
+  if (!std::isnan(m_dt)) {
     latex = RootPlot::newLatex(0.15, 0.82);
     latex->SetTextColor(kRed);
     latex->SetTitle(qPrintable(QString("x_fit = %1%2 ns").arg(m_dt < 0 ? '-' : ' ').arg(qAbs(m_dt), 0, 'f', 3, ' ')));
