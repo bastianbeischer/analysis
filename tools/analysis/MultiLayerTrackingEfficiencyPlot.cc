@@ -12,14 +12,23 @@
 #include "Track.hh"
 #include "ParticleInformation.hh"
 
-MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot() :
+MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot(Type type) :
   AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
   H2DPlot(),
+  m_type(type),
   m_normHisto(0),
   m_nLayers(8),
   m_layerZ(new double[m_nLayers])
 {
-  setTitle("Multi Layer Efficiency");
+  QString htitle = "Multi Layer Efficiency";
+  
+  if (m_type == Positive)
+    htitle += " positive";
+  if (m_type == Negative)
+    htitle += " negative";
+  if (m_type == All)
+    htitle += " all";
+  setTitle(htitle);
   
   int nBinsY = m_nLayers;
   double y0 = 0.5;
@@ -89,7 +98,16 @@ void MultiLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, P
     }
   }
   
-  double absRigidity = track->rigidity();
+  double rigidity = track->rigidity();
+  
+  if (m_type == Positive && rigidity < 0) {
+    return;
+  }
+  if (m_type == Negative && rigidity > 0) {
+    return;
+  }
+  
+  double absRigidity = rigidity;
   if (absRigidity < 0) {
     absRigidity *= -1;
   }
