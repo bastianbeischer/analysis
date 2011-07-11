@@ -5,6 +5,10 @@ CONFIG += debug
 
 TOPLEVEL = ../..
 
+LIBS += \
+  -L$$TOPLEVEL/lib \
+  -lSimpleEvent
+
 SOURCES += \
   main.cc
 

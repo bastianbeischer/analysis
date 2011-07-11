@@ -5,6 +5,9 @@
 
 #include <TROOT.h>
 #include <TFileMerger.h>
+#include <TFile.h>
+#include <TList.h>
+#include <TObject.h>
 
 int main(int argc, char** argv)
 {
@@ -25,10 +28,24 @@ int main(int argc, char** argv)
     destinationFileName.append("Decompressed.root");
     qDebug() << sourceFileName << "  ---->  " << destinationFileName;
 
+    /* For some reason TFileMerger is not compiled into libRIO.so on i7
     TFileMerger merger;
     merger.AddFile(qPrintable(sourceFileName));
     merger.OutputFile(qPrintable(destinationFileName));
     merger.Merge();
+    */
+
+    TFile inputFile(qPrintable(sourceFileName), "READ", "inputFile");
+    gROOT->cd();
+    inputFile.GetListOfKeys();
+    TIter next(inputFile.GetListOfKeys());
+    TFile outputFile(qPrintable(destinationFileName), "RECREATE", "outputFile", 0);
+    TObject* key;
+    while ((key = next())) {
+      key->Write();
+    }
+    outputFile.Close();
+    inputFile.Close();
   }
   return 0;
 }
