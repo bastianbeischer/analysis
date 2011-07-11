@@ -29,7 +29,7 @@ MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot() :
   double y1 = m_nLayers+0.5;
   
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, x0, x1, nBinsY, y0, y1);
-  setAxisTitle("R / GV", "layer number", "");
+  setAxisTitle("R / GV", "number of layers", "");
   addHistogram(histogram);
 
   m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBinsX, x0, x1);
@@ -62,6 +62,9 @@ void MultiLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, P
     return;
 
   ParticleInformation::Flags flags = particle->information()->flags();
+  if ( !(flags & ParticleInformation::Chi2Good) )
+    return;
+  
   if ( !(flags & ParticleInformation::InsideMagnet) )
     return;
 
@@ -79,8 +82,14 @@ void MultiLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, P
       }
     }
   }
-  histogram()->Fill(track->rigidity(), nbOfLayers);
-  m_normHisto->Fill(track->rigidity());
+  
+  double absRigidity = track->rigidity();
+  if (absRigidity < 0) {
+    absRigidity *= -1;
+  }
+  
+  histogram()->Fill(absRigidity, nbOfLayers);
+  m_normHisto->Fill(absRigidity);
 }
 
 void MultiLayerTrackingEfficiencyPlot::finalize()
