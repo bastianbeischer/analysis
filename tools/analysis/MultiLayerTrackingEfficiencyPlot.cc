@@ -12,27 +12,42 @@
 #include "Track.hh"
 #include "ParticleInformation.hh"
 
-MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot() :
+MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot(Type type) :
   AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
   H2DPlot(),
+  m_type(type),
   m_normHisto(0),
   m_nLayers(8),
   m_layerZ(new double[m_nLayers])
 {
-  setTitle("Multi Layer Efficiency");
+  QString htitle = "Multi Layer Efficiency";
   
-  int nBinsX = 10;
-  double x0 = 0.;
-  double x1 = 10.;
+  if (m_type == Positive)
+    htitle += " positive";
+  if (m_type == Negative)
+    htitle += " negative";
+  if (m_type == All)
+    htitle += " all";
+  setTitle(htitle);
+  
   int nBinsY = m_nLayers;
   double y0 = 0.5;
   double y1 = m_nLayers+0.5;
   
-  TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, x0, x1, nBinsY, y0, y1);
-  setAxisTitle("R / GV", "layer number", "");
+  int nBins = 21;
+  double lowerBound = 1e-1;
+  double upperBound = 20.;
+  double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
+  double p[nBins+1];
+  for (int i = 0; i < nBins+1; i++) {
+    p[i] = pow(lowerBound, delta*i+1);
+  }
+  
+  TH2D* histogram = new TH2D(qPrintable(title()), "", nBins, p, nBinsY, y0, y1);
+  setAxisTitle("R / GV", "number of layers", "");
   addHistogram(histogram);
-
-  m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBinsX, x0, x1);
+  
+  m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBins, p);
 
   int i = 0;
   Setup* setup = Setup::instance();
@@ -62,6 +77,9 @@ void MultiLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, P
     return;
 
   ParticleInformation::Flags flags = particle->information()->flags();
+  if ( !(flags & ParticleInformation::Chi2Good) )
+    return;
+  
   if ( !(flags & ParticleInformation::InsideMagnet) )
     return;
 
@@ -79,8 +97,23 @@ void MultiLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, P
       }
     }
   }
-  histogram()->Fill(track->rigidity(), nbOfLayers);
-  m_normHisto->Fill(track->rigidity());
+  
+  double rigidity = track->rigidity();
+  
+  if (m_type == Positive && rigidity < 0) {
+    return;
+  }
+  if (m_type == Negative && rigidity > 0) {
+    return;
+  }
+  
+  double absRigidity = rigidity;
+  if (absRigidity < 0) {
+    absRigidity *= -1;
+  }
+  
+  histogram()->Fill(absRigidity, nbOfLayers);
+  m_normHisto->Fill(absRigidity);
 }
 
 void MultiLayerTrackingEfficiencyPlot::finalize()
