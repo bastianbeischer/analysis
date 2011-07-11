@@ -10,6 +10,11 @@ public:
   ~MainWindow();
 protected:
   virtual void setupAnalysis();
+private slots:
+  void saveToConfigFileWithoutBarShift();
+  void saveToConfigFileWithBarShift();
+private:
+  void saveToConfigFile(bool withBarShift);
 };
 
 #endif

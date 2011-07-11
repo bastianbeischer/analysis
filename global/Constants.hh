@@ -19,12 +19,17 @@ namespace Constants
   const double lowerTofPosition = -531.55; // mm
   const double sigmaSipm = 0.6;            // ns
   const double tofClusterSignalCut = 600;  // ns
+  const double minimalTotPerSipm = 17.;
+  const double triggerMatchingMinimum = 95.;
+  const double triggerMatchingMaximum = 140.;
   const double idealTot = 30.;             //ns
   const int nTofChannels = 64;
   const int nTofBars = 16;
   const int nTofSipmsPerBar = 4;
 
   const double TRDTubeRadius = 3.0;        //mm
+
+  const int runLength = 600; // seconds
 
 }
 

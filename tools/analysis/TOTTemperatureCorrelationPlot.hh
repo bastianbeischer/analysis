@@ -2,7 +2,7 @@
 #define TOTTemperatureCorrelationPlot_hh
 
 #include "AnalysisPlot.hh"
-#include "H2DPlot.hh"
+#include "H2DProjectionPlot.hh"
 #include "SensorTypes.hh"
 
 #include <QVector>
@@ -12,7 +12,7 @@ class Hit;
 class Particle;
 class SimpleEvent;
 
-class TOTTemperatureCorrelationPlot : public AnalysisPlot, public H2DPlot {
+class TOTTemperatureCorrelationPlot : public AnalysisPlot, public H2DProjectionPlot {
 public:
   TOTTemperatureCorrelationPlot(unsigned int tofChannel);
   ~TOTTemperatureCorrelationPlot();

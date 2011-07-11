@@ -81,13 +81,11 @@ void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hi
       }
     }else if ( cluster->type() == Hit::tracker ) {
       // find max strip
-      unsigned short iMax = 0;
       double max = 0.;
       for(unsigned short i = 0; i < cluster->hits().size(); ++i) {
         double amplitude = cluster->hits().at(i)->signalHeight();
         if (amplitude > max) {
           max = amplitude;
-          iMax = i;
         }
       }
       trackerCluster++;

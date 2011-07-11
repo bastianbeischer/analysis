@@ -3,6 +3,7 @@
 
 #include "AnalysisPlot.hh"
 #include "H2DPlot.hh"
+#include "TOTLayer.hh"
 
 #include <QString>
 
@@ -10,17 +11,16 @@ class Hit;
 class Particle;
 class SimpleEvent;
 
-class TOTBetaCorrelation : public AnalysisPlot, public H2DPlot {
+class TOTBetaCorrelation : public H2DPlot, public TOTLayer  {
 public:
-  enum TofLayer {Lower, Upper, All};
-  TOTBetaCorrelation(TofLayer layer);
+  TOTBetaCorrelation();
+  TOTBetaCorrelation(TOTLayer::Layer layer);
   ~TOTBetaCorrelation();
+  TOTBetaCorrelation* create(TOTLayer::Layer layer) const;
   virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
   virtual void finalize();
 private:
-  TofLayer m_layer;
-  QString layerName(TofLayer layer);
-  bool checkLayer(double z);
+
 };
 
 #endif

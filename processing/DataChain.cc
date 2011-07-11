@@ -1,21 +1,26 @@
 #include "DataChain.hh"
 
 #include <QMutexLocker>
+#include <QRegExp>
 
 #include <TFile.h>
 #include <TList.h>
 
 #include "SimpleEvent.hh"
 #include "DataDescription.hh"
+#include "Constants.hh"
 
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 
 QMutex DataChain::s_mutex;
 
 DataChain::DataChain()
   : m_chain(0)
   , m_event(0)
+  , m_currentEntry(-1)
 {
   init();
 }
@@ -23,6 +28,7 @@ DataChain::DataChain()
 DataChain::DataChain(const char* listName)
   : m_chain(0)
   , m_event(0)
+  , m_currentEntry(-1)
 {
   setFileList(listName);
 }
@@ -30,6 +36,9 @@ DataChain::DataChain(const char* listName)
 DataChain::~DataChain()
 {
   delete m_chain;
+  for (std::map<TTree*, const DataDescription*>::iterator it = m_descriptionBuffer.begin(); it != m_descriptionBuffer.end(); it++) {
+    delete it->second;
+  }
 }
 
 void DataChain::init()
@@ -62,13 +71,22 @@ void DataChain::addFileList(const char* listName)
   while (true) {
     // read filename from list
     char filename[256];
-    file >> filename;
+    file.getline(filename,256);
     if (file.eof()) break;
-
-    addRootFile(filename);
+    QString fullname(filename);
+    if (fullname.endsWith(".txt"))
+      addFileList(qPrintable(fullname));
+    else if (fullname.endsWith(".root")) {
+      const char* env = getenv("PERDAIXDATA_PATH");
+      if (env == 0) {
+        qFatal("ERROR: You need to set PERDAIXDATA_PATH environment variable to the toplevel location of the data!");
+      }
+      fullname.prepend(QString(env) + "/");
+      addRootFile(qPrintable(fullname));
+    }
   }
   
-  std::cout << "DONE: Chain contains " << m_chain->GetEntries() << " events" << std::endl;
+  std::cout << "DONE: Chain now contains " << m_chain->GetEntries() << " events in total (after addition of " << listName << ")" << std::endl;
 }
 
 void DataChain::addRootFile(const char* filename)
@@ -89,7 +107,16 @@ void DataChain::addRootFile(const char* filename)
   std::cout << " with " << nEntries << " events";
   if (desc) {
     std::cout << " (version: " << desc->softwareVersionHash() << ")" << std::endl;
+    for (int i = 0; i < desc->numberOfRuns(); i++) {
+      QString name(desc->runFileName(i).c_str());
+      QRegExp re("run_(\\d+)");
+      if(name.contains(re)) {
+        unsigned int time = re.cap(1).toUInt();
+        m_runNumbers.push_back(time);
+      }
+    }
   }
+  std::sort(m_runNumbers.begin(), m_runNumbers.end());
 }
 
 SimpleEvent* DataChain::event(unsigned int i)
@@ -99,6 +126,13 @@ SimpleEvent* DataChain::event(unsigned int i)
   m_currentEntry = i;
   m_event = 0;
   m_chain->GetEntry(i); 
+  TTree* tree = m_chain->GetTree();
+  const DataDescription* desc = m_descriptionBuffer[tree];
+  if (!desc) {
+    desc = new DataDescription(*currentDescription()); // create a copy because the original vanishes when the TChain closes its TFile
+    m_descriptionBuffer[tree] = desc;
+  }
+  m_event->setDescription(desc);
   return m_event;
 }
 
@@ -151,10 +185,10 @@ QDateTime DataChain::time(int eventNumber)
 
 QDateTime DataChain::startTime()
 {
-  return time(0);
+  return QDateTime::fromTime_t(m_runNumbers.front());
 }
 
 QDateTime DataChain::stopTime()
 {
-  return time(nEntries() - 1);
+  return QDateTime::fromTime_t(m_runNumbers.back() + Constants::runLength);
 }

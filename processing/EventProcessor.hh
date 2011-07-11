@@ -3,6 +3,8 @@
 
 #include <QVector>
 
+class Particle;
+class Hit;
 class SimpleEvent;
 class EventDestination;
 
@@ -18,6 +20,7 @@ public:
   void clearDestinations();
 
   virtual void process(SimpleEvent*) = 0;
+  bool tryProcessingDestination(EventDestination*, QVector<Hit*>&, Particle*, SimpleEvent*) const;
 
 protected:
   QVector<EventDestination*> m_destinations;

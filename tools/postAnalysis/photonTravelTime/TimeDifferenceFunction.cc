@@ -36,10 +36,19 @@ TimeDifferenceFunction::TimeDifferenceFunction(PostAnalysisCanvas* canvas)
   double minY = histogram->GetYaxis()->GetXmin();
   double maxY = histogram->GetYaxis()->GetXmax();
   m_function = new TF2(qPrintable(title), photonTime, minX, maxX, minY, maxY, Corrections::nPhotonTravelTimeDifferenceParameters);
-  m_function->SetParameters(0, 1.5, 2.5, 2.5, 2.5, 2.5);
-  histogram->Fit(m_function, "QN0 WW");
-  for (int i = 0; i < Corrections::nPhotonTravelTimeDifferenceParameters; ++i)
-    qDebug() << QString("%1_c%2=%3").arg(title).arg(i).arg(m_function->GetParameter(i));
+  m_function->SetParameters(0.0, 1.5, 1.0, 1.0, 1.0, 1.0);
+  m_function->SetParLimits(1, 1.3, 1.8);
+  m_function->SetParLimits(2, 0., 10.0);
+  m_function->SetParLimits(3, 0., 10.0);
+  m_function->SetParLimits(4, 0., 10.0);
+  m_function->SetParLimits(5, 0., 10.0);
+  m_function->SetRange(-150., 150.);
+  histogram->Fit(m_function, "QN0 E R");
+  m_function->FixParameter(0, m_function->GetParameter(0));
+  m_function->FixParameter(1, m_function->GetParameter(1));
+  m_function->SetRange(minY, maxY);
+  histogram->Fit(m_function, "QN0 E");
+
   title = QString("%1 histogram").arg(canvas->name());
   setTitle(title);
   int nBinsX = histogram->GetXaxis()->GetNbins();
@@ -53,6 +62,10 @@ TimeDifferenceFunction::TimeDifferenceFunction(PostAnalysisCanvas* canvas)
     }
   }
   addHistogram(h);
+  std::cout << qPrintable(title.mid(31, 4));
+  for (int i = 0; i < Corrections::nPhotonTravelTimeDifferenceParameters; ++i)
+    std::cout << (i == 0 ? '=' : ',') << m_function->GetParameter(i);
+  std::cout << std::endl;
 }
 
 TimeDifferenceFunction::~TimeDifferenceFunction()

@@ -10,8 +10,14 @@ INCLUDEPATH+= \
 
 CLASSES += \
   RootPlot \
+  RootQtWidget \
   H1DPlot \
   H2DPlot \
+  H2DProjectionPlot \
+  ProjectionControlWidget \
+  StringSpinBox \
+  DetectorSelectionWidget \
+  TOFChannelSelectionWidget \
   GraphPlot \
   PerdaixDisplay
 

@@ -1,0 +1,8 @@
+testbeam/20110517/run_1305626867.root
+testbeam/20110517/run_1305627467.root
+testbeam/20110517/run_1305628068.root
+testbeam/20110517/run_1305628668.root
+testbeam/20110517/run_1305629268.root
+testbeam/20110517/run_1305629869.root
+testbeam/20110517/run_1305630180.root
+testbeam/20110517/run_1305630780.root

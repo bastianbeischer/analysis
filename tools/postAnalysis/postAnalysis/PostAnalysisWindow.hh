@@ -16,6 +16,7 @@ public:
   ~PostAnalysisWindow();
   void setAnalysisFile(const QString&);
 protected:
+  void addWidget(QWidget*);
   virtual void setupAnalysis() = 0;
   PostAnalysisCanvas* addCanvas(TFile*, const QString& name);
   void addPlot(PostAnalysisPlot*);
@@ -30,7 +31,8 @@ private slots:
   void selectPlot(QListWidgetItem*);
   void selectPlot(QListWidgetItem*, QListWidgetItem*);
   void plotOptionComboBoxCurrentIndexChanged(const QString& option);
-private:
+  void setLogY(int);
+protected:
   Ui_postAnalysisWindow* m_ui;
 };
 

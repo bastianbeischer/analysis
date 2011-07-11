@@ -22,7 +22,7 @@
 
 TOTTimeCorrelationPlot::TOTTimeCorrelationPlot(unsigned int id, QDateTime first, QDateTime last)
   : AnalysisPlot(TimeOverThreshold)
-  , H2DPlot()
+  , H2DProjectionPlot()
   , m_id(id)
 {
   QString title = QString("time over threshold time correlation 0x%1").arg(0x8000 | id, 0, 16);
@@ -46,17 +46,18 @@ TOTTimeCorrelationPlot::~TOTTimeCorrelationPlot()
 {
 }
 
-void TOTTimeCorrelationPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void TOTTimeCorrelationPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
 {
   const Track* track = particle->track();
+  if (!track || !track->fitGood())
+    return;
+  const QVector<Hit*>& hits = track->hits(); 
 
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Hit* hit = *it;
     if (hit->type() == Hit::tof) {
       TOFCluster* cluster = static_cast<TOFCluster*> (hit);
-      if (qAbs(track->x(cluster->position().z()) - cluster->position().x()) > 0.95 * Constants::tofBarWidth / 2.)
-        continue;
       std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {

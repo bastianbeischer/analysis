@@ -1,0 +1,72 @@
+#include "ProjectionControlWidget.hh"
+
+#include "H2DProjectionPlot.hh"
+
+#include <QHBoxLayout>
+#include <QLabel>
+#include <QSpinBox>
+#include <QComboBox>
+
+ProjectionControlWidget::ProjectionControlWidget(H2DProjectionPlot* plot, QWidget* parent) :
+  QWidget(parent),
+  m_projectionPlot(plot),
+  m_comboBox(new QComboBox),
+  m_spinBox(new QSpinBox)
+{
+  m_comboBox->addItem("none");
+  m_comboBox->addItem("projection on y");
+  m_comboBox->addItem("projection on x");
+  m_comboBox->setCurrentIndex(0);
+
+  m_spinBox->setMinimum(1);
+  m_spinBox->setValue(1);
+  m_spinBox->setEnabled(false);
+
+  QHBoxLayout* layout = new QHBoxLayout(this);
+  layout->addWidget(m_comboBox);
+  layout->addSpacing(50);
+  layout->addWidget(new QLabel("number of bins"));
+  layout->addWidget(m_spinBox);
+  layout->addStretch();
+
+  connect(m_comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeProjectionType(int)));
+}
+
+ProjectionControlWidget::~ProjectionControlWidget()
+{
+}
+
+void ProjectionControlWidget::setProjectionType(H2DProjectionPlot::ProjectionType type)
+{
+  switch (type) {
+    case H2DProjectionPlot::NoProjection: m_comboBox->setCurrentIndex(0); break;
+    case H2DProjectionPlot::ProjectionOnY: m_comboBox->setCurrentIndex(1); break;
+    case H2DProjectionPlot::ProjectionOnX: m_comboBox->setCurrentIndex(2); break;
+  }
+}
+
+void ProjectionControlWidget::changeProjectionType(int index)
+{
+  switch (index) {
+  case 0:
+    m_projectionPlot->setProjectionType(H2DProjectionPlot::NoProjection);
+    m_spinBox->setEnabled(false);
+    break;
+  case 1:
+    m_projectionPlot->setProjectionType(H2DProjectionPlot::ProjectionOnY);
+    m_spinBox->setEnabled(true);
+    break;
+  case 2:
+    m_projectionPlot->setProjectionType(H2DProjectionPlot::ProjectionOnX);
+    m_spinBox->setEnabled(true);
+    break;
+  default:
+    Q_ASSERT(false);
+    break;
+  }
+}
+  
+QSpinBox* ProjectionControlWidget::spinBox()
+{
+  return m_spinBox;
+}

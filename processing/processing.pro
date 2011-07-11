@@ -14,7 +14,10 @@ CLASSES += \
   EventDestination \
   DataChain \
   LimitedEventQueue \
-  ProcessingThread
+  ProcessingThread \
+  Cut \
+  CutFilter \
+  MCFilter
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \

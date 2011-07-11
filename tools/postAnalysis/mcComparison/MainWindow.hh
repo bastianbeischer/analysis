@@ -3,18 +3,17 @@
 
 #include "PostAnalysisWindow.hh"
 
+class QStringList;
+
 class MainWindow : public PostAnalysisWindow {
 Q_OBJECT
 public:
   MainWindow(QWidget* parent = 0);
   ~MainWindow();
-  void setAnalysisFile(const QString&);
-  void setMCFile(const QString&);
 
-  void setupAnalysis();
-
-protected:
-  QString m_mcFile;
+  void setupAnalysis(QStringList args);
+private:
+  void setupAnalysis(){}
 };
 
 #endif

@@ -9,7 +9,7 @@
 #include <QDebug>
 
 const QVector<RootPlot::DrawOption> H1DPlot::s_drawOptions = QVector<DrawOption>()
-  << BLANK;
+  << BLANK << E1X0 << P << L << C << HIST;
 
 H1DPlot::H1DPlot()
   : RootPlot()

@@ -5,19 +5,24 @@
 #include <TLegend.h>
 #include <TF1.h>
 
+#include <QWidget>
+
 RootPlot::RootPlot()
   : m_title(QString())
   , m_drawOption(UndefinedDrawOption)
   , m_type(Undefined)
   , m_drawn(false)
-  , m_latex(QVector<TLatex*>())
-  , m_legend(QVector<TLegend*>())
-  , m_function(QVector<TF1*>())
+  , m_secondaryWidget(0)
+  , m_latex()
+  , m_legend()
+  , m_function()
 {
 }
 
 RootPlot::~RootPlot()
 {
+  if (m_secondaryWidget)
+    delete m_secondaryWidget;
   qDeleteAll(m_latex);
   qDeleteAll(m_legend);
   qDeleteAll(m_function);
@@ -84,6 +89,7 @@ QString RootPlot::drawOption(DrawOption option)
 {
   switch (option) {
     case BLANK: return "";
+    case E1X0: return "E1X0";
     case COLZ: return "COL Z";
     case SCAT: return "SCAT";
     case CONT4Z: return "CONT4 Z";
@@ -95,6 +101,11 @@ QString RootPlot::drawOption(DrawOption option)
     case AC: return "AC";
     case ALP: return "ALP";
     case ACP: return "ACP";
+    case ALX: return "ALX";
+    case P: return "P";
+    case L: return "L";
+    case C: return "C";
+    case HIST: return "HIST";
     default: return QString();
   }
   return QString();
@@ -108,4 +119,11 @@ RootPlot::DrawOption RootPlot::drawOption()
 void RootPlot::setDrawOption(DrawOption option)
 {
   m_drawOption = option;
+}
+
+void RootPlot::setSecondaryWidget(QWidget* widget)
+{
+  if (m_secondaryWidget)
+    delete m_secondaryWidget;
+  m_secondaryWidget = widget;
 }

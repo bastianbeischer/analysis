@@ -9,9 +9,14 @@
 #include "TRDModule.hh"
 #include "TOFBar.hh"
 
+#include "FieldManager.hh"
+#include "InhomField.hh"
+#include "UniformField.hh"
+
 #include <QStringList>
 #include <QSettings>
 #include <QMutex>
+#include <QDir>
 
 #include <TVector3.h>
 
@@ -25,13 +30,21 @@ Setup::Setup() :
   m_coordinates(0),
   m_settings(0)
 {
-  char* env = getenv("PERDAIXANA_PATH");
+  const char* env = getenv("PERDAIXANA_PATH");
   if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
   QString path(env);
   path += "/conf/";
-  m_coordinates = new QSettings(path+"perdaix_coordinates.conf", QSettings::IniFormat);
+  QDir dir(path);
+  if (!dir.exists("coordinates.conf")) {
+    qFatal("ERROR: coordinates.conf not found. Maybe you need to switch to a configuration, for example: switch_to_config.sh kiruna");
+  }
+  if (!dir.exists("setup.conf")) {
+    qFatal("ERROR: setup.conf not found. Maybe you need to switch to a configuration, for example: switch_to_config.sh kiruna");
+  }
+
+  m_coordinates = new QSettings(path+"coordinates.conf", QSettings::IniFormat);
   m_settings = new QSettings(path+"setup.conf", QSettings::IniFormat);
 
   construct();
@@ -74,6 +87,24 @@ void Setup::construct()
         }
       } // elements
       layer->sortIdsByPosition();
+    }
+    else if (list[0] == "field") {
+      QString type = list[1];
+      if (type == "uniform") {
+        QList<QVariant> values = m_settings->value(key).toList();
+        double Bx = values[0].toDouble();
+        double By = values[1].toDouble();
+        double Bz = values[2].toDouble();
+        FieldManager::instance()->setField(new UniformField(TVector3(Bx, By, Bz)));
+      }
+      else if (type == "inhom") {
+        QString fieldMap = m_settings->value(key).toString();
+        FieldManager::instance()->setField(new InhomField(qPrintable(fieldMap)));
+      }
+      else {
+        // shouldn't happen
+        Q_ASSERT(false);
+      }
     }
   } // layers
 }
@@ -191,7 +222,7 @@ SensorTypes::Type Setup::sensorForId(unsigned short id)
     return tofSensorForId(id);
   //TODO: Tracker, TRD
   Q_ASSERT(false);
-  return SensorTypes::END;
+  return SensorTypes::N_SENSOR_TYPES;
 }
 
 SensorTypes::Type Setup::tofSensorForId(unsigned short id)

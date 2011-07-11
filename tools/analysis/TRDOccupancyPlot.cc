@@ -3,10 +3,13 @@
 #include "Setup.hh"
 #include "DetectorElement.hh"
 #include "Particle.hh"
+#include "ParticleInformation.hh"
 #include "Track.hh"
 #include "Hit.hh"
 #include "Cluster.hh"
 #include "SimpleEvent.hh"
+#include "TRDCalculations.hh"
+#include "TRDSpectrumPlot.hh"
 
 #include <TCanvas.h>
 #include <TList.h>
@@ -56,12 +59,21 @@ TRDOccupancyPlot::~TRDOccupancyPlot()
 
 void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
 {
+
   const Track* track = particle->track();
+  const QVector<Hit*> trackHits = track->hits();
+  const ParticleInformation::Flags pFlags = particle->information()->flags();
 
-  const QVector<Hit*>& clustersToAnalyze = m_onlyOnTrack ? track->hits() : hits;
+  //check if everything worked and a track has been fit
+  if (!track || !track->fitGood())
+    return;
 
-  const QVector<Hit*>::const_iterator endIt = clustersToAnalyze.end();
-  for (QVector<Hit*>::const_iterator it = clustersToAnalyze.begin(); it != endIt; ++it) {
+  if (pFlags & ParticleInformation::Chi2Good)
+    return;
+
+  //loop over all hits of the event
+  const QVector<Hit*>::const_iterator endIt = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Hit* clusterHit = *it;
 
     //only trd:
@@ -70,12 +82,24 @@ void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, Particle* particl
 
     Cluster* cluster = static_cast<Cluster*>(clusterHit);
 
+    //loop over all subhits of the cluster, in most cases just one
     std::vector<Hit*>& subHits = cluster->hits();
     const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       Hit* hit = *it;
+      //analyse the hit:
+      double distanceInTube = 1.;
+
+      if(TRDSpectrumPlot::calculateLengthInTube)
+          TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
+
+      if(!(distanceInTube > 0 && trackHits.contains(clusterHit)) && m_onlyOnTrack)
+        continue;
+
+      double signal = hit->signalHeight() / (distanceInTube);
+
       m_hits[hit->detId()]++;
-      m_signalHeightSum[hit->detId()] += hit->signalHeight();
+      m_signalHeightSum[hit->detId()] += signal;
     
       //fill histo
       double value = 0;

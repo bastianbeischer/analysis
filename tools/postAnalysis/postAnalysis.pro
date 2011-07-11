@@ -10,4 +10,6 @@ SUBDIRS  = \
   timeOverThreshold \
   timeOverThresholdScaling \
   timeResolution \
-  slowControl
+  mcComparison \
+  slowControl \
+  trdMoPV

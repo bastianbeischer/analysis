@@ -1,0 +1,18 @@
+# Data taken after installing the new
+# isolation. Two hour warm up phase.
+# When PERDaix was just warmed up we
+# went out for the RF-Test again.
+20101122interferenceTest/run_1290418792.root
+20101122interferenceTest/run_1290419392.root
+20101122interferenceTest/run_1290419992.root
+20101122interferenceTest/run_1290420593.root
+20101122interferenceTest/run_1290421193.root
+20101122interferenceTest/run_1290421794.root
+20101122interferenceTest/run_1290422394.root
+20101122interferenceTest/run_1290422995.root
+20101122interferenceTest/run_1290423595.root
+20101122interferenceTest/run_1290424195.root
+20101122interferenceTest/run_1290424796.root
+20101122interferenceTest/run_1290425396.root
+20101122interferenceTest/run_1290425997.root
+

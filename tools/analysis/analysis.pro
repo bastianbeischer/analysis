@@ -25,8 +25,7 @@ LIBS += \
   -lparticle \
   -ltracking \
   -lrootplot \
-  -lsetup \
-  -lglobal
+  -lsetup
 
 CLASSES = \
   AlbedosVsMomentumPlot \
@@ -36,24 +35,34 @@ CLASSES = \
   BendingPositionPlot \
   BetaMomentumCorrelationPlot \
   BetaPlot \
+  BeamProfilePlot \
   Chi2PerNdfPlot \
   Chi2Plot \
   Chi2VsMomentumPlot \
+  PlotCollection \
+  TRDSpectrumPlotCollection \
+  TRDSpectrumCherenkovPlotCollection \
+  TRDSpectrumVsTimePlotCollection \
+  TRDSpectrumVsTemperaturePlotCollection \
+  TRDSpectrumVsPressurePlotCollection \
   ClusterLengthPlot \
   ClusterShapePlot \
   GeometricOccupancyPlot \
-  GeometricOccupancyProjectionPlot \
   MainWindow \
   MomentumSpectrumPlot \
   Plotter \
   ResidualPlot \
+  ResidualPlotMC \
   SignalHeightPlot \
+  SignalHeight2DPlot \
   SingleLayerTrackingEfficiencyPlot \
   MultiLayerTrackingEfficiencyPlot \
   CutStatisticsPlot \
   TOFPositionCorrelationPlot \
   TOFTimeDifferencePlot \
+  TOFTimeDifferencePlotCollection \
   TOFTimeShiftPlot \
+  TOFTimeShiftPlotCollection \
   TotalSignalHeightPlot \
   TrackerLayerStatisticsPlot \
   TRDCalculations \
@@ -62,32 +71,49 @@ CLASSES = \
   TRDDistanceWireToTrackPlot \
   TRDEfficiencyPlot \
   TRDEnergyDepositionOverMomentumPlot \
-  TRDMoPVTimeEvolutionPlot \
+  TRDTimeCorrectionPlot \
   TRDOccupancyPlot \
   TRDSpectrumPlot \
+  TRDSpectrumCherenkovPlot \
+  TRDSpectrumVsTimePlot \
+  TRDSpectrumVsTemperaturePlot \
+  TRDSpectrumVsPressurePlot \
   TimeResolutionPlot \
+  TimeResolutionPlotCollection \
   TotalEnergyDepositionPlot \
   TotalEnergyDepositionTRDvsTrackerPlot \
   TOFEfficiencyPlot \
   TrackingEfficiencyVsMomentumPlot \
   TOTMomentumCorrelation \
   TOTBetaCorrelation \
+  TOTLayer \
   TOTPlot \
   TOTLayerPlot \
+  TOTLayerCollection \
   TOTIonizationCorrelation \
+  TOTTemperatureCorrelationPlotCollection \
+  TOTTimeCorrelationPlotCollection \
   TOTTemperatureCorrelationPlot \
   TOTTimeCorrelationPlot \
-  TOFAlignment \
   TemperatureTimePlot \
+  PressureTimePlot \
   ChannelTriggerProbabilityPlot \
   TOFTimeShiftTriggerPlot \
   HeightTimePlot \
   TriggerRateTimePlot \
   SensorTimePlot \
+  SettingTimePlot \
   MCTotalEnergyDepositionTRDvsTrackerPlot \
   MCTRDSpectrumPlot \
-  MCRigidityResolution \
-  PMTPlot
+  MCTRDCalibrationPlot \
+  RigidityResolutionPlot \
+  MCRigidityResolutionPlot \
+  TestbeamRigidityResolutionPlot \
+  PMTPlot \
+  PMTCorrelationPlot \
+  ZSquareTRDPlot \
+  TOFBarShiftPlot \
+  TOFBarShiftPlotCollection
 
 SOURCES += \
   main.cc

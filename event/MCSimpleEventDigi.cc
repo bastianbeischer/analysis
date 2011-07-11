@@ -3,7 +3,6 @@
 
 ClassImp(MCSimpleEventDigi);
 
-
 MCSimpleEventDigi::MCSimpleEventDigi()
   : TObject()
 {
@@ -21,9 +20,11 @@ MCSimpleEventDigi::MCSimpleEventDigi(const MCSimpleEventDigi& other) :
   m_detID(other.m_detID)
 {
   m_signals.clear();
-  for (std::vector<const MCDigiSignal*>::iterator it = m_signals.begin(); it != m_signals.end(); it++) {
-    const MCDigiSignal* otherDigiSignal = *it;
-    m_signals.push_back(new MCDigiSignal(*otherDigiSignal));
+
+  const std::vector <const MCDigiSignal*> otherMcDigiSignals = other.digiSignals();
+  for (unsigned int i = 0; i < otherMcDigiSignals.size(); i++) {
+    const MCDigiSignal* otherMcDigiSignal = otherMcDigiSignals.at(i);
+    m_signals.push_back(new MCDigiSignal( *otherMcDigiSignal ));
   }
 }
 
@@ -33,3 +34,19 @@ MCSimpleEventDigi::~MCSimpleEventDigi()
     delete m_signals.at(i);
   }
 }
+
+
+double MCSimpleEventDigi::signalSum() const
+{
+  //sum up all signals (check if thy belong to one channel, atm only for trd true)
+  if (m_signals.size() == 0)
+    return 0.;
+
+  double sum = 0.;
+  std::vector<const MCDigiSignal*>::const_iterator it;
+  for (it = m_signals.begin(); it != m_signals.end(); ++it)
+    sum += (*it)->energyDeposition;
+
+  return sum;
+}
+

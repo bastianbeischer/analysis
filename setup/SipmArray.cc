@@ -19,7 +19,7 @@ QVector<Hit*> SipmArray::findClusters(const QVector<Hit*>& rawhits)
 {
   QVector<Hit*> clusters;
 
-  const int seedThreshold = 300;
+  const int seedThreshold = 500;
   const int neighbourThreshold = 100;
 
   for (unsigned short channel = 0; channel < m_nChannels; ++channel) {

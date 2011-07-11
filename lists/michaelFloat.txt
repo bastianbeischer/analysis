@@ -1,0 +1,16 @@
+# file list during float phase
+# from 11:00 until 12:38.
+# During the whole flight the
+# settings were kept constant.
+20101123flight/run_1290506391.root
+20101123flight/run_1290506991.root
+20101123flight/run_1290507591.root
+20101123flight/run_1290508192.root
+20101123flight/run_1290508792.root
+20101123flight/run_1290509033.root
+20101123flight/run_1290509633.root
+20101123flight/run_1290509669.root
+20101123flight/run_1290509894.root
+20101123flight/run_1290510514.root
+20101123flight/run_1290511114.root
+20101123flight/run_1290511715.root

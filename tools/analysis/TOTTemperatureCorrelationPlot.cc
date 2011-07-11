@@ -18,11 +18,11 @@
 #include <QDebug>
 #include <QVariant>
 #include <QSettings>
-#include <math.h>
+#include <cmath>
 
 TOTTemperatureCorrelationPlot::TOTTemperatureCorrelationPlot(unsigned int id)
   : AnalysisPlot(TimeOverThreshold)
-  , H2DPlot()
+  , H2DProjectionPlot()
   , m_id(id)
 {
   QString title = QString("time over threshold temperature correlation 0x%1").arg(0x8000 | id, 0, 16);
@@ -42,9 +42,12 @@ TOTTemperatureCorrelationPlot::~TOTTemperatureCorrelationPlot()
 {
 }
 
-void TOTTemperatureCorrelationPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void TOTTemperatureCorrelationPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
 {
   const Track* track = particle->track();
+  if (!track || !track->fitGood())
+    return;
+  const QVector<Hit*>& hits = track->hits(); 
 
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
@@ -60,7 +63,7 @@ void TOTTemperatureCorrelationPlot::processEvent(const QVector<Hit*>& hits, Part
         if (tofHit->detId() == m_id) {
           double temperature = event->sensorData(Setup::instance()->sensorForId(m_id));
           TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
-          if (!isnan(temperature))
+          if (!std::isnan(temperature))
             histogram()->Fill(temperature, tofSipmHit->timeOverThreshold());
         }
       }

@@ -45,7 +45,7 @@ private:
   
   int m_channel;
   double m_startTime;
-  double m_photonTravelTime; //! TODO: remove this comment line next time the data is processed!
+  double m_photonTravelTime; //!
   double m_timeOverThreshold;
 
   std::vector<uint32_t> m_levelChanges;

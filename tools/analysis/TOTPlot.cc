@@ -8,6 +8,10 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "Constants.hh"
+#include "ProjectionControlWidget.hh"
+
+#include <QSpinBox>
+
 
 #include <TH2D.h>
 #include <TAxis.h>
@@ -17,8 +21,9 @@
 
 TOTPlot::TOTPlot()
   : AnalysisPlot(TimeOverThreshold)
-  , H2DPlot()
+  , H2DProjectionPlot()
 {
+  controlWidget()->spinBox()->setMaximum(64);
   QString title = QString("time over threshold");
   setTitle(title);
   TH2D* histogram = new TH2D(qPrintable(title), "", 64, -0.5, 63.5, 150, 0, 150);
@@ -31,17 +36,17 @@ TOTPlot::TOTPlot()
 TOTPlot::~TOTPlot()
 {}
 
-void TOTPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
+void TOTPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
   const Track* track = particle->track();
-
+  if (!track || !track->fitGood())
+    return;
+  const QVector<Hit*>& hits = track->hits(); 
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Hit* hit = *it;
     if (hit->type() == Hit::tof) {
       TOFCluster* cluster = static_cast<TOFCluster*> (hit);
-      if (qAbs(track->x(cluster->position().z()) - cluster->position().x()) > .95 * Constants::tofBarWidth / 2.)
-        continue;
       std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {

@@ -63,14 +63,13 @@ TRDEfficiencyPlot::~TRDEfficiencyPlot()
 void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent*)
 {
   const Track* track = particle->track();
+  const ParticleInformation::Flags pFlags = particle->information()->flags();
 
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;
 
-  //filter: only use events with 8 tracker hits:
-  ParticleInformation::Flags flags = particle->information()->flags();
-  if (!(flags & ParticleInformation::AllTrackerLayers))
+  if (pFlags & ParticleInformation::Chi2Good)
     return;
 
   //TODO: check for off track hits, atm this is Bastians criteria for on track
@@ -97,7 +96,7 @@ void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* pa
     //get distance
     double distance = TRDCalculations::distanceTrackToWire(pos2D, track);
     //check if tube has been punched by track:
-    if (fabs(distance) < 2) {
+    if (fabs(distance) < 1) {
       //was on track +1
       m_wasOnTrack[i.key()]++;
       //now check wheter the tube has seen a signal:

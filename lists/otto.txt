@@ -1,0 +1,16 @@
+# Data taken after the recovery.
+# PERDaix is still installed inside
+# the gondula. The standard inside
+# settings were used. The detector
+# warms up for two hours.
+20101125/run_1290698585.root
+20101125/run_1290699186.root
+20101125/run_1290699786.root
+20101125/run_1290701835.root
+20101125/run_1290702436.root
+20101125/run_1290703037.root
+20101125/run_1290703637.root
+20101125/run_1290704237.root
+20101125/run_1290704838.root
+20101125/run_1290705438.root
+20101125/run_1290706039.root

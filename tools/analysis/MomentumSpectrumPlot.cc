@@ -7,6 +7,7 @@
 #include "ParticleInformation.hh"
 #include "Particle.hh"
 #include "Track.hh"
+#include "SimpleEvent.hh"
 
 #include <iostream>
 #include <cmath>
@@ -49,17 +50,20 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Type type) :
   histogram->SetLineColor(kBlack);
   addHistogram(histogram);
   addLatex(RootPlot::newLatex(.15, .85));
+  if (m_type == Inverted) {
+    addLatex(RootPlot::newLatex(.15, .75));
+    addLatex(RootPlot::newLatex(.15, .65));
+  }
 }
 
 MomentumSpectrumPlot::~MomentumSpectrumPlot()
 {
 }
 
-void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* /*event*/)
+void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
   const Track* track = particle->track();
 
-  // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
 
@@ -94,4 +98,10 @@ void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle
 void MomentumSpectrumPlot::update()
 {
   latex(0)->SetTitle(qPrintable(QString("entries = %1").arg(histogram()->GetEntries())));
+  if (m_type == Inverted) {
+    double mean = histogram()->GetMean();
+    double rms = histogram()->GetRMS();
+    latex(1)->SetTitle(qPrintable(QString("#mu_R = %1 GV").arg(1./mean, 0, 'f', 2)));
+    latex(2)->SetTitle(qPrintable(QString("#sigma_{R}/R = %1").arg(rms/fabs(mean), 0, 'f', 2)));
+  }
 }

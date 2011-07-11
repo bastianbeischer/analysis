@@ -12,11 +12,14 @@
 #include "AnalysisProcessor.hh"
 #include "EventReader.hh"
 
+#include "RootQtWidget.hh"
+#include "TRDSpectrumPlotCollection.hh"
+#include "TRDSpectrumCherenkovPlotCollection.hh"
+#include "TRDSpectrumVsTimePlotCollection.hh"
 #include "BendingPositionPlot.hh"
 #include "BendingAnglePlot.hh"
 #include "ResidualPlot.hh"
 #include "GeometricOccupancyPlot.hh"
-#include "GeometricOccupancyProjectionPlot.hh"
 #include "BendingAnglePositionPlot.hh"
 #include "Chi2Plot.hh"
 #include "Chi2PerNdfPlot.hh"
@@ -24,11 +27,12 @@
 #include "AlbedosVsMomentumPlot.hh"
 #include "TOFPositionCorrelationPlot.hh"
 #include "MomentumSpectrumPlot.hh"
+#include "SignalHeight2DPlot.hh"
 #include "SignalHeightPlot.hh"
 #include "ClusterLengthPlot.hh"
 #include "ClusterShapePlot.hh"
 #include "BetaPlot.hh"
-#include "TOFTimeShiftPlot.hh"
+#include "TOFTimeShiftPlotCollection.hh"
 #include "BetaMomentumCorrelationPlot.hh"
 #include "CutStatisticsPlot.hh"
 #include "TrackerLayerStatisticsPlot.hh"
@@ -38,35 +42,50 @@
 #include "TRDClustersOnTrackPlot.hh"
 #include "TRDDistanceWireToTrackPlot.hh"
 #include "TRDDistanceInTube.hh"
-#include "TRDMoPVTimeEvolutionPlot.hh"
+#include "TRDTimeCorrectionPlot.hh"
 #include "TRDEnergyDepositionOverMomentumPlot.hh"
 #include "TRDSpectrumPlot.hh"
+#include "TRDSpectrumVsTimePlot.hh"
+#include "TRDSpectrumVsTemperaturePlot.hh"
+#include "TRDSpectrumVsPressurePlot.hh"
 #include "TRDOccupancyPlot.hh"
 #include "TRDEfficiencyPlot.hh"
 #include "TotalEnergyDepositionPlot.hh"
 #include "TotalEnergyDepositionTRDvsTrackerPlot.hh"
-#include "TimeResolutionPlot.hh"
-#include "TOFTimeDifferencePlot.hh"
+#include "TimeResolutionPlotCollection.hh"
+#include "TOFTimeDifferencePlotCollection.hh"
 #include "TotalSignalHeightPlot.hh"
 #include "TOFEfficiencyPlot.hh"
 #include "TOTMomentumCorrelation.hh"
 #include "TOTBetaCorrelation.hh"
 #include "TOTPlot.hh"
 #include "TOTLayerPlot.hh"
+#include "TOTLayerCollection.hh"
 #include "TOTIonizationCorrelation.hh"
+#include "TOTTemperatureCorrelationPlotCollection.hh"
+#include "TOTTimeCorrelationPlotCollection.hh"
 #include "TOTTemperatureCorrelationPlot.hh"
-#include "TOFAlignment.hh"
 #include "TOTTimeCorrelationPlot.hh"
 #include "TemperatureTimePlot.hh"
+#include "PressureTimePlot.hh"
+#include "SettingTimePlot.hh"
 #include "ChannelTriggerProbabilityPlot.hh"
 #include "TOFTimeShiftTriggerPlot.hh"
 #include "TriggerRateTimePlot.hh"
 #include "HeightTimePlot.hh"
 #include "MCTotalEnergyDepositionTRDvsTrackerPlot.hh"
 #include "MCTRDSpectrumPlot.hh"
-#include "MCRigidityResolution.hh"
+#include "MCRigidityResolutionPlot.hh"
+#include "MCTRDCalibrationPlot.hh"
+#include "ResidualPlotMC.hh"
+#include "TestbeamRigidityResolutionPlot.hh"
 #include "PMTPlot.hh"
+#include "PMTCorrelationPlot.hh"
+#include "BeamProfilePlot.hh"
+#include "ZSquareTRDPlot.hh"
+#include "TOFBarShiftPlotCollection.hh"
 
+#include <QCloseEvent>
 #include <QFileDialog>
 #include <QVBoxLayout>
 #include <QDateTime>
@@ -84,7 +103,7 @@ MainWindow::MainWindow(QWidget* parent)
 {
   m_ui.setupUi(this);
  
-  char* env = getenv("PERDAIXANA_PATH");
+  const char* env = getenv("PERDAIXANA_PATH");
   if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
@@ -148,6 +167,7 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.alignmentCorrectionCheckBox);
   m_controlWidgets.append(m_ui.timeShiftCorrectionCheckBox);
   m_controlWidgets.append(m_ui.trdMopValueCorrectionCheckBox);
+  m_controlWidgets.append(m_ui.trdTimeDependencyCorrectionCheckBox);
   m_controlWidgets.append(m_ui.timeOverThresholdCorrectionCheckBox);
   m_controlWidgets.append(m_ui.multipleScatteringCorrectionCheckBox);
   m_controlWidgets.append(m_ui.photonTravelTimeCorrectionCheckBox);
@@ -157,6 +177,36 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.positronCheckBox);
   m_controlWidgets.append(m_ui.muonCheckBox);
   m_controlWidgets.append(m_ui.antiMuonCheckBox);
+  m_controlWidgets.append(m_ui.rigidityCutCheckBox);
+  m_controlWidgets.append(m_ui.rigidityLineEditMax);
+  m_controlWidgets.append(m_ui.rigidityLineEditMin);
+  m_controlWidgets.append(m_ui.betaCutCheckBox);
+  m_controlWidgets.append(m_ui.betaLineEditMax);
+  m_controlWidgets.append(m_ui.betaLineEditMin);
+  m_controlWidgets.append(m_ui.tofTotCutCheckBox);
+  m_controlWidgets.append(m_ui.tofTotLineEditMax);
+  m_controlWidgets.append(m_ui.tofTotLineEditMin);
+  m_controlWidgets.append(m_ui.trdDepositionCutCheckBox);
+  m_controlWidgets.append(m_ui.trdDepositionLineEditMax);
+  m_controlWidgets.append(m_ui.trdDepositionLineEditMin);
+  m_controlWidgets.append(m_ui.cherenkovCutCheckBox);
+  m_controlWidgets.append(m_ui.cherenkovCutBelowRadioButton);
+  m_controlWidgets.append(m_ui.cherenkovCutAboveRadioButton);
+  m_controlWidgets.append(m_ui.cherenkovCutDoubleSpinBox);
+
+  m_controlWidgets.append(m_ui.mcAntiMuonCheckBox);
+  m_controlWidgets.append(m_ui.mcAntiPionCheckBox);
+  m_controlWidgets.append(m_ui.mcAntiprotonCheckBox);
+  m_controlWidgets.append(m_ui.mcElectronCheckBox);
+  m_controlWidgets.append(m_ui.mcGammaCheckBox);
+  m_controlWidgets.append(m_ui.mcHeliumCheckBox);
+  m_controlWidgets.append(m_ui.mcMuonCheckBox);
+  m_controlWidgets.append(m_ui.mcPionCheckBox);
+  m_controlWidgets.append(m_ui.mcPositronCheckBox);
+  m_controlWidgets.append(m_ui.mcProtonCheckBox);
+
+
+
 
   connect(m_reader, SIGNAL(started()), this, SLOT(toggleControlWidgetsStatus()));
   connect(m_reader, SIGNAL(finished()), this, SLOT(toggleControlWidgetsStatus()));
@@ -190,10 +240,10 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.selectTrackerButton, SIGNAL(clicked()), this, SLOT(selectTrackerButtonClicked()));
   connect(m_ui.selectTrdButton, SIGNAL(clicked()), this, SLOT(selectTrdButtonClicked()));
   connect(m_ui.selectTofButton, SIGNAL(clicked()), this, SLOT(selectTofButtonClicked()));
-  connect(m_ui.gridCheckBox, SIGNAL(stateChanged(int)), this, SLOT(gridCheckBoxChanged(int)));
-  connect(m_ui.logXCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logXCheckBoxChanged(int)));
-  connect(m_ui.logYCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logYCheckBoxChanged(int)));
-  connect(m_ui.logZCheckBox, SIGNAL(stateChanged(int)), this, SLOT(logZCheckBoxChanged(int)));
+  connect(m_ui.gridCheckBox, SIGNAL(stateChanged(int)), m_ui.plotter->rootWidget(), SLOT(setGrid(int)));
+  connect(m_ui.logXCheckBox, SIGNAL(stateChanged(int)), m_ui.plotter->rootWidget(), SLOT(setLogX(int)));
+  connect(m_ui.logYCheckBox, SIGNAL(stateChanged(int)), m_ui.plotter->rootWidget(), SLOT(setLogY(int)));
+  connect(m_ui.logZCheckBox, SIGNAL(stateChanged(int)), m_ui.plotter->rootWidget(), SLOT(setLogZ(int)));
   connect(m_ui.listWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(listWidgetItemChanged(QListWidgetItem*)));
   connect(m_ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(listWidgetCurrentRowChanged(int)));
 
@@ -400,10 +450,10 @@ void MainWindow::setDrawOptionComboBox()
 void MainWindow::setupPlots()
 {
   Setup* setup = Setup::instance();
-  const ElementIterator elementStartIt = setup->firstElement();
-  const ElementIterator elementEndIt = setup->lastElement();
-  const LayerIterator layerStartIt = setup->firstLayer();
-  const LayerIterator layerEndIt = setup->lastLayer();
+  const ElementIterator& elementStartIt = setup->firstElement();
+  const ElementIterator& elementEndIt = setup->lastElement();
+  const LayerIterator& layerStartIt = setup->firstLayer();
+  const LayerIterator& layerEndIt = setup->lastLayer();
   ElementIterator elementIt;
   LayerIterator layerIt;
 
@@ -411,10 +461,11 @@ void MainWindow::setupPlots()
   m_activePlots.clear();
   m_ui.listWidget->clear();
     
-  QDateTime first = m_reader->time(m_ui.firstEventSpinBox->value());
-  QDateTime last = m_reader->time(m_ui.lastEventSpinBox->value());
+  QDateTime first = m_reader->startTime();
+  QDateTime last = m_reader->stopTime();
 
   if (m_ui.signalHeightTrackerCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new SignalHeight2DPlot);
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tracker)
@@ -422,27 +473,21 @@ void MainWindow::setupPlots()
     }
   }
   if (m_ui.signalHeightTRDCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new ZSquareTRDPlot);
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::trd)
         m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightTRD, element->id()));
     }
 
-    m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD));
-    m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, -3, -1.5));
-    m_ui.plotter->addPlot(new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, 0 /* doesnt matter */,TRDSpectrumPlot::completeTRD, 1.5, 3));
-    
-    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
-      DetectorElement* element = *elementIt;
-      if (element->type() == DetectorElement::trd){
-        TRDSpectrumPlot* trdModuleSpectrumPlot = new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, element->id(),TRDSpectrumPlot::module);
-        m_ui.plotter->addPlot(trdModuleSpectrumPlot);
-        for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++){
-          TRDSpectrumPlot* trdChannelSpectrumPlot = new TRDSpectrumPlot(AnalysisPlot::SignalHeightTRD, element->id() | tubeNo,TRDSpectrumPlot::channel);
-          m_ui.plotter->addPlot(trdChannelSpectrumPlot);
-        }
-      }
-    }
+    m_ui.plotter->addPlot(new TRDSpectrumPlot());
+    m_ui.plotter->addPlot(new TRDSpectrumPlotCollection);
+
+    m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(first,last));
+    m_ui.plotter->addPlot(new TRDSpectrumVsTimePlotCollection(first, last));
+
+    m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot());
+    m_ui.plotter->addPlot(new TRDSpectrumVsPressurePlot());
   }
   if (m_ui.clusterShapeTrackerCheckBox->isChecked()) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
@@ -462,40 +507,32 @@ void MainWindow::setupPlots()
   }
   if (m_ui.timeOverThresholdCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TOTPlot);
-    m_ui.plotter->addPlot(new TOTLayerPlot(TOTLayerPlot::Upper));
-    m_ui.plotter->addPlot(new TOTLayerPlot(TOTLayerPlot::Lower));
-    m_ui.plotter->addPlot(new TOTLayerPlot(TOTLayerPlot::All));
-    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Upper, Hit::trd));
-    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Lower, Hit::trd));
-    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::All, Hit::trd));
-    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Upper, Hit::tracker));
-    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::Lower, Hit::tracker));
-    m_ui.plotter->addPlot(new TOTIonizationCorrelation(TOTIonizationCorrelation::All, Hit::tracker));
-    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::Upper));
-    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::Lower));
-    m_ui.plotter->addPlot(new TOTMomentumCorrelation(TOTMomentumCorrelation::All));
-    m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::Upper));
-    m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::Lower));
-    m_ui.plotter->addPlot(new TOTBetaCorrelation(TOTBetaCorrelation::All));
-    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
-      DetectorElement* element = *elementIt;
-      if (element->type() == DetectorElement::tof)
-        for (int ch = 0; ch < 4; ++ch)
-          m_ui.plotter->addPlot(new TOTTemperatureCorrelationPlot(element->id() | ch));
-    }
-    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
-      DetectorElement* element = *elementIt;
-      if (element->type() == DetectorElement::tof)
-        for (int ch = 0; ch < 4; ++ch)
-          m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch, first, last));
-    }
+    m_ui.plotter->addPlot(new TOTLayerCollection(new TOTLayerPlot()));
+    m_ui.plotter->addPlot(new TOTLayerCollection(new TOTIonizationCorrelation(Hit::trd)));
+    m_ui.plotter->addPlot(new TOTLayerCollection(new TOTIonizationCorrelation(Hit::tracker)));
+    m_ui.plotter->addPlot(new TOTLayerCollection(new TOTMomentumCorrelation()));
+    m_ui.plotter->addPlot(new TOTLayerCollection(new TOTBetaCorrelation()));
+    m_ui.plotter->addPlot(new TOTTemperatureCorrelationPlotCollection);
+    m_ui.plotter->addPlot(new TOTTimeCorrelationPlotCollection(first, last));
+    // for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+    //   DetectorElement* element = *elementIt;
+    //   if (element->type() == DetectorElement::tof)
+    //     for (int ch = 0; ch < 4; ++ch)
+    //       m_ui.plotter->addPlot(new TOTTemperatureCorrelationPlot(element->id() | ch));
+    // }
+    // for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+    //   DetectorElement* element = *elementIt;
+    //   if (element->type() == DetectorElement::tof)
+    //     for (int ch = 0; ch < 4; ++ch)
+    //       m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch, first, last));
+    // }
   }
   if (m_ui.trackingCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BendingPositionPlot);
     m_ui.plotter->addPlot(new BendingAnglePlot);
     for (double cut = .004; cut < .008; cut+=.001)
       m_ui.plotter->addPlot(new BendingAnglePositionPlot(cut));
-    for (unsigned short ndf = 10; ndf <= 20; ndf++)
+    for (unsigned short ndf = 6; ndf <= 16; ndf++)
       m_ui.plotter->addPlot(new Chi2Plot(ndf));
     m_ui.plotter->addPlot(new Chi2PerNdfPlot);
     m_ui.plotter->addPlot(new Chi2VsMomentumPlot);
@@ -504,7 +541,6 @@ void MainWindow::setupPlots()
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       m_ui.plotter->addPlot(new GeometricOccupancyPlot(layer->z()));
-      m_ui.plotter->addPlot(new GeometricOccupancyProjectionPlot(layer->z()));
     }
   }
   if (m_ui.residualsTrackerCheckBox->isChecked()) {
@@ -540,42 +576,14 @@ void MainWindow::setupPlots()
     }
   }
   if (m_ui.resolutionTofCheckBox->isChecked()) {
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8000, 0x8010, 0x802c, 0x803c));
-    
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8004, 0x8014, 0x802c, 0x803c));
-
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x8008, 0x8018, 0x802c, 0x803c));
-    
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TimeResolutionPlot(0x800c, 0x801c, 0x802c, 0x803c));
+    m_ui.plotter->addPlot(new TimeResolutionPlotCollection);
   }
   if (m_ui.calibrationTofCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new ChannelTriggerProbabilityPlot);
     m_ui.plotter->addPlot(new TOFTimeShiftTriggerPlot);
-    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
-      DetectorElement* element = *elementIt;
-      if (element->type() == DetectorElement::tof)
-        m_ui.plotter->addPlot(new TOFTimeDifferencePlot(element->id()));
-    }
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8000, 0x8010));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8004, 0x8014));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8008, 0x8018));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x800c, 0x801c));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8020, 0x8030));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8024, 0x8034));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x8028, 0x8038));
-    m_ui.plotter->addPlot(new TOFTimeShiftPlot(0x802c, 0x803c));
+    m_ui.plotter->addPlot(new TOFTimeShiftPlotCollection);
+    m_ui.plotter->addPlot(new TOFTimeDifferencePlotCollection);
+    m_ui.plotter->addPlot(new TOFBarShiftPlotCollection);
   }
   if (m_ui.miscellaneousTrackerCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TotalSignalHeightPlot);
@@ -595,10 +603,9 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDEfficiencyPlot());
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::numberOfHits));
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::numberOfHits, true));
-    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeights));
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeights, true));
-    m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits));
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits, true));
+    m_ui.plotter->addPlot(new TRDTimeCorrectionPlot(first, last));
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BetaPlot());
@@ -607,12 +614,13 @@ void MainWindow::setupPlots()
       if (element->type() == DetectorElement::tof)
         m_ui.plotter->addPlot(new TOFPositionCorrelationPlot(element->id()));
     }
-    //m_ui.plotter->addPlot(new TOFAlignment);
   }
   if (m_ui.slowControlCheckBox->isChecked()) {
     QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());
     foreach(SensorTypes::Type sensor, temperatureSensors)
       m_ui.plotter->addPlot(new TemperatureTimePlot(sensor, first, last));
+    m_ui.plotter->addPlot(new PressureTimePlot(SensorTypes::TRD_PRESSURE, first, last));
+    m_ui.plotter->addPlot(new PressureTimePlot(SensorTypes::TRD_PRESSURE_SMOOTHED, first, last));
     m_ui.plotter->addPlot(new TriggerRateTimePlot(first, last));
     m_ui.plotter->addPlot(new HeightTimePlot(first, last));
   }
@@ -620,22 +628,48 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MCTotalEnergyDepositionTRDvsTrackerPlot());
   }
   if (m_ui.mcTRDCheckBox->isChecked()) {
-    m_ui.plotter->addPlot(new MCTRDSpectrumPlot(0 /* doesnt matter */,MCTRDSpectrumPlot::completeTRD));
+    m_ui.plotter->addPlot(new MCTRDSpectrumPlot());
+    for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
+      Layer* layer = *layerIt;
+      if (layer->z() > -520 && layer->z() < -240)
+        m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisPlot::MonteCarloTRD, layer));
+    }
+    m_ui.plotter->addPlot(new MCTRDCalibrationPlot());
   }
   if (m_ui.mcTrackerCheckBox->isChecked()) {
-    m_ui.plotter->addPlot(new MCRigidityResolution(-11));
-    m_ui.plotter->addPlot(new MCRigidityResolution(11));
-    m_ui.plotter->addPlot(new MCRigidityResolution(2212));
-    m_ui.plotter->addPlot(new MCRigidityResolution(1000020040));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Positron));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Electron));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Proton));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::PiMinus));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::PiPlus));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Helium));
+    for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
+      Layer* layer = *layerIt;
+      if (layer->z() > -240 && layer->z() < 240)
+        m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisPlot::MonteCarloTracker, layer));
+    }
   }
   if (m_ui.testbeamCheckBox->isChecked()) {
+    m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::MagnetInstalled, first, last));
+    m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::Momentum, first, last));
+    m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::Polarity, first, last));
+    m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::AbsMomentum, first, last));
+    m_ui.plotter->addPlot(new TRDSpectrumCherenkovPlotCollection());
     QVector<SensorTypes::Type> beamSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::beamSensors());
     foreach(SensorTypes::Type sensor, beamSensors)
       m_ui.plotter->addPlot(new PMTPlot(sensor));
+    m_ui.plotter->addPlot(new PMTCorrelationPlot);
+    m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Horizontal));
+    m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Vertical));
+    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::Positron));
+    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::Electron));
+    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::Proton));
+    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::PiMinus));
+    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::PiPlus));
   }
 }
 
-void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes)
+void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes, CutFilter& cutFilter, MCFilter::Types& mcFilterTypes)
 {
   if (m_ui.alignmentCorrectionCheckBox->isChecked())
     flags|= Corrections::Alignment;
@@ -647,6 +681,8 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
     flags|= Corrections::PhotonTravelTime;
   if (m_ui.trdMopValueCorrectionCheckBox->isChecked())
     flags|= Corrections::TrdMopv;
+  if (m_ui.trdTimeDependencyCorrectionCheckBox->isChecked())
+    flags|= Corrections::TrdTime;
   if (m_ui.timeOverThresholdCorrectionCheckBox->isChecked())
     flags|= Corrections::TofTimeOverThreshold;
 
@@ -663,6 +699,101 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
   if (m_ui.antiMuonCheckBox->isChecked())
     filterTypes |= Particle::AntiMuon;
 
+  if (m_ui.mcProtonCheckBox->isChecked())
+    mcFilterTypes |= Particle::Proton;
+  if (m_ui.mcAntiprotonCheckBox->isChecked())
+    mcFilterTypes |= Particle::AntiProton;
+  if (m_ui.mcElectronCheckBox->isChecked())
+    mcFilterTypes |= Particle::Electron;
+  if (m_ui.mcPositronCheckBox->isChecked())
+    mcFilterTypes |= Particle::Positron;
+  if (m_ui.mcMuonCheckBox->isChecked())
+    mcFilterTypes |= Particle::Muon;
+  if (m_ui.mcAntiMuonCheckBox->isChecked())
+    mcFilterTypes |= Particle::AntiMuon;
+  if (m_ui.mcPionCheckBox->isChecked())
+    mcFilterTypes |= Particle::PiPlus;
+  if (m_ui.mcAntiPionCheckBox->isChecked())
+    mcFilterTypes |= Particle::PiMinus;
+  if (m_ui.mcHeliumCheckBox->isChecked())
+    mcFilterTypes |= Particle::Helium;
+  if (m_ui.mcGammaCheckBox->isChecked())
+    mcFilterTypes |= Particle::Photon;
+  
+  if (m_ui.rigidityCutCheckBox->isChecked()) {
+    Cut cut(Cut::rigidity);
+    QString minText = m_ui.rigidityLineEditMin->text();
+    QString maxText = m_ui.rigidityLineEditMax->text();
+    bool minIsNumber = false;
+    double min = minText.toDouble(&minIsNumber);
+    if (minIsNumber) {
+      cut.setMin(min);
+    }
+    bool maxIsNumber = false;
+    double max = maxText.toDouble(&maxIsNumber);
+    if (maxIsNumber) {
+      cut.setMax(max);
+    }
+    cutFilter.addCut(cut);
+  }
+  if (m_ui.betaCutCheckBox->isChecked()) {
+    Cut cut(Cut::beta);
+    QString minText = m_ui.betaLineEditMin->text();
+    QString maxText = m_ui.betaLineEditMax->text();
+    bool minIsNumber = false;
+    double min = minText.toDouble(&minIsNumber);
+    if (minIsNumber) {
+      cut.setMin(min);
+    }
+    bool maxIsNumber = false;
+    double max = maxText.toDouble(&maxIsNumber);
+    if (maxIsNumber) {
+      cut.setMax(max);
+    }
+    cutFilter.addCut(cut);
+  }
+  if (m_ui.trdDepositionCutCheckBox->isChecked()) {
+    Cut cut(Cut::trdDeposition);
+    QString minText = m_ui.trdDepositionLineEditMin->text();
+    QString maxText = m_ui.trdDepositionLineEditMax->text();
+    bool minIsNumber = false;
+    double min = minText.toDouble(&minIsNumber);
+    if (minIsNumber) {
+      cut.setMin(min);
+    }
+    bool maxIsNumber = false;
+    double max = maxText.toDouble(&maxIsNumber);
+    if (maxIsNumber) {
+      cut.setMax(max);
+    }
+    cutFilter.addCut(cut);
+  }
+  if (m_ui.tofTotCutCheckBox->isChecked()) {
+    Cut cut(Cut::tofTimeOverThreshold);
+    QString minText = m_ui.tofTotLineEditMin->text();
+    QString maxText = m_ui.tofTotLineEditMax->text();
+    bool minIsNumber = false;
+    double min = minText.toDouble(&minIsNumber);
+    if (minIsNumber) {
+      cut.setMin(min);
+    }
+    bool maxIsNumber = false;
+    double max = maxText.toDouble(&maxIsNumber);
+    if (maxIsNumber) {
+      cut.setMax(max);
+    }
+    cutFilter.addCut(cut);
+  }
+  if (m_ui.cherenkovCutCheckBox->isChecked()) {
+    Cut cut(Cut::cherenkov);
+    double cherenkovLimit = m_ui.cherenkovCutDoubleSpinBox->value();
+    if (m_ui.cherenkovCutBelowRadioButton->isChecked())
+      cut.setMax(cherenkovLimit);
+    else
+      cut.setMin(cherenkovLimit);
+    cutFilter.addCut(cut);
+  }
+  
   if (m_ui.trackComboBox->currentText() == "centered broken line") {
     type = Track::CenteredBrokenLine;
   } else if (m_ui.trackComboBox->currentText() == "centered broken line 2D") {
@@ -725,10 +856,12 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
 void MainWindow::analyzeButtonClicked()
 {
   if (m_ui.analyzeButton->text() == "&start") {
-    Track::Type type;
+    Track::Type type = Track::None;
     Corrections::Flags flags;
     ParticleFilter::Types filterTypes;
-    setupAnalysis(type, flags, filterTypes);
+    CutFilter cutFilter;
+    MCFilter::Types mcFilterTypes;
+    setupAnalysis(type, flags, filterTypes, cutFilter, mcFilterTypes);
     setupPlots();
 
     qDeleteAll(m_processors);
@@ -740,8 +873,10 @@ void MainWindow::analyzeButtonClicked()
       processor->setTrackType(type);
       processor->setCorrectionFlags(flags);
       processor->setParticleFilter(filterTypes);
+      processor->setCutFilter(cutFilter);
+      processor->setMCFilter(mcFilterTypes);
       m_processors.append(processor);
-    }      
+    }
     m_reader->start(m_processors, m_ui.firstEventSpinBox->value(), m_ui.lastEventSpinBox->value());
   } else {
     m_reader->stop();
@@ -823,16 +958,16 @@ void MainWindow::saveCanvasDialogActionTriggered()
 
 void MainWindow::saveAllCanvasDialogActionTriggered()
 {
+  QStringList fileFormatEndings;
+  fileFormatEndings << "svg" << "pdf" << "eps" << "root" << "png";
   QFileDialog dialog(this, "save all canvases displayed", ".");
   dialog.setFileMode(QFileDialog::DirectoryOnly);
   if (dialog.exec())
     for (int i = 0; i < m_ui.listWidget->count(); ++i) {
       m_ui.listWidget->setCurrentRow(i);
       QString directoryName = dialog.selectedFiles().first();
-      m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".svg");
-      m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".pdf");
-      m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".root");
-      m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + ".png");
+      foreach (QString fileFormatEnding, fileFormatEndings)
+        m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + "." + fileFormatEnding);
     }
 }
 
@@ -909,26 +1044,6 @@ void MainWindow::closeEvent(QCloseEvent* event)
   event->accept();
 }
 
-void MainWindow::gridCheckBoxChanged(int value)
-{
-  m_ui.plotter->setGrid(value);
-}
-
-void MainWindow::logXCheckBoxChanged(int value)
-{
-  m_ui.plotter->setLogX(value);
-}
-
-void MainWindow::logYCheckBoxChanged(int value)
-{
-  m_ui.plotter->setLogY(value);
-}
-
-void MainWindow::logZCheckBoxChanged(int value)
-{
-  m_ui.plotter->setLogZ(value);
-}
-
 void MainWindow::firstOrLastEventChanged(int)
 {
   double firstEvent = m_ui.firstEventSpinBox->value();
@@ -943,6 +1058,8 @@ void MainWindow::numberOfEventsChanged(int nEvents)
   m_ui.lastEventSpinBox->setMaximum(nEvents-1);
   m_ui.firstEventSpinBox->setValue(0);
   m_ui.lastEventSpinBox->setValue(nEvents-1);
+  if (nEvents > 0)
+    m_ui.analyzeButton->setEnabled(true);
   firstOrLastEventChanged();
 }
 

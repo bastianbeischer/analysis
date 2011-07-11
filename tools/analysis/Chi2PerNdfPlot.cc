@@ -33,15 +33,11 @@ void Chi2PerNdfPlot::processEvent(const QVector<Hit*>&, Particle* particle, Simp
 {
   const Track* track = particle->track();
 
-  // QMutexLocker locker(&m_mutex);
   if(!track || !track->fitGood())
     return;
 
   ParticleInformation::Flags flags = particle->information()->flags();
   if (!(flags & ParticleInformation::AllTrackerLayers))
-    return;
-
-  if (particle->type() != Particle::Helium)
     return;
 
   histogram()->Fill(track->chi2() / track->ndf());

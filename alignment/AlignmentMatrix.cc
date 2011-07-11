@@ -70,11 +70,9 @@ void AlignmentMatrix::processEvent(const QVector<Hit*>&, Particle* particle, Sim
   const QVector<Hit*>& hits = track->hits();
   
   foreach(Hit* hit, hits) {
-    //resetArrays();
-    
-    //use only tracker hits for alignment
-    // if(hit->type() != Hit::tracker)
-    //   continue;
+    // use only tracker and trd hits for alignment
+    if(hit->type() == Hit::tof)
+      continue;
 
     // position
     TVector3 pos = hit->position();
@@ -91,7 +89,7 @@ void AlignmentMatrix::processEvent(const QVector<Hit*>&, Particle* particle, Sim
     float xi = useTangens ? sin(angle)/cos(angle) : cos(angle)/sin(angle);
 
     // specify resolution
-    double sigmaV = hit->resolutionEstimate();
+    double sigmaV = hit->resolution();
 
     // detector ID
     unsigned short detId = hit->detId() - hit->channel();

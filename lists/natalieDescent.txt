@@ -1,0 +1,5 @@
+# flight data during descent
+# from 12:44 until 12:54. During
+# the whole flight the settings
+# were constant.
+20101123flight/run_1290512657.root

@@ -10,9 +10,14 @@ class PostAnalysisCanvas;
 
 class TimeOfFlightHistogram : public PostAnalysisPlot, public H1DPlot {
 public:
-  TimeOfFlightHistogram(PostAnalysisCanvas*, int ch);
+  TimeOfFlightHistogram(PostAnalysisCanvas*, int bin);
+  double y();
+  double sigma();
   virtual ~TimeOfFlightHistogram();
   static TH2D* histgram(TCanvas*);
+private:
+  double m_y;
+  double m_sigma;
 };
 
 #endif

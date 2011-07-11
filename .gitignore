@@ -3,10 +3,11 @@ Makefile
 /bin
 /lib
 /data
-/lists
+/tables
 /test
 /TAGS
 /plots
+/forPostAnalysis
 perdaix.log
 /*.txt
 *.png
@@ -19,3 +20,4 @@ texput.*
 fort.66
 build
 foo
+out

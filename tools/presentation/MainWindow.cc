@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget* parent)
 {
   m_ui.setupUi(this);
 
-  char* env = getenv("PERDAIXANA_PATH");
+  const char* env = getenv("PERDAIXANA_PATH");
   if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
@@ -72,6 +72,7 @@ void MainWindow::addFile(const QString& fileName)
   QTableWidgetItem* item = 0;
   int index = fileName.lastIndexOf('/');
   QString title = fileName.mid(index + 1, fileName.lastIndexOf('.') - index - 1);
+  title.replace("_", " ");
   item = new QTableWidgetItem(title);
   m_ui.tableWidget->setItem(cr, 0, item);
   item = new QTableWidgetItem(fileName);

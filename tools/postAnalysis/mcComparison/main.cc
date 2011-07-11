@@ -10,11 +10,9 @@ int main(int argc, char* argv[])
 
   QApplication application(argc, argv);
   MainWindow window;
-  if (application.arguments().count() == 3) {
-    window.setAnalysisFile(application.arguments().at(1));
-    window.setMCFile(application.arguments().at(2));
-    window.setupAnalysis();
+  if (application.arguments().size() > 1) {
+    window.setupAnalysis(application.arguments());
+    window.show();
+    return application.exec();
   }
-  window.show();
-  return application.exec();
 }

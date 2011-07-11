@@ -39,7 +39,7 @@
          <item row="0" column="2">
           <widget class="QCheckBox" name="drawTrackCheckBox">
            <property name="text">
-            <string>draw track</string>
+            <string>track</string>
            </property>
           </widget>
          </item>
@@ -50,14 +50,14 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="2">
+         <item row="3" column="2" colspan="2">
           <widget class="QPushButton" name="unzoomButton">
            <property name="text">
             <string>unzoom</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="2">
+         <item row="2" column="2" colspan="2">
           <widget class="QPushButton" name="addFileListButton">
            <property name="text">
             <string>add file list</string>
@@ -71,7 +71,7 @@
            </property>
           </widget>
          </item>
-         <item row="4" column="2">
+         <item row="4" column="2" colspan="2">
           <widget class="QComboBox" name="fitMethodComboBox">
            <property name="enabled">
             <bool>false</bool>
@@ -110,10 +110,17 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="2">
+         <item row="1" column="2" colspan="2">
           <widget class="QPushButton" name="editEventListButton">
            <property name="text">
             <string>edit event list</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QCheckBox" name="allClustersCheckBox">
+           <property name="text">
+            <string>all clusters</string>
            </property>
           </widget>
          </item>

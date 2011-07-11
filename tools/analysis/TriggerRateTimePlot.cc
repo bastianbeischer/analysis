@@ -20,7 +20,9 @@ TriggerRateTimePlot::TriggerRateTimePlot(QDateTime first, QDateTime last)
   int nBins = (t2 - t1) / 60;
   TH1D* histogram = new TH1D("trigger rate", "", nBins, t1, t2);
   setAxisTitle("time", "trigger rate / Hz");
-  addHistogram(histogram);
+  histogram->SetMarkerSize(0.5);
+  addHistogram(histogram, H1DPlot::P);
+  setDrawOption(H1DPlot::P);
 }
 
 TriggerRateTimePlot::~TriggerRateTimePlot()
@@ -48,6 +50,8 @@ void TriggerRateTimePlot::draw(TCanvas* canvas)
     H1DPlot::draw(canvas);
   } else {
     H1DPlot::draw(canvas);
+    //TODO check this, especially for older data !!!
+    xAxis()->SetTimeOffset(3600, "gmt"); //dont understand this, but works at testbeam
     xAxis()->SetTimeDisplay(1);
     xAxis()->SetTimeFormat("%d-%H:%M");
     gPad->Modified();

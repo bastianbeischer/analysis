@@ -146,7 +146,12 @@ void EventReader::run()
   m_threads.clear();
 }
 
-QDateTime EventReader::time(int eventNumber)
+QDateTime EventReader::startTime()
 {
-  return m_chain->time(eventNumber);
+  return m_chain->startTime();
+}
+
+QDateTime EventReader::stopTime()
+{
+  return m_chain->stopTime();
 }

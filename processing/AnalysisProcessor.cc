@@ -8,6 +8,7 @@
 #include "EventDestination.hh"
 #include "Particle.hh"
 #include "ParticleFilter.hh"
+#include "MCFilter.hh"
 #include "ParticleIdentifier.hh"
 #include "TimeOfFlight.hh"
 #include "ParticleInformation.hh"
@@ -16,9 +17,11 @@ AnalysisProcessor::AnalysisProcessor()
   : EventProcessor()
   , m_particle(new Particle)
   , m_filter(new ParticleFilter)
+  , m_mcFilter(new MCFilter)
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections)
   , m_identifier(new ParticleIdentifier)
+  , m_cuts(new CutFilter)
 {
 }
 
@@ -26,6 +29,7 @@ AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, Tr
   : EventProcessor(destinations)
   , m_particle(new Particle)
   , m_filter(new ParticleFilter)
+  , m_mcFilter(new MCFilter)
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections(flags))
   , m_identifier(new ParticleIdentifier)
@@ -38,6 +42,7 @@ AnalysisProcessor::~AnalysisProcessor()
 {
   delete m_particle;
   delete m_filter;
+  delete m_mcFilter;
   delete m_trackFinding;
   delete m_corrections;
   delete m_identifier;
@@ -56,6 +61,16 @@ void AnalysisProcessor::setCorrectionFlags(Corrections::Flags flags)
 void AnalysisProcessor::setParticleFilter(ParticleFilter::Types types)
 {
   m_filter->setTypes(types);
+}
+
+void AnalysisProcessor::setMCFilter(MCFilter::Types types)
+{
+  m_mcFilter->setTypes(types);
+}
+
+void AnalysisProcessor::setCutFilter(CutFilter cuts)
+{
+  m_cuts->setCuts(cuts);
 }
 
 void AnalysisProcessor::process(SimpleEvent* event)
@@ -80,7 +95,23 @@ void AnalysisProcessor::process(SimpleEvent* event)
   // identify particle species
   m_identifier->identify(m_particle);
 
-  if (m_filter->passes(m_particle))
-    foreach (EventDestination* destination, m_destinations)
-      destination->processEvent(clusters, m_particle, event);
+  if (m_filter->passes(m_particle)) {
+    if (m_mcFilter->passes(clusters, m_particle, event)) {
+      if (m_cuts->passes(clusters, m_particle, event)) {
+        QVector<int> postponed;
+        for (int i = 0; i < m_destinations.size(); i++) {
+          EventDestination* destination = m_destinations.at(i);
+          bool success = tryProcessingDestination(destination, clusters, m_particle, event);
+          if (!success) // postpone this destination for now.
+            postponed.append(i);
+        }
+        while(postponed.size() > 0) {
+          bool success = tryProcessingDestination(m_destinations.at(postponed.front()), clusters, m_particle, event);
+          if (success) {
+            postponed.remove(0);
+          }
+        }
+      }
+    }
+  }
 }

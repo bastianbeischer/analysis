@@ -47,10 +47,11 @@ void RootStyle::setPalette(PaletteType type)
 {
   gStyle->SetNumberContours(99);
   if (type == ResiduePalette) {
-		double stops[] = {0.00, 0.25, 0.50, 0.75, 1.00};
-		double red[]   = {0.00, 0.00, 0.00, 0.50, 1.00};
-		double green[] = {0.00, 0.00, 0.00, 0.00, 0.00};
-		double blue[]  = {1.00, 0.50, 0.00, 0.00, 0.00};
+    double stops[] = {0.00, 0.35, 0.50, 0.65, 1.00};
+		double red[]   = {0.00, 0.00, 0.00, 0.70, 1.00};
+		double green[] = {1.00, 1.00, 1.00, 1.00, 1.00};
+		double blue[]  = {1.00, 0.70, 0.00, 0.00, 0.00};
+
 		TColor::CreateGradientColorTable(5, stops, red, green, blue, gStyle->GetNumberContours());
 		return;
 	}

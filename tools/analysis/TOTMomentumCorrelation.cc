@@ -15,12 +15,18 @@
 
 #include <QDebug>
 
-TOTMomentumCorrelation::TOTMomentumCorrelation(TofLayer layer)
-: AnalysisPlot(AnalysisPlot::TimeOverThreshold)
-, H2DPlot()
-, m_layer(layer)
+TOTMomentumCorrelation::TOTMomentumCorrelation()
+  : H2DPlot() 
+  , TOTLayer(TOTLayer::All)
 {
-  QString htitle = "time over threshold momentum correlation " + layerName(layer) + " tof";
+  m_plotName = "time over threshold momentum correlation";
+}
+
+TOTMomentumCorrelation::TOTMomentumCorrelation(TOTLayer::Layer layer)
+  : H2DPlot()
+  , TOTLayer(layer)
+{
+  QString htitle = m_plotName + " " + layerName(layer) + " tof";
   setTitle(htitle);
   TH2D* histogram = new TH2D(qPrintable(htitle), "", 100, 0, 10, 150, 0, 100);
   setAxisTitle("rigidity / GV", "mean time over threshold / ns", "");
@@ -30,12 +36,17 @@ TOTMomentumCorrelation::TOTMomentumCorrelation(TofLayer layer)
 TOTMomentumCorrelation::~TOTMomentumCorrelation()
 {}
 
-void TOTMomentumCorrelation::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
+TOTMomentumCorrelation* TOTMomentumCorrelation::create(TOTLayer::Layer layer) const
+{ 
+  return new TOTMomentumCorrelation(layer); 
+}
+
+void TOTMomentumCorrelation::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
   const Track* track = particle->track();
-
   if (!track || !track->fitGood())
     return;
+  const QVector<Hit*>& clusters = track->hits();
   ParticleInformation::Flags flags = particle->information()->flags();
   if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
     return;
@@ -68,24 +79,3 @@ void TOTMomentumCorrelation::finalize() {
   setDrawOption(CONT4Z);
 }
 
-QString TOTMomentumCorrelation::layerName(TofLayer layer)
-{
-  switch (layer) {
-    case Lower: return "lower";
-    case Upper: return "upper";
-    case All: return "all";
-  }
-  return QString();
-}
-
-bool TOTMomentumCorrelation::checkLayer(double z)
-{
-  if (m_layer == Upper && z > 0) {
-    return true;
-  } else if (m_layer == Lower && z < 0) {
-    return true;
-  } else if (m_layer == All) {
-    return true;
-  }
-  return false;
-}

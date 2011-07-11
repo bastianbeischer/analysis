@@ -11,31 +11,38 @@
 #include <TROOT.h>
 
 #include "Converter.hh"
+#include "PreAnalysis.hh"
 #include "SensorsData.hh"
 #include "SimpleEvent.hh"
 #include "SingleFile.hh"
 #include "MCSingleFile.hh"
 #include "DataDescription.hh"
 
+#include "SettingsManager.hh"
+#include "Settings.hh"
+
 DataManager::DataManager() :
   m_description(0),
   m_sensorsData(0),
   m_atcData(0),
   m_ebassData(0),
+  m_testbeamData(0),
   m_outputFileName("output.root"),
   m_currentEvent(0),
   m_outputFile(0),
   m_outputTree(0)
 {
-  char* env = getenv("PERDAIXANA_PATH");
+  const char* env = getenv("PERDAIXANA_PATH");
   if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
   QString path(env);
-  QString sensorFileName = path + "/tools/parser/sensors.root";
+  QString sensorFileName = path + "/tools/parser/kiruna.root";
+  QString testbeamFileName = path + "/tools/parser/testbeam.root";
   m_sensorsData = new SensorsData(SensorsData::SENSORS, qPrintable(sensorFileName));
   m_atcData = new SensorsData(SensorsData::ATC, qPrintable(sensorFileName));
   m_ebassData = new SensorsData(SensorsData::EBASS, qPrintable(sensorFileName));
+  m_testbeamData = new SensorsData(SensorsData::SENSORS, qPrintable(testbeamFileName));
 }
 
 DataManager::~DataManager()
@@ -51,6 +58,7 @@ DataManager::~DataManager()
   delete m_sensorsData;
   delete m_atcData;
   delete m_ebassData;
+  delete m_testbeamData;
   delete m_outputFile;
 }
 
@@ -130,6 +138,7 @@ void DataManager::processFiles()
 {
   std::cout << "Starting conversion to Simple Events." << std::endl;
   Converter converter;
+  PreAnalysis preAna;
   int totalNumberOfEvents = 0;
   int currentGlobalEvent = 0;
   foreach(SingleFile* inputFile, m_inputFiles) {
@@ -149,11 +158,12 @@ void DataManager::processFiles()
     //TODO not very nice to have 2 lists
     MCSingleFile* mcInputFile = m_inputMCFiles.at(i) ;
 
-    unsigned int Nevents = inputFile->getNumberOfEvents();
-    for (unsigned int iEvent = 0; iEvent < Nevents; iEvent++) {
-      m_currentEvent = converter.generateNextSimpleEvent(inputFile, mcInputFile);
+    m_currentEvent = converter.generateNextSimpleEvent(inputFile, mcInputFile);
+    while (m_currentEvent) {
       if (!mcInputFile)
         addSensorData(m_currentEvent);
+
+      m_currentEvent = preAna.generateCompressedEvent(m_currentEvent);
 
       m_outputTree->Fill();
       delete m_currentEvent;
@@ -163,6 +173,7 @@ void DataManager::processFiles()
         iFactors++;
       }
       currentGlobalEvent++;
+      m_currentEvent = converter.generateNextSimpleEvent(inputFile, mcInputFile);
     }
   }
 
@@ -173,24 +184,25 @@ void DataManager::processFiles()
 
 void DataManager::addSensorData(SimpleEvent* event)
 {
-  int nKeys = m_sensorsData->numberOfKeys();
-  const char** keys = m_sensorsData->keys();
-  float* values = m_sensorsData->values(event->time());
-  for (int iKey = 0; iKey < nKeys; iKey++) {
-    event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
+  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+  if (settings && settings->situation() == Settings::Testbeam11) {
+    readKeys(m_testbeamData, event);
   }
-
-  nKeys = m_atcData->numberOfKeys();
-  keys = m_atcData->keys();
-  values = m_atcData->values(event->time());
-  for (int iKey = 0; iKey < nKeys; iKey++) {
-    event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
+  else {
+    readKeys(m_sensorsData, event);
+    readKeys(m_atcData, event);
+    readKeys(m_ebassData, event);
   }
+}
 
-  nKeys = m_ebassData->numberOfKeys();
-  keys = m_ebassData->keys();
-  values = m_ebassData->values(event->time());
-  for (int iKey = 0; iKey < nKeys; iKey++) {
-    event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
+void DataManager::readKeys(SensorsData* data, SimpleEvent* event)
+{
+  if (data->good()) {
+    int nKeys = data->numberOfKeys();
+    const char** keys = data->keys();
+    float* values = data->values(event->time());
+    for (int iKey = 0; iKey < nKeys; iKey++) {
+      event->setSensorData(SensorTypes::convertFromString(keys[iKey]), values[iKey]);
+    }
   }
 }

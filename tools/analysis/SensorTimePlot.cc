@@ -3,14 +3,11 @@
 #include "SensorTypes.hh"
 #include "SimpleEvent.hh"
 
-#include <TH2.h>
 #include <TAxis.h>
 #include <THStack.h>
 #include <TPad.h>
 
-#include <math.h>
-
-#include <QDebug>
+#include <cmath>
 
 SensorTimePlot::SensorTimePlot(SensorTypes::Type type, QDateTime first, QDateTime last)
   : AnalysisPlot(AnalysisPlot::SlowControl)
@@ -27,7 +24,9 @@ SensorTimePlot::SensorTimePlot(SensorTypes::Type type, QDateTime first, QDateTim
   TH1D* histogram = 0;
   
   histogram = new TH1D(qPrintable(title()), "", nBins, t1, t2);
-  addHistogram(histogram);
+  histogram->SetMarkerSize(0.5);
+  addHistogram(histogram, H1DPlot::P);
+  setDrawOption(H1DPlot::P);
   
   m_normalizationHistogram = new TH1D(qPrintable(title() + "normalization"), "", nBins, t1, t2);
 }
@@ -40,7 +39,7 @@ SensorTimePlot::~SensorTimePlot()
 void SensorTimePlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
 {
   double value = event->sensorData(m_type);
-  if (!isnan(value)) {
+  if (!std::isnan(value)) {
     double t = event->time();
     histogram()->Fill(t, value);
     m_normalizationHistogram->Fill(t);
@@ -63,6 +62,8 @@ void SensorTimePlot::draw(TCanvas* canvas)
     H1DPlot::draw(canvas);
   } else {
     H1DPlot::draw(canvas);
+    //TODO check this, especially for older data !!!
+    xAxis()->SetTimeOffset(3600, "gmt"); //dont understand this, but works at testbeam
     xAxis()->SetTimeDisplay(1);
     xAxis()->SetTimeFormat("%d-%H:%M");
     gPad->Modified();

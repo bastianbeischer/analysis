@@ -1,0 +1,25 @@
+# Data during EMI test. The settings have
+# been changed during run_1290429599 to account
+# for the lower temperature outside the Cathedral.
+# During the test an USB board problem occured
+# several times. The list only contains usable data.
+20101122interferenceTest/run_1290426597.root
+20101122interferenceTest/run_1290427197.root
+20101122interferenceTest/run_1290427798.root
+20101122interferenceTest/run_1290428398.root
+20101122interferenceTest/run_1290428999.root
+20101122interferenceTest/run_1290429599.root
+20101122interferenceTest/run_1290434632.root
+20101122interferenceTest/run_1290435236.root
+20101122interferenceTest/run_1290435275.root
+20101122interferenceTest/run_1290435875.root
+20101122interferenceTest/run_1290436475.root
+20101122interferenceTest/run_1290437076.root
+20101122interferenceTest/run_1290437676.root
+20101122interferenceTest/run_1290438277.root
+20101122interferenceTest/run_1290438877.root
+20101122interferenceTest/run_1290439477.root
+20101122interferenceTest/run_1290440078.root
+20101122interferenceTest/run_1290440678.root
+20101122interferenceTest/run_1290441278.root
+20101122interferenceTest/run_1290441879.root

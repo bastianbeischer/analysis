@@ -6,12 +6,15 @@
 #include "Track.hh"
 #include "Corrections.hh"
 #include "ParticleFilter.hh"
+#include "MCFilter.hh"
 #include "EventReader.hh"
 #include "RootPlot.hh"
+#include "CutFilter.hh"
 
 #include <QMainWindow>
 #include <QString>
 #include <QVector>
+#include <QList>
 #include <QTime>
 #include <QTimer>
 
@@ -37,10 +40,6 @@ private slots:
   void selectTrackerButtonClicked();
   void selectTrdButtonClicked();
   void selectTofButtonClicked();
-  void gridCheckBoxChanged(int);
-  void logXCheckBoxChanged(int);
-  void logYCheckBoxChanged(int);
-  void logZCheckBoxChanged(int);
   void showButtonsClicked();
   void analyzeButtonClicked();
   void saveButtonsClicked();
@@ -55,7 +54,7 @@ private slots:
   void update();
 private:
   void setupPlots();
-  void setupAnalysis(Track::Type&, Corrections::Flags&, ParticleFilter::Types&);
+  void setupAnalysis(Track::Type&, Corrections::Flags&, ParticleFilter::Types&, CutFilter&, MCFilter::Types&);
   void startAnalysis();
   void changeTopicGroupStatus(QVector<QCheckBox*>&);
   void removeListWidgetItem(int);

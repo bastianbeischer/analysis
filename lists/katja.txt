@@ -1,0 +1,22 @@
+# data taken outside the Cathedral
+# just before launch. Settings switched
+# to default outside settings used
+# before from beginning.
+# After 1290496238 the TOF voltages were
+# lowered by 0.2V.
+20101123flight/run_1290490435.root
+20101123flight/run_1290491035.root
+20101123flight/run_1290491635.root
+20101123flight/run_1290492236.root
+20101123flight/run_1290492783.root
+20101123flight/run_1290493223.root
+20101123flight/run_1290493647.root
+20101123flight/run_1290494247.root
+20101123flight/run_1290494709.root
+20101123flight/run_1290495015.root
+20101123flight/run_1290495638.root
+20101123flight/run_1290496238.root
+20101123flight/run_1290496586.root
+20101123flight/run_1290498140.root
+20101123flight/run_1290498800.root
+20101123flight/run_1290499635.root

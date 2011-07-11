@@ -3,14 +3,16 @@
 
 #include "AnalysisPlot.hh"
 
-#include <TQtWidget.h>
-
+#include <QWidget>
 #include <QVector>
 #include <QTimer>
 
+class QVBoxLayout;
+class RootQtWidget;
+
 class AnalysisPlot;
 
-class Plotter : public TQtWidget
+class Plotter : public QWidget
 {
 Q_OBJECT
 public:
@@ -27,25 +29,21 @@ public:
   RootPlot::DrawOption drawOption();
   void setDrawOption(RootPlot::DrawOption);
   RootPlot::Type selectedPlotType();
-  void unzoom();
-  void setGrid(bool);
-  void setLogX(bool);
-  void setLogY(bool);
-  void setLogZ(bool);
   void saveCanvas(const QString& fileName);
   void saveForPostAnalysis(const QString&);
+  static RootQtWidget* rootWidget();
 public slots:
   void update();
+  void unzoom();
+  void canvasPositionChanged(double, double);
   void finalizeAnalysis();
   void toggleUpdateTimer();
 signals:
   void titleChanged(const QString&);
   void positionChanged(double, double);
-protected:
-  void mousePressEvent(QMouseEvent *event);
-  void mouseMoveEvent(QMouseEvent* event);
-  void updateCanvas();
 private:
+  QVBoxLayout* m_layout;
+  static RootQtWidget* s_rootWidget;
   QTimer m_updateTimer;
   QVector<AnalysisPlot*> m_plots;
   int m_selectedPlot;

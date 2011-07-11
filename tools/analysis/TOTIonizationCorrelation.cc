@@ -16,10 +16,24 @@
 #include <QString>
 #include <QDebug>
 
-TOTIonizationCorrelation::TOTIonizationCorrelation(TofLayer layer, Hit::ModuleType type)
-  : AnalysisPlot(TimeOverThreshold)
-  , H2DPlot()
-  , m_layer(layer)
+TOTIonizationCorrelation::TOTIonizationCorrelation(Hit::ModuleType type) 
+: H2DPlot() 
+, TOTLayer(TOTLayer::All)
+, m_type(type)
+{
+  QString typeName;
+  if (m_type == Hit::trd) {
+    typeName = "trd";
+  }
+  if (m_type == Hit::tracker) {
+    typeName = "tracker";
+  }
+  m_plotName = QString("time over threshold %1 signal height correlation").arg(typeName);
+}
+
+TOTIonizationCorrelation::TOTIonizationCorrelation(TOTLayer::Layer layer, Hit::ModuleType type)
+  : H2DPlot()
+  , TOTLayer(layer)
   , m_type(type)
 {
   unsigned int nBinsX = 150;
@@ -38,7 +52,7 @@ TOTIonizationCorrelation::TOTIonizationCorrelation(TofLayer layer, Hit::ModuleTy
     xMin = 0;
     xMax = 7e4;
   }
-  QString title = QString("time over threshold %1 signal height correlation %2").arg(typeName).arg(layerName(layer));
+  QString title = m_plotName + " " + layerName(layer);
   setTitle(title);
   TH2D* histogram = new TH2D(qPrintable(title), "", nBinsX, xMin, xMax, 100, 0, 100);
   setAxisTitle("signal height / ADC counts", "mean time over threshold / ns", "");
@@ -48,12 +62,17 @@ TOTIonizationCorrelation::TOTIonizationCorrelation(TofLayer layer, Hit::ModuleTy
 TOTIonizationCorrelation::~TOTIonizationCorrelation()
 {}
 
-void TOTIonizationCorrelation::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
+TOTIonizationCorrelation* TOTIonizationCorrelation::create(TOTLayer::Layer layer) const
+{ 
+  return new TOTIonizationCorrelation(layer, m_type); 
+}
+
+void TOTIonizationCorrelation::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
   const Track* track = particle->track();
-
   if (!track || !track->fitGood())
     return;
+  const QVector<Hit*>& clusters = track->hits();
   ParticleInformation::Flags flags = particle->information()->flags();
   if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
     return;
@@ -99,28 +118,6 @@ double TOTIonizationCorrelation::sumOfNonTOFSignalHeights(const Track*, const QV
     }
   }
   return sumSignal;
-}
-
-QString TOTIonizationCorrelation::layerName(TofLayer layer)
-{
-  switch (layer) {
-    case Lower: return "lower";
-    case Upper: return "upper";
-    case All: return "all";
-  }
-  return QString();
-}
-
-bool TOTIonizationCorrelation::checkLayer(double z)
-{
-  if (m_layer == Upper && z > 0) {
-    return true;
-  } else if (m_layer == Lower && z < 0) {
-    return true;
-  } else if (m_layer == All) {
-    return true;
-  }
-  return false;
 }
 
 void TOTIonizationCorrelation::finalize()

@@ -1,0 +1,17 @@
+# data after EMI test while warming up
+# inside the Cathedral again. The settings
+# have been changed back to the original
+# ones from fileListDavid (Basilica) and
+# fileListEgon/Frank (Cathedral, 2 degrees
+# colder than Basilica).
+20101122/run_1290454546.root
+20101122/run_1290455632.root
+20101122/run_1290456232.root
+20101122/run_1290456832.root
+20101122/run_1290457433.root
+20101122/run_1290458033.root
+20101122/run_1290458844.root
+20101122/run_1290459445.root
+20101122/run_1290460045.root
+20101122/run_1290460940.root
+20101122/run_1290461540.root

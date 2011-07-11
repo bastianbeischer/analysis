@@ -20,11 +20,12 @@ CLASSES += \
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \
-  $$TOPLEVEL/global
+  $$TOPLEVEL/global \
+  $$TOPLEVEL/setup
 
 DEPENDPATH += $$INCLUDEPATH
 
-LIBS += -L$$TOPLEVEL/lib -lSimpleEvent
+LIBS += -L$$TOPLEVEL/lib -lSimpleEvent -lsetup
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

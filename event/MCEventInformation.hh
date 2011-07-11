@@ -2,8 +2,8 @@
 #define MCEVENTINFORMATION_HH
 
 #include <TObject.h>
-#include <TVector3.h>
 #include <vector>
+
 #include "MCSimpleEventParticle.hh"
 #include "MCSimpleEventDigi.hh"
 

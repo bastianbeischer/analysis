@@ -46,7 +46,6 @@ void BetaPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEven
 {
   const Track* track = particle->track();
 
-  // QMutexLocker locker(&m_mutex);
   if (!track || !track->fitGood())
     return;
   ParticleInformation::Flags flags = particle->information()->flags();

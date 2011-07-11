@@ -71,6 +71,8 @@ Converter::~Converter()
 SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MCSingleFile* mcFile)
 {
   const RawEvent* event = file->getNextRawEvent();
+  if (!event)
+    return 0;
 
   // fill simple event basics
   unsigned int eventId = event->GetEventID();
@@ -167,12 +169,15 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
       else if (id->IsPMT()) {
         int amplitude = static_cast<int>(temp[i]);
 
-        if (i == 4) {
+        if (i == 18)
           simpleEvent->setSensorData(SensorTypes::BEAM_CHERENKOV1, amplitude);
-        }
+        if (i == 16)
+          simpleEvent->setSensorData(SensorTypes::BEAM_CHERENKOV2, amplitude);
       } // pmt
 
     } // all hits
+
+    delete dataBlock;
 
     std::map<unsigned short, TOFSipmHit*>::iterator tofHitIt = tofHitMap.begin();
     for (; tofHitIt != tofHitMap.end(); ++tofHitIt)
@@ -220,7 +225,6 @@ const MCEventInformation* Converter::generateNextMCEventInformation(const MCSing
 
   foreach (const MCSimpleEventDigi* digi, digis)
     mcEventInfo->addMcDigis(digi);
-
 
   delete mcEvent;
 
@@ -275,12 +279,16 @@ const QVector<const MCSimpleEventDigi*> Converter::getAllMCDigis(const MCEvent* 
     DetectorID* id = DetectorID::Get(mcDigi->GetDetectorID());
 
     Hit::ModuleType moduleType = Hit::none;
-    if (id->IsTracker())
+    if (id->IsTracker()) {
       moduleType = Hit::tracker;
+      continue;
+    }
     else if (id->IsTRD())
       moduleType = Hit::trd;
-    else if (id->IsTOF())
+    else if (id->IsTOF()) {
       moduleType = Hit::tof;
+      continue;
+    }
 
     //qDebug("got digi type %i with id 0x%x", moduleType, completeChannelID16bit);
     MCSimpleEventDigi* seDigi = new MCSimpleEventDigi(moduleType, completeChannelID16bit);
@@ -297,16 +305,12 @@ const QVector<const MCSimpleEventDigi*> Converter::getAllMCDigis(const MCEvent* 
       seSignal->hitPosition.SetXYZ(pos.x(), pos.y(), pos.z());
       seSignal->time = mcSignal._time;
       seSignal->energyDeposition = mcSignal._energyDeposit / CLHEP::keV;
-
-      seDigi->AddSignal(seSignal);
+      seDigi->addSignal(seSignal);
     }
 
     seDigis << seDigi;
   }
 
   return seDigis;
-
-
-
 }
 

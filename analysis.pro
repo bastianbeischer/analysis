@@ -9,8 +9,8 @@ CONFIG += ordered
 SUBDIRS = \
   event \
   global \
-  tracking \
   setup \
+  tracking \
   particle \
   processing \
   alignment \

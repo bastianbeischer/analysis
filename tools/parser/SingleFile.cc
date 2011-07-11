@@ -28,6 +28,7 @@ SingleFile::~SingleFile()
   qDeleteAll(m_fiberModules);
   qDeleteAll(m_trdModules);
   qDeleteAll(m_tofModules);
+  qDeleteAll(m_pmtModules);
 }
 
 void SingleFile::init()
@@ -86,8 +87,7 @@ void SingleFile::open(QString fileName)
   int nEvents = m_runFile->GetNumberOfEvents() - nCalibrationEvents;
   std::cout << qPrintable(fileName) << ": contains " << nEvents << " regular events and " << nCalibrationEvents << " calibration events" << std::endl;
   if (nEvents == 0) {
-    qDebug() << "SKIPPING FILE!!";
-    return;
+    qDebug() << "File doesn't contain a valid header. Trying to read as many events as possible. Progress bar will be wrong!";
   }
 
   calibrate();
@@ -114,11 +114,14 @@ void SingleFile::calibrate()
     foreach(PERDaixPMTModule* module, m_pmtModules) {
       module->ProcessCalibrationEvent((PMTDataBlock*) dataBlockMap[module->GetBoardID()]);
     }
+
+    qDeleteAll(dataBlockMap);
     delete event;
   }
 
   foreach(PERDaixFiberModule* module, m_fiberModules)  module->ProcessCalibrationData();
   foreach(PERDaixTRDModule* module, m_trdModules)  module->ProcessCalibrationData();
+  foreach(PERDaixPMTModule* module, m_pmtModules)  module->ProcessCalibrationData();
 }
 
 // return pointer to calibration for calibration "whichCali" on hpe/ufe board with id "id"
