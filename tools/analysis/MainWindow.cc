@@ -84,6 +84,7 @@
 #include "BeamProfilePlot.hh"
 #include "ZSquareTRDPlot.hh"
 #include "TOFBarShiftPlotCollection.hh"
+#include "TrackFindingEfficiency.hh"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -594,6 +595,9 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::Positive));
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::Negative));
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::All));
+    m_ui.plotter->addPlot(new TrackFindingEfficiency(TrackFindingEfficiency::Positive));
+    m_ui.plotter->addPlot(new TrackFindingEfficiency(TrackFindingEfficiency::Negative));
+    m_ui.plotter->addPlot(new TrackFindingEfficiency(TrackFindingEfficiency::All));
   }
   if (m_ui.miscellaneousTRDCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisPlot::MiscellaneousTRD));

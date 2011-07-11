@@ -113,7 +113,8 @@ CLASSES = \
   PMTCorrelationPlot \
   ZSquareTRDPlot \
   TOFBarShiftPlot \
-  TOFBarShiftPlotCollection
+  TOFBarShiftPlotCollection \
+  TrackFindingEfficiency
 
 SOURCES += \
   main.cc
