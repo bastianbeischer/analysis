@@ -23,6 +23,7 @@ public:
   TH1D* histogram(int i = 0);
   void setAxisTitle(const QString&, const QString&);
   void addHistogram(TH1D*, DrawOption = BLANK);
+  void removeHistogram(int i = 0);
   TAxis* xAxis();
   TAxis* yAxis();
 private:

@@ -1,6 +1,8 @@
 #ifndef Constants_hh
 #define Constants_hh
 
+#include <cmath>
+
 namespace Constants
 {
 
@@ -31,6 +33,8 @@ namespace Constants
 
   const int runLength = 600; // seconds
 
+  const double geometricAcceptance = 31.8198/(pow(100, 2));//m^2sr
+	const double geometricAcceptanceTof=84.8509/(pow(100, 2));//m^2sr
 }
 
 #endif
