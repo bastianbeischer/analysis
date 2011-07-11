@@ -16,7 +16,8 @@ CLASSES += \
   StraightLine \
   StraightLineMatrix \
   Track \
-  TrackFinding
+  TrackFinding \
+  TrdTrackFinding
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \

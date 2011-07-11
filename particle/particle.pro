@@ -17,7 +17,9 @@ CLASSES += \
 INCLUDEPATH += \
   $$TOPLEVEL/event \
   $$TOPLEVEL/global \
-  $$TOPLEVEL/tracking
+  $$TOPLEVEL/tracking \
+  $$TOPLEVEL/trdAnalysis
+
 
 DEPENDPATH += $$INCLUDEPATH
 

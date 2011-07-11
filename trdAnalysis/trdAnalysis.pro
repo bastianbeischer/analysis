@@ -16,7 +16,8 @@ CLASSES += TRDCalculations \
            TRDElectronIdentifier \
            TRDElectronIdentifierCutBased \
            TRDElectronIdentifierLikelihood \
-           TRDLikelihoods
+           TRDLikelihoods \
+           TRDReconstruction
            #TRDLikelihood
 
 
