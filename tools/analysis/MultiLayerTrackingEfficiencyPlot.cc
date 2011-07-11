@@ -21,18 +21,33 @@ MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot() :
 {
   setTitle("Multi Layer Efficiency");
   
-  int nBinsX = 10;
-  double x0 = 0.;
-  double x1 = 10.;
+//  int nBinsX = 10;
+//  double x0 = 0.;
+//  double x1 = 10.;
   int nBinsY = m_nLayers;
   double y0 = 0.5;
   double y1 = m_nLayers+0.5;
   
-  TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, x0, x1, nBinsY, y0, y1);
+  int nBins = 21;
+  double lowerBound = 1e-1;
+  double upperBound = 20.;
+  double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
+  double p[nBins+1];
+  for (int i = 0; i < nBins+1; i++) {
+    p[i] = pow(lowerBound, delta*i+1);
+  }
+  
+  TH2D* histogram = new TH2D(qPrintable(title()), "", nBins, p, nBinsY, y0, y1);
   setAxisTitle("R / GV", "number of layers", "");
   addHistogram(histogram);
-
-  m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBinsX, x0, x1);
+  
+  m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBins, p);
+  
+//  TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, x0, x1, nBinsY, y0, y1);
+//  setAxisTitle("R / GV", "number of layers", "");
+//  addHistogram(histogram);
+//
+//  m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBinsX, x0, x1);
 
   int i = 0;
   Setup* setup = Setup::instance();
