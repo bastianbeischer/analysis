@@ -21,9 +21,6 @@ MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot() :
 {
   setTitle("Multi Layer Efficiency");
   
-//  int nBinsX = 10;
-//  double x0 = 0.;
-//  double x1 = 10.;
   int nBinsY = m_nLayers;
   double y0 = 0.5;
   double y1 = m_nLayers+0.5;
@@ -42,12 +39,6 @@ MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot() :
   addHistogram(histogram);
   
   m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBins, p);
-  
-//  TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, x0, x1, nBinsY, y0, y1);
-//  setAxisTitle("R / GV", "number of layers", "");
-//  addHistogram(histogram);
-//
-//  m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBinsX, x0, x1);
 
   int i = 0;
   Setup* setup = Setup::instance();
