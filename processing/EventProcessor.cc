@@ -28,7 +28,7 @@ void EventProcessor::clearDestinations()
 bool EventProcessor::tryProcessingDestination(EventDestination* destination, QVector<Hit*>& clusters, Particle* particle, SimpleEvent* event) const
 {
   if (destination->needsLocking()) { // destination needs locking
-    if (destination->tryLock()) { // if tryLock() yields "true" destination has been locked succesfully and was not locked before
+    if (destination->tryLock()) { // if tryLock() yields "true" destination has been locked successfully and was not locked before
       destination->processEvent(clusters, particle, event);
       destination->unlock();
       return true;

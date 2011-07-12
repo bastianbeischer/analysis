@@ -75,3 +75,36 @@ void H2DProjectionPlot::positionChanged(double posX, double posY)
     prevPad->cd();
   }
 }
+
+void H2DProjectionPlot::setLogX(int b)
+{
+  TVirtualPad* prevPad = gPad;
+  TCanvas* can = projectionWidget()->GetCanvas();
+  can->cd();
+  can->SetLogx(b);
+  can->Modified();
+  can->Update();
+  prevPad->cd();
+}
+
+void H2DProjectionPlot::setLogY(int b)
+{
+  TVirtualPad* prevPad = gPad;
+  TCanvas* can = projectionWidget()->GetCanvas();
+  can->cd();
+  can->SetLogy(b);
+  can->Modified();
+  can->Update();
+  prevPad->cd();
+}
+
+void H2DProjectionPlot::setLogZ(int b)
+{
+  TVirtualPad* prevPad = gPad;
+  TCanvas* can = projectionWidget()->GetCanvas();
+  can->cd();
+  can->SetLogz(b);
+  can->Modified();
+  can->Update();
+  prevPad->cd();
+}

@@ -27,6 +27,9 @@ protected:
 
 public slots:
   void setProjectionType(ProjectionType type);
+  void setLogX(int);
+  void setLogY(int);
+  void setLogZ(int);
 
 private:
   TH1D* m_projectionHistX;
