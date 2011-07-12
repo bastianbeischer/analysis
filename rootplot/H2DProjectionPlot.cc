@@ -16,9 +16,7 @@ H2DProjectionPlot::H2DProjectionPlot() :
   m_projectionHistY(0),
   m_controlWidget(new ProjectionControlWidget(this)),
   m_projectionWidget(new RootQtWidget),
-  m_type(NoProjection),
-  m_pad(0),
-  m_prevPad(0)
+  m_type(NoProjection)
 {
   m_projectionWidget->hide();
 
@@ -69,43 +67,48 @@ void H2DProjectionPlot::positionChanged(double posX, double posY)
       Q_ASSERT(false);
       break;
     }
-    m_prevPad = gPad;
+    TVirtualPad* prevPad = gPad;
     TCanvas* can = widget->GetCanvas();
     can->cd();
     can->Clear();
     proj->Draw();
     can->Modified();
     can->Update();
-    m_pad = gPad;
-    m_prevPad->cd();
-    
+    prevPad->cd();
+
     m_controlWidget->activateLogCheckBoxes();
   }
 }
 
 void H2DProjectionPlot::setLogX(int b)
 {
-  m_pad->cd();
-  m_pad->SetLogx(b);
-  m_pad->Modified();
-  m_pad->Update();
-  m_prevPad->cd();
+  TVirtualPad* prevPad = gPad;
+  TCanvas* can = projectionWidget()->GetCanvas();
+  can->cd();
+  can->SetLogx(b);
+  can->Modified();
+  can->Update();
+  prevPad->cd();
 }
 
 void H2DProjectionPlot::setLogY(int b)
 {
-  m_pad->cd();
-  m_pad->SetLogy(b);
-  m_pad->Modified();
-  m_pad->Update();
-  m_prevPad->cd();
+  TVirtualPad* prevPad = gPad;
+  TCanvas* can = projectionWidget()->GetCanvas();
+  can->cd();
+  can->SetLogy(b);
+  can->Modified();
+  can->Update();
+  prevPad->cd();
 }
 
 void H2DProjectionPlot::setLogZ(int b)
 {
-  m_pad->cd();
-  m_pad->SetLogz(b);
-  m_pad->Modified();
-  m_pad->Update();
-  m_prevPad->cd();
+  TVirtualPad* prevPad = gPad;
+  TCanvas* can = projectionWidget()->GetCanvas();
+  can->cd();
+  can->SetLogz(b);
+  can->Modified();
+  can->Update();
+  prevPad->cd();
 }

@@ -8,7 +8,6 @@
 class ProjectionControlWidget;
 class RootQtWidget;
 class TH1D;
-class TVirtualPad;
 
 class H2DProjectionPlot : public QObject, public H2DPlot {
 Q_OBJECT
@@ -40,9 +39,6 @@ private:
   RootQtWidget* m_projectionWidget;
   
   ProjectionType m_type;
-  
-  TVirtualPad* m_pad;
-  TVirtualPad* m_prevPad;
 };
 
 #endif /* H2DProjectionPlot_hh */
