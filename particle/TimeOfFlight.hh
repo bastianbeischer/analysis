@@ -20,8 +20,8 @@ public:
   double timeOfFlight() const {return m_stopTime - m_startTime;}
 
 private:
-  static double lastGoodTime(QVector<double>&);
-  static double bestTime(QVector<double>&);
+  static double bestTime(const QVector<double>&);
+  void sort(QVector<double>& t, QVector<double>& tot);
 
 private:
   double m_startTime;
