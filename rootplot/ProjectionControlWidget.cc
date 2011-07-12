@@ -25,14 +25,13 @@ ProjectionControlWidget::ProjectionControlWidget(H2DProjectionPlot* plot, QWidge
 
   m_spinBox->setMinimum(1);
   m_spinBox->setValue(1);
-  m_spinBox->setEnabled(false);
   
   m_checkBoxLogX->setText("log x");
   m_checkBoxLogY->setText("log y");
   m_checkBoxLogZ->setText("log z");
-  m_checkBoxLogX->setEnabled(false);
-  m_checkBoxLogY->setEnabled(false);
-  m_checkBoxLogZ->setEnabled(false);
+
+  // deactivate all elements
+  setElementStatus(false);
 
   QHBoxLayout* layout = new QHBoxLayout(this);
   layout->addWidget(m_comboBox);
@@ -45,6 +44,9 @@ ProjectionControlWidget::ProjectionControlWidget(H2DProjectionPlot* plot, QWidge
   layout->addStretch();
 
   connect(m_comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeProjectionType(int)));
+  connect(m_checkBoxLogX, SIGNAL(stateChanged(int)), m_projectionPlot, SLOT(setLogX(int)));
+  connect(m_checkBoxLogY, SIGNAL(stateChanged(int)), m_projectionPlot, SLOT(setLogY(int)));
+  connect(m_checkBoxLogZ, SIGNAL(stateChanged(int)), m_projectionPlot, SLOT(setLogZ(int)));
 }
 
 ProjectionControlWidget::~ProjectionControlWidget()
@@ -65,15 +67,15 @@ void ProjectionControlWidget::changeProjectionType(int index)
   switch (index) {
   case 0:
     m_projectionPlot->setProjectionType(H2DProjectionPlot::NoProjection);
-    m_spinBox->setEnabled(false);
+    setElementStatus(false);
     break;
   case 1:
     m_projectionPlot->setProjectionType(H2DProjectionPlot::ProjectionOnY);
-    m_spinBox->setEnabled(true);
+    setElementStatus(true);
     break;
   case 2:
     m_projectionPlot->setProjectionType(H2DProjectionPlot::ProjectionOnX);
-    m_spinBox->setEnabled(true);
+    setElementStatus(true);
     break;
   default:
     Q_ASSERT(false);
@@ -86,16 +88,10 @@ QSpinBox* ProjectionControlWidget::spinBox()
   return m_spinBox;
 }
 
-void ProjectionControlWidget::connectCheckBoxes()
+void ProjectionControlWidget::setElementStatus(bool status)
 {
-  connect(m_checkBoxLogX, SIGNAL(stateChanged(int)), m_projectionPlot, SLOT(setLogX(int)));
-  connect(m_checkBoxLogY, SIGNAL(stateChanged(int)), m_projectionPlot, SLOT(setLogY(int)));
-  connect(m_checkBoxLogZ, SIGNAL(stateChanged(int)), m_projectionPlot, SLOT(setLogZ(int)));
-}
-
-void ProjectionControlWidget::activateLogCheckBoxes()
-{
-  m_checkBoxLogX->setEnabled(true);
-  m_checkBoxLogY->setEnabled(true);
-  m_checkBoxLogZ->setEnabled(true);
+  m_spinBox->setEnabled(status);
+  m_checkBoxLogX->setEnabled(status);
+  m_checkBoxLogY->setEnabled(status);
+  m_checkBoxLogZ->setEnabled(status);
 }

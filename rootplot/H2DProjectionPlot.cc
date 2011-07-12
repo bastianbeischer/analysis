@@ -27,8 +27,6 @@ H2DProjectionPlot::H2DProjectionPlot() :
   QWidget* widget = new QWidget;
   widget->setLayout(layout);
   setSecondaryWidget(widget);
-  
-  m_controlWidget->connectCheckBoxes();
 }
 
 H2DProjectionPlot::~H2DProjectionPlot()
@@ -75,8 +73,6 @@ void H2DProjectionPlot::positionChanged(double posX, double posY)
     can->Modified();
     can->Update();
     prevPad->cd();
-
-    m_controlWidget->activateLogCheckBoxes();
   }
 }
 

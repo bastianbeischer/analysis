@@ -18,9 +18,10 @@ public:
   ~ProjectionControlWidget();
   QSpinBox* spinBox();
   void setProjectionType(H2DProjectionPlot::ProjectionType);
-  void connectCheckBoxes();
-  void activateLogCheckBoxes();
   
+private:
+  void setElementStatus(bool);
+
 private slots:
   void changeProjectionType(int);
   
