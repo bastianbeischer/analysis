@@ -1,5 +1,16 @@
 DEPENDPATH += $$INCLUDEPATH
 
+
+for(dir, DIRS) {
+  dir = $$OUT_PWD/$$dir
+  !exists($${dir}) {
+    error(Directory $${dir} does not exist!)
+  }
+  SOURCES += $$system(ls -1 $${dir}/*.cc)
+  HEADERS += $$system(ls -1 $${dir}/*.hh)
+  FORMS   += $$system(ls -1 $${dir}/*.ui 2>/dev/null)
+}
+
 for(class, CLASSES) {
   HEADERS += $${class}.hh
   SOURCES += $${class}.cc
