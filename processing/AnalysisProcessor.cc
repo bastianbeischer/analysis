@@ -98,18 +98,16 @@ void AnalysisProcessor::process(SimpleEvent* event)
   if (m_filter->passes(m_particle)) {
     if (m_mcFilter->passes(clusters, m_particle, event)) {
       if (m_cuts->passes(clusters, m_particle, event)) {
-        QVector<int> postponed;
-        for (int i = 0; i < m_destinations.size(); i++) {
-          EventDestination* destination = m_destinations.at(i);
+        QVector<EventDestination*> postponed;
+        foreach(EventDestination* destination, m_destinations) {
           bool success = tryProcessingDestination(destination, clusters, m_particle, event);
-          if (!success) // postpone this destination for now.
-            postponed.append(i);
+          if (!success)
+            postponed.append(destination); // postpone this destination for now.
         }
         while(postponed.size() > 0) {
-          bool success = tryProcessingDestination(m_destinations.at(postponed.front()), clusters, m_particle, event);
-          if (success) {
+          bool success = tryProcessingDestination(postponed.front(), clusters, m_particle, event);
+          if (success)
             postponed.remove(0);
-          }
         }
       }
     }
