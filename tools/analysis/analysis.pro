@@ -25,16 +25,16 @@ LIBS += \
   -lsetup
 
 SOURCEDIRS = \
-  Framework \
-  GeneralPlots \
-  MC \
-  Occupancy \
-  Reconstruction \
-  SlowControl \
-  TOF \
-  TRD \
-  Testbeam \
-  Tracker \
+  framework \
+  generalPlots \
+  mc \
+  occupancy \
+  reconstruction \
+  slowControl \
+  tof \
+  trd \
+  testbeam \
+  tracker \
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
