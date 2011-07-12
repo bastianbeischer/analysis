@@ -1,7 +1,7 @@
 DEPENDPATH += $$INCLUDEPATH
 
 
-for(dir, DIRS) {
+for(dir, SOURCEDIRS) {
   dir = $$OUT_PWD/$$dir
   !exists($${dir}) {
     error(Directory $${dir} does not exist!)

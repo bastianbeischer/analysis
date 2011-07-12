@@ -24,7 +24,7 @@ LIBS += \
   -lrootplot \
   -lsetup
 
-DIRS = \
+SOURCEDIRS = \
   Framework \
   GeneralPlots \
   MC \
