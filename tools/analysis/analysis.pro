@@ -25,20 +25,20 @@ LIBS += \
   -lsetup
 
 SOURCEDIRS = \
-  framework \
+  main \
+  tracker \
+  tof \
+  trd \
+  reconstruction \
   generalPlots \
   mc \
   occupancy \
-  reconstruction \
   slowControl \
-  tof \
-  trd \
-  testbeam \
-  tracker \
+  testbeam
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
 include($$TOPLEVEL/common.pri)
 
 RESOURCES += \
-  Framework/resources.qrc
+  main/resources.qrc
