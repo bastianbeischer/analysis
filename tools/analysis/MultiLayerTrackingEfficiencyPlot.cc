@@ -11,10 +11,13 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "ParticleInformation.hh"
+#include "ProjectionControlWidget.hh"
+
+#include <QSpinBox>
 
 MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot(Type type) :
   AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
-  H2DPlot(),
+  H2DProjectionPlot(),
   m_type(type),
   m_normHisto(0),
   m_nLayers(8),
@@ -61,6 +64,8 @@ MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot(Type type) :
     }
   }
   setDrawOption(COLZTEXT);
+  
+  controlWidget()->spinBox()->setMaximum(histogram->GetNbinsY());
 }
 
 MultiLayerTrackingEfficiencyPlot::~MultiLayerTrackingEfficiencyPlot()
