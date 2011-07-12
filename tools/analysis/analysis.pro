@@ -113,7 +113,8 @@ CLASSES = \
   PMTCorrelationPlot \
   ZSquareTRDPlot \
   TOFBarShiftPlot \
-  TOFBarShiftPlotCollection
+  TOFBarShiftPlotCollection \
+  TimeReconstructionPlot
 
 SOURCES += \
   main.cc
