@@ -7,6 +7,7 @@
 
 class QComboBox;
 class QSpinBox;
+class QCheckBox;
 
 class ProjectionControlWidget :
   public QWidget
@@ -17,12 +18,20 @@ public:
   ~ProjectionControlWidget();
   QSpinBox* spinBox();
   void setProjectionType(H2DProjectionPlot::ProjectionType);
+  
+private:
+  void setElementStatus(bool);
+
 private slots:
   void changeProjectionType(int);
+  
 private:
   H2DProjectionPlot* m_projectionPlot;
   QComboBox* m_comboBox;
   QSpinBox* m_spinBox;
+  QCheckBox* m_checkBoxLogX;
+  QCheckBox* m_checkBoxLogY;
+  QCheckBox* m_checkBoxLogZ;
 };
 
 #endif /* ProjectionControlWidget_hh */
