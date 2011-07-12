@@ -36,12 +36,9 @@ DIRS = \
   Testbeam \
   Tracker \
 
-SOURCES += \
-  main.cc
-
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
 include($$TOPLEVEL/common.pri)
 
 RESOURCES += \
-  resources.qrc
+  Framework/resources.qrc

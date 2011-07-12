@@ -9,6 +9,7 @@ for(dir, DIRS) {
   SOURCES += $$system(ls -1 $${dir}/*.cc)
   HEADERS += $$system(ls -1 $${dir}/*.hh)
   FORMS   += $$system(ls -1 $${dir}/*.ui 2>/dev/null)
+  INCLUDEPATH += $$dir
 }
 
 for(class, CLASSES) {
