@@ -2,14 +2,14 @@
 #define MultiLayerTrackingEfficiencyPlot_hh
 
 #include "AnalysisPlot.hh"
-#include "H2DPlot.hh"
+#include "H2DProjectionPlot.hh"
 
 class TH1D;
 class TCanvas;
 
 class MultiLayerTrackingEfficiencyPlot :
   public AnalysisPlot,
-  public H2DPlot
+  public H2DProjectionPlot
 {
   
 public:
