@@ -36,7 +36,7 @@ TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin
   QString title = QString("%1 y=%2mm").arg(canvas->name().remove(" canvas")).arg(m_y);
   setTitle(title);
   TH1D* projection = histogram->ProjectionY("tmp", bin, bin);
-  projection->Smooth();
+  //projection->Smooth();
   projection->SetName(qPrintable(title));
   setAxisTitle("#Deltat / ns", "");
   TF1* function = new TF1(qPrintable(title + "Function"), "gaus", projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
@@ -55,10 +55,19 @@ TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin
   addFunction(function);
   TLatex* latex = 0;
   latex = RootPlot::newLatex(0.15, 0.85);
-  latex->SetTitle(qPrintable(QString("mean   = %1 ns").arg(function->GetParameter(1), 0, 'f', 3, ' ')));
+  latex->SetTitle(qPrintable(QString("n     = %1").arg(projection->GetEntries())));
   addLatex(latex);
   latex = RootPlot::newLatex(0.15, 0.82);
-  latex->SetTitle(qPrintable(QString("#sigma = %1 ns").arg(function->GetParameter(2), 0, 'f', 3, ' ')));
+  latex->SetTitle(qPrintable(QString("uflow = %1").arg(projection->GetBinContent(0))));
+  addLatex(latex);
+  latex = RootPlot::newLatex(0.15, 0.79);
+  latex->SetTitle(qPrintable(QString("oflow = %1").arg(projection->GetBinContent(projection->GetXaxis()->GetNbins()+1))));
+  addLatex(latex);
+  latex = RootPlot::newLatex(0.15, 0.76);
+  latex->SetTitle(qPrintable(QString("mean  = %1 ns").arg(function->GetParameter(1), 0, 'f', 3, ' ')));
+  addLatex(latex);
+  latex = RootPlot::newLatex(0.15, 0.73);
+  latex->SetTitle(qPrintable(QString("#sigma     = %1 ns").arg(function->GetParameter(2), 0, 'f', 3, ' ')));
   addLatex(latex);
 }
 
