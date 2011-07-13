@@ -12,10 +12,8 @@ TRDReconstruction::TRDReconstruction()
   , m_layerEnergyDepositionOnTrackAndPierced(8, 0.)
   , m_layerLengthThroughTube(8, 0.)
   , m_layerEnergyDepositionOnTrackPerLength(8, 0.)
-
 {
 }
-
 
 void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
 {
