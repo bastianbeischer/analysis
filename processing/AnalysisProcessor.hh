@@ -28,6 +28,14 @@ public:
 
   void process(SimpleEvent*);
 
+  const Particle* particle() const {return m_particle;}
+  const ParticleFilter* particleFilter() const {return m_filter;}
+  const MCFilter* mcFilter() const {return m_mcFilter;}
+  const TrackFinding* trackFinding() const {return m_trackFinding;}
+  const Corrections* corrections() const {return m_corrections;}
+  const ParticleIdentifier* particleIdentifier() const {return m_identifier;}
+  const CutFilter* cutFilter() const {return m_cuts;}
+
 private:
   Particle* m_particle;
   ParticleFilter* m_filter;
