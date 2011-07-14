@@ -16,7 +16,7 @@
 int TrackFinding::s_histCounter = 0;
 
 TrackFinding::TrackFinding() :
-  m_maxSlope(1.),
+  m_maxSlope(0.5),
   m_maxOffset(100.),
   m_slopeBins(41),
   m_offsetBins(41),
