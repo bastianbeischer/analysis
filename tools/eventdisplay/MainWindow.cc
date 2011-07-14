@@ -124,7 +124,7 @@ void MainWindow::update()
   else if (index == 0) type = Track::CenteredBrokenLine;
   else if (index == 1) type = Track::StraightLine;
   else if (index == 2) type = Track::BrokenLine;
-  m_ui.plotter->drawEvent(m_ui.eventSpinBox->value(), type, m_ui.allClustersCheckBox->isChecked(), *m_ui.textEdit);
+  m_ui.plotter->drawEvent(m_ui.eventSpinBox->value(), type, m_ui.allClustersCheckBox->isChecked(), *m_ui.textEdit, *m_ui.trackFindingWidget);
 }
 
 void MainWindow::saveButtonClicked()
