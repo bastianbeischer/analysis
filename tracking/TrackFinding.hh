@@ -4,7 +4,7 @@
 #include <QVector>
 
 class Hit;
-class TH2I;
+class TH2D;
 class Track;
 
 class TrackFinding {
@@ -20,6 +20,8 @@ public:
 
   QVector<Hit*> findTrack(const QVector<Hit*>& hits);
 
+  TH2D* trackFindingHist() const {return m_trackFindingHist;}
+
   static bool isInCorridor(const Track* track, Hit* hit, double maxPull);
 
 private:
@@ -32,7 +34,7 @@ private:
   double m_trdPull;
   double m_tofPull;
 
-  TH2I* m_trackFindingHist;
+  TH2D* m_trackFindingHist;
   static int s_histCounter;
 
 };

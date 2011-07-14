@@ -7,7 +7,7 @@
 #include "CenteredBrokenLine.hh"
 #include "BrokenLine.hh"
 
-#include <TH2I.h>
+#include <TH2D.h>
 #include <cmath>
 #include <iostream>
 
@@ -26,7 +26,7 @@ TrackFinding::TrackFinding() :
 {
   char title[128];
   sprintf(title, "trackFindingHist_%d", s_histCounter);
-  m_trackFindingHist = new TH2I(title, title, m_slopeBins, -m_maxSlope, m_maxSlope, m_offsetBins, -m_maxOffset, m_maxOffset);
+  m_trackFindingHist = new TH2D(title, title, m_slopeBins, -m_maxSlope, m_maxSlope, m_offsetBins, -m_maxOffset, m_maxOffset);
   s_histCounter++;
 }
 
@@ -52,7 +52,7 @@ QVector<Hit*> TrackFinding::findTrack(const QVector<Hit*>& hits)
       if (fabs(z2 - z1) > 20) {
         double slope = (x2-x1)/(z2-z1);
         double offset = x1 - slope*z1;
-        int bin = m_trackFindingHist->Fill(slope,offset);
+        int bin = m_trackFindingHist->Fill(slope,offset,fabs(z2-z1));
         int content = m_trackFindingHist->GetBinContent(bin);
         if (content > max) {
           max = content;
