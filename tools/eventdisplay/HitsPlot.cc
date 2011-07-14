@@ -158,6 +158,7 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, Simpl
   }
 
   QVector<Hit*> hitsToPlot;
+  QVector<Hit*> hitsToPlotOnTrack;
 
   foreach(Hit* hit, track && !m_drawAllClusters ? track->hits() : hits) {
     // draw TOF yEstimates
@@ -172,11 +173,16 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, Simpl
     // draw the raw the the rest
     if ( (strcmp(hit->ClassName(), "Hit") == 0) || (strcmp(hit->ClassName(), "TOFSipmHit") == 0) ) {
       hitsToPlot.push_back(hit);
+      if (!track || track->hits().contains(hit))
+        hitsToPlotOnTrack.push_back(hit);
     }
     else if ( (strcmp(hit->ClassName(), "Cluster") == 0) || (strcmp(hit->ClassName(), "TOFCluster") == 0) ) {
       Cluster* cluster = static_cast<Cluster*>(hit);
-      foreach(Hit* subHit, cluster->hits())
+      foreach(Hit* subHit, cluster->hits()) {
         hitsToPlot.push_back(subHit);
+        if (!track || track->hits().contains(hit))
+          hitsToPlotOnTrack.push_back(subHit);
+      }
     }
   }
 
@@ -214,7 +220,10 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, Simpl
     }
     else if (type == Hit::trd) {
       TEllipse* circle = new TEllipse(x, z, 3.);
-      circle->SetFillStyle(1001);
+      if (hitsToPlotOnTrack.contains(hit))
+        circle->SetFillStyle(1001);
+      else
+        circle->SetFillStyle(3001);
       circle->SetFillColor(color);
       circle->SetLineColor(color);
       circle->Draw("SAME");
@@ -231,7 +240,10 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, Simpl
 
       if (type != Hit::trd) {
         TBox* box = new TBox(x-0.5*width, z-0.5*height, x+0.5*width, z+0.5*height);
-        box->SetFillStyle(1001);
+        if (hitsToPlotOnTrack.contains(hit))
+          box->SetFillStyle(1001);
+        else
+          box->SetFillStyle(3001);
         box->SetFillColor(color);
         box->Draw("SAME");
         m_hits.push_back(box);
