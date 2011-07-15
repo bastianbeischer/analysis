@@ -30,9 +30,8 @@ SOURCEDIRS = \
   tof \
   trd \
   reconstruction \
-  generalPlots \
+  general \
   mc \
-  occupancy \
   slowControl \
   testbeam
 
