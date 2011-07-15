@@ -21,6 +21,7 @@ public:
   
 private:
   TF1* m_efficiencyFit;
+  QString m_name;
   
   void fit();
   void saveAsSetting();

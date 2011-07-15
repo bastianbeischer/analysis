@@ -29,12 +29,12 @@ TrackingEfficiencyCorrection::TrackingEfficiencyCorrection(PostAnalysisCanvas* c
   
   TH1D* histogram = h2->ProjectionX("projection", 8, 8);
   
-  
   QString title = QString(canvas->name()).replace("canvas", "histogram");
   setTitle(title);
-  addHistogram(histogram);
+  addHistogram(histogram, H1DPlot::HIST);
   setAxisTitle("abs(rigidity/GV)", "efficiency");
-  
+  m_name = QString(canvas->name()).remove("Multi Layer Efficiency ").remove(" canvas");
+
   fit();
   saveAsSetting();
 }
@@ -62,7 +62,7 @@ void TrackingEfficiencyCorrection::fit()
   m_efficiencyFit->SetParameter(4, 2.1);
   m_efficiencyFit->SetParLimits(4, 2, 2.4);
 
-  histogram(0)->Fit(m_efficiencyFit,"EQ");
+  histogram(0)->Fit(m_efficiencyFit,"EQN0");
   
   addFunction(m_efficiencyFit);
 }
@@ -86,8 +86,8 @@ void TrackingEfficiencyCorrection::saveAsSetting()
   
   QSettings* settings = new QSettings(path + "EfficiencyCorrections.conf", QSettings::IniFormat);
   
-  QString prefix = "trackingEfficiencyParam";
-  settings->setValue(prefix, params);
+  QString prefix = "trackingEfficiencyParam/";
+  settings->setValue(prefix+m_name, params);
   settings->sync();
   
   delete settings;

@@ -26,7 +26,15 @@ void MainWindow::setupAnalysis()
   TFile file(qPrintable(m_analysisFile));
   gROOT->cd();
   
-  QString name = QString("Multi Layer Efficiency canvas");
+  QString name = QString("Multi Layer Efficiency positive canvas");
+  canvas = addCanvas(&file, qPrintable(name));
+  addPlot(new TrackingEfficiencyCorrection(canvas));
+  
+  name = QString("Multi Layer Efficiency negative canvas");
+  canvas = addCanvas(&file, qPrintable(name));
+  addPlot(new TrackingEfficiencyCorrection(canvas));
+  
+  name = QString("Multi Layer Efficiency all canvas");
   canvas = addCanvas(&file, qPrintable(name));
   addPlot(new TrackingEfficiencyCorrection(canvas));
   
