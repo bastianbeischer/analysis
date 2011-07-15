@@ -26,11 +26,12 @@ TrackingEfficiencyCorrection::TrackingEfficiencyCorrection(PostAnalysisCanvas* c
   , H1DPlot()
 {
   TH2D* h2 = new TH2D(*canvas->histograms2D().at(0));
-  
-  TH1D* histogram = h2->ProjectionX("projection", 8, 8);
-  
+
   QString title = QString(canvas->name()).replace("canvas", "histogram");
   setTitle(title);
+
+  TH1D* histogram = h2->ProjectionX(qPrintable(title+"projection"), 8, 8);
+
   addHistogram(histogram, H1DPlot::HIST);
   setAxisTitle("abs(rigidity/GV)", "efficiency");
   m_name = QString(canvas->name()).remove("Multi Layer Efficiency ").remove(" canvas");
