@@ -13,6 +13,7 @@
 #include <TLatex.h>
 #include <TF1.h>
 #include <TRoot.h>
+#include <TVector3.h>
 
 #include <QVector>
 #include <QDebug>
@@ -75,23 +76,32 @@ TrackFindingEfficiency::~TrackFindingEfficiency()
 
 void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
 {
-  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
-  
-  if (!settings)
-    return;
-
+  bool fillHistogram = false;
   double rigidity = 0;
   
-  if (settings && settings->situation() == Settings::Testbeam11) {
-    if (m_type == Negative && settings->polarity() > 0)
-      return;
-    if (m_type == Positive && settings->polarity() < 0)
-      return;
-    rigidity = settings->momentum();
+  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+  if (settings) {
+    if (settings && settings->situation() == Settings::Testbeam11) {
+      if (m_type == Negative && settings->polarity() > 0)
+        return;
+      if (m_type == Positive && settings->polarity() < 0)
+        return;
+      rigidity = settings->momentum();
+      
+      fillHistogram = true;
+    }
+  } else if (event->contentType() == SimpleEvent::MonteCarlo) {
+    int mcPdgId = rigidity = event->MCInformation()->primary()->pdgID;
+    rigidity = event->MCInformation()->primary()->initialMomentum.Mag();
+    if (mcPdgId == 1000020040/*Helium*/)
+      rigidity /= 2;
     
-    m_total->Fill(rigidity);
+    fillHistogram = true;
   }
+  
   ++m_nTotal;
+  if (fillHistogram)
+    m_total->Fill(rigidity);
   
   const Track* track = particle->track();
   if (!track || !track->fitGood())
@@ -100,10 +110,9 @@ void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, Particle* partic
   if (!(flags & (ParticleInformation::Chi2Good)))
     return;
 
-  if (settings && settings->situation() == Settings::Testbeam11)
-    m_reconstructed->Fill(rigidity);
-  
   ++m_nReconstructed;
+  if (fillHistogram)
+    m_reconstructed->Fill(rigidity);
 }
 
 void TrackFindingEfficiency::update()
