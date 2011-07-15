@@ -30,6 +30,7 @@ RootStyle::RootStyle()
   SetMarkerStyle(20);
   SetPaintTextFormat(".2f");
   SetNumberContours(99);
+  SetFrameBorderMode(0);
 }
 
 void RootStyle::set()
