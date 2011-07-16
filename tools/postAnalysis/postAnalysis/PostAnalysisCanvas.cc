@@ -10,6 +10,12 @@
 
 #include <QDebug>
 
+PostAnalysisCanvas::PostAnalysisCanvas(TCanvas* canvas)
+  : m_palette(RootStyle::DefaultPalette)
+  , m_canvas(canvas)
+{
+}
+
 PostAnalysisCanvas::PostAnalysisCanvas(TFile* file, const QString& name)
   : m_palette(RootStyle::DefaultPalette)
   , m_canvas(static_cast<TCanvas*>(file->Get(qPrintable(name))->Clone()))
