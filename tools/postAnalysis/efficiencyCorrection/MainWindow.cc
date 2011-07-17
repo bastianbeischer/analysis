@@ -2,7 +2,7 @@
 
 #include "PostAnalysisPlot.hh"
 #include "PostAnalysisCanvas.hh"
-#include "TrackingEfficiencyCorrection.hh"
+#include "MultiLayerEfficiencyCorrection.hh"
 
 #include <TCanvas.h>
 #include <TFile.h>
@@ -28,15 +28,15 @@ void MainWindow::setupAnalysis()
   
   QString name = QString("Multi Layer Efficiency positive canvas");
   canvas = addCanvas(&file, qPrintable(name));
-  addPlot(new TrackingEfficiencyCorrection(canvas));
+  addPlot(new MultiLayerEfficiencyCorrection(canvas));
   
   name = QString("Multi Layer Efficiency negative canvas");
   canvas = addCanvas(&file, qPrintable(name));
-  addPlot(new TrackingEfficiencyCorrection(canvas));
+  addPlot(new MultiLayerEfficiencyCorrection(canvas));
   
   name = QString("Multi Layer Efficiency all canvas");
   canvas = addCanvas(&file, qPrintable(name));
-  addPlot(new TrackingEfficiencyCorrection(canvas));
+  addPlot(new MultiLayerEfficiencyCorrection(canvas));
   
   file.Close();
 }
