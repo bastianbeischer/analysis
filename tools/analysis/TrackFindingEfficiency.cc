@@ -79,17 +79,20 @@ void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, Particle* partic
   double rigidity = 0;
   
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
-  if (settings) {
-    if (settings && settings->situation() == Settings::Testbeam11) {
-      if (m_type == Negative && settings->polarity() > 0)
-        return;
-      if (m_type == Positive && settings->polarity() < 0)
-        return;
-      rigidity = settings->momentum();
-      
-      fillHistogram = true;
-    }
+  if (settings && settings->situation() == Settings::Testbeam11) {
+    if (m_type == Negative && settings->polarity() > 0)
+      return;
+    if (m_type == Positive && settings->polarity() < 0)
+      return;
+    rigidity = settings->momentum();
+    
+    fillHistogram = true;
   } else if (event->contentType() == SimpleEvent::MonteCarlo) {
+    if (m_type == Negative && settings->polarity() > 0)
+      return;
+    if (m_type == Positive && settings->polarity() < 0)
+      return;
+    
     int mcPdgId = event->MCInformation()->primary()->pdgID;
     Particle mcParticle(mcPdgId);
     
