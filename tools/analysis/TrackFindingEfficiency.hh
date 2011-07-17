@@ -12,6 +12,7 @@
 
 #include <QString>
 #include <QDateTime>
+#include <QVector>
 
 class Hit;
 class Particle;
@@ -40,6 +41,8 @@ private:
   bool hasTrdTrack(const QVector<Hit*>&);
   unsigned int m_nTotal;
   unsigned int m_nReconstructed;
+  
+  QVector<double> logBinning(unsigned int nBins, double min, double max);
 };
 
 #endif
