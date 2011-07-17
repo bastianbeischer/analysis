@@ -1,9 +1,10 @@
-#include "MultiLayerEfficiencyCorrection.hh"
+#include "TrackFindingEfficiencyCorrection.hh"
 
 #include "Corrections.hh"
 
 #include <TH1.h>
 #include <TH2.h>
+#include <TH1D.h>
 #include <TH2D.h>
 #include <TCanvas.h>
 #include <TAxis.h>
@@ -22,29 +23,27 @@
 #include <QSettings>
 #include <QVector>
 
-MultiLayerEfficiencyCorrection::MultiLayerEfficiencyCorrection(PostAnalysisCanvas* canvas)
+TrackFindingEfficiencyCorrection::TrackFindingEfficiencyCorrection(PostAnalysisCanvas* canvas)
   : PostAnalysisPlot()
   , H1DPlot()
 {
-  TH2D* h2 = new TH2D(*canvas->histograms2D().at(0));
+  TH1D* histogram = new TH1D(*canvas->histograms1D().at(0));
 
   QString title = QString(canvas->name()).replace("canvas", "histogram");
   setTitle(title);
 
-  TH1D* histogram = h2->ProjectionX(qPrintable(title+"projection"), 8, 8);
-
   addHistogram(histogram, H1DPlot::HIST);
   setAxisTitle("abs(rigidity/GV)", "efficiency");
-  m_name = QString(canvas->name()).remove("Multi Layer Efficiency ").remove(" canvas");
-  
-  //saveAsSetting();
+  m_name = QString(canvas->name()).remove("Track finding efficiency - ").remove(" canvas");
+
+//  saveAsSetting();
 }
 
-MultiLayerEfficiencyCorrection::~MultiLayerEfficiencyCorrection()
+TrackFindingEfficiencyCorrection::~TrackFindingEfficiencyCorrection()
 {
 }
 
-void MultiLayerEfficiencyCorrection::saveAsSetting()
+void TrackFindingEfficiencyCorrection::saveAsSetting()
 {
   QList<QVariant> axis;
   for (int i = 0; i <=  histogram()->GetNbinsX(); ++i) {
@@ -71,7 +70,7 @@ void MultiLayerEfficiencyCorrection::saveAsSetting()
   
   QSettings* settings = new QSettings(path + "EfficiencyCorrections.conf", QSettings::IniFormat);
   
-  QString prefix = "multiLayerEfficiency_"+m_name;
+  QString prefix = "trackFindingEfficiency_"+m_name;
   settings->setValue(prefix+"/axis", axis);
   settings->setValue(prefix+"/values", values);
   settings->sync();

@@ -1,5 +1,5 @@
-#ifndef MultiLayerEfficiencyCorrection_hh
-#define MultiLayerEfficiencyCorrection_hh
+#ifndef TrackFindingEfficiencyCorrection_hh
+#define TrackFindingEfficiencyCorrection_hh
 
 #include "PostAnalysisCanvas.hh"
 #include "PostAnalysisPlot.hh"
@@ -12,10 +12,10 @@
 #include <TF1.h>
 #include <TH1D.h>
 
-class MultiLayerEfficiencyCorrection : public PostAnalysisPlot, public H1DPlot {
+class TrackFindingEfficiencyCorrection : public PostAnalysisPlot, public H1DPlot {
 public:
-  MultiLayerEfficiencyCorrection(PostAnalysisCanvas*);
-  virtual ~MultiLayerEfficiencyCorrection();
+  TrackFindingEfficiencyCorrection(PostAnalysisCanvas*);
+  virtual ~TrackFindingEfficiencyCorrection();
   
 public:
   
