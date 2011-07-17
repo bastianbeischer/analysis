@@ -48,13 +48,20 @@ m_type(type)
   
   setTitle(title);
   
-  const double step = 0.1;
-  const double min = 0.05;
-  const double max = 10.05;
+//  const double step = 0.1;
+//  const double min = 0.05;
+//  const double max = 10.05;
+//  int nBins = (int)((max - min) / step);
+//  
+//  TH1D* histogram = new TH1D("reconstruction efficiency", "", nBins, min, max);
   
-  int nBins = (int)((max - min) / step);
+  const int nBins = 21;
+  const double min = 0.1;
+  const double max = 20;
+  const QVector<double>& axis = logBinning(nBins, min, max);
   
-  TH1D* histogram = new TH1D("reconstruction efficiency", "", nBins, min, max);
+  TH1D* histogram = new TH1D("reconstruction efficiency", "", nBins, axis.constData());
+  
   setAxisTitle("abs(rigidity / GV)", "efficiency");
   addHistogram(histogram);
   
