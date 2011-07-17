@@ -12,7 +12,6 @@
 #include <TH1D.h>
 #include <TLatex.h>
 #include <TF1.h>
-#include <TRoot.h>
 #include <TVector3.h>
 
 #include <QVector>
