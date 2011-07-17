@@ -88,15 +88,15 @@ void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, Particle* partic
     
     fillHistogram = true;
   } else if (event->contentType() == SimpleEvent::MonteCarlo) {
-    if (m_type == Negative && settings->polarity() > 0)
-      return;
-    if (m_type == Positive && settings->polarity() < 0)
-      return;
-    
     int mcPdgId = event->MCInformation()->primary()->pdgID;
     Particle mcParticle(mcPdgId);
     
     rigidity = event->MCInformation()->primary()->initialMomentum.Mag() / mcParticle.charge();
+    
+    if (m_type == Negative && rigidity > 0)
+      return;
+    if (m_type == Positive && rigidity < 0)
+      return;
     
     fillHistogram = true;
   }
