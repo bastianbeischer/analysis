@@ -13,7 +13,6 @@
 
 #include <TH2.h>
 #include <TVector3.h>
-#include <THStack.h>
 
 #include <iostream>
 #include <QDebug>

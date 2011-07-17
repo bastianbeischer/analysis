@@ -4,7 +4,6 @@
 #include <TH1.h>
 #include <TAxis.h>
 #include <TPad.h>
-#include <THStack.h>
 
 #include <QDebug>
 

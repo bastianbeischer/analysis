@@ -7,7 +7,6 @@
 
 class TCanvas;
 class TH1D;
-class THStack;
 class TAxis;
 
 class H1DPlot : virtual public RootPlot {
