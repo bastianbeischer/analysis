@@ -37,7 +37,7 @@ MultiLayerEfficiencyCorrection::MultiLayerEfficiencyCorrection(PostAnalysisCanva
   setAxisTitle("abs(rigidity/GV)", "efficiency");
   m_name = QString(canvas->name()).remove("Multi Layer Efficiency ").remove(" canvas");
   
-  //saveAsSetting();
+  saveAsSetting();
 }
 
 MultiLayerEfficiencyCorrection::~MultiLayerEfficiencyCorrection()
