@@ -65,8 +65,11 @@ m_type(type)
   setAxisTitle("abs(rigidity / GV)", "efficiency");
   addHistogram(histogram);
   
-  m_reconstructed = new TH1D("reconstructed", "", nBins, min, max);
-  m_total = new TH1D("total", "", nBins, min, max);
+//  m_reconstructed = new TH1D("reconstructed", "", nBins, min, max);
+//  m_total = new TH1D("total", "", nBins, min, max);
+  
+  m_reconstructed = new TH1D("reconstructed", "",  nBins, axis.constData());
+  m_total = new TH1D("total", "",  nBins, axis.constData());
   
   addLatex(RootPlot::newLatex(.3, .85));
 }
@@ -110,7 +113,7 @@ void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, Particle* partic
   
   ++m_nTotal;
   if (fillHistogram)
-    m_total->Fill(rigidity);
+    m_total->Fill(qAbs(rigidity));
   
   const Track* track = particle->track();
   if (!track || !track->fitGood())
@@ -121,7 +124,7 @@ void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, Particle* partic
 
   ++m_nReconstructed;
   if (fillHistogram)
-    m_reconstructed->Fill(rigidity);
+    m_reconstructed->Fill(qAbs(rigidity));
 }
 
 void TrackFindingEfficiency::update()
