@@ -39,17 +39,17 @@ void MainWindow::setupAnalysis()
   canvas = addCanvas(&file, qPrintable(name));
   addPlot(new MultiLayerEfficiencyCorrection(canvas));
   
-//  name = QString("Track finding efficiency - positive canvas");
-//  canvas = addCanvas(&file, qPrintable(name));
-//  addPlot(new TrackFindingEfficiencyCorrection(canvas));
-//  
-//  name = QString("Track finding efficiency - negative canvas");
-//  canvas = addCanvas(&file, qPrintable(name));
-//  addPlot(new TrackFindingEfficiencyCorrection(canvas));
-//  
-//  name = QString("Track finding efficiency - all canvas");
-//  canvas = addCanvas(&file, qPrintable(name));
-//  addPlot(new TrackFindingEfficiencyCorrection(canvas));
+  name = QString("Track finding efficiency - positive canvas");
+  canvas = addCanvas(&file, qPrintable(name));
+  addPlot(new TrackFindingEfficiencyCorrection(canvas));
+  
+  name = QString("Track finding efficiency - negative canvas");
+  canvas = addCanvas(&file, qPrintable(name));
+  addPlot(new TrackFindingEfficiencyCorrection(canvas));
+  
+  name = QString("Track finding efficiency - all canvas");
+  canvas = addCanvas(&file, qPrintable(name));
+  addPlot(new TrackFindingEfficiencyCorrection(canvas));
   
   file.Close();
 }
