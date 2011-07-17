@@ -4,13 +4,18 @@
 #include <TCanvas.h>
 #include <TFile.h>
 #include <TROOT.h>
+#include <TH1.h>
 #include <TH2.h>
+#include <TF1.h>
 #include <TKey.h>
+
 
 #include <QDebug>
 #include <QtGlobal>
 #include <QFile>
 #include <QStringList>
+
+bool verbose = true;
 
 void compareKeys(const QStringList& keys1, const QStringList& keys2,
       QStringList& common, QStringList& missing1, QStringList& missing2)
@@ -35,31 +40,77 @@ void compareKeys(const QStringList& keys1, const QStringList& keys2,
 
 bool histogramsMatch(TH1D* h1, TH1D* h2, QStringList& comment)
 {
-  if (strcmp(h1->GetName(), h2->GetName()))
+  bool ret = true;
+  if (strcmp(h1->GetName(), h2->GetName())) {
     comment << QString("Name mismatch: %1 <-> %2").arg(h1->GetName()).arg(h2->GetName());
+    ret = false;
+  }
+  if (h1->GetEntries() != h2->GetEntries()) {
+    if (verbose)
+      comment << QString("Number of entries mismatch: %1 <-> %2")
+        .arg(h1->GetEntries()).arg(h2->GetEntries());
+    ret = false;
+  }
   int nBins = h1->GetXaxis()->GetNbins();
   for (int bin = 0; bin <= nBins; ++bin)
     if (!qFuzzyCompare(h1->GetBinContent(bin), h2->GetBinContent(bin))) {
-      //comment << QString("bin %1: first file = %2, second file = %3").arg(bin).arg(h1->GetBinContent(bin)).arg(h2->GetBinContent(bin));
-      return false;
+      if (verbose)
+        comment << QString("bin %1: first file = %2, second file = %3").arg(bin).arg(h1->GetBinContent(bin)).arg(h2->GetBinContent(bin));
+      ret = false;
     }
-  return true;
+  return ret;
 }
 
 bool histogramsMatch(TH2D* h1, TH2D* h2, QStringList& comment)
 {
-  if (strcmp(h1->GetName(), h2->GetName()))
+  bool ret = true;
+  if (strcmp(h1->GetName(), h2->GetName())) {
     comment << QString("Name mismatch: %1 <-> %2").arg(h1->GetName()).arg(h2->GetName());
+    ret = false;
+  }
+  if (h1->GetEntries() != h2->GetEntries()) {
+    if (verbose)
+      comment << QString("Number of entries mismatch: %1 <-> %2")
+        .arg(h1->GetEntries()).arg(h2->GetEntries());
+    ret = false;
+  }
   int nBinsX = h1->GetXaxis()->GetNbins();
   int nBinsY = h1->GetYaxis()->GetNbins();
   for (int binX = 0; binX <= nBinsX; ++binX)
     for (int binY = 0; binY <= nBinsY; ++binY)
       if (!qFuzzyCompare(h1->GetBinContent(binX, binY), h2->GetBinContent(binX, binY))) {
-        //comment << QString("bin %1: first file = %2, second file = %3").arg(bin).arg(h1->GetBinContent(bin)).arg(h2->GetBinContent(bin));
-        return false;
+        if (verbose)
+          comment << QString("bin x %1, bin y %2: first file = %3, second file = %4")
+            .arg(binX).arg(binY).arg(h1->GetBinContent(binX, binY)).arg(h2->GetBinContent(binX, binY));
+        ret = false;
       }
-  return true;
+  return ret;
 }
+
+bool functionsMatch(TF1* f1, TF1* f2, QStringList& comment)
+{
+  bool ret = true;
+  if (strcmp(f1->GetName(), f2->GetName())) {
+    comment << QString("Name mismatch: %1 <-> %2").arg(f1->GetName()).arg(f2->GetName());
+    ret = false;
+  }
+  if (f1->GetNpar() != f2->GetNpar()) {
+    if (verbose)
+      comment << QString("Number of parameters mismatch: %1 <-> %2")
+        .arg(f1->GetNpar()).arg(f2->GetNpar());
+    ret = false;
+  }
+  int nParamters = f1->GetNpar();
+  for (int i = 0; i < nParamters; ++i)
+    if (!qFuzzyCompare(f1->GetParameter(i), f2->GetParameter(i))) {
+      if (verbose)
+        comment << QString("parameter %1 mismatch: %3 <-> %4")
+          .arg(i).arg(f1->GetParameter(i)).arg(f2->GetParameter(i));
+      ret = false;
+    }
+  return ret;
+}
+
 
 void compareKeys(TKey* key1, TKey* key2, QStringList& comment)
 {
@@ -73,15 +124,24 @@ void compareKeys(TKey* key1, TKey* key2, QStringList& comment)
   const QVector<TH1D*>& h1d2 = canvas2.histograms1D();
   for (int i = 0; i < h1d1.count(); ++i) {
     if (!histogramsMatch(h1d1[i], h1d2[i], comment))
-      comment << QString("canvas \"%1\", histogram \"%2\" differ").arg(canvas1.name()).arg(h1d1[i]->GetName());
+      comment << QString("canvases \"%1\", histograms \"%2\" differ.").arg(canvas1.name()).arg(h1d1[i]->GetName());
   }
 
   const QVector<TH2D*>& h2d1 = canvas1.histograms2D();
   const QVector<TH2D*>& h2d2 = canvas2.histograms2D();
   for (int i = 0; i < h2d1.count(); ++i) {
     if (!histogramsMatch(h2d1[i], h2d2[i], comment))
-      comment << QString("canvas \"%1\", histogram \"%2\" differ").arg(canvas1.name()).arg(h2d1[i]->GetName());
+      comment << QString("canvases \"%1\", histograms \"%2\" differ.").arg(canvas1.name()).arg(h2d1[i]->GetName());
   }
+
+  const QVector<TF1*>& f1 = canvas1.functions();
+  const QVector<TF1*>& f2 = canvas2.functions();
+  for (int i = 0; i < f1.count(); ++i) {
+    if (!functionsMatch(f1[i], f2[i], comment))
+      comment << QString("canvases \"%1\", functions \"%2\" differ.").arg(canvas1.name()).arg(f1[i]->GetName());
+  }
+
+
 }
 
 int main(int argc, char* argv[])
