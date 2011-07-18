@@ -10,6 +10,7 @@
 class ParticleProperties;
 class ParticleInformation;
 class TimeOfFlight;
+class TRDReconstruction;
 
 class Particle
 {
@@ -32,6 +33,7 @@ public:
   const ParticleProperties* properties() const {return m_properties;}
   Track* track() const {return m_track;}
   TimeOfFlight* timeOfFlight() const {return m_tof;}
+  TRDReconstruction* trdReconstruction() const {return m_trd;}
   ParticleInformation* information() const {return m_information;}
 
   double transverseMomentum() const;
@@ -53,6 +55,7 @@ private:
   const ParticleProperties* m_properties;
   Track* m_track;
   TimeOfFlight* m_tof;
+  TRDReconstruction* m_trd;
   ParticleInformation* m_information;
 
 };
