@@ -48,7 +48,6 @@ public:
     int getNoOfLayersWithEnergyDepositionOnTrack() const;
     int getNoOfLayersWithEnergyDepositionOnTrackAndPierced() const;
     int getNoOfLayersWithEnergyDepositionOnTrackPerLength() const;
-    /*not necessery*/int getNoOfLayersWithEnergyDepositionOnTrackWithMinumLength() const;
 
 private:
     QList<const Hit*> m_allHits;
@@ -69,6 +68,7 @@ private:
     QVector<double> m_layerLengthThroughTube;
     QVector<double> m_layerEnergyDepositionOnTrackPerLength;
     QVector<double> m_layerEnergyDepositionOnTrackPerMinLength;
+  /*not necessery*/int getNoOfLayersWithEnergyDepositionOnTrackPerMinLength() const;
 
 //##############################
 //static members and functions:

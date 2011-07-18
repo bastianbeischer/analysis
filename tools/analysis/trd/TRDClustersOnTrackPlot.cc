@@ -67,7 +67,7 @@ void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/,Particle
   histogram(2)->Fill(trdReconstruction->getNoOfLayersWithEnergyDepositionOnTrack());
   histogram(3)->Fill(trdReconstruction->getNoOfLayersWithEnergyDepositionOnTrackAndPierced());
   histogram(4)->Fill(trdReconstruction->getNoOfLayersWithEnergyDepositionOnTrackPerLength());
-  histogram(5)->Fill(trdReconstruction->getNoOfLayersWithEnergyDepositionOnTrackWithMinumLength());
+  histogram(5)->Fill(trdReconstruction->getNoOfLayersWithEnergyDepositionOnTrackPerMinLength());
   histogram(6)->Fill(trdReconstruction->getNoOfClustersOnTrack());
   histogram(7)->Fill(trdReconstruction->getNoOfHitsOnTrack());
 }
