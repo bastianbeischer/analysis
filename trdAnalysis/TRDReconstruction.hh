@@ -14,50 +14,58 @@ class TRDReconstruction
 {
 public:
     TRDReconstruction();
+    void reset();
     void reconstructTRD(SimpleEvent* event, Track* globalTrack);
-    QList<Hit*> getAllHits() {return m_allHits;}
-    QList<Cluster*> getAllClusters() {return m_allClusters;}
-    QList<Hit*> getAllHitsOnTrack() {return m_allHitsOnTrack;}
-    QList<Cluster*> getAllClustersOnTrack() {return m_allClustersOnTrack;}
-    QList<Hit*> getAllHitsOnTrackAndPierced() {return m_allHitsOnTrackAndPierced;}
-    QList<Cluster*> getAllClustersOnTracAndPierced() {return m_allClustersOnTrackAndPierced;}
-    QList<Hit*> getAllHitsForLayer(int layer) {return m_layerAllHits.values(layer);}
-    QList<Cluster*> getAllClustersForLayer(int layer) {return m_layerAllClusters.values(layer);}
-    QList<Hit*> getAllHitsOnTrackForLayer(int layer) {return m_layerAllHitsOnTrack.values(layer);}
-    QList<Cluster*> getAllClustersOnTrackForLayer(int layer) {return m_layerAllClustersOnTrack.values(layer);}
-    QList<Hit*> getAllHitsOnTrackAndPiercedForLayer(int layer) {return m_layerAllHitsOnTrackAndPierced.values(layer);}
-    QList<Cluster*> getAllClustersOnTracAndPiercedkForLayer(int layer) {return m_layerAllClustersOnTrackAndPierced.values(layer);}
-    double getEnergyDepositionForLayer(int layer) {return m_layerEnergyDeposition.at(layer);}
-    double getEnergyDepositionOnTrackForLayer(int layer) {return m_layerEnergyDepositionOnTrack.at(layer);}
-    double getEnergyDepositionOnTrackAndPiercedForLayer(int layer) {return m_layerEnergyDepositionOnTrackAndPierced.at(layer);}
-    double getLengthThroughTubeForLayer(int layer) {return m_layerLengthThroughTube.at(layer);}
-    double getEnergyDepositionOnTrackPerLengthForLayer(int layer) {return m_layerEnergyDepositionOnTrackPerLength.at(layer);}
+    const QList<const Hit*>& getAllHits() const {return m_allHits;}
+    const QList<const Cluster*>& getAllClusters() const {return m_allClusters;}
+    const QList<const Hit*>& getAllHitsOnTrack() const {return m_allHitsOnTrack;}
+    const QList<const Cluster*>& getAllClustersOnTrack() const {return m_allClustersOnTrack;}
+    const QList<const Hit*>& getAllHitsOnTrackAndPierced() const {return m_allHitsOnTrackAndPierced;}
+    const QList<const Cluster*>& getAllClustersOnTracAndPierced() const {return m_allClustersOnTrackAndPierced;}
+    const QList<const Hit*> getAllHitsForLayer(int layer) const {return m_layerAllHits.values(layer);}
+    const QList<const Cluster*> getAllClustersForLayer(int layer) const {return m_layerAllClusters.values(layer);}
+    const QList<const Hit*> getAllHitsOnTrackForLayer(int layer) const {return m_layerAllHitsOnTrack.values(layer);}
+    const QList<const Cluster*> getAllClustersOnTrackForLayer(int layer) const {return m_layerAllClustersOnTrack.values(layer);}
+    const QList<const Hit*> getAllHitsOnTrackAndPiercedForLayer(int layer) const {return m_layerAllHitsOnTrackAndPierced.values(layer);}
+    const QList<const Cluster*> getAllClustersOnTracAndPiercedkForLayer(int layer) const {return m_layerAllClustersOnTrackAndPierced.values(layer);}
+    double getEnergyDepositionForLayer(int layer) const {return m_layerEnergyDeposition.at(layer);}
+    double getEnergyDepositionOnTrackForLayer(int layer) const {return m_layerEnergyDepositionOnTrack.at(layer);}
+    double getEnergyDepositionOnTrackAndPiercedForLayer(int layer) const {return m_layerEnergyDepositionOnTrackAndPierced.at(layer);}
+    double getLengthThroughTubeForLayer(int layer) const {return m_layerLengthThroughTube.at(layer);}
+    double getEnergyDepositionOnTrackPerLengthForLayer(int layer) const {return m_layerEnergyDepositionOnTrackPerLength.at(layer);}
+    double getEnergyDepositionOnTrackPerMinimumLengthForLayer(int layer) const {return m_layerEnergyDepositionOnTrackPerMinLength.at(layer);}
 
-    int getNoOfHits() {return m_allHits.size();}
-    int getNoOfClusters() {return m_allClusters.size();}
-    int getNoOfHitsOnTrack() {return m_allHitsOnTrack.size();}
-    int getNoOfClustersOnTrack() {return m_allClustersOnTrack.size();}
-    int getNoOfHitsOnTrackAndPierced() {return m_allHitsOnTrackAndPierced.size();}
-    int getNoOfClustersOnTrackAndPierced() {return m_allClustersOnTrackAndPierced.size();}
+    int getNoOfHits() const {return m_allHits.size();}
+    int getNoOfClusters() const {return m_allClusters.size();}
+    int getNoOfHitsOnTrack() const {return m_allHitsOnTrack.size();}
+    int getNoOfClustersOnTrack() const {return m_allClustersOnTrack.size();}
+    int getNoOfHitsOnTrackAndPierced() const {return m_allHitsOnTrackAndPierced.size();}
+    int getNoOfClustersOnTrackAndPierced() const {return m_allClustersOnTrackAndPierced.size();}
+    int getNoOfLayersWithEnergyDeposition() const;
+    int getNoOfLayersWithEnergyDepositionOnTrack() const;
+    int getNoOfLayersWithEnergyDepositionOnTrackAndPierced() const;
+    int getNoOfLayersWithEnergyDepositionOnTrackPerLength() const;
+    /*not necessery*/int getNoOfLayersWithEnergyDepositionOnTrackWithMinumLength() const;
 
 private:
-    QList<Hit*> m_allHits;
-    QList<Cluster*> m_allClusters;
-    QList<Hit*> m_allHitsOnTrack;
-    QList<Cluster*> m_allClustersOnTrack;
-    QList<Hit*> m_allHitsOnTrackAndPierced;
-    QList<Cluster*> m_allClustersOnTrackAndPierced;
-    QMultiMap<int, Hit*> m_layerAllHits;
-    QMultiMap<int, Cluster*> m_layerAllClusters;
-    QMultiMap<int, Hit*> m_layerAllHitsOnTrack;
-    QMultiMap<int, Hit*> m_layerAllHitsOnTrackAndPierced;
-    QMultiMap<int, Cluster*> m_layerAllClustersOnTrack;
-    QMultiMap<int, Cluster*> m_layerAllClustersOnTrackAndPierced;
+    QList<const Hit*> m_allHits;
+    QList<const Cluster*> m_allClusters;
+    QList<const Hit*> m_allHitsOnTrack;
+    QList<const Cluster*> m_allClustersOnTrack;
+    QList<const Hit*> m_allHitsOnTrackAndPierced;
+    QList<const Cluster*> m_allClustersOnTrackAndPierced;
+    QMultiMap<int, const Hit*> m_layerAllHits;
+    QMultiMap<int, const Cluster*> m_layerAllClusters;
+    QMultiMap<int, const Hit*> m_layerAllHitsOnTrack;
+    QMultiMap<int, const Hit*> m_layerAllHitsOnTrackAndPierced;
+    QMultiMap<int, const Cluster*> m_layerAllClustersOnTrack;
+    QMultiMap<int, const Cluster*> m_layerAllClustersOnTrackAndPierced;
     QVector<double> m_layerEnergyDeposition;
     QVector<double> m_layerEnergyDepositionOnTrack;
     QVector<double> m_layerEnergyDepositionOnTrackAndPierced;
     QVector<double> m_layerLengthThroughTube;
     QVector<double> m_layerEnergyDepositionOnTrackPerLength;
+    QVector<double> m_layerEnergyDepositionOnTrackPerMinLength;
 };
 
 #endif // TRDRECONSTRUCTION_HH
