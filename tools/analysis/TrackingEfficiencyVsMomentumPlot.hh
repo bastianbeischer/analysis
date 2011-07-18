@@ -6,25 +6,17 @@
 
 class TCanvas;
 
-class TrackingEfficiencyVsMomentumPlot :
-  public AnalysisPlot,
-  public H2DPlot
+class TrackingEfficiencyVsMomentumPlot : public AnalysisPlot, public H2DPlot
 {
-  
 public:
-  enum Type {
-    Positive,
-    Negative,
-    All
-  };
+  enum Type {Positive, Negative, All};
   TrackingEfficiencyVsMomentumPlot(Type type);
   ~TrackingEfficiencyVsMomentumPlot();
-  
+
   void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
   void finalize();
 private:
   Type m_type;
-
 };
 
 #endif /* TrackingEfficiencyVsMomentumPlot_hh */

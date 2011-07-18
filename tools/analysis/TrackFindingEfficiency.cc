@@ -36,10 +36,10 @@ TrackFindingEfficiency::TrackFindingEfficiency(Type type)
 {
   m_nTotal = 0;
   m_nReconstructed = 0;
-  
+
   TH1::SetDefaultSumw2(kTRUE);
   QString title = "Track finding efficiency";
-  
+
   if (m_type == Negative) {
     title += " - negative";
   }
@@ -49,22 +49,22 @@ TrackFindingEfficiency::TrackFindingEfficiency(Type type)
   if (m_type == All) {
     title += " - all";
   }
-  
+
   setTitle(title);
-  
+
   const int nBins = 21;
   const double min = 0.1;
   const double max = 20;
   const QVector<double>& axis = logBinning(nBins, min, max);
-  
+
   TH1D* histogram = new TH1D("reconstruction efficiency", "", nBins, axis.constData());
-  
+
   setAxisTitle("abs(rigidity / GV)", "efficiency");
   addHistogram(histogram);
-  
-  m_reconstructed = new TH1D("reconstructed", "",  nBins, axis.constData());
-  m_total = new TH1D("total", "",  nBins, axis.constData());
-  
+
+  m_reconstructed = new TH1D("reconstructed", "", nBins, axis.constData());
+  m_total = new TH1D("total", "", nBins, axis.constData());
+
   addLatex(RootPlot::newLatex(.3, .85));
 }
 
@@ -79,7 +79,7 @@ void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, Particle* partic
 {
   bool fillHistogram = false;
   double rigidity = 0;
-  
+
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
   if (settings && settings->situation() == Settings::Testbeam11) {
     if (m_type == Negative && settings->polarity() > 0)
@@ -98,11 +98,11 @@ void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, Particle* partic
       return;
     fillHistogram = true;
   }
-  
+
   ++m_nTotal;
   if (fillHistogram)
     m_total->Fill(qAbs(rigidity));
-  
+
   const Track* track = particle->track();
   if (!track || !track->fitGood())
     return;
@@ -122,10 +122,10 @@ void TrackFindingEfficiency::update()
   double recError = sqrt(m_nReconstructed);
   double totError = sqrt(m_nTotal);
   double efficiencyError = efficiency * Helpers::addQuad(recError/m_nReconstructed, totError/m_nTotal);
-  
+
   latex()->SetTitle(qPrintable(QString("efficiency  = %1 #pm %2").arg(efficiency).arg(efficiencyError)));
 }
-  
+
 void TrackFindingEfficiency::finalize()
 {
   update();
@@ -138,4 +138,4 @@ QVector<double> TrackFindingEfficiency::logBinning(unsigned int nBins, double mi
     binning.append(pow(min, 1 + delta * i));
   }
   return binning;
-} 
+}

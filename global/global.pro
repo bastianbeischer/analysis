@@ -9,7 +9,7 @@ CLASSES += \
   RootStyle
 
 HEADERS += \
-	Constants.hh \
+  Constants.hh \
   Helpers.hh
 
 include($$TOPLEVEL/root.pri)

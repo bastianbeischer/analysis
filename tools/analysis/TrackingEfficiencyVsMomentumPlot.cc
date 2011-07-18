@@ -16,7 +16,7 @@ TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot(Type type)
   , m_type(type)
 {
   QString htitle = "Efficiency vs momentum";
-  
+
   if (m_type == Positive)
     htitle += " positive";
   if (m_type == Negative)
@@ -24,7 +24,7 @@ TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot(Type type)
   if (m_type == All)
     htitle += " all";
   setTitle(htitle);
-  
+
   int nBins = 21;
   double lowerBound = 1e-1;
   double upperBound = 20.;
@@ -33,7 +33,7 @@ TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot(Type type)
   for (int i = 0; i < nBins+1; i++) {
     p[i] = pow(lowerBound, delta*i+1);
   }
-  
+
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBins, p, 7, 1.5, 8.5);
   setAxisTitle("R / GV", "layers with exactly one hit", "");
   addHistogram(histogram);
@@ -68,7 +68,7 @@ void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, Partic
   }
 
   double rigidity = track->rigidity();
-  
+
   if (m_type == Positive && rigidity < 0) {
     return;
   }
@@ -76,7 +76,7 @@ void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, Partic
     return;
   }
 
-  histogram()->Fill(qAbs(rigidity),nLayers);
+  histogram()->Fill(qAbs(rigidity), nLayers);
 }
 
 void TrackingEfficiencyVsMomentumPlot::finalize()
@@ -91,6 +91,6 @@ void TrackingEfficiencyVsMomentumPlot::finalize()
     for (int binY = 1; binY <= nBinsY; binY++) {
       double bc = histogram()->GetBinContent(binX, binY);
       histogram()->SetBinContent(binX, binY, bc/sum);
-    }    
+    }
   }
 }

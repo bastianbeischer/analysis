@@ -65,7 +65,7 @@ SingleLayerTrackingEfficiencyPlot::SingleLayerTrackingEfficiencyPlot(Type type) 
 SingleLayerTrackingEfficiencyPlot::~SingleLayerTrackingEfficiencyPlot()
 {
   delete m_normHisto;
-  delete [] m_layerZ;
+  delete[] m_layerZ;
 }
 
 void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
@@ -95,12 +95,10 @@ void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, 
 
     double rigidity = track->rigidity();
 
-    if (m_type == Positive && rigidity < 0) {
+    if (m_type == Positive && rigidity < 0)
       return;
-    }
-    if (m_type == Negative && rigidity > 0) {
+    if (m_type == Negative && rigidity > 0)
       return;
-    }
 
     // fill histograms
     if (beenHit)
