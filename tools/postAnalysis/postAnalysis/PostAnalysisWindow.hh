@@ -31,7 +31,9 @@ private slots:
   void selectPlot(QListWidgetItem*);
   void selectPlot(QListWidgetItem*, QListWidgetItem*);
   void plotOptionComboBoxCurrentIndexChanged(const QString& option);
+  void setLogX(int);
   void setLogY(int);
+  void setLogZ(int);
 protected:
   Ui_postAnalysisWindow* m_ui;
 };
