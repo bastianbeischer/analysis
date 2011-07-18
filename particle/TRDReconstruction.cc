@@ -27,11 +27,13 @@
 //static members:
 const bool TRDReconstruction::calculateLengthInTube = true;
 const int TRDReconstruction::minLayerCut = 6;
+const int TRDReconstruction::maxOffTrackCluster = 2;
 const int TRDReconstruction::spectrumDefaultBins = 100;
 
 
 TRDReconstruction::TRDReconstruction()
-  : m_layerEnergyDeposition(8, 0.)
+  : m_flags(None)
+  , m_layerEnergyDeposition(8, 0.)
   , m_layerEnergyDepositionOnTrack(8, 0.)
   , m_layerEnergyDepositionOnTrackAndPierced(8, 0.)
   , m_layerLengthThroughTube(8, 0.)
@@ -42,6 +44,7 @@ TRDReconstruction::TRDReconstruction()
 
 void TRDReconstruction::reset()
 {
+  m_flags = None;
   m_allHits.clear();
   m_allClusters.clear();
   m_allHitsOnTrack.clear();
@@ -54,6 +57,14 @@ void TRDReconstruction::reset()
   m_layerAllHitsOnTrackAndPierced.clear();
   m_layerAllClustersOnTrack.clear();
   m_layerAllClustersOnTrackAndPierced.clear();
+  m_channelEnergyDeposition.clear();
+  m_channelEnergyDepositionOnTrack.clear();
+  m_channelEnergyDepositionOnTrackPerLength.clear();
+  m_channelEnergyDepositionOnTrackPerMinLength.clear();
+  m_moduleEnergyDeposition.clear();
+  m_moduleEnergyDepositionOnTrack.clear();
+  m_moduleEnergyDepositionOnTrackPerLength.clear();
+  m_moduleEnergyDepositionOnTrackPerMinLength.clear();
   //now set all values per layer to zero
   m_layerEnergyDeposition.fill(0.);
   m_layerEnergyDepositionOnTrack.fill(0.);
@@ -66,6 +77,7 @@ void TRDReconstruction::reset()
 void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
 {
   reset();
+
   std::vector<Hit*>::const_iterator endIt = event->hits().end();
   for (std::vector<Hit*>::const_iterator eventHitIt = event->hits().begin(); eventHitIt != endIt; ++eventHitIt) {
     Hit* hit = *eventHitIt;
@@ -100,12 +112,20 @@ void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
       m_allHits << subHit;
       m_layerAllHits.insert(trdLayer, subHit);
       m_layerEnergyDeposition[trdLayer] += subHit->signalHeight();
+      m_channelEnergyDeposition[subHit->detId()] += subHit->signalHeight();
+      m_moduleEnergyDeposition[subHit->detId() & 0xFFF0] += subHit->signalHeight();
+      double lengthInTube = TRDReconstruction::distanceOnTrackThroughTRDTube(subHit, globalTrack);
+      double minLength = qMax(1.0 /*mm*/, lengthInTube);
       if (globalTrack && (globalTrack->hits().contains(cluster) || globalTrack->hits().contains(subHit))) {
         m_allHitsOnTrack << subHit;
         m_layerAllHitsOnTrack.insert(trdLayer, subHit);
         m_layerEnergyDepositionOnTrack[trdLayer] += subHit->signalHeight();
+        m_layerEnergyDepositionOnTrackPerMinLength[trdLayer] += (subHit->signalHeight() / minLength);
+        m_channelEnergyDepositionOnTrack[subHit->detId()] += subHit->signalHeight();
+        m_moduleEnergyDepositionOnTrack[subHit->detId() & 0xFFF0] += subHit->signalHeight();
+        m_channelEnergyDepositionOnTrackPerMinLength[subHit->detId()] += (subHit->signalHeight() / minLength);
+        m_moduleEnergyDepositionOnTrackPerMinLength[subHit->detId() & 0xFFF0] += (subHit->signalHeight() / minLength);
       }
-      double lengthInTube = TRDReconstruction::distanceOnTrackThroughTRDTube(subHit, globalTrack);
       if (lengthInTube > 0.) {
         oneSubHitPierced = true;
         m_layerLengthThroughTube[trdLayer] += lengthInTube;
@@ -113,6 +133,8 @@ void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
         m_layerAllHitsOnTrackAndPierced.insert(trdLayer, subHit);
         m_layerEnergyDepositionOnTrackAndPierced[trdLayer] += subHit->signalHeight();
         m_layerEnergyDepositionOnTrackPerLength[trdLayer] += (subHit->signalHeight() / lengthInTube);
+        m_channelEnergyDepositionOnTrackPerLength[subHit->detId()] += subHit->signalHeight();
+        m_moduleEnergyDepositionOnTrackPerLength[subHit->detId() & 0xFFF0] += (subHit->signalHeight() / lengthInTube);
       }
     }
 
@@ -123,11 +145,17 @@ void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
 
   } // all Clusters/Hits
 
-  //calculate the energy deposition per layer normalized to the length un tub, but use total energy on layer on track and use a minimum length of 1 mm
-  for (int i = 0; i < 8; ++i)
-    m_layerEnergyDepositionOnTrackPerMinLength[i] = m_layerEnergyDepositionOnTrack.at(i) / qMax(1.0 /*mm*/, m_layerLengthThroughTube.at(i));
+  checkGoodTRDEvent();
 }
 
+void TRDReconstruction::checkGoodTRDEvent()
+{
+  int nLayersWithEnDepOnTrack = getNoOfLayersWithEnergyDepositionOnTrack();
+  int nOffTrackCluster = getNoOfClusters() - getNoOfClustersOnTrack();
+
+  if ((nLayersWithEnDepOnTrack >= minLayerCut) && (nOffTrackCluster <= maxOffTrackCluster))
+    m_flags |= GoodTRDEvent;
+}
 
 int TRDReconstruction::getNoOfLayersWithEnergyDeposition() const
 {
@@ -165,7 +193,7 @@ int TRDReconstruction::getNoOfLayersWithEnergyDepositionOnTrackPerLength() const
   return count;
 }
 
-int TRDReconstruction::getNoOfLayersWithEnergyDepositionOnTrackWithMinumLength() const
+int TRDReconstruction::getNoOfLayersWithEnergyDepositionOnTrackPerMinLength() const
 {
   int count = 0;
   for (QVector<double>::const_iterator it = m_layerEnergyDepositionOnTrackPerMinLength.constBegin(); it != m_layerEnergyDepositionOnTrackPerMinLength.constEnd(); ++it)
@@ -266,7 +294,7 @@ bool TRDReconstruction::globalTRDCuts(const QVector<Hit*>&, const Particle* part
   //check if magnet was installed, if it was or no information was found, check if the particle went through the inner magnet:
   if (!(settings && !(settings->magnet()))){
     //check if track was inside of magnet
-    if (!(pFlags & ParticleInformation::InsideMagnet)  )
+    if (pFlags & ParticleInformation::MagnetCollision)
       return false;
   }
 
@@ -282,7 +310,7 @@ bool TRDReconstruction::globalTRDCuts(const QVector<Hit*>&, const Particle* part
 
   //trd layer cut
 
-  if (nTrdHitsOnTrack < TRDReconstruction::minTRDLayerCut)
+  if (nTrdHitsOnTrack < TRDReconstruction::minLayerCut)
     return false;
 
   if (nTotalTRDHits-2 > nTrdHitsOnTrack)
