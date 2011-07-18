@@ -20,7 +20,7 @@ public:
   void update();
   void unzoom();
   void draw(TCanvas*);
-  void saveForPostAnalysis(TCanvas*);
+  void saveForPostAnalysis();
   void positionChanged(double, double);
 
 protected slots:

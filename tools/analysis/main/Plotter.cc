@@ -64,22 +64,20 @@ void Plotter::saveCanvas(const QString& fileName)
 
 void Plotter::saveForPostAnalysis(const QString& fileName)
 {
-  int savedSelectedPlot = m_selectedPlot;
   TFile file(qPrintable(fileName), "RECREATE");
   for (unsigned int i = 0; i < numberOfPlots(); ++i) {
-    selectPlot(i, true);
     AnalysisPlot* plot = m_plots.at(i);
     PlotCollection* pc = dynamic_cast<PlotCollection*>(plot);
     if (pc) {
-      pc->saveForPostAnalysis(s_rootWidget->GetCanvas());
-    }
-    else {
+      pc->saveForPostAnalysis();
+    } else {
+      m_plots[i]->draw(s_rootWidget->GetCanvas());
       s_rootWidget->GetCanvas()->SetName(qPrintable(plotTitle(i) + " canvas"));
       s_rootWidget->GetCanvas()->Write();
     }
   }
   file.Close();
-  selectPlot(savedSelectedPlot);
+  selectPlot(m_selectedPlot);
   s_rootWidget->GetCanvas()->SetName("tqtwidget");
 }
 
@@ -116,7 +114,7 @@ AnalysisPlot::Topic Plotter::plotTopic(unsigned int i)
   return m_plots[i]->topic();
 }
 
-void Plotter::selectPlot(int i, bool inhibitDraw)
+void Plotter::selectPlot(int i)
 {
   Q_ASSERT(i < int(numberOfPlots()));
   if (i < 0) {
@@ -126,19 +124,17 @@ void Plotter::selectPlot(int i, bool inhibitDraw)
   } else {
     emit(titleChanged(m_plots[i]->title()));
     m_plots[i]->draw(s_rootWidget->GetCanvas());
-    if (!inhibitDraw) {
-      if (m_layout->count() > 1) {
-        QWidget* prevWidget = m_layout->itemAt(0)->widget();
-        m_layout->removeWidget(prevWidget);
-        prevWidget->close();
-      }
-      QWidget* secondaryWidget = m_plots[i]->secondaryWidget();
-      if (secondaryWidget) {
-        m_layout->insertWidget(0, secondaryWidget);
-        secondaryWidget->show();
-      }
-      s_rootWidget->updateCanvas();
+    if (m_layout->count() > 1) {
+      QWidget* prevWidget = m_layout->itemAt(0)->widget();
+      m_layout->removeWidget(prevWidget);
+      prevWidget->close();
     }
+    QWidget* secondaryWidget = m_plots[i]->secondaryWidget();
+    if (secondaryWidget) {
+      m_layout->insertWidget(0, secondaryWidget);
+      secondaryWidget->show();
+    }
+    s_rootWidget->updateCanvas();
   }
   m_selectedPlot = i;
 }

@@ -85,6 +85,14 @@ void H1DPlot::addHistogram(TH1D* h, DrawOption option)
   }
 }
 
+void H1DPlot::removeHistogram(int i)
+{
+  delete m_histograms.at(i);
+  m_histograms[i] = 0;
+  m_histograms.remove(i);
+  m_drawOptions.remove(i);
+}
+
 const QVector<RootPlot::DrawOption>& H1DPlot::drawOptions()
 {
   return s_drawOptions;

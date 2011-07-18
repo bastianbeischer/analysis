@@ -12,4 +12,5 @@ SUBDIRS  = \
   timeResolution \
   mcComparison \
   slowControl \
-  trdMoPV
+  trdMoPV \
+  fileCompare

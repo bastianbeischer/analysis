@@ -95,9 +95,21 @@ void AnalysisProcessor::process(SimpleEvent* event)
   // identify particle species
   m_identifier->identify(m_particle);
 
-  if (m_filter->passes(m_particle))
-    if (m_mcFilter->passes(clusters, m_particle, event))
-      if (m_cuts->passes(clusters, m_particle, event))
-        foreach (EventDestination* destination, m_destinations)
-          destination->processEvent(clusters, m_particle, event);
+  if (m_filter->passes(m_particle)) {
+    if (m_mcFilter->passes(clusters, m_particle, event)) {
+      if (m_cuts->passes(clusters, m_particle, event)) {
+        QVector<EventDestination*> postponed;
+        foreach(EventDestination* destination, m_destinations) {
+          bool success = tryProcessingDestination(destination, clusters, m_particle, event);
+          if (!success)
+            postponed.append(destination); // postpone this destination for now.
+        }
+        while(postponed.size() > 0) {
+          bool success = tryProcessingDestination(postponed.front(), clusters, m_particle, event);
+          if (success)
+            postponed.remove(0);
+        }
+      }
+    }
+  }
 }

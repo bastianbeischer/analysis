@@ -1,46 +1,38 @@
 TEMPLATE = app
-TARGET = analysis
+TARGET = efficiencyCorrection
 
 CONFIG += debug
 
-TOPLEVEL = ../..
+TOPLEVEL = ../../..
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \
-  $$TOPLEVEL/global \
-  $$TOPLEVEL/processing \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/particle \
   $$TOPLEVEL/tracking \
-  $$TOPLEVEL/trdAnalysis
+  $$TOPLEVEL/global \
+  $$TOPLEVEL/processing \
+  $$TOPLEVEL/tools/postAnalysis/postAnalysis
 
 LIBS += \
   -L$$TOPLEVEL/lib \
-  -lglobal \
   -lSimpleEvent \
-  -lprocessing \
   -lparticle \
   -ltracking \
   -lrootplot \
   -lsetup \
-  -ltrdAnalysis
+  -lprocessing \
+  -lglobal \
+  -lpostAnalysis
 
-SOURCEDIRS = \
-  main \
-  tracker \
-  tof \
-  trd \
-  reconstruction \
-  general \
-  mc \
-  slowControl \
-  testbeam
+CLASSES = \
+  MainWindow \
+  TrackingEfficiencyCorrection
 
+SOURCES = \
+  main.cc
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
 include($$TOPLEVEL/common.pri)
-
-RESOURCES += \
-  main/resources.qrc

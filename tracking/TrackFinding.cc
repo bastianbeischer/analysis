@@ -7,7 +7,7 @@
 #include "CenteredBrokenLine.hh"
 #include "BrokenLine.hh"
 
-#include <TH2I.h>
+#include <TH2D.h>
 #include <cmath>
 #include <iostream>
 
@@ -16,7 +16,7 @@
 int TrackFinding::s_histCounter = 0;
 
 TrackFinding::TrackFinding() :
-  m_maxSlope(1.),
+  m_maxSlope(0.5),
   m_maxOffset(100.),
   m_slopeBins(41),
   m_offsetBins(41),
@@ -26,7 +26,9 @@ TrackFinding::TrackFinding() :
 {
   char title[128];
   sprintf(title, "trackFindingHist_%d", s_histCounter);
-  m_trackFindingHist = new TH2I(title, title, m_slopeBins, -m_maxSlope, m_maxSlope, m_offsetBins, -m_maxOffset, m_maxOffset);
+  m_trackFindingHist = new TH2D(title, title, m_slopeBins, -m_maxSlope, m_maxSlope, m_offsetBins, -m_maxOffset, m_maxOffset);
+  m_trackFindingHist->GetXaxis()->SetTitle("slope");
+  m_trackFindingHist->GetYaxis()->SetTitle("offset / mm");
   s_histCounter++;
 }
 
@@ -52,7 +54,7 @@ QVector<Hit*> TrackFinding::findTrack(const QVector<Hit*>& hits)
       if (fabs(z2 - z1) > 20) {
         double slope = (x2-x1)/(z2-z1);
         double offset = x1 - slope*z1;
-        int bin = m_trackFindingHist->Fill(slope,offset);
+        int bin = m_trackFindingHist->Fill(slope,offset,fabs(z2-z1));
         int content = m_trackFindingHist->GetBinContent(bin);
         if (content > max) {
           max = content;
@@ -64,11 +66,30 @@ QVector<Hit*> TrackFinding::findTrack(const QVector<Hit*>& hits)
 
   int maxX, maxY, maxZ;
   m_trackFindingHist->GetBinXYZ(maxBin, maxX, maxY, maxZ);
-  double slopeMax = m_trackFindingHist->GetXaxis()->GetBinCenter(maxX);
-  double offsetMax  = m_trackFindingHist->GetYaxis()->GetBinCenter(maxY);
+
+  double slopeGuess = 0.;
+  double offsetGuess = 0.;
+  double sumOfWeights = 0.;
+  if (maxX > 1 && maxX < m_slopeBins && maxY > 1 && maxY < m_offsetBins) {
+    for (int i = -1; i <= 1; i++) {
+      for (int j = -1; j <= 1; j++) {
+        double bc = m_trackFindingHist->GetBinContent(maxX+i, maxY+j);
+        slopeGuess += bc*m_trackFindingHist->GetXaxis()->GetBinCenter(maxX+i);
+        offsetGuess += bc*m_trackFindingHist->GetYaxis()->GetBinCenter(maxY+j);
+        sumOfWeights += bc;
+      }
+    }
+    slopeGuess /= sumOfWeights;
+    offsetGuess /= sumOfWeights;
+  }
+  else {
+    slopeGuess = m_trackFindingHist->GetXaxis()->GetBinCenter(maxX);
+    offsetGuess = m_trackFindingHist->GetYaxis()->GetBinCenter(maxY);
+  }
+
   StraightLine straightLine;
-  straightLine.setSlopeX(slopeMax);
-  straightLine.setX0(offsetMax);
+  straightLine.setSlopeX(slopeGuess);
+  straightLine.setX0(offsetGuess);
 
   QVector<Hit*> hitsForFit;
   const QVector<Hit*>::const_iterator hitsEnd = hits.end();

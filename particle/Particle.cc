@@ -113,3 +113,8 @@ int Particle::charge() const
 {
   return m_properties->charge();
 }
+
+Color_t Particle::color() const
+{
+  return m_properties->color();
+}

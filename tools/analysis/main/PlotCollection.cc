@@ -78,15 +78,14 @@ void PlotCollection::draw(TCanvas* can)
   Plotter::rootWidget()->updateCanvas();
 }
 
-void PlotCollection::saveForPostAnalysis(TCanvas* can)
+void PlotCollection::saveForPostAnalysis()
 {
-  int prevSelectedPlot = m_selectedPlot;
-  for (m_selectedPlot = 0; m_selectedPlot < m_plots.size(); m_selectedPlot++) {
-    draw(can);
-    can->SetName(qPrintable(m_plots.at(m_selectedPlot)->title() + " canvas"));
-    can->Write();
+  for (int i = 0; i < m_plots.size(); ++i) {
+    TCanvas* canvas = Plotter::rootWidget()->GetCanvas();
+    m_plots[i]->draw(canvas);
+    canvas->SetName(qPrintable(m_plots[i]->title() + " canvas"));
+    canvas->Write();
   }
-  selectPlot(prevSelectedPlot);
 }
 
 void PlotCollection::selectPlot(int plot)

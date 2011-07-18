@@ -5,6 +5,7 @@
 AnalysisPlot::AnalysisPlot(Topic topic)
   : m_topic(topic)
 {
+  setNeedsLocking(true);
 }
 
 AnalysisPlot::~AnalysisPlot()

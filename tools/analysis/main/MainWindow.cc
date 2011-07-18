@@ -595,7 +595,9 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TrackerLayerStatisticsPlot);
     m_ui.plotter->addPlot(new TrackingEfficiencyVsMomentumPlot);
     m_ui.plotter->addPlot(new SingleLayerTrackingEfficiencyPlot);
-    m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot);
+    m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::Positive));
+    m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::Negative));
+    m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::All));
   }
   if (m_ui.miscellaneousTRDCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisPlot::MiscellaneousTRD));

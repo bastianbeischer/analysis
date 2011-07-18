@@ -3,6 +3,7 @@
 
 #include "Particle.hh"
 #include <QString>
+#include <TColor.h>
 
 class ParticleProperties
 {
@@ -19,6 +20,7 @@ public:
   QString name() const {return m_name;}
   double mass() const {return m_mass;}
   int charge() const {return m_charge;}
+  Color_t color() const {return m_color;}
 
 private:
   Particle::Type m_type;
@@ -26,6 +28,7 @@ private:
   QString m_name;
   double m_mass;
   int m_charge;
+  Color_t m_color;
 
 };
 
