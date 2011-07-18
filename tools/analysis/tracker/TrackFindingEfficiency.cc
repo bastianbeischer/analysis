@@ -37,7 +37,6 @@ TrackFindingEfficiency::TrackFindingEfficiency(Type type)
   m_nTotal = 0;
   m_nReconstructed = 0;
 
-  TH1::SetDefaultSumw2(kTRUE);
   QString title = "Track finding efficiency";
 
   if (m_type == Negative) {
@@ -58,12 +57,15 @@ TrackFindingEfficiency::TrackFindingEfficiency(Type type)
   const QVector<double>& axis = logBinning(nBins, min, max);
 
   TH1D* histogram = new TH1D("reconstruction efficiency", "", nBins, axis.constData());
+  histogram->Sumw2();
 
   setAxisTitle("abs(rigidity / GV)", "efficiency");
   addHistogram(histogram);
 
   m_reconstructed = new TH1D("reconstructed", "", nBins, axis.constData());
+  m_reconstructed->Sumw2();
   m_total = new TH1D("total", "", nBins, axis.constData());
+  m_total->Sumw2();
 
   addLatex(RootPlot::newLatex(.3, .85));
 }
