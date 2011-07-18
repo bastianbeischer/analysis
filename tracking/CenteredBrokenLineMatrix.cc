@@ -11,20 +11,12 @@ CenteredBrokenLineMatrix::~CenteredBrokenLineMatrix()
 {
 }
 
-void CenteredBrokenLineMatrix::fillMatrixFromHit(TMatrixD& A, unsigned int i, bool useTangens, float k, float xi) const
+void CenteredBrokenLineMatrix::fillMatrixFromHit(TMatrixD& A, unsigned int i, double k, double c, double s) const
 {
   int slopeXindex = k > 0. ? 2 : 3;
 
-  if (useTangens) {
-    A(i,0)            = -xi;
-    A(i,1)            = 1.;
-    A(i,slopeXindex)  = -k*xi;
-    A(i,4)            = k;
-  }
-  else {
-    A(i,0)            = 1.;
-    A(i,1)            = -xi;
-    A(i,slopeXindex)  = k;
-    A(i,4)            = -k*xi;
-  }
+  A(i,0)            = c;
+  A(i,1)            = -s;
+  A(i,slopeXindex)  = k*c;
+  A(i,4)            = -k*s;
 }
