@@ -10,7 +10,7 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "ParticleInformation.hh"
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 
 TRDDistanceWireToTrackPlot::TRDDistanceWireToTrackPlot(AnalysisPlot::Topic topic) :
   AnalysisPlot(topic),
@@ -30,7 +30,7 @@ TRDDistanceWireToTrackPlot::~TRDDistanceWireToTrackPlot()
 
 void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
-  if (!TRDCalculations::globalTRDCuts(hits, particle, event))
+  if (!TRDReconstruction::globalTRDCuts(hits, particle, event))
       return;
 
   //now get all relevant energy deposition for this specific plot and all length
@@ -46,12 +46,12 @@ void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& hits, Particl
     const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       Hit* subHit = *it;
-      double distancefromWire = TRDCalculations::distanceTrackToWire(subHit, track);
+      double distancefromWire = TRDReconstruction::distanceTrackToWire(subHit, track);
       distanceList << distancefromWire;
     } // subhits in cluster
   } // all hits
 
-  if (distanceList.size() >= TRDCalculations::minTRDLayerCut) {
+  if (distanceList.size() >= TRDReconstruction::minTRDLayerCut) {
   foreach(double distance, distanceList)
     histogram()->Fill(distance);
   }

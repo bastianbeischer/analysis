@@ -14,7 +14,7 @@
 #include "Hit.hh"
 #include "Particle.hh"
 
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 #include "RootStyle.hh"
 
 MCTotalEnergyDepositionTRDvsTrackerPlot::MCTotalEnergyDepositionTRDvsTrackerPlot()
@@ -82,7 +82,7 @@ void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& 
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         Hit* trdHit = *it;
-        double distance = TRDCalculations::distanceOnTrackThroughTRDTube(trdHit, track);
+        double distance = TRDReconstruction::distanceOnTrackThroughTRDTube(trdHit, track);
         if (distance > 0) {
           distanceSumTRD += distance;
           signalSumTRD += cluster->signalHeight();

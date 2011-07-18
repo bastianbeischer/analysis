@@ -6,7 +6,7 @@
 #include "Cluster.hh"
 #include "Hit.hh"
 #include "SimpleEvent.hh"
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 #include "Settings.hh"
 #include "SettingsManager.hh"
 
@@ -52,9 +52,9 @@ TRDSpectrumVsPressurePlot::TRDSpectrumVsPressurePlot(unsigned short id, TRDSpect
   const unsigned int nPressureBins = 200;
   const double minPressure = 1070;
   const double maxPressure = 1115;
-  int nBins = TRDCalculations::spectrumDefaultBins;
+  int nBins = TRDReconstruction::spectrumDefaultBins;
   double lowerBound = 1e-3;
-  double upperBound = TRDCalculations::spectrumUpperLimit();
+  double upperBound = TRDReconstruction::spectrumUpperLimit();
   double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
   double p[nBins+1];
   for (int i = 0; i < nBins+1; i++) {
@@ -62,7 +62,7 @@ TRDSpectrumVsPressurePlot::TRDSpectrumVsPressurePlot(unsigned short id, TRDSpect
   }
 
   TH2D* histogram = new TH2D(qPrintable(title()),"", nPressureBins, minPressure, maxPressure, nBins, p);
-  setAxisTitle("pressure /  mBar", TRDCalculations::xAxisTitle(), "");
+  setAxisTitle("pressure /  mBar", TRDReconstruction::xAxisTitle(), "");
   addHistogram(histogram);
 }
 
@@ -72,7 +72,7 @@ TRDSpectrumVsPressurePlot::~TRDSpectrumVsPressurePlot()
 
 void TRDSpectrumVsPressurePlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
-  if (!TRDCalculations::globalTRDCuts(hits, particle, event))
+  if (!TRDReconstruction::globalTRDCuts(hits, particle, event))
       return;
 
   // TODO: temp sensormap
@@ -97,8 +97,8 @@ void TRDSpectrumVsPressurePlot::processEvent(const QVector<Hit*>& hits, Particle
          (m_spectrumType == TRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
          (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
         double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
-        if (TRDCalculations::calculateLengthInTube)
-            distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(subHit, track);
+        if (TRDReconstruction::calculateLengthInTube)
+            distanceInTube = TRDReconstruction::distanceOnTrackThroughTRDTube(subHit, track);
         if (distanceInTube > 0) {
           signalList << subHit->signalHeight();
           lengthList << distanceInTube;
@@ -115,7 +115,7 @@ void TRDSpectrumVsPressurePlot::processEvent(const QVector<Hit*>& hits, Particle
 
   //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
   int hitsWhichAreOnTrack = signalList.size();
-  if (m_spectrumType == TRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDCalculations::minTRDLayerCut)
+  if (m_spectrumType == TRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDReconstruction::minTRDLayerCut)
     return;
 
   for (int i = 0; i < signalList.size(); ++i) {

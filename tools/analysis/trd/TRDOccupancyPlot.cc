@@ -8,7 +8,7 @@
 #include "Hit.hh"
 #include "Cluster.hh"
 #include "SimpleEvent.hh"
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 #include "TRDSpectrumPlot.hh"
 
 #include <TCanvas.h>
@@ -90,8 +90,8 @@ void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, Particle* particl
       //analyse the hit:
       double distanceInTube = 1.;
 
-      if(TRDCalculations::calculateLengthInTube)
-          TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
+      if(TRDReconstruction::calculateLengthInTube)
+          TRDReconstruction::distanceOnTrackThroughTRDTube(hit, track);
 
       if(!(distanceInTube > 0 && trackHits.contains(clusterHit)) && m_onlyOnTrack)
         continue;

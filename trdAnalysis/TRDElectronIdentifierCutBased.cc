@@ -2,7 +2,7 @@
 
 #include <QVector>
 
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 #include "SimpleEvent.hh"
 #include "Hit.hh"
 #include "Cluster.hh"
@@ -23,7 +23,7 @@ TRDElectronIdentifierCutBased::TRDElectronIdentifierCutBased()
 bool TRDElectronIdentifierCutBased::isElectronish(const QVector<Hit*>& hits, const Particle* particle, const SimpleEvent* event, bool &ok)
 {
   //use general trd cuts here:
-  if (TRDCalculations::globalTRDCuts(hits, particle, event)) {
+  if (TRDReconstruction::globalTRDCuts(hits, particle, event)) {
     ok = false;
     return false;
   }
@@ -42,8 +42,8 @@ bool TRDElectronIdentifierCutBased::isElectronish(const QVector<Hit*>& hits, con
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       Hit* subHit = *it;
       double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
-      if (TRDCalculations::calculateLengthInTube)
-          distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(subHit, track);
+      if (TRDReconstruction::calculateLengthInTube)
+          distanceInTube = TRDReconstruction::distanceOnTrackThroughTRDTube(subHit, track);
       if (distanceInTube > 0)
         values << hit->signalHeight() / distanceInTube;
     } // subhits in cluster
@@ -51,7 +51,7 @@ bool TRDElectronIdentifierCutBased::isElectronish(const QVector<Hit*>& hits, con
 
   //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
   int hitsWhichAreOnTrack = values.size();
-  if (hitsWhichAreOnTrack < TRDCalculations::minTRDLayerCut) {
+  if (hitsWhichAreOnTrack < TRDReconstruction::minTRDLayerCut) {
     ok = false;
     return false;
   }

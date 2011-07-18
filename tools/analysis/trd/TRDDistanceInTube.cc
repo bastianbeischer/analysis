@@ -7,7 +7,7 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "ParticleInformation.hh"
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 
 TRDDistanceInTube::TRDDistanceInTube(AnalysisPlot::Topic topic) :
   AnalysisPlot(topic),
@@ -27,7 +27,7 @@ TRDDistanceInTube::~TRDDistanceInTube()
 
 void TRDDistanceInTube::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
-  if (!TRDCalculations::globalTRDCuts(hits, particle, event))
+  if (!TRDReconstruction::globalTRDCuts(hits, particle, event))
       return;
 
   //now get all relevant energy deposition for this specific plot and all length
@@ -43,12 +43,12 @@ void TRDDistanceInTube::processEvent(const QVector<Hit*>& hits, Particle* partic
     const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       Hit* subHit = *it;
-      double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(subHit, track);
+      double distanceInTube = TRDReconstruction::distanceOnTrackThroughTRDTube(subHit, track);
       lengthList << distanceInTube;
     } // subhits in cluster
   } // all hits
 
-  if (lengthList.size() >= TRDCalculations::minTRDLayerCut) {
+  if (lengthList.size() >= TRDReconstruction::minTRDLayerCut) {
     foreach(double length, lengthList)
       histogram()->Fill(length);
   }

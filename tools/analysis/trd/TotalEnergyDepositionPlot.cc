@@ -9,7 +9,7 @@
 #include "Cluster.hh"
 #include "Hit.hh"
 
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 
 TotalEnergyDepositionPlot::TotalEnergyDepositionPlot()
   : AnalysisPlot(AnalysisPlot::MiscellaneousTRD)
@@ -28,7 +28,7 @@ TotalEnergyDepositionPlot::~TotalEnergyDepositionPlot()
 
 void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
 {
-  if (!TRDCalculations::globalTRDCuts(hits, particle, event))
+  if (!TRDReconstruction::globalTRDCuts(hits, particle, event))
       return;
 
   //now get all relevant energy deposition for this specific plot and all length
@@ -46,8 +46,8 @@ void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>& hits, Particle
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       Hit* subHit = *it;
       double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
-      if (TRDCalculations::calculateLengthInTube)
-          distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(subHit, track);
+      if (TRDReconstruction::calculateLengthInTube)
+          distanceInTube = TRDReconstruction::distanceOnTrackThroughTRDTube(subHit, track);
       if (distanceInTube > 0) {
         signalList << subHit->signalHeight();
         lengthList << distanceInTube;
@@ -63,7 +63,7 @@ void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>& hits, Particle
 
   //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
   int hitsWhichAreOnTrack = signalList.size();
-  if (hitsWhichAreOnTrack < TRDCalculations::minTRDLayerCut)
+  if (hitsWhichAreOnTrack < TRDReconstruction::minTRDLayerCut)
     return;
 
   double signalSum = 0;

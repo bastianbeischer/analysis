@@ -1,5 +1,5 @@
 #include "TRDLikelihoods.hh"
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 
 #include <QMutex>
 #include <QMutexLocker>
@@ -40,7 +40,7 @@ TRDLikelihoods* TRDLikelihoods::instance()
 }
 
 TRDLikelihoods::TRDLikelihoods()
-  : m_normalizedToLength(TRDCalculations::calculateLengthInTube)
+  : m_normalizedToLength(TRDReconstruction::calculateLengthInTube)
   , m_LHFunctionTR(getPrototypeLHFunctionTR())
   , m_LHFunctionNonTR(getPrototypeLHFunctionNonTR())
 {

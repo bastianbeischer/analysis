@@ -10,7 +10,7 @@
 #include "Cluster.hh"
 #include "Hit.hh"
 
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 
 TotalEnergyDepositionTRDvsTrackerPlot::TotalEnergyDepositionTRDvsTrackerPlot() :
     AnalysisPlot(AnalysisPlot::MiscellaneousTRD),
@@ -72,7 +72,7 @@ void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hi
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         Hit* trdHit = *it;
-        double distance = TRDCalculations::distanceOnTrackThroughTRDTube(trdHit, track);
+        double distance = TRDReconstruction::distanceOnTrackThroughTRDTube(trdHit, track);
         if (distance > 0) {
           distanceSumTRD += distance;
           signalSumTRD += cluster->signalHeight();

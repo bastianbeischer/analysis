@@ -24,16 +24,14 @@ INCLUDEPATH += \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/particle \
   $$TOPLEVEL/tracking \
-  $$TOPLEVEL/global \
-  $$TOPLEVEL/trdAnalysis
+  $$TOPLEVEL/global
 
 LIBS += \
   -L$$TOPLEVEL/lib \
   -lSimpleEvent \
   -lsetup \
   -lparticle \
-  -ltracking \
-  -ltrdAnalysis
+  -ltracking
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

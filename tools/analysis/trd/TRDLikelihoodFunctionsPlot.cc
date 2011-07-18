@@ -1,7 +1,7 @@
 #include "TRDLikelihoodFunctionsPlot.hh"
 
 #include "TRDLikelihoods.hh"
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 
 #include <TH1D.h>
 #include <TF1.h>
@@ -11,8 +11,8 @@ TRDLikelihoodFunctionsPlot::TRDLikelihoodFunctionsPlot()
   , H1DPlot()
 {
   setTitle("TRD pdfs");
-  setAxisTitle(TRDCalculations::xAxisTitle(), "");
-  addHistogram(new TH1D(qPrintable(title()),"", 100, 0, TRDCalculations::spectrumUpperLimit()));
+  setAxisTitle(TRDReconstruction::xAxisTitle(), "");
+  addHistogram(new TH1D(qPrintable(title()),"", 100, 0, TRDReconstruction::spectrumUpperLimit()));
 
   TRDLikelihoods* lhs = TRDLikelihoods::instance();
   addFunction(new TF1(*lhs->getLHFunctionNonTR()));

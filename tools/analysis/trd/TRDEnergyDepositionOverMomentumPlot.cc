@@ -11,7 +11,7 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "ParticleInformation.hh"
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 
 TRDEnergyDepositionOverMomentumPlot::TRDEnergyDepositionOverMomentumPlot(AnalysisPlot::Topic topic) :
   AnalysisPlot(topic),
@@ -79,7 +79,7 @@ void TRDEnergyDepositionOverMomentumPlot::processEvent(const QVector<Hit*>& /*hi
     const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       Hit* subHit = *it;
-      double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(subHit, track);
+      double distanceInTube = TRDReconstruction::distanceOnTrackThroughTRDTube(subHit, track);
       if(distanceInTube > 0)
         energyDepPerTubePerDistance << (subHit->signalHeight() / distanceInTube);
     }

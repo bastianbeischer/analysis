@@ -12,6 +12,7 @@ public:
   ~TRDClustersOnTrackPlot();
 
   virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  virtual void update();
 };
 
 #endif /* TRDClustersOnTrackPlot_hh */

@@ -5,10 +5,13 @@ class Hit;
 class Cluster;
 class SimpleEvent;
 class Track;
+class QVector2D;
+class Particle;
 
 #include <QVector>
 #include <QMap>
 #include <QMultiMap>
+#include <QString>
 
 class TRDReconstruction
 {
@@ -66,6 +69,26 @@ private:
     QVector<double> m_layerLengthThroughTube;
     QVector<double> m_layerEnergyDepositionOnTrackPerLength;
     QVector<double> m_layerEnergyDepositionOnTrackPerMinLength;
+
+//##############################
+//static members and functions:
+public:
+  static double distanceOnTrackThroughTRDTube(const Hit* hit, const Track* track);
+  static double distanceTrackToWire(const Hit* hit, const Track* track);
+  static double distanceTrackToWire(const QVector2D& trdChanPos2D, const Track* track);
+
+  static int TRDLayerNo(const Hit* hit);
+  static int TRDLayerNo(const unsigned int detID);
+
+  static bool globalTRDCuts(const QVector<Hit*>&, const Particle* particle, const SimpleEvent* event);
+  static const int spectrumDefaultBins;
+
+  static double spectrumUpperLimit() {return TRDReconstruction::calculateLengthInTube ? 15 : 50 ;}
+  static QString xAxisTitle() {return TRDReconstruction::calculateLengthInTube ? "energy deposition length in tube / (keV/mm)" : "energy deposition / keV" ;}
+
+public:
+  static const bool calculateLengthInTube;
+  static const int minTRDLayerCut;
 };
 
 #endif // TRDRECONSTRUCTION_HH
