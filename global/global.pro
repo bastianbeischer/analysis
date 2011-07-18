@@ -9,7 +9,8 @@ CLASSES += \
   RootStyle
 
 HEADERS += \
-	Constants.hh
+	Constants.hh \
+  Helpers.hh
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

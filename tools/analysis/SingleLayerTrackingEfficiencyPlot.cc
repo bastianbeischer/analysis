@@ -20,7 +20,7 @@ SingleLayerTrackingEfficiencyPlot::SingleLayerTrackingEfficiencyPlot(Type type) 
   m_layerZ(new double[m_nLayers])
 {
   QString htitle = "Single Layer Efficiency";
-  
+
   if (m_type == Positive)
     htitle += " positive";
   if (m_type == Negative)
@@ -28,7 +28,7 @@ SingleLayerTrackingEfficiencyPlot::SingleLayerTrackingEfficiencyPlot(Type type) 
   if (m_type == All)
     htitle += " all";
   setTitle(htitle);
-  
+
   int nBins = 21;
   double lowerBound = 1e-1;
   double upperBound = 20.;
@@ -37,11 +37,11 @@ SingleLayerTrackingEfficiencyPlot::SingleLayerTrackingEfficiencyPlot(Type type) 
   for (int i = 0; i < nBins+1; i++) {
     p[i] = pow(lowerBound, delta*i+1);
   }
-  
+
   int nBinsY = m_nLayers;
   double y0 = 0.5;
   double y1 = m_nLayers+0.5;
-  
+
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBins, p, nBinsY, y0, y1);
   setAxisTitle("rigidity / GV", "layer number", "");
   addHistogram(histogram);
@@ -92,9 +92,9 @@ void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, 
         }
       }
     }
-    
+
     double rigidity = track->rigidity();
-    
+
     if (m_type == Positive && rigidity < 0) {
       return;
     }

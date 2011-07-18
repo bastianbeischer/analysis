@@ -24,30 +24,18 @@ class SimpleEvent;
 class TrackFindingEfficiency : public AnalysisPlot, public H1DPlot {
   
 public:
-  enum Type {
-    All,
-    Positive,
-    Negative,
-  };
-
+  enum Type {All, Positive, Negative};
   TrackFindingEfficiency(Type type);
   ~TrackFindingEfficiency();
-  
   virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
   virtual void finalize();
   virtual void update();
-  
 private:
   Type m_type;
   TH1D* m_reconstructed;
   TH1D* m_total;
-  bool hasTrdTrack(const QVector<Hit*>&);
   unsigned int m_nTotal;
   unsigned int m_nReconstructed;
-  
-  bool trajectoryPosition(double z, const std::vector<TVector3>& trajectory, double& x, double& y);
-  bool insideMagnet(const std::vector<TVector3>& trajectory);
-  bool isTriggerEvent(const QVector<Hit*>& clusters);
   QVector<double> logBinning(unsigned int nBins, double min, double max);
 };
 
