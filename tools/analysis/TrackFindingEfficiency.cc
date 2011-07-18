@@ -8,6 +8,9 @@
 #include "Settings.hh"
 #include "SettingsManager.hh"
 #include "Cluster.hh"
+#include "TOFSipmHit.hh"
+#include "TOFCluster.hh"
+#include "Hit.hh"
 
 #include <TH1D.h>
 #include <TLatex.h>
@@ -99,6 +102,13 @@ void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, Particle* partic
     fillHistogram = true;
   } else if (event->contentType() == SimpleEvent::MonteCarlo) {
     int mcPdgId = event->MCInformation()->primary()->pdgID;
+    
+//    if (!isTriggerEvent(QVector<Hit*>::fromStdVector(event->hits())))
+//      return;
+//    
+//    if (!insideMagnet(event->MCInformation()->primary()->trajectory))
+//      return;
+    
     Particle mcParticle(mcPdgId);
     
     rigidity = event->MCInformation()->primary()->initialMomentum.Mag() / mcParticle.charge();
@@ -154,3 +164,72 @@ QVector<double> TrackFindingEfficiency::logBinning(unsigned int nBins, double mi
   }
   return binning;
 } 
+
+inline bool TrackFindingEfficiency::trajectoryPosition(double z, const std::vector<TVector3>& trajectory, double& x, double& y)
+{
+  for (unsigned int i = 0; i < trajectory.size()-1; ++i) {
+    const TVector3& a = trajectory[i];
+    const TVector3& b = trajectory[i+1];
+    if (a.z() >= z && z >= b.z()) {
+      if (b.z() - a.z() != 0) {
+        double r = (z - a.z()) / (b.z() - a.z());
+        TVector3 line = a + r *(b - a);
+        x = line.x();
+        y = line.y();
+      } else {
+        x = a.x();
+        y = a.y();
+      }
+    }
+  }
+  if (trajectory[0].z() >= z && z >= trajectory[trajectory.size()-1].z()) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+inline bool TrackFindingEfficiency::insideMagnet(const std::vector<TVector3>& trajectory)
+{
+  double zMagentUp = 40.;
+  double zMagnetLow = -40.;
+  double x = 0;
+  double y = 0;
+  
+  if (!(trajectoryPosition(zMagentUp, trajectory, x, y) && trajectoryPosition(zMagnetLow, trajectory, x, y)) ) {
+    return false;
+  }
+  
+  double r1 = sqrt(pow(x, 2.) + pow(y, 2.));
+  double r2 = sqrt(pow(x, 2.) + pow(y, 2.));
+  if (r1 < 75. && r2 < 75.) {
+    return true;
+  } else {
+    return false;
+  }
+
+}
+
+inline bool TrackFindingEfficiency::isTriggerEvent(const QVector<Hit*>& clusters)
+{
+  const QVector<Hit*>::const_iterator endIt = clusters.end();
+  bool hitUpperTof = false;
+  bool hitLowerTof = false;
+  for (QVector<Hit*>::const_iterator clusterIt = clusters.begin(); clusterIt != endIt; ++clusterIt) {
+    Hit* hit = *clusterIt;
+    if (hit->type() == Hit::tof) {
+      TOFCluster* tofCluster = static_cast<TOFCluster*>(hit);
+      if (tofCluster->position().z() > 0)
+        hitUpperTof = true;
+      if (tofCluster->position().z() < 0)
+        hitLowerTof = true;
+    }
+  }
+  return (hitUpperTof && hitLowerTof);
+}
+
+
+
+
+
+

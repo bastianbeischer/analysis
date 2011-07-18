@@ -9,10 +9,13 @@
 #include <TH2D.h>
 #include <TLatex.h>
 #include <TCanvas.h>
+#include <TVector3.h>
 
 #include <QString>
 #include <QDateTime>
 #include <QVector>
+
+#include <vector>
 
 class Hit;
 class Particle;
@@ -42,6 +45,9 @@ private:
   unsigned int m_nTotal;
   unsigned int m_nReconstructed;
   
+  bool trajectoryPosition(double z, const std::vector<TVector3>& trajectory, double& x, double& y);
+  bool insideMagnet(const std::vector<TVector3>& trajectory);
+  bool isTriggerEvent(const QVector<Hit*>& clusters);
   QVector<double> logBinning(unsigned int nBins, double min, double max);
 };
 
