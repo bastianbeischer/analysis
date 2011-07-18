@@ -119,7 +119,7 @@ void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>& hits, Parti
 
     //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
     int hitsWhichAreOnTrack = signalList.size();
-    if (m_spectrumType == TRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDReconstruction::minTRDLayerCut)
+    if (m_spectrumType == TRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDReconstruction::minLayerCut)
       return;
 
     for (int i = 0; i < signalList.size(); ++i) {

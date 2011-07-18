@@ -51,7 +51,7 @@ void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& hits, Particl
     } // subhits in cluster
   } // all hits
 
-  if (distanceList.size() >= TRDReconstruction::minTRDLayerCut) {
+  if (distanceList.size() >= TRDReconstruction::minLayerCut) {
   foreach(double distance, distanceList)
     histogram()->Fill(distance);
   }

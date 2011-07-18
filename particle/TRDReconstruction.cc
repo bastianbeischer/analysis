@@ -26,7 +26,7 @@
 //#############################
 //static members:
 const bool TRDReconstruction::calculateLengthInTube = true;
-const int TRDReconstruction::minTRDLayerCut = 6;
+const int TRDReconstruction::minLayerCut = 6;
 const int TRDReconstruction::spectrumDefaultBins = 100;
 
 

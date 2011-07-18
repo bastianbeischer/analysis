@@ -106,7 +106,7 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* partic
 
   //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
   int hitsWhichAreOnTrack = signalList.size();
-  if (m_spectrumType == MCTRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDReconstruction::minTRDLayerCut)
+  if (m_spectrumType == MCTRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDReconstruction::minLayerCut)
     return;
 
   //get histo:

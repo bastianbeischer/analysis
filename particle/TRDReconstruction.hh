@@ -88,7 +88,7 @@ public:
 
 public:
   static const bool calculateLengthInTube;
-  static const int minTRDLayerCut;
+  static const int minLayerCut;
 };
 
 #endif // TRDRECONSTRUCTION_HH

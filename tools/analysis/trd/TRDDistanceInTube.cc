@@ -48,7 +48,7 @@ void TRDDistanceInTube::processEvent(const QVector<Hit*>& hits, Particle* partic
     } // subhits in cluster
   } // all hits
 
-  if (lengthList.size() >= TRDReconstruction::minTRDLayerCut) {
+  if (lengthList.size() >= TRDReconstruction::minLayerCut) {
     foreach(double length, lengthList)
       histogram()->Fill(length);
   }
