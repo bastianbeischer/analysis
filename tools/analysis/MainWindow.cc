@@ -590,8 +590,12 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TotalSignalHeightPlot);
     m_ui.plotter->addPlot(new CutStatisticsPlot);
     m_ui.plotter->addPlot(new TrackerLayerStatisticsPlot);
-    m_ui.plotter->addPlot(new TrackingEfficiencyVsMomentumPlot);
-    m_ui.plotter->addPlot(new SingleLayerTrackingEfficiencyPlot);
+    m_ui.plotter->addPlot(new TrackingEfficiencyVsMomentumPlot(TrackingEfficiencyVsMomentumPlot::Positive));
+    m_ui.plotter->addPlot(new TrackingEfficiencyVsMomentumPlot(TrackingEfficiencyVsMomentumPlot::Negative));
+    m_ui.plotter->addPlot(new TrackingEfficiencyVsMomentumPlot(TrackingEfficiencyVsMomentumPlot::All));
+    m_ui.plotter->addPlot(new SingleLayerTrackingEfficiencyPlot(SingleLayerTrackingEfficiencyPlot::Positive));
+    m_ui.plotter->addPlot(new SingleLayerTrackingEfficiencyPlot(SingleLayerTrackingEfficiencyPlot::Negative));
+    m_ui.plotter->addPlot(new SingleLayerTrackingEfficiencyPlot(SingleLayerTrackingEfficiencyPlot::All));
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::Positive));
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::Negative));
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::All));

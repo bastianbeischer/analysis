@@ -8,13 +8,33 @@
 
 #include <TH2D.h>
 
-TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot()
+#include <cmath>
+
+TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot(Type type)
   : AnalysisPlot(AnalysisPlot::MiscellaneousTracker)
   , H2DPlot()
+  , m_type(type)
 {
-  setTitle(QString("Efficiency vs momentum"));
+  QString htitle = "Efficiency vs momentum";
   
-  TH2D* histogram = new TH2D(qPrintable(title()), "", 10, 0., 10., 7, 1.5, 8.5);
+  if (m_type == Positive)
+    htitle += " positive";
+  if (m_type == Negative)
+    htitle += " negative";
+  if (m_type == All)
+    htitle += " all";
+  setTitle(htitle);
+  
+  int nBins = 21;
+  double lowerBound = 1e-1;
+  double upperBound = 20.;
+  double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
+  double p[nBins+1];
+  for (int i = 0; i < nBins+1; i++) {
+    p[i] = pow(lowerBound, delta*i+1);
+  }
+  
+  TH2D* histogram = new TH2D(qPrintable(title()), "", nBins, p, 7, 1.5, 8.5);
   setAxisTitle("R / GV", "layers with exactly one hit", "");
   addHistogram(histogram);
   setDrawOption(COLZTEXT);
@@ -48,8 +68,15 @@ void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, Partic
   }
 
   double rigidity = track->rigidity();
+  
+  if (m_type == Positive && rigidity < 0) {
+    return;
+  }
+  if (m_type == Negative && rigidity > 0) {
+    return;
+  }
 
-  histogram()->Fill(rigidity,nLayers);
+  histogram()->Fill(qAbs(rigidity),nLayers);
 }
 
 void TrackingEfficiencyVsMomentumPlot::finalize()

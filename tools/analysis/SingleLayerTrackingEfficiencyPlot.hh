@@ -12,13 +12,19 @@ class SingleLayerTrackingEfficiencyPlot :
 {
   
 public:
-  SingleLayerTrackingEfficiencyPlot();
+  enum Type {
+    Positive,
+    Negative,
+    All
+  };
+  SingleLayerTrackingEfficiencyPlot(Type type);
   ~SingleLayerTrackingEfficiencyPlot();
   
   void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
   void finalize();
 
 private:
+  Type m_type;
   TH2D* m_normHisto;
   int m_nLayers;
   double* m_layerZ;
