@@ -41,11 +41,14 @@ OneHitAllLayersTrackingEfficiencyPlot::OneHitAllLayersTrackingEfficiencyPlot(Typ
   }
   
   TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, p);
+  histogram->Sumw2();
   setAxisTitle("R / GV", "efficiency");
   addHistogram(histogram, H1DPlot::P);
   
   m_afterCutHisto = new TH1D(qPrintable(title() + "_norm"), "", nBins, p);
+  m_afterCutHisto->Sumw2();
   m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBins, p);
+  m_normHisto->Sumw2();
 }
 
 OneHitAllLayersTrackingEfficiencyPlot::~OneHitAllLayersTrackingEfficiencyPlot()
