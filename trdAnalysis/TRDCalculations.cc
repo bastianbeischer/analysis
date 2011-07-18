@@ -122,8 +122,8 @@ bool TRDCalculations::globalTRDCuts(const QVector<Hit*>&, const Particle* partic
   }
 
   //count trd hits which belong to the track and those of the event
-  unsigned int nTrdHitsOnTrack = 0;
-  unsigned int nTotalTRDHits = 0;
+  int nTrdHitsOnTrack = 0;
+  int nTotalTRDHits = 0;
   for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != track->hits().end(); ++it) {
     if ((*it)->type() == Hit::trd)
       ++nTotalTRDHits;

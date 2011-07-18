@@ -56,7 +56,7 @@ bool TRDElectronIdentifierLikelihood::isElectronish(const QVector<Hit*>& hits, c
   } // all hits
 
   //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
-  unsigned int hitsWhichAreOnTrack = values.size();
+  int hitsWhichAreOnTrack = values.size();
   if (hitsWhichAreOnTrack < TRDCalculations::minTRDLayerCut) {
     ok = false;
     return false;
