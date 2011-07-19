@@ -11,21 +11,13 @@ BrokenLineMatrix::~BrokenLineMatrix()
 {
 }
 
-void BrokenLineMatrix::fillMatrixFromHit(TMatrixD& A, unsigned int i, bool useTangens, float k, float xi) const
+void BrokenLineMatrix::fillMatrixFromHit(TMatrixD& A, unsigned int i, double k, double c, double s) const
 {
   int offsetXindex = k > 0. ? 0 : 1;
   int slopeXindex = k > 0. ? 3 : 4;
 
-  if (useTangens) {
-    A(i,offsetXindex) = -xi;
-    A(i,2)            = 1.;
-    A(i,slopeXindex)  = -k*xi;
-    A(i,5)            = k;
-  }
-  else {
-    A(i,offsetXindex) = 1.;
-    A(i,2)            = -xi;
-    A(i,slopeXindex)  = k;
-    A(i,5)            = -k*xi;
-  }
+  A(i,offsetXindex) = c;
+  A(i,2)            = -s;
+  A(i,slopeXindex)  = k*c;
+  A(i,5)            = -k*s;
 }

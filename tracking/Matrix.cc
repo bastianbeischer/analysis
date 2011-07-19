@@ -45,62 +45,24 @@ int Matrix::fit(const QVector<Hit*>& hits)
   for (unsigned int i = 0; i < m_nRow; i++) {
     Hit* hit = filteredHits.at(i);
 
-    TVector3 pos = hit->position();
-
-    // get information from detector...
-    double angle = hit->angle();
-    angle += M_PI/2.;
-
-    // fill matrix
     // this parameter is arbitrary. z0 = 0 should minimize correlations...
-    float z0 = 0.0;
-    float k = pos.z() - z0;
-    bool useTangens = fabs(angle) < M_PI/4. ? true : false;
-    float xi = useTangens ? sin(angle)/cos(angle) : cos(angle)/sin(angle);
+    double z0 = 0.0;
 
-    if (useTangens) {
-      CombineXandY(0,0) = -xi;
-      CombineXandY(0,1) = 1.;
-      b(i)              = -xi*pos.x() + pos.y();
-    }
-    else {
-      CombineXandY(0,0) = 1.;
-      CombineXandY(0,1) = -xi;
-      b(i)              = pos.x() - xi*pos.y();
-    }
+    TVector3 pos = hit->position();
+    double k = pos.z() - z0;
+    double angle = -hit->angle();
+    double sigmaU = hit->resolution();
+
+    double c = cos(angle);
+    double s = sin(angle);
+    
+    b(i) = c*pos.x() - s*pos.y();
 
     for (unsigned int j = 0; j < m_nCol; j++)
       A(i,j) = 0.;
-    fillMatrixFromHit(A, i, useTangens, k, xi);
+    fillMatrixFromHit(A, i, k, c, s);
 
-    // calculate covariance matrix
-
-    // Rot is the matrix that maps u,v, to x,y (i.e. the backward rotation)
-    TMatrixD Rot(2,2); 
-    Rot(0,0) = cos(angle);
-    Rot(0,1) = sin(angle);
-    Rot(1,0) = -sin(angle);
-    Rot(1,1) = cos(angle);
-    TMatrixD RotTrans(2,2);
-    RotTrans.Transpose(Rot);
-
-    double sigmaV = hit->resolution();
-    TMatrixD V1(2,2);
-    V1(0,0) = 0.;
-    V1(0,1) = 0.;
-    V1(1,0) = 0.;
-    V1(1,1) = sigmaV*sigmaV;
-
-    TMatrixD V2(2,2);
-    V2 = Rot * V1 * RotTrans;
-
-    TMatrixD CombineXandYTrans(2,1);
-    CombineXandYTrans.Transpose(CombineXandY);
-
-    TMatrixD V3 = TMatrixD(1,1);
-    V3 = CombineXandY * V2 * CombineXandYTrans;
-
-    Uinv(i,i) = 1./V3(0,0); // this is the sigma for the i'th measurement
+    Uinv(i,i) = 1./(sigmaU*sigmaU); // this is the inverse of the sigma for the i'th measurement
 
   } // loop over hits
   

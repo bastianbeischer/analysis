@@ -84,6 +84,8 @@
 #include "BeamProfilePlot.hh"
 #include "ZSquareTRDPlot.hh"
 #include "TOFBarShiftPlotCollection.hh"
+#include "TrackFindingEfficiency.hh"
+#include "AllTrackerLayersFlagEfficiency.hh"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -589,11 +591,21 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TotalSignalHeightPlot);
     m_ui.plotter->addPlot(new CutStatisticsPlot);
     m_ui.plotter->addPlot(new TrackerLayerStatisticsPlot);
-    m_ui.plotter->addPlot(new TrackingEfficiencyVsMomentumPlot);
-    m_ui.plotter->addPlot(new SingleLayerTrackingEfficiencyPlot);
+    m_ui.plotter->addPlot(new TrackingEfficiencyVsMomentumPlot(TrackingEfficiencyVsMomentumPlot::Positive));
+    m_ui.plotter->addPlot(new TrackingEfficiencyVsMomentumPlot(TrackingEfficiencyVsMomentumPlot::Negative));
+    m_ui.plotter->addPlot(new TrackingEfficiencyVsMomentumPlot(TrackingEfficiencyVsMomentumPlot::All));
+    m_ui.plotter->addPlot(new SingleLayerTrackingEfficiencyPlot(SingleLayerTrackingEfficiencyPlot::Positive));
+    m_ui.plotter->addPlot(new SingleLayerTrackingEfficiencyPlot(SingleLayerTrackingEfficiencyPlot::Negative));
+    m_ui.plotter->addPlot(new SingleLayerTrackingEfficiencyPlot(SingleLayerTrackingEfficiencyPlot::All));
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::Positive));
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::Negative));
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::All));
+    m_ui.plotter->addPlot(new TrackFindingEfficiency(TrackFindingEfficiency::Positive));
+    m_ui.plotter->addPlot(new TrackFindingEfficiency(TrackFindingEfficiency::Negative));
+    m_ui.plotter->addPlot(new TrackFindingEfficiency(TrackFindingEfficiency::All));
+    m_ui.plotter->addPlot(new AllTrackerLayersFlagEfficiency(AllTrackerLayersFlagEfficiency::Positive));
+    m_ui.plotter->addPlot(new AllTrackerLayersFlagEfficiency(AllTrackerLayersFlagEfficiency::Negative));
+    m_ui.plotter->addPlot(new AllTrackerLayersFlagEfficiency(AllTrackerLayersFlagEfficiency::All));
   }
   if (m_ui.miscellaneousTRDCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisPlot::MiscellaneousTRD));

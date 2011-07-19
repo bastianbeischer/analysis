@@ -121,7 +121,7 @@ void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& 
     graph->SetMarkerColor(RootStyle::rootColor(m_colorCounter++));
     graph->SetMarkerSize(0.3);
     m_graphMap.insert(pdgID, graph);
-    addGraph(graph, "P");
+    addGraph(graph, P);
     const ParticleProperties* properties = ParticleDB::instance()->lookupPdgId(pdgID);
     QString particleName = properties->name();
     legend()->AddEntry(graph, qPrintable(particleName), "p");

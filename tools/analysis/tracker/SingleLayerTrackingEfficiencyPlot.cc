@@ -11,27 +11,42 @@
 #include "Track.hh"
 #include "ParticleInformation.hh"
 
-SingleLayerTrackingEfficiencyPlot::SingleLayerTrackingEfficiencyPlot() :
+SingleLayerTrackingEfficiencyPlot::SingleLayerTrackingEfficiencyPlot(Type type) :
   AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
   H2DPlot(),
+  m_type(type),
   m_normHisto(0),
   m_nLayers(8),
   m_layerZ(new double[m_nLayers])
 {
-  setTitle("Single Layer Efficiency");
-  
-  int nBinsX = 10;
-  double x0 = 0.;
-  double x1 = 10.;
+  QString htitle = "Single Layer Efficiency";
+
+  if (m_type == Positive)
+    htitle += " positive";
+  if (m_type == Negative)
+    htitle += " negative";
+  if (m_type == All)
+    htitle += " all";
+  setTitle(htitle);
+
+  int nBins = 21;
+  double lowerBound = 1e-1;
+  double upperBound = 20.;
+  double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
+  double p[nBins+1];
+  for (int i = 0; i < nBins+1; i++) {
+    p[i] = pow(lowerBound, delta*i+1);
+  }
+
   int nBinsY = m_nLayers;
   double y0 = 0.5;
   double y1 = m_nLayers+0.5;
-  
-  TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, x0, x1, nBinsY, y0, y1);
+
+  TH2D* histogram = new TH2D(qPrintable(title()), "", nBins, p, nBinsY, y0, y1);
   setAxisTitle("rigidity / GV", "layer number", "");
   addHistogram(histogram);
 
-  m_normHisto = new TH2D(qPrintable(title() + "_norm"), "", nBinsX, x0, x1, nBinsY, y0, y1);
+  m_normHisto = new TH2D(qPrintable(title() + "_norm"), "", nBins, p, nBinsY, y0, y1);
 
   int i = 0;
   Setup* setup = Setup::instance();
@@ -50,7 +65,7 @@ SingleLayerTrackingEfficiencyPlot::SingleLayerTrackingEfficiencyPlot() :
 SingleLayerTrackingEfficiencyPlot::~SingleLayerTrackingEfficiencyPlot()
 {
   delete m_normHisto;
-  delete [] m_layerZ;
+  delete[] m_layerZ;
 }
 
 void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
@@ -78,10 +93,17 @@ void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, 
       }
     }
 
+    double rigidity = track->rigidity();
+
+    if (m_type == Positive && rigidity < 0)
+      return;
+    if (m_type == Negative && rigidity > 0)
+      return;
+
     // fill histograms
     if (beenHit)
-      histogram()->Fill(track->rigidity(), i+1);
-    m_normHisto->Fill(track->rigidity(), i+1);
+      histogram()->Fill(qAbs(rigidity), i+1);
+    m_normHisto->Fill(qAbs(rigidity), i+1);
   }
 }
 

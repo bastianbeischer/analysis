@@ -22,7 +22,7 @@ public:
   
 protected:
   virtual bool checkInvertability(const QVector<Hit*>& hits) const;
-  virtual void fillMatrixFromHit(TMatrixD& A, unsigned int i, bool useTangens, float k, float xi) const = 0;
+  virtual void fillMatrixFromHit(TMatrixD& A, unsigned int i, double k, double c, double s) const = 0;
 
 protected:
   unsigned int m_nRow;

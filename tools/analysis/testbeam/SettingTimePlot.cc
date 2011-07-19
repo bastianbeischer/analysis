@@ -4,8 +4,8 @@
 #include "SimpleEvent.hh"
 
 #include <TAxis.h>
-#include <THStack.h>
 #include <TPad.h>
+#include <TH1.h>
 
 #include <cmath>
 

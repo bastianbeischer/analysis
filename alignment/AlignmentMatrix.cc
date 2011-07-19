@@ -11,8 +11,6 @@
 #include "DetectorElement.hh"
 #include "millepede.h"
 
-#include <TMatrixD.h>
-
 #include <cmath>
 
 AlignmentMatrix::AlignmentMatrix() :
@@ -82,120 +80,42 @@ void AlignmentMatrix::processEvent(const QVector<Hit*>&, Particle* particle, Sim
     float z0 = 0.0;
     float k  = fz - z0;
 
-    // angle
-    float angle = hit->angle();
-    angle += M_PI/2.;
-    bool  useTangens = fabs(angle) < M_PI/4. ? true : false;
-    float xi = useTangens ? sin(angle)/cos(angle) : cos(angle)/sin(angle);
-
-    // specify resolution
-    double sigmaV = hit->resolution();
-
     // detector ID
     unsigned short detId = hit->detId() - hit->channel();
     unsigned int index = Manager::instance()->parameters()->indexForDetId(detId);
 
-    // Rot is the matrix that maps u,v, to x,y (i.e. the backward rotation)
-    TMatrixD Rot(2,2); 
-    Rot(0,0) = cos(angle);
-    Rot(0,1) = sin(angle);
-    Rot(1,0) = -sin(angle);
-    Rot(1,1) = cos(angle);
-    TMatrixD V1(2,2);
-    V1(0,0) = 0.;
-    V1(0,1) = 0.;
-    V1(1,0) = 0.;
-    V1(1,1) = sigmaV*sigmaV;
-    TMatrixD RotTrans(2,2);
-    RotTrans.Transpose(Rot);
-    TMatrixD V2(2,2);
-    V2 = Rot * V1 * RotTrans;
-    TMatrixD Lin(1,2);
-    if (useTangens) {
-      Lin(0,0) = -xi;
-      Lin(0,1) = 1.;
-    }
-    else {
-      Lin(0,0) = 1.;
-      Lin(0,1) = -xi;
-    }
-    TMatrixD LinTrans(2,1);
-    LinTrans.Transpose(Lin);
-    TMatrixD V3 = TMatrixD(1,1);
-    V3 = Lin * V2 * LinTrans;
-    
-    
-    int offsetXindex = 0;
-    int slopeXindex = 0;
+    // angle
+    float angle = -hit->angle();
 
-    float y,sigma;
-    if (useTangens) {
-      y = -xi*fx + fy;
-      sigma = sqrt(V3(0,0));
+    float c = cosf(angle);
+    float s = sinf(angle);
 
-      // derivative for Delta_x!
-      m_globalDerivatives[index] = -xi*sin(angle) + cos(angle);
+    float u = fx*c - fy*s;
+    float sigmaU = hit->resolution();
+
+    // derivative for Delta_u!
+    m_globalDerivatives[index] = 1.;
       
-      if (m_nLocal == 4) {
-        m_localDerivatives[0] = -xi;
-        m_localDerivatives[1] = 1.;
-        m_localDerivatives[2] = -k*xi;
-        m_localDerivatives[3] = k;
-      }
-      else if (m_nLocal == 5) {
-        slopeXindex = k>0 ? 2 : 3;
-        m_localDerivatives[0]            = -xi;
-        m_localDerivatives[1]            = 1.;
-        m_localDerivatives[slopeXindex]  = -k*xi;
-        m_localDerivatives[4]            = k;
-      }
-      else if (m_nLocal == 6) {
-        offsetXindex = k>0 ? 0 : 1;
-        slopeXindex = k>0 ? 3 : 4;
-        m_localDerivatives[offsetXindex] = -xi;
-        m_localDerivatives[2]            = 1.;
-        m_localDerivatives[slopeXindex]  = -k*xi;
-        m_localDerivatives[5]            = k;
-      }
-      else if (m_nLocal == 2) {
-        m_localDerivatives[0] = 1.;
-        m_localDerivatives[1] = k;
-      }
+    int offsetXindex = 0;
+    int offsetYindex = 1;
+    int slopeXindex = 2;
+    int slopeYindex = 3;
+    if (m_nLocal == 5) {
+      slopeXindex = k>0 ? 2 : 3;
+      slopeYindex = 4;
     }
-    else {
-      y = fx - xi*fy;
-      sigma = sqrt(V3(0,0));
-
-      // derivative for Delta_x!
-      m_globalDerivatives[index] = sin(angle) - xi*cos(angle);
-
-      if (m_nLocal == 4) {
-        m_localDerivatives[0] = 1.;
-        m_localDerivatives[1] = -xi;
-        m_localDerivatives[2] = k;
-        m_localDerivatives[3] = -k*xi;
-      }
-      else if (m_nLocal == 5) {
-        slopeXindex = k>0 ? 2 : 3;
-        m_localDerivatives[0]            = -xi;
-        m_localDerivatives[1]            = 1.;
-        m_localDerivatives[slopeXindex]  = -k*xi;
-        m_localDerivatives[4]            = k;
-      }
-      else if (m_nLocal == 6) {
-        offsetXindex = k>0 ? 0 : 1;
-        slopeXindex = k>0 ? 3 : 4;
-        m_localDerivatives[offsetXindex] = 1.;
-        m_localDerivatives[2]            = -xi;
-        m_localDerivatives[slopeXindex]  = k;
-        m_localDerivatives[5]            = -k*xi;
-      }
-      else if (m_nLocal == 2) {
-        m_localDerivatives[0] = 1.;
-        m_localDerivatives[1] = k;
-      }
+    else if (m_nLocal == 6) {
+      offsetXindex = k>0 ? 0 : 1;
+      offsetYindex = 2;
+      slopeXindex = k>0 ? 3 : 4;
+      slopeYindex = 5;
     }
 
-    EQULOC(m_globalDerivatives, m_localDerivatives, y, sigma);
+    m_localDerivatives[offsetXindex] = c;
+    m_localDerivatives[offsetYindex] = -s;
+    m_localDerivatives[slopeXindex] = k*c;
+    m_localDerivatives[slopeYindex] = -k*s;
+
+    EQULOC(m_globalDerivatives, m_localDerivatives, u, sigmaU);
   }
 }

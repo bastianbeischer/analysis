@@ -25,7 +25,7 @@ public:
   QVector<unsigned int> plotIndices(AnalysisPlot::Topic topic);
   const QString& plotTitle(unsigned int);
   AnalysisPlot::Topic plotTopic(unsigned int);
-  void selectPlot(int, bool = false);
+  void selectPlot(int);
   RootPlot::DrawOption drawOption();
   void setDrawOption(RootPlot::DrawOption);
   RootPlot::Type selectedPlotType();
