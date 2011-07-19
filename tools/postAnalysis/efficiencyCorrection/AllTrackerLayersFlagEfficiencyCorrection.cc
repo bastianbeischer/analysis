@@ -44,7 +44,7 @@ AllTrackerLayersFlagEfficiencyCorrection::~AllTrackerLayersFlagEfficiencyCorrect
 {
 }
 
-void AllTrackerLayersFlagEfficiencyCorrection::saveAsSetting(const QString& config) const
+void AllTrackerLayersFlagEfficiencyCorrection::saveAsSetting(const QString& config)
 {
   QList<QVariant> axis;
   for (int i = 0; i <=  histogram()->GetNbinsX(); ++i) {

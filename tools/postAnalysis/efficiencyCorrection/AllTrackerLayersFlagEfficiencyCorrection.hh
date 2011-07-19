@@ -18,7 +18,7 @@ public:
   virtual ~AllTrackerLayersFlagEfficiencyCorrection();
 private:
   QString m_name;
-  void saveAsSetting(const QString& config) const;
+  void saveAsSetting(const QString& config);
 };
 
 #endif
