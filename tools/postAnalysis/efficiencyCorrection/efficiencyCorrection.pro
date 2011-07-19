@@ -28,7 +28,7 @@ LIBS += \
 
 CLASSES = \
   MainWindow \
-  OneHitAllLayersEfficiencyCorrection \
+  AllTrackerLayersFlagEfficiencyCorrection \
   TrackFindingEfficiencyCorrection
 
 SOURCES = \

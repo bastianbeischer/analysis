@@ -49,7 +49,7 @@ void TrackFindingEfficiencyCorrection::saveAsSetting(QString config)
   for (int i = 0; i <=  histogram()->GetNbinsX(); ++i) {
     axis.push_back( histogram()->GetBinLowEdge(i+1) );
   }
-  
+
   QList<QVariant> values;
   for (int i = 0; i <  histogram()->GetNbinsX(); ++i) {
     double value = histogram()->GetBinContent(i+1);
@@ -57,23 +57,23 @@ void TrackFindingEfficiencyCorrection::saveAsSetting(QString config)
       value = 1;
     values.push_back( value );
   }
-  
+
   const char* env = getenv("PERDAIXANA_PATH");
   if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
   }
   QString path(env);
   path += "/conf/";
-  
+
   path += config+"/";
-  
+
   QSettings* settings = new QSettings(path + "EfficiencyCorrections.conf", QSettings::IniFormat);
-  
+
   QString prefix = "trackFindingEfficiency_"+m_name;
   settings->setValue(prefix+"/axis", axis);
   settings->setValue(prefix+"/values", values);
   settings->sync();
-  
+
   delete settings;
   settings = 0;
 }
