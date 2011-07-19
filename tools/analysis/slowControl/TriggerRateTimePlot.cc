@@ -30,7 +30,7 @@ TriggerRateTimePlot::~TriggerRateTimePlot()
 
 void TriggerRateTimePlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
 {
-  if (event->time() < xAxis()->GetXmin() || event->time() >= xAxis()->GetXmax())
+  if ((event->time() < xAxis()->GetXmin() || event->time() >= xAxis()->GetXmax()) && event->contentType() != SimpleEvent::MonteCarlo)
     qDebug() << event->time();
   else
     histogram()->Fill(event->time());
