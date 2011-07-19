@@ -22,6 +22,12 @@ TimeOfFlight::~TimeOfFlight()
 {
 }
 
+void TimeOfFlight::reset()
+{
+  m_startTime = 0.;
+  m_stopTime = 0.;
+}
+
 void TimeOfFlight::calculateTimes(const Track* track)
 {
   QVector<double> t[2][2];

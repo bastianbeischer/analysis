@@ -19,6 +19,13 @@ Matrix::~Matrix()
 {
 }
 
+void Matrix::reset()
+{
+  m_chi2 = 0.;
+  m_ndf = 0;
+  m_solution.Zero();
+}
+
 int Matrix::fit(const QVector<Hit*>& hits)
 {
   QVector<Hit*> filteredHits;

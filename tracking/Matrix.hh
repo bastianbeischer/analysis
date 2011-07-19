@@ -13,6 +13,7 @@ public:
   Matrix();
   virtual ~Matrix();
   
+  void reset();
   int fit(const QVector<Hit*>& hits);
   TVectorD solution() const {return m_solution;}
   unsigned int nRow() const {return m_nRow;}

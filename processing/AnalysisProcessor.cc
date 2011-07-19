@@ -75,6 +75,8 @@ void AnalysisProcessor::setCutFilter(CutFilter cuts)
 
 void AnalysisProcessor::process(SimpleEvent* event)
 {
+  m_particle->reset();
+
   m_corrections->preFitCorrections(event);
 
   QVector<Hit*> clusters = QVector<Hit*>::fromStdVector(event->hits());
@@ -85,7 +87,6 @@ void AnalysisProcessor::process(SimpleEvent* event)
   ParticleInformation* info = m_particle->information();
 
   if (track) {
-    info->reset();
     track->fit(trackClusters);
     m_corrections->postFitCorrections(m_particle);
     tof->calculateTimes(track);
