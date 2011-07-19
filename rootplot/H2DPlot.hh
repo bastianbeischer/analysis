@@ -9,7 +9,6 @@
 
 class TCanvas;
 class TH2D;
-class THStack;
 class TAxis;
 
 class H2DPlot : virtual public RootPlot {

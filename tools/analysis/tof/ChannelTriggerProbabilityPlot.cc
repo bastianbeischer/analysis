@@ -15,7 +15,6 @@
 #include <TVector3.h>
 #include <TLatex.h>
 #include <TF1.h>
-#include <THStack.h>
 
 #include <QDebug>
 

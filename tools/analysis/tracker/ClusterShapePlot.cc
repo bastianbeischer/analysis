@@ -1,7 +1,6 @@
 #include "ClusterShapePlot.hh"
 
 #include <TH1D.h>
-#include <TH1I.h>
 #include <TLatex.h>
 #include <TGaxis.h>
 #include <TStyle.h>

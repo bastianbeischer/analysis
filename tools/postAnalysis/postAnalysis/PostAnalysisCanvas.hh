@@ -15,6 +15,7 @@ class TCanvas;
 class PostAnalysisCanvas {
 public:
   PostAnalysisCanvas(TFile*, const QString& name);
+  PostAnalysisCanvas(TCanvas*);
   virtual ~PostAnalysisCanvas();
   void draw(TCanvas*);
   void setPalette(RootStyle::PaletteType);

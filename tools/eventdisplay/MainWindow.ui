@@ -219,6 +219,9 @@
        <widget class="QPlainTextEdit" name="textEdit"/>
       </item>
       <item>
+       <widget class="TQtWidget" name="trackFindingWidget" native="true"/>
+      </item>
+      <item>
        <widget class="QLabel" name="positionLabel">
         <property name="font">
          <font>
@@ -253,6 +256,12 @@
    <class>Plotter</class>
    <extends>QWidget</extends>
    <header>Plotter.hh</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TQtWidget</class>
+   <extends>QWidget</extends>
+   <header>TQtWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

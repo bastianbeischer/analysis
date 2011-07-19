@@ -6,9 +6,14 @@
 #include <TCanvas.h>
 #include <TROOT.h>
 #include <TFile.h>
-#include <THStack.h>
 
 #include <QDebug>
+
+PostAnalysisCanvas::PostAnalysisCanvas(TCanvas* canvas)
+  : m_palette(RootStyle::DefaultPalette)
+  , m_canvas(canvas)
+{
+}
 
 PostAnalysisCanvas::PostAnalysisCanvas(TFile* file, const QString& name)
   : m_palette(RootStyle::DefaultPalette)

@@ -3,6 +3,8 @@
 
 #include "Track.hh"
 
+#include <TColor.h>
+
 #include <QString>
 
 class ParticleProperties;
@@ -42,6 +44,7 @@ public:
   QString name() const;
   double mass() const;
   int charge() const;
+  Color_t color() const;
 
 private:
   void init();

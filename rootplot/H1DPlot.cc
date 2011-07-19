@@ -4,7 +4,6 @@
 #include <TList.h>
 #include <TCanvas.h>
 #include <TPad.h>
-#include <THStack.h>
 
 #include <QDebug>
 
@@ -83,6 +82,14 @@ void H1DPlot::addHistogram(TH1D* h, DrawOption option)
     m_xAxis = h->GetXaxis();
     m_yAxis = h->GetYaxis();
   }
+}
+
+void H1DPlot::removeHistogram(int i)
+{
+  delete m_histograms.at(i);
+  m_histograms[i] = 0;
+  m_histograms.remove(i);
+  m_drawOptions.remove(i);
 }
 
 const QVector<RootPlot::DrawOption>& H1DPlot::drawOptions()

@@ -96,7 +96,7 @@ void Plotter::mouseMoveEvent(QMouseEvent* event)
   }
 }
 
-void Plotter::drawEvent(unsigned int i, Track::Type type, bool allClusters, QPlainTextEdit& infoTextEdit)
+void Plotter::drawEvent(unsigned int i, Track::Type type, bool allClusters, QPlainTextEdit& infoTextEdit, TQtWidget& trackFindingWidget)
 {
   TCanvas* canvas = GetCanvas();
   canvas->cd();
@@ -113,6 +113,13 @@ void Plotter::drawEvent(unsigned int i, Track::Type type, bool allClusters, QPla
 
   canvas->Modified();
   canvas->Update();
+
+  TCanvas* tfCan = trackFindingWidget.GetCanvas();
+  tfCan->cd();
+  tfCan->Clear();
+  m_processor->trackFinding()->trackFindingHist()->Draw("colz");
+  tfCan->Modified();
+  tfCan->Update();
 
   //show info for event
   const DataDescription* currentDesc = m_chain->currentDescription();

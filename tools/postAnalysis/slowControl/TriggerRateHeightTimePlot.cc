@@ -7,7 +7,6 @@
 #include <TLegend.h>
 #include <TGraph.h>
 #include <TMultiGraph.h>
-#include <THStack.h>
 
 #include <iostream>
 #include <iomanip>
