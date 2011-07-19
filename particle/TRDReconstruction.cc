@@ -145,15 +145,19 @@ void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
 
   } // all Clusters/Hits
 
-  checkGoodTRDEvent();
+  checkGoodTRDEvent(globalTrack);
 }
 
-void TRDReconstruction::checkGoodTRDEvent()
+void TRDReconstruction::checkGoodTRDEvent(const Track* track)
 {
   int nLayersWithEnDepOnTrack = getNoOfLayersWithEnergyDepositionOnTrack();
   int nOffTrackCluster = getNoOfClusters() - getNoOfClustersOnTrack();
 
-  if ((nLayersWithEnDepOnTrack >= minLayerCut) && (nOffTrackCluster <= maxOffTrackCluster))
+  bool layerCut = nLayersWithEnDepOnTrack >= minLayerCut;
+  bool offTrackHitCut =nOffTrackCluster <= maxOffTrackCluster;
+  bool trackCut = track && track->fitGood() && ((track->chi2() / track->ndf()) < 10);
+
+  if (layerCut && offTrackHitCut && offTrackHitCut)
     m_flags |= GoodTRDEvent;
 }
 

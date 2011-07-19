@@ -29,7 +29,7 @@ private:
   Flags m_flags;
 
 private:
-  void checkGoodTRDEvent();
+  void checkGoodTRDEvent(const Track*);
 
 public:
   const QList<const Hit*>& getAllHits() const {return m_allHits;}
