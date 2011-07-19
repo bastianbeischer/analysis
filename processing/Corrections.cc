@@ -75,8 +75,12 @@ void Corrections::preFitCorrections(SimpleEvent* event)
 
 void Corrections::postFitCorrections(Particle* particle)
 {
+  if (m_flags & PhotonTravelTime) photonTravelTime(particle); // multiple scattering needs "beta"
+}
+
+void Corrections::postTOFCorrections(Particle* particle)
+{
   for (int i = 0; i < 5; i++) {
-    if (m_flags & PhotonTravelTime) photonTravelTime(particle); // multiple scattering needs "beta"
     if (m_flags & MultipleScattering) multipleScattering(particle); // should be done first
   }
 }

@@ -90,6 +90,7 @@ void AnalysisProcessor::process(SimpleEvent* event)
     track->fit(trackClusters);
     m_corrections->postFitCorrections(m_particle);
     tof->calculateTimes(track);
+    m_corrections->postTOFCorrections(m_particle);
     info->process();
   }
 
