@@ -23,7 +23,7 @@
 #include <QSettings>
 #include <QVector>
 
-TrackFindingEfficiencyCorrection::TrackFindingEfficiencyCorrection(PostAnalysisCanvas* canvas)
+TrackFindingEfficiencyCorrection::TrackFindingEfficiencyCorrection(PostAnalysisCanvas* canvas, QString config)
   : PostAnalysisPlot()
   , H1DPlot()
 {
@@ -32,18 +32,18 @@ TrackFindingEfficiencyCorrection::TrackFindingEfficiencyCorrection(PostAnalysisC
   QString title = QString(canvas->name()).replace("canvas", "histogram");
   setTitle(title);
 
-  addHistogram(histogram, H1DPlot::HIST);
+  addHistogram(histogram);
   setAxisTitle("abs(rigidity/GV)", "efficiency");
   m_name = QString(canvas->name()).remove("Track finding efficiency - ").remove(" canvas");
 
-//  saveAsSetting();
+//  saveAsSetting(config);
 }
 
 TrackFindingEfficiencyCorrection::~TrackFindingEfficiencyCorrection()
 {
 }
 
-void TrackFindingEfficiencyCorrection::saveAsSetting()
+void TrackFindingEfficiencyCorrection::saveAsSetting(QString config)
 {
   QList<QVariant> axis;
   for (int i = 0; i <=  histogram()->GetNbinsX(); ++i) {
@@ -65,8 +65,7 @@ void TrackFindingEfficiencyCorrection::saveAsSetting()
   QString path(env);
   path += "/conf/";
   
-  //for now only valid for flight configuration
-  path += "kiruna/";
+  path += config+"/";
   
   QSettings* settings = new QSettings(path + "EfficiencyCorrections.conf", QSettings::IniFormat);
   

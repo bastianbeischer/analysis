@@ -1,5 +1,5 @@
-#ifndef TrackFindingEfficiencyCorrection_hh
-#define TrackFindingEfficiencyCorrection_hh
+#ifndef OneHitAllLayersEfficiencyCorrection_hh
+#define OneHitAllLayersEfficiencyCorrection_hh
 
 #include "PostAnalysisCanvas.hh"
 #include "PostAnalysisPlot.hh"
@@ -12,10 +12,10 @@
 #include <TF1.h>
 #include <TH1D.h>
 
-class TrackFindingEfficiencyCorrection : public PostAnalysisPlot, public H1DPlot {
+class OneHitAllLayersEfficiencyCorrection : public PostAnalysisPlot, public H1DPlot {
 public:
-  TrackFindingEfficiencyCorrection(PostAnalysisCanvas*, QString config);
-  virtual ~TrackFindingEfficiencyCorrection();
+  OneHitAllLayersEfficiencyCorrection(PostAnalysisCanvas*, QString config);
+  virtual ~OneHitAllLayersEfficiencyCorrection();
   
 public:
   

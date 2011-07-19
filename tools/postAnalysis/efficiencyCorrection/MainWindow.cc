@@ -2,7 +2,7 @@
 
 #include "PostAnalysisPlot.hh"
 #include "PostAnalysisCanvas.hh"
-#include "MultiLayerEfficiencyCorrection.hh"
+#include "OneHitAllLayersEfficiencyCorrection.hh"
 #include "TrackFindingEfficiencyCorrection.hh"
 
 #include <TCanvas.h>
@@ -11,6 +11,7 @@
 
 #include <QDebug>
 #include <QFileDialog>
+#include <qstring.h>
 
 MainWindow::MainWindow(QWidget* parent)
   : PostAnalysisWindow(parent)
@@ -26,30 +27,32 @@ void MainWindow::setupAnalysis()
   PostAnalysisCanvas* canvas = 0;
   TFile file(qPrintable(m_analysisFile));
   gROOT->cd();
-  qDebug("hallo");
-  QString name = QString("Multi Layer Efficiency positive canvas");
-  canvas = addCanvas(&file, qPrintable(name));
-  addPlot(new MultiLayerEfficiencyCorrection(canvas));
+
+  QString config = "kirunaFlight";
   
-  name = QString("Multi Layer Efficiency negative canvas");
+  QString name = QString("One hit in all layers positive canvas");
   canvas = addCanvas(&file, qPrintable(name));
-  addPlot(new MultiLayerEfficiencyCorrection(canvas));
+  addPlot(new OneHitAllLayersEfficiencyCorrection(canvas, config));
   
-  name = QString("Multi Layer Efficiency all canvas");
+  name = QString("One hit in all layers negative canvas");
   canvas = addCanvas(&file, qPrintable(name));
-  addPlot(new MultiLayerEfficiencyCorrection(canvas));
+  addPlot(new OneHitAllLayersEfficiencyCorrection(canvas, config));
+  
+  name = QString("One hit in all layers all canvas");
+  canvas = addCanvas(&file, qPrintable(name));
+  addPlot(new OneHitAllLayersEfficiencyCorrection(canvas, config));
   
   name = QString("Track finding efficiency - positive canvas");
   canvas = addCanvas(&file, qPrintable(name));
-  addPlot(new TrackFindingEfficiencyCorrection(canvas));
+  addPlot(new TrackFindingEfficiencyCorrection(canvas, config));
   
   name = QString("Track finding efficiency - negative canvas");
   canvas = addCanvas(&file, qPrintable(name));
-  addPlot(new TrackFindingEfficiencyCorrection(canvas));
+  addPlot(new TrackFindingEfficiencyCorrection(canvas, config));
   
   name = QString("Track finding efficiency - all canvas");
   canvas = addCanvas(&file, qPrintable(name));
-  addPlot(new TrackFindingEfficiencyCorrection(canvas));
+  addPlot(new TrackFindingEfficiencyCorrection(canvas, config));
   
   file.Close();
 }
