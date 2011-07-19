@@ -42,7 +42,7 @@ BetaPlot::~BetaPlot()
   delete m_line;
 }
 
-void BetaPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
+void BetaPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 
