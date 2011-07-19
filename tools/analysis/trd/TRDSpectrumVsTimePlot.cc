@@ -72,7 +72,7 @@ TRDSpectrumVsTimePlot::~TRDSpectrumVsTimePlot()
 {
 }
 
-void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
 {
   //use the global cuts defined in the TRDSpectrumPlot class
   if ( ! TRDSpectrumPlot::globalTRDCuts(hits, particle, event))

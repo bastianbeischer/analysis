@@ -33,7 +33,7 @@ ChannelTriggerProbabilityPlot::~ChannelTriggerProbabilityPlot()
   delete m_normalizationHistogram;
 }
 
-void ChannelTriggerProbabilityPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void ChannelTriggerProbabilityPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
   if (!track || !track->fitGood())

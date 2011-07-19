@@ -77,7 +77,7 @@ TrackFindingEfficiency::~TrackFindingEfficiency()
   delete m_total;
 }
 
-void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
+void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
 {
   bool fillHistogram = false;
   double rigidity = 0;

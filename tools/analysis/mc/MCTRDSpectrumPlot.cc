@@ -58,7 +58,7 @@ MCTRDSpectrumPlot::~MCTRDSpectrumPlot()
 {
 }
 
-void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
 {
   //only MC Events
   if (event->contentType() != SimpleEvent::MonteCarlo)

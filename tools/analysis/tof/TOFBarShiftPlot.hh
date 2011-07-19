@@ -8,7 +8,7 @@ class TOFBarShiftPlot : public AnalysisPlot, public H1DPlot {
 public:
   TOFBarShiftPlot(unsigned short, unsigned short, unsigned short, unsigned short);
   virtual ~TOFBarShiftPlot();
-  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
   virtual void update();
   virtual void finalize();
 private:

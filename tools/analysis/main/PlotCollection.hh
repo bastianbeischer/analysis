@@ -15,7 +15,7 @@ public:
   ~PlotCollection();
   
   void addPlot(AnalysisPlot* plot) {m_plots.append(plot);}
-  void processEvent(const QVector<Hit*>&, Particle*, SimpleEvent*);
+  void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);
   void finalize();
   void update();
   void unzoom();

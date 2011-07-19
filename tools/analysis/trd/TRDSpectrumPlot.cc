@@ -80,7 +80,7 @@ TRDSpectrumPlot::~TRDSpectrumPlot()
   delete m_fitRangeMarker_upper;
 }
 
-bool TRDSpectrumPlot::globalTRDCuts(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
+bool TRDSpectrumPlot::globalTRDCuts(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
 {
   const Track* track = particle->track();
   const ParticleInformation::Flags pFlags = particle->information()->flags();
@@ -124,7 +124,7 @@ bool TRDSpectrumPlot::globalTRDCuts(const QVector<Hit*>&, Particle* particle, Si
   return true;
 }
 
-void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void TRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
 {
 
   if (!TRDSpectrumPlot::globalTRDCuts(hits, particle, event))

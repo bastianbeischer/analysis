@@ -14,7 +14,7 @@ TestbeamRigidityResolutionPlot::~TestbeamRigidityResolutionPlot()
 {
 }
 
-void TestbeamRigidityResolutionPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void TestbeamRigidityResolutionPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
 {
   //get settings if present
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
@@ -41,7 +41,7 @@ void TestbeamRigidityResolutionPlot::processEvent(const QVector<Hit*>& hits, Par
   RigidityResolutionPlot::processEvent(hits, particle, event);
 }
 
-double TestbeamRigidityResolutionPlot::referenceRigidity(SimpleEvent* event) const
+double TestbeamRigidityResolutionPlot::referenceRigidity(const SimpleEvent* const event) const
 {
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
   double genMom = settings->momentum() * settings->polarity();

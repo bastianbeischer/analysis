@@ -60,7 +60,7 @@ TRDEfficiencyPlot::~TRDEfficiencyPlot()
   m_ellipses.clear();
 }
 
-void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent*)
+void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
   const ParticleInformation::Flags pFlags = particle->information()->flags();

@@ -57,7 +57,7 @@ TRDOccupancyPlot::~TRDOccupancyPlot()
   m_ellipses.clear();
 }
 
-void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
+void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const)
 {
 
   const Track* track = particle->track();

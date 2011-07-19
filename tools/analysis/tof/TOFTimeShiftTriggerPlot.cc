@@ -34,7 +34,7 @@ TOFTimeShiftTriggerPlot::TOFTimeShiftTriggerPlot()
 TOFTimeShiftTriggerPlot::~TOFTimeShiftTriggerPlot()
 {}
 
-void TOFTimeShiftTriggerPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void TOFTimeShiftTriggerPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
   if (!track || !track->fitGood())

@@ -11,7 +11,7 @@ public:
   TotalEnergyDepositionPlot(double lowerMomentum = -10, double upperMomentum = 10);
   ~TotalEnergyDepositionPlot();
 
-  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
 
 private:
   double m_lowerMomentum;

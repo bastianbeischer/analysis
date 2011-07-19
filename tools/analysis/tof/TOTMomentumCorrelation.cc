@@ -41,7 +41,7 @@ TOTMomentumCorrelation* TOTMomentumCorrelation::create(TOTLayer::Layer layer) co
   return new TOTMomentumCorrelation(layer); 
 }
 
-void TOTMomentumCorrelation::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void TOTMomentumCorrelation::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
   if (!track || !track->fitGood())

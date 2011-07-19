@@ -52,7 +52,7 @@ void AlignmentMatrix::resetArrays()
     m_localDerivatives[i] = 0.;
 }
 
-void AlignmentMatrix::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void AlignmentMatrix::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 

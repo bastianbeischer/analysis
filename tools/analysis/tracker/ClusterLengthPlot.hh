@@ -11,7 +11,7 @@ public:
   ClusterLengthPlot(AnalysisPlot::Topic, unsigned short);
   ~ClusterLengthPlot();
 
-  void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
   void update();
 
 private:

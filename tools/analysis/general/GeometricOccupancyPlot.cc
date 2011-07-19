@@ -27,7 +27,7 @@ GeometricOccupancyPlot::GeometricOccupancyPlot(double zPosition)
 GeometricOccupancyPlot::~GeometricOccupancyPlot()
 {}
 
-void GeometricOccupancyPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void GeometricOccupancyPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 

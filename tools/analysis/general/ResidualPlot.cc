@@ -50,7 +50,7 @@ ResidualPlot::~ResidualPlot()
 {
 }
 
-void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void ResidualPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
 {
   const Track* track = particle->track();
 
@@ -125,7 +125,7 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, S
   }
 }
 
-Track* ResidualPlot::referenceTrack(const QVector<Hit*>&, Particle* particle, SimpleEvent* /*event*/)
+Track* ResidualPlot::referenceTrack(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const /*event*/)
 {
   const Track* track = particle->track();
 

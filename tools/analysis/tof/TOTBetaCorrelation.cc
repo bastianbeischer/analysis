@@ -39,7 +39,7 @@ TOTBetaCorrelation* TOTBetaCorrelation::create(TOTLayer::Layer layer) const
   return new TOTBetaCorrelation(layer); 
 }
 
-void TOTBetaCorrelation::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void TOTBetaCorrelation::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
   if (!track || !track->fitGood())
