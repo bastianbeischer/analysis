@@ -75,7 +75,8 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   addHistogram(histogram, H1DPlot::HIST);
   setDrawOption(H1DPlot::HIST);
 
-  addLatex(RootPlot::newLatex(0.6, 0.8));
+  addLatex(RootPlot::newLatex(0.5, 0.8));
+  addLatex(RootPlot::newLatex(0.55, 0.7));
 }
 
 TRDSpectrumPlot::~TRDSpectrumPlot()
@@ -124,6 +125,8 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, Sim
 
 
   for (QList<double>::const_iterator it = valuesToFill.constBegin(); it != valuesToFill.constEnd(); ++it) {
+    if (!(*it > 0.))
+      continue;
     int iBin = histogram()->FindBin(*it);
     double width = histogram()->GetBinWidth(iBin);
     double weight = 1./width;
@@ -163,6 +166,7 @@ void TRDSpectrumPlot::finalize()
 void TRDSpectrumPlot::update()
 {
   latex()->SetTitle(qPrintable(QString("entries = %1").arg(histogram()->GetEntries())));
+  latex(1)->SetTitle(qPrintable(QString("uflow = %1, oflow = %2").arg(histogram()->GetBinContent(0)).arg(histogram()->GetBinContent(histogram()->GetNbinsX()))));
 }
 
 void TRDSpectrumPlot::draw(TCanvas* canvas)
