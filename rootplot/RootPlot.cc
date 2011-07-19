@@ -64,6 +64,7 @@ TLatex* RootPlot::latex(int i)
 void RootPlot::addLegend(TLegend* legend)
 {
   Q_ASSERT(legend);
+  legend->SetFillColor(10);
   m_legend.append(legend);
 }
 
