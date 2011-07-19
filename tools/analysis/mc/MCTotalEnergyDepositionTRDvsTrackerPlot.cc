@@ -113,7 +113,6 @@ void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& 
 
   TGraph* graph = 0;
 
-  QMutexLocker locker(&m_mutex);
   if (m_graphMap.contains(pdgID))
     graph = m_graphMap.value(pdgID);
   else {
