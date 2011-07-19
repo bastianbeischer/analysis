@@ -155,9 +155,9 @@ void TRDReconstruction::checkGoodTRDEvent(const Track* track)
 
   bool layerCut = nLayersWithEnDepOnTrack >= minLayerCut;
   bool offTrackHitCut =nOffTrackCluster <= maxOffTrackCluster;
-  bool trackCut = track && track->fitGood() && ((track->chi2() / track->ndf()) < 10);
+  bool trackCut = track && track->fitGood() && ((track->chi2() / track->ndf()) < 5);
 
-  if (layerCut && offTrackHitCut && offTrackHitCut)
+  if (layerCut && offTrackHitCut && trackCut)
     m_flags |= GoodTRDEvent;
 }
 
