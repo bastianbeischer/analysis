@@ -19,7 +19,7 @@ public:
 public:
   TRDOccupancyPlot(TrdOccupancyType, bool onlyOnTrack = false);
   ~TRDOccupancyPlot();
-  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
   virtual void finalize();
   virtual void draw(TCanvas* c);
   virtual void update();

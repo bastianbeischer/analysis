@@ -38,7 +38,7 @@ TOFTimeDifferencePlot::~TOFTimeDifferencePlot()
   delete m_normalizationHistogram;
 }
 
-void TOFTimeDifferencePlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void TOFTimeDifferencePlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
   if (!track || !track->fitGood() || track->chi2() / track->ndf() > 3.)

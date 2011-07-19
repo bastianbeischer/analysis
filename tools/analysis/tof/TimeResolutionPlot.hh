@@ -8,7 +8,7 @@ class TimeResolutionPlot : public AnalysisPlot, public H2DProjectionPlot {
 public:
   TimeResolutionPlot(unsigned short, unsigned short, unsigned short, unsigned short);
   virtual ~TimeResolutionPlot();
-  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
 private:
   unsigned short m_idTop1;
   unsigned short m_idTop2;

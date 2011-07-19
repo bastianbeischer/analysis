@@ -40,7 +40,7 @@ TOTLayerPlot* TOTLayerPlot::create(TOTLayer::Layer layer) const
   return new TOTLayerPlot(layer); 
 }
 
-void TOTLayerPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void TOTLayerPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
   if (!track || !track->fitGood())

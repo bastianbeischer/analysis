@@ -66,7 +66,7 @@ TRDSpectrumVsTemperaturePlot::~TRDSpectrumVsTemperaturePlot()
 {
 }
 
-void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
 {
   if (!TRDSpectrumPlot::globalTRDCuts(hits, particle, event))
       return;

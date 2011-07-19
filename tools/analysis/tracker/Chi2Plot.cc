@@ -48,7 +48,7 @@ Chi2Plot::~Chi2Plot()
 {
 }
 
-void Chi2Plot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* /*event*/)
+void Chi2Plot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const /*event*/)
 {
   const Track* track = particle->track();
 

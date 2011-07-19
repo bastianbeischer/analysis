@@ -68,7 +68,7 @@ SingleLayerTrackingEfficiencyPlot::~SingleLayerTrackingEfficiencyPlot()
   delete[] m_layerZ;
 }
 
-void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
+void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 

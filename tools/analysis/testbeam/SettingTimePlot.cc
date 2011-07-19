@@ -50,7 +50,7 @@ SettingTimePlot::~SettingTimePlot()
   delete m_normalizationHistogram;
 }
 
-void SettingTimePlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
+void SettingTimePlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
 {
   //get settings if present
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);

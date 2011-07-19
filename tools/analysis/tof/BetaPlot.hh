@@ -10,7 +10,7 @@ class BetaPlot : public AnalysisPlot, public H1DPlot {
 public:
   BetaPlot();
   virtual ~BetaPlot();
-  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
   virtual void update();
   virtual void draw(TCanvas*);
 private:

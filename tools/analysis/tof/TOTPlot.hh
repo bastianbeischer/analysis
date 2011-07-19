@@ -14,7 +14,7 @@ class TOTPlot : public AnalysisPlot, public H2DProjectionPlot {
 public:
   TOTPlot();
   ~TOTPlot();
-  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
 };
 
 #endif /* TOTPlot_hh */

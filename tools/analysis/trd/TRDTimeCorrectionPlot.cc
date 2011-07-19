@@ -46,7 +46,7 @@ TRDTimeCorrectionPlot::~TRDTimeCorrectionPlot()
   delete m_TrdTimeSpline;
 }
 
-void TRDTimeCorrectionPlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
+void TRDTimeCorrectionPlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
 {
   double time = event->time();
   double corrFactor = m_corr->trdTimeDependendFactor(time);

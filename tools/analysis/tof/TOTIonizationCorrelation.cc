@@ -67,7 +67,7 @@ TOTIonizationCorrelation* TOTIonizationCorrelation::create(TOTLayer::Layer layer
   return new TOTIonizationCorrelation(layer, m_type); 
 }
 
-void TOTIonizationCorrelation::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void TOTIonizationCorrelation::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
   if (!track || !track->fitGood())

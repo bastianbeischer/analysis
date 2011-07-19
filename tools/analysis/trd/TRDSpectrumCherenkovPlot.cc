@@ -31,7 +31,7 @@ TRDSpectrumCherenkovPlot::~TRDSpectrumCherenkovPlot()
 {
 }
 
-void TRDSpectrumCherenkovPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void TRDSpectrumCherenkovPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
 {
   double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
   double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);

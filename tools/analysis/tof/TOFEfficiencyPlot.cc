@@ -38,7 +38,7 @@ TOFEfficiencyPlot::~TOFEfficiencyPlot()
   delete m_normalizationHistogram;
 }
 
-void TOFEfficiencyPlot::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
+void TOFEfficiencyPlot::processEvent(const QVector<Hit*>& clusters, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 

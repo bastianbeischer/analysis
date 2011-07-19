@@ -13,7 +13,7 @@ public:
   SignalHeightPlot(AnalysisPlot::Topic, unsigned short);
   ~SignalHeightPlot();
 
-  void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);
 
 private:
   unsigned short m_id;

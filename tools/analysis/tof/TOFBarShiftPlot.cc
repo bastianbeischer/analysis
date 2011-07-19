@@ -53,7 +53,7 @@ TOFBarShiftPlot::TOFBarShiftPlot(unsigned short idTop1, unsigned short idTop2, u
 TOFBarShiftPlot::~TOFBarShiftPlot()
 {}
 
-void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
+void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
 {
   const Track* track = particle->track();
   if (!track || !track->fitGood())

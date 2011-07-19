@@ -23,7 +23,7 @@ PlotCollection::~PlotCollection()
   qDeleteAll(m_plots);
 }
 
-void PlotCollection::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void PlotCollection::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
 {
   foreach(AnalysisPlot* plot, m_plots)
     plot->processEvent(hits, particle, event);
