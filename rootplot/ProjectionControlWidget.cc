@@ -15,8 +15,7 @@ ProjectionControlWidget::ProjectionControlWidget(H2DProjectionPlot* plot, QWidge
   m_comboBox(new QComboBox),
   m_spinBox(new QSpinBox),
   m_checkBoxLogX(new QCheckBox),
-  m_checkBoxLogY(new QCheckBox),
-  m_checkBoxLogZ(new QCheckBox)
+  m_checkBoxLogY(new QCheckBox)
 {
   m_comboBox->addItem("none");
   m_comboBox->addItem("projection on y");
@@ -28,7 +27,6 @@ ProjectionControlWidget::ProjectionControlWidget(H2DProjectionPlot* plot, QWidge
   
   m_checkBoxLogX->setText("log x");
   m_checkBoxLogY->setText("log y");
-  m_checkBoxLogZ->setText("log z");
 
   // deactivate all elements
   setElementStatus(false);
@@ -40,13 +38,11 @@ ProjectionControlWidget::ProjectionControlWidget(H2DProjectionPlot* plot, QWidge
   layout->addWidget(m_spinBox);
   layout->addWidget(m_checkBoxLogX);
   layout->addWidget(m_checkBoxLogY);
-  layout->addWidget(m_checkBoxLogZ);
   layout->addStretch();
 
   connect(m_comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(changeProjectionType(int)));
   connect(m_checkBoxLogX, SIGNAL(stateChanged(int)), m_projectionPlot, SLOT(setLogX(int)));
   connect(m_checkBoxLogY, SIGNAL(stateChanged(int)), m_projectionPlot, SLOT(setLogY(int)));
-  connect(m_checkBoxLogZ, SIGNAL(stateChanged(int)), m_projectionPlot, SLOT(setLogZ(int)));
 }
 
 ProjectionControlWidget::~ProjectionControlWidget()
@@ -93,5 +89,4 @@ void ProjectionControlWidget::setElementStatus(bool status)
   m_spinBox->setEnabled(status);
   m_checkBoxLogX->setEnabled(status);
   m_checkBoxLogY->setEnabled(status);
-  m_checkBoxLogZ->setEnabled(status);
 }
