@@ -55,7 +55,7 @@ bool histogramsMatch(TH1D* h1, TH1D* h2, QStringList& comment)
   int nBins = h1->GetXaxis()->GetNbins();
   for (int bin = 0; bin <= nBins; ++bin)
     if (!qFuzzyCompare(h1->GetBinContent(bin), h2->GetBinContent(bin))
-      && !(isnan(h1->GetBinContent(bin)) && isnan(h1->GetBinContent(bin)))) {
+      && !(std::isnan(h1->GetBinContent(bin)) && std::isnan(h1->GetBinContent(bin)))) {
       if (verbose)
         comment << QString("bin %1: first file = %2, second file = %3").arg(bin).arg(h1->GetBinContent(bin)).arg(h2->GetBinContent(bin));
       ret = false;
@@ -81,7 +81,7 @@ bool histogramsMatch(TH2D* h1, TH2D* h2, QStringList& comment)
   for (int binX = 0; binX <= nBinsX; ++binX)
     for (int binY = 0; binY <= nBinsY; ++binY)
       if (!qFuzzyCompare(h1->GetBinContent(binX, binY), h2->GetBinContent(binX, binY))
-        && !(isnan(h1->GetBinContent(binX, binY)) && isnan(h1->GetBinContent(binX, binY)))) {
+        && !(std::isnan(h1->GetBinContent(binX, binY)) && std::isnan(h1->GetBinContent(binX, binY)))) {
         if (verbose)
           comment << QString("bin x %1, bin y %2: first file = %3, second file = %4")
             .arg(binX).arg(binY).arg(h1->GetBinContent(binX, binY)).arg(h2->GetBinContent(binX, binY));
