@@ -86,6 +86,8 @@
 #include "TOFBarShiftPlotCollection.hh"
 #include "TrackFindingEfficiency.hh"
 #include "AllTrackerLayersFlagEfficiency.hh"
+#include "ZenithDistributionPlot.hh"
+#include "AzimuthDistributionPlot.hh"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -566,6 +568,8 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Negative));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Inverted));
     m_ui.plotter->addPlot(new AlbedosVsMomentumPlot());
+    m_ui.plotter->addPlot(new ZenithDistributionPlot());
+    m_ui.plotter->addPlot(new AzimuthDistributionPlot());
   }
   if (m_ui.efficiencyTofCheckBox->isChecked()) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
