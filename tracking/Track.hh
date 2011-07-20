@@ -36,6 +36,10 @@ public:
   virtual double slopeY(double z) const = 0;
   virtual double bendingAngle() const = 0;
   virtual double trackLength() const = 0;
+  
+  virtual double upperAzimuth() const = 0;
+  virtual double upperZenith() const = 0;
+  
   TVector3 position(double z) const {return TVector3(x(z), y(z), z);}
 
   TVector3 meanFieldAlongTrack();

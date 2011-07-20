@@ -30,6 +30,9 @@ public:
   double slopeY(double) const {return slopeY();}
   double bendingAngle() const {return 0.;}
   double trackLength() const;
+  double upperAzimuth() const {return 0.;}
+  double upperZenith() const {return 0.;}
+  
 private:
   void retrieveFitResults();
 
