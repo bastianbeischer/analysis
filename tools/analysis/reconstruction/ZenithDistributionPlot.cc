@@ -42,7 +42,7 @@ void ZenithDistributionPlot::processEvent(const QVector<Hit*>&, const Particle* 
   if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
     return;
   
-  double zenith = track->upperZenith();
+  double zenith = track->zenithAngle();
 
   histogram()->Fill(cos(zenith));
 }

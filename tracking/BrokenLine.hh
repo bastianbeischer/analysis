@@ -36,8 +36,6 @@ public:
   double y(double z) const;
   double slopeX(double) const;
   double slopeY(double) const;
-  double upperAzimuth() const {return 0.;}
-  double upperZenith() const {return 0.;}
 
 private:
   void retrieveFitResults();

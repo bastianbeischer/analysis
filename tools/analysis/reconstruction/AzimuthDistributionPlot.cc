@@ -42,7 +42,7 @@ void AzimuthDistributionPlot::processEvent(const QVector<Hit*>&, const Particle*
   if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
     return;
   
-  double azimuth = (track->upperAzimuth()) / M_PI * 180;
+  double azimuth = (track->azimuthAngle()) / M_PI * 180;
   
   histogram()->Fill(azimuth);
 }

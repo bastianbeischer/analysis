@@ -56,33 +56,3 @@ double StraightLine::trackLength() const
   const TVector3& lowerPoint = position(Constants::lowerTofPosition);
   return (upperPoint-lowerPoint).Mag();
 }
-
-double StraightLine::upperZenith() const
-{
-  return atan(sqrt(pow(slopeX(), 2)+pow(slopeY(), 2)));
-}
-
-double StraightLine::upperAzimuth() const
-{
-  //with respect to the x-axis
-  double my = slopeY();
-  double mx = slopeX();
-  
-  if (mx > 0) {
-    return atan(my / mx);
-  } else if (mx < 0) {
-    if (my >= 0) {
-      return atan(my / mx) + M_PI;
-    } else {
-      return atan(my / mx) - M_PI;
-    }
-  } else {
-    if (my > 0) {
-      return M_PI / 2.;
-    } else if (my < 0) {
-      return -M_PI / 2.;
-    } else {
-      return NAN;
-    }
-  }
-}

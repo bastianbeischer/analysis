@@ -85,33 +85,3 @@ double CenteredBrokenLine::trackLength() const
   return (upperPoint-middlePoint).Mag() + (middlePoint-lowerPoint).Mag();
 }
 
-double CenteredBrokenLine::upperZenith() const
-{
-  return atan(sqrt(pow(upperSlopeX(), 2)+pow(slopeY(), 2)));
-}
-
-double CenteredBrokenLine::upperAzimuth() const
-{
-  //with respect to the x-axis
-  double my = slopeY();
-  double mx = upperSlopeX();
-  
-  if (mx > 0) {
-    return atan(my / mx);
-  } else if (mx < 0) {
-    if (my >= 0) {
-      return atan(my / mx) + M_PI;
-    } else {
-      return atan(my / mx) - M_PI;
-    }
-  } else {
-    if (my > 0) {
-      return M_PI / 2.;
-    } else if (my < 0) {
-      return -M_PI / 2.;
-    } else {
-      return NAN;
-    }
-  }
-}
-
