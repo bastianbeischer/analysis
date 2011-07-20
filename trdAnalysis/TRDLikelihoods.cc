@@ -77,6 +77,10 @@ TF1* TRDLikelihoods::getPrototypeLHFunctionNonTR()
   else
     LHFun->SetParameters(1.32391,2.23676,1.02281,0.788797, -0.0594475, 0.00140946, -2.07114e-05);
 
+  LHFun->SetParLimits(4, -0.0594475*10, -0.0594475*0.1);
+  LHFun->SetParLimits(5, 0.00140946*0.1, 0.00140946*20);
+  LHFun->SetParLimits(6, -2.07114e-05*20, -2.07114e-05*0.02);
+
   //normalize
   //double integral = LHFun->Integral(0,100);
   //LHFun->SetParameter(0, LHFun->GetParameter(0) / integral);
