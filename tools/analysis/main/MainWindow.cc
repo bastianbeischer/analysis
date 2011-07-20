@@ -540,6 +540,8 @@ void MainWindow::setupPlots()
       m_ui.plotter->addPlot(new Chi2Plot(ndf));
     m_ui.plotter->addPlot(new Chi2PerNdfPlot);
     m_ui.plotter->addPlot(new Chi2VsMomentumPlot);
+    m_ui.plotter->addPlot(new ZenithDistributionPlot());
+    m_ui.plotter->addPlot(new AzimuthDistributionPlot());
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
@@ -568,8 +570,6 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Negative));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Inverted));
     m_ui.plotter->addPlot(new AlbedosVsMomentumPlot());
-    m_ui.plotter->addPlot(new ZenithDistributionPlot());
-    m_ui.plotter->addPlot(new AzimuthDistributionPlot());
   }
   if (m_ui.efficiencyTofCheckBox->isChecked()) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {

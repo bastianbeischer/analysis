@@ -1,4 +1,4 @@
-#include "ZenithDistributionPlot.hh"
+#include "AzimuthDistributionPlot.hh"
 
 #include <TH1D.h>
 #include <TLatex.h>
@@ -12,42 +12,42 @@
 #include <iostream>
 #include <cmath>
 
-ZenithDistributionPlot::ZenithDistributionPlot() :
-  AnalysisPlot(AnalysisPlot::MomentumReconstruction),
-  H1DPlot()
+AzimuthDistributionPlot::AzimuthDistributionPlot() :
+AnalysisPlot(AnalysisPlot::Tracking),
+H1DPlot()
 {
-  setTitle("Zenith distribution");
-  int nBins = 200;
-  double xMin = 0;
-  double xMax = 1;
+  setTitle("Azimuth distribution");
+  int nBins = 60;
+  double xMin = -180;
+  double xMax = 180;
   TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, xMin, xMax);
   histogram->Sumw2();
-  setAxisTitle("cos(zenith)", "entries");
+  setAxisTitle("azimuth", "entries");
   addHistogram(histogram);
   addLatex(RootPlot::newLatex(.15, .85));
 }
 
-ZenithDistributionPlot::~ZenithDistributionPlot()
+AzimuthDistributionPlot::~AzimuthDistributionPlot()
 {
 }
 
-void ZenithDistributionPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void AzimuthDistributionPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
-
+  
   if (!track || !track->fitGood())
     return;
-
+  
   ParticleInformation::Flags flags = particle->information()->flags();
   if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
     return;
   
-  double zenith = track->zenithAngle();
-
-  histogram()->Fill(cos(zenith));
+  double azimuth = (track->azimuthAngle()) / M_PI * 180;
+  
+  histogram()->Fill(azimuth);
 }
 
-void ZenithDistributionPlot::update()
+void AzimuthDistributionPlot::update()
 {
-
+  
 }
