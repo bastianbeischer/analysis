@@ -25,6 +25,16 @@ Track::~Track()
 {
 }
 
+void Track::reset()
+{
+  m_hits.clear();
+  m_fitGood = 0;
+  m_chi2 = 0;
+  m_ndf = 0;
+  m_transverseRigidity = 0;
+  m_matrix->reset();
+}
+
 int Track::fit(const QVector<Hit*>& hits)
 {
   m_hits = hits;

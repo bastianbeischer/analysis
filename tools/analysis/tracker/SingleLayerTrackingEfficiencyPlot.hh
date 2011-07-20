@@ -6,23 +6,20 @@
 
 class TCanvas;
 
-class SingleLayerTrackingEfficiencyPlot :
-  public AnalysisPlot,
-  public H2DPlot
+class SingleLayerTrackingEfficiencyPlot : public AnalysisPlot, public H2DPlot
 {
-  
 public:
-  SingleLayerTrackingEfficiencyPlot();
+  enum Type {Positive, Negative, All};
+  SingleLayerTrackingEfficiencyPlot(Type type);
   ~SingleLayerTrackingEfficiencyPlot();
-  
-  void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
   void finalize();
 
 private:
+  Type m_type;
   TH2D* m_normHisto;
   int m_nLayers;
   double* m_layerZ;
-  
 };
 
 #endif /* SingleLayerTrackingEfficiencyPlot_hh */

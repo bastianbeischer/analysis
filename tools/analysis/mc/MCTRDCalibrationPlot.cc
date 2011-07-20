@@ -19,7 +19,7 @@ MCTRDCalibrationPlot::MCTRDCalibrationPlot()
   addHistogram(histogram);
 }
 
-void MCTRDCalibrationPlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
+void MCTRDCalibrationPlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
 {
   //qDebug("new event");
   if (event->contentType() != SimpleEvent::MonteCarlo)

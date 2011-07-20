@@ -67,7 +67,7 @@ BeamProfilePlot::~BeamProfilePlot()
 {
 }
 
-void BeamProfilePlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void BeamProfilePlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 

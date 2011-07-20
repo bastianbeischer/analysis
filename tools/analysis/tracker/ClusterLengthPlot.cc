@@ -28,7 +28,7 @@ ClusterLengthPlot::~ClusterLengthPlot()
 {
 }
 
-void ClusterLengthPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
+void ClusterLengthPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 

@@ -15,7 +15,7 @@ public:
   TRDSpectrumVsTimePlot(QDateTime, QDateTime, unsigned short id = 0, TRDSpectrumPlot::TRDSpectrumType spectrumType = TRDSpectrumPlot::completeTRD);
   ~TRDSpectrumVsTimePlot();
 
-  void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
 
 private:
   unsigned short m_id;

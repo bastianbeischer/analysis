@@ -26,7 +26,7 @@ TRDClustersOnTrackPlot::~TRDClustersOnTrackPlot()
 {
 }
 
-void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/,Particle* particle ,SimpleEvent* event)
+void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/, const Particle* const particle, const SimpleEvent* const event)
 {
   const Track* track = particle->track();
 

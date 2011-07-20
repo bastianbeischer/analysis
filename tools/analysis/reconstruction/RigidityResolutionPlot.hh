@@ -18,13 +18,13 @@ public:
   RigidityResolutionPlot(AnalysisPlot::Topic, const Particle::Type& = Particle::Electron);
   ~RigidityResolutionPlot();
 
-  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
   void update();
   void finalize();
   void positionChanged(double, double);
 
 private:
-  virtual double referenceRigidity(SimpleEvent*) const = 0;
+  virtual double referenceRigidity(const SimpleEvent* const) const = 0;
   void loadRigHisto(double rig);
   void loadRigHisto(int bin);
   void saveHistos();

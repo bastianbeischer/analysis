@@ -80,7 +80,7 @@ void SimpleEvent::setSensorData(SensorTypes::Type type, float data)
   m_sensorSet[type] = data;
 }
 
-float SimpleEvent::sensorData(SensorTypes::Type type)
+float SimpleEvent::sensorData(SensorTypes::Type type) const
 {
   assert(type >= 0 && type < SensorTypes::N_SENSOR_TYPES);
   return m_sensorSet[type];

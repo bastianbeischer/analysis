@@ -47,7 +47,7 @@ AlbedosVsMomentumPlot::~AlbedosVsMomentumPlot()
   delete m_totalHisto;
 }
 
-void AlbedosVsMomentumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void AlbedosVsMomentumPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 

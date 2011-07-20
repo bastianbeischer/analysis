@@ -28,7 +28,8 @@ LIBS += \
 
 CLASSES = \
   MainWindow \
-  TrackingEfficiencyCorrection
+  AllTrackerLayersFlagEfficiencyCorrection \
+  TrackFindingEfficiencyCorrection
 
 SOURCES = \
   main.cc

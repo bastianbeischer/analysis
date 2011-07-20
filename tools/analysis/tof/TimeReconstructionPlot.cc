@@ -43,7 +43,7 @@ TimeReconstructionPlot::TimeReconstructionPlot(Method method)
 TimeReconstructionPlot::~TimeReconstructionPlot()
 {}
 
-void TimeReconstructionPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void TimeReconstructionPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
   if (!track || !track->fitGood())

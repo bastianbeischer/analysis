@@ -17,7 +17,7 @@ public:
   TRDSpectrumPlot(unsigned short = 0, TRDSpectrumType = completeTRD);
   ~TRDSpectrumPlot();
 
-  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
   virtual void finalize();
   virtual void update();
   virtual void draw(TCanvas*);
@@ -29,7 +29,7 @@ public:
   static double spectrumUpperLimit() {return TRDSpectrumPlot::calculateLengthInTube ? 15 : 50 ;}
   static QString xAxisTitle() {return TRDSpectrumPlot::calculateLengthInTube ? "energy deposition length in tube / (keV/mm)" : "energy deposition / keV" ;}
 
-  static bool globalTRDCuts(const QVector<Hit*>&, Particle* particle, SimpleEvent* event);
+  static bool globalTRDCuts(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event);
 
 private:
 

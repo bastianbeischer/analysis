@@ -42,6 +42,7 @@ public:
   double rigidity() const;
 
 public:
+  void reset();
   int fit(const QVector<Hit*>& hits);
 
 private:

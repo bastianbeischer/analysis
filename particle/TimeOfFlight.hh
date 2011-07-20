@@ -13,6 +13,7 @@ public:
   ~TimeOfFlight();
   
 public:
+  void reset();
   void calculateTimes(const Track*);
 
   double startTime() const {return m_startTime;}

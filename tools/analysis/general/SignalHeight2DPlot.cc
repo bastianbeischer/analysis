@@ -52,7 +52,7 @@ SignalHeight2DPlot::~SignalHeight2DPlot()
   delete m_normHisto;
 }
 
-void SignalHeight2DPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void SignalHeight2DPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 

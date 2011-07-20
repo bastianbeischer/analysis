@@ -13,7 +13,7 @@ HeightTimePlot::HeightTimePlot(QDateTime first, QDateTime last)
   setAxisTitle("time", "height / km");
 }
 
-void HeightTimePlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
+void HeightTimePlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
 {
   double value = event->sensorData(m_type);
   if (!std::isnan(value)) {

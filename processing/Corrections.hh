@@ -40,6 +40,7 @@ public:
 public:
   void preFitCorrections(SimpleEvent*);
   void postFitCorrections(Particle*);
+  void postTOFCorrections(Particle*);
 
   static const int nPhotonTravelTimeParameters = 3;
   static const int nPhotonTravelTimeDifferenceParameters = 6;

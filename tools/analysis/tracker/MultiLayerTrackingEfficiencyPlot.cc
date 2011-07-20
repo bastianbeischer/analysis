@@ -74,7 +74,7 @@ MultiLayerTrackingEfficiencyPlot::~MultiLayerTrackingEfficiencyPlot()
   delete [] m_layerZ;
 }
 
-void MultiLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
+void MultiLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 

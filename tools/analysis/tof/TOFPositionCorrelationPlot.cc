@@ -38,7 +38,7 @@ TOFPositionCorrelationPlot::~TOFPositionCorrelationPlot()
   delete m_correlationGraph;
 }
 
-void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
+void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 

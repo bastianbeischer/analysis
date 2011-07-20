@@ -44,6 +44,14 @@ void Particle::init()
   m_information = new ParticleInformation(this);
 }
 
+void Particle::reset()
+{
+  m_properties = ParticleDB::instance()->lookupType(Unknown);
+  m_track->reset();
+  m_tof->reset();
+  m_information->reset();
+}
+
 void Particle::setType(const Type& type)
 {
   m_properties = ParticleDB::instance()->lookupType(type);

@@ -16,7 +16,7 @@ public:
   TRDSpectrumVsTemperaturePlot(unsigned short = 0, TRDSpectrumPlot::TRDSpectrumType = TRDSpectrumPlot::completeTRD);
   ~TRDSpectrumVsTemperaturePlot();
 
-  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
 
 private:
   unsigned short m_id;
