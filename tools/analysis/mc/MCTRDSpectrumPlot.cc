@@ -28,14 +28,17 @@ MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrum
 {
   QString strType;
   switch(m_spectrumType){
-  case MCTRDSpectrumPlot::completeTRD:
+  case TRDSpectrumPlot::completeTRD:
     strType = "complete TRD";
     break;
-  case MCTRDSpectrumPlot::module:
+  case TRDSpectrumPlot::module:
     strType = "Module";
     break;
-  case MCTRDSpectrumPlot::channel:
+  case TRDSpectrumPlot::channel:
     strType = "Channel";
+    break;
+  case TRDSpectrumPlot::layer:
+    strType = "TRD layer";
     break;
   }
 
@@ -58,56 +61,41 @@ MCTRDSpectrumPlot::~MCTRDSpectrumPlot()
 {
 }
 
-void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
 {
-  //only MC Events
-  if (event->contentType() != SimpleEvent::MonteCarlo)
+  const TRDReconstruction* trdReconst = particle->trdReconstruction();
+  if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
     return;
 
-  if ( ! TRDReconstruction::globalTRDCuts(hits, particle, event))
-      return;
-
-  //now get all relevant energy deposition for this specific plot and all length
-  QList<double> lengthList;
-  QList<double> signalList;
-
-  const Track* track = particle->track();
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != track->hits().end(); ++it) {
-    Hit* hit = *it;
-    if (hit->type() != Hit::trd)
-      continue;
-
-    Cluster* cluster = static_cast<Cluster*>(hit);
-    std::vector<Hit*>& subHits = cluster->hits();
-    const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
-    for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
-      Hit* subHit = *it;
-      //check if the id of the plot has been hit (difference between module mode and channel mode
-      if(m_spectrumType == MCTRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
-         (m_spectrumType == MCTRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
-         (m_spectrumType == MCTRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
-        double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
-        if(TRDReconstruction::calculateLengthInTube)
-            distanceInTube = TRDReconstruction::distanceOnTrackThroughTRDTube(hit, track);
-        if(distanceInTube > 0) {
-          signalList << hit->signalHeight();
-          lengthList << distanceInTube;
-        }
-      } // fits into category
-    } // subhits in cluster
-  } // all hits
-
-
-  /* now fill the mean of all gathered data
-      - one value for a single tube
-      - normally also one value for a module (except no length is calculated and 2 tubes show a signal)
-      - several signals for the complete trd
-  */
-
-  //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
-  int hitsWhichAreOnTrack = signalList.size();
-  if (m_spectrumType == MCTRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDReconstruction::minLayerCut)
-    return;
+  QList<double> valuesToFill;
+  switch (m_spectrumType) {
+  case TRDSpectrumPlot::completeTRD:
+    if (TRDReconstruction::calculateLengthInTube)
+      for (int i = 0; i < 8; ++i)
+        valuesToFill << trdReconst->getEnergyDepositionOnTrackPerLengthForLayer(i);
+    else
+      for (int i = 0; i < 8; ++i)
+        valuesToFill << trdReconst->getEnergyDepositionOnTrackForLayer(i);
+    break;
+  case TRDSpectrumPlot::module:
+    if (TRDReconstruction::calculateLengthInTube)
+      valuesToFill << trdReconst->getEnergyDepositionOnTrackPerLengthForModule(m_id);
+    else
+      valuesToFill << trdReconst->getEnergyDepositionOnTrackForModule(m_id);
+    break;
+  case TRDSpectrumPlot::channel:
+    if (TRDReconstruction::calculateLengthInTube)
+      valuesToFill << trdReconst->getEnergyDepositionOnTrackPerLengthForChannel(m_id);
+    else
+      valuesToFill << trdReconst->getEnergyDepositionOnTrackForModule(m_id);
+    break;
+  case TRDSpectrumPlot::layer:
+    if (TRDReconstruction::calculateLengthInTube)
+        valuesToFill << trdReconst->getEnergyDepositionOnTrackPerLengthForLayer(m_id);
+    else
+        valuesToFill << trdReconst->getEnergyDepositionOnTrackForLayer(m_id);
+    break;
+  }
 
   //get histo:
   int pdgID = event->MCInformation()->primary()->pdgID;
@@ -136,12 +124,13 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, Particle* partic
     addHistogram(spectrumHisto, H1DPlot::HIST);
   }
 
-  for (int i = 0; i < signalList.size(); ++i) {
-    double value = signalList.at(i) / lengthList.at(i);
-    int iBin = histogram()->FindBin(value);
-    double width = histogram()->GetBinWidth(iBin);
+  for (QList<double>::const_iterator it = valuesToFill.constBegin(); it != valuesToFill.constEnd(); ++it) {
+    if (!(*it > 0.))
+      continue;
+    int iBin = spectrumHisto->FindBin(*it);
+    double width = spectrumHisto->GetBinWidth(iBin);
     double weight = 1./width;
-    histogram()->Fill(value, weight);
+    spectrumHisto->Fill(*it, weight);
   }
 }
 

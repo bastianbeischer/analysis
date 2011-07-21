@@ -28,31 +28,12 @@ TRDDistanceWireToTrackPlot::~TRDDistanceWireToTrackPlot()
 {
 }
 
-void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
 {
-  if (!TRDReconstruction::globalTRDCuts(hits, particle, event))
-      return;
+  const TRDReconstruction* trdReconst = particle->trdReconstruction();
+  if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
+    return;
 
-  //now get all relevant energy deposition for this specific plot and all length
-  QList<double> distanceList;
-
-  const Track* track = particle->track();
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != track->hits().end(); ++it) {
-    Hit* hit = *it;
-    if (hit->type() != Hit::trd)
-      continue;
-    Cluster* cluster = static_cast<Cluster*>(hit);
-    std::vector<Hit*>& subHits = cluster->hits();
-    const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
-    for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
-      Hit* subHit = *it;
-      double distancefromWire = TRDReconstruction::distanceTrackToWire(subHit, track);
-      distanceList << distancefromWire;
-    } // subhits in cluster
-  } // all hits
-
-  if (distanceList.size() >= TRDReconstruction::minLayerCut) {
-  foreach(double distance, distanceList)
-    histogram()->Fill(distance);
-  }
+  for (QList<const Hit*>::const_iterator it = trdReconst->getAllHitsOnTrack().constBegin(); it != trdReconst->getAllHitsOnTrack().constEnd(); ++it)
+    histogram()->Fill(TRDReconstruction::distanceTrackToWire(*it, particle->track()));
 }
