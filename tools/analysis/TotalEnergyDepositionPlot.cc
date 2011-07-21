@@ -26,24 +26,17 @@ TotalEnergyDepositionPlot::~TotalEnergyDepositionPlot()
 {
 }
 
-void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
+void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent*)
 {
   const TRDReconstruction* trdReconst = particle->trdReconstruction();
   if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
     return;
 
-  QList<double> valuesToFill;
-
-  if (TRDReconstruction::calculateLengthInTube)
-    for (int i = 0; i < 8; ++i)
-      valuesToFill << trdReconst->energyDepositionOnTrackPerLengthForLayer(i);
-  else
-    for (int i = 0; i < 8; ++i)
-      valuesToFill << trdReconst->energyDepositionOnTrackForLayer(i);
-
+  const QVector<double>& values = TRDReconstruction::calculateLengthInTube ?
+        trdReconst->energyDepositionOnTrackPerLengthForLayers() : trdReconst->energyDepositionOnTrackForLayers();
 
   double signalSum = 0.;
-  for (QList<double>::const_iterator it = valuesToFill.constBegin(); it != valuesToFill.constEnd(); ++it)
+  for (QVector<double>::const_iterator it = values.constBegin(); it != values.constEnd(); ++it)
     signalSum += *it;
 
   histogram()->Fill(signalSum);

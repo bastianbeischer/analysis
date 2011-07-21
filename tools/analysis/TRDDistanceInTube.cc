@@ -25,12 +25,12 @@ TRDDistanceInTube::~TRDDistanceInTube()
 {
 }
 
-void TRDDistanceInTube::processEvent(const QVector<Hit*>& /*hits*/, const Particle* const particle, const SimpleEvent* const event)
+void TRDDistanceInTube::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent*)
 {
   const TRDReconstruction* trdReconst = particle->trdReconstruction();
   if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
     return;
 
-  for (int i = 0; i < 8; ++i)
-    histogram()->Fill(trdReconst->lengthThroughTubeForLayer(i));
+  const QVector<double>& values = trdReconst->lengthThroughTubeForLayers();
+  histogram()->FillN(values.size(), values.constData(), 0);
 }

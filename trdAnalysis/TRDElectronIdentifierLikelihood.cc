@@ -34,15 +34,8 @@ bool TRDElectronIdentifierLikelihood::isElectronish(const QVector<Hit*>&, const 
   //can be reconstructed
   ok = true;
 
-  QList<double> values;
-  int nLayers = 8;
-
-  for (int i = 0; i < nLayers; i++) {
-    if (TRDReconstruction::calculateLengthInTube)
-      values << trdReconst->energyDepositionOnTrackPerLengthForLayer(i);
-    else
-      values << trdReconst->energyDepositionOnTrackForLayer(i);
-  }
+  const QVector<double>& values = TRDReconstruction::calculateLengthInTube ?
+        trdReconst->energyDepositionOnTrackPerLengthForLayers() : trdReconst->energyDepositionOnTrackForLayers();
 
   //calculate likelihoods:
   TRDLikelihoods* lhs = TRDLikelihoods::instance();
@@ -60,12 +53,12 @@ bool TRDElectronIdentifierLikelihood::isElectronish(const QVector<Hit*>&, const 
   double nonTRLH = 1.;
   foreach(double layerLH, lhsNonTR)
     nonTRLH *= layerLH;
-  nonTRLH = pow(nonTRLH, 1.0 / lhsNonTR.size() );
+  nonTRLH = pow(nonTRLH, 1. / lhsNonTR.size() );
 
-  double trLH = 1;
+  double trLH = 1.;
   foreach(double layerLH, lhsTR)
     trLH *= layerLH;
-  trLH = pow(trLH, 1.0 / lhsTR.size() );
+  trLH = pow(trLH, 1. / lhsTR.size() );
 
   //log likelihood:
   logLH = -log(trLH / ( trLH + nonTRLH)) ;

@@ -28,7 +28,7 @@ TRDDistanceWireToTrackPlot::~TRDDistanceWireToTrackPlot()
 {
 }
 
-void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>& /*hits*/, const Particle* const particle, const SimpleEvent* const event)
+void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent*)
 {
   const TRDReconstruction* trdReconst = particle->trdReconstruction();
   if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))

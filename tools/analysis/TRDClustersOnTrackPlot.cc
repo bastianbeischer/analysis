@@ -41,7 +41,7 @@ TRDClustersOnTrackPlot::~TRDClustersOnTrackPlot()
 {
 }
 
-void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/, const Particle* const particle, const SimpleEvent* const event)
+void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/, const Particle* const particle, const SimpleEvent*)
 {
   const TRDReconstruction* trdReconst = particle->trdReconstruction();
   //if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))

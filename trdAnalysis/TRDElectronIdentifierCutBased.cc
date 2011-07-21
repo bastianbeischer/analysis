@@ -15,7 +15,7 @@ TRDElectronIdentifierCutBased::TRDElectronIdentifierCutBased()
 {
 }
 
-bool TRDElectronIdentifierCutBased::isElectronish(const QVector<Hit*>& hits, const Particle* particle, const SimpleEvent* event, bool &ok)
+bool TRDElectronIdentifierCutBased::isElectronish(const QVector<Hit*>&, const Particle* particle, const SimpleEvent*, bool &ok)
 {
   const TRDReconstruction* trdReconst = particle->trdReconstruction();
   if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent)) {
@@ -23,16 +23,11 @@ bool TRDElectronIdentifierCutBased::isElectronish(const QVector<Hit*>& hits, con
     return false;
   }
 
-  QList<double> values;
-  for (int i = 0; i < 7; i++) {
-    if (TRDReconstruction::calculateLengthInTube)
-      values << trdReconst->energyDepositionOnTrackPerLengthForLayer(i);
-    else
-      values << trdReconst->energyDepositionOnTrackForLayer(i);
-  }
-
   //can be reconstructed
   ok = true;
+
+  QList<double> values = TRDReconstruction::calculateLengthInTube ?
+        trdReconst->energyDepositionOnTrackPerLengthForLayers().toList() : trdReconst->energyDepositionOnTrackForLayers().toList();
 
   values.removeAll(0.);
 
