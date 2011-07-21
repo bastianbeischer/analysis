@@ -37,13 +37,13 @@ public:
   const QList<const Hit*>& getAllHitsOnTrack() const {return m_allHitsOnTrack;}
   const QList<const Cluster*>& getAllClustersOnTrack() const {return m_allClustersOnTrack;}
   const QList<const Hit*>& getAllHitsOnTrackAndPierced() const {return m_allHitsOnTrackAndPierced;}
-  const QList<const Cluster*>& getAllClustersOnTracAndPierced() const {return m_allClustersOnTrackAndPierced;}
+  const QList<const Cluster*>& getAllClustersOnTrackAndPierced() const {return m_allClustersOnTrackAndPierced;}
   const QList<const Hit*> getAllHitsForLayer(int layer) const {return m_layerAllHits.values(layer);}
   const QList<const Cluster*> getAllClustersForLayer(int layer) const {return m_layerAllClusters.values(layer);}
   const QList<const Hit*> getAllHitsOnTrackForLayer(int layer) const {return m_layerAllHitsOnTrack.values(layer);}
   const QList<const Cluster*> getAllClustersOnTrackForLayer(int layer) const {return m_layerAllClustersOnTrack.values(layer);}
   const QList<const Hit*> getAllHitsOnTrackAndPiercedForLayer(int layer) const {return m_layerAllHitsOnTrackAndPierced.values(layer);}
-  const QList<const Cluster*> getAllClustersOnTracAndPiercedkForLayer(int layer) const {return m_layerAllClustersOnTrackAndPierced.values(layer);}
+  const QList<const Cluster*> getAllClustersOnTrackAndPiercedForLayer(int layer) const {return m_layerAllClustersOnTrackAndPierced.values(layer);}
   double getEnergyDepositionForLayer(int layer) const {return m_layerEnergyDeposition.at(layer);}
   double getEnergyDepositionOnTrackForLayer(int layer) const {return m_layerEnergyDepositionOnTrack.at(layer);}
   double getEnergyDepositionOnTrackAndPiercedForLayer(int layer) const {return m_layerEnergyDepositionOnTrackAndPierced.at(layer);}
