@@ -93,7 +93,6 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, Sim
     return;
 
   QList<double> valuesToFill;
-
   switch (m_spectrumType) {
   case TRDSpectrumPlot::completeTRD:
     if (TRDReconstruction::calculateLengthInTube)
@@ -123,7 +122,6 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, Sim
     break;
   }
 
-
   for (QList<double>::const_iterator it = valuesToFill.constBegin(); it != valuesToFill.constEnd(); ++it) {
     if (!(*it > 0.))
       continue;
@@ -145,22 +143,6 @@ void TRDSpectrumPlot::finalize()
     m_fitRangeMarker_upper->SetX(m_landauFitRange_upper);
     m_fitRangeMarker_upper->SetY(m_landauFit->Eval(m_landauFitRange_upper));
   }
-
-  //  if (false) {
-  //    //write fit results:
-  //    Corrections corrections;
-  //    if( m_spectrumType == TRDSpectrumPlot::module){
-  //      for (int chan = 0; chan < 16; chan++){
-  //        unsigned short channelID = m_id | chan ;
-  //        double mopvValue = m_landauFit->GetParameter(1) ;
-  //        double oldScalingFactor = corrections.trdScalingFactor(channelID) ;
-  //        //TODO target value of mopv is 1 or whatever?
-  //        double newScalingFactor =  1.0 * oldScalingFactor / mopvValue;
-  //        qDebug("setting for 0x%x old TRDScalingFactor from %f to %f", channelID, oldScalingFactor,  newScalingFactor) ;
-  //        corrections.setTrdScalingFactor(channelID, newScalingFactor) ;
-  //      }
-  //    }
-  // }
 }
 
 void TRDSpectrumPlot::update()
