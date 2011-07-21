@@ -35,6 +35,9 @@ AzimuthMigrationHistogram::~AzimuthMigrationHistogram()
 
 void AzimuthMigrationHistogram::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
 {
+  if (event->contentType() != SimpleEvent::MonteCarlo)
+    return;
+
   if (event->MCInformation()->primary()->initialMomentum.Z() > 0)
     return;
   
