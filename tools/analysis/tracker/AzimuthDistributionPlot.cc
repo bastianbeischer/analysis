@@ -19,7 +19,7 @@ AnalysisPlot(AnalysisPlot::Tracking),
 H1DPlot()
 {
   setTitle("Azimuth distribution");
-  int nBins = 60;
+  int nBins = 90;
   double xMin = -180;
   double xMax = 180;
   TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, xMin, xMax);
@@ -52,11 +52,10 @@ void AzimuthDistributionPlot::processEvent(const QVector<Hit*>&, const Particle*
 
 void AzimuthDistributionPlot::update()
 {
-  double integral = histogram(0)->Integral("width");
-  histogram(0)->Scale(100/integral);
+
 }
 
 void AzimuthDistributionPlot::finalize()
 {
-  update();
+
 }

@@ -17,10 +17,10 @@ AnalysisPlot(AnalysisPlot::MonteCarloTracker),
 H2DPlot()
 {
   setTitle("Azimuth migration");
-  const int nBinsGenerated = 60;
+  const int nBinsGenerated = 45;
   const double minGenerated = -180;
   const double maxGenerated = 180;
-  const int nBinsReconstructed = 120;
+  const int nBinsReconstructed = 90;
   const double minReconstructed = -180;
   const double maxReconstructed = 180;
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsReconstructed, minReconstructed, maxReconstructed, nBinsGenerated, minGenerated, maxGenerated);
