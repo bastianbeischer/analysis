@@ -95,12 +95,12 @@ TF1* TRDLikelihoods::prototypeLHFunctionTR()
   LHFun->SetNpx(1000);
   if (m_normalizedToLength) {
     LHFun->SetParameters(1, 0.51, 0.19, 0.3, 2.3, 0.59, 1, -0.001);
-    LHFun->SetParLimits(0, 0.8, 1.4);
+    LHFun->SetParLimits(0, 0.8, 2);
     LHFun->SetParLimits(1, 0.3, 0.6);
     LHFun->SetParLimits(3, 0.2, 0.6);
-    LHFun->SetParLimits(4, 2, 5);
-    LHFun->SetParLimits(5, 0.3, 0.65);
-    LHFun->SetParLimits(6, 0.8, 1.4);
+    LHFun->SetParLimits(4, 1.5, 5);
+    LHFun->SetParLimits(5, 0.3, 0.8);
+    LHFun->SetParLimits(6, 0.8, 1.6);
   } else {
     LHFun->SetParameters(0.533941, 2.04519, 0.90618, 0.177358, 13.3248, 4.80789, 0.312408, -0.0432751);
     LHFun->SetParLimits(0, 0.4, 1);
