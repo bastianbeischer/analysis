@@ -18,20 +18,11 @@ public:
   ~TRDSpectrumPlot();
 
   virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
-  virtual void finalize();
   virtual void update();
-  virtual void draw(TCanvas*);
 
 private:
   unsigned short m_id;
   TRDSpectrumType m_spectrumType;
-
-  TF1* m_landauFit;
-  const double m_landauFitRange_lower;
-  const double m_landauFitRange_upper;
-
-  TMarker* m_fitRangeMarker_lower;
-  TMarker* m_fitRangeMarker_upper;
 
 };
 

@@ -1,7 +1,6 @@
 #include "TRDSpectrumPlot.hh"
 
 #include <TH1D.h>
-#include <TMarker.h>
 #include <TLatex.h>
 
 #include "Particle.hh"
@@ -16,18 +15,13 @@
 #include "Corrections.hh"
 
 #include <math.h>
-
 #include <QList>
 
 TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType) :
   AnalysisPlot(AnalysisPlot::SignalHeightTRD),
   H1DPlot(),
   m_id(id),
-  m_spectrumType(spectrumType),
-  m_landauFitRange_lower(2./3./100. *TRDReconstruction::spectrumUpperLimit()),
-  m_landauFitRange_upper(0.2 *TRDReconstruction::spectrumUpperLimit()),
-  m_fitRangeMarker_lower(new TMarker(m_landauFitRange_lower, 0,2)),
-  m_fitRangeMarker_upper(new TMarker(m_landauFitRange_upper, 0,2))
+  m_spectrumType(spectrumType)
 {
   QString strType;
   switch(m_spectrumType){
@@ -52,13 +46,6 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   else
     setTitle(strType + QString(" spectrum 0x%1").arg(m_id,0,16));
 
-  //initialize fit function:
-  m_landauFit = new TF1(qPrintable(title() + "LandauFit"),"landau", m_landauFitRange_lower, m_landauFitRange_upper);
-  m_landauFit->SetLineColor(kRed);
-
-  m_fitRangeMarker_lower->SetMarkerColor(kRed);
-  m_fitRangeMarker_upper->SetMarkerColor(kRed);
-
   int nBins = TRDReconstruction::spectrumDefaultBins;
   double lowerBound = 1e-3;
   double upperBound = TRDReconstruction::spectrumUpperLimit();
@@ -80,9 +67,6 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
 
 TRDSpectrumPlot::~TRDSpectrumPlot()
 {
-  delete m_landauFit;
-  delete m_fitRangeMarker_lower;
-  delete m_fitRangeMarker_upper;
 }
 
 void TRDSpectrumPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
@@ -131,29 +115,8 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>&, const Particle* const p
   }
 }
 
-void TRDSpectrumPlot::finalize()
-{
-  if (histogram(0)->GetEntries() > 30) {
-    histogram(0)->Fit(m_landauFit,"Q0","",m_landauFitRange_lower,m_landauFitRange_upper);
-
-    m_fitRangeMarker_lower->SetX(m_landauFitRange_lower);
-    m_fitRangeMarker_lower->SetY(m_landauFit->Eval(m_landauFitRange_lower));
-
-    m_fitRangeMarker_upper->SetX(m_landauFitRange_upper);
-    m_fitRangeMarker_upper->SetY(m_landauFit->Eval(m_landauFitRange_upper));
-  }
-}
-
 void TRDSpectrumPlot::update()
 {
   latex()->SetTitle(qPrintable(QString("entries = %1").arg(histogram()->GetEntries())));
   latex(1)->SetTitle(qPrintable(QString("uflow = %1, oflow = %2").arg(histogram()->GetBinContent(0)).arg(histogram()->GetBinContent(histogram()->GetNbinsX()))));
-}
-
-void TRDSpectrumPlot::draw(TCanvas* canvas)
-{
-  H1DPlot::draw(canvas);
-  m_landauFit->Draw("same");
-  m_fitRangeMarker_lower->Draw("same");
-  m_fitRangeMarker_upper->Draw("same");
 }
