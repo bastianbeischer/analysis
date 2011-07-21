@@ -17,31 +17,48 @@
 
 #include <TH2.h>
 #include <TVector3.h>
-#include <TLatex.h>
 #include <TF1.h>
+#include <TAxis.h>
+#include <TLine.h>
 
 #include <QDebug>
 #include <QSpinBox>
 
-TimeResolutionPlot::TimeResolutionPlot(unsigned short idTop1, unsigned short idTop2, unsigned short idBottom1, unsigned short idBottom2)
+TimeResolutionPlot::TimeResolutionPlot(unsigned short id1, unsigned short id2, unsigned short id3, unsigned short id4)
   : AnalysisPlot(AnalysisPlot::ResolutionTOF)
   , H2DProjectionPlot()
-  , m_idTop1(idTop1)
-  , m_idTop2(idTop2)
-  , m_idBottom1(idBottom1)
-  , m_idBottom2(idBottom2)
+  , m_idTop1(id1)
+  , m_idTop2(id2)
+  , m_idBottom1(id3)
+  , m_idBottom2(id4)
+  , m_nBins(10)
 {
-  controlWidget()->spinBox()->setMaximum(64);
-  QString title = QString("time resolution 0x%1 0x%2 0x%3 0x%4")
-    .arg(m_idTop1, 0, 16)
-    .arg(m_idTop2, 0, 16)
-    .arg(m_idBottom1, 0, 16)
-    .arg(m_idBottom2, 0, 16);
+  QString title = QString("time resolution 0x%1 0x%2, 0x%4 0x%5")
+    .arg(m_idTop1, 0, 16).arg(m_idTop2, 0, 16).arg(m_idBottom1, 0, 16).arg(m_idBottom2, 0, 16);
   setTitle(title);
-  TH2D* histogram = new TH2D(qPrintable(title), "",
-    20, -Constants::tofBarLength / 2., Constants::tofBarLength / 2., 30, 0, 6);
-  setAxisTitle("y / mm", "#Deltat / ns", "");
+  TH2D* histogram = new TH2D(qPrintable(title), "", m_nBins*m_nBins, 0, m_nBins*m_nBins, 30, 0, 6);
+  setAxisTitle("", "#Deltat / ns", "");
   addHistogram(histogram);
+  TLine* line = 0;
+
+  double binWidth = Constants::tofBarLength / m_nBins;
+  for (int upperBin = 0; upperBin < m_nBins; ++upperBin) {
+    double upperCenter = (0.5 + upperBin) * binWidth - Constants::tofBarLength / 2.;
+    for (int lowerBin = 0; lowerBin < m_nBins; ++lowerBin) {
+      double lowerCenter = (0.5 + lowerBin) * binWidth - Constants::tofBarLength / 2.;
+      QString label = QString("u%1 l%2").arg(upperCenter).arg(lowerCenter);
+      xAxis()->SetBinLabel(upperBin * m_nBins + lowerBin + 1, qPrintable(label));
+    }
+  }
+
+  for (int bin = 0; bin < m_nBins - 1; ++bin) {
+    line = new TLine();
+    line->SetLineColor(kGreen);
+    line->SetLineStyle(2);
+    line->SetLineWidth(2);
+    m_lines.append(line);
+  }
+
 }
 
 TimeResolutionPlot::~TimeResolutionPlot()
@@ -105,8 +122,28 @@ void TimeResolutionPlot::processEvent(const QVector<Hit*>&, const Particle* cons
     double pCorrection = (t + lCorrection) * (1 - sqrt(rigidity*rigidity + m*m) / rigidity);
     double yu = track->y(Constants::upperTofPosition);
     double yl = track->y(Constants::lowerTofPosition);
-    double binWidth = xAxis()->GetBinWidth(1);
-    if (qAbs(yu - yl) < binWidth)
-      histogram()->Fill((yu + yl) / 2., t + lCorrection + pCorrection);
+    double binWidth = Constants::tofBarLength / m_nBins;
+    int upperBin = (yu + Constants::tofBarLength / 2.) / binWidth;
+    int lowerBin = (yl + Constants::tofBarLength / 2.) / binWidth;
+    if (0 <= upperBin && upperBin < m_nBins && 0 <= lowerBin && lowerBin < m_nBins)
+      histogram()->Fill(upperBin * m_nBins + lowerBin + 1, t + lCorrection + pCorrection);
   }
+}
+
+void TimeResolutionPlot::update()
+{
+  for (int bin = 0; bin < m_nBins - 1; ++bin) {
+    m_lines[bin]->SetX1((bin + 1) * m_nBins);
+    m_lines[bin]->SetX2((bin + 1) * m_nBins);
+    m_lines[bin]->SetY1(0);
+    m_lines[bin]->SetY2(yAxis()->GetXmax());
+    m_lines[bin]->Draw();
+  }
+  AnalysisPlot::update();
+}
+
+void TimeResolutionPlot::draw(TCanvas* canvas)
+{
+  H2DPlot::draw(canvas);
+  update();
 }
