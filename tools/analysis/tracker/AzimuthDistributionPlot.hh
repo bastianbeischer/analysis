@@ -17,9 +17,7 @@ public:
   void finalize();
 
 private:
-  void readFile();
-  double angleMovement(double azimuth);
-  TH1D* m_azimuthAcceptance;
+
 };
 
 #endif /* AzimuthDistributionPlot_hh */
