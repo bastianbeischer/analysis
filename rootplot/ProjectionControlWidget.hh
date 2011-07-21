@@ -31,7 +31,6 @@ private:
   QSpinBox* m_spinBox;
   QCheckBox* m_checkBoxLogX;
   QCheckBox* m_checkBoxLogY;
-  QCheckBox* m_checkBoxLogZ;
 };
 
 #endif /* ProjectionControlWidget_hh */

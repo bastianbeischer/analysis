@@ -4,7 +4,6 @@
 #include <TList.h>
 #include <TCanvas.h>
 #include <TPad.h>
-#include <THStack.h>
 
 #include <QDebug>
 

@@ -56,4 +56,3 @@ double StraightLine::trackLength() const
   const TVector3& lowerPoint = position(Constants::lowerTofPosition);
   return (upperPoint-lowerPoint).Mag();
 }
-

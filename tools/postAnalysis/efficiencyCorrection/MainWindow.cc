@@ -2,7 +2,8 @@
 
 #include "PostAnalysisPlot.hh"
 #include "PostAnalysisCanvas.hh"
-#include "TrackingEfficiencyCorrection.hh"
+#include "AllTrackerLayersFlagEfficiencyCorrection.hh"
+#include "TrackFindingEfficiencyCorrection.hh"
 
 #include <TCanvas.h>
 #include <TFile.h>
@@ -10,6 +11,7 @@
 
 #include <QDebug>
 #include <QFileDialog>
+#include <QString>
 
 MainWindow::MainWindow(QWidget* parent)
   : PostAnalysisWindow(parent)
@@ -25,10 +27,32 @@ void MainWindow::setupAnalysis()
   PostAnalysisCanvas* canvas = 0;
   TFile file(qPrintable(m_analysisFile));
   gROOT->cd();
-  
-  QString name = QString("Multi Layer Efficiency canvas");
+
+  QString config = "kirunaFlight";
+
+  QString name = QString("One hit in all layers positive canvas");
   canvas = addCanvas(&file, qPrintable(name));
-  addPlot(new TrackingEfficiencyCorrection(canvas));
-  
+  addPlot(new AllTrackerLayersFlagEfficiencyCorrection(canvas, config));
+
+  name = QString("One hit in all layers negative canvas");
+  canvas = addCanvas(&file, qPrintable(name));
+  addPlot(new AllTrackerLayersFlagEfficiencyCorrection(canvas, config));
+
+  name = QString("One hit in all layers all canvas");
+  canvas = addCanvas(&file, qPrintable(name));
+  addPlot(new AllTrackerLayersFlagEfficiencyCorrection(canvas, config));
+
+  name = QString("Track finding efficiency - positive canvas");
+  canvas = addCanvas(&file, qPrintable(name));
+  addPlot(new TrackFindingEfficiencyCorrection(canvas, config));
+
+  name = QString("Track finding efficiency - negative canvas");
+  canvas = addCanvas(&file, qPrintable(name));
+  addPlot(new TrackFindingEfficiencyCorrection(canvas, config));
+
+  name = QString("Track finding efficiency - all canvas");
+  canvas = addCanvas(&file, qPrintable(name));
+  addPlot(new TrackFindingEfficiencyCorrection(canvas, config));
+
   file.Close();
 }

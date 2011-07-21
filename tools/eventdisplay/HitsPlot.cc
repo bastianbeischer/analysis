@@ -60,7 +60,7 @@ void HitsPlot::clearHits()
   m_fitInfo = 0;
 }
 
-void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void HitsPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
 {
   const Track* track = particle->track();
 

@@ -75,8 +75,12 @@ void Corrections::preFitCorrections(SimpleEvent* event)
 
 void Corrections::postFitCorrections(Particle* particle)
 {
+  if (m_flags & PhotonTravelTime) photonTravelTime(particle); // multiple scattering needs "beta"
+}
+
+void Corrections::postTOFCorrections(Particle* particle)
+{
   for (int i = 0; i < 5; i++) {
-    if (m_flags & PhotonTravelTime) photonTravelTime(particle); // multiple scattering needs "beta"
     if (m_flags & MultipleScattering) multipleScattering(particle); // should be done first
   }
 }
@@ -420,8 +424,9 @@ void Corrections::multipleScattering(Particle* particle)
     Hit* hit = *it;
     if (hit->type() == Hit::tracker) {
       double p = track->rigidity();
-      double sipmRes = hit->resolutionEstimate();
       double beta = particle->beta();
+      if (beta == 0 || p == 0)
+        return;
       // double m = particle->mass();
       // double beta = p / sqrt(p*p + m*m);
       double z = hit->position().z();
@@ -432,6 +437,7 @@ void Corrections::multipleScattering(Particle* particle)
       else if (qAbs(z) == 69) parameter = 35e-3;
       else if (qAbs(z) == 51) parameter = 31e-3;
 
+      double sipmRes = hit->resolutionEstimate();
       double mscPart = 1/(p*beta) * parameter;
       double newRes = sqrt(sipmRes*sipmRes + mscPart*mscPart);
       hit->setResolution(newRes);

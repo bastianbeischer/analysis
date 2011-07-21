@@ -42,7 +42,7 @@ SettingsManager* SettingsManager::instance()
   return s_instance;
 }
 
-const Settings* SettingsManager::settingsForEvent(const SimpleEvent* event) const
+const Settings* SettingsManager::settingsForEvent(const SimpleEvent* const event) const
 {
   int run = event->runStartTime();
   return settingsForRun(run);

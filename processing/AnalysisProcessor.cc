@@ -76,6 +76,8 @@ void AnalysisProcessor::setCutFilter(CutFilter cuts)
 
 void AnalysisProcessor::process(SimpleEvent* event)
 {
+  m_particle->reset();
+
   m_corrections->preFitCorrections(event);
 
   QVector<Hit*> clusters = QVector<Hit*>::fromStdVector(event->hits());
@@ -87,16 +89,13 @@ void AnalysisProcessor::process(SimpleEvent* event)
   ParticleInformation* info = m_particle->information();
 
   if (track) {
-    info->reset();
     track->fit(trackClusters);
     m_corrections->postFitCorrections(m_particle);
     tof->calculateTimes(track);
+    m_corrections->postTOFCorrections(m_particle);
+    trd->reconstructTRD(event, track);
+    info->process();
   }
-  //reconstruct trd, uses a fitted track (if present)
-  trd->reconstructTRD(event, track);
-  //do info processing aftre trd reconstruction
-  if (track)
-   info->process();
 
   // identify particle species
   m_identifier->identify(m_particle);

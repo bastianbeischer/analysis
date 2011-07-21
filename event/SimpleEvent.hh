@@ -25,13 +25,13 @@ public:
   ~SimpleEvent();
 
 public:
-  std::vector<Hit*>& hits() {return m_hits;}
+  const std::vector<Hit*>& hits() const {return m_hits;}
   unsigned int eventId() const {return m_eventId;}
   double time() const {return m_runStartTime + m_eventTime/1000.;}
   unsigned int runStartTime() const {return m_runStartTime;}
   unsigned int eventTime() const {return m_eventTime;}
   ContentType contentType() const {return m_contentType;}
-  float sensorData(SensorTypes::Type type);
+  float sensorData(SensorTypes::Type type) const;
   const MCEventInformation* MCInformation() const {return m_mcEventInformation;}
   const DataDescription* description() const {return m_description;}
 

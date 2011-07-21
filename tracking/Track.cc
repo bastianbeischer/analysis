@@ -5,6 +5,8 @@
 
 #include "FieldManager.hh"
 #include "MagneticField.hh"
+#include "Constants.hh"
+#include "Helpers.hh"
 
 #include <cmath>
 #include <cfloat>
@@ -23,6 +25,16 @@ Track::Track() :
 
 Track::~Track()
 {
+}
+
+void Track::reset()
+{
+  m_hits.clear();
+  m_fitGood = 0;
+  m_chi2 = 0;
+  m_ndf = 0;
+  m_transverseRigidity = 0;
+  m_matrix->reset();
 }
 
 int Track::fit(const QVector<Hit*>& hits)
@@ -82,5 +94,37 @@ double Track::rigidity() const
   double theta = fabs(atan(slopeY(0.)));
   double rigidity = m_transverseRigidity/cos(theta);
   return rigidity;
+}
+
+double Track::zenithAngle() const
+{
+  double tof = Constants::upperTofPosition;
+  return atan(Helpers::addQuad(slopeX(tof), slopeY(tof)));
+}
+
+double Track::azimuthAngle() const
+{
+  //with respect to the x-axis
+  double tof = Constants::upperTofPosition;
+  double my = slopeY(tof);
+  double mx = slopeX(tof);
+
+  if (mx > 0) {
+    return atan(my / mx);
+  } else if (mx < 0) {
+    if (my >= 0) {
+      return atan(my / mx) + M_PI;
+    } else {
+      return atan(my / mx) - M_PI;
+    }
+  } else {
+    if (my > 0) {
+      return M_PI / 2.;
+    } else if (my < 0) {
+      return -M_PI / 2.;
+    } else {
+      return NAN;
+    }
+  }
 }
 

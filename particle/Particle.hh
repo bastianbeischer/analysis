@@ -48,6 +48,8 @@ public:
   int charge() const;
   Color_t color() const;
 
+  void reset();
+
 private:
   void init();
 

@@ -67,5 +67,5 @@ HistResiduals::HistResiduals(PostAnalysisCanvas* canvas1, PostAnalysisCanvas* ca
   else
     graph->SetMarkerStyle(0);
 
-  addGraph(graph,"P");
+  addGraph(graph, P);
 }

@@ -6,7 +6,6 @@
 #include <TCanvas.h>
 #include <TROOT.h>
 #include <TFile.h>
-#include <THStack.h>
 
 #include <QDebug>
 

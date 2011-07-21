@@ -64,6 +64,7 @@ TLatex* RootPlot::latex(int i)
 void RootPlot::addLegend(TLegend* legend)
 {
   Q_ASSERT(legend);
+  legend->SetFillColor(10);
   m_legend.append(legend);
 }
 
@@ -106,6 +107,7 @@ QString RootPlot::drawOption(DrawOption option)
     case L: return "L";
     case C: return "C";
     case HIST: return "HIST";
+    case LX: return "LX";
     default: return QString();
   }
   return QString();
