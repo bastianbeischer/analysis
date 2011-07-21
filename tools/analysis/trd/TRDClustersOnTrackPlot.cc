@@ -25,7 +25,7 @@ TRDClustersOnTrackPlot::TRDClustersOnTrackPlot(AnalysisPlot::Topic topic) :
 
   //add further histos:
   for (int i = 0; i < 7; ++i) {
-    TH1D* histogram = new TH1D(qPrintable(title() + QString::number(i+1)), "", 11, -0.5, 10.5);
+    TH1D* histogram = new TH1D(qPrintable(title() + QString::number(i)), "", 11, -0.5, 10.5);
     histogram->SetStats(true);
     histogram->Sumw2();
     histogram->SetLineColor(2+i);
@@ -43,44 +43,27 @@ TRDClustersOnTrackPlot::~TRDClustersOnTrackPlot()
 
 void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/,Particle* particle ,SimpleEvent*)
 {
-  const Track* track = particle->track();
+  const TRDReconstruction* trdReconst = particle->trdReconstruction();
+  //if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
+  //  return;
 
-  //check if everything worked and a track has been fit
-  if (!track || !track->fitGood())
-    return;
-
-  if (particle->information()->flags() & ParticleInformation::Chi2Good)
-    return;
-
-  int nTRDHits = 0;
-  QVector<Hit*>::const_iterator endIt = track->hits().end();
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != endIt; ++it) {
-    if ((*it)->type() == Hit::trd)
-      ++nTRDHits;
-  }
-
-  histogram(0)->Fill(nTRDHits);
-
-  //use trdReconstruction class:
-  const TRDReconstruction* trdReconstruction = particle->trdReconstruction();
-  histogram(1)->Fill(trdReconstruction->getNoOfLayersWithEnergyDeposition());
-  histogram(2)->Fill(trdReconstruction->getNoOfLayersWithEnergyDepositionOnTrack());
-  histogram(3)->Fill(trdReconstruction->getNoOfLayersWithEnergyDepositionOnTrackAndPierced());
-  histogram(4)->Fill(trdReconstruction->getNoOfLayersWithEnergyDepositionOnTrackPerLength());
-  histogram(5)->Fill(trdReconstruction->getNoOfLayersWithEnergyDepositionOnTrackPerMinLength());
-  histogram(6)->Fill(trdReconstruction->getNoOfClustersOnTrack());
-  histogram(7)->Fill(trdReconstruction->getNoOfHitsOnTrack());
+  histogram(0)->Fill(trdReconst->getNoOfClustersOnTrack());
+  histogram(1)->Fill(trdReconst->getNoOfHitsOnTrack());
+  histogram(2)->Fill(trdReconst->getNoOfLayersWithEnergyDeposition());
+  histogram(3)->Fill(trdReconst->getNoOfLayersWithEnergyDepositionOnTrack());
+  histogram(4)->Fill(trdReconst->getNoOfLayersWithEnergyDepositionOnTrackAndPierced());
+  histogram(5)->Fill(trdReconst->getNoOfLayersWithEnergyDepositionOnTrackPerLength());
+  histogram(6)->Fill(trdReconst->getNoOfLayersWithEnergyDepositionOnTrackPerMinLength());
 }
 
 void TRDClustersOnTrackPlot::update()
 {
   legend()->Clear();
-  legend()->AddEntry(histogram(0), qPrintable(QString("old on Track = %1").arg(QString::number(histogram(0)->GetMean(),'g',3))));
-  legend()->AddEntry(histogram(1), qPrintable(QString("layers with enDep = %1").arg(QString::number(histogram(1)->GetMean(),'g',3))));
-  legend()->AddEntry(histogram(2), qPrintable(QString("layers with enDep on track = %1").arg(QString::number(histogram(2)->GetMean(),'g',3))));
-  legend()->AddEntry(histogram(3), qPrintable(QString("layers with enDep on track and pierced = %1").arg(QString::number(histogram(3)->GetMean(),'g',3))));
-  legend()->AddEntry(histogram(4), qPrintable(QString("layers with enDep on track per length = %1").arg(QString::number(histogram(4)->GetMean(),'g',3))));
-  legend()->AddEntry(histogram(5), qPrintable(QString("layers with enDep on track per min length = %1").arg(QString::number(histogram(5)->GetMean(),'g',3))));
-  legend()->AddEntry(histogram(6), qPrintable(QString("clusters on track = %1").arg(QString::number(histogram(6)->GetMean(),'g',3))));
-  legend()->AddEntry(histogram(7), qPrintable(QString("hits on track = %1").arg(QString::number(histogram(7)->GetMean(),'g',3))));
+  legend()->AddEntry(histogram(0), qPrintable(QString("clusters on track = %1").arg(QString::number(histogram(0)->GetMean(),'g',3))));
+  legend()->AddEntry(histogram(1), qPrintable(QString("hits on track = %1").arg(QString::number(histogram(1)->GetMean(),'g',3))));
+  legend()->AddEntry(histogram(2), qPrintable(QString("layers with enDep = %1").arg(QString::number(histogram(2)->GetMean(),'g',3))));
+  legend()->AddEntry(histogram(3), qPrintable(QString("layers with enDep on track = %1").arg(QString::number(histogram(3)->GetMean(),'g',3))));
+  legend()->AddEntry(histogram(4), qPrintable(QString("layers with enDep on track and pierced = %1").arg(QString::number(histogram(4)->GetMean(),'g',3))));
+  legend()->AddEntry(histogram(5), qPrintable(QString("layers with enDep on track per length = %1").arg(QString::number(histogram(5)->GetMean(),'g',3))));
+  legend()->AddEntry(histogram(6), qPrintable(QString("layers with enDep on track per min length = %1").arg(QString::number(histogram(6)->GetMean(),'g',3))));
 }
