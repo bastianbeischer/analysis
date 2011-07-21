@@ -21,8 +21,6 @@
 #include <QVector2D>
 #include <QString>
 
-//#############################
-//static members:
 const bool TRDReconstruction::calculateLengthInTube = true;
 const int TRDReconstruction::minLayerCut = 6;
 const int TRDReconstruction::maxOffTrackCluster = 2;

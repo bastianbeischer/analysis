@@ -50,6 +50,14 @@ public:
   const QList<const Cluster*> allClustersOnTrackForLayer(int layer) const {return m_layerAllClustersOnTrack.values(layer);}
   const QList<const Hit*> allHitsOnTrackAndPiercedForLayer(int layer) const {return m_layerAllHitsOnTrackAndPierced.values(layer);}
   const QList<const Cluster*> allClustersOnTrackAndPiercedForLayer(int layer) const {return m_layerAllClustersOnTrackAndPierced.values(layer);}
+
+  const QVector<double>& energyDepositionForLayers() const {return m_layerEnergyDeposition;}
+  const QVector<double>& energyDepositionOnTrackForLayers() const {return m_layerEnergyDepositionOnTrack;}
+  const QVector<double>& energyDepositionOnTrackAndPiercedForLayers() const {return m_layerEnergyDepositionOnTrackAndPierced;}
+  const QVector<double>& lengthThroughTubeForLayers() const {return m_layerLengthThroughTube;}
+  const QVector<double>& energyDepositionOnTrackPerLengthForLayers() const {return m_layerEnergyDepositionOnTrackPerLength;}
+  const QVector<double>& energyDepositionOnTrackPerMinLengthForLayer() const {return m_layerEnergyDepositionOnTrackPerMinLength;}
+
   double energyDepositionForLayer(int layer) const {return m_layerEnergyDeposition.at(layer);}
   double energyDepositionOnTrackForLayer(int layer) const {return m_layerEnergyDepositionOnTrack.at(layer);}
   double energyDepositionOnTrackAndPiercedForLayer(int layer) const {return m_layerEnergyDepositionOnTrackAndPierced.at(layer);}
