@@ -263,7 +263,7 @@ void Corrections::setTrdPressureDependendFactor(QPair<double,double> P0, double 
   m_trdSettings->sync();
 }
 
-void Corrections::getTrdPressureDependendFactor(QPair<double,double>& P0, double& dM_dP)
+void Corrections::trdPressureDependendFactor(QPair<double,double>& P0, double& dM_dP)
 {
   P0.first = m_trdSettings->value("PressureDependency/P0", 1100).toDouble();
   P0.second = m_trdSettings->value("PressureDependency/M0", 1).toDouble();
@@ -286,7 +286,7 @@ void Corrections::setTrdTemperatureDependendFactor(QPair<double,double> T0, doub
   m_trdSettings->sync();
 }
 
-void Corrections::getTrdTemperatureDependendFactor(QPair<double,double>& T0, double& dM_dT)
+void Corrections::trdTemperatureDependendFactor(QPair<double,double>& T0, double& dM_dT)
 {
   T0.first = m_trdSettings->value("TemperatureDependency/T0", 30).toDouble();
   T0.second = m_trdSettings->value("TemperatureDependency/M0", 1).toDouble();
@@ -384,7 +384,7 @@ void Corrections::readTRDTimeDependendCorrections()
   }
 }
 
-TSpline3* Corrections::getTrdTimeSpline() const
+TSpline3* Corrections::trdTimeSpline() const
 {
   if (!m_TRDSplineTime)
     return 0;

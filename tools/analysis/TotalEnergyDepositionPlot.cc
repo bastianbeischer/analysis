@@ -36,10 +36,10 @@ void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, const Particl
 
   if (TRDReconstruction::calculateLengthInTube)
     for (int i = 0; i < 8; ++i)
-      valuesToFill << trdReconst->getEnergyDepositionOnTrackPerLengthForLayer(i);
+      valuesToFill << trdReconst->energyDepositionOnTrackPerLengthForLayer(i);
   else
     for (int i = 0; i < 8; ++i)
-      valuesToFill << trdReconst->getEnergyDepositionOnTrackForLayer(i);
+      valuesToFill << trdReconst->energyDepositionOnTrackForLayer(i);
 
 
   double signalSum = 0.;

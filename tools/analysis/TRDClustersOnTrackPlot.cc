@@ -47,13 +47,13 @@ void TRDClustersOnTrackPlot::processEvent(const QVector<Hit*>& /*hits*/, const P
   //if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
   //  return;
 
-  histogram(0)->Fill(trdReconst->getNoOfClustersOnTrack());
-  histogram(1)->Fill(trdReconst->getNoOfHitsOnTrack());
-  histogram(2)->Fill(trdReconst->getNoOfLayersWithEnergyDeposition());
-  histogram(3)->Fill(trdReconst->getNoOfLayersWithEnergyDepositionOnTrack());
-  histogram(4)->Fill(trdReconst->getNoOfLayersWithEnergyDepositionOnTrackAndPierced());
-  histogram(5)->Fill(trdReconst->getNoOfLayersWithEnergyDepositionOnTrackPerLength());
-  histogram(6)->Fill(trdReconst->getNoOfLayersWithEnergyDepositionOnTrackPerMinLength());
+  histogram(0)->Fill(trdReconst->noOfClustersOnTrack());
+  histogram(1)->Fill(trdReconst->noOfHitsOnTrack());
+  histogram(2)->Fill(trdReconst->noOfLayersWithEnergyDeposition());
+  histogram(3)->Fill(trdReconst->noOfLayersWithEnergyDepositionOnTrack());
+  histogram(4)->Fill(trdReconst->noOfLayersWithEnergyDepositionOnTrackAndPierced());
+  histogram(5)->Fill(trdReconst->noOfLayersWithEnergyDepositionOnTrackPerLength());
+  histogram(6)->Fill(trdReconst->noOfLayersWithEnergyDepositionOnTrackPerMinLength());
 }
 
 void TRDClustersOnTrackPlot::update()

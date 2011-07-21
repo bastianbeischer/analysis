@@ -78,15 +78,15 @@ void TRDLikelihoodPlot::update()
 {
   double eEff50 = 0;
   double eEff50Err = 0;
-  int iBineEff50 = getBinEff(0.5, m_TRHisto, eEff50, eEff50Err);
+  int iBineEff50 = binEfficiency(0.5, m_TRHisto, eEff50, eEff50Err);
   double pRej50Err = 0;
-  double pRej50 = getRej(m_NonTRHisto, iBineEff50, pRej50Err);
+  double pRej50 = rejection(m_NonTRHisto, iBineEff50, pRej50Err);
 
   double eEff90 = 0;
   double eEff90Err = 0;
-  int iBineEff90 = getBinEff(0.9, m_TRHisto, eEff90, eEff90Err);
+  int iBineEff90 = binEfficiency(0.9, m_TRHisto, eEff90, eEff90Err);
   double pRej90Err = 0;
-  double pRej90 = getRej(m_NonTRHisto, iBineEff90, pRej90Err);
+  double pRej90 = rejection(m_NonTRHisto, iBineEff90, pRej90Err);
 
   latex(0)->SetTitle(qPrintable(QString("#splitline{bg_{rej}(e_{eff} = %1)}{ = %2}")
                                 .arg(QString::number(eEff50, 'g', 3))
@@ -116,9 +116,9 @@ void TRDLikelihoodPlot::updateNonTRRejVsTREffHisto()
     double eEffWanted = m_NonTRRejVsTREff->GetBinCenter(iBin);
     double eEff = 0;
     double eEffErr = 0;
-    int eEffBin = getBinEff(eEffWanted, m_TRHisto, eEff, eEffErr);
+    int eEffBin = binEfficiency(eEffWanted, m_TRHisto, eEff, eEffErr);
     double bgRejErr = 0;
-    double bgRej = getRej(m_NonTRHisto, eEffBin, bgRejErr);
+    double bgRej = rejection(m_NonTRHisto, eEffBin, bgRejErr);
     m_NonTRRejVsTREff->SetBinContent(iBin, bgRej);
     m_NonTRRejVsTREff->SetBinError(iBin, bgRejErr);
   }
@@ -165,18 +165,18 @@ bool TRDLikelihoodPlot::truthMcIsElectron(const SimpleEvent* const event, bool& 
 
 }
 
-int TRDLikelihoodPlot::getBinEff(double effWanted, const TH1D* hist, double& eff, double& effErr)
+int TRDLikelihoodPlot::binEfficiency(double effWanted, const TH1D* hist, double& eff, double& effErr)
 {
   double nBins = hist->GetNbinsX();
   for (int i = 1; i < nBins+1; ++i) {
-    eff = getEff(hist, i, effErr);
+    eff = efficiency(hist, i, effErr);
     if (eff >= effWanted)
       return i;
   }
   return nBins;
 }
 
-double TRDLikelihoodPlot::getEff(const TH1D* hist, int upToBin, double& effErr)
+double TRDLikelihoodPlot::efficiency(const TH1D* hist, int upToBin, double& effErr)
 {
   double sigmaNAllEntries = 0;
   double sigmaNUpToBin = 0;
@@ -188,7 +188,7 @@ double TRDLikelihoodPlot::getEff(const TH1D* hist, int upToBin, double& effErr)
   return eff;
 }
 
-double TRDLikelihoodPlot::getRej(const TH1D* hist, int upToBin, double& rejErr)
+double TRDLikelihoodPlot::rejection(const TH1D* hist, int upToBin, double& rejErr)
 {
   double sigmaNAllEntries = 0;
   double sigmaNUpToBin = 0;

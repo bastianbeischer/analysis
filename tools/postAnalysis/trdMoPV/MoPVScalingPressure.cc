@@ -40,7 +40,7 @@ void MoPVScalingPressure::saveDependency()
   //get old dependency from corrections
   QPair<double,double> P0_old;
   double dM_dP_old;
-  corr->getTrdPressureDependendFactor(P0_old, dM_dP_old);
+  corr->trdPressureDependendFactor(P0_old, dM_dP_old);
 
   //calculate new dependency taking old dependency into account
   dM_dP = dM_dP_old + dM_dP;

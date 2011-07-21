@@ -32,5 +32,5 @@ void TRDDistanceInTube::processEvent(const QVector<Hit*>& /*hits*/, const Partic
     return;
 
   for (int i = 0; i < 8; ++i)
-    histogram()->Fill(trdReconst->getLengthThroughTubeForLayer(i));
+    histogram()->Fill(trdReconst->lengthThroughTubeForLayer(i));
 }

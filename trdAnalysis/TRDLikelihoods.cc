@@ -41,11 +41,11 @@ TRDLikelihoods* TRDLikelihoods::instance()
 
 TRDLikelihoods::TRDLikelihoods()
   : m_normalizedToLength(TRDReconstruction::calculateLengthInTube)
-  , m_LHFunctionTR(getPrototypeLHFunctionTR())
-  , m_LHFunctionNonTR(getPrototypeLHFunctionNonTR())
+  , m_LHFunctionTR(prototypeLHFunctionTR())
+  , m_LHFunctionNonTR(prototypeLHFunctionNonTR())
 {
   for (int i = 0; i < 8; ++i)
-    m_LHFunctionTRLayer << getPrototypeLHFunctionTR();
+    m_LHFunctionTRLayer << prototypeLHFunctionTR();
 
   const char* env = getenv("PERDAIXANA_PATH");
   if (env == 0)
@@ -57,7 +57,7 @@ TRDLikelihoods::TRDLikelihoods()
   loadLHs();
 }
 
-TF1* TRDLikelihoods::getPrototypeLHFunctionNonTR()
+TF1* TRDLikelihoods::prototypeLHFunctionNonTR()
 {
   /**
     p[0] normalization factor
@@ -88,7 +88,7 @@ TF1* TRDLikelihoods::getPrototypeLHFunctionNonTR()
   return LHFun;
 }
 
-TF1* TRDLikelihoods::getPrototypeLHFunctionTR()
+TF1* TRDLikelihoods::prototypeLHFunctionTR()
 {
   TF1* LHFun = new TF1("TRDLikelihoodTR","(landau(0)+landau(3))*expo(6)", 0., 100.);
 

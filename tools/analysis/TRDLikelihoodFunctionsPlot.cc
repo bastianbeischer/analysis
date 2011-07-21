@@ -16,11 +16,11 @@ TRDLikelihoodFunctionsPlot::TRDLikelihoodFunctionsPlot()
   addHistogram(new TH1D(qPrintable(title()),"", 100, 0, TRDReconstruction::spectrumUpperLimit()));
 
   TRDLikelihoods* lhs = TRDLikelihoods::instance();
-  addFunction(new TF1(*lhs->getLHFunctionNonTR()));
-  //addFunction(new TF1(*lhs->getLHFunctionTR()));
+  addFunction(new TF1(*lhs->lhFunctionNonTR()));
+  //addFunction(new TF1(*lhs->lHFunctionTR()));
   //function(1)->SetLineColor(kRed);
   for (int i = 0; i < 8; ++i) {
-    addFunction(new TF1(*lhs->getLHFunctionTRLayer(i)));
+    addFunction(new TF1(*lhs->lhFunctionTRLayer(i)));
     function(i+1)->SetLineWidth(0.1);
     float r = i/7.;
     float g = 1.-i/7.;

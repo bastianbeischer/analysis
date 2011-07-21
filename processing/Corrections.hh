@@ -64,10 +64,10 @@ public:
   void setTrdScalingFactor(unsigned int, double);
   double trdPressureDependendFactor(double P);
   void setTrdPressureDependendFactor(QPair<double,double> P0, double dM_dP);
-  void getTrdPressureDependendFactor(QPair<double,double>& P0, double& dM_dP);
+  void trdPressureDependendFactor(QPair<double,double>& P0, double& dM_dP);
   double trdTemperatureDependendFactor(double T);
   void setTrdTemperatureDependendFactor(QPair<double,double> T0, double dM_dT);
-  void getTrdTemperatureDependendFactor(QPair<double,double>& T0, double& dM_dT);
+  void trdTemperatureDependendFactor(QPair<double,double>& T0, double& dM_dT);
   void addTrdTimeDependendFactor(double time, double factor);
   void removeTrdTimeDependendFactors(double startTime, double endTime);
   double trdTimeDependendFactor(double time);
@@ -83,8 +83,8 @@ private:
   void writeTRDTimeDependendCorrections();
 
 public:
-  TSpline3* getTrdTimeSpline() const;
-  QMap<double, double> getTrdTimeFactors() const {return m_TRDMapTime;}
+  TSpline3* trdTimeSpline() const;
+  QMap<double, double> trdTimeFactors() const {return m_TRDMapTime;}
   
 private:
   QSettings* m_trdSettings;

@@ -73,7 +73,7 @@ void LHFit::fitTRFunction()
 {
   if (m_fit)
     delete m_fit;
-  m_fit = m_trdLHs->getPrototypeLHFunctionTR();
+  m_fit = m_trdLHs->prototypeLHFunctionTR();
   histogram()->Fit(m_fit);
   gPad->Modified();
   gPad->Update();
@@ -83,7 +83,7 @@ void LHFit::fitNonTRFunction()
 {
   if (m_fit)
     delete m_fit;
-  m_fit = m_trdLHs->getPrototypeLHFunctionNonTR();
+  m_fit = m_trdLHs->prototypeLHFunctionNonTR();
   histogram()->Fit(m_fit);
   gPad->Modified();
   gPad->Update();

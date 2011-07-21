@@ -16,8 +16,6 @@
 #include <BrokenLine.hh>
 #include <CenteredBrokenLine.hh>
 #include <Constants.hh>
-#include <Settings.hh>
-#include <SettingsManager.hh>
 
 #include <TVector3.h>
 #include <QVector2D>
@@ -150,8 +148,8 @@ void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
 
 void TRDReconstruction::checkGoodTRDEvent(const Track* track)
 {
-  int nLayersWithEnDepOnTrack = getNoOfLayersWithEnergyDepositionOnTrack();
-  int nOffTrackCluster = getNoOfClusters() - getNoOfClustersOnTrack();
+  int nLayersWithEnDepOnTrack = noOfLayersWithEnergyDepositionOnTrack();
+  int nOffTrackCluster = noOfClusters() - noOfClustersOnTrack();
 
   bool layerCut = nLayersWithEnDepOnTrack >= minLayerCut;
   bool offTrackHitCut =nOffTrackCluster <= maxOffTrackCluster;
@@ -161,7 +159,7 @@ void TRDReconstruction::checkGoodTRDEvent(const Track* track)
     m_flags |= GoodTRDEvent;
 }
 
-int TRDReconstruction::getNoOfLayersWithEnergyDeposition() const
+int TRDReconstruction::noOfLayersWithEnergyDeposition() const
 {
   int count = 0;
   for (QVector<double>::const_iterator it = m_layerEnergyDeposition.constBegin(); it != m_layerEnergyDeposition.constEnd(); ++it)
@@ -170,7 +168,7 @@ int TRDReconstruction::getNoOfLayersWithEnergyDeposition() const
   return count;
 }
 
-int TRDReconstruction::getNoOfLayersWithEnergyDepositionOnTrack() const
+int TRDReconstruction::noOfLayersWithEnergyDepositionOnTrack() const
 {
   int count = 0;
   for (QVector<double>::const_iterator it = m_layerEnergyDepositionOnTrack.constBegin(); it != m_layerEnergyDepositionOnTrack.constEnd(); ++it)
@@ -179,7 +177,7 @@ int TRDReconstruction::getNoOfLayersWithEnergyDepositionOnTrack() const
   return count;
 }
 
-int TRDReconstruction::getNoOfLayersWithEnergyDepositionOnTrackAndPierced() const
+int TRDReconstruction::noOfLayersWithEnergyDepositionOnTrackAndPierced() const
 {
   int count = 0;
   for (QVector<double>::const_iterator it = m_layerEnergyDepositionOnTrackAndPierced.constBegin(); it != m_layerEnergyDepositionOnTrackAndPierced.constEnd(); ++it)
@@ -188,7 +186,7 @@ int TRDReconstruction::getNoOfLayersWithEnergyDepositionOnTrackAndPierced() cons
   return count;
 }
 
-int TRDReconstruction::getNoOfLayersWithEnergyDepositionOnTrackPerLength() const
+int TRDReconstruction::noOfLayersWithEnergyDepositionOnTrackPerLength() const
 {
   int count = 0;
   for (QVector<double>::const_iterator it = m_layerEnergyDepositionOnTrackPerLength.constBegin(); it != m_layerEnergyDepositionOnTrackPerLength.constEnd(); ++it)
@@ -197,7 +195,7 @@ int TRDReconstruction::getNoOfLayersWithEnergyDepositionOnTrackPerLength() const
   return count;
 }
 
-int TRDReconstruction::getNoOfLayersWithEnergyDepositionOnTrackPerMinLength() const
+int TRDReconstruction::noOfLayersWithEnergyDepositionOnTrackPerMinLength() const
 {
   int count = 0;
   for (QVector<double>::const_iterator it = m_layerEnergyDepositionOnTrackPerMinLength.constBegin(); it != m_layerEnergyDepositionOnTrackPerMinLength.constEnd(); ++it)
@@ -279,49 +277,4 @@ double TRDReconstruction::distanceOnTrackThroughTRDTube(const Hit* hit, const Tr
 
   return distanceInTube3D;
 }
-
-bool TRDReconstruction::globalTRDCuts(const QVector<Hit*>&, const Particle* particle, const SimpleEvent* event)
-{
-  const Track* track = particle->track();
-  const ParticleInformation::Flags pFlags = particle->information()->flags();
-
-  //check if everything worked and a track has been fit
-  if (!track || !track->fitGood())
-    return false;
-
-  if (pFlags & ParticleInformation::Chi2Good)
-    return false;
-
-  //get settings if present
-  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
-
-  //check if magnet was installed, if it was or no information was found, check if the particle went through the inner magnet:
-  if (!(settings && !(settings->magnet()))){
-    //check if track was inside of magnet
-    if (pFlags & ParticleInformation::MagnetCollision)
-      return false;
-  }
-
-  //count trd hits which belong to the track and those of the event
-  int nTrdHitsOnTrack = 0;
-  int nTotalTRDHits = 0;
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != track->hits().end(); ++it) {
-    if ((*it)->type() == Hit::trd)
-      ++nTotalTRDHits;
-    if (track->hits().contains(*it))
-      ++nTrdHitsOnTrack;
-  }
-
-  //trd layer cut
-
-  if (nTrdHitsOnTrack < TRDReconstruction::minLayerCut)
-    return false;
-
-  if (nTotalTRDHits-2 > nTrdHitsOnTrack)
-    return false;
-
-  //passed all cuts
-  return true;
-}
-
 

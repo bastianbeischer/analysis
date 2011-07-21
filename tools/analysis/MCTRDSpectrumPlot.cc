@@ -75,28 +75,28 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>&, const Particle* const
   case TRDSpectrumPlot::completeTRD:
     if (TRDReconstruction::calculateLengthInTube)
       for (int i = 0; i < 8; ++i)
-        valuesToFill << trdReconst->getEnergyDepositionOnTrackPerLengthForLayer(i);
+        valuesToFill << trdReconst->energyDepositionOnTrackPerLengthForLayer(i);
     else
       for (int i = 0; i < 8; ++i)
-        valuesToFill << trdReconst->getEnergyDepositionOnTrackForLayer(i);
+        valuesToFill << trdReconst->energyDepositionOnTrackForLayer(i);
     break;
   case TRDSpectrumPlot::module:
     if (TRDReconstruction::calculateLengthInTube)
-      valuesToFill << trdReconst->getEnergyDepositionOnTrackPerLengthForModule(m_id);
+      valuesToFill << trdReconst->energyDepositionOnTrackPerLengthForModule(m_id);
     else
-      valuesToFill << trdReconst->getEnergyDepositionOnTrackForModule(m_id);
+      valuesToFill << trdReconst->energyDepositionOnTrackForModule(m_id);
     break;
   case TRDSpectrumPlot::channel:
     if (TRDReconstruction::calculateLengthInTube)
-      valuesToFill << trdReconst->getEnergyDepositionOnTrackPerLengthForChannel(m_id);
+      valuesToFill << trdReconst->energyDepositionOnTrackPerLengthForChannel(m_id);
     else
-      valuesToFill << trdReconst->getEnergyDepositionOnTrackForModule(m_id);
+      valuesToFill << trdReconst->energyDepositionOnTrackForModule(m_id);
     break;
   case TRDSpectrumPlot::layer:
     if (TRDReconstruction::calculateLengthInTube)
-        valuesToFill << trdReconst->getEnergyDepositionOnTrackPerLengthForLayer(m_id);
+        valuesToFill << trdReconst->energyDepositionOnTrackPerLengthForLayer(m_id);
     else
-        valuesToFill << trdReconst->getEnergyDepositionOnTrackForLayer(m_id);
+        valuesToFill << trdReconst->energyDepositionOnTrackForLayer(m_id);
     break;
   }
 
