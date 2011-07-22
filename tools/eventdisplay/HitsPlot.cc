@@ -28,6 +28,7 @@
 #include <TStyle.h>
 
 #include <iostream>
+#include <algorithm>
 
 HitsPlot::HitsPlot()
   : PerdaixDisplay()
@@ -223,7 +224,27 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, const Particle* const par
     }
 
     TBox* box = new TBox(x-0.5*width, z-0.5*height, x+0.5*width, z+0.5*height);
-    box->SetFillStyle(1001);
+    unsigned int fillstyle = 1001;
+    if (track) {
+      bool found = false;
+      int i = 0;
+      while (!found && i < track->hits().size()) {
+        Hit* trackHit = track->hits().at(i);
+        if ( (strcmp(trackHit->ClassName(), "Hit") == 0) || (strcmp(trackHit->ClassName(), "TOFSipmHit") == 0) ) {
+          if (hit == trackHit) {
+            found = true;
+          }
+        }
+        else if ( (strcmp(trackHit->ClassName(), "Cluster") == 0) || (strcmp(trackHit->ClassName(), "TOFCluster") == 0) ) {
+          Cluster* cluster = static_cast<Cluster*>(trackHit);
+          if (std::find(cluster->hits().begin(), cluster->hits().end(), hit) != cluster->hits().end())
+            found = true;
+        }
+        i++;
+      }
+      fillstyle = found ? 1001 : 3001;
+    }
+    box->SetFillStyle(fillstyle);
     box->SetFillColor(color);
     box->Draw("SAME");
     m_hits.push_back(box);
