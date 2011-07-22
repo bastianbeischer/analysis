@@ -12,7 +12,7 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& pl
   QVector<double> sigma;
   TGraph* graph = new TGraph;
   foreach (TimeOfFlightHistogram* plot, plots)
-    graph->SetPoint(graph->GetN(), plot->y(), plot->sigma());
+    graph->SetPoint(graph->GetN(), plot->upperY(), plot->sigma());
   setDrawOption(ALP);
   addGraph(graph);
 }
