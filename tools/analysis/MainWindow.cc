@@ -87,6 +87,8 @@
 #include "TimeReconstructionPlot.hh"
 #include "TrackFindingEfficiency.hh"
 #include "AllTrackerLayersFlagEfficiency.hh"
+#include "ZenithDistributionPlot.hh"
+#include "AzimuthDistributionPlot.hh"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -539,6 +541,8 @@ void MainWindow::setupPlots()
       m_ui.plotter->addPlot(new Chi2Plot(ndf));
     m_ui.plotter->addPlot(new Chi2PerNdfPlot);
     m_ui.plotter->addPlot(new Chi2VsMomentumPlot);
+    m_ui.plotter->addPlot(new ZenithDistributionPlot());
+    m_ui.plotter->addPlot(new AzimuthDistributionPlot());
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {

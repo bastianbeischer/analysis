@@ -119,9 +119,7 @@ void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, const Particle* c
       histogram()->SetBinContent(binToFill,value);
       // TPaletteAxis* palette = (TPaletteAxis*) histogram()->GetListOfFunctions()->FindObject("palette");
       // if(palette) {
-      //   m_mutex.lock();
       //   ell->SetFillColor( palette->GetValueColor(value));
-      //   m_mutex.unlock();
       // }
     }
   }
@@ -178,9 +176,7 @@ void TRDOccupancyPlot::updateEllipses()
       break;
     }
     TEllipse* ell = m_ellipses.value(i.key());
-    m_mutex.lock();
     ell->SetFillColor(palette->GetValueColor(value));
-    m_mutex.unlock();
     //ell->Draw("same");
   }
 }

@@ -24,20 +24,11 @@ LIBS += \
   -lrootplot \
   -lsetup
 
-SOURCEDIRS = \
-  main \
-  tracker \
-  tof \
-  trd \
-  reconstruction \
-  general \
-  mc \
-  slowControl \
-  testbeam
+SOURCEDIRS = .
+
+RESOURCES += \
+  resources.qrc
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
 include($$TOPLEVEL/common.pri)
-
-RESOURCES += \
-  main/resources.qrc

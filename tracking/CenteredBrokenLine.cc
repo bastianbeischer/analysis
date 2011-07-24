@@ -84,3 +84,4 @@ double CenteredBrokenLine::trackLength() const
   const TVector3& lowerPoint = position(Constants::lowerTofPosition);
   return (upperPoint-middlePoint).Mag() + (middlePoint-lowerPoint).Mag();
 }
+
