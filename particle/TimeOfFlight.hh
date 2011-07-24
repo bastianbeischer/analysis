@@ -19,6 +19,7 @@ public:
   double startTime() const {return m_startTime;}
   double stopTime() const {return m_stopTime;}
   double timeOfFlight() const {return m_stopTime - m_startTime;}
+  bool good() const {return m_good;}
 
 private:
   static double bestTime(const QVector<double>&);
@@ -27,7 +28,7 @@ private:
 private:
   double m_startTime;
   double m_stopTime;
-
+  bool m_good;
 };
 
 #endif /* TimeOfFlight_hh */

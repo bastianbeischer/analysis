@@ -12,9 +12,10 @@
 
 #include <QDebug>
 
-TimeOfFlight::TimeOfFlight() :
-  m_startTime(0.),
-  m_stopTime(0.)
+TimeOfFlight::TimeOfFlight()
+  : m_startTime(0.)
+  , m_stopTime(0.)
+  , m_good(false)
 {
 }
 
@@ -26,6 +27,7 @@ void TimeOfFlight::reset()
 {
   m_startTime = 0.;
   m_stopTime = 0.;
+  m_good = false;
 }
 
 void TimeOfFlight::calculateTimes(const Track* track)
@@ -65,6 +67,7 @@ void TimeOfFlight::calculateTimes(const Track* track)
   qSort(stopTimes);
   m_startTime = bestTime(startTimes);
   m_stopTime = bestTime(stopTimes);
+  m_good = true;
 }
 
 double TimeOfFlight::bestTime(const QVector<double>& times)
