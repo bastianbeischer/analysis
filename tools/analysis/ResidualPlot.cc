@@ -61,13 +61,6 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, const Particle* const
   if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
-  // if (!(flags & ParticleInformation::Chi2Good))
-  //   return;
-
-  // only select tracks which didn't pass through the magnet
-  //if ((flags & ParticleInformation::MagnetCollision))
-  //  return;
-
   // remove hits in this layer from hits for track fit
   QVector<Hit*> hitsInThisLayer;
 
