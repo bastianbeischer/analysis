@@ -48,7 +48,8 @@ void TOTMomentumCorrelation::processEvent(const QVector<Hit*>&, const Particle* 
     return;
   const QVector<Hit*>& clusters = track->hits();
   ParticleInformation::Flags flags = particle->information()->flags();
-  if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
+  ParticleInformation::Flags required = ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet;
+  if ((flags & required) != required)
     return;
   double totSum = 0.;
   int nTofHits = 0;

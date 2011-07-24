@@ -114,7 +114,6 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, const Particle* 
 
   TH1D* spectrumHisto = 0;
 
-  QMutexLocker locker(&m_mutex);
   if (m_spectrumMap.contains(pdgID))
     spectrumHisto = m_spectrumMap.value(pdgID);
   else

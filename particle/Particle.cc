@@ -47,7 +47,8 @@ void Particle::init()
 void Particle::reset()
 {
   m_properties = ParticleDB::instance()->lookupType(Unknown);
-  m_track->reset();
+  if (m_track)
+    m_track->reset();
   m_tof->reset();
   m_information->reset();
 }
@@ -81,17 +82,23 @@ void Particle::setTrackType(const Track::Type& trackType)
 
 double Particle::transverseMomentum() const
 {
-  return m_properties->charge()*m_track->transverseRigidity();
+  if (m_track)
+    return m_properties->charge()*m_track->transverseRigidity();
+  return 0.;
 }
 
 double Particle::momentum() const
 {
-  return m_properties->charge()*m_track->rigidity();
+  if (m_track)
+    return m_properties->charge()*m_track->rigidity();
+  return 0.;
 }
 
 double Particle::beta() const
 {
-  return m_track->trackLength() / (m_tof->timeOfFlight() * Constants::speedOfLight);
+  if (m_track)
+    return m_track->trackLength() / (m_tof->timeOfFlight() * Constants::speedOfLight);
+  return 0.;
 }
 
 //////////////////////////////////////////////////

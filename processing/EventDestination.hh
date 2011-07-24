@@ -19,7 +19,7 @@ public:
   void lock();
   void unlock();
 
-protected:
+private:
   bool m_needsLocking;
   QMutex m_mutex;
 };

@@ -55,7 +55,8 @@ void AlbedosVsMomentumPlot::processEvent(const QVector<Hit*>&, const Particle* c
     return;
 
   ParticleInformation::Flags flags = particle->information()->flags();
-  if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) )
+  ParticleInformation::Flags required = ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet | ParticleInformation::BetaGood;
+  if ((flags & required) != required)
     return;
 
   double rigidity = track->rigidity();
