@@ -67,8 +67,8 @@ void Corrections::preFitCorrections(SimpleEvent* event)
     if (m_flags & TimeShifts) timeShift(hit);
     if (m_flags & TrdMopv) trdMopv(hit);
     if (m_flags & TrdTime) trdTime(hit, event);
-    if (m_flags & TrdPressure) trdPressure(hit, event);
-    if (m_flags & TrdTemperature) trdTemperature(hit, event);
+    //if (m_flags & TrdPressure) trdPressure(hit, event);
+    //if (m_flags & TrdTemperature) trdTemperature(hit, event);
     if (m_flags & TofTimeOverThreshold) tofTot(hit, event);
   }
 }
