@@ -24,7 +24,7 @@ H1DPlot()
   double xMax = 180;
   TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, xMin, xMax);
   histogram->Sumw2();
-  setAxisTitle("azimuth", "probability / %");
+  setAxisTitle("azimuth", "entries");
   addHistogram(histogram);
   addLatex(RootPlot::newLatex(.15, .85));
 }
