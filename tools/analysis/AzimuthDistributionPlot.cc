@@ -19,7 +19,7 @@ AnalysisPlot(AnalysisPlot::Tracking),
 H1DPlot()
 {
   setTitle("Azimuth distribution");
-  int nBins = 90;
+  int nBins = 45;
   double xMin = -180;
   double xMax = 180;
   TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, xMin, xMax);

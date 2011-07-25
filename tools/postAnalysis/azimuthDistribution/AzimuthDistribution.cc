@@ -40,20 +40,23 @@ AzimuthDistribution::AzimuthDistribution(PostAnalysisCanvas* canvas)
 
   addHistogram(histogram);
   setAxisTitle(histogram->GetXaxis()->GetTitle(), histogram->GetYaxis()->GetTitle());
-  readFile();
-  addHistogram(m_azimuthAcceptance);
+  if (readFile())
+    addHistogram(m_azimuthAcceptance);
 }
 
 AzimuthDistribution::~AzimuthDistribution()
 {
 }
 
-void AzimuthDistribution::readFile()
+bool AzimuthDistribution::readFile()
 {
   QString filename = "plots/azimuthAcceptance.root";
   std::cout << "Reading file " <<qPrintable(filename) << std::endl;
   QString hName = "phiHistoValid";
-  TFile* openfile = new TFile(qPrintable(filename));
+  TFile* openfile = 0;
+  openfile = new TFile(qPrintable(filename));
+  if (openfile->IsZombie())
+    return false;
   gROOT->cd();
   TH1D* azimuthAcceptance = (TH1D*)(((TH1D*)openfile->Get(qPrintable(hName)))->Clone());
   double integral = azimuthAcceptance->Integral("width");
@@ -73,6 +76,7 @@ void AzimuthDistribution::readFile()
   azimuthAcceptance = 0;
   m_azimuthAcceptance->SetMarkerColor(kBlue);
   m_azimuthAcceptance->SetLineColor(kBlue);
+  return true;
 }
 
 double AzimuthDistribution::angleMovement(double azimuth)

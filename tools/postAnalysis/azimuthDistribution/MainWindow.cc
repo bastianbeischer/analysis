@@ -61,7 +61,7 @@ void MainWindow::setupAnalysis()
   unfoldedDistribution->Scale(100/integral);
 
   
-  addPlot(new H1Plot(3, unfoldedDistribution, azimuthDistribution->azimuthAcceptance(), azimuthDistribution->distribution()));
+  addPlot(new H1Plot(2, unfoldedDistribution, azimuthDistribution->distribution()));
 
   delete file;
   file = 0;

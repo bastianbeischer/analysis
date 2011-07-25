@@ -24,7 +24,7 @@ public:
 private:
   TH1D* m_azimuthAcceptance;
   
-  void readFile();
+  bool readFile();
   double angleMovement(double azimuth);
 
 };
