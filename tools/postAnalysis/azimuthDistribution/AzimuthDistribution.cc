@@ -50,7 +50,7 @@ AzimuthDistribution::~AzimuthDistribution()
 
 void AzimuthDistribution::readFile()
 {
-  QString filename = "azimuthAcceptance.root";
+  QString filename = "plots/azimuthAcceptance.root";
   std::cout << "Reading file " <<qPrintable(filename) << std::endl;
   QString hName = "phiHistoValid";
   TFile* openfile = new TFile(qPrintable(filename));
