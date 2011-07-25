@@ -14,5 +14,4 @@ SUBDIRS  = \
   slowControl \
   trdMoPV \
   fileCompare \
-  azimuthDistribution \
   efficiencyCorrection
