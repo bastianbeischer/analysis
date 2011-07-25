@@ -5,13 +5,6 @@ CONFIG += debug
 
 TOPLEVEL    = ../
 
-# Seperate source & build dirs
-DESTDIR     = $$TOPLEVEL/lib
-OBJECTS_DIR = ./.tmp
-MOC_DIR     = ./.tmp
-UI_DIR      = ./.tmp
-RCC_DIR     = ./.tmp
-
 CLASSES += TRDElectronIdentifierCutBased \
            TRDElectronIdentifierLikelihood \
            TRDLikelihoods
