@@ -25,7 +25,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupAnalysis()
 {
-  TFile file(qPrintable(m_analysisFile));
+  TFile file(qPrintable(m_analysisFiles.at(0)));
   gROOT->cd();
   for (int i = 0; i < 64; ++i) {
     QString title = QString("tof efficiency 0x%1 canvas").arg(0x8000 | i, 0, 16);
