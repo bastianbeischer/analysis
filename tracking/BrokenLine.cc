@@ -46,13 +46,13 @@ void BrokenLine::retrieveFitResults()
 
   if (m_verbose > 0) {
     std::cout << "--------------------------------------------------------------------------------------------------" << std::endl;
-    std::cout << " results of straight line track fit: chi2/ndf      = " << m_chi2        << "/" << m_ndf << std::endl;
-    std::cout << "                                       upperX0     = " << m_upperX0     << " mm" <<std::endl;
-    std::cout << "                                       lowerX0     = " << m_lowerX0     << " mm" <<std::endl;
-    std::cout << "                                       y0          = " << m_y0          << " mm" <<std::endl;
-    std::cout << "                                       upperSlopeX = " << m_upperSlopeX << std::endl;
-    std::cout << "                                       lowerSlopeX = " << m_lowerSlopeX << std::endl;
-    std::cout << "                                       slopeY      = " << m_slopeY      << std::endl;
+    std::cout << " results of broken line track fit: chi2/ndf      = " << m_chi2        << "/" << m_ndf << std::endl;
+    std::cout << "                                     upperX0     = " << m_upperX0     << " mm" <<std::endl;
+    std::cout << "                                     lowerX0     = " << m_lowerX0     << " mm" <<std::endl;
+    std::cout << "                                     y0          = " << m_y0          << " mm" <<std::endl;
+    std::cout << "                                     upperSlopeX = " << m_upperSlopeX << std::endl;
+    std::cout << "                                     lowerSlopeX = " << m_lowerSlopeX << std::endl;
+    std::cout << "                                     slopeY      = " << m_slopeY      << std::endl;
     std::cout << "--------------------------------------------------------------------------------------------------" << std::endl;
   }
 }
