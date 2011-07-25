@@ -9,7 +9,6 @@
 
 class AnalysisProcessor;
 class TCanvas;
-class Corrections;
 class DataChain;
 class TrackFinding;
 class HitsPlot;
@@ -38,7 +37,6 @@ private:
   TCanvas* m_canvas;
   DataChain* m_chain;
   TrackFinding* m_trackFinding;
-  Corrections* m_corrections;
   Track* m_track;
   AnalysisProcessor* m_processor;
   HitsPlot* m_hitsPlot;
