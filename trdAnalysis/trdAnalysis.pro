@@ -12,11 +12,9 @@ MOC_DIR     = ./.tmp
 UI_DIR      = ./.tmp
 RCC_DIR     = ./.tmp
 
-CLASSES += TRDElectronIdentifier \
-           TRDElectronIdentifierCutBased \
+CLASSES += TRDElectronIdentifierCutBased \
            TRDElectronIdentifierLikelihood \
            TRDLikelihoods
-           #TRDLikelihood
 
 
 INCLUDEPATH += $$TOPLEVEL/event \
