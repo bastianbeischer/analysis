@@ -13,4 +13,6 @@ SUBDIRS  = \
   mcComparison \
   slowControl \
   trdMoPV \
-  fileCompare
+  fileCompare \
+  azimuthDistribution \
+  efficiencyCorrection
