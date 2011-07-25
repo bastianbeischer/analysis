@@ -35,8 +35,8 @@ private:
   bool loadFunctionParameters(TF1* func, QString name);
 
 private:
-  static TRDLikelihoods* m_instance;
-  static QMutex m_mutex;
+  static TRDLikelihoods* s_instance;
+  static QMutex s_mutex;
 
   bool m_normalizedToLength;
 

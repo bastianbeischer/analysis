@@ -11,13 +11,13 @@
 double functionNonTR(double *x, double *par)
 {
   /**
-    p[0] normalization factor
-    p[1] mopv
-    p[2] sigma of rising landau flank
-    p[3] sigma of falling landau flank
-    p[4] linear term in exponential
-    p[5] quadratic term in exponential
-    p[6] cubic term in exponential
+     p[0] normalization factor
+     p[1] mopv
+     p[2] sigma of rising landau flank
+     p[3] sigma of falling landau flank
+     p[4] linear term in exponential
+     p[5] quadratic term in exponential
+     p[6] cubic term in exponential
   **/
   if (x[0]<par[1])
     return par[0]*TMath::Landau(x[0],par[1],par[2])*TMath::Exp(par[4]*x[0]+par[5]*x[0]*x[0]+par[6]*x[0]*x[0]*x[0]);
@@ -26,17 +26,17 @@ double functionNonTR(double *x, double *par)
 }
 
 
-TRDLikelihoods* TRDLikelihoods::m_instance = 0;
-QMutex TRDLikelihoods::m_mutex;
+TRDLikelihoods* TRDLikelihoods::s_instance = 0;
+QMutex TRDLikelihoods::s_mutex;
 
 TRDLikelihoods* TRDLikelihoods::instance()
 {
-  if (!m_instance) {
-    QMutexLocker locker(&m_mutex);
-    if (!m_instance)
-      m_instance = new TRDLikelihoods();
+  if (!s_instance) {
+    QMutexLocker locker(&s_mutex);
+    if (!s_instance)
+      s_instance = new TRDLikelihoods();
   }
-  return m_instance;
+  return s_instance;
 }
 
 TRDLikelihoods::TRDLikelihoods()
@@ -60,13 +60,13 @@ TRDLikelihoods::TRDLikelihoods()
 TF1* TRDLikelihoods::prototypeLHFunctionNonTR()
 {
   /**
-    p[0] normalization factor
-    p[1] mopv
-    p[2] sigma of rising landau flank
-    p[3] sigma of falling landau flank
-    p[4] linear term in exponential
-    p[5] quadratic term in exponential
-    p[6] cubic term in exponential
+     p[0] normalization factor
+     p[1] mopv
+     p[2] sigma of rising landau flank
+     p[3] sigma of falling landau flank
+     p[4] linear term in exponential
+     p[5] quadratic term in exponential
+     p[6] cubic term in exponential
   **/
 
   TF1* LHFun = new TF1("TRDLikelihoodNonTR", functionNonTR, 0., 100., 7);
