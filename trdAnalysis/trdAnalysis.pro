@@ -20,15 +20,12 @@ CLASSES += TRDElectronIdentifier \
 
 
 INCLUDEPATH += $$TOPLEVEL/event \
-               $$TOPLEVEL/processing \
-               $$TOPLEVEL/setup \
                $$TOPLEVEL/particle \
                $$TOPLEVEL/tracking
 
 LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
-                         -lprocessing \
-                         -ltracking \
-                         -lsetup
+                         -lparticle \
+                         -ltracking
 
 
 include($$TOPLEVEL/common.pri)
