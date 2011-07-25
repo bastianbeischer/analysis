@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QListWidgetItem>
+#include <QStringList>
 
 class TFile;
 class PostAnalysisPlot;
@@ -14,13 +15,14 @@ Q_OBJECT
 public:
   PostAnalysisWindow(QWidget* parent = 0);
   ~PostAnalysisWindow();
-  void setAnalysisFile(const QString&);
+  void addAnalysisFiles(const QStringList&);
+
 protected:
   void addWidget(QWidget*);
   virtual void setupAnalysis() = 0;
   PostAnalysisCanvas* addCanvas(TFile*, const QString& name);
   void addPlot(PostAnalysisPlot*);
-  QString m_analysisFile;
+  QStringList m_analysisFiles;
   QVector<PostAnalysisCanvas*> m_canvases;
   QVector<PostAnalysisPlot*> m_plots;
 private slots:

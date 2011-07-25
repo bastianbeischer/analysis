@@ -36,7 +36,7 @@ MainWindow::~MainWindow()
 void MainWindow::setupAnalysis()
 {
   PostAnalysisCanvas* canvas = 0;
-  TFile file(qPrintable(m_analysisFile));
+  TFile file(qPrintable(m_analysisFiles.at(0)));
   gROOT->cd();
 
   QVector<PostAnalysisCanvas*> canvases[8];
