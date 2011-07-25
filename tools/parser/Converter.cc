@@ -113,7 +113,8 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
       if (!id->IsTOF()) {
         Calibration* cali = file->getCalibrationForDetector(id, iVA);
         Q_ASSERT(cali);
-        const int channelsPerVA = blockLength / nVA32perBlock;
+        const int channelsPerVA = 32;
+        Q_ASSERT(blockLength / nVA32perBlock == channelsPerVA); // cross check!
         cali->GetAmplitudes(rawData + iVA*channelsPerVA, amplitudes + iVA*channelsPerVA);
       }
     }
