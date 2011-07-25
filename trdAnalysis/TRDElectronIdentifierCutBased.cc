@@ -26,7 +26,7 @@ bool TRDElectronIdentifierCutBased::isElectronish(const QVector<Hit*>&, const Pa
   //can be reconstructed
   ok = true;
 
-  QList<double> values = TRDReconstruction::calculateLengthInTube ?
+  QList<double> values = TRDReconstruction::s_calculateLengthInTube ?
         trdReconst->energyDepositionOnTrackPerLengthForLayers().toList() : trdReconst->energyDepositionOnTrackForLayers().toList();
 
   values.removeAll(0.);

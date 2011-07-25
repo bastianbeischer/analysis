@@ -40,7 +40,7 @@ TRDLikelihoods* TRDLikelihoods::instance()
 }
 
 TRDLikelihoods::TRDLikelihoods()
-  : m_normalizedToLength(TRDReconstruction::calculateLengthInTube)
+  : m_normalizedToLength(TRDReconstruction::s_calculateLengthInTube)
   , m_LHFunctionTR(prototypeLHFunctionTR())
   , m_LHFunctionNonTR(prototypeLHFunctionNonTR())
 {

@@ -32,7 +32,7 @@ void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, const Particl
   if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
     return;
 
-  const QVector<double>& values = TRDReconstruction::calculateLengthInTube ?
+  const QVector<double>& values = TRDReconstruction::s_calculateLengthInTube ?
         trdReconst->energyDepositionOnTrackPerLengthForLayers() : trdReconst->energyDepositionOnTrackForLayers();
 
   double signalSum = 0.;

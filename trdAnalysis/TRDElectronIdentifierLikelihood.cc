@@ -34,7 +34,7 @@ bool TRDElectronIdentifierLikelihood::isElectronish(const QVector<Hit*>&, const 
   //can be reconstructed
   ok = true;
 
-  const QVector<double>& values = TRDReconstruction::calculateLengthInTube ?
+  const QVector<double>& values = TRDReconstruction::s_calculateLengthInTube ?
         trdReconst->energyDepositionOnTrackPerLengthForLayers() : trdReconst->energyDepositionOnTrackForLayers();
 
   //calculate likelihoods:

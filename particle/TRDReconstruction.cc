@@ -21,10 +21,10 @@
 #include <QVector2D>
 #include <QString>
 
-const bool TRDReconstruction::calculateLengthInTube = true;
-const int TRDReconstruction::minLayerCut = 6;
-const int TRDReconstruction::maxOffTrackCluster = 2;
-const int TRDReconstruction::spectrumDefaultBins = 100;
+const bool TRDReconstruction::s_calculateLengthInTube = true;
+const int TRDReconstruction::s_minLayerCut = 6;
+const int TRDReconstruction::s_maxOffTrackCluster = 2;
+const int TRDReconstruction::s_spectrumDefaultBins = 100;
 
 
 TRDReconstruction::TRDReconstruction()
@@ -149,8 +149,8 @@ void TRDReconstruction::checkGoodTRDEvent(const Track* track)
   int nLayersWithEnDepOnTrack = noOfLayersWithEnergyDepositionOnTrack();
   int nOffTrackCluster = noOfClusters() - noOfClustersOnTrack();
 
-  bool layerCut = nLayersWithEnDepOnTrack >= minLayerCut;
-  bool offTrackHitCut =nOffTrackCluster <= maxOffTrackCluster;
+  bool layerCut = nLayersWithEnDepOnTrack >= s_minLayerCut;
+  bool offTrackHitCut =nOffTrackCluster <= s_maxOffTrackCluster;
   bool trackCut = track && track->fitGood() && ((track->chi2() / track->ndf()) < 5);
 
   if (layerCut && offTrackHitCut && trackCut)

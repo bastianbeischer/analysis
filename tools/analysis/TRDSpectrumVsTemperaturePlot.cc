@@ -50,7 +50,7 @@ TRDSpectrumVsTemperaturePlot::TRDSpectrumVsTemperaturePlot(unsigned short id, TR
   const unsigned int nTemperatureBins = 200;
   const double minTemperature = 26;
   const double maxTemperature = 34;
-  int nBins = TRDReconstruction::spectrumDefaultBins;
+  int nBins = TRDReconstruction::s_spectrumDefaultBins;
   double lowerBound = 1e-3;
   double upperBound = TRDReconstruction::spectrumUpperLimit();
   double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
@@ -86,7 +86,7 @@ void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>&, const Part
   QList<double> valuesToFill;
   switch (m_spectrumType) {
   case TRDSpectrumPlot::completeTRD:
-    if (TRDReconstruction::calculateLengthInTube)
+    if (TRDReconstruction::s_calculateLengthInTube)
       for (int i = 0; i < 8; ++i)
         valuesToFill << trdReconst->energyDepositionOnTrackPerLengthForLayer(i);
     else
@@ -94,19 +94,19 @@ void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>&, const Part
         valuesToFill << trdReconst->energyDepositionOnTrackForLayer(i);
     break;
   case TRDSpectrumPlot::module:
-    if (TRDReconstruction::calculateLengthInTube)
+    if (TRDReconstruction::s_calculateLengthInTube)
       valuesToFill << trdReconst->energyDepositionOnTrackPerLengthForModule(m_id);
     else
       valuesToFill << trdReconst->energyDepositionOnTrackForModule(m_id);
     break;
   case TRDSpectrumPlot::channel:
-    if (TRDReconstruction::calculateLengthInTube)
+    if (TRDReconstruction::s_calculateLengthInTube)
       valuesToFill << trdReconst->energyDepositionOnTrackPerLengthForChannel(m_id);
     else
       valuesToFill << trdReconst->energyDepositionOnTrackForModule(m_id);
     break;
   case TRDSpectrumPlot::layer:
-    if (TRDReconstruction::calculateLengthInTube)
+    if (TRDReconstruction::s_calculateLengthInTube)
         valuesToFill << trdReconst->energyDepositionOnTrackPerLengthForLayer(m_id);
     else
         valuesToFill << trdReconst->energyDepositionOnTrackForLayer(m_id);

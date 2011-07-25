@@ -52,7 +52,7 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(QDateTime first, QDateTime last, un
   int t1 = first.toTime_t();
   int t2 = last.toTime_t();
   const unsigned int nTimeBins = qMin((t2 - t1) / secsPerBin, 500);
-  int nBins = TRDReconstruction::spectrumDefaultBins;
+  int nBins = TRDReconstruction::s_spectrumDefaultBins;
   double lowerBound = 1e-3;
   double upperBound = TRDReconstruction::spectrumUpperLimit();
   double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
@@ -86,7 +86,7 @@ void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>&, const Particle* c
   QList<double> valuesToFill;
   switch (m_spectrumType) {
   case TRDSpectrumPlot::completeTRD:
-    if (TRDReconstruction::calculateLengthInTube)
+    if (TRDReconstruction::s_calculateLengthInTube)
       for (int i = 0; i < 8; ++i)
         valuesToFill << trdReconst->energyDepositionOnTrackPerLengthForLayer(i);
     else
@@ -94,19 +94,19 @@ void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>&, const Particle* c
         valuesToFill << trdReconst->energyDepositionOnTrackForLayer(i);
     break;
   case TRDSpectrumPlot::module:
-    if (TRDReconstruction::calculateLengthInTube)
+    if (TRDReconstruction::s_calculateLengthInTube)
       valuesToFill << trdReconst->energyDepositionOnTrackPerLengthForModule(m_id);
     else
       valuesToFill << trdReconst->energyDepositionOnTrackForModule(m_id);
     break;
   case TRDSpectrumPlot::channel:
-    if (TRDReconstruction::calculateLengthInTube)
+    if (TRDReconstruction::s_calculateLengthInTube)
       valuesToFill << trdReconst->energyDepositionOnTrackPerLengthForChannel(m_id);
     else
       valuesToFill << trdReconst->energyDepositionOnTrackForModule(m_id);
     break;
   case TRDSpectrumPlot::layer:
-    if (TRDReconstruction::calculateLengthInTube)
+    if (TRDReconstruction::s_calculateLengthInTube)
         valuesToFill << trdReconst->energyDepositionOnTrackPerLengthForLayer(m_id);
     else
         valuesToFill << trdReconst->energyDepositionOnTrackForLayer(m_id);

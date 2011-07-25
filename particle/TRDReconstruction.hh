@@ -29,8 +29,8 @@ public:
   static int TRDLayerNo(const Hit* hit);
   static int TRDLayerNo(const unsigned int detID);
 
-  static double spectrumUpperLimit() {return TRDReconstruction::calculateLengthInTube ? 15 : 50 ;}
-  static QString xAxisTitle() {return TRDReconstruction::calculateLengthInTube ? "energy deposition length in tube / (keV/mm)" : "energy deposition / keV" ;}
+  static double spectrumUpperLimit() {return TRDReconstruction::s_calculateLengthInTube ? 15 : 50 ;}
+  static QString xAxisTitle() {return TRDReconstruction::s_calculateLengthInTube ? "energy deposition length in tube / (keV/mm)" : "energy deposition / keV" ;}
 
 public:
   void reset();
@@ -90,10 +90,10 @@ private:
   void checkGoodTRDEvent(const Track*);
 
 public:
-  static const int spectrumDefaultBins;
-  static const bool calculateLengthInTube;
-  static const int minLayerCut;
-  static const int maxOffTrackCluster;
+  static const int s_spectrumDefaultBins;
+  static const bool s_calculateLengthInTube;
+  static const int s_minLayerCut;
+  static const int s_maxOffTrackCluster;
 
 private:
   Flags m_flags;
