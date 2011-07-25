@@ -38,12 +38,12 @@ public:
 
   const Flags& flags() const {return m_flags;}
 
-  const QList<const Hit*>& allHits() const {return m_allHits;}
-  const QList<const Cluster*>& allClusters() const {return m_allClusters;}
-  const QList<const Hit*>& allHitsOnTrack() const {return m_allHitsOnTrack;}
-  const QList<const Cluster*>& allClustersOnTrack() const {return m_allClustersOnTrack;}
-  const QList<const Hit*>& allHitsOnTrackAndPierced() const {return m_allHitsOnTrackAndPierced;}
-  const QList<const Cluster*>& allClustersOnTrackAndPierced() const {return m_allClustersOnTrackAndPierced;}
+  const QVector<const Hit*>& allHits() const {return m_allHits;}
+  const QVector<const Cluster*>& allClusters() const {return m_allClusters;}
+  const QVector<const Hit*>& allHitsOnTrack() const {return m_allHitsOnTrack;}
+  const QVector<const Cluster*>& allClustersOnTrack() const {return m_allClustersOnTrack;}
+  const QVector<const Hit*>& allHitsOnTrackAndPierced() const {return m_allHitsOnTrackAndPierced;}
+  const QVector<const Cluster*>& allClustersOnTrackAndPierced() const {return m_allClustersOnTrackAndPierced;}
   const QList<const Hit*> allHitsForLayer(int layer) const {return m_layerAllHits.values(layer);}
   const QList<const Cluster*> allClustersForLayer(int layer) const {return m_layerAllClusters.values(layer);}
   const QList<const Hit*> allHitsOnTrackForLayer(int layer) const {return m_layerAllHitsOnTrack.values(layer);}
@@ -98,12 +98,12 @@ public:
 private:
   Flags m_flags;
 
-  QList<const Hit*> m_allHits;
-  QList<const Cluster*> m_allClusters;
-  QList<const Hit*> m_allHitsOnTrack;
-  QList<const Cluster*> m_allClustersOnTrack;
-  QList<const Hit*> m_allHitsOnTrackAndPierced;
-  QList<const Cluster*> m_allClustersOnTrackAndPierced;
+  QVector<const Hit*> m_allHits;
+  QVector<const Cluster*> m_allClusters;
+  QVector<const Hit*> m_allHitsOnTrack;
+  QVector<const Cluster*> m_allClustersOnTrack;
+  QVector<const Hit*> m_allHitsOnTrackAndPierced;
+  QVector<const Cluster*> m_allClustersOnTrackAndPierced;
   QMultiMap<int, const Hit*> m_layerAllHits;
   QMultiMap<int, const Cluster*> m_layerAllClusters;
   QMultiMap<int, const Hit*> m_layerAllHitsOnTrack;

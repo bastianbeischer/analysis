@@ -34,6 +34,6 @@ void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>&, const Partic
   if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
     return;
 
-  for (QList<const Hit*>::const_iterator it = trdReconst->allHitsOnTrack().constBegin(); it != trdReconst->allHitsOnTrack().constEnd(); ++it)
+  for (QVector<const Hit*>::const_iterator it = trdReconst->allHitsOnTrack().constBegin(); it != trdReconst->allHitsOnTrack().constEnd(); ++it)
     histogram()->Fill(TRDReconstruction::distanceTrackToWire(*it, particle->track()));
 }
