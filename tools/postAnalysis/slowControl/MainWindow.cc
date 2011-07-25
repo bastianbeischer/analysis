@@ -24,7 +24,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupAnalysis()
 {
-  TFile file(qPrintable(m_analysisFile));
+  TFile file(qPrintable(m_analysisFiles.at(0)));
   gROOT->cd();
 
   PostAnalysisCanvas* triggerRateCanvas = addCanvas(&file, "trigger rate canvas");
