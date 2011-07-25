@@ -174,14 +174,14 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, const Particle* const par
     // draw the raw the the rest
     if ( (strcmp(hit->ClassName(), "Hit") == 0) || (strcmp(hit->ClassName(), "TOFSipmHit") == 0) ) {
       hitsToPlot.push_back(hit);
-      if (!track || track->hits().contains(hit))
+      if (!(track && track->fitGood()) || track->hits().contains(hit))
         hitsToPlotOnTrack.push_back(hit);
     }
     else if ( (strcmp(hit->ClassName(), "Cluster") == 0) || (strcmp(hit->ClassName(), "TOFCluster") == 0) ) {
       Cluster* cluster = static_cast<Cluster*>(hit);
       foreach(Hit* subHit, cluster->hits()) {
         hitsToPlot.push_back(subHit);
-        if (!track || track->hits().contains(hit))
+        if (!(track && track->fitGood()) || track->hits().contains(hit))
           hitsToPlotOnTrack.push_back(subHit);
       }
     }
@@ -215,20 +215,10 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, const Particle* const par
     double width = 0.;
     double height = 0.;
     double heightModule = 20.0;
+    unsigned int fillstyle = hitsToPlotOnTrack.contains(hit) ? 1001 : 3001;
     if (type == Hit::tracker) {
       width = 1.0;
       height = heightModule;
-    }
-    else if (type == Hit::trd) {
-      TEllipse* circle = new TEllipse(x, z, 3.);
-      if (hitsToPlotOnTrack.contains(hit))
-        circle->SetFillStyle(1001);
-      else
-        circle->SetFillStyle(3001);
-      circle->SetFillColor(color);
-      circle->SetLineColor(color);
-      circle->Draw("SAME");
-      m_hitsTRD.push_back(circle);
     }
     else if (type == Hit::tof) {
       width = 5.;
@@ -238,41 +228,20 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, const Particle* const par
       x = element->position().x() + (2*(channel-2)+0.5) * width;
       color = palette->GetValueColor(amplitude*5);
     }
+
     if (type != Hit::trd) {
       TBox* box = new TBox(x-0.5*width, z-0.5*height, x+0.5*width, z+0.5*height);
-      unsigned int fillstyle = 1001;
-      if (track) {
-        bool found = false;
-        int i = 0;
-        while (!found && i < track->hits().size()) {
-          Hit* trackHit = track->hits().at(i);
-          if ( (strcmp(trackHit->ClassName(), "Hit") == 0) || (strcmp(trackHit->ClassName(), "TOFSipmHit") == 0) ) {
-            if (hit == trackHit) {
-              found = true;
-            }
-          }
-          else if ( (strcmp(trackHit->ClassName(), "Cluster") == 0) || (strcmp(trackHit->ClassName(), "TOFCluster") == 0) ) {
-            Cluster* cluster = static_cast<Cluster*>(trackHit);
-            if (std::find(cluster->hits().begin(), cluster->hits().end(), hit) != cluster->hits().end())
-              found = true;
-          }
-          i++;
-        }
-        fillstyle = found ? 1001 : 3001;
-      }
       box->SetFillStyle(fillstyle);
       box->SetFillColor(color);
       box->Draw("SAME");
       m_hits.push_back(box);
-      /*
-      TBox* box = new TBox(x-0.5*width, z-0.5*height, x+0.5*width, z+0.5*height);
-      if (hitsToPlotOnTrack.contains(hit))
-        box->SetFillStyle(1001);
-      else
-        box->SetFillStyle(3001);
-      box->SetFillColor(color);
-      box->Draw("SAME");
-      m_hits.push_back(box);*/
+    } else {
+      TEllipse* circle = new TEllipse(x, z, 3.);
+      circle->SetFillColor(color);
+      circle->SetLineColor(color);
+      circle->SetFillStyle(fillstyle);
+      circle->Draw("SAME");
+      m_hitsTRD.push_back(circle);
     }
   }
 
