@@ -95,7 +95,7 @@ void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
     if (cluster) {
       m_allClusters << cluster;
       m_layerAllClusters.insert(trdLayer, cluster);
-      if (globalTrack && globalTrack->hits().contains(cluster)) {
+      if (globalTrack && globalTrack->fitGood() && globalTrack->hits().contains(cluster)) {
         m_allClustersOnTrack << cluster;
         m_layerAllClustersOnTrack.insert(trdLayer, cluster);
         //m_layerEnergyDepositionOnTrack[trdLayer] += cluster->signalHeight();
@@ -112,7 +112,7 @@ void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
       m_moduleEnergyDeposition[subHit->detId() & 0xFFF0] += subHit->signalHeight();
       double lengthInTube = TRDReconstruction::distanceOnTrackThroughTRDTube(subHit, globalTrack);
       double minLength = qMax(1.0 /*mm*/, lengthInTube);
-      if (globalTrack && (globalTrack->hits().contains(cluster) || globalTrack->hits().contains(subHit))) {
+      if (globalTrack && globalTrack->fitGood() && (globalTrack->hits().contains(cluster) || globalTrack->hits().contains(subHit))) {
         m_allHitsOnTrack << subHit;
         m_layerAllHitsOnTrack.insert(trdLayer, subHit);
         m_layerEnergyDepositionOnTrack[trdLayer] += subHit->signalHeight();
