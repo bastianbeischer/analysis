@@ -11,13 +11,7 @@ class AzimuthDistributionPlot :
 public:
   AzimuthDistributionPlot();
   ~AzimuthDistributionPlot();
-  
   void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
-  void update();
-  void finalize();
-
-private:
-
 };
 
 #endif /* AzimuthDistributionPlot_hh */

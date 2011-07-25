@@ -25,7 +25,7 @@ H2DPlot()
   const double maxReconstructed = 180;
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsReconstructed, minReconstructed, maxReconstructed, nBinsGenerated, minGenerated, maxGenerated);
   histogram->Sumw2();
-  setAxisTitle("reconstructed azimuth", "generated azimuth", "entries");
+  setAxisTitle("reconstructed azimuth", "generated azimuth", "");
   addHistogram(histogram);
 }
 
@@ -40,37 +40,30 @@ void AzimuthMigrationHistogram::processEvent(const QVector<Hit*>&, const Particl
 
   if (event->MCInformation()->primary()->initialMomentum.Z() > 0)
     return;
-  
+
   const Track* track = particle->track();
-  
+
   if (!track || !track->fitGood())
     return;
-  
+
   ParticleInformation::Flags flags = particle->information()->flags();
   if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
     return;
-  
-  double azimuthGenerated = azimuthAngle(event->MCInformation()->primary()->initialMomentum) / M_PI * 180;
-  double azimuthReconstructed = (track->azimuthAngle()) / M_PI * 180;
-  
-  histogram()->Fill(azimuthReconstructed, azimuthGenerated);
-  if (azimuthGenerated <= -180 || 180 <= azimuthGenerated )
-    qDebug("generated smaler lager than abs(180)");
-  if (azimuthReconstructed <= -180 || 180 <= azimuthReconstructed )
-    qDebug("reconstructed smaler lager than abs(180)");
-}
 
-void AzimuthMigrationHistogram::update()
-{
-  
+  double azimuthGenerated = azimuthAngle(event->MCInformation()->primary()->initialMomentum) * 180. / M_PI;
+  double azimuthReconstructed = (track->azimuthAngle()) * 180. / M_PI;
+
+  histogram()->Fill(azimuthReconstructed, azimuthGenerated);
+  Q_ASSERT(180. <= qAbs(azimuthGenerated));
+  Q_ASSERT(180. <= qAbs(azimuthReconstructed));
 }
 
 double AzimuthMigrationHistogram::azimuthAngle(const TVector3& initialMomentum)
 {
   //with respect to the x-axis
-  const double y = (-1*initialMomentum).Y();
-  const double x = (-1*initialMomentum).X();
-  
+  const double y = -initialMomentum.Y();
+  const double x = -initialMomentum.X();
+
   if (x > 0) {
     return atan(y / x);
   } else if (x < 0) {
