@@ -29,18 +29,27 @@ MainWindow::~MainWindow()
 void MainWindow::setupAnalysis()
 {
   PostAnalysisCanvas* canvas = 0;
-  TFile file(qPrintable(m_analysisFiles.at(0)));
+  TFile* file = new TFile(qPrintable(m_analysisFiles.at(0)));
   gROOT->cd();
-
-  QString name = QString("Azimuth distribution canvas");
-  canvas = addCanvas(&file, qPrintable(name));
+  
+  QString name = QString("Azimuth migration canvas");
+  canvas = addCanvas(file, qPrintable(name));
+  AzimuthMigration* azimuthMigration = new AzimuthMigration(canvas);
+  addPlot(azimuthMigration);
+  
+  file->Close();
+  delete file;
+  file = 0;
+  
+  file = new TFile(qPrintable(m_analysisFiles.at(1)));
+  gROOT->cd();
+  
+  name = QString("Azimuth distribution canvas");
+  canvas = addCanvas(file, qPrintable(name));
   AzimuthDistribution* azimuthDistribution = new AzimuthDistribution(canvas);
   addPlot(azimuthDistribution);
   
-  name = QString("Azimuth migration canvas");
-  canvas = addCanvas(&file, qPrintable(name));
-  AzimuthMigration* azimuthMigration = new AzimuthMigration(canvas);
-  addPlot(azimuthMigration);
+  file->Close();
   
   AzimuthUnfolding* azimuthUnfolding= new AzimuthUnfolding(azimuthMigration->migrationHistogram(), azimuthDistribution->distribution());
   
@@ -50,8 +59,10 @@ void MainWindow::setupAnalysis()
   TH1D* unfoldedDistribution = new TH1D(*azimuthUnfolding->unfoldedHistogram());
   double integral = unfoldedDistribution->Integral("width");
   unfoldedDistribution->Scale(100/integral);
-  
-  addPlot(new H1Plot(2, unfoldedDistribution, azimuthDistribution->azimuthAcceptance()));
 
-  file.Close();
+  
+  addPlot(new H1Plot(3, unfoldedDistribution, azimuthDistribution->azimuthAcceptance(), azimuthDistribution->distribution()));
+
+  delete file;
+  file = 0;
 }

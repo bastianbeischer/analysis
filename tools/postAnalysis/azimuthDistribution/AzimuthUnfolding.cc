@@ -101,6 +101,8 @@ void AzimuthUnfolding::unfold()
   
   m_unfoldedHistogram = new TH1D(qPrintable(title), qPrintable(xTitle),nGen,xMinGen,xMaxGen);
   m_unfoldedHistogram->Sumw2();
+  m_unfoldedHistogram->SetMarkerColor(kRed);
+  m_unfoldedHistogram->SetLineColor(kRed);
   
 //  tau = exp(-0.474793);
 //  unfold.DoUnfold(tau,m_unfoldInput,biasScale);
