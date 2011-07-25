@@ -128,7 +128,7 @@ void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
         m_layerAllHitsOnTrackAndPierced[trdLayer].append(subHit);
         m_layerEnergyDepositionOnTrackAndPierced[trdLayer] += amplitude;
         m_layerEnergyDepositionOnTrackPerLength[trdLayer] += (amplitude / lengthInTube);
-        m_channelEdep[channelId].edepOnTrackPerLength += amplitude;
+        m_channelEdep[channelId].edepOnTrackPerLength += (amplitude / lengthInTube);
         m_moduleEdep[moduleId].edepOnTrackPerLength += (amplitude / lengthInTube);
       }
     }
