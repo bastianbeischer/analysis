@@ -41,6 +41,9 @@
            <property name="text">
             <string>track</string>
            </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item row="3" column="1">
@@ -74,7 +77,7 @@
          <item row="4" column="2" colspan="2">
           <widget class="QComboBox" name="fitMethodComboBox">
            <property name="enabled">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <item>
             <property name="text">
@@ -121,6 +124,9 @@
           <widget class="QCheckBox" name="allClustersCheckBox">
            <property name="text">
             <string>all clusters</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
            </property>
           </widget>
          </item>

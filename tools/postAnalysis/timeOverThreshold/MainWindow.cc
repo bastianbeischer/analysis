@@ -23,7 +23,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupAnalysis()
 {
-  TFile file(qPrintable(m_analysisFile));
+  TFile file(qPrintable(m_analysisFiles.at(0)));
   gROOT->cd();
   PostAnalysisCanvas* canvas = addCanvas(&file, "time over threshold canvas");
   for (int i = 0; i < 64; ++i)

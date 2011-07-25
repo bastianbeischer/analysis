@@ -97,9 +97,9 @@ void PostAnalysisWindow::plotOptionComboBoxCurrentIndexChanged(const QString& op
   gPad->Update();
 }
 
-void PostAnalysisWindow::setAnalysisFile(const QString& file)
+void PostAnalysisWindow::addAnalysisFiles(const QStringList& files)
 {
-  m_analysisFile = file;
+  m_analysisFiles = files;
   setupAnalysis();
 }
 

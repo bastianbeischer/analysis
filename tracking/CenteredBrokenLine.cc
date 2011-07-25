@@ -43,12 +43,12 @@ void CenteredBrokenLine::retrieveFitResults()
 
   if (m_verbose > 0) {
     std::cout << "--------------------------------------------------------------------------------------------------" << std::endl;
-    std::cout << " results of straight line track fit: chi2/ndf      = " << m_chi2        << "/" << m_ndf << std::endl;
-    std::cout << "                                       X0          = " << m_x0          << " mm" <<std::endl;
-    std::cout << "                                       y0          = " << m_y0          << " mm" <<std::endl;
-    std::cout << "                                       upperSlopeX = " << m_upperSlopeX << std::endl;
-    std::cout << "                                       lowerSlopeX = " << m_lowerSlopeX << std::endl;
-    std::cout << "                                       slopeY      = " << m_slopeY      << std::endl;
+    std::cout << " results of centered broken line track fit: chi2/ndf      = " << m_chi2        << "/" << m_ndf << std::endl;
+    std::cout << "                                              X0          = " << m_x0          << " mm" <<std::endl;
+    std::cout << "                                              y0          = " << m_y0          << " mm" <<std::endl;
+    std::cout << "                                              upperSlopeX = " << m_upperSlopeX << std::endl;
+    std::cout << "                                              lowerSlopeX = " << m_lowerSlopeX << std::endl;
+    std::cout << "                                              slopeY      = " << m_slopeY      << std::endl;
     std::cout << "--------------------------------------------------------------------------------------------------" << std::endl;
   }
 }

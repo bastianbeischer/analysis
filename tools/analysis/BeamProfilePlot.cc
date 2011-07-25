@@ -74,10 +74,6 @@ void BeamProfilePlot::processEvent(const QVector<Hit*>&, const Particle* const p
   if(!track || !track->fitGood())
     return;
 
-//  ParticleInformation::Flags flags = particle->information()->flags();
-//  if (!(flags & ParticleInformation::AllTrackerLayers))
-//    return;
-
   if (m_type == Horizontal)
     histogram()->Fill(track->y(0), track->slopeY(0));
   else if (m_type == Vertical)

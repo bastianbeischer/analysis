@@ -84,6 +84,7 @@
 #include "BeamProfilePlot.hh"
 #include "ZSquareTRDPlot.hh"
 #include "TOFBarShiftPlotCollection.hh"
+#include "TimeReconstructionPlot.hh"
 #include "TrackFindingEfficiency.hh"
 #include "AllTrackerLayersFlagEfficiency.hh"
 #include "ZenithDistributionPlot.hh"
@@ -627,7 +628,9 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDTimeCorrectionPlot(first, last));
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
-    m_ui.plotter->addPlot(new BetaPlot());
+    m_ui.plotter->addPlot(new BetaPlot);
+    m_ui.plotter->addPlot(new TimeReconstructionPlot(TimeReconstructionPlot::Mean));
+    m_ui.plotter->addPlot(new TimeReconstructionPlot(TimeReconstructionPlot::Median));
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof)

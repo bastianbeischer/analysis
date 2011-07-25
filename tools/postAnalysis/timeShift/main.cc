@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
   if (application.arguments().count() == 3)
     TimeShiftContainer::instance()->setConfigFile(application.arguments().at(2));
   MainWindow window;
-  window.setAnalysisFile(application.arguments().at(1));
+  window.addAnalysisFiles(QStringList(application.arguments().at(1)));
   window.show();
   return application.exec();
 }

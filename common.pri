@@ -1,6 +1,5 @@
 DEPENDPATH += $$INCLUDEPATH
 
-
 for(dir, SOURCEDIRS) {
   dir = $$OUT_PWD/$$dir
   !exists($${dir}) {

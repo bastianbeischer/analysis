@@ -163,9 +163,7 @@ void TRDEfficiencyPlot::updateEllipses()
 
     double value = m_hits.value(i.key()) / static_cast<double>(i.value());
     TEllipse* ell = m_ellipses.value(i.key());
-    m_mutex.lock();
     ell->SetFillColor(palette->GetValueColor(value));
-    m_mutex.unlock();
   }
 }
 
