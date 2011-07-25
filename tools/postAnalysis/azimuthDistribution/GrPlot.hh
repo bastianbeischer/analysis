@@ -12,6 +12,7 @@
 class GrPlot : public PostAnalysisPlot, public GraphPlot {
 public:
   GrPlot(TGraph* graph);
+  GrPlot(TGraph* graph1, TGraph* graph2);
   virtual ~GrPlot();
 
 private:

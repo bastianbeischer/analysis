@@ -28,6 +28,16 @@ GrPlot::GrPlot(TGraph* graph)
   setAxisTitle(graph->GetXaxis()->GetTitle(), graph->GetYaxis()->GetTitle());
 }
 
+GrPlot::GrPlot(TGraph* graph1, TGraph* graph2)
+: PostAnalysisPlot()
+, GraphPlot()
+{
+  setTitle(graph1->GetTitle());
+  addGraph(new TGraph(*graph1));
+  setAxisTitle(graph1->GetXaxis()->GetTitle(), graph1->GetYaxis()->GetTitle());
+  addGraph(graph2);
+}
+
 GrPlot::~GrPlot()
 {
 

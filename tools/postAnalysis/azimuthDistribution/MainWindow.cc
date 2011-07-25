@@ -43,10 +43,15 @@ void MainWindow::setupAnalysis()
   addPlot(azimuthMigration);
   
   AzimuthUnfolding* azimuthUnfolding= new AzimuthUnfolding(azimuthMigration->migrationHistogram(), azimuthDistribution->distribution());
-  addPlot(azimuthUnfolding);
+  
   addPlot(new H2Plot(azimuthUnfolding->rohIj()));
-  addPlot(new GrPlot(azimuthUnfolding->lCurve()));
-  addPlot(new H1Plot(azimuthUnfolding->unfoldedHistogram(), azimuthDistribution->azimuthAcceptance()));
+  addPlot(new GrPlot(azimuthUnfolding->lCurve(), azimuthUnfolding->bestlcurve()));
+  
+  TH1D* unfoldedDistribution = new TH1D(*azimuthUnfolding->unfoldedHistogram());
+  double integral = unfoldedDistribution->Integral("width");
+  unfoldedDistribution->Scale(100/integral);
+  
+  addPlot(new H1Plot(2, unfoldedDistribution, azimuthDistribution->azimuthAcceptance()));
 
   file.Close();
 }

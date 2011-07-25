@@ -7,12 +7,14 @@
 
 #include <QString>
 
+#include <stdarg.h>
+
 #include <TH1D.h>
 
 class H1Plot : public PostAnalysisPlot, public H1DPlot {
 public:
   H1Plot(TH1D* histogram);
-  H1Plot(TH1D* histogram1, TH1D* histogram2);
+  H1Plot(int nParams, ...);
   virtual ~H1Plot();
 
 private:
