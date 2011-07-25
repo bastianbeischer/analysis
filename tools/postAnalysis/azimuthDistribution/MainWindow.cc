@@ -5,9 +5,9 @@
 #include "AzimuthDistribution.hh"
 #include "AzimuthMigration.hh"
 #include "AzimuthUnfolding.hh"
-#include "H1Plot.hh"
-#include "H2Plot.hh"
-#include "GrPlot.hh"
+#include "H1DPostAnalysisPlot.hh"
+#include "H2DPostAnalysisPlot.hh"
+#include "GraphPostAnalysisPlot.hh"
 
 #include <TCanvas.h>
 #include <TFile.h>
@@ -53,15 +53,15 @@ void MainWindow::setupAnalysis()
   
   AzimuthUnfolding* azimuthUnfolding= new AzimuthUnfolding(azimuthMigration->migrationHistogram(), azimuthDistribution->distribution());
   
-  addPlot(new H2Plot(azimuthUnfolding->rohIj()));
-  addPlot(new GrPlot(azimuthUnfolding->lCurve(), azimuthUnfolding->bestlcurve()));
+  addPlot(new H2DPostAnalysisPlot(azimuthUnfolding->rohIj()));
+  addPlot(new GraphPostAnalysisPlot(azimuthUnfolding->lCurve(), azimuthUnfolding->bestlcurve()));
   
   TH1D* unfoldedDistribution = new TH1D(*azimuthUnfolding->unfoldedHistogram());
   double integral = unfoldedDistribution->Integral("width");
   unfoldedDistribution->Scale(100/integral);
 
   
-  addPlot(new H1Plot(2, unfoldedDistribution, azimuthDistribution->distribution()));
+  addPlot(new H1DPostAnalysisPlot(unfoldedDistribution, azimuthDistribution->distribution()));
 
   delete file;
   file = 0;
