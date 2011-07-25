@@ -76,7 +76,7 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
 
   // fill simple event basics
   unsigned int eventId = event->GetEventID();
-  unsigned int runStartTime = file->getStartTime(); // convert ms to s for
+  unsigned int runStartTime = file->getStartTime();
   unsigned int eventTime = event->GetTime();
 
   SimpleEvent* simpleEvent = new SimpleEvent(eventId, runStartTime, eventTime, mcFile? SimpleEvent::MonteCarlo : SimpleEvent::Data);
@@ -87,39 +87,34 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
     //get event data from detector, distinguish types of detectors
     DataBlock* dataBlock = event->GetBlock(id);
 
-    // reserve temporary space
-    quint16 nValues = 0;
-    if (id->IsTOF())
-      nValues = ((TOFDataBlock*) dataBlock)->GetRawDataLength();
-    else
-      nValues = id->GetDataLength();
-    qint16 temp[nValues];
-
-    // get tracker and trd data from block
-    int nArrays = 8;
-    int nTrd = 2;
-    int nPmt = 4;
-    int nMax = 0;
-    const quint16* values;
+    // get tracker, trd and pmt data from block
+    int nVA32perBlock = 0;
+    const quint16* rawData;
     if (id->IsTracker()) {
-      nMax = nArrays;
-      values = ((TrackerDataBlock*) dataBlock)->GetRawData();
+      nVA32perBlock = 8; // sipm arrays per HPE
+      rawData = ((TrackerDataBlock*) dataBlock)->GetRawData();
     }
     else if (id->IsTRD()) {
-      nMax = nTrd;
-      values = ((TRDDataBlock*) dataBlock)->GetRawData();
+      nVA32perBlock = 2; // VA32 per UFE
+      rawData = ((TRDDataBlock*) dataBlock)->GetRawData();
     }
     else if (id->IsPMT()) {
-      nMax = nPmt;
-      values = ((PMTDataBlock*) dataBlock)->GetRawData();
+      nVA32perBlock = 4; // PMT uplink has 128 channels, with 4 VA 32.
+      rawData = ((PMTDataBlock*) dataBlock)->GetRawData();
     }
 
+
+    // create amplitude array
+    unsigned short blockLength = id->IsTOF() ? ((TOFDataBlock*) dataBlock)->GetRawDataLength() : id->GetDataLength(); // tof length is not fixed by the detector type (it is dynamic)
+    qint16 amplitudes[blockLength];
+
     //get calibration for non-tof detectors
-    for (int i = 0; i < nMax; i++) {
+    for (int iVA = 0; iVA < nVA32perBlock; iVA++) {
       if (!id->IsTOF()) {
-        Calibration* cali = file->getCalibrationForDetector(id, i);
+        Calibration* cali = file->getCalibrationForDetector(id, iVA);
         Q_ASSERT(cali);
-        cali->GetAmplitudes(values + i*nValues/nMax, temp + i*nValues/nMax);
+        const int channelsPerVA = blockLength / nVA32perBlock;
+        cali->GetAmplitudes(rawData + iVA*channelsPerVA, amplitudes + iVA*channelsPerVA);
       }
     }
 
@@ -127,10 +122,10 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
     unsigned short detId = id->GetID16();
     std::map<unsigned short, TOFSipmHit*> tofHitMap; // maps channel to sipm hits
 
-    for (int i = 0; i < nValues; i++) {
+    for (int i = 0; i < blockLength; i++) {
 
       if (id->IsTracker()) {
-        int amplitude = static_cast<int>(temp[i]);
+        int amplitude = static_cast<int>(amplitudes[i]);
 
         TVector3& pos = m_positions[detId | i];
         TVector3& counterPos = m_counterPositions[detId | i];
@@ -139,7 +134,7 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
       } // tracker
 
       else if (id->IsTRD()) {
-        int amplitude = static_cast<int>(temp[i]);
+        int amplitude = static_cast<int>(amplitudes[i]);
 
         TVector3& pos = m_positions[detId | i];
         TVector3& counterPos = m_counterPositions[detId | i];
@@ -167,11 +162,10 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
       } // tof
 
       else if (id->IsPMT()) {
-        int amplitude = static_cast<int>(temp[i]);
-
-        if (i == 18)
+        int amplitude = static_cast<int>(amplitudes[i]);
+        if (i == 18) // hack for testbeam 2011
           simpleEvent->setSensorData(SensorTypes::BEAM_CHERENKOV1, amplitude);
-        if (i == 16)
+        if (i == 16) // dito
           simpleEvent->setSensorData(SensorTypes::BEAM_CHERENKOV2, amplitude);
       } // pmt
 
