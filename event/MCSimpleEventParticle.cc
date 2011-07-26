@@ -7,7 +7,7 @@ MCSimpleEventParticle::MCSimpleEventParticle()
 {
 }
 
-double MCSimpleEventParticle::azimuthAngle()
+double MCSimpleEventParticle::azimuthAngle() const
 {
   //with respect to the x-axis
   const double y = -initialMomentum.Y();
@@ -32,7 +32,7 @@ double MCSimpleEventParticle::azimuthAngle()
   }
 }
 
-bool MCSimpleEventParticle::isInsideMagnet()
+bool MCSimpleEventParticle::isInsideMagnet() const
 {
   const double zMagentUp = 40.;
   const double zMagnetLow = -40.;
@@ -53,7 +53,7 @@ bool MCSimpleEventParticle::isInsideMagnet()
   
 }
 
-bool MCSimpleEventParticle::trajectoryPosition(const double z, double& x, double& y)
+bool MCSimpleEventParticle::trajectoryPosition(const double z, double& x, double& y) const
 {
   for (unsigned int i = 0; i < trajectory.size()-1; ++i) {
     const TVector3& a = trajectory[i];
