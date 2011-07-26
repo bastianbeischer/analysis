@@ -47,20 +47,16 @@ void TRDReconstruction::reset()
   m_allClustersOnTrack.clear();
   m_allHitsOnTrackAndPierced.clear();
   m_allClustersOnTrackAndPierced.clear();
-  m_layerAllHits.clear();
-  m_layerAllClusters.clear();
-  m_layerAllHitsOnTrack.clear();
-  m_layerAllHitsOnTrackAndPierced.clear();
-  m_layerAllClustersOnTrack.clear();
-  m_layerAllClustersOnTrackAndPierced.clear();
-  m_channelEnergyDeposition.clear();
-  m_channelEnergyDepositionOnTrack.clear();
-  m_channelEnergyDepositionOnTrackPerLength.clear();
-  m_channelEnergyDepositionOnTrackPerMinLength.clear();
-  m_moduleEnergyDeposition.clear();
-  m_moduleEnergyDepositionOnTrack.clear();
-  m_moduleEnergyDepositionOnTrackPerLength.clear();
-  m_moduleEnergyDepositionOnTrackPerMinLength.clear();
+  for (int i = 0; i < 8; i++) {
+    m_layerAllHits[i].clear();
+    m_layerAllClusters[i].clear();
+    m_layerAllHitsOnTrack[i].clear();
+    m_layerAllHitsOnTrackAndPierced[i].clear();
+    m_layerAllClustersOnTrack[i].clear();
+    m_layerAllClustersOnTrackAndPierced[i].clear();
+  }
+  m_channelEdep.clear();
+  m_moduleEdep.clear();
   //now set all values per layer to zero
   m_layerEnergyDeposition.fill(0.);
   m_layerEnergyDepositionOnTrack.fill(0.);
@@ -90,14 +86,14 @@ void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
       hits << hit;
     }
     int trdLayer = TRDReconstruction::TRDLayerNo(hit);
-    //now we have one raw hit or all subhits  of a cluster in the list.
+    //now we have one raw hit or all subhits of a cluster in the list.
 
     if (cluster) {
       m_allClusters << cluster;
-      m_layerAllClusters.insert(trdLayer, cluster);
+      m_layerAllClusters[trdLayer].append(cluster);
       if (globalTrack && globalTrack->fitGood() && globalTrack->hits().contains(cluster)) {
         m_allClustersOnTrack << cluster;
-        m_layerAllClustersOnTrack.insert(trdLayer, cluster);
+        m_layerAllClustersOnTrack[trdLayer].append(cluster);
         //m_layerEnergyDepositionOnTrack[trdLayer] += cluster->signalHeight();
       }
     }
@@ -105,38 +101,41 @@ void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
     bool oneSubHitPierced = false;
     for (QVector<Hit*>::const_iterator it = hits.constBegin(); it != hits.constEnd(); ++it) {
       Hit* subHit = *it;
+      double amplitude = subHit->signalHeight();
+      unsigned short channelId = subHit->detId();
+      unsigned short moduleId = channelId & 0xFFF0;
       m_allHits << subHit;
-      m_layerAllHits.insert(trdLayer, subHit);
-      m_layerEnergyDeposition[trdLayer] += subHit->signalHeight();
-      m_channelEnergyDeposition[subHit->detId()] += subHit->signalHeight();
-      m_moduleEnergyDeposition[subHit->detId() & 0xFFF0] += subHit->signalHeight();
+      m_layerAllHits[trdLayer].append(subHit);
+      m_layerEnergyDeposition[trdLayer] += amplitude;
+      m_channelEdep[channelId].edep += amplitude;
+      m_moduleEdep[moduleId].edep += amplitude;
       double lengthInTube = TRDReconstruction::distanceOnTrackThroughTRDTube(subHit, globalTrack);
       double minLength = qMax(1.0 /*mm*/, lengthInTube);
       if (globalTrack && globalTrack->fitGood() && (globalTrack->hits().contains(cluster) || globalTrack->hits().contains(subHit))) {
         m_allHitsOnTrack << subHit;
-        m_layerAllHitsOnTrack.insert(trdLayer, subHit);
-        m_layerEnergyDepositionOnTrack[trdLayer] += subHit->signalHeight();
-        m_layerEnergyDepositionOnTrackPerMinLength[trdLayer] += (subHit->signalHeight() / minLength);
-        m_channelEnergyDepositionOnTrack[subHit->detId()] += subHit->signalHeight();
-        m_moduleEnergyDepositionOnTrack[subHit->detId() & 0xFFF0] += subHit->signalHeight();
-        m_channelEnergyDepositionOnTrackPerMinLength[subHit->detId()] += (subHit->signalHeight() / minLength);
-        m_moduleEnergyDepositionOnTrackPerMinLength[subHit->detId() & 0xFFF0] += (subHit->signalHeight() / minLength);
+        m_layerAllHitsOnTrack[trdLayer].append(subHit);
+        m_layerEnergyDepositionOnTrack[trdLayer] += amplitude;
+        m_layerEnergyDepositionOnTrackPerMinLength[trdLayer] += (amplitude / minLength);
+        m_channelEdep[channelId].edepOnTrack += amplitude;
+        m_moduleEdep[moduleId].edepOnTrack += amplitude;
+        m_channelEdep[channelId].edepOnTrackPerMinLength += (amplitude / minLength);
+        m_moduleEdep[moduleId].edepOnTrackPerMinLength += (amplitude / minLength);
       }
       if (lengthInTube > 0.) {
         oneSubHitPierced = true;
         m_layerLengthThroughTube[trdLayer] += lengthInTube;
         m_allHitsOnTrackAndPierced << subHit;
-        m_layerAllHitsOnTrackAndPierced.insert(trdLayer, subHit);
-        m_layerEnergyDepositionOnTrackAndPierced[trdLayer] += subHit->signalHeight();
-        m_layerEnergyDepositionOnTrackPerLength[trdLayer] += (subHit->signalHeight() / lengthInTube);
-        m_channelEnergyDepositionOnTrackPerLength[subHit->detId()] += subHit->signalHeight();
-        m_moduleEnergyDepositionOnTrackPerLength[subHit->detId() & 0xFFF0] += (subHit->signalHeight() / lengthInTube);
+        m_layerAllHitsOnTrackAndPierced[trdLayer].append(subHit);
+        m_layerEnergyDepositionOnTrackAndPierced[trdLayer] += amplitude;
+        m_layerEnergyDepositionOnTrackPerLength[trdLayer] += (amplitude / lengthInTube);
+        m_channelEdep[channelId].edepOnTrackPerLength += amplitude;
+        m_moduleEdep[moduleId].edepOnTrackPerLength += (amplitude / lengthInTube);
       }
     }
 
     if (oneSubHitPierced) {
       m_allClustersOnTrackAndPierced << cluster;
-      m_layerAllClustersOnTrackAndPierced.insert(trdLayer, cluster);
+      m_layerAllClustersOnTrackAndPierced[trdLayer].append(cluster);
     }
 
   } // all Clusters/Hits
@@ -206,21 +205,23 @@ int TRDReconstruction::noOfLayersWithEnergyDepositionOnTrackPerMinLength() const
 //#############################
 //static functions:
 
-int TRDReconstruction::TRDLayerNo(const Hit* hit)
+unsigned char TRDReconstruction::TRDLayerNo(const Hit* hit)
 {
+  if (hit->type() != Hit::trd)
+    Q_ASSERT(false);
   return TRDLayerNo(hit->detId());
 }
 
-int TRDReconstruction::TRDLayerNo(const unsigned int detID)
+unsigned char TRDReconstruction::TRDLayerNo(const unsigned short detID)
 {
   //returns the trdlayer number counted from top to bottom 0-7
 
   unsigned short trdQuarterID = detID & 0xFF00;
   unsigned short trdLayerInQuarter = (detID & 0x00F0) >> 4;
   switch (trdQuarterID) {
-    case 0x3400: case 0x3500: return 7-trdLayerInQuarter; break;
-    case 0x3200: case 0x3600: return 3-trdLayerInQuarter; break;
-    default: return 99;
+    case 0x3400: case 0x3500: return 7-trdLayerInQuarter;
+    case 0x3200: case 0x3600: return 3-trdLayerInQuarter;
+    default: Q_ASSERT(false); return 0xFF;
   }
 }
 
