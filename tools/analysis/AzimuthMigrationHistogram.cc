@@ -9,6 +9,8 @@
 #include "Track.hh"
 #include "SimpleEvent.hh"
 
+#include <QDebug>
+
 #include <iostream>
 #include <cmath>
 
@@ -50,10 +52,18 @@ void AzimuthMigrationHistogram::processEvent(const QVector<Hit*>&, const Particl
   if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
     return;
 
+  if (!event->MCInformation()->primary()->isInsideMagnet())
+    return;
+
   double azimuthGenerated = event->MCInformation()->primary()->azimuthAngle() * 180. / M_PI;
   double azimuthReconstructed = (track->azimuthAngle()) * 180. / M_PI;
+  
+  if (azimuthGenerated == 180.)
+    azimuthGenerated = 0.;
+  if (azimuthReconstructed == 180.)
+    azimuthReconstructed = 0.;
 
   histogram()->Fill(azimuthReconstructed, azimuthGenerated);
-  Q_ASSERT(180. <= qAbs(azimuthGenerated));
-  Q_ASSERT(180. <= qAbs(azimuthReconstructed));
+  Q_ASSERT(180. >= qAbs(azimuthGenerated));
+  Q_ASSERT(180. >= qAbs(azimuthReconstructed));
 }
