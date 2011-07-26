@@ -20,7 +20,7 @@ double MCSimpleEventParticle::azimuthAngle() const
   //with respect to the x-axis
   const double y = -initialMomentum.Y();
   const double x = -initialMomentum.X();
-  
+
   if (x > 0) {
     return atan(y / x);
   } else if (x < 0) {
@@ -46,11 +46,11 @@ bool MCSimpleEventParticle::isInsideMagnet() const
   const double zMagnetLow = -40.;
   double x = 0;
   double y = 0;
-  
-  if (!(trajectoryPosition(zMagentUp, x, y) && trajectoryPosition(zMagnetLow, x, y)) ) {
+
+  if (!(trajectoryPosition(zMagentUp, x, y) && trajectoryPosition(zMagnetLow, x, y))) {
     return false;
   }
-  
+
   double r1 = sqrt(pow(x, 2.) + pow(y, 2.));
   double r2 = sqrt(pow(x, 2.) + pow(y, 2.));
   if (r1 < 75. && r2 < 75.) {
@@ -58,7 +58,7 @@ bool MCSimpleEventParticle::isInsideMagnet() const
   } else {
     return false;
   }
-  
+
 }
 
 bool MCSimpleEventParticle::trajectoryPosition(const double z, double& x, double& y) const
