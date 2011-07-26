@@ -25,7 +25,7 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   m_spectrumType(spectrumType)
 {
   QString strType;
-  switch(m_spectrumType){
+  switch (m_spectrumType) {
   case TRDSpectrumPlot::completeTRD:
     strType = "complete TRD";
     break;

@@ -27,7 +27,7 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(QDateTime first, QDateTime last, un
   , m_spectrumType(spectrumType)
 {
   QString strType;
-  switch(m_spectrumType){
+  switch (m_spectrumType) {
   case TRDSpectrumPlot::completeTRD:
     strType = "complete TRD vs time";
     break;
@@ -85,38 +85,47 @@ void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>&, const Particle* c
   case TRDSpectrumPlot::completeTRD:
     if (TRDReconstruction::s_calculateLengthInTube) {
       for (int i = 0; i < 8; ++i)
-        if (trdReconst->energyDepositionForLayer(i).isPierced)
+        if (trdReconst->energyDepositionForLayer(i).isPierced) {
           valuesToFill << trdReconst->energyDepositionForLayer(i).edepOnTrackPerLength;
+        }
     } else {
       for (int i = 0; i < 8; ++i)
-        if (trdReconst->energyDepositionForLayer(i).isOnTRack)
+        if (trdReconst->energyDepositionForLayer(i).isOnTRack) {
           valuesToFill << trdReconst->energyDepositionForLayer(i).edepOnTrack;
+        }
     }
     break;
   case TRDSpectrumPlot::module:
     if (TRDReconstruction::s_calculateLengthInTube) {
-      if (trdReconst->energyDepositionForModule(m_id).isPierced)
+      if (trdReconst->energyDepositionForModule(m_id).isPierced) {
         valuesToFill << trdReconst->energyDepositionForModule(m_id).edepOnTrackPerLength;
+      }
     } else {
-      valuesToFill << trdReconst->energyDepositionForModule(m_id).edepOnTrack;
+      if (trdReconst->energyDepositionForModule(m_id).isOnTRack) {
+        valuesToFill << trdReconst->energyDepositionForModule(m_id).edepOnTrack;
+      }
     }
     break;
   case TRDSpectrumPlot::channel:
     if (TRDReconstruction::s_calculateLengthInTube) {
-      if (trdReconst->energyDepositionForChannel(m_id).isPierced)
+      if (trdReconst->energyDepositionForChannel(m_id).isPierced) {
         valuesToFill << trdReconst->energyDepositionForChannel(m_id).edepOnTrackPerLength;
+      }
     } else {
-      if (trdReconst->energyDepositionForChannel(m_id).isOnTRack)
+      if (trdReconst->energyDepositionForChannel(m_id).isOnTRack) {
         valuesToFill << trdReconst->energyDepositionForChannel(m_id).edepOnTrack;
+      }
     }
     break;
   case TRDSpectrumPlot::layer:
     if (TRDReconstruction::s_calculateLengthInTube) {
-      if (trdReconst->energyDepositionForLayer(m_id).isPierced)
+      if (trdReconst->energyDepositionForLayer(m_id).isPierced) {
         valuesToFill << trdReconst->energyDepositionForLayer(m_id).edepOnTrackPerLength;
+      }
     } else {
-      if (trdReconst->energyDepositionForLayer(m_id).isOnTRack)
+      if (trdReconst->energyDepositionForLayer(m_id).isOnTRack) {
         valuesToFill << trdReconst->energyDepositionForLayer(m_id).edepOnTrack;
+      }
     }
     break;
   }
