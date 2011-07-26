@@ -89,6 +89,7 @@
 #include "AllTrackerLayersFlagEfficiency.hh"
 #include "ZenithDistributionPlot.hh"
 #include "AzimuthDistributionPlot.hh"
+#include "AzimuthMigrationHistogram.hh"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -669,6 +670,7 @@ void MainWindow::setupPlots()
       if (layer->z() > -240 && layer->z() < 240)
         m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisPlot::MonteCarloTracker, layer));
     }
+    m_ui.plotter->addPlot(new AzimuthMigrationHistogram());
   }
   if (m_ui.testbeamCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::MagnetInstalled, first, last));
