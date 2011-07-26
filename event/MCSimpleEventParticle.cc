@@ -7,6 +7,14 @@ MCSimpleEventParticle::MCSimpleEventParticle()
 {
 }
 
+double MCSimpleEventParticle::zenithAngle() const
+{
+  const double x = -initialMomentum.X();
+  const double y = -initialMomentum.Y();
+  const double z = -initialMomentum.Z();
+  return atan(sqrt(pow(x, 2) + pow(y, 2)) / z);
+}
+
 double MCSimpleEventParticle::azimuthAngle() const
 {
   //with respect to the x-axis

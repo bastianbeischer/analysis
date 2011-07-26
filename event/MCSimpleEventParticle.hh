@@ -18,6 +18,7 @@ public:
   TVector3 initialPosition;
   std::vector<TVector3> trajectory;
 
+  double zenithAngle() const;
   double azimuthAngle() const;
   bool isInsideMagnet() const;
   bool trajectoryPosition(const double z, double& x, double& y) const;
