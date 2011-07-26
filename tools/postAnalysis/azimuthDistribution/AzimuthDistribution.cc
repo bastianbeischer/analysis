@@ -1,29 +1,14 @@
 #include "AzimuthDistribution.hh"
-
-#include "Corrections.hh"
+#include "PostAnalysisCanvas.hh"
 
 #include <TH1.h>
-#include <TH2.h>
-#include <TH1D.h>
-#include <TH2D.h>
-#include <TCanvas.h>
 #include <TAxis.h>
-#include <TList.h>
-#include <TF1.h>
-#include <TLatex.h>
-#include <TMultiGraph.h>
-#include <TMath.h>
 #include <TFile.h>
 #include <TROOT.h>
 
-#include <iostream>
-#include <iomanip>
 #include <cmath>
 
 #include <QDebug>
-#include <QStringList>
-#include <QSettings>
-#include <QVector>
 
 AzimuthDistribution::AzimuthDistribution(PostAnalysisCanvas* canvas)
   : PostAnalysisPlot()
@@ -31,7 +16,7 @@ AzimuthDistribution::AzimuthDistribution(PostAnalysisCanvas* canvas)
   , m_azimuthAcceptance(0)
 {
   TH1D* histogram = new TH1D(*canvas->histograms1D().at(0));
-  
+
   double integral = histogram->Integral("width");
   histogram->Scale(100/integral);
 
@@ -51,7 +36,7 @@ AzimuthDistribution::~AzimuthDistribution()
 bool AzimuthDistribution::readFile()
 {
   QString filename = "plots/azimuthAcceptance.root";
-  std::cout << "Reading file " <<qPrintable(filename) << std::endl;
+  qDebug() << "Reading file" << qPrintable(filename);
   QString hName = "phiHistoValid";
   TFile* openfile = 0;
   openfile = new TFile(qPrintable(filename));
@@ -64,7 +49,7 @@ bool AzimuthDistribution::readFile()
   openfile->Close();
   delete openfile;
   openfile = 0;
-  
+
   m_azimuthAcceptance = new TH1D("acceptance phi", "", azimuthAcceptance->GetNbinsX(), -180, 180);
   for (int i = 0; i < m_azimuthAcceptance->GetNbinsX(); ++i) {
     double azimuth = m_azimuthAcceptance->GetBinCenter(i+1);
