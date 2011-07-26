@@ -3,9 +3,12 @@
 
 #include <cmath>
 
+#include <QVector>
+
 namespace Helpers
 {
-  double addQuad(double a, double b) {return sqrt(a*a + b*b);}
+  double addQuad(double a, double b);
+  QVector<double> logBinning(unsigned int nBins, double min, double max);
 }
 
 #endif
