@@ -50,35 +50,10 @@ void AzimuthMigrationHistogram::processEvent(const QVector<Hit*>&, const Particl
   if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
     return;
 
-  double azimuthGenerated = azimuthAngle(event->MCInformation()->primary()->initialMomentum) * 180. / M_PI;
+  double azimuthGenerated = event->MCInformation()->primary()->azimuthAngle() * 180. / M_PI;
   double azimuthReconstructed = (track->azimuthAngle()) * 180. / M_PI;
 
   histogram()->Fill(azimuthReconstructed, azimuthGenerated);
   Q_ASSERT(180. <= qAbs(azimuthGenerated));
   Q_ASSERT(180. <= qAbs(azimuthReconstructed));
-}
-
-double AzimuthMigrationHistogram::azimuthAngle(const TVector3& initialMomentum)
-{
-  //with respect to the x-axis
-  const double y = -initialMomentum.Y();
-  const double x = -initialMomentum.X();
-
-  if (x > 0) {
-    return atan(y / x);
-  } else if (x < 0) {
-    if (y >= 0) {
-      return atan(y / x) + M_PI;
-    } else {
-      return atan(y / x) - M_PI;
-    }
-  } else {
-    if (y > 0) {
-      return M_PI / 2.;
-    } else if (y < 0) {
-      return -M_PI / 2.;
-    } else {
-      return NAN;
-    }
-  }
 }

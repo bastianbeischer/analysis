@@ -91,6 +91,9 @@ void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, const Particle* 
     rigidity = settings->momentum();
     fillHistogram = true;
   } else if (event->contentType() == SimpleEvent::MonteCarlo) {
+    if (!event->MCInformation()->primary()->isInsideMagnet())
+      return;
+    
     int mcPdgId = event->MCInformation()->primary()->pdgID;
     Particle mcParticle(mcPdgId);
     rigidity = event->MCInformation()->primary()->initialMomentum.Mag() / mcParticle.charge();
