@@ -30,7 +30,7 @@ TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot(Type type)
   const double min = 0.1;
   const double max = 20;
   const QVector<double>& axis = Helpers::logBinning(nBins, min, max);
-  
+
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBins, axis.constData(), 7, 1.5, 8.5);
   setAxisTitle("R / GV", "layers with exactly one hit", "");
   addHistogram(histogram);
