@@ -54,7 +54,7 @@ TrackFindingEfficiency::TrackFindingEfficiency(Type type)
   const int nBins = 21;
   const double min = 0.1;
   const double max = 20;
-  const QVector<double>& axis = logBinning(nBins, min, max);
+  const QVector<double>& axis = Helpers::logBinning(nBins, min, max);
 
   TH1D* histogram = new TH1D("reconstruction efficiency", "", nBins, axis.constData());
   histogram->Sumw2();
@@ -134,13 +134,4 @@ void TrackFindingEfficiency::update()
 void TrackFindingEfficiency::finalize()
 {
   update();
-}
-
-QVector<double> TrackFindingEfficiency::logBinning(unsigned int nBins, double min, double max) {
-  QVector<double> binning;
-  const double delta = (log(max) / log(min) - 1) / nBins;
-  for (unsigned int i = 0; i <= nBins; ++i) {
-    binning.append(pow(min, 1 + delta * i));
-  }
-  return binning;
 }

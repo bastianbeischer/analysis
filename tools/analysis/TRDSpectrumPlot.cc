@@ -13,6 +13,7 @@
 #include "SettingsManager.hh"
 #include "TRDCalculations.hh"
 #include "Corrections.hh"
+#include "Helpers.hh"
 
 #include <math.h>
 
@@ -60,13 +61,9 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   int nBins = TRDSpectrumPlot::spectrumDefaultBins;
   double lowerBound = 1e-3;
   double upperBound = TRDSpectrumPlot::spectrumUpperLimit();
-  double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
-  double p[nBins+1];
-  for (int i = 0; i < nBins+1; i++) {
-    p[i] = pow(lowerBound, delta*i+1);
-  }
+  const QVector<double>& axis = Helpers::logBinning(nBins, lowerBound, upperBound);
 
-  TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, p);
+  TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, axis.constData());
   histogram->Sumw2();
   setAxisTitle(TRDSpectrumPlot::xAxisTitle(), "entries");
   addHistogram(histogram, H1DPlot::HIST);
