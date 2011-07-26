@@ -18,9 +18,9 @@ public:
   TVector3 initialPosition;
   std::vector<TVector3> trajectory;
 
-  double azimuthAngle();
-  bool isInsideMagnet();
-  bool trajectoryPosition(const double z, double& x, double& y);
+  double azimuthAngle() const;
+  bool isInsideMagnet() const;
+  bool trajectoryPosition(const double z, double& x, double& y) const;
 
   ClassDef(MCSimpleEventParticle,1);
 };
