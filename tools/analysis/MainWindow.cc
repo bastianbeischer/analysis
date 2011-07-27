@@ -90,6 +90,7 @@
 #include "ZenithDistributionPlot.hh"
 #include "AzimuthDistributionPlot.hh"
 #include "AzimuthMigrationHistogram.hh"
+#include "RigidityMigrationHistogram.hh"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -572,6 +573,9 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Negative));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Inverted));
     m_ui.plotter->addPlot(new AlbedosVsMomentumPlot());
+    m_ui.plotter->addPlot(new RigidityMigrationHistogram(RigidityMigrationHistogram::Positive));
+    m_ui.plotter->addPlot(new RigidityMigrationHistogram(RigidityMigrationHistogram::Negative));
+    m_ui.plotter->addPlot(new RigidityMigrationHistogram(RigidityMigrationHistogram::All));
   }
   if (m_ui.efficiencyTofCheckBox->isChecked()) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
