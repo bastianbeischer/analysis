@@ -9,6 +9,7 @@
 #include "SimpleEvent.hh"
 #include "Settings.hh"
 #include "SettingsManager.hh"
+#include "Helpers.hh"
 
 #include "TRDCalculations.hh"
 
@@ -52,13 +53,9 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(QDateTime first, QDateTime last, un
   int nBins = TRDSpectrumPlot::spectrumDefaultBins;
   double lowerBound = 1e-3;
   double upperBound = TRDSpectrumPlot::spectrumUpperLimit();
-  double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
-  double p[nBins+1];
-  for (int i = 0; i < nBins+1; i++) {
-    p[i] = pow(lowerBound, delta*i+1);
-  }
+  const QVector<double>& axis = Helpers::logBinning(nBins, lowerBound, upperBound);
 
-  TH2D* histogram = new TH2D(qPrintable(title()),"", nTimeBins,t1,t2, nBins, p);
+  TH2D* histogram = new TH2D(qPrintable(title()),"", nTimeBins,t1,t2, nBins, axis.constData());
   histogram->Sumw2();
   histogram->GetXaxis()->SetTimeDisplay(1);
   histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");

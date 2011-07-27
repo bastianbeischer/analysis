@@ -9,7 +9,6 @@
 #include "Layer.hh"
 #include "TrackFinding.hh"
 #include "Setup.hh"
-#include "Corrections.hh"
 #include "DataDescription.hh"
 #include "HitsPlot.hh"
 #include "AnalysisProcessor.hh"
@@ -36,7 +35,6 @@ Plotter::Plotter(QWidget* parent)
   : TQtWidget(parent)
   , m_chain(new DataChain)
   , m_trackFinding(new TrackFinding)
-  , m_corrections(new Corrections)
   , m_track(0)
   , m_processor(new AnalysisProcessor)
   , m_hitsPlot(new HitsPlot)
@@ -54,7 +52,6 @@ Plotter::~Plotter()
     delete m_track;
   delete m_chain;
   delete m_trackFinding;
-  delete m_corrections;
   delete m_hitsPlot;
 }
 

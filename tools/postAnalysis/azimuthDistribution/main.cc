@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
 
   QApplication application(argc, argv);
   MainWindow window;
-  if (application.arguments().count() == 2) {
+  if (application.arguments().count() > 1) {
     QStringList filenames = application.arguments();
     filenames.removeAt(0);
     window.addAnalysisFiles(filenames);

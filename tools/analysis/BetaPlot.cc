@@ -49,7 +49,8 @@ void BetaPlot::processEvent(const QVector<Hit*>&, const Particle* const particle
   if (!track || !track->fitGood())
     return;
   ParticleInformation::Flags flags = particle->information()->flags();
-  if (!(flags & ParticleInformation::AllTrackerLayers))
+  ParticleInformation::Flags required = ParticleInformation::Chi2Good | ParticleInformation::BetaGood;
+  if ((flags & required) != required)
     return;
   histogram()->Fill(1./particle->beta());
 }

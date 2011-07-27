@@ -6,11 +6,11 @@ CONFIG += debug
 TOPLEVEL = ..
 
 CLASSES += \
-  RootStyle
+  RootStyle \
+  Helpers
 
 HEADERS += \
-  Constants.hh \
-  Helpers.hh
+  Constants.hh
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

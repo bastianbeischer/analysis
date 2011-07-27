@@ -27,7 +27,7 @@ MainWindow::~MainWindow()
 void MainWindow::setupAnalysis()
 {
   PostAnalysisCanvas* canvas = 0;
-  TFile file(qPrintable(m_analysisFile));
+  TFile file(qPrintable(m_analysisFiles.at(0)));
   gROOT->cd();
   const char* upper[] = {"0x8000 0x8010", "0x8004 0x8014", "0x8008 0x8018", "0x800c 0x801c"};
   const char* lower[] = {"0x8020 0x8030", "0x8024 0x8034", "0x8028 0x8038", "0x802c 0x803c"};

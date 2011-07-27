@@ -8,6 +8,7 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "SimpleEvent.hh"
+#include "Helpers.hh"
 
 #include <iostream>
 #include <cmath>
@@ -29,14 +30,11 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Type type) :
   } else if (m_type == Negative || m_type == Positive) {
     if (m_type == Negative) setTitle(title() + " - Negative");
     if (m_type == Positive) setTitle(title() + " - Positive");
-    double lowerBound = 1e-1;
-    double upperBound = 20.;
-    double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
-    double p[nBins+1];
-    for (int i = 0; i < nBins+1; i++) {
-      p[i] = pow(lowerBound, delta*i+1);
-    }
-    histogram = new TH1D(qPrintable(title()), "", nBins, p);
+    const double min = 0.1;
+    const double max = 20;
+    const QVector<double>& axis = Helpers::logBinning(nBins, min, max);
+
+    histogram = new TH1D(qPrintable(title()), "", nBins, axis.constData());
     setAxisTitle("R / GV", "particles / GV");
   } else if (m_type == Inverted) {
     setTitle(title() + " - Inverted");

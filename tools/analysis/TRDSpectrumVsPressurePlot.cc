@@ -9,6 +9,7 @@
 #include "TRDCalculations.hh"
 #include "Settings.hh"
 #include "SettingsManager.hh"
+#include "Helpers.hh"
 
 #include <TH2D.h>
 #include <TAxis.h>
@@ -53,13 +54,9 @@ TRDSpectrumVsPressurePlot::TRDSpectrumVsPressurePlot(unsigned short id, TRDSpect
   int nBins = TRDSpectrumPlot::spectrumDefaultBins;
   double lowerBound = 1e-3;
   double upperBound = TRDSpectrumPlot::spectrumUpperLimit();
-  double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
-  double p[nBins+1];
-  for (int i = 0; i < nBins+1; i++) {
-    p[i] = pow(lowerBound, delta*i+1);
-  }
+  const QVector<double>& axis = Helpers::logBinning(nBins, lowerBound, upperBound);
 
-  TH2D* histogram = new TH2D(qPrintable(title()),"", nPressureBins, minPressure, maxPressure, nBins, p);
+  TH2D* histogram = new TH2D(qPrintable(title()),"", nPressureBins, minPressure, maxPressure, nBins, axis.constData());
   setAxisTitle("pressure /  mBar", TRDSpectrumPlot::xAxisTitle(), "");
   addHistogram(histogram);
 }

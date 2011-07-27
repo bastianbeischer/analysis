@@ -3,6 +3,7 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "ParticleInformation.hh"
+#include "Helpers.hh"
 
 #include <QMap>
 
@@ -25,16 +26,12 @@ TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot(Type type)
     htitle += " all";
   setTitle(htitle);
 
-  int nBins = 21;
-  double lowerBound = 1e-1;
-  double upperBound = 20.;
-  double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
-  double p[nBins+1];
-  for (int i = 0; i < nBins+1; i++) {
-    p[i] = pow(lowerBound, delta*i+1);
-  }
+  const int nBins = 21;
+  const double min = 0.1;
+  const double max = 20;
+  const QVector<double>& axis = Helpers::logBinning(nBins, min, max);
 
-  TH2D* histogram = new TH2D(qPrintable(title()), "", nBins, p, 7, 1.5, 8.5);
+  TH2D* histogram = new TH2D(qPrintable(title()), "", nBins, axis.constData(), 7, 1.5, 8.5);
   setAxisTitle("R / GV", "layers with exactly one hit", "");
   addHistogram(histogram);
   setDrawOption(COLZTEXT);

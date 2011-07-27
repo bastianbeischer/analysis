@@ -36,7 +36,6 @@ private:
   TH1D* m_total;
   unsigned int m_nTotal;
   unsigned int m_nReconstructed;
-  QVector<double> logBinning(unsigned int nBins, double min, double max);
 };
 
 #endif
