@@ -29,12 +29,6 @@ const int TRDReconstruction::s_spectrumDefaultBins = 100;
 
 TRDReconstruction::TRDReconstruction()
   : m_flags(None)
-  , m_layerEnergyDeposition(8, 0.)
-  , m_layerEnergyDepositionOnTrack(8, 0.)
-  , m_layerEnergyDepositionOnTrackAndPierced(8, 0.)
-  , m_layerLengthThroughTube(8, 0.)
-  , m_layerEnergyDepositionOnTrackPerLength(8, 0.)
-  , m_layerEnergyDepositionOnTrackPerMinLength(8, 0.)
 {
 }
 
@@ -57,13 +51,14 @@ void TRDReconstruction::reset()
   }
   m_channelEdep.clear();
   m_moduleEdep.clear();
-  //now set all values per layer to zero
-  m_layerEnergyDeposition.fill(0.);
-  m_layerEnergyDepositionOnTrack.fill(0.);
-  m_layerEnergyDepositionOnTrackAndPierced.fill(0.);
-  m_layerLengthThroughTube.fill(0.);
-  m_layerEnergyDepositionOnTrackPerLength.fill(0.);
-  m_layerEnergyDepositionOnTrackPerMinLength.fill(0.);
+
+  for (int i = 0; i < 8; ++i) {
+    m_layerEdep[i].edep = 0.;
+    m_layerEdep[i].edepOnTrack = 0.;
+    m_layerEdep[i].lengthThroughTube = 0.;
+    m_layerEdep[i].edepOnTrackAndPierced = 0.;
+    m_layerEdep[i].edepOnTrackPerLength = 0.;
+  }
 }
 
 void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
@@ -86,18 +81,19 @@ void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
       hits << hit;
     }
     int trdLayer = TRDReconstruction::TRDLayerNo(hit);
-    //now we have one raw hit or all subhits of a cluster in the list.
+    //now we have the single hit or all subhits of a cluster in the list.
 
+    //do the general sorting of the cluster, if presentm in the correct lists and layer
     if (cluster) {
       m_allClusters << cluster;
       m_layerAllClusters[trdLayer].append(cluster);
       if (globalTrack && globalTrack->fitGood() && globalTrack->hits().contains(cluster)) {
         m_allClustersOnTrack << cluster;
         m_layerAllClustersOnTrack[trdLayer].append(cluster);
-        //m_layerEnergyDepositionOnTrack[trdLayer] += cluster->signalHeight();
       }
     }
 
+    //now loop over all subhits:
     bool oneSubHitPierced = false;
     for (QVector<Hit*>::const_iterator it = hits.constBegin(); it != hits.constEnd(); ++it) {
       Hit* subHit = *it;
@@ -105,34 +101,39 @@ void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
       unsigned short channelId = subHit->detId();
       unsigned short moduleId = channelId & 0xFFF0;
       m_allHits << subHit;
-      m_layerAllHits[trdLayer].append(subHit);
-      m_layerEnergyDeposition[trdLayer] += amplitude;
+      m_layerAllHits[trdLayer] << subHit;
+      m_layerEdep[trdLayer].edep += amplitude;
       m_channelEdep[channelId].edep += amplitude;
       m_moduleEdep[moduleId].edep += amplitude;
-      double lengthInTube = TRDReconstruction::distanceOnTrackThroughTRDTube(subHit, globalTrack);
-      double minLength = qMax(1.0 /*mm*/, lengthInTube);
+
+      //subit is on track or cluster of subhit is on track
       if (globalTrack && globalTrack->fitGood() && (globalTrack->hits().contains(cluster) || globalTrack->hits().contains(subHit))) {
         m_allHitsOnTrack << subHit;
-        m_layerAllHitsOnTrack[trdLayer].append(subHit);
-        m_layerEnergyDepositionOnTrack[trdLayer] += amplitude;
-        m_layerEnergyDepositionOnTrackPerMinLength[trdLayer] += (amplitude / minLength);
+        m_layerAllHitsOnTrack[trdLayer] << subHit;
+        m_layerEdep[trdLayer].edepOnTrack += amplitude;
         m_channelEdep[channelId].edepOnTrack += amplitude;
         m_moduleEdep[moduleId].edepOnTrack += amplitude;
-        m_channelEdep[channelId].edepOnTrackPerMinLength += (amplitude / minLength);
-        m_moduleEdep[moduleId].edepOnTrackPerMinLength += (amplitude / minLength);
       }
+
+      //the subhit has been pierced by the global track
+      double lengthInTube = TRDReconstruction::distanceOnTrackThroughTRDTube(subHit, globalTrack);
       if (lengthInTube > 0.) {
         oneSubHitPierced = true;
-        m_layerLengthThroughTube[trdLayer] += lengthInTube;
         m_allHitsOnTrackAndPierced << subHit;
-        m_layerAllHitsOnTrackAndPierced[trdLayer].append(subHit);
-        m_layerEnergyDepositionOnTrackAndPierced[trdLayer] += amplitude;
-        m_layerEnergyDepositionOnTrackPerLength[trdLayer] += (amplitude / lengthInTube);
+        m_layerAllHitsOnTrackAndPierced[trdLayer] << subHit;
+        m_layerEdep[trdLayer].lengthThroughTube += lengthInTube;
+        m_channelEdep[channelId].lengthThroughTube += lengthInTube;
+        m_moduleEdep[moduleId].lengthThroughTube += lengthInTube;
+        m_layerEdep[trdLayer].edepOnTrackAndPierced += amplitude;
+        m_channelEdep[channelId].edepOnTrackAndPierced += amplitude;
+        m_moduleEdep[moduleId].edepOnTrackAndPierced += amplitude;
+        m_layerEdep[trdLayer].edepOnTrackPerLength += (amplitude / lengthInTube);
         m_channelEdep[channelId].edepOnTrackPerLength += (amplitude / lengthInTube);
         m_moduleEdep[moduleId].edepOnTrackPerLength += (amplitude / lengthInTube);
       }
     }
 
+    //we can only check if subhits have been pierced, if this is true add the cluster to the pierced lists
     if (oneSubHitPierced) {
       m_allClustersOnTrackAndPierced << cluster;
       m_layerAllClustersOnTrackAndPierced[trdLayer].append(cluster);
@@ -159,8 +160,8 @@ void TRDReconstruction::checkGoodTRDEvent(const Track* track)
 int TRDReconstruction::noOfLayersWithEnergyDeposition() const
 {
   int count = 0;
-  for (QVector<double>::const_iterator it = m_layerEnergyDeposition.constBegin(); it != m_layerEnergyDeposition.constEnd(); ++it)
-    if (*it > 0)
+  for (int i = 0; i < 8; ++i)
+    if (m_layerEdep[i].edep > 0)
       ++count;
   return count;
 }
@@ -168,8 +169,8 @@ int TRDReconstruction::noOfLayersWithEnergyDeposition() const
 int TRDReconstruction::noOfLayersWithEnergyDepositionOnTrack() const
 {
   int count = 0;
-  for (QVector<double>::const_iterator it = m_layerEnergyDepositionOnTrack.constBegin(); it != m_layerEnergyDepositionOnTrack.constEnd(); ++it)
-    if (*it > 0)
+  for (int i = 0; i < 8; ++i)
+    if (m_layerEdep[i].edepOnTrack > 0)
       ++count;
   return count;
 }
@@ -177,26 +178,8 @@ int TRDReconstruction::noOfLayersWithEnergyDepositionOnTrack() const
 int TRDReconstruction::noOfLayersWithEnergyDepositionOnTrackAndPierced() const
 {
   int count = 0;
-  for (QVector<double>::const_iterator it = m_layerEnergyDepositionOnTrackAndPierced.constBegin(); it != m_layerEnergyDepositionOnTrackAndPierced.constEnd(); ++it)
-    if (*it > 0)
-      ++count;
-  return count;
-}
-
-int TRDReconstruction::noOfLayersWithEnergyDepositionOnTrackPerLength() const
-{
-  int count = 0;
-  for (QVector<double>::const_iterator it = m_layerEnergyDepositionOnTrackPerLength.constBegin(); it != m_layerEnergyDepositionOnTrackPerLength.constEnd(); ++it)
-    if (*it > 0)
-      ++count;
-  return count;
-}
-
-int TRDReconstruction::noOfLayersWithEnergyDepositionOnTrackPerMinLength() const
-{
-  int count = 0;
-  for (QVector<double>::const_iterator it = m_layerEnergyDepositionOnTrackPerMinLength.constBegin(); it != m_layerEnergyDepositionOnTrackPerMinLength.constEnd(); ++it)
-    if (*it > 0)
+  for (int i = 0; i < 8; ++i)
+    if (m_layerEdep[i].lengthThroughTube > 0)
       ++count;
   return count;
 }

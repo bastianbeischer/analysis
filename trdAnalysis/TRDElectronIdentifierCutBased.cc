@@ -26,10 +26,14 @@ bool TRDElectronIdentifierCutBased::isElectronish(const QVector<Hit*>&, const Pa
   //can be reconstructed
   ok = true;
 
-  QList<double> values = TRDReconstruction::s_calculateLengthInTube ?
-        trdReconst->energyDepositionOnTrackPerLengthForLayers().toList() : trdReconst->energyDepositionOnTrackForLayers().toList();
-
-  values.removeAll(0.);
+  QList<double> values;
+  if (TRDReconstruction::s_calculateLengthInTube) {
+    for (int i = 0; i < 8; ++i)
+      values << trdReconst->energyDepositionForLayer(i).edepOnTrackPerLength;
+  } else {
+    for (int i = 0; i < 8; ++i)
+      values << trdReconst->energyDepositionForLayer(i).edepOnTrack;
+  }
 
   qSort(values) ;
   if (values.at(m_layerCut-1) > m_energyDepositionPerLengthCut) {

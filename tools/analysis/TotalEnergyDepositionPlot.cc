@@ -32,12 +32,13 @@ void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, const Particl
   if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
     return;
 
-  const QVector<double>& values = TRDReconstruction::s_calculateLengthInTube ?
-        trdReconst->energyDepositionOnTrackPerLengthForLayers() : trdReconst->energyDepositionOnTrackForLayers();
-
   double signalSum = 0.;
-  for (QVector<double>::const_iterator it = values.constBegin(); it != values.constEnd(); ++it)
-    signalSum += *it;
+  if (TRDReconstruction::s_calculateLengthInTube)
+    for (int i = 0; i < 8; ++i)
+      signalSum += trdReconst->energyDepositionForLayer(i).edepOnTrackPerLength;
+  else
+    for (int i = 0; i < 8; ++i)
+      signalSum += trdReconst->energyDepositionForLayer(i).edepOnTrack;
 
   histogram()->Fill(signalSum);
 }

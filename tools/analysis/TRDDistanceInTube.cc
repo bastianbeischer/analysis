@@ -31,6 +31,6 @@ void TRDDistanceInTube::processEvent(const QVector<Hit*>&, const Particle* const
   if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
     return;
 
-  const QVector<double>& values = trdReconst->lengthThroughTubeForLayers();
-  histogram()->FillN(values.size(), values.constData(), 0);
+  for (int i = 0; i < 8; ++i)
+    histogram()->Fill(trdReconst->energyDepositionForLayer(i).lengthThroughTube);
 }

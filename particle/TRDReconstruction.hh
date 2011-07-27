@@ -16,8 +16,9 @@ class Particle;
 struct EnergyDeposition {
   double edep;
   double edepOnTrack;
+  double lengthThroughTube;
+  double edepOnTrackAndPierced;
   double edepOnTrackPerLength;
-  double edepOnTrackPerMinLength;
 };
 
 class TRDReconstruction
@@ -58,28 +59,9 @@ public:
   const QVector<const Hit*>& allHitsOnTrackAndPiercedForLayer(int layer) const {return m_layerAllHitsOnTrackAndPierced[layer];}
   const QVector<const Cluster*>& allClustersOnTrackAndPiercedForLayer(int layer) const {return m_layerAllClustersOnTrackAndPierced[layer];}
 
-  const QVector<double>& energyDepositionForLayers() const {return m_layerEnergyDeposition;}
-  const QVector<double>& energyDepositionOnTrackForLayers() const {return m_layerEnergyDepositionOnTrack;}
-  const QVector<double>& energyDepositionOnTrackAndPiercedForLayers() const {return m_layerEnergyDepositionOnTrackAndPierced;}
-  const QVector<double>& lengthThroughTubeForLayers() const {return m_layerLengthThroughTube;}
-  const QVector<double>& energyDepositionOnTrackPerLengthForLayers() const {return m_layerEnergyDepositionOnTrackPerLength;}
-  const QVector<double>& energyDepositionOnTrackPerMinLengthForLayer() const {return m_layerEnergyDepositionOnTrackPerMinLength;}
-
-  double energyDepositionForLayer(int layer) const {return m_layerEnergyDeposition.at(layer);}
-  double energyDepositionOnTrackForLayer(int layer) const {return m_layerEnergyDepositionOnTrack.at(layer);}
-  double energyDepositionOnTrackAndPiercedForLayer(int layer) const {return m_layerEnergyDepositionOnTrackAndPierced.at(layer);}
-  double lengthThroughTubeForLayer(int layer) const {return m_layerLengthThroughTube.at(layer);}
-  double energyDepositionOnTrackPerLengthForLayer(int layer) const {return m_layerEnergyDepositionOnTrackPerLength.at(layer);}
-  double energyDepositionOnTrackPerMinLengthForLayer(int layer) const {return m_layerEnergyDepositionOnTrackPerMinLength.at(layer);}
-
-  double energyDepositionForChannel(unsigned short channelID) const {return m_channelEdep.value(channelID).edep;}
-  double energyDepositionOnTrackForChannel(unsigned short channelID) const {return m_channelEdep.value(channelID).edepOnTrack;}
-  double energyDepositionOnTrackPerLengthForChannel(unsigned short channelID) const {return m_channelEdep.value(channelID).edepOnTrackPerLength;}
-  double energyDepositionOnTrackPerMinLengthForChannel(unsigned short channelID) const {return m_channelEdep.value(channelID).edepOnTrackPerMinLength;}
-  double energyDepositionForModule(unsigned short moduleID) const {return m_moduleEdep.value(moduleID).edep;}
-  double energyDepositionOnTrackForModule(unsigned short moduleID) const {return m_moduleEdep.value(moduleID).edepOnTrack;}
-  double energyDepositionOnTrackPerLengthForModule(unsigned short moduleID) const {return m_moduleEdep.value(moduleID).edepOnTrackPerLength;}
-  double energyDepositionOnTrackPerMinLengthForModule(unsigned short moduleID) const {return m_moduleEdep.value(moduleID).edepOnTrackPerMinLength;}
+  const EnergyDeposition& energyDepositionForLayer(int layer) const {return m_layerEdep[layer];}
+  const EnergyDeposition& energyDepositionForChannel(unsigned short channelID) const {return m_channelEdep.constFind(channelID).value();}
+  const EnergyDeposition& energyDepositionForModule(unsigned short moduleID) const {return m_moduleEdep.constFind(moduleID).value();}
 
   int noOfHits() const {return m_allHits.size();}
   int noOfClusters() const {return m_allClusters.size();}
@@ -90,8 +72,6 @@ public:
   int noOfLayersWithEnergyDeposition() const;
   int noOfLayersWithEnergyDepositionOnTrack() const;
   int noOfLayersWithEnergyDepositionOnTrackAndPierced() const;
-  int noOfLayersWithEnergyDepositionOnTrackPerLength() const;
-  int noOfLayersWithEnergyDepositionOnTrackPerMinLength() const; // not necessary
 
 private:
   void checkGoodTRDEvent(const Track*);
@@ -119,12 +99,7 @@ private:
   QVector<const Cluster*> m_layerAllClustersOnTrack[8];
   QVector<const Cluster*> m_layerAllClustersOnTrackAndPierced[8];
 
-  QVector<double> m_layerEnergyDeposition;
-  QVector<double> m_layerEnergyDepositionOnTrack;
-  QVector<double> m_layerEnergyDepositionOnTrackAndPierced;
-  QVector<double> m_layerLengthThroughTube;
-  QVector<double> m_layerEnergyDepositionOnTrackPerLength;
-  QVector<double> m_layerEnergyDepositionOnTrackPerMinLength;
+  EnergyDeposition m_layerEdep[8];
 
   QMap<unsigned short, EnergyDeposition> m_channelEdep;
   QMap<unsigned short, EnergyDeposition> m_moduleEdep;

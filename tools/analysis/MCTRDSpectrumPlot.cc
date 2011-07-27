@@ -70,33 +70,41 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>&, const Particle* const
   if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
     return;
 
-  QList<double> valuesToFill;
+  QVector<double> valuesToFill;
   switch (m_spectrumType) {
   case TRDSpectrumPlot::completeTRD:
-    if (TRDReconstruction::s_calculateLengthInTube)
+    if (TRDReconstruction::s_calculateLengthInTube) {
       for (int i = 0; i < 8; ++i)
-        valuesToFill << trdReconst->energyDepositionOnTrackPerLengthForLayer(i);
-    else
+        if (trdReconst->energyDepositionForLayer(i).lengthThroughTube > 0.)
+          valuesToFill << trdReconst->energyDepositionForLayer(i).edepOnTrackPerLength;
+    } else {
       for (int i = 0; i < 8; ++i)
-        valuesToFill << trdReconst->energyDepositionOnTrackForLayer(i);
+        valuesToFill << trdReconst->energyDepositionForLayer(i).edepOnTrack;
+    }
     break;
   case TRDSpectrumPlot::module:
-    if (TRDReconstruction::s_calculateLengthInTube)
-      valuesToFill << trdReconst->energyDepositionOnTrackPerLengthForModule(m_id);
-    else
-      valuesToFill << trdReconst->energyDepositionOnTrackForModule(m_id);
+    if (TRDReconstruction::s_calculateLengthInTube) {
+      if (trdReconst->energyDepositionForModule(m_id).lengthThroughTube > 0.)
+        valuesToFill << trdReconst->energyDepositionForModule(m_id).edepOnTrackPerLength;
+    } else {
+      valuesToFill << trdReconst->energyDepositionForModule(m_id).edepOnTrack;
+    }
     break;
   case TRDSpectrumPlot::channel:
-    if (TRDReconstruction::s_calculateLengthInTube)
-      valuesToFill << trdReconst->energyDepositionOnTrackPerLengthForChannel(m_id);
-    else
-      valuesToFill << trdReconst->energyDepositionOnTrackForModule(m_id);
+    if (TRDReconstruction::s_calculateLengthInTube) {
+      if (trdReconst->energyDepositionForChannel(m_id).lengthThroughTube > 0.)
+        valuesToFill << trdReconst->energyDepositionForChannel(m_id).edepOnTrackPerLength;
+    } else {
+      valuesToFill << trdReconst->energyDepositionForChannel(m_id).edepOnTrack;
+    }
     break;
   case TRDSpectrumPlot::layer:
-    if (TRDReconstruction::s_calculateLengthInTube)
-        valuesToFill << trdReconst->energyDepositionOnTrackPerLengthForLayer(m_id);
-    else
-        valuesToFill << trdReconst->energyDepositionOnTrackForLayer(m_id);
+    if (TRDReconstruction::s_calculateLengthInTube) {
+      if (trdReconst->energyDepositionForLayer(m_id).lengthThroughTube > 0.)
+        valuesToFill << trdReconst->energyDepositionForLayer(m_id).edepOnTrackPerLength;
+    } else {
+      valuesToFill << trdReconst->energyDepositionForLayer(m_id).edepOnTrack;
+    }
     break;
   }
 
@@ -127,9 +135,7 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>&, const Particle* const
     addHistogram(spectrumHisto, H1DPlot::HIST);
   }
 
-  for (QList<double>::const_iterator it = valuesToFill.constBegin(); it != valuesToFill.constEnd(); ++it) {
-    if (!(*it > 0.))
-      continue;
+  for (QVector<double>::const_iterator it = valuesToFill.constBegin(); it != valuesToFill.constEnd(); ++it) {
     int iBin = spectrumHisto->FindBin(*it);
     double width = spectrumHisto->GetBinWidth(iBin);
     double weight = 1./width;
