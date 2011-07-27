@@ -41,7 +41,7 @@ void AzimuthDistributionPlot::processEvent(const QVector<Hit*>&, const Particle*
     return;
 
   ParticleInformation::Flags flags = particle->information()->flags();
-  if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || !(flags & ParticleInformation::BetaGood) || (flags & ParticleInformation::Albedo) )
+  if ( !(flags & ParticleInformation::Chi2Good) || !(flags & ParticleInformation::InsideMagnet) || !(flags & ParticleInformation::BetaGood) || (flags & ParticleInformation::Albedo) )
     return;
 
   double azimuth = track->azimuthAngle() * 180. / M_PI;

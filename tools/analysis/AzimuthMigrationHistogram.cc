@@ -49,7 +49,7 @@ void AzimuthMigrationHistogram::processEvent(const QVector<Hit*>&, const Particl
     return;
 
   ParticleInformation::Flags flags = particle->information()->flags();
-  if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
+  if ( !(flags & ParticleInformation::Chi2Good) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
     return;
 
   if (!event->MCInformation()->primary()->isInsideMagnet())
