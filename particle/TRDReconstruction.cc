@@ -58,6 +58,8 @@ void TRDReconstruction::reset()
     m_layerEdep[i].lengthThroughTube = 0.;
     m_layerEdep[i].edepOnTrackAndPierced = 0.;
     m_layerEdep[i].edepOnTrackPerLength = 0.;
+    m_layerEdep[i].isOnTRack = false;
+    m_layerEdep[i].isPierced = false;
   }
 }
 
@@ -113,6 +115,9 @@ void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
         m_layerEdep[trdLayer].edepOnTrack += amplitude;
         m_channelEdep[channelId].edepOnTrack += amplitude;
         m_moduleEdep[moduleId].edepOnTrack += amplitude;
+        m_layerEdep[trdLayer].isOnTRack = true; //dose it make sense for layers?
+        m_channelEdep[channelId].isOnTRack = true;
+        m_moduleEdep[moduleId].isOnTRack = true; //dose it make sense for modules?
       }
 
       //the subhit has been pierced by the global track
@@ -130,6 +135,9 @@ void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
         m_layerEdep[trdLayer].edepOnTrackPerLength += (amplitude / lengthInTube);
         m_channelEdep[channelId].edepOnTrackPerLength += (amplitude / lengthInTube);
         m_moduleEdep[moduleId].edepOnTrackPerLength += (amplitude / lengthInTube);
+        m_layerEdep[trdLayer].isPierced = true; //dose it make sense for layers?
+        m_channelEdep[channelId].isPierced = true;
+        m_moduleEdep[moduleId].isPierced = true; //dose it make sense for modules?
       }
     }
 
@@ -170,7 +178,7 @@ int TRDReconstruction::noOfLayersWithEnergyDepositionOnTrack() const
 {
   int count = 0;
   for (int i = 0; i < 8; ++i)
-    if (m_layerEdep[i].edepOnTrack > 0)
+    if (m_layerEdep[i].isOnTRack)
       ++count;
   return count;
 }
@@ -179,7 +187,7 @@ int TRDReconstruction::noOfLayersWithEnergyDepositionOnTrackAndPierced() const
 {
   int count = 0;
   for (int i = 0; i < 8; ++i)
-    if (m_layerEdep[i].lengthThroughTube > 0)
+    if (m_layerEdep[i].isPierced)
       ++count;
   return count;
 }

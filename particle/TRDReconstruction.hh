@@ -19,6 +19,8 @@ struct EnergyDeposition {
   double lengthThroughTube;
   double edepOnTrackAndPierced;
   double edepOnTrackPerLength;
+  bool isOnTRack;
+  bool isPierced;
 };
 
 class TRDReconstruction

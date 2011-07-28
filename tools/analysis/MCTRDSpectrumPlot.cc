@@ -75,16 +75,17 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>&, const Particle* const
   case TRDSpectrumPlot::completeTRD:
     if (TRDReconstruction::s_calculateLengthInTube) {
       for (int i = 0; i < 8; ++i)
-        if (trdReconst->energyDepositionForLayer(i).lengthThroughTube > 0.)
+        if (trdReconst->energyDepositionForLayer(i).isPierced)
           valuesToFill << trdReconst->energyDepositionForLayer(i).edepOnTrackPerLength;
     } else {
       for (int i = 0; i < 8; ++i)
-        valuesToFill << trdReconst->energyDepositionForLayer(i).edepOnTrack;
+        if (trdReconst->energyDepositionForLayer(i).isOnTRack)
+          valuesToFill << trdReconst->energyDepositionForLayer(i).edepOnTrack;
     }
     break;
   case TRDSpectrumPlot::module:
     if (TRDReconstruction::s_calculateLengthInTube) {
-      if (trdReconst->energyDepositionForModule(m_id).lengthThroughTube > 0.)
+      if (trdReconst->energyDepositionForModule(m_id).isPierced)
         valuesToFill << trdReconst->energyDepositionForModule(m_id).edepOnTrackPerLength;
     } else {
       valuesToFill << trdReconst->energyDepositionForModule(m_id).edepOnTrack;
@@ -92,18 +93,20 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>&, const Particle* const
     break;
   case TRDSpectrumPlot::channel:
     if (TRDReconstruction::s_calculateLengthInTube) {
-      if (trdReconst->energyDepositionForChannel(m_id).lengthThroughTube > 0.)
+      if (trdReconst->energyDepositionForChannel(m_id).isPierced)
         valuesToFill << trdReconst->energyDepositionForChannel(m_id).edepOnTrackPerLength;
     } else {
-      valuesToFill << trdReconst->energyDepositionForChannel(m_id).edepOnTrack;
+      if (trdReconst->energyDepositionForChannel(m_id).isOnTRack)
+        valuesToFill << trdReconst->energyDepositionForChannel(m_id).edepOnTrack;
     }
     break;
   case TRDSpectrumPlot::layer:
     if (TRDReconstruction::s_calculateLengthInTube) {
-      if (trdReconst->energyDepositionForLayer(m_id).lengthThroughTube > 0.)
+      if (trdReconst->energyDepositionForLayer(m_id).isPierced)
         valuesToFill << trdReconst->energyDepositionForLayer(m_id).edepOnTrackPerLength;
     } else {
-      valuesToFill << trdReconst->energyDepositionForLayer(m_id).edepOnTrack;
+      if (trdReconst->energyDepositionForLayer(m_id).isOnTRack)
+        valuesToFill << trdReconst->energyDepositionForLayer(m_id).edepOnTrack;
     }
     break;
   }
