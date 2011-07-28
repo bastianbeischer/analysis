@@ -39,7 +39,7 @@ public:
   static unsigned char TRDLayerNo(const Hit* hit);
   static unsigned char TRDLayerNo(const unsigned short detID);
 
-  static double spectrumUpperLimit() {return TRDReconstruction::s_calculateLengthInTube ? 15 : 50 ;}
+  static double spectrumUpperLimit() {return TRDReconstruction::s_calculateLengthInTube ? 20 : 70 ;}
   static QString xAxisTitle() {return TRDReconstruction::s_calculateLengthInTube ? "energy deposition length in tube / (keV/mm)" : "energy deposition / keV" ;}
 
 public:
