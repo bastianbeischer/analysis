@@ -18,11 +18,13 @@ double functionNonTR(double *x, double *par)
      p[4] linear term in exponential
      p[5] quadratic term in exponential
      p[6] cubic term in exponential
+     p[7] const for gauss
+     p[8] sigma of gauss
   **/
   if (x[0]<par[1])
-    return par[0]*TMath::Landau(x[0],par[1],par[2])*TMath::Exp(par[4]*x[0]+par[5]*x[0]*x[0]+par[6]*x[0]*x[0]*x[0]);
+    return par[0]*TMath::Landau(x[0],par[1],par[2])*TMath::Exp(par[4]*x[0]+par[5]*x[0]*x[0]+par[6]*x[0]*x[0]*x[0])+ par[7]*TMath::Gaus(x[0],par[8],par[9]);
   else
-    return par[0]*TMath::Landau(x[0],par[1],par[3])*TMath::Exp(par[4]*x[0]+par[5]*x[0]*x[0]+par[6]*x[0]*x[0]*x[0]);
+    return par[0]*TMath::Landau(x[0],par[1],par[3])*TMath::Exp(par[4]*x[0]+par[5]*x[0]*x[0]+par[6]*x[0]*x[0]*x[0])+ par[7]*TMath::Gaus(x[0],par[8],par[9]);
 }
 
 
@@ -67,19 +69,27 @@ TF1* TRDLikelihoods::prototypeLHFunctionNonTR()
      p[4] linear term in exponential
      p[5] quadratic term in exponential
      p[6] cubic term in exponential
+     p[7] const for gauss
+     p[8] sigma of gauss
   **/
 
-  TF1* LHFun = new TF1("TRDLikelihoodNonTR", functionNonTR, 0., 100., 7);
+  TF1* LHFun = new TF1("TRDLikelihoodNonTR", functionNonTR, 0., 100., 10);
   //set default values:
   LHFun->SetNpx(1000);
   if (m_normalizedToLength)
-    LHFun->SetParameters(7.5, 0.34, 0.115, 0.135, -0.0594475, 0.00140946, -2.07114e-05);
+    LHFun->SetParameters(7.5, 0.34, 0.115, 0.135, -0.0594475, 0.00140946, -2.07114e-05, 0.5, 0., 0.1);
   else
-    LHFun->SetParameters(1.32391,2.23676,1.02281,0.788797, -0.0594475, 0.00140946, -2.07114e-05);
+    LHFun->SetParameters(1.32391,2.23676,1.02281,0.788797, -0.0594475, 0.00140946, -2.07114e-05, 0.5, 0., 0.1);
+
+  LHFun->SetParLimits(2, 0.01,0.1);
 
   LHFun->SetParLimits(4, -0.0594475*10, -0.0594475*0.1);
   LHFun->SetParLimits(5, 0.00140946*0.1, 0.00140946*20);
   LHFun->SetParLimits(6, -2.07114e-05*20, -2.07114e-05*0.02);
+
+  LHFun->SetParLimits(7, 0.01, 1);
+  LHFun->SetParLimits(8, -0.1, 0);
+  LHFun->SetParLimits(9, 0.05, 1);
 
   //normalize
   //double integral = LHFun->Integral(0,100);
