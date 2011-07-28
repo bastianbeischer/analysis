@@ -57,7 +57,7 @@ void AzimuthMigrationHistogram::processEvent(const QVector<Hit*>&, const Particl
 
   double azimuthGenerated = event->MCInformation()->primary()->azimuthAngle() * 180. / M_PI;
   double azimuthReconstructed = (track->azimuthAngle()) * 180. / M_PI;
-  
+
   if (azimuthGenerated == 180.)
     azimuthGenerated = 0.;
   if (azimuthReconstructed == 180.)
