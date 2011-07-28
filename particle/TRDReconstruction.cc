@@ -22,7 +22,7 @@
 #include <QString>
 
 const bool TRDReconstruction::s_calculateLengthInTube = true;
-const int TRDReconstruction::s_minLayerCut = 6;
+const int TRDReconstruction::s_minLayerCut = 4;
 const int TRDReconstruction::s_maxOffTrackCluster = 2;
 const int TRDReconstruction::s_spectrumDefaultBins = 100;
 
