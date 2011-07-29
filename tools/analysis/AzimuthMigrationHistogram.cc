@@ -59,9 +59,9 @@ void AzimuthMigrationHistogram::processEvent(const QVector<Hit*>&, const Particl
   double azimuthReconstructed = (track->azimuthAngle()) * 180. / M_PI;
 
   if (azimuthGenerated == 180.)
-    azimuthGenerated = 0.;
+    azimuthGenerated = -180.;
   if (azimuthReconstructed == 180.)
-    azimuthReconstructed = 0.;
+    azimuthReconstructed = -180.;
 
   histogram()->Fill(azimuthReconstructed, azimuthGenerated);
   Q_ASSERT(180. >= qAbs(azimuthGenerated));
