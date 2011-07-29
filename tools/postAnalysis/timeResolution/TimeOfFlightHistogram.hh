@@ -12,14 +12,17 @@ class TimeOfFlightHistogram : public PostAnalysisPlot, public H1DPlot {
 public:
   TimeOfFlightHistogram(PostAnalysisCanvas*, int bin);
   virtual ~TimeOfFlightHistogram();
-  double upperY();
-  double lowerY();
-  double mean();
-  double meanError();
-  double sigma();
-  double sigmaError();
-  static TH2D* histgram(TCanvas*);
+  int upperId() const;
+  int lowerId() const;
+  double upperY() const;
+  double lowerY() const;
+  double mean() const;
+  double meanError() const;
+  double sigma() const;
+  double sigmaError() const;
 private:
+  int m_upperId;
+  int m_lowerId;
   double m_upperY;
   double m_lowerY;
   double m_mean;
