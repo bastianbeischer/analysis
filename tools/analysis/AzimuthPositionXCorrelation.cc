@@ -1,4 +1,4 @@
-#include "AzimuthPositionYCorrelation.hh"
+#include "AzimuthPositionXCorrelation.hh"
 
 #include <QDebug>
 
@@ -17,12 +17,12 @@
 #include <iostream>
 #include <cmath>
 
-AzimuthPositionYCorrelation::AzimuthPositionYCorrelation(Type type)
+AzimuthPositionXCorrelation::AzimuthPositionXCorrelation(Type type)
   : AnalysisPlot(AnalysisPlot::Tracking)
   , H2DProjectionPlot()
   , m_type(type)
 {
-  QString htitle = "Azimuth correlation with y position";
+  QString htitle = "Azimuth correlation with x position";
 
   if (m_type == Positive)
     htitle += " positive";
@@ -42,18 +42,18 @@ AzimuthPositionYCorrelation::AzimuthPositionYCorrelation(Type type)
 
   TH2D* histogram = new TH2D(qPrintable(htitle), "", nBinsX, xMin, xMax, nBinsY, yMin, yMax);
   histogram->Sumw2();
-  setAxisTitle("azimuth/degree", "y position / mm", "");
+  setAxisTitle("azimuth/degree", "x position / mm", "");
   addHistogram(histogram);
 
   setDrawOption(COLZ);
   controlWidget()->spinBox()->setMaximum(histogram->GetNbinsY());
 }
 
-AzimuthPositionYCorrelation::~AzimuthPositionYCorrelation()
+AzimuthPositionXCorrelation::~AzimuthPositionXCorrelation()
 {
 }
 
-void AzimuthPositionYCorrelation::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void AzimuthPositionXCorrelation::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 
@@ -73,7 +73,7 @@ void AzimuthPositionYCorrelation::processEvent(const QVector<Hit*>&, const Parti
   }
 
   double azimuth = track->azimuthAngle() * 180. / M_PI;
-  double yPosition = track->y(Constants::upperTofPosition);
+  double xPosition = track->x(Constants::upperTofPosition);
 
-  histogram()->Fill(azimuth, yPosition);
+  histogram()->Fill(azimuth, xPosition);
 }
