@@ -90,6 +90,7 @@
 #include "ZenithDistributionPlot.hh"
 #include "AzimuthDistributionPlot.hh"
 #include "AzimuthMigrationHistogram.hh"
+#include "AzimuthPositionYCorrelation.hh"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -544,6 +545,9 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new Chi2VsMomentumPlot);
     m_ui.plotter->addPlot(new ZenithDistributionPlot());
     m_ui.plotter->addPlot(new AzimuthDistributionPlot());
+    m_ui.plotter->addPlot(new AzimuthPositionYCorrelation(AzimuthPositionYCorrelation::Positive));
+    m_ui.plotter->addPlot(new AzimuthPositionYCorrelation(AzimuthPositionYCorrelation::Negative));
+    m_ui.plotter->addPlot(new AzimuthPositionYCorrelation(AzimuthPositionYCorrelation::All));
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
