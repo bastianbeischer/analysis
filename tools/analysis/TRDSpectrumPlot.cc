@@ -58,9 +58,10 @@ TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType
   addHistogram(histogram, H1DPlot::HIST);
   setDrawOption(H1DPlot::HIST);
 
-  addLatex(RootPlot::newLatex(0.5, 0.8));
-  addLatex(RootPlot::newLatex(0.55, 0.75));
-  addLatex(RootPlot::newLatex(0.55, 0.7));
+  addLatex(RootPlot::newLatex(0.6, 0.85));
+  addLatex(RootPlot::newLatex(0.65, 0.8));
+  addLatex(RootPlot::newLatex(0.7, 0.75));
+  addLatex(RootPlot::newLatex(0.7, 0.7));
 }
 
 TRDSpectrumPlot::~TRDSpectrumPlot()
@@ -135,7 +136,8 @@ void TRDSpectrumPlot::processEvent(const QVector<Hit*>&, const Particle* const p
 
 void TRDSpectrumPlot::update()
 {
-  latex()->SetTitle(qPrintable(QString("entries = %1").arg(histogram()->GetEntries())));
-  latex(1)->SetTitle(qPrintable(QString("uflow = %1").arg(histogram()->GetBinContent(0))));
-  latex(2)->SetTitle(qPrintable(QString("oflow = %1").arg(histogram()->GetBinContent(histogram()->GetNbinsX()+1))));
+  latex(0)->SetTitle(qPrintable(title()));
+  latex(1)->SetTitle(qPrintable(QString("entries = %1").arg(histogram()->GetEntries())));
+  latex(2)->SetTitle(qPrintable(QString("uflow = %1").arg(histogram()->GetBinContent(0))));
+  latex(3)->SetTitle(qPrintable(QString("oflow = %1").arg(histogram()->GetBinContent(histogram()->GetNbinsX()+1))));
 }
