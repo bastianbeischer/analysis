@@ -32,6 +32,7 @@ AzimuthCutStatistics::AzimuthCutStatistics()
   const double maxCuts = 7.5;
 
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsCuts, minCuts, maxCuts, nBinsAzimuth, minAzimuth, maxAzimuth);
+
   histogram->Sumw2();
   setAxisTitle("cut", "azimuth/degree", "");
   addHistogram(histogram);
