@@ -16,4 +16,5 @@ SUBDIRS = \
   trdAnalysis \
   alignment \
   rootplot \
+  fluxAnalysis \
   tools

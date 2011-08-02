@@ -36,6 +36,7 @@ public:
   void addLatex(TLatex*);
   TLatex* latex(int i = 0);
   void addLegend(TLegend*);
+  bool hasLegend();
   TLegend* legend(int i = 0);
   void addFunction(TF1*);
   TF1* function(int i = 0);

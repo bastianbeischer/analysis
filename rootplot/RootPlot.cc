@@ -68,6 +68,11 @@ void RootPlot::addLegend(TLegend* legend)
   m_legend.append(legend);
 }
 
+bool RootPlot::hasLegend()
+{
+  return (m_legend.size() > 0);
+}
+
 TLegend* RootPlot::legend(int i)
 {
   Q_ASSERT(0 <= i && i < m_legend.size());
