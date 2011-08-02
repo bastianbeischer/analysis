@@ -13,7 +13,8 @@ INCLUDEPATH += \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/particle \
   $$TOPLEVEL/tracking \
-  $$TOPLEVEL/trdAnalysis
+  $$TOPLEVEL/trdAnalysis \
+  $$TOPLEVEL/fluxAnalysis
 
 LIBS += \
   -L$$TOPLEVEL/lib \
@@ -24,7 +25,8 @@ LIBS += \
   -ltracking \
   -lrootplot \
   -lsetup \
-  -ltrdAnalysis
+  -ltrdAnalysis \
+  -lfluxAnalysis
 
 SOURCEDIRS = .
 

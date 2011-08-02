@@ -92,6 +92,9 @@
 #include "ZenithDistributionPlot.hh"
 #include "AzimuthDistributionPlot.hh"
 #include "AzimuthMigrationHistogram.hh"
+#include "RigidityParticleSpectrum.hh"
+#include "RigidityFlux.hh"
+#include "RigiditySpectrumRatio.hh"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -576,6 +579,16 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Negative));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Inverted));
     m_ui.plotter->addPlot(new AlbedosVsMomentumPlot());
+    RigidityParticleSpectrum* particleSpectrumAll = new RigidityParticleSpectrum(RigidityParticleSpectrum::All);
+    m_ui.plotter->addPlot(particleSpectrumAll);
+    RigidityParticleSpectrum* particleSpectrumPositive = new RigidityParticleSpectrum(RigidityParticleSpectrum::Positive);
+    m_ui.plotter->addPlot(particleSpectrumPositive);
+    RigidityParticleSpectrum* particleSpectrumNegative = new RigidityParticleSpectrum(RigidityParticleSpectrum::Negative);
+    m_ui.plotter->addPlot(particleSpectrumNegative);
+    m_ui.plotter->addPlot(new RigidityFlux(RigidityFlux::All, first, last, m_ui.plotter, particleSpectrumAll->particleHistogram()));
+    m_ui.plotter->addPlot(new RigidityFlux(RigidityFlux::Positive, first, last, m_ui.plotter, particleSpectrumPositive->particleHistogram()));
+    m_ui.plotter->addPlot(new RigidityFlux(RigidityFlux::Negative, first, last, m_ui.plotter, particleSpectrumNegative->particleHistogram()));
+    m_ui.plotter->addPlot(new RigiditySpectrumRatio());
   }
   if (m_ui.efficiencyTofCheckBox->isChecked()) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
