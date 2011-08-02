@@ -34,10 +34,6 @@ MeasurementTimeCalculation::MeasurementTimeCalculation(TH1D* histogram) :
 
 MeasurementTimeCalculation::~MeasurementTimeCalculation()
 {
-  if (m_histogram) {
-    delete m_histogram;
-    m_histogram = 0;
-  }
 }
 
 void MeasurementTimeCalculation::update(const SimpleEvent* const event)

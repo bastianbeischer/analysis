@@ -113,6 +113,7 @@ RigidityFlux::RigidityFlux(Type type, const QDateTime& first, const QDateTime& l
 
 RigidityFlux::~RigidityFlux()
 {
+  delete m_measurementTimeCalculation->histogram();
   delete m_measurementTimeCalculation;
   m_measurementTimeCalculation = 0;
   delete m_fluxCalculation;
