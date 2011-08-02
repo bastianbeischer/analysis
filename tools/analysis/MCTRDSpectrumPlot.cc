@@ -19,7 +19,7 @@
 
 #include <math.h>
 
-MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType)
+MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumPlot::TRDSpectrumType spectrumType)
   : AnalysisPlot(AnalysisPlot::MonteCarloTRD)
   , H1DPlot()
   , m_colorCounter(0)
@@ -29,23 +29,19 @@ MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrum
   QString strType;
   switch (m_spectrumType) {
   case TRDSpectrumPlot::completeTRD:
-    strType = "complete TRD";
+    strType = "MC complete TRD";
     break;
   case TRDSpectrumPlot::module:
-    strType = "Module";
+    strType = "MC Module";
     break;
   case TRDSpectrumPlot::channel:
-    strType = "Channel";
+    strType = "MC Channel";
     break;
   case TRDSpectrumPlot::layer:
-    strType = "TRD layer";
+    strType = "MC TRD layer";
+    break;
     break;
   }
-
-  if(m_spectrumType == MCTRDSpectrumPlot::completeTRD)
-    setTitle(QString("MC spectra"));
-  else
-    setTitle(QString("MC spectra 0x%1").arg(m_id,0,16));
 
   setAxisTitle(TRDReconstruction::xAxisTitle(), "entries");
 
