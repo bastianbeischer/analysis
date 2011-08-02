@@ -95,6 +95,7 @@
 #include "RigidityParticleSpectrum.hh"
 #include "RigidityFlux.hh"
 #include "RigiditySpectrumRatio.hh"
+#include "MeasurementTimePlot.hh"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -579,6 +580,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Negative));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Inverted));
     m_ui.plotter->addPlot(new AlbedosVsMomentumPlot());
+    m_ui.plotter->addPlot(new MeasurementTimePlot(first, last));
     RigidityParticleSpectrum* particleSpectrumAll = new RigidityParticleSpectrum(RigidityParticleSpectrum::All);
     m_ui.plotter->addPlot(particleSpectrumAll);
     RigidityParticleSpectrum* particleSpectrumPositive = new RigidityParticleSpectrum(RigidityParticleSpectrum::Positive);
