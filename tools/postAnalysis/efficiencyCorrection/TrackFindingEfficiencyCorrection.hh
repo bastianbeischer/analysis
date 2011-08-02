@@ -14,7 +14,7 @@
 
 class TrackFindingEfficiencyCorrection : public PostAnalysisPlot, public H1DPlot {
 public:
-  TrackFindingEfficiencyCorrection(PostAnalysisCanvas*, QString config);
+  TrackFindingEfficiencyCorrection(PostAnalysisCanvas*);
   virtual ~TrackFindingEfficiencyCorrection();
 
 public:
@@ -22,7 +22,7 @@ public:
 private:
   QString m_name;
 
-  void saveAsSetting(QString config);
+  void saveAsSetting();
 
 };
 

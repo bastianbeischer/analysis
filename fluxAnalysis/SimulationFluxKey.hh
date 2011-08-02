@@ -8,7 +8,7 @@
 #include <QMap>
 
 class SimulationFluxKey {
-	
+
 public:
   enum Source {
     Total,
@@ -26,16 +26,16 @@ public:
   QString sourceName();
   QString internalName();
   QString name();
-  
+
   void setPhi(double phi);
   void setSource(Source source);
-  
+
   static QList<Source> allSources();
   static QString sourceName(Source source);
   static Source source(QString sourceName);
 
   static QList<Particle::Type> allParticles();
-  
+
   bool operator==(SimulationFluxKey);
 
 private:

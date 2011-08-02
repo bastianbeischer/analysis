@@ -12,10 +12,9 @@
 #include <QString>
 #include <QMap>
 #include <QMutex>
-#include <QStringList>
 
 class SimulationFluxReader {
-	
+
 public:
   enum Location {
     NotSet,

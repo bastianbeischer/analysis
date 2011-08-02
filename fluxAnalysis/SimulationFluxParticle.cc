@@ -1,12 +1,6 @@
 #include "SimulationFluxParticle.hh"
 
-#include <QFile>
 #include <QDebug>
-#include <QStringList>
-
-#include <TFile.h>
-#include <TObject.h>
-#include <TROOT.h>
 
 bool SimulationFluxParticle::s_constructed = false;
 QMap<Particle::Type, QString> SimulationFluxParticle::s_particleNames;

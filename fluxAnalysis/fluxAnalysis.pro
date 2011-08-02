@@ -13,15 +13,7 @@ INCLUDEPATH+= \
   $$TOPLEVEL/processing \
   $$TOPLEVEL/event
 
-CLASSES += \
-  SimulationFlux \
-  SimulationFluxParticle \
-  SimulationFluxKey \
-  SimulationFluxRatioWidget \
-  SimulationFluxReader \
-  SimulationFluxWidget \
-  FluxCalculation \
-  MeasurementTimeCalculation
+SOURCEDIRS += .
 
 LIBS += \
   -L$$TOPLEVEL/lib \

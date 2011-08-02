@@ -8,7 +8,7 @@
 #include <QMap>
 
 class SimulationFluxParticle {
-	
+
 public:
   enum Source {
     Total,

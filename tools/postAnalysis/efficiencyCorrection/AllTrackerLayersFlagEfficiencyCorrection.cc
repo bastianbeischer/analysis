@@ -1,6 +1,7 @@
 #include "AllTrackerLayersFlagEfficiencyCorrection.hh"
 
 #include "Corrections.hh"
+#include "EfficiencyCorrectionSettings.hh"
 
 #include <TH1.h>
 #include <TH2.h>
@@ -22,7 +23,7 @@
 #include <QSettings>
 #include <QVector>
 
-AllTrackerLayersFlagEfficiencyCorrection::AllTrackerLayersFlagEfficiencyCorrection(PostAnalysisCanvas* canvas, const QString& config)
+AllTrackerLayersFlagEfficiencyCorrection::AllTrackerLayersFlagEfficiencyCorrection(PostAnalysisCanvas* canvas)
   : PostAnalysisPlot()
   , H1DPlot()
 {
@@ -31,50 +32,19 @@ AllTrackerLayersFlagEfficiencyCorrection::AllTrackerLayersFlagEfficiencyCorrecti
   QString title = QString(canvas->name()).replace("canvas", "histogram");
   setTitle(title);
 
-//  TH1D* histogram = h2->ProjectionX(qPrintable(title+"projection"), 8, 8);
-
   addHistogram(histogram);
   setAxisTitle("abs(rigidity/GV)", "efficiency");
   m_name = QString(canvas->name()).remove("One hit in all layers ").remove(" canvas");
 
-//  saveAsSetting(config);
+//  saveAsSetting();
 }
 
 AllTrackerLayersFlagEfficiencyCorrection::~AllTrackerLayersFlagEfficiencyCorrection()
 {
 }
 
-void AllTrackerLayersFlagEfficiencyCorrection::saveAsSetting(const QString& config)
+void AllTrackerLayersFlagEfficiencyCorrection::saveAsSetting()
 {
-  QList<QVariant> axis;
-  for (int i = 0; i <=  histogram()->GetNbinsX(); ++i) {
-    axis.push_back( histogram()->GetBinLowEdge(i+1) );
-  }
-
-  QList<QVariant> values;
-  for (int i = 0; i <  histogram()->GetNbinsX(); ++i) {
-    double value = histogram()->GetBinContent(i+1);
-    if (value == 0)
-      value = 1;
-    values.push_back( value );
-  }
-
-  const char* env = getenv("PERDAIXANA_PATH");
-  if (env == 0) {
-    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
-  }
-  QString path(env);
-  path += "/conf/";
-
-  path += config+"/";
-
-  QSettings* settings = new QSettings(path + "EfficiencyCorrections.conf", QSettings::IniFormat);
-
-  QString prefix = "oneHitAllLayersEfficiency_"+m_name;
-  settings->setValue(prefix+"/axis", axis);
-  settings->setValue(prefix+"/values", values);
-  settings->sync();
-
-  delete settings;
-  settings = 0;
+  EfficiencyCorrectionSettings effCorSet;
+  effCorSet.save(EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey, histogram());
 }

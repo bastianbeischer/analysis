@@ -60,9 +60,9 @@ double MeasurementTimeCalculation::measurementTime()
   const double minEvents = 1;
   double measurementTime = 0;
   m_mutex.lock();
-  
+
   double binWidth = m_histogram->GetBinWidth(1);
-  
+
   for (int bin = 1; bin <= m_histogram->GetNbinsX(); ++bin) {
     double content = histogram()->GetBinContent(bin);
     if (content >= minEvents) {
@@ -78,6 +78,6 @@ double MeasurementTimeCalculation::measurementTimeError()
 {
   double binWidth = m_histogram->GetBinWidth(1);
   m_measurementTimeError = binWidth / sqrt(12);
-  
+
   return m_measurementTimeError;
 }

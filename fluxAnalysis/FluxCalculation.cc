@@ -1,15 +1,11 @@
 #include "FluxCalculation.hh"
+
 #include "Constants.hh"
-#include "RootPlot.hh"
-#include "H1DPlot.hh"
-#include "Helpers.hh"
 
 #include <QDebug>
 #include <QMutex>
 
 #include <TArray.h>
-
-#include <cmath>
 
 FluxCalculation::FluxCalculation()
 {
@@ -23,7 +19,7 @@ FluxCalculation::FluxCalculation(TH1D* particleHistogram, double measurementTime
   const QString xTitle = m_particleHistogram->GetXaxis()->GetTitle();
   const int nBins = m_particleHistogram->GetNbinsX();
   const double* axis = m_particleHistogram->GetXaxis()->GetXbins()->GetArray();
-  
+
   m_fluxHistogram = new TH1D(qPrintable(title), "", nBins, axis);
   m_fluxHistogram->Sumw2();
   m_fluxHistogram->GetXaxis()->SetTitle(qPrintable(xTitle));
@@ -31,7 +27,7 @@ FluxCalculation::FluxCalculation(TH1D* particleHistogram, double measurementTime
   m_fluxHistogram->SetLineColor(kBlack);
   m_fluxHistogram->SetMarkerColor(kBlack);
   m_fluxHistogram->SetMarkerStyle(20);
-  
+
   update();
 }
 
@@ -47,32 +43,44 @@ void FluxCalculation::setMeasurementTime(double measurementTime)
 void FluxCalculation::update()
 {
   m_mutexUpdate.lock();
-  m_fluxHistogram->Reset();
   double acceptance = Constants::geometricAcceptance;
-  
   const int nBins = m_particleHistogram->GetNbinsX();
-  
+
+  m_fluxHistogram->Reset();
+
   for (int i = 0 ; i < nBins; i++) {
     double content = m_particleHistogram->GetBinContent(i+1);
     double error = m_particleHistogram->GetBinError(i+1);
     m_fluxHistogram->SetBinContent(i+1, content);
     m_fluxHistogram->SetBinError(i+1, error);
   }
-  
+
   m_fluxHistogram->Scale(1./(acceptance * m_measurementTime), "width");
   m_mutexUpdate.unlock();
+}
+
+void FluxCalculation::efficiencyCorrection(TH1D* histogramToCorrect, double efficiency)
+{
+  if (!histogramToCorrect->GetSumw2())
+    histogramToCorrect->Sumw2();
+  histogramToCorrect->Scale(1./efficiency);
 }
 
 void FluxCalculation::efficiencyCorrection(TH1D* histogramToCorrect, TH1D* efficiencyHistogram)
 {
   if (!histogramToCorrect->GetSumw2())
     histogramToCorrect->Sumw2();
-  histogramToCorrect->Multiply(efficiencyHistogram);
+  histogramToCorrect->Divide(efficiencyHistogram);
 }
 
 void FluxCalculation::efficiencyCorrection(TH1D* efficiencyHistogram)
 {
   efficiencyCorrection(m_fluxHistogram, efficiencyHistogram);
+}
+
+void FluxCalculation::efficiencyCorrection(double efficiency)
+{
+  efficiencyCorrection(m_fluxHistogram, efficiency);
 }
 
 TLatex FluxCalculation::binTitle(int bin)

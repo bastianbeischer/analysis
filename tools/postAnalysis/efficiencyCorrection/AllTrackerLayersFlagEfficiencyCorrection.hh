@@ -14,11 +14,11 @@
 
 class AllTrackerLayersFlagEfficiencyCorrection : public PostAnalysisPlot, public H1DPlot {
 public:
-  AllTrackerLayersFlagEfficiencyCorrection(PostAnalysisCanvas*, const QString& config);
+  AllTrackerLayersFlagEfficiencyCorrection(PostAnalysisCanvas*);
   virtual ~AllTrackerLayersFlagEfficiencyCorrection();
 private:
   QString m_name;
-  void saveAsSetting(const QString& config);
+  void saveAsSetting();
 };
 
 #endif

@@ -1,12 +1,6 @@
 #include "SimulationFluxKey.hh"
 
-#include <QFile>
 #include <QDebug>
-#include <QStringList>
-
-#include <TFile.h>
-#include <TObject.h>
-#include <TROOT.h>
 
 bool SimulationFluxKey::s_constructed = false;
 QMap<Particle::Type, QString> SimulationFluxKey::s_particleNames;

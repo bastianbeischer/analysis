@@ -8,7 +8,7 @@
 #include <TH2D.h>
 
 class SimulationFlux {
-	
+
 public:
   SimulationFlux(SimulationFluxKey key, TH2D* h2Spectrum);
 	~SimulationFlux();

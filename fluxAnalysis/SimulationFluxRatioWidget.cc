@@ -27,7 +27,7 @@ m_canvas(canvas)
 {
   m_nPrevHistograms = m_plot->numberOfHistograms();
   m_nPrevLegends = m_plot->legend()->GetListOfPrimitives()->GetEntries();
-  
+
   m_reader = 0;
   m_activated = false;
 

@@ -13,7 +13,8 @@ INCLUDEPATH += \
   $$TOPLEVEL/tracking \
   $$TOPLEVEL/global \
   $$TOPLEVEL/processing \
-  $$TOPLEVEL/tools/postAnalysis/postAnalysis
+  $$TOPLEVEL/tools/postAnalysis/postAnalysis \
+  $$TOPLEVEL/fluxAnalysis
 
 LIBS += \
   -L$$TOPLEVEL/lib \
@@ -24,15 +25,10 @@ LIBS += \
   -lsetup \
   -lprocessing \
   -lglobal \
-  -lpostAnalysis
+  -lpostAnalysis \
+  -lfluxAnalysis
 
-CLASSES = \
-  MainWindow \
-  AllTrackerLayersFlagEfficiencyCorrection \
-  TrackFindingEfficiencyCorrection
-
-SOURCES = \
-  main.cc
+SOURCEDIRS = .
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

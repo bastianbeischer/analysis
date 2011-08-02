@@ -9,7 +9,7 @@
 #include <QMutex>
 
 class MeasurementTimeCalculation {
-	
+
 public:
   MeasurementTimeCalculation();
 	MeasurementTimeCalculation(QDateTime first, QDateTime last);
