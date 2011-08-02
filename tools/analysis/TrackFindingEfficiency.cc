@@ -97,6 +97,10 @@ void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, const Particle* 
     int mcPdgId = event->MCInformation()->primary()->pdgID;
     Particle mcParticle(mcPdgId);
     rigidity = event->MCInformation()->primary()->initialMomentum.Mag() / mcParticle.charge();
+
+    if (!isTriggerEvent(QVector<Hit*>::fromStdVector(event->hits())))
+      return;
+
     if (m_type == Negative && rigidity > 0)
       return;
     if (m_type == Positive && rigidity < 0)
@@ -134,4 +138,22 @@ void TrackFindingEfficiency::update()
 void TrackFindingEfficiency::finalize()
 {
   update();
+}
+
+bool TrackFindingEfficiency::isTriggerEvent(const QVector<Hit*>& clusters)
+{
+  const QVector<Hit*>::const_iterator endIt = clusters.end();
+  bool hitUpperTof = false;
+  bool hitLowerTof = false;
+  for (QVector<Hit*>::const_iterator clusterIt = clusters.begin(); clusterIt != endIt; ++clusterIt) {
+    Hit* hit = *clusterIt;
+    if (hit->type() == Hit::tof) {
+      TOFCluster* tofCluster = static_cast<TOFCluster*>(hit);
+      if (tofCluster->position().z() > 0)
+        hitUpperTof = true;
+      if (tofCluster->position().z() < 0)
+        hitLowerTof = true;
+    }
+  }
+  return (hitUpperTof && hitLowerTof);
 }

@@ -36,6 +36,7 @@ private:
   TH1D* m_total;
   unsigned int m_nTotal;
   unsigned int m_nReconstructed;
+  bool isTriggerEvent(const QVector<Hit*>& clusters);
 };
 
 #endif
