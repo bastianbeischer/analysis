@@ -12,18 +12,22 @@ CLASSES += \
   ParticleIdentifier \
   ParticleInformation \
   ParticleProperties \
-  TimeOfFlight
+  TimeOfFlight \
+  TRDReconstruction
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \
   $$TOPLEVEL/global \
-  $$TOPLEVEL/tracking
+  $$TOPLEVEL/tracking \
+  $$TOPLEVEL/setup
+
 
 DEPENDPATH += $$INCLUDEPATH
 
 LIBS += -L$$TOPLEVEL/lib \
         -lSimpleEvent \
-        -ltracking
+        -ltracking \
+        -lsetup
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

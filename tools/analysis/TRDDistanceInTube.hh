@@ -12,7 +12,6 @@ public:
   ~TRDDistanceInTube();
 
   virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
-  virtual void finalize();
 
 };
 

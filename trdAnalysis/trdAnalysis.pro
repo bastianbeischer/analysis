@@ -1,0 +1,26 @@
+TEMPLATE = lib
+TARGET = trdAnalysis
+
+CONFIG += debug
+
+TOPLEVEL    = ../
+
+CLASSES += TRDElectronIdentifierCutBased \
+           TRDElectronIdentifierLikelihood \
+           TRDLikelihoods
+
+
+INCLUDEPATH += $$TOPLEVEL/event \
+               $$TOPLEVEL/particle \
+               $$TOPLEVEL/tracking
+
+LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
+                         -lparticle \
+                         -ltracking
+
+
+include($$TOPLEVEL/common.pri)
+include($$TOPLEVEL/root.pri)
+include($$TOPLEVEL/macx.pri)
+
+QMAKE_LFLAGS -= -Wl,--as-needed

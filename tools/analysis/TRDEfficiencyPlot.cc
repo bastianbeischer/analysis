@@ -8,7 +8,7 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "ParticleInformation.hh"
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 
 #include <TCanvas.h>
 #include <TList.h>
@@ -94,7 +94,7 @@ void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, const Partic
     i.next();
     QVector2D pos2D = i.value();
     //get distance
-    double distance = TRDCalculations::distanceTrackToWire(pos2D, track);
+    double distance = TRDReconstruction::distanceTrackToWire(pos2D, track);
     //check if tube has been punched by track:
     if (fabs(distance) < 1) {
       //was on track +1
