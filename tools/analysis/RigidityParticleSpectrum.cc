@@ -73,7 +73,7 @@ void RigidityParticleSpectrum::processEvent(const QVector<Hit*>&, const Particle
 
   if (flags & ParticleInformation::Albedo)
     rigidity *= -1;
-  
+
   if (m_type == Negative && rigidity >= 0)
     return;
   if (m_type == Positive && rigidity <= 0)
