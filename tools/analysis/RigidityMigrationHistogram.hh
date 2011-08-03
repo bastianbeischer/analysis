@@ -12,15 +12,11 @@ class RigidityMigrationHistogram : public AnalysisPlot, public H2DPlot
 {
 public:
   enum Type {All, Positive, Negative};
-  
   RigidityMigrationHistogram(Type type);
   ~RigidityMigrationHistogram();
-  
   void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
-
 private:
   Type m_type;
-  QVector<double> logBinning(unsigned int nBins, double min, double max);
 };
 
 #endif /* RigidityMigrationHistogram_hh */

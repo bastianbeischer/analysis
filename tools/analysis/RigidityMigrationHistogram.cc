@@ -8,6 +8,7 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "SimpleEvent.hh"
+#include "Helpers.hh"
 
 #include <iostream>
 #include <cmath>
@@ -28,16 +29,16 @@ RigidityMigrationHistogram::RigidityMigrationHistogram(Type type)
     title += " - all";
   }
   setTitle(title);
-  
+
   const int nBinsGenerated = 21;
   const double minGenerated = 0.1;
   const double maxGenerated = 20;
-  const QVector<double>& axisGenerated = logBinning(nBinsGenerated, minGenerated, maxGenerated);
-  
+  const QVector<double>& axisGenerated = Helpers::logBinning(nBinsGenerated, minGenerated, maxGenerated);
+
   const int nBinsData = 42;
   const double minData = 0.1;
   const double maxData = 20;
-  const QVector<double>& axisData = logBinning(nBinsData, minData, maxData);
+  const QVector<double>& axisData = Helpers::logBinning(nBinsData, minData, maxData);
 
   TH2D* histogram = new TH2D(qPrintable(title), "", nBinsData, axisData.constData(),  nBinsGenerated, axisGenerated.constData());
   histogram->Sumw2();
@@ -67,13 +68,13 @@ void RigidityMigrationHistogram::processEvent(const QVector<Hit*>&, const Partic
     return;
   if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
     return;
-  
+
   int mcPdgId = event->MCInformation()->primary()->pdgID;
   Particle mcParticle(mcPdgId);
   double rigidityGenerated = event->MCInformation()->primary()->initialMomentum.Mag() / mcParticle.charge();
 
   double rigidityData = track->rigidity();
-  
+
   if (m_type == Negative && rigidityData >= 0)
     return;
   if (m_type == Positive && rigidityData < 0)
@@ -81,16 +82,3 @@ void RigidityMigrationHistogram::processEvent(const QVector<Hit*>&, const Partic
 
   histogram()->Fill(qAbs(rigidityData), qAbs(rigidityGenerated));
 }
-
-QVector<double> RigidityMigrationHistogram::logBinning(unsigned int nBins, double min, double max) {
-  QVector<double> binning;
-  const double delta = (log(max) / log(min) - 1) / nBins;
-  for (unsigned int i = 0; i <= nBins; ++i) {
-    binning.append(pow(min, 1 + delta * i));
-  }
-  return binning;
-}
-
-
-
-
