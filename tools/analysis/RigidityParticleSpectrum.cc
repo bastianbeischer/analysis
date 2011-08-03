@@ -61,9 +61,13 @@ void RigidityParticleSpectrum::processEvent(const QVector<Hit*>&, const Particle
   if (!track || !track->fitGood())
     return;
   ParticleInformation::Flags flags = particle->information()->flags();
-  if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
+  if (!(flags & ParticleInformation::Chi2Good))
     return;
-  if (!(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet))
+  if (!(flags & ParticleInformation::BetaGood))
+    return;
+  if (!(flags & ParticleInformation::InsideMagnet))
+    return;
+  if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
   if ((m_type == AlbedoPositive || m_type == AlbedoNegative ) && !(flags & ParticleInformation::Albedo))
     return;

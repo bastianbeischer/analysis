@@ -107,9 +107,15 @@ void RigiditySpectrumRatio::processEvent(const QVector<Hit*>&, const Particle* c
   if (!track || !track->fitGood())
     return;
   ParticleInformation::Flags flags = particle->information()->flags();
-  if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
+  if (!(flags & ParticleInformation::Chi2Good))
     return;
-  if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
+  if (!(flags & ParticleInformation::BetaGood))
+    return;
+  if (!(flags & ParticleInformation::InsideMagnet))
+    return;
+  if (!(flags & ParticleInformation::AllTrackerLayers))
+    return;
+  if ((flags & ParticleInformation::Albedo))
     return;
 
   double rigidity = track->rigidity();
