@@ -64,7 +64,7 @@ TH1D* EfficiencyCorrectionSettings::readHistogram(const QString& key)
   const QString& prefix = key;
   QList<QVariant> axisVariant = m_settings->value(prefix+m_axisKey).toList();
   QList<QVariant> contentVariant = m_settings->value(prefix+m_contentKey).toList();
-//  QList<QVariant> errorVariant = m_settings->value(prefix+m_errorKey).toList();
+  QList<QVariant> errorVariant = m_settings->value(prefix+m_errorKey).toList();
 
   QVector<double> axis;
   for (int i = 0; i < axisVariant.size(); ++i) {
@@ -78,10 +78,10 @@ TH1D* EfficiencyCorrectionSettings::readHistogram(const QString& key)
 
   for (int i = 0; i < nBins; ++i) {
     double content = contentVariant[i].toDouble();
-//    double error = errorVariant[i].toDouble();
+    double error = errorVariant[i].toDouble();
     int bin = i+1;
     histogram->SetBinContent(bin, content);
-//    histogram->SetBinError(bin, error);
+    histogram->SetBinError(bin, error);
   }
   return histogram;
 }

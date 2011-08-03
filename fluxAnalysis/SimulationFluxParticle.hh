@@ -22,16 +22,15 @@ public:
   Particle::Type type() const {return m_type;}
   bool isAlbedo() const {return m_isAlbedo;}
   Source source() const {return m_source;}
-  QString internalName();
+  QString internalName() const;
 
   static QList<Source> allSources();
   static QString sourceName(Source source);
   static Source source(QString sourceName);
-  QString sourceName();
+  QString sourceName() const;
 
   static QList<Particle::Type> allParticles();
-//  static SimulationFluxParticle type(QString name, Source source);
-  QString name();
+  QString name() const;
   bool operator==(SimulationFluxParticle);
 
 private:

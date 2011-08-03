@@ -44,7 +44,7 @@ void SimulationFluxParticle::construct()
   }
 }
 
-QString SimulationFluxParticle::internalName()
+QString SimulationFluxParticle::internalName() const
 {
   return s_particleNames[m_type];
 }
@@ -67,7 +67,7 @@ QList<Particle::Type> SimulationFluxParticle::allParticles()
   return s_particleNames.keys();
 }
 
-QString SimulationFluxParticle::name()
+QString SimulationFluxParticle::name() const
 {
   QString name = Particle(m_type).name();
   if (m_isAlbedo) {
@@ -76,7 +76,7 @@ QString SimulationFluxParticle::name()
   return name;
 }
 
-QString SimulationFluxParticle::sourceName()
+QString SimulationFluxParticle::sourceName() const
 {
   return s_sourceNames[m_source];
 }
@@ -86,22 +86,6 @@ SimulationFluxParticle::Source SimulationFluxParticle::source(QString sourceName
   construct();
   return s_sourceNames.key(sourceName);
 }
-
-//SimulationFluxParticle SimulationFluxParticle::type(QString name, Source source)
-//{
-//  construct();
-//  QList<Particle::Type> types = allParticles();
-//  foreach(Particle::Type type, types) {
-//    for(int isAlbedo = 0; isAlbedo < 2; isAlbedo++) {
-//      SimulationFluxParticle currentParticle = SimulationFluxParticle(type, isAlbedo, source);
-//      if (currentParticle.name() == name) {
-//        return currentParticle;
-//      }
-//    }
-//  }
-//  qFatal("Particle not found");
-//  return SimulationFluxParticle(Particle::Unknown, false, Total);
-//}
 
 bool SimulationFluxParticle::operator==(SimulationFluxParticle particle)
 {

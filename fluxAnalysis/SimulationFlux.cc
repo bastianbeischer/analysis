@@ -15,7 +15,7 @@ SimulationFlux::~SimulationFlux()
   }
 }
 
-TH2D* SimulationFlux::h2Spectrum()
+TH2D* SimulationFlux::h2Spectrum() const
 {
   return m_h2Spectrum;
 }
