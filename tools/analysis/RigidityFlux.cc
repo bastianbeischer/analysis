@@ -27,27 +27,6 @@ bool RigidityFlux::s_efficienciesLoaded = false;
 QMap<RigidityFlux::Type, TH1D*> RigidityFlux::s_multiLayerEff;
 QMap<RigidityFlux::Type, TH1D*> RigidityFlux::s_trackFindingEff;
 
-double myFluxPhi(Double_t *x, Double_t *par)
-{
-  const int pdgId = 2212;
-  const double z =  Particle(pdgId).charge();
-  const double m = Particle(pdgId).mass();
-
-  double R = x[0];
-  double J0 = par[0];
-  double gamma = par[1];
-  double phi = par[2];
-
-  double p = R * z;
-  double E = sqrt(p*p + m*m);
-//  double T = E - m;
-  double Phi = qAbs(z) * phi;
-  double Jlis = J0 * pow(E+Phi, -gamma);
-
-  double f = Jlis * (E*E - m*m) / (pow(E+Phi, 2) - m*m);
-  return f;
-}
-
 RigidityFlux::RigidityFlux(Type type, const QDateTime& first, const QDateTime& last, Plotter* plotter, TH1D* particleHistogram)
   : AnalysisPlot(AnalysisPlot::MomentumReconstruction)
   , H1DPlot()
@@ -88,20 +67,8 @@ RigidityFlux::RigidityFlux(Type type, const QDateTime& first, const QDateTime& l
   legend->AddEntry(histogram, "Data", "p");
   addLegend(legend);
 
-  int nParams = 3;
-  double fitMin = 0.8;
-  double fitMax = 20;
-  QString fTitle = title + " phiFit";
-  TF1* fitPhi = new TF1(qPrintable(fTitle), myFluxPhi, fitMin, fitMax, nParams);
-  fitPhi->SetLineColor(kGreen);
-  fitPhi->SetParameters(0, 1.8*1e4);
-  fitPhi->SetParameters(1, 2.7);
-  fitPhi->SetParLimits(0, 1e3, 1e5);
-  fitPhi->SetParLimits(1, 1, 4);
-  fitPhi->SetParameters(2, 0.55);
-  fitPhi->SetParLimits(2, 0.1, 1.6);
-
-  addFunction(fitPhi);
+  m_phiFit = new SolarModulationFit(histogram);
+  addFunction(m_phiFit->fit());
   TLatex* gammaLatex = RootPlot::newLatex(.4, .88);
   TLatex* phiLatex = RootPlot::newLatex(.4, .83);
   addLatex(gammaLatex);
@@ -140,6 +107,8 @@ RigidityFlux::~RigidityFlux()
   s_trackFindingEff.clear();
   s_efficienciesLoaded = false;
   mutex.unlock();
+  delete m_phiFit;
+  m_phiFit = 0;
 }
 
 void RigidityFlux::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
@@ -154,15 +123,9 @@ void RigidityFlux::update()
   efficiencyCorrection();
   updateBinTitles();
 
-  histogram(0)->Fit(function(0),"EQRN0");
-  double gamma = function(0)->GetParameter(1);
-  double gammaError = function(0)->GetParError(1);
-  double phi = function(0)->GetParameter(2) * 1e3;
-  double phiError = function(0)->GetParError(2) * 1e3;
-  QString gammaText = QString("#gamma = %1 #pm %2").arg(gamma, 0, 'g', 3).arg(gammaError, 0, 'g', 0);
-  QString phiText = QString("#phi / MV = %1 #pm %2").arg(phi, 0, 'g', 3).arg(phiError, 0, 'g', 2);
-  latex(histogram()->GetNbinsX())->SetTitle(qPrintable(gammaText));
-  latex(histogram()->GetNbinsX()+1)->SetTitle(qPrintable(phiText));
+  m_phiFit->fit();
+  latex(histogram()->GetNbinsX())->SetTitle(qPrintable(m_phiFit->gammaLabel()));
+  latex(histogram()->GetNbinsX()+1)->SetTitle(qPrintable(m_phiFit->phiLabel()));
 }
 
 void RigidityFlux::finalize()

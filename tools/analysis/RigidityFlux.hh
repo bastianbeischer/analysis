@@ -5,6 +5,7 @@
 #include "H1DPlot.hh"
 #include "FluxCalculation.hh"
 #include "MeasurementTimeCalculation.hh"
+#include "SolarModulationFit.hh"
 #include "Plotter.hh"
 
 #include <TH1D.h>
@@ -43,6 +44,7 @@ private:
   FluxCalculation* m_fluxCalculation;
   Plotter* m_plotter;
   TH1D* m_particleHistogram;
+  SolarModulationFit* m_phiFit;
   void updateBinTitles();
 //  double maxFlux();
 
