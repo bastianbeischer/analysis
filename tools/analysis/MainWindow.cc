@@ -96,6 +96,9 @@
 #include "RigidityFlux.hh"
 #include "RigiditySpectrumRatio.hh"
 #include "MeasurementTimePlot.hh"
+#include "RigidityMigrationHistogram.hh"
+#include "AzimuthPositionCorrelation.hh"
+#include "AzimuthCutStatistics.hh"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -552,6 +555,13 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new Chi2VsMomentumPlot);
     m_ui.plotter->addPlot(new ZenithDistributionPlot());
     m_ui.plotter->addPlot(new AzimuthDistributionPlot());
+    m_ui.plotter->addPlot(new AzimuthCutStatistics());
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::X, AzimuthPositionCorrelation::Positive));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::X, AzimuthPositionCorrelation::Negative));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::X, AzimuthPositionCorrelation::All));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, AzimuthPositionCorrelation::Positive));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, AzimuthPositionCorrelation::Negative));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, AzimuthPositionCorrelation::All));
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
@@ -591,6 +601,9 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new RigidityFlux(RigidityFlux::Positive, first, last, m_ui.plotter, particleSpectrumPositive->particleHistogram()));
     m_ui.plotter->addPlot(new RigidityFlux(RigidityFlux::Negative, first, last, m_ui.plotter, particleSpectrumNegative->particleHistogram()));
     m_ui.plotter->addPlot(new RigiditySpectrumRatio());
+    m_ui.plotter->addPlot(new RigidityMigrationHistogram(RigidityMigrationHistogram::Positive));
+    m_ui.plotter->addPlot(new RigidityMigrationHistogram(RigidityMigrationHistogram::Negative));
+    m_ui.plotter->addPlot(new RigidityMigrationHistogram(RigidityMigrationHistogram::All));
   }
   if (m_ui.efficiencyTofCheckBox->isChecked()) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
