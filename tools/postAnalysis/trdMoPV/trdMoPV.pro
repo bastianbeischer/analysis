@@ -13,6 +13,7 @@ INCLUDEPATH += \
   $$TOPLEVEL/tracking \
   $$TOPLEVEL/global \
   $$TOPLEVEL/processing \
+  $$TOPLEVEL/trdAnalysis \
   $$TOPLEVEL/tools/postAnalysis/postAnalysis
 
 LIBS += \
@@ -24,7 +25,8 @@ LIBS += \
   -lsetup \
   -lprocessing \
   -lglobal \
-  -lpostAnalysis
+  -lpostAnalysis \
+  -ltrdAnalysis
 
 CLASSES = \
   MainWindow \
@@ -32,7 +34,8 @@ CLASSES = \
   MoPVScalingTime \
   MoPVScalingPressure \
   MoPVScalingTemperature \
-  MoPVConstant
+  MoPVConstant \
+  LHFit \
 
 SOURCES = \
   main.cc

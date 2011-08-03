@@ -13,13 +13,13 @@
 #include "Cluster.hh"
 #include "Hit.hh"
 #include "TRDSpectrumPlot.hh"
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 #include "Corrections.hh"
 #include "RootStyle.hh"
 
 #include <math.h>
 
-MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType)
+MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumPlot::TRDSpectrumType spectrumType)
   : AnalysisPlot(AnalysisPlot::MonteCarloTRD)
   , H1DPlot()
   , m_colorCounter(0)
@@ -27,24 +27,23 @@ MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrum
   , m_spectrumType(spectrumType)
 {
   QString strType;
-  switch(m_spectrumType){
-  case MCTRDSpectrumPlot::completeTRD:
-    strType = "complete TRD";
+  switch (m_spectrumType) {
+  case TRDSpectrumPlot::completeTRD:
+    strType = "MC complete TRD";
     break;
-  case MCTRDSpectrumPlot::module:
-    strType = "Module";
+  case TRDSpectrumPlot::module:
+    strType = "MC Module";
     break;
-  case MCTRDSpectrumPlot::channel:
-    strType = "Channel";
+  case TRDSpectrumPlot::channel:
+    strType = "MC Channel";
+    break;
+  case TRDSpectrumPlot::layer:
+    strType = "MC TRD layer";
+    break;
     break;
   }
 
-  if(m_spectrumType == MCTRDSpectrumPlot::completeTRD)
-    setTitle(QString("MC spectra"));
-  else
-    setTitle(QString("MC spectra 0x%1").arg(m_id,0,16));
-
-  setAxisTitle(TRDSpectrumPlot::xAxisTitle(), "entries");
+  setAxisTitle(TRDReconstruction::xAxisTitle(), "entries");
 
   TLegend* legend = new TLegend(.72, .72, .98, .98);
   legend->SetFillColor(kWhite);
@@ -58,56 +57,64 @@ MCTRDSpectrumPlot::~MCTRDSpectrumPlot()
 {
 }
 
-void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
+void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
 {
-  //only MC Events
   if (event->contentType() != SimpleEvent::MonteCarlo)
     return;
 
-  if ( ! TRDSpectrumPlot::globalTRDCuts(hits, particle, event))
-      return;
-
-  //now get all relevant energy deposition for this specific plot and all length
-  QList<double> lengthList;
-  QList<double> signalList;
-
-  const Track* track = particle->track();
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != track->hits().end(); ++it) {
-    Hit* hit = *it;
-    if (hit->type() != Hit::trd)
-      continue;
-
-    Cluster* cluster = static_cast<Cluster*>(hit);
-    std::vector<Hit*>& subHits = cluster->hits();
-    const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
-    for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
-      Hit* subHit = *it;
-      //check if the id of the plot has been hit (difference between module mode and channel mode
-      if(m_spectrumType == MCTRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
-         (m_spectrumType == MCTRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
-         (m_spectrumType == MCTRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
-        double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
-        if(TRDSpectrumPlot::calculateLengthInTube)
-            distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
-        if(distanceInTube > 0) {
-          signalList << hit->signalHeight();
-          lengthList << distanceInTube;
-        }
-      } // fits into category
-    } // subhits in cluster
-  } // all hits
-
-
-  /* now fill the mean of all gathered data
-      - one value for a single tube
-      - normally also one value for a module (except no length is calculated and 2 tubes show a signal)
-      - several signals for the complete trd
-  */
-
-  //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
-  unsigned int hitsWhichAreOnTrack = signalList.size();
-  if (m_spectrumType == MCTRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDSpectrumPlot::minTRDLayerCut)
+  const TRDReconstruction* trdReconst = particle->trdReconstruction();
+  if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
     return;
+
+  QVector<double> valuesToFill;
+  switch (m_spectrumType) {
+  case TRDSpectrumPlot::completeTRD:
+    if (TRDReconstruction::s_calculateLengthInTube) {
+      for (int i = 0; i < 8; ++i)
+        if (trdReconst->energyDepositionForLayer(i).isPierced) {
+          valuesToFill << trdReconst->energyDepositionForLayer(i).edepOnTrackPerLength;
+        }
+    } else {
+      for (int i = 0; i < 8; ++i)
+        if (trdReconst->energyDepositionForLayer(i).isOnTRack) {
+          valuesToFill << trdReconst->energyDepositionForLayer(i).edepOnTrack;
+        }
+    }
+    break;
+  case TRDSpectrumPlot::module:
+    if (TRDReconstruction::s_calculateLengthInTube) {
+      if (trdReconst->energyDepositionForModule(m_id).isPierced) {
+        valuesToFill << trdReconst->energyDepositionForModule(m_id).edepOnTrackPerLength;
+      }
+    } else {
+      if (trdReconst->energyDepositionForModule(m_id).isOnTRack) {
+        valuesToFill << trdReconst->energyDepositionForModule(m_id).edepOnTrack;
+      }
+    }
+    break;
+  case TRDSpectrumPlot::channel:
+    if (TRDReconstruction::s_calculateLengthInTube) {
+      if (trdReconst->energyDepositionForChannel(m_id).isPierced) {
+        valuesToFill << trdReconst->energyDepositionForChannel(m_id).edepOnTrackPerLength;
+      }
+    } else {
+      if (trdReconst->energyDepositionForChannel(m_id).isOnTRack) {
+        valuesToFill << trdReconst->energyDepositionForChannel(m_id).edepOnTrack;
+      }
+    }
+    break;
+  case TRDSpectrumPlot::layer:
+    if (TRDReconstruction::s_calculateLengthInTube) {
+      if (trdReconst->energyDepositionForLayer(m_id).isPierced) {
+        valuesToFill << trdReconst->energyDepositionForLayer(m_id).edepOnTrackPerLength;
+      }
+    } else {
+      if (trdReconst->energyDepositionForLayer(m_id).isOnTRack) {
+        valuesToFill << trdReconst->energyDepositionForLayer(m_id).edepOnTrack;
+      }
+    }
+    break;
+  }
 
   //get histo:
   int pdgID = event->MCInformation()->primary()->pdgID;
@@ -120,9 +127,9 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, const Particle* 
   {
     const ParticleProperties* properties = ParticleDB::instance()->lookupPdgId(pdgID);
     QString particleName = properties->name();
-    int nBins = TRDSpectrumPlot::spectrumDefaultBins;
+    int nBins = TRDReconstruction::s_spectrumDefaultBins;
     double lowerBound = 1e-3;
-    double upperBound = TRDSpectrumPlot::spectrumUpperLimit();
+    double upperBound = TRDReconstruction::spectrumUpperLimit();
     double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
     double p[nBins+1];
     for (int i = 0; i < nBins+1; i++) {
@@ -136,12 +143,11 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>& hits, const Particle* 
     addHistogram(spectrumHisto, H1DPlot::HIST);
   }
 
-  for (int i = 0; i < signalList.size(); ++i) {
-    double value = signalList.at(i) / lengthList.at(i);
-    int iBin = histogram()->FindBin(value);
-    double width = histogram()->GetBinWidth(iBin);
+  for (QVector<double>::const_iterator it = valuesToFill.constBegin(); it != valuesToFill.constEnd(); ++it) {
+    int iBin = spectrumHisto->FindBin(*it);
+    double width = spectrumHisto->GetBinWidth(iBin);
     double weight = 1./width;
-    histogram()->Fill(value, weight);
+    spectrumHisto->Fill(*it, weight);
   }
 }
 

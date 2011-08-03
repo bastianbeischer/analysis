@@ -53,7 +53,7 @@ void MainWindow::setupAnalysis(QStringList args)
     qDebug() << "canvas " << canvas->name() << " got " << canvas->histograms1D().size() << " 1D histos";
     allCanvases << canvas;
 
-    file.Close();
+
   }
 
   if (allCanvases.size() > 2)
@@ -68,6 +68,23 @@ void MainWindow::setupAnalysis(QStringList args)
       addPlot(new HistResiduals(twoCanvases.at(0), twoCanvases.at(1), false));
       addPlot(new HistResiduals(twoCanvases.at(0), twoCanvases.at(1), true));
     }
+  }
+
+  //other comparisons
+  QList<QString> compareCanvasesNames;
+  compareCanvasesNames << "TRD clusters on track canvas";
+  compareCanvasesNames << "TRD distance of track to wire canvas";
+  compareCanvasesNames << "TRD length in tube canvas";
+
+  foreach (QString canvasName, compareCanvasesNames) {
+    QList<PostAnalysisCanvas*> canvases;
+    foreach (QString filename, args) {
+      TFile file(qPrintable(filename));
+      gROOT->cd();
+      canvases << addCanvas(&file, canvasName);
+      file.Close();
+    }
+    addPlot(new HistCompare(canvases));
   }
 }
 

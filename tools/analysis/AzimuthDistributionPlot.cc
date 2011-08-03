@@ -24,7 +24,7 @@ AzimuthDistributionPlot::AzimuthDistributionPlot()
   double xMax = 180;
   TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, xMin, xMax);
   histogram->Sumw2();
-  setAxisTitle("azimuth", "");
+  setAxisTitle("azimuth / degree", "");
   addHistogram(histogram);
   addLatex(RootPlot::newLatex(.15, .85));
 }
@@ -41,7 +41,7 @@ void AzimuthDistributionPlot::processEvent(const QVector<Hit*>&, const Particle*
     return;
 
   ParticleInformation::Flags flags = particle->information()->flags();
-  if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
+  if ( !(flags & ParticleInformation::Chi2Good) || !(flags & ParticleInformation::InsideMagnet) || !(flags & ParticleInformation::BetaGood) || (flags & ParticleInformation::Albedo) )
     return;
 
   double azimuth = track->azimuthAngle() * 180. / M_PI;

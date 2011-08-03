@@ -15,8 +15,8 @@ TRDTimeCorrectionPlot::TRDTimeCorrectionPlot(QDateTime first, QDateTime last)
   , m_line1(new TLine)
   , m_line2(new TLine)
   , m_corr(new Corrections)
-  , m_TrdTimeFactors(m_corr->getTrdTimeFactors())
-  , m_TrdTimeSpline(m_corr->getTrdTimeSpline())
+  , m_TrdTimeFactors(m_corr->trdTimeFactors())
+  , m_TrdTimeSpline(m_corr->trdTimeSpline())
 {
 
   m_line1->SetLineColor(kGreen);
