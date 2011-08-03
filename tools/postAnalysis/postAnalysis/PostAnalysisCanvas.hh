@@ -23,6 +23,7 @@ public:
   QVector<TH2D*> histograms2D();
   QVector<TH1D*> histograms1D();
   QVector<TF1*> functions();
+  TCanvas* canvas() const {return m_canvas;}
 private:
   RootStyle::PaletteType m_palette;
   TCanvas* m_canvas;

@@ -352,8 +352,8 @@ void SimulationFluxWidget::activationSlot(bool isChecked)
     activateControls();
   } else {
     deactivateControls();
+    clear();
   }
-
 }
 
 void SimulationFluxWidget::activateControls()
