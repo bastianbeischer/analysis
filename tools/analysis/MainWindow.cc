@@ -90,8 +90,7 @@
 #include "ZenithDistributionPlot.hh"
 #include "AzimuthDistributionPlot.hh"
 #include "AzimuthMigrationHistogram.hh"
-#include "AzimuthPositionYCorrelation.hh"
-#include "AzimuthPositionXCorrelation.hh"
+#include "AzimuthPositionCorrelation.hh"
 #include "AzimuthCutStatistics.hh"
 
 #include <QCloseEvent>
@@ -548,12 +547,12 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new ZenithDistributionPlot());
     m_ui.plotter->addPlot(new AzimuthDistributionPlot());
     m_ui.plotter->addPlot(new AzimuthCutStatistics());
-    m_ui.plotter->addPlot(new AzimuthPositionYCorrelation(AzimuthPositionYCorrelation::Positive));
-    m_ui.plotter->addPlot(new AzimuthPositionYCorrelation(AzimuthPositionYCorrelation::Negative));
-    m_ui.plotter->addPlot(new AzimuthPositionYCorrelation(AzimuthPositionYCorrelation::All));
-    m_ui.plotter->addPlot(new AzimuthPositionXCorrelation(AzimuthPositionXCorrelation::Positive));
-    m_ui.plotter->addPlot(new AzimuthPositionXCorrelation(AzimuthPositionXCorrelation::Negative));
-    m_ui.plotter->addPlot(new AzimuthPositionXCorrelation(AzimuthPositionXCorrelation::All));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::X, AzimuthPositionCorrelation::Positive));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::X, AzimuthPositionCorrelation::Negative));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::X, AzimuthPositionCorrelation::All));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, AzimuthPositionCorrelation::Positive));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, AzimuthPositionCorrelation::Negative));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, AzimuthPositionCorrelation::All));
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {

@@ -1,4 +1,4 @@
-#include "AzimuthPositionYCorrelation.hh"
+#include "AzimuthPositionCorrelation.hh"
 
 #include <QDebug>
 
@@ -17,12 +17,18 @@
 #include <iostream>
 #include <cmath>
 
-AzimuthPositionYCorrelation::AzimuthPositionYCorrelation(Type type)
+AzimuthPositionCorrelation::AzimuthPositionCorrelation(Direction direction, Type type)
   : AnalysisPlot(AnalysisPlot::Tracking)
   , H2DProjectionPlot()
+  , m_direction(direction)
   , m_type(type)
 {
-  QString htitle = "Azimuth correlation with y position";
+  QString htitle;
+  if (direction == X) {
+    htitle = "Azimuth correlation with x direction";
+  } else {
+    htitle = "Azimuth correlation with y direction";
+  }
 
   if (m_type == Positive)
     htitle += " positive";
@@ -42,18 +48,22 @@ AzimuthPositionYCorrelation::AzimuthPositionYCorrelation(Type type)
 
   TH2D* histogram = new TH2D(qPrintable(htitle), "", nBinsX, xMin, xMax, nBinsY, yMin, yMax);
   histogram->Sumw2();
-  setAxisTitle("azimuth/degree", "y position / mm", "");
+  if (direction == X) {
+    setAxisTitle("azimuth/degree", "x position / mm", "");
+  } else {
+    setAxisTitle("azimuth/degree", "y position / mm", "");
+  }
   addHistogram(histogram);
 
   setDrawOption(COLZ);
   controlWidget()->spinBox()->setMaximum(histogram->GetNbinsY());
 }
 
-AzimuthPositionYCorrelation::~AzimuthPositionYCorrelation()
+AzimuthPositionCorrelation::~AzimuthPositionCorrelation()
 {
 }
 
-void AzimuthPositionYCorrelation::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void AzimuthPositionCorrelation::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 
@@ -65,15 +75,18 @@ void AzimuthPositionYCorrelation::processEvent(const QVector<Hit*>&, const Parti
     return;
 
   double rigidity = track->rigidity();
-  if (m_type == Positive && rigidity < 0) {
+  if (m_type == Positive && rigidity < 0)
     return;
-  }
-  if (m_type == Negative && rigidity > 0) {
+  if (m_type == Negative && rigidity > 0)
     return;
-  }
 
   double azimuth = track->azimuthAngle() * 180. / M_PI;
-  double yPosition = track->y(Constants::upperTofPosition);
+  double position = 0;
+  if (m_direction == X) {
+    position = track->x(Constants::upperTofPosition);
+  } else {
+    position = track->y(Constants::upperTofPosition);
+  }
 
-  histogram()->Fill(azimuth, yPosition);
+  histogram()->Fill(azimuth, position);
 }
