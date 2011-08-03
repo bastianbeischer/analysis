@@ -92,6 +92,8 @@
 #include "ZenithDistributionPlot.hh"
 #include "AzimuthDistributionPlot.hh"
 #include "AzimuthMigrationHistogram.hh"
+#include "AzimuthPositionCorrelation.hh"
+#include "AzimuthCutStatistics.hh"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -548,6 +550,13 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new Chi2VsMomentumPlot);
     m_ui.plotter->addPlot(new ZenithDistributionPlot());
     m_ui.plotter->addPlot(new AzimuthDistributionPlot());
+    m_ui.plotter->addPlot(new AzimuthCutStatistics());
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::X, AzimuthPositionCorrelation::Positive));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::X, AzimuthPositionCorrelation::Negative));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::X, AzimuthPositionCorrelation::All));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, AzimuthPositionCorrelation::Positive));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, AzimuthPositionCorrelation::Negative));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, AzimuthPositionCorrelation::All));
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
