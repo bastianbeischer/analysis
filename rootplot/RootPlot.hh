@@ -33,11 +33,13 @@ public:
   virtual void clear() {}
   void setTitle(const QString& title) {m_title = title;}
   const QString& title() const {return m_title;}
+  int numberOfLatexs() const;
   void addLatex(TLatex*);
   TLatex* latex(int i = 0);
+  int numberOfLegends() const;
   void addLegend(TLegend*);
-  bool hasLegend();
   TLegend* legend(int i = 0);
+  int numberOfFunctions() const;
   void addFunction(TF1*);
   TF1* function(int i = 0);
   DrawOption drawOption();

@@ -68,11 +68,6 @@ void RootPlot::addLegend(TLegend* legend)
   m_legend.append(legend);
 }
 
-bool RootPlot::hasLegend()
-{
-  return (m_legend.size() > 0);
-}
-
 TLegend* RootPlot::legend(int i)
 {
   Q_ASSERT(0 <= i && i < m_legend.size());
@@ -133,4 +128,19 @@ void RootPlot::setSecondaryWidget(QWidget* widget)
   if (m_secondaryWidget)
     delete m_secondaryWidget;
   m_secondaryWidget = widget;
+}
+  
+int RootPlot::numberOfLatexs() const
+{
+  return m_latex.count();
+}
+
+int RootPlot::numberOfLegends() const
+{
+  return m_legend.count();
+}
+
+int RootPlot::numberOfFunctions() const
+{
+  return m_function.count();
 }

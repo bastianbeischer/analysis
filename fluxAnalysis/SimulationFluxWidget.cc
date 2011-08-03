@@ -19,10 +19,10 @@
 #include <QList>
 #include <QAction>
 
-SimulationFluxWidget::SimulationFluxWidget(H1DPlot* plot, TCanvas* canvas, QWidget* parent) :
-QWidget(parent),
-m_plot(plot),
-m_canvas(canvas)
+SimulationFluxWidget::SimulationFluxWidget(H1DPlot* plot, TCanvas* canvas, QWidget* parent)
+  : QWidget(parent)
+  , m_plot(plot)
+  , m_canvas(canvas)
 {
   m_reader = 0;
   m_activated = false;
@@ -246,7 +246,7 @@ void SimulationFluxWidget::updatePlot()
       if (!newHisto->GetSumw2())
         newHisto->Sumw2();
       m_plot->addHistogram(newHisto, H1DPlot::HIST);
-      if (m_plot->hasLegend())
+      if (m_plot->numberOfLegends())
         m_plot->legend()->AddEntry(newHisto, newHisto->GetTitle(), "l");
     }
     m_plot->histogram(0)->GetXaxis()->SetMoreLogLabels(true);
@@ -259,7 +259,7 @@ void SimulationFluxWidget::updatePlot()
 }
 
 void SimulationFluxWidget::clearLegend() {
-  if(m_plot->hasLegend()) {
+  if (m_plot->numberOfLegends()) {
     while (m_plot->legend()->GetListOfPrimitives()->GetEntries() > 1) {
       TLegendEntry* entry = (TLegendEntry*)m_plot->legend()->GetListOfPrimitives()->At(1);
       m_plot->legend()->GetListOfPrimitives()->Remove(entry);
