@@ -11,7 +11,7 @@
 #include "SettingsManager.hh"
 #include "Helpers.hh"
 
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 
 #include <TH2D.h>
 #include <TAxis.h>
@@ -27,7 +27,7 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(QDateTime first, QDateTime last, un
   , m_spectrumType(spectrumType)
 {
   QString strType;
-  switch(m_spectrumType){
+  switch (m_spectrumType) {
   case TRDSpectrumPlot::completeTRD:
     strType = "complete TRD vs time";
     break;
@@ -36,6 +36,9 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(QDateTime first, QDateTime last, un
     break;
   case TRDSpectrumPlot::channel:
     strType = "channel vs time";
+    break;
+  case TRDSpectrumPlot::layer:
+    strType = "layer vs time";
     break;
   }
 
@@ -50,9 +53,9 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(QDateTime first, QDateTime last, un
   int t1 = first.toTime_t();
   int t2 = last.toTime_t();
   const unsigned int nTimeBins = qMin((t2 - t1) / secsPerBin, 500);
-  int nBins = TRDSpectrumPlot::spectrumDefaultBins;
+  int nBins = TRDReconstruction::s_spectrumDefaultBins;
   double lowerBound = 1e-3;
-  double upperBound = TRDSpectrumPlot::spectrumUpperLimit();
+  double upperBound = TRDReconstruction::spectrumUpperLimit();
   const QVector<double>& axis = Helpers::logBinning(nBins, lowerBound, upperBound);
 
   TH2D* histogram = new TH2D(qPrintable(title()),"", nTimeBins,t1,t2, nBins, axis.constData());
@@ -61,7 +64,7 @@ TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(QDateTime first, QDateTime last, un
   histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");
   histogram->GetXaxis()->SetTimeOffset(3600, "gmt"); //dont understand this, but works at testbeam
   histogram->GetXaxis()->SetTimeDisplay(1);
-  setAxisTitle("Time", TRDSpectrumPlot::xAxisTitle(), "");
+  setAxisTitle("Time", TRDReconstruction::xAxisTitle(), "");
   addHistogram(histogram);
 }
 
@@ -69,63 +72,72 @@ TRDSpectrumVsTimePlot::~TRDSpectrumVsTimePlot()
 {
 }
 
-void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
+void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
 {
-  //use the global cuts defined in the TRDSpectrumPlot class
-  if ( ! TRDSpectrumPlot::globalTRDCuts(hits, particle, event))
-      return;
-
-  //now get all relevant energy deposition for this specific plot and all length
-  QList<double> lengthList;
-  QList<double> signalList;
-
-  const Track* track = particle->track();
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != track->hits().end(); ++it) {
-    Hit* hit = *it;
-    if (hit->type() != Hit::trd)
-      continue;
-
-    Cluster* cluster = static_cast<Cluster*>(hit);
-    std::vector<Hit*>& subHits = cluster->hits();
-    const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
-    for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
-      Hit* subHit = *it;
-      //check if the id of the plot has been hit (difference between module mode and channel mode
-      if(m_spectrumType == TRDSpectrumPlot::completeTRD ||  // one spectrum for whole trd
-         (m_spectrumType == TRDSpectrumPlot::module && (subHit->detId() - subHit->channel()) == m_id) ||  // spectrum per module
-         (m_spectrumType == TRDSpectrumPlot::channel && subHit->detId() == m_id)) {  //spectrum per channel
-        double distanceInTube = 1.; //default length in trd tube, if no real calcultaion is performed
-        if(TRDSpectrumPlot::calculateLengthInTube)
-            distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
-        if(distanceInTube > 0) {
-          signalList << hit->signalHeight();
-          lengthList << distanceInTube;
-        }
-      }
-    }
-  }
-
-  /* now fill the mean of all gathered data
-      - one value for a single tube
-      - normally also one value for a module (except no length is calculated and 2 tubes show a signal)
-      - several signals for the complete trd
-  */
-
-  //check again if the trdhits are still on the fitted track and fullfill the minTRDLayerCut
-  unsigned int hitsWhichAreOnTrack = signalList.size();
-  if (m_spectrumType == TRDSpectrumPlot::completeTRD && hitsWhichAreOnTrack < TRDSpectrumPlot::minTRDLayerCut)
+  const TRDReconstruction* trdReconst = particle->trdReconstruction();
+  if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
     return;
 
-  for (int i = 0; i < signalList.size(); ++i) {
-    double value = signalList.at(i) / lengthList.at(i);
-    int iGlobalBin = histogram()->FindBin(event->time(), value);
-    int iXBin, iYBin, iZBin;
-    histogram()->GetBinXYZ(iGlobalBin, iXBin, iYBin, iZBin);
-    double width = histogram()->GetYaxis()->GetBinWidth(iYBin);
-    double weight = 1./width;
-    histogram()->Fill(event->time(), value, weight);
+  double time = event->time();
+
+  QVector<double> valuesToFill;
+  switch (m_spectrumType) {
+  case TRDSpectrumPlot::completeTRD:
+    if (TRDReconstruction::s_calculateLengthInTube) {
+      for (int i = 0; i < 8; ++i)
+        if (trdReconst->energyDepositionForLayer(i).isPierced) {
+          valuesToFill << trdReconst->energyDepositionForLayer(i).edepOnTrackPerLength;
+        }
+    } else {
+      for (int i = 0; i < 8; ++i)
+        if (trdReconst->energyDepositionForLayer(i).isOnTRack) {
+          valuesToFill << trdReconst->energyDepositionForLayer(i).edepOnTrack;
+        }
+    }
+    break;
+  case TRDSpectrumPlot::module:
+    if (TRDReconstruction::s_calculateLengthInTube) {
+      if (trdReconst->energyDepositionForModule(m_id).isPierced) {
+        valuesToFill << trdReconst->energyDepositionForModule(m_id).edepOnTrackPerLength;
+      }
+    } else {
+      if (trdReconst->energyDepositionForModule(m_id).isOnTRack) {
+        valuesToFill << trdReconst->energyDepositionForModule(m_id).edepOnTrack;
+      }
+    }
+    break;
+  case TRDSpectrumPlot::channel:
+    if (TRDReconstruction::s_calculateLengthInTube) {
+      if (trdReconst->energyDepositionForChannel(m_id).isPierced) {
+        valuesToFill << trdReconst->energyDepositionForChannel(m_id).edepOnTrackPerLength;
+      }
+    } else {
+      if (trdReconst->energyDepositionForChannel(m_id).isOnTRack) {
+        valuesToFill << trdReconst->energyDepositionForChannel(m_id).edepOnTrack;
+      }
+    }
+    break;
+  case TRDSpectrumPlot::layer:
+    if (TRDReconstruction::s_calculateLengthInTube) {
+      if (trdReconst->energyDepositionForLayer(m_id).isPierced) {
+        valuesToFill << trdReconst->energyDepositionForLayer(m_id).edepOnTrackPerLength;
+      }
+    } else {
+      if (trdReconst->energyDepositionForLayer(m_id).isOnTRack) {
+        valuesToFill << trdReconst->energyDepositionForLayer(m_id).edepOnTrack;
+      }
+    }
+    break;
   }
 
+  for (QVector<double>::const_iterator it = valuesToFill.constBegin(); it != valuesToFill.constEnd(); ++it) {
+    int iGlobalBin = histogram()->FindBin(time, *it);
+    int iXBin, iYBin, iZBin;
+    histogram()->GetBinXYZ(iGlobalBin, iXBin, iYBin, iZBin);
+    double width = histogram()->GetBinWidth(iYBin);
+    double weight = 1./width;
+    histogram()->Fill(time, *it, weight);
+  }
 }
 
 

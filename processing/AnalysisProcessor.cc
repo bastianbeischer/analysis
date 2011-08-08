@@ -11,6 +11,7 @@
 #include "MCFilter.hh"
 #include "ParticleIdentifier.hh"
 #include "TimeOfFlight.hh"
+#include "TRDReconstruction.hh"
 #include "ParticleInformation.hh"
 
 AnalysisProcessor::AnalysisProcessor()
@@ -84,6 +85,7 @@ void AnalysisProcessor::process(SimpleEvent* event)
 
   Track* track = m_particle->track();
   TimeOfFlight* tof = m_particle->timeOfFlight();
+  TRDReconstruction* trd = m_particle->trdReconstruction();
   ParticleInformation* info = m_particle->information();
 
   if (track) {
@@ -91,6 +93,7 @@ void AnalysisProcessor::process(SimpleEvent* event)
     m_corrections->postFitCorrections(m_particle);
     tof->calculateTimes(track);
     m_corrections->postTOFCorrections(m_particle);
+    trd->reconstructTRD(event, track);
     info->process();
   }
 

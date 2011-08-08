@@ -4,6 +4,7 @@
 #include "ParticleProperties.hh"
 #include "ParticleInformation.hh"
 #include "TimeOfFlight.hh"
+#include "TRDReconstruction.hh"
 #include "Constants.hh"
 
 #include "CenteredBrokenLine.hh"
@@ -33,6 +34,7 @@ Particle::~Particle()
 {
   delete m_track;
   delete m_tof;
+  delete m_trd;
   delete m_information;
 }
 
@@ -41,6 +43,7 @@ void Particle::init()
   m_properties = ParticleDB::instance()->lookupType(Unknown);
   m_track = new CenteredBrokenLine;
   m_tof = new TimeOfFlight;
+  m_trd = new TRDReconstruction;
   m_information = new ParticleInformation(this);
 }
 

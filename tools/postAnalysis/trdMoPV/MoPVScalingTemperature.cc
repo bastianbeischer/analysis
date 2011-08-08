@@ -40,7 +40,7 @@ void MoPVScalingTemperature::saveDependency()
   //get old dependency from corrections
   QPair<double,double> T0_old;
   double dM_dT_old;
-  corr->getTrdTemperatureDependendFactor(T0_old, dM_dT_old);
+  corr->trdTemperatureDependendFactor(T0_old, dM_dT_old);
 
   //calculate new dependency taking old dependency into account
   dM_dT = dM_dT_old + dM_dT;

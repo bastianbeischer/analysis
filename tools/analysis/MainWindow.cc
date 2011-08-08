@@ -50,6 +50,8 @@
 #include "TRDSpectrumVsPressurePlot.hh"
 #include "TRDOccupancyPlot.hh"
 #include "TRDEfficiencyPlot.hh"
+#include "TRDLikelihoodPlot.hh"
+#include "TRDLikelihoodFunctionsPlot.hh"
 #include "TotalEnergyDepositionPlot.hh"
 #include "TotalEnergyDepositionTRDvsTrackerPlot.hh"
 #include "TimeResolutionPlotCollection.hh"
@@ -90,6 +92,9 @@
 #include "ZenithDistributionPlot.hh"
 #include "AzimuthDistributionPlot.hh"
 #include "AzimuthMigrationHistogram.hh"
+#include "RigidityMigrationHistogram.hh"
+#include "AzimuthPositionCorrelation.hh"
+#include "AzimuthCutStatistics.hh"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -488,6 +493,8 @@ void MainWindow::setupPlots()
 
     m_ui.plotter->addPlot(new TRDSpectrumPlot());
     m_ui.plotter->addPlot(new TRDSpectrumPlotCollection);
+    for (int i = 0; i < 8; ++i)
+      m_ui.plotter->addPlot(new TRDSpectrumPlot(i, TRDSpectrumPlot::layer));
 
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlot(first,last));
     m_ui.plotter->addPlot(new TRDSpectrumVsTimePlotCollection(first, last));
@@ -544,6 +551,13 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new Chi2VsMomentumPlot);
     m_ui.plotter->addPlot(new ZenithDistributionPlot());
     m_ui.plotter->addPlot(new AzimuthDistributionPlot());
+    m_ui.plotter->addPlot(new AzimuthCutStatistics());
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::X, AzimuthPositionCorrelation::Positive));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::X, AzimuthPositionCorrelation::Negative));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::X, AzimuthPositionCorrelation::All));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, AzimuthPositionCorrelation::Positive));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, AzimuthPositionCorrelation::Negative));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, AzimuthPositionCorrelation::All));
   }
   if (m_ui.occupancyCheckBox->isChecked()) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
@@ -572,6 +586,9 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Negative));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Inverted));
     m_ui.plotter->addPlot(new AlbedosVsMomentumPlot());
+    m_ui.plotter->addPlot(new RigidityMigrationHistogram(RigidityMigrationHistogram::Positive));
+    m_ui.plotter->addPlot(new RigidityMigrationHistogram(RigidityMigrationHistogram::Negative));
+    m_ui.plotter->addPlot(new RigidityMigrationHistogram(RigidityMigrationHistogram::All));
   }
   if (m_ui.efficiencyTofCheckBox->isChecked()) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
@@ -617,7 +634,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisPlot::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TRDDistanceWireToTrackPlot(AnalysisPlot::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TRDDistanceInTube(AnalysisPlot::MiscellaneousTRD));
-    m_ui.plotter->addPlot(new TotalEnergyDepositionPlot(-100,100));
+    m_ui.plotter->addPlot(new TotalEnergyDepositionPlot());
     m_ui.plotter->addPlot(new TRDEnergyDepositionOverMomentumPlot(AnalysisPlot::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TotalEnergyDepositionTRDvsTrackerPlot());
     m_ui.plotter->addPlot(new TRDEfficiencyPlot());
@@ -626,6 +643,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeights, true));
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::sumOfSignalHeightsNormalizedToHits, true));
     m_ui.plotter->addPlot(new TRDTimeCorrectionPlot(first, last));
+    m_ui.plotter->addPlot(new TRDLikelihoodFunctionsPlot());
   }
   if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BetaPlot);
@@ -657,6 +675,7 @@ void MainWindow::setupPlots()
         m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisPlot::MonteCarloTRD, layer));
     }
     m_ui.plotter->addPlot(new MCTRDCalibrationPlot());
+    m_ui.plotter->addPlot(new TRDLikelihoodPlot(AnalysisPlot::MonteCarloTRD));
   }
   if (m_ui.mcTrackerCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Positron));
@@ -682,6 +701,7 @@ void MainWindow::setupPlots()
     foreach(SensorTypes::Type sensor, beamSensors)
       m_ui.plotter->addPlot(new PMTPlot(sensor));
     m_ui.plotter->addPlot(new PMTCorrelationPlot);
+    m_ui.plotter->addPlot(new TRDLikelihoodPlot(AnalysisPlot::Testbeam));
     m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Horizontal));
     m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Vertical));
     m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::Positron));

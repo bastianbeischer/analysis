@@ -13,6 +13,7 @@ SUBDIRS = \
   tracking \
   particle \
   processing \
+  trdAnalysis \
   alignment \
   rootplot \
   tools

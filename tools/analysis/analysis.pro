@@ -12,7 +12,8 @@ INCLUDEPATH += \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/particle \
-  $$TOPLEVEL/tracking
+  $$TOPLEVEL/tracking \
+  $$TOPLEVEL/trdAnalysis
 
 LIBS += \
   -L$$TOPLEVEL/lib \
@@ -22,12 +23,14 @@ LIBS += \
   -lparticle \
   -ltracking \
   -lrootplot \
-  -lsetup
+  -lsetup \
+  -ltrdAnalysis
 
 SOURCEDIRS = .
 
 RESOURCES += \
   resources.qrc
+
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

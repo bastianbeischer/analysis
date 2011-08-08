@@ -19,8 +19,8 @@ HistCompare::HistCompare(QList<PostAnalysisCanvas*> canvases)
   , H1DPlot()
 {
   gROOT->cd();
-  setTitle("TRD Spectra");
-  setAxisTitle("energy Deposition per length / (keV / mm)","#");
+  setTitle(canvases.at(0)->name());
+  setAxisTitle(canvases.at(0)->histograms1D().at(0)->GetXaxis()->GetTitle(), canvases.at(0)->histograms1D().at(0)->GetYaxis()->GetTitle());
 
   setDrawOption(H1DPlot::BLANK);
 
@@ -31,9 +31,10 @@ HistCompare::HistCompare(QList<PostAnalysisCanvas*> canvases)
      TH1D* histClone = (TH1D*) canvas->histograms1D().at(0)->Clone();
      histClone->Sumw2();
      histClone->SetStats(kFALSE);
-     double lowerIntegralBin = histClone->FindBin(0.01 * histClone->GetXaxis()->GetXmax());
-     double upperIntegralBin = histClone->FindBin(0.4 * histClone->GetXaxis()->GetXmax());
-     histClone->Scale(1./histClone->Integral(lowerIntegralBin, upperIntegralBin, "width"));
+     //double lowerIntegralBin = histClone->FindBin(0.01 * histClone->GetXaxis()->GetXmax());
+     //double upperIntegralBin = histClone->FindBin(0.4 * histClone->GetXaxis()->GetXmax());
+     //histClone->Scale(1./histClone->Integral(lowerIntegralBin, upperIntegralBin, "width"));
+     histClone->Scale(1./histClone->Integral("width"));
      histClone->SetLineColor(nColour++);
 
      ymax = qMax(ymax, histClone->GetMaximum());
