@@ -126,7 +126,7 @@ void TimeResolutionPlot::processEvent(const QVector<Hit*>&, const Particle* cons
     int upperBin = (yu + Constants::tofBarLength / 2.) / binWidth;
     int lowerBin = (yl + Constants::tofBarLength / 2.) / binWidth;
     if (0 <= upperBin && upperBin < m_nBins && 0 <= lowerBin && lowerBin < m_nBins)
-      histogram()->Fill(upperBin * m_nBins + lowerBin + 1, t + lCorrection + pCorrection);
+      histogram()->Fill(upperBin * m_nBins + lowerBin, t + lCorrection + pCorrection);
   }
 }
 
