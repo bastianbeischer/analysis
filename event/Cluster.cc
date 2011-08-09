@@ -60,47 +60,50 @@ void Cluster::processHits()
   
   double x  = 0., y  = 0., z  = 0.;
   double xc = 0., yc = 0., zc = 0.;
-  unsigned short detId;
-  double weightedMean = 0.;
-  double weightedMeanC = 0.;
+  unsigned short detId = 0;
+  double weightedMeanX = 0.;
+  double weightedMeanXC = 0.;
+  double weightedMeanY = 0.;
+  double weightedMeanYC = 0.;
   double sumOfWeights = 0.;
+  double amplitude = 0.;
 
   Hit* firstHit = m_hits.at(0);
   Hit::ModuleType type = firstHit->type();
-  detId = firstHit->detId() - firstHit->channel();
-  y  = firstHit->position().y();
   z  = firstHit->position().z();
-  yc = firstHit->counterPosition().y();
   zc = firstHit->counterPosition().z();
 
-  for (std::vector<Hit*>::iterator it = m_hits.begin(); it != m_hits.end(); it++) {
-    x = (*it)->position().x();
-    xc = (*it)->counterPosition().x();
-
-    double weight = pow((*it)->signalHeight(), 2.);
-    weightedMean += x*weight;
-    weightedMeanC += xc*weight;
+  double max = 0;
+  for (unsigned int i = 0 ; i < m_hits.size(); i++) {
+    Hit* hit = m_hits.at(i);
+    double signalHeight = hit->signalHeight();
+    double weight = pow(signalHeight, 2.);
+    x = hit->position().x();
+    xc = hit->counterPosition().x();
+    y = hit->position().y();
+    yc = hit->counterPosition().y();
+    weightedMeanX += x*weight;
+    weightedMeanXC += xc*weight;
+    weightedMeanY += y*weight;
+    weightedMeanYC += yc*weight;
     sumOfWeights += weight;
+    amplitude += signalHeight;
+    if (signalHeight > max) {
+      max = signalHeight;
+      detId = hit->detId();
+    }
   }
-  weightedMean /= sumOfWeights;
-  weightedMeanC /= sumOfWeights;
 
-  x = weightedMean;
-  xc = weightedMeanC;
-
-  TVector3 position = TVector3(x,y,z);
-  TVector3 counterPosition = TVector3(xc,yc,zc);
-
-  int amplitude = 0.;
-  for (std::vector<Hit*>::iterator it = m_hits.begin(); it != m_hits.end(); it++) {
-    amplitude += (*it)->signalHeight();
-  }  
+  x = weightedMeanX / sumOfWeights;
+  xc = weightedMeanXC / sumOfWeights;
+  y = weightedMeanY / sumOfWeights;
+  yc = weightedMeanYC / sumOfWeights;
 
   m_type = type;
   m_detId = detId;
   m_signalHeight = amplitude;
-  m_position = position;
-  m_counterPosition = counterPosition;
+  m_position = TVector3(x,y,z);
+  m_counterPosition = TVector3(xc,yc,zc);
   
   calculateAngle();
 }
