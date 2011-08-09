@@ -11,26 +11,19 @@
 #include <iomanip>
 
 TimeResolutionPlot::Key::Key(int vi, int vj, int vk, int vl)
-  : i(vi), j(vj), k(vk), l(vl)
+  : i(vi)
+  , j(vj)
+  , k(vk)
+  , l(vl)
 {
 }
 
 TimeResolutionPlot::Key::Key(const TimeOfFlightHistogram* const h)
-  : i(-1), j(-1), k(-1), l(-1)
+  : i(h->i())
+  , j(h->j())
+  , k(h->k())
+  , l(h->l())
 {
-  if (h->upperId() == 0x8000) i = 0;
-  else if (h->upperId() == 0x8004) i = 1;
-  else if (h->upperId() == 0x8008) i = 2;
-  else if (h->upperId() == 0x800c) i = 3;
-
-  if (h->upperId() == 0x8020) j = 0;
-  else if (h->upperId() == 0x8024) j = 1;
-  else if (h->upperId() == 0x8028) j = 2;
-  else if (h->upperId() == 0x802c) j = 3;
-
-  k = 0; //TODO
-
-  l = 0; //TODO
 }
 
 bool TimeResolutionPlot::Key::operator<(const Key& other) const
@@ -48,9 +41,10 @@ TimeResolutionPlot::Value::Value(double s, double se)
 {
 }
 
-TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& histograms)
+TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& histograms, int nBins)
   : PostAnalysisPlot()
   , GraphPlot()
+  , m_nBins(nBins)
 {
   setTitle("time resolution plot");
   Q_ASSERT(histograms.count());
@@ -58,7 +52,6 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& hi
   foreach (TimeOfFlightHistogram* histogram, histograms)
     map.insert(Key(histogram), Value(histogram->sigma(), histogram->sigmaError()));
 
-  int nBins = 3;
   TMatrixT<double> a(8*nBins, 8*nBins);
 
   for (int row = 0; row < 8*nBins; ++row) {
@@ -67,7 +60,6 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& hi
     }
   }
 
-  // top left
   for (int i = 0; i < 4; ++i) {
     for (int k = 0; k < nBins; ++k) {
       int d = i * nBins + k;
@@ -75,18 +67,6 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& hi
     }
   }
 
-  // top right
-  for (int i = 0; i < 4; ++i) {
-    for (int j = 0; j < 4; ++j) {
-      for (int k = 0; k < nBins; ++k) {
-        for (int l = 0; l < nBins; ++l) {
-          int ai = 0;
-          int aj = 4 * nBins + 0;
-        }
-      }
-    }
-  }
-  // bottom left
   for (int j = 0; j < 4; ++j) {
     for (int l = 0; l < nBins; ++l) {
       int d = 4 * nBins + j * nBins + l;
@@ -94,9 +74,41 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& hi
     }
   }
 
-  // bootom right
+  for (int i = 0; i < 4; ++i) {
+    for (int j = 0; j < 4; ++j) {
+      for (int k = 0; k < nBins; ++k) {
+        for (int l = 0; l < nBins; ++l) {
+          const Value& value = map.find(Key(i, j, k, l)).value();
+          int ai = 0;
+          int aj = 0;
+          ai = i * nBins + k;
+          aj = 4 * nBins + j * nBins + l;
+          a(ai, aj) = value.sigma * value.sigma / (value.sigmaError * value.sigmaError);
+          ai = 4 * nBins + j * nBins + l;
+          aj = i * nBins + k;
+          a(ai, aj) = value.sigma * value.sigma / (value.sigmaError * value.sigmaError);
+        }
+      }
+    }
+  }
 
-  dumpMatrix(a);
+  TMatrixT<double> b(8*nBins, 1);
+  for (int ai = 0; ai < 8*nBins; ++ai)
+    b(ai, 0) = 0;
+
+  for (int i = 0; i < 4; ++i) {
+    for (int k = 0; k < nBins; ++k) {
+      b(i * nBins + k, 0) = sumRelativeSigmaErrorJL(map, i, k);
+    }
+  }
+  for (int j = 0; j < 4; ++j) {
+    for (int l = 0; l < nBins; ++l) {
+      b(4 * nBins + j * nBins + l, 0) = sumSigmaErrorIK(map, j, l);
+    }
+  }
+
+  dumpMatrix(a.Invert() * b);
+//  dumpMatrix(a.Invert());
 
   for (int bar = 0; bar < Constants::nTofBars / 2; ++bar) {
     TGraph* graph = new TGraph(nBins);
@@ -114,29 +126,47 @@ TimeResolutionPlot::~TimeResolutionPlot()
 double TimeResolutionPlot::sumSigmaErrorJL(const QMap<Key, Value>& map, int i, int k)
 {
   double sum = 0;
+  for (int j = 0; j < 4; ++j) {
+    for (int l = 0; l < m_nBins; ++l) {
+      const Value& value = map.find(Key(i, j, k, l)).value();
+      sum+= 1. / (value.sigmaError * value.sigmaError);
+    }
+  }
   return sum;
 }
 
 double TimeResolutionPlot::sumSigmaErrorIK(const QMap<Key, Value>& map, int j, int l)
 {
   double sum = 0;
-  return sum;
-}
-
-double TimeResolutionPlot::sumRelativeSigmaError(const QMap<Key, Value>& map, int i, int j, int k, int l)
-{
-  double sum = 0;
+  for (int i = 0; i < 4; ++i) {
+    for (int k = 0; k < m_nBins; ++k) {
+      const Value& value = map.find(Key(i, j, k, l)).value();
+      sum+= 1. / (value.sigmaError * value.sigmaError);
+    }
+  }
   return sum;
 }
 
 double TimeResolutionPlot::sumRelativeSigmaErrorJL(const QMap<Key, Value>& map, int i, int k)
 {
   double sum = 0;
+  for (int j = 0; j < 4; ++j) {
+    for (int l = 0; l < m_nBins; ++l) {
+      const Value& value = map.find(Key(i, j, k, l)).value();
+      sum+= value.sigma * value.sigma / (value.sigmaError * value.sigmaError);
+    }
+  }
   return sum;
 }
 
 double TimeResolutionPlot::sumRelativeSigmaErrorIK(const QMap<Key, Value>& map, int j, int l) {
   double sum = 0;
+  for (int i = 0; i < 4; ++i) {
+    for (int k = 0; k < m_nBins; ++k) {
+      const Value& value = map.find(Key(i, j, k, l)).value();
+      sum+= value.sigma * value.sigma / (value.sigmaError * value.sigmaError);
+    }
+  }
   return sum;
 }
 

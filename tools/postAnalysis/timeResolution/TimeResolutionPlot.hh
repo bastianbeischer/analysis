@@ -10,7 +10,7 @@ class TimeOfFlightHistogram;
 
 class TimeResolutionPlot : public PostAnalysisPlot, public GraphPlot {
 public:
-  TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>&);
+  TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>&, int nBins);
   virtual ~TimeResolutionPlot();
 private:
   struct Key {
@@ -30,6 +30,8 @@ private:
   double sumRelativeSigmaErrorJL(const QMap<Key, Value>& map, int i, int k);
   double sumRelativeSigmaErrorIK(const QMap<Key, Value>& map, int j, int l);
   void dumpMatrix(const TMatrixT<double>& m);
+
+  int m_nBins;
 };
 
 #endif

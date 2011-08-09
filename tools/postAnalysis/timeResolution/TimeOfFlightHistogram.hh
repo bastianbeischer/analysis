@@ -14,6 +14,10 @@ public:
   virtual ~TimeOfFlightHistogram();
   int upperId() const;
   int lowerId() const;
+  int i() const;
+  int j() const;
+  int k() const;
+  int l() const;
   double upperY() const;
   double lowerY() const;
   double mean() const;
@@ -23,6 +27,7 @@ public:
 private:
   int m_upperId;
   int m_lowerId;
+  int m_i, m_j, m_k, m_l;
   double m_upperY;
   double m_lowerY;
   double m_mean;

@@ -21,13 +21,17 @@ TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin
   , H1DPlot()
   , m_upperId(-1)
   , m_lowerId(-1)
+  , m_i(-1)
+  , m_j(-1)
+  , m_k(-1)
+  , m_l(-1)
   , m_upperY(NAN)
   , m_lowerY(NAN)
   , m_mean(NAN)
   , m_meanError(NAN)
   , m_sigma(NAN)
   , m_sigmaError(NAN)
-{
+{ 
   TH2D* histogram = canvas->histograms2D().at(0);
   histogram->Draw("COLZ");
   QString axisLabel(histogram->GetXaxis()->GetBinLabel(bin));
@@ -36,6 +40,21 @@ TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin
   QString title = canvas->name().remove("time resolution ").remove(" canvas");
   m_upperId = title.mid(2, 4).toInt(0, 16);
   m_lowerId = title.mid(17, 4).toInt(0, 16);
+
+  if (m_upperId == 0x8000) m_i = 0;
+  else if (m_upperId == 0x8004) m_i = 1;
+  else if (m_upperId == 0x8008) m_i = 2;
+  else if (m_upperId == 0x800c) m_i = 3;
+
+  if (m_lowerId == 0x8020) m_j = 0;
+  else if (m_lowerId == 0x8024) m_j = 1;
+  else if (m_lowerId == 0x8028) m_j = 2;
+  else if (m_lowerId == 0x802c) m_j = 3;
+
+  int nBarPositions = sqrt(canvas->histograms2D().at(0)->GetXaxis()->GetNbins());
+  m_k = (bin - 1) / nBarPositions;
+  m_l = (bin - 1) % nBarPositions;
+
   title.append(QString(" upper=%1mm lower=%2mm").arg(m_upperY).arg(m_lowerY));
   setTitle(title);
   TH1D* projection = histogram->ProjectionY("tmp", bin, bin);
@@ -117,6 +136,26 @@ int TimeOfFlightHistogram::upperId() const
 int TimeOfFlightHistogram::lowerId() const
 {
   return m_lowerId;
+}
+
+int TimeOfFlightHistogram::i() const
+{
+  return m_i;
+}
+
+int TimeOfFlightHistogram::j() const
+{
+  return m_j;
+}
+
+int TimeOfFlightHistogram::k() const
+{
+  return m_k;
+}
+
+int TimeOfFlightHistogram::l() const
+{
+  return m_l;
 }
 
 double TimeOfFlightHistogram::upperY() const

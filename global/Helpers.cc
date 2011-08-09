@@ -6,7 +6,9 @@
 
 namespace Helpers
 {
-  double addQuad(double a, double b) {return sqrt(a*a + b*b);}
+  double addQuad(double a, double b, double c, double d, double e) {
+    return sqrt(a*a + b*b + c*c + d*d + e*e);
+  }
 
   QVector<double> logBinning(unsigned int nBins, double min, double max) {
     QVector<double> binning;
