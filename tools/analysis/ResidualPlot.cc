@@ -98,19 +98,6 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, const Particle* const
       DetectorElement* element = Setup::instance()->element(detId);
       unsigned short nChannels = element->nChannels();
       unsigned short channel = hit->channel();
-      if (strcmp(hit->ClassName(), "Cluster") == 0) {
-        int max = 0;
-        int imax = 0;
-        Cluster* cluster = static_cast<Cluster*>(hit);
-        std::vector<Hit*> subHits = cluster->hits();
-        for (unsigned int i = 0 ; i < subHits.size(); i++) {
-          if (subHits.at(i)->signalHeight() > max) {
-            max = subHits.at(i)->signalHeight();
-            imax = i;
-          }
-        }
-        channel = element->sortedChannel(subHits.at(imax)->channel());
-      }
 
       histogram()->Fill(index*nChannels + channel, res);
     }
