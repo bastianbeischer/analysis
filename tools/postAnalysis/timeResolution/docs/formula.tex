@@ -1,0 +1,117 @@
+\documentclass[a4paper]{article}
+\usepackage[latin1]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{amsmath, amsfonts, amssymb, amstext}
+\usepackage{graphicx}
+\usepackage{fancybox}
+\usepackage{pdflscape}
+\usepackage[cm]{fullpage}
+\pagestyle{empty}
+\begin{document}
+\begin{center}
+\includegraphics[width=0.75\textwidth]{sketch.pdf}
+\vskip 10mm
+\fbox{\begin{Beqnarray*}
+V_{i j k l} &=& \sigma_{i j k l}^2 \overset{!}{=} \hat{\sigma}_{i k}^2 + \check{\sigma}_{j l}^2 = \hat{V}_{i k} + \check{V}_{j l} \\
+\sigma_{V_{i j k l}} &=& 2 \cdot \sigma_{i j k l} \cdot \sigma_{\sigma_{i j k l}}
+\end{Beqnarray*}}
+
+\begin{align*}
+\chi^2 &= \sum_{\substack{i, j = 1 \ldots 4 \\ k, l = 1 \ldots n}}
+        {\left( \frac{V_{i j k l} - \left( \hat{V}_{i k} + \check{V}_{j l} \right)}{\sigma_{V_{i j k l}}} \right)}^2 \to \text{min.} \\
+\\
+\frac{\partial \chi^2}{\partial \hat{V}_{i^\prime k^\prime}} &= \sum_{\substack{j = 1 \ldots 4 \\ l = 1 \ldots n}}
+        \frac{\partial}{\partial \hat{V}_{i^\prime k^\prime}} {\left( \frac{V_{i^\prime j k^\prime l} - \left( \hat{V}_{i^\prime k^\prime}
+        + \check{V}_{j l} \right)}{\sigma_{V_{i^\prime j k^\prime l}}} \right)}^2 \\
+&= \sum_{j l} - \frac{1}{\sigma_{V_{i^\prime j k^\prime l}}} \cdot 2 \cdot {\left( \frac{V_{i^\prime j k^\prime l} - \left( \hat{V}_{i^\prime k^\prime}
+        + \check{V}_{j l} \right)}{\sigma_{V_{i^\prime j k^\prime l}}} \right)} \\
+&= 2 \cdot \left( \hat{V}_{i^\prime k^\prime} \cdot \sum_{j l} \frac{1}{\sigma_{V_{i^\prime j k^\prime l}}^2}
+        + \sum_{j l} \frac{\check{V}_{j l}}{\sigma_{V_{i^\prime j k^\prime l}}^2}
+        - \sum_{j l} \frac{V_{i^\prime j k^\prime l}}{\sigma_{V_{i^\prime j k^\prime l}}^2} \right) \\  
+&\stackrel{!}{=} 0
+\end{align*}
+
+\fbox{\begin{Beqnarray*}
+\hat{V}_{i k} \cdot \sum_{j l} \frac{1}{\sigma_{V_{i j k l}}^2}
+        + \sum_{j l} \frac{\check{V}_{j l}}{\sigma_{V_{i j k l}}^2}
+        &=& \sum_{j l} \frac{V_{i j k l}}{\sigma_{V_{i j k l}}^2} \\
+\check{V}_{j l} \cdot \sum_{i k} \frac{1}{\sigma_{V_{i j k l}}^2}
+        + \sum_{i k} \frac{\hat{V}_{i k}}{\sigma_{V_{i j k l}}^2}
+        &=& \sum_{i k} \frac{V_{i j k l l}}{\sigma_{V_{i j k l}}^2}
+\end{Beqnarray*}}
+\end{center}
+
+\begin{landscape}
+$$
+\left[
+\begin{array}{ccc|ccc|c|ccc|ccc|ccc|c|ccc}
+
+\sigma^{-2}_{V_{1 j 1 l}}&& &&& &&& &&
+    \sigma^{-2}_{V_{1 1 1 1}} & \cdots & \sigma^{-2}_{V_{1 1 1 n}} & \sigma^{-2}_{V_{1 2 1 1}} & \cdots & \sigma^{-2}_{V_{1 2 1 n}} &
+    & \sigma^{-2}_{V_{1 4 1 1}} & \cdots & \sigma^{-2}_{V_{1 4 1 n}} \\
+&\ddots& &&& &&& && \vdots & & \vdots & \vdots & & \vdots & \cdots & \vdots & & \vdots \\
+&&\sigma^{-2}_{V_{1 j n l}} &&& &&& && 
+    \sigma^{-2}_{V_{1 1 n 1}} & \cdots & \sigma^{-2}_{V_{1 1 n n}} & \sigma^{-2}_{V_{1 2 n 1}} & \cdots & \sigma^{-2}_{V_{1 2 n n}} &
+    & \sigma^{-2}_{V_{1 4 n 1}} & \cdots & \sigma^{-2}_{V_{1 4 n n}} \\ \hline
+
+&&& \sigma^{-2}_{V_{2 j 1 l}}&& &&& &&
+    \sigma^{-2}_{V_{2 1 1 1}} & \cdots & \sigma^{-2}_{V_{2 1 1 n}} & \sigma^{-2}_{V_{2 2 1 1}} & \cdots & \sigma^{-2}_{V_{2 2 1 n}} &
+    & \sigma^{-2}_{V_{2 4 1 1}} & \cdots & \sigma^{-2}_{V_{2 4 1 n}} \\
+&&& &\ddots& &&& && \vdots & & \vdots & \vdots & & \vdots & \cdots & \vdots & & \vdots \\
+&&& &&\sigma^{-2}_{V_{2 j n l}} &&& && 
+    \sigma^{-2}_{V_{2 1 n 1}} & \cdots & \sigma^{-2}_{V_{2 1 n n}} & \sigma^{-2}_{V_{2 2 n 1}} & \cdots & \sigma^{-2}_{V_{2 2 n n}} &
+    & \sigma^{-2}_{V_{2 4 n 1}} & \cdots & \sigma^{-2}_{V_{2 4 n n}} \\ \hline
+
+&&& &&& \ddots &&& && \vdots && & \vdots && && \vdots & \\ \hline
+
+&&& &&& & \sigma^{-2}_{V_{4 j 1 l}}&& &
+    \sigma^{-2}_{V_{4 1 1 1}} & \cdots & \sigma^{-2}_{V_{4 1 1 n}} & \sigma^{-2}_{V_{4 2 1 1}} & \cdots & \sigma^{-2}_{V_{4 2 1 n}} &
+    & \sigma^{-2}_{V_{4 4 1 1}} & \cdots & \sigma^{-2}_{V_{4 4 1 n}} \\
+&&& &&& & &\ddots& & \vdots & & \vdots & \vdots & & \vdots & \cdots & \vdots & & \vdots \\
+&&& &&& & &&\sigma^{-2}_{V_{4 j n l}} &
+    \sigma^{-2}_{V_{4 1 n 1}} & \cdots & \sigma^{-2}_{V_{4 1 n n}} & \sigma^{-2}_{V_{4 2 n 1}} & \cdots & \sigma^{-2}_{V_{4 2 n n}} &
+    & \sigma^{-2}_{V_{4 4 n 1}} & \cdots & \sigma^{-2}_{V_{4 4 n n}} \\ \hline
+
+\sigma^{-2}_{V_{1111}} & \cdots & \sigma^{-2}_{V_{11n1}} & \sigma^{-2}_{V_{2111}} & \cdots & \sigma^{-2}_{V_{21n1}} & & \sigma^{-2}_{V_{4111}} & \cdots & \sigma^{-2}_{V_{41n1}} & \sigma^{-2}_{V_{i 1 k 1}}&& &&& &&& \\
+\vdots & & \vdots & \vdots & & \vdots & \cdots & \vdots & & \vdots & &\ddots& &&& &&& \\
+\sigma^{-2}_{V_{111n}} & \cdots & \sigma^{-2}_{V_{11nn}} & \sigma^{-2}_{V_{211n}} & \cdots & \sigma^{-2}_{V_{21nn}} & & \sigma^{-2}_{V_{411n}} & \cdots & \sigma^{-2}_{V_{41nn}} & &&\sigma^{-2}_{V_{i 1 k n}} &&& &&& \\ \hline
+\sigma^{-2}_{V_{1211}} & \cdots & \sigma^{-2}_{V_{12n1}} & \sigma^{-2}_{V_{2211}} & \cdots & \sigma^{-2}_{V_{22n1}} & & \sigma^{-2}_{V_{4211}} & \cdots & \sigma^{-2}_{V_{42n1}} & &&& \sigma^{-2}_{V_{i 2 k 1}}&& &&& \\
+\vdots & & \vdots & \vdots & & \vdots & \cdots & \vdots & & \vdots & &&& &\ddots& &&& \\
+\sigma^{-2}_{V_{121n}} & \cdots & \sigma^{-2}_{V_{12nn}} & \sigma^{-2}_{V_{221n}} & \cdots & \sigma^{-2}_{V_{22nn}} & & \sigma^{-2}_{V_{421n}} & \cdots & \sigma^{-2}_{V_{42nn}} & &&& &&\sigma^{-2}_{V_{i 2 k n}} &&& \\ \hline
+& \vdots && & \vdots && && \vdots & & &&& &&& \ddots &&& \\ \hline
+\sigma^{-2}_{V_{1411}} & \cdots & \sigma^{-2}_{V_{14n1}} & \sigma^{-2}_{V_{2411}} & \cdots & \sigma^{-2}_{V_{24n1}} & & \sigma^{-2}_{V_{4411}} & \cdots & \sigma^{-2}_{V_{44n1}} & &&& &&& & \sigma^{-2}_{V_{i 4 k 1}}&& \\
+\vdots & & \vdots & \vdots & & \vdots & \cdots & \vdots & & \vdots & &&& &&& & &\ddots& \\
+\sigma^{-2}_{V_{141n}} & \cdots & \sigma^{-2}_{V_{14nn}} & \sigma^{-2}_{V_{241n}} & \cdots & \sigma^{-2}_{V_{24nn}} & & \sigma^{-2}_{V_{441n}} & \cdots & \sigma^{-2}_{V_{44nn}} & &&& &&& & &&\sigma^{-2}_{V_{i 4 k n}}
+\end{array}
+\right]
+\cdot
+\left[
+\begin{array}{c}
+\hat{V}_{11} \\ \vdots \\ \hat{V}_{1n} \\ \hline
+\hat{V}_{21} \\ \vdots \\ \hat{V}_{2n} \\ \hline
+\vdots \\ \hline
+\hat{V}_{41} \\ \vdots \\ \hat{V}_{4n} \\ \hline
+\check{V}_{11} \\ \vdots \\ \check{V}_{1n} \\ \hline
+\check{V}_{21} \\ \vdots \\ \check{V}_{2n} \\ \hline
+\vdots \\ \hline
+\check{V}_{41} \\ \vdots \\ \check{V}_{4n}
+\end{array}
+\right]
+=
+\left[
+\begin{array}{c}
+V_{1 j 1 l} \cdot \sigma^{-2}_{V_{1 j 1 l}} \\ \vdots \\ V_{1 j n l} \cdot \sigma^{-2}_{V_{1 j n l}} \\ \hline
+V_{2 j 1 l} \cdot \sigma^{-2}_{V_{2 j 1 l}} \\ \vdots \\ V_{2 j n l} \cdot \sigma^{-2}_{V_{2 j n l}} \\ \hline
+\vdots \\ \hline
+V_{4 j 1 l} \cdot \sigma^{-2}_{V_{4 j 1 l}} \\ \vdots \\ V_{4 j n l} \cdot \sigma^{-2}_{V_{4 j n l}} \\ \hline
+V_{i 1 k 1} \cdot \sigma^{-2}_{V_{i 1 k 1}} \\ \vdots \\ V_{i 1 k n} \cdot \sigma^{-2}_{V_{i 1 k n}} \\ \hline
+V_{i 2 k 1} \cdot \sigma^{-2}_{V_{i 2 k 1}} \\ \vdots \\ V_{i 2 k n} \cdot \sigma^{-2}_{V_{i 2 k n}} \\ \hline
+\vdots \\ \hline
+V_{i 4 k 1} \cdot \sigma^{-2}_{V_{i 4 k 1}} \\ \vdots \\ V_{i 4 k n} \cdot \sigma^{-2}_{V_{i 4 k n}}
+\end{array}
+\right]
+$$
+\end{landscape}
+
+\end{document}
