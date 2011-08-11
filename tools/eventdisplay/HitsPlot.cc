@@ -224,7 +224,7 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, const Particle* const par
       width = 5.;
       height = 6.;
       unsigned short channel = hit->channel();
-      DetectorElement* element = Setup::instance()->element(hit->detId() - channel);
+      DetectorElement* element = Setup::instance()->element(hit->elementId());
       x = element->position().x() + (2*(channel-2)+0.5) * width;
       color = palette->GetValueColor(amplitude*5);
     }

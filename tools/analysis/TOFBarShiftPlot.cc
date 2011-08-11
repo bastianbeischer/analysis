@@ -75,7 +75,7 @@ void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, const Particle* const p
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Hit* hit = *it;
-    unsigned short barId = hit->detId() - hit->channel();
+    unsigned short barId = hit->elementId();
     if (!idTop1 && barId == m_idTop1) idTop1 = true;
     if (!idTop2 && barId == m_idTop2) idTop2 = true;
     if (!idBottom1 && barId == m_idBottom1) idBottom1 = true;

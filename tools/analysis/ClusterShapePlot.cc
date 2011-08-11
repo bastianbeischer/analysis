@@ -58,7 +58,7 @@ void ClusterShapePlot::processEvent(const QVector<Hit*>& hits, const Particle* c
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Cluster* cluster = static_cast<Cluster*>(*it);
-    unsigned short element = cluster->detId() - cluster->channel();
+    unsigned short element = cluster->elementId();
     if (element == m_id) {
       std::vector<Hit*>& subHits = cluster->hits();
 

@@ -42,7 +42,7 @@ void ClusterLengthPlot::processEvent(const QVector<Hit*>& hits, const Particle* 
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Cluster* cluster = static_cast<Cluster*>(*it);
-    if (cluster->detId() - cluster->channel() == m_id)
+    if (cluster->elementId() == m_id)
       histogram()->Fill(cluster->hits().size());
   }
 }

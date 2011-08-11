@@ -81,7 +81,7 @@ void AlignmentMatrix::processEvent(const QVector<Hit*>&, const Particle* const p
     float k  = fz - z0;
 
     // detector ID
-    unsigned short detId = hit->detId() - hit->channel();
+    unsigned short detId = hit->elementId();
     unsigned int index = Manager::instance()->parameters()->indexForDetId(detId);
 
     // angle

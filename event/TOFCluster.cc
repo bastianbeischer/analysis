@@ -51,7 +51,7 @@ void TOFCluster::processHits()
   if (!m_hits.size())
     return;
   Hit* firstHit = m_hits[0];
-  unsigned short detId = firstHit->detId() - firstHit->channel();
+  unsigned short detId = firstHit->elementId();
   x = 50.*int(firstHit->position().x()/50.) + (firstHit->position().x() < 0 ? -25 : 25);
   y = firstHit->position().y();
   z = firstHit->position().z();

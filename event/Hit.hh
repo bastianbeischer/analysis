@@ -38,6 +38,8 @@ public:
   const TVector3& counterPosition() const {return m_counterPosition;}
   double          angle()           const {return m_angle;}
 
+  unsigned short  elementId()       const {return detId() - channel();}
+
 public:
   virtual double  resolutionEstimate() const;
   double          resolution() const;
