@@ -1180,5 +1180,4 @@ void MainWindow::changeAspectRatioTriggered()
   } else if (s == m_ui.view169Action) {
     m_ui.plotter->setAspectRatio(16./9.);
   }
-  adjustSize();
 }

@@ -17,6 +17,7 @@ public:
 public:
   void updateCanvas();
   void setAspectRatio(double);
+  QSize sizeHint() const;
 public slots:
   void setGrid(int);
   void setLogX(int);

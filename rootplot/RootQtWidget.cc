@@ -64,6 +64,8 @@ void RootQtWidget::setLogZ(int b)
 void RootQtWidget::setAspectRatio(double ratio)
 {
   m_aspectRatio = ratio;
+  updateGeometry();
+  adjustSize();
 }
 
 void RootQtWidget::resizeEvent(QResizeEvent* event)
@@ -73,14 +75,17 @@ void RootQtWidget::resizeEvent(QResizeEvent* event)
     return;
   }
   m_inhibitResizeEvent = true;
-  if (m_aspectRatio > 0) {
-    int w = event->size().width();
-    int h = event->size().height();
-    if (h * m_aspectRatio < w) {
-      resize(h * m_aspectRatio, h);
-    } else {
-      resize(w, w / m_aspectRatio);
-    }
+  int w = event->size().width();
+  int h = event->size().height();
+  if (h * m_aspectRatio < w) {
+    resize(h * m_aspectRatio, h);
+  } else {
+    resize(w, w / m_aspectRatio);
   }
   m_inhibitResizeEvent = false;
+}
+  
+QSize RootQtWidget::sizeHint() const
+{
+  return QSize(300, 300);
 }
