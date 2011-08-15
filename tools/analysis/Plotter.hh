@@ -9,8 +9,8 @@
 
 class QVBoxLayout;
 class RootQtWidget;
-
 class AnalysisPlot;
+class QResizeEvent;
 
 class Plotter : public QWidget
 {
@@ -28,6 +28,7 @@ public:
   void selectPlot(int);
   RootPlot::DrawOption drawOption();
   void setDrawOption(RootPlot::DrawOption);
+  void setAspectRatio(double);
   RootPlot::Type selectedPlotType();
   void saveCanvas(const QString& fileName);
   void saveForPostAnalysis(const QString&);
@@ -41,12 +42,16 @@ public slots:
 signals:
   void titleChanged(const QString&);
   void positionChanged(double, double);
+protected:
+  void resizeEvent(QResizeEvent*);
 private:
   QVBoxLayout* m_layout;
   static RootQtWidget* s_rootWidget;
   QTimer m_updateTimer;
   QVector<AnalysisPlot*> m_plots;
   int m_selectedPlot;
+  double m_aspectRatio;
+  bool m_inhibitResizeEvent;
 };
 
 #endif /* Plotter_hh */

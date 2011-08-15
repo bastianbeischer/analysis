@@ -21,6 +21,8 @@ Plotter::Plotter(QWidget* parent)
   , m_layout(new QVBoxLayout(this))
   , m_updateTimer(this)
   , m_selectedPlot(-1)
+  , m_aspectRatio(-1)
+  , m_inhibitResizeEvent(false)
 {
   m_layout->setContentsMargins(0, 0, 0, 0);
   s_rootWidget = new RootQtWidget(this);
@@ -197,4 +199,28 @@ void Plotter::setDrawOption(RootPlot::DrawOption option)
 RootQtWidget* Plotter::rootWidget()
 {
   return s_rootWidget;
+}
+
+void Plotter::setAspectRatio(double aspectRatio)
+{
+  m_aspectRatio = aspectRatio;
+}
+
+void Plotter::resizeEvent(QResizeEvent* event)
+{
+  if (m_inhibitResizeEvent || m_aspectRatio <= 0.) {
+    QWidget::resizeEvent(event);
+    return;
+  }
+  m_inhibitResizeEvent = true;
+  if (m_aspectRatio > 0) {
+    int w = event->size().width();
+    int h = event->size().height();
+    if (h * m_aspectRatio < w) {
+      resize(h * m_aspectRatio, h);
+    } else {
+      resize(w, w / m_aspectRatio);
+    }
+  }
+  m_inhibitResizeEvent = false;
 }
