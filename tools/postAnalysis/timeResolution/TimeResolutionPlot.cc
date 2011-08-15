@@ -4,11 +4,15 @@
 
 #include <TGraph.h>
 #include <TMatrix.h>
+#include <TRandom.h>
 
 #include <QMap>
+#include <QDebug>
 
 #include <iostream>
 #include <iomanip>
+#include <cstdlib>
+#include <cmath>
 
 TimeResolutionPlot::Key::Key(int vi, int vj, int vk, int vl)
   : i(vi)
@@ -35,9 +39,9 @@ bool TimeResolutionPlot::Key::operator<(const Key& other) const
   return false;
 }
 
-TimeResolutionPlot::Value::Value(double s, double se)
-  : sigma(s)
-  , sigmaError(se)
+TimeResolutionPlot::Value::Value(double variance, double varianceError)
+  : v(variance)
+  , vError(varianceError)
 {
 }
 
@@ -49,8 +53,15 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& hi
   setTitle("time resolution plot");
   Q_ASSERT(histograms.count());
   QMap<Key, Value> map;
-  foreach (TimeOfFlightHistogram* histogram, histograms)
-    map.insert(Key(histogram), Value(histogram->sigma(), histogram->sigmaError()));
+  foreach (TimeOfFlightHistogram* histogram, histograms) {
+    double vError = 0;
+    if (histogram->fitted()) {
+      vError = histogram->vError();
+    } else {
+      vError = 2 * histogram->v() * gRandom->Gaus(0.4, 0.05);
+    }
+    map.insert(Key(histogram), Value(histogram->v(), vError));
+  }
 
   TMatrixT<double> a(8*nBins, 8*nBins);
 
@@ -83,10 +94,10 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& hi
           int aj = 0;
           ai = i * nBins + k;
           aj = 4 * nBins + j * nBins + l;
-          a(ai, aj) = value.sigma * value.sigma / (value.sigmaError * value.sigmaError);
+          a(ai, aj) = 1. / (value.vError * value.vError);
           ai = 4 * nBins + j * nBins + l;
           aj = i * nBins + k;
-          a(ai, aj) = value.sigma * value.sigma / (value.sigmaError * value.sigmaError);
+          a(ai, aj) = 1. / (value.vError * value.vError);
         }
       }
     }
@@ -107,16 +118,20 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& hi
     }
   }
 
-  dumpMatrix(a.Invert() * b);
-//  dumpMatrix(a.Invert());
+  //dumpMatrix(a.GetSub(0, 8*nBins-2, 0, 8*nBins-2).Invert());
+  dumpMatrix(a);
+  TMatrixT<double> v = a.GetSub(0, 8*nBins-2, 0, 8*nBins-2).Invert() * b.GetSub(0, 8*nBins-2, 0, 0);
+  dumpMatrix(v);
 
-  for (int bar = 0; bar < Constants::nTofBars / 2; ++bar) {
+  for (int i = 0; i < 4; ++i) {
     TGraph* graph = new TGraph(nBins);
-    for (int point = 0; point < nBins; ++point) {
-      graph->SetPoint(point, point, point * point);
+    for (int j = 0; j < nBins; ++j) {
+      double sigma = sqrt(v(i * nBins + j, 0));
+      graph->SetPoint(j, j, sigma);
+      qDebug() << i << j << v(i * nBins + j, 0) << sigma;
     }
     setDrawOption(ALP);
-    addGraph(graph);
+    addGraph(graph, LP);
   }
 }
 
@@ -129,7 +144,7 @@ double TimeResolutionPlot::sumSigmaErrorJL(const QMap<Key, Value>& map, int i, i
   for (int j = 0; j < 4; ++j) {
     for (int l = 0; l < m_nBins; ++l) {
       const Value& value = map.find(Key(i, j, k, l)).value();
-      sum+= 1. / (value.sigmaError * value.sigmaError);
+      sum+= 1. / (value.vError * value.vError);
     }
   }
   return sum;
@@ -141,7 +156,7 @@ double TimeResolutionPlot::sumSigmaErrorIK(const QMap<Key, Value>& map, int j, i
   for (int i = 0; i < 4; ++i) {
     for (int k = 0; k < m_nBins; ++k) {
       const Value& value = map.find(Key(i, j, k, l)).value();
-      sum+= 1. / (value.sigmaError * value.sigmaError);
+      sum+= 1. / (value.vError * value.vError);
     }
   }
   return sum;
@@ -153,7 +168,7 @@ double TimeResolutionPlot::sumRelativeSigmaErrorJL(const QMap<Key, Value>& map, 
   for (int j = 0; j < 4; ++j) {
     for (int l = 0; l < m_nBins; ++l) {
       const Value& value = map.find(Key(i, j, k, l)).value();
-      sum+= value.sigma * value.sigma / (value.sigmaError * value.sigmaError);
+      sum+= value.v / (value.vError * value.vError);
     }
   }
   return sum;
@@ -164,7 +179,7 @@ double TimeResolutionPlot::sumRelativeSigmaErrorIK(const QMap<Key, Value>& map, 
   for (int i = 0; i < 4; ++i) {
     for (int k = 0; k < m_nBins; ++k) {
       const Value& value = map.find(Key(i, j, k, l)).value();
-      sum+= value.sigma * value.sigma / (value.sigmaError * value.sigmaError);
+      sum+= value.v / (value.vError * value.vError);
     }
   }
   return sum;

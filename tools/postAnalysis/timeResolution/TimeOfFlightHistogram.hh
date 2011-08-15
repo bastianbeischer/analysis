@@ -24,6 +24,9 @@ public:
   double meanError() const;
   double sigma() const;
   double sigmaError() const;
+  double v() const;
+  double vError() const;
+  bool fitted() const;
 private:
   int m_upperId;
   int m_lowerId;
@@ -34,6 +37,9 @@ private:
   double m_meanError;
   double m_sigma;
   double m_sigmaError;
+  double m_v;
+  double m_vError;
+  bool m_fitted;
 };
 
 #endif

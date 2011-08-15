@@ -21,7 +21,7 @@ private:
   };
   struct Value {
     Value(double, double);
-    double sigma, sigmaError;
+    double v, vError;
   };
   
   double sumSigmaErrorJL(const QMap<Key, Value>& map, int i, int k);

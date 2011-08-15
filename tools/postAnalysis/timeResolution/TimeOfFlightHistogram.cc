@@ -31,6 +31,9 @@ TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin
   , m_meanError(NAN)
   , m_sigma(NAN)
   , m_sigmaError(NAN)
+  , m_v(NAN)
+  , m_vError(NAN)
+  , m_fitted(false)
 { 
   TH2D* histogram = canvas->histograms2D().at(0);
   histogram->Draw("COLZ");
@@ -69,7 +72,6 @@ TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin
   function->SetParameters(projection->GetMaximum(), 2.6, 0.4);
   function->SetParError(1, 5.);
   function->SetParError(2, 5.);
-  bool fitted = false;
   if (entries > 100) {
     function->SetParameters(projection->GetMaximum(), 2.6, 0.4);
     function->SetParError(1, .2);
@@ -83,13 +85,15 @@ TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin
       function->SetRange(mean - 1.5 * sigma, mean + 1.5 * sigma);
       projection->Fit(function, "RQN0");
     }
-    fitted = true;
+    m_fitted = true;
   }
 
   m_mean = function->GetParameter(1);
   m_meanError = function->GetParError(1);
   m_sigma = function->GetParameter(2);
   m_sigmaError = function->GetParError(2);
+  m_v = m_sigma * m_sigma;
+  m_vError = 2 * m_sigma * m_sigmaError;
   TF1* functionR = new TF1(qPrintable(title + "FunctionR"), "gaus", function->GetXmin(), function->GetXmax());
   function->SetRange(projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
   QStringList stringList = title.split(" ");
@@ -99,7 +103,7 @@ TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin
   functionR->SetParameters(function->GetParameter(0), function->GetParameter(1), function->GetParameter(2));
   functionR->SetLineColor(kRed);
   functionR->SetNpx(1000);
-  if (fitted)
+  if (m_fitted)
     addFunction(functionR);
 
   TLatex* latex = 0;
@@ -112,6 +116,11 @@ TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin
   addLatex(latex);
   latex = RootPlot::newLatex(0.15, 0.79);
   latex->SetTitle(qPrintable(QString("oflow = %1").arg(projection->GetBinContent(nBins + 1))));
+  addLatex(latex);
+
+  latex = RootPlot::newLatex(0.50, 0.95);
+  latex->SetTextAlign(23);
+  latex->SetTitle(qPrintable(QString("(%1 %2 %3 %4)").arg(m_i).arg(m_j).arg(m_k).arg(m_l)));
   addLatex(latex);
 
   latex = RootPlot::newLatex(0.60, 0.85);
@@ -186,4 +195,19 @@ double TimeOfFlightHistogram::sigma() const
 double TimeOfFlightHistogram::sigmaError() const
 {
   return m_sigmaError;
+}
+
+double TimeOfFlightHistogram::v() const
+{
+    return m_v;
+}
+
+double TimeOfFlightHistogram::vError() const
+{
+    return m_vError;
+}
+
+bool TimeOfFlightHistogram::fitted() const
+{
+  return m_fitted;
 }

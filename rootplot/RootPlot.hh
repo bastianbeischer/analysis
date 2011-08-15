@@ -17,7 +17,7 @@ public:
     UndefinedDrawOption,
     BLANK, E1X0,
     COLZ, SCAT, CONT4Z, LEGO, LEGO2, SURF1, COLZTEXT,
-    AP, AC, ALP, ACP, ALX, P, L, C, HIST, LX
+    AP, AC, ALP, ACP, ALX, P, L, C, HIST, LX, LP
   };
   enum Type {Undefined, H1DPlot, H2DPlot, GraphPlot};
 
