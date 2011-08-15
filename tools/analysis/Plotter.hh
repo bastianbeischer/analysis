@@ -42,16 +42,12 @@ public slots:
 signals:
   void titleChanged(const QString&);
   void positionChanged(double, double);
-protected:
-  void resizeEvent(QResizeEvent*);
 private:
   QVBoxLayout* m_layout;
   static RootQtWidget* s_rootWidget;
   QTimer m_updateTimer;
   QVector<AnalysisPlot*> m_plots;
   int m_selectedPlot;
-  double m_aspectRatio;
-  bool m_inhibitResizeEvent;
 };
 
 #endif /* Plotter_hh */
