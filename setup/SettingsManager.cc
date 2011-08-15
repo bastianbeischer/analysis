@@ -50,7 +50,9 @@ const Settings* SettingsManager::settingsForEvent(const SimpleEvent* const event
 
 const Settings* SettingsManager::settingsForRun(int run) const
 {
-  foreach(const Settings* settings, m_settings) {
+  const QVector<const Settings*>::const_iterator endIt = m_settings.constEnd();
+  for (QVector<const Settings*>::const_iterator it = m_settings.constBegin(); it != endIt; it++) {
+    const Settings* settings = *it;
     int firstRun = settings->firstRun();
     int lastRun = settings->lastRun();
     if (run >= firstRun && run <= lastRun) {
