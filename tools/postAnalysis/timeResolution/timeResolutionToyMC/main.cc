@@ -29,12 +29,12 @@ int main(int argc, char* argv[])
   TApplication application("timeResolutionToyMC", &argc, argv);
 
   TF1* resolutionFunction[4][2];
-  for (int bar = 0; bar < 8; ++bar) {
+  for (int bar = 0; bar < 4; ++bar) {
     for (int layer = 0; layer < 2; ++layer) {
       char name[128];
       sprintf(name, "resolutionFunction_%d_%d", bar, layer);
       char function[128];
-      sprintf(function, "0.3 +  %d * 0.1 * (x/200.)^2", bar + 1);
+      sprintf(function, "0.3 / sqrt(2.)+ %d * 0.1 * (x/200.)^2", bar + 1);
       resolutionFunction[bar][layer] = new TF1(name, function);
     }
   }
@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
     }
   }
 
-  TRandom3* random = new TRandom3();
+  TRandom* random = new TRandom();
   for (int event = 0; event < 50000 * 4 * 4 * nBins * nBins; ++event) {
     double upperX = random->Uniform(- 2. * Constants::tofBarWidth, 2. * Constants::tofBarWidth);
     double lowerX = random->Uniform(- 2. * Constants::tofBarWidth, 2. * Constants::tofBarWidth);
@@ -83,8 +83,9 @@ int main(int argc, char* argv[])
     int lowerBin = (lowerY + Constants::tofBarLength / 2.) / binWidth;
     double ds =
       Helpers::addQuad(upperX - lowerX, upperY - lowerY, Constants::upperTofPosition - Constants::lowerTofPosition);
-    double dt = random->Gaus(ds / Constants::speedOfLight, resolutionFunction[lowerBar][1]->Eval(lowerY))
-      - random->Gaus(0, resolutionFunction[upperBar][0]->Eval(upperY));
+    double t1 = random->Gaus(ds / Constants::speedOfLight, resolutionFunction[lowerBar][1]->Eval(lowerY));
+    double t2 = random->Gaus(0, resolutionFunction[upperBar][0]->Eval(upperY));
+    double dt = t2 - (lowerBar == 3 && lowerBin == nBins - 1) ? 0 : t1;
     histograms[upperBar][lowerBar]->Fill(upperBin * nBins + lowerBin, dt);
   }
 

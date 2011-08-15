@@ -5,6 +5,7 @@
 #include <TGraph.h>
 #include <TMatrix.h>
 #include <TRandom.h>
+#include <TAxis.h>
 
 #include <QMap>
 #include <QDebug>
@@ -114,25 +115,41 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& hi
   }
   for (int j = 0; j < 4; ++j) {
     for (int l = 0; l < nBins; ++l) {
-      b(4 * nBins + j * nBins + l, 0) = sumSigmaErrorIK(map, j, l);
+      b(4 * nBins + j * nBins + l, 0) = sumRelativeSigmaErrorIK(map, j, l);
     }
   }
 
-  //dumpMatrix(a.GetSub(0, 8*nBins-2, 0, 8*nBins-2).Invert());
   dumpMatrix(a);
+  dumpMatrix(a.GetSub(0, 8*nBins-2, 0, 8*nBins-2).Invert());
   TMatrixT<double> v = a.GetSub(0, 8*nBins-2, 0, 8*nBins-2).Invert() * b.GetSub(0, 8*nBins-2, 0, 0);
   dumpMatrix(v);
 
   for (int i = 0; i < 4; ++i) {
     TGraph* graph = new TGraph(nBins);
-    for (int j = 0; j < nBins; ++j) {
-      double sigma = sqrt(v(i * nBins + j, 0));
-      graph->SetPoint(j, j, sigma);
-      qDebug() << i << j << v(i * nBins + j, 0) << sigma;
+    graph->SetName(qPrintable(QString("i = %1").arg(i)));
+    for (int k = 0; k < nBins; ++k) {
+      double sigma = sqrt(v(i * nBins + k, 0));
+      graph->SetPoint(k, k, sigma);
+      qDebug() << i << k << v(i * nBins + k, 0) << sigma;
     }
     setDrawOption(ALP);
     addGraph(graph, LP);
   }
+
+  for (int j = 0; j < 4; ++j) {
+    TGraph* graph = new TGraph(nBins);
+    graph->SetName(qPrintable(QString("j = %1").arg(j)));
+    for (int l = 0; l < nBins; ++l) {
+      int ai = (j+4) * nBins + l;
+      double sigma = sqrt((ai < 8*nBins - 1) ? v(ai, 0) : 0);
+      graph->SetPoint(l, l, sigma);
+      qDebug() << sigma;
+    }
+    setDrawOption(ALP);
+    addGraph(graph, LP);
+  }
+
+  yAxis()->SetRangeUser(0., 1.);
 }
 
 TimeResolutionPlot::~TimeResolutionPlot()
