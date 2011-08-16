@@ -12,6 +12,11 @@
 
 SettingsManager* SettingsManager::s_instance = 0;
 
+bool settingsCompare(const Settings* s1, const Settings* s2)
+{
+  return s1->lastRun() < s2->firstRun();
+}
+
 SettingsManager::SettingsManager() :
   m_configFile(0)
 {
@@ -48,17 +53,15 @@ const Settings* SettingsManager::settingsForEvent(const SimpleEvent* const event
   return settingsForRun(run);
 }
 
+
 const Settings* SettingsManager::settingsForRun(int run) const
 {
-  const QVector<const Settings*>::const_iterator endIt = m_settings.constEnd();
-  for (QVector<const Settings*>::const_iterator it = m_settings.constBegin(); it != endIt; it++) {
-    const Settings* settings = *it;
-    int firstRun = settings->firstRun();
-    int lastRun = settings->lastRun();
-    if (run >= firstRun && run <= lastRun) {
-      return settings;
-    }
-  }
+  Settings temp;
+  temp.setFirstRun(run);
+  temp.setLastRun(run);
+  const QVector<const Settings*>::const_iterator it = qBinaryFind(m_settings.begin(), m_settings.end(), &temp, &settingsCompare);
+  if (it != m_settings.constEnd())
+    return *it;
   return 0;
 }
 
@@ -97,4 +100,5 @@ void SettingsManager::readSettings()
     m_settings.append(settings);
     m_configFile->endGroup();
   }
+  qSort(m_settings.begin(), m_settings.end(), &settingsCompare);
 }
