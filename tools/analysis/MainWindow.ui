@@ -2474,6 +2474,11 @@ over threshold</string>
     <addaction name="saveForPostAnalysisDialogAction"/>
    </widget>
    <widget class="QMenu" name="menu_View">
+    <property name="font">
+     <font>
+      <family>DejaVu Sans</family>
+     </font>
+    </property>
     <property name="title">
      <string>&amp;View</string>
     </property>
