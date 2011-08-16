@@ -198,3 +198,9 @@ RootQtWidget* Plotter::rootWidget()
 {
   return s_rootWidget;
 }
+
+void Plotter::setAspectRatio(double aspectRatio)
+{
+  s_rootWidget->setAspectRatio(aspectRatio);
+}
+
