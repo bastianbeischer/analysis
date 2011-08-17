@@ -32,10 +32,9 @@ private:
 
   void updateBinTitles();
   void loadEfficiencies();
-  static bool s_efficienciesLoaded;
 
-  static TH1D* s_multiLayerEff;
-  static TH1D* s_trackFindingEff;
+  TH1D* m_multiLayerEff;
+  TH1D* m_trackFindingEff;
   QMap<Type, QString> m_typeNames;
 };
 

@@ -1,15 +1,16 @@
 #include "RigidityFlux.hh"
 
+#include "Track.hh"
+#include "Plotter.hh"
+#include "Constants.hh"
+#include "RootQtWidget.hh"
+#include "ParticleInformation.hh"
+#include "EfficiencyCorrectionSettings.hh"
+#include "SimulationFluxWidget.hh"
 #include "SimpleEvent.hh"
 #include "Particle.hh"
-#include "Track.hh"
-#include "ParticleInformation.hh"
-#include "Constants.hh"
-#include "Plotter.hh"
-#include "RootQtWidget.hh"
-#include "SimulationFluxWidget.hh"
 #include "Helpers.hh"
-#include "EfficiencyCorrectionSettings.hh"
+
 
 #include <TH1D.h>
 #include <TLatex.h>
@@ -26,19 +27,14 @@
 #include <cmath>
 #include <vector>
 
-bool RigidityFlux::s_efficienciesLoaded = false;
-TH1D* RigidityFlux::s_multiLayerEff = 0;
-TH1D* RigidityFlux::s_trackFindingEff = 0;
-
-RigidityFlux::RigidityFlux(Type type, const QDateTime& first, const QDateTime& last, Plotter* plotter, TH1D* particleHistogram)
+RigidityFlux::RigidityFlux(Type type, const QDateTime& first, const QDateTime& last, TH1D* particleHistogram)
   : AnalysisPlot(AnalysisPlot::MomentumReconstruction)
   , H1DPlot()
   , m_type(type)
-  , m_plotter(plotter)
+  , m_effCor(0)
   , m_particleHistogram(particleHistogram)
   , m_particleHistogramMirrored(0)
 {
-  loadEfficiencies();
   QString title = "flux spectrum";
   m_measurementTimeCalculation = new MeasurementTimeCalculation(first, last);
   if (m_type == Negative) {
@@ -99,19 +95,6 @@ RigidityFlux::~RigidityFlux()
   m_measurementTimeCalculation = 0;
   delete m_fluxCalculation;
   m_fluxCalculation = 0;
-
-  QMutex mutex;
-  mutex.lock();
-  if (s_multiLayerEff) {
-    delete s_multiLayerEff;
-    s_multiLayerEff = 0;
-  }
-  if (s_trackFindingEff) {
-    delete s_trackFindingEff;
-    s_trackFindingEff = 0;
-  }
-  s_efficienciesLoaded = false;
-  mutex.unlock();
   delete m_phiFit;
   m_phiFit = 0;
 }
@@ -156,27 +139,19 @@ void RigidityFlux::updateBinTitles()
 
 void RigidityFlux::loadEfficiencies()
 {
-  QMutex mutex;
-  mutex.lock();
-  if (!s_efficienciesLoaded) {
-
-    EfficiencyCorrectionSettings effCorSet;
-    if (m_type == Negative) {
-      s_multiLayerEff = Helpers::createMirroredHistogram(effCorSet.readHistogram(EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey));
-      s_trackFindingEff = Helpers::createMirroredHistogram(effCorSet.readHistogram(EfficiencyCorrectionSettings::s_trackFindingEfficiencyPreKey));
-    } else {
-      s_multiLayerEff = effCorSet.readHistogram(EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey);
-      s_trackFindingEff = effCorSet.readHistogram(EfficiencyCorrectionSettings::s_trackFindingEfficiencyPreKey);
-    }
-    s_efficienciesLoaded = true;
+  if (m_type == Negative) {
+    m_multiLayerEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->histogram(EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey));
+    m_trackFindingEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->histogram(EfficiencyCorrectionSettings::s_trackFindingEfficiencyPreKey));
+  } else {
+    m_multiLayerEff = EfficiencyCorrectionSettings::instance()->histogram(EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey);
+    m_trackFindingEff = EfficiencyCorrectionSettings::instance()->histogram(EfficiencyCorrectionSettings::s_trackFindingEfficiencyPreKey);
   }
-  mutex.unlock();
 }
 
 void RigidityFlux::efficiencyCorrection()
 {
-  m_fluxCalculation->efficiencyCorrection(s_multiLayerEff);
-  m_fluxCalculation->efficiencyCorrection(s_trackFindingEff);
+  m_fluxCalculation->efficiencyCorrection(m_multiLayerEff);
+  m_fluxCalculation->efficiencyCorrection(m_trackFindingEff);
   m_fluxCalculation->efficiencyCorrection(0.843684 / 0.792555);
   m_fluxCalculation->efficiencyCorrection(0.999);//estimate for TOF trigger efficiency
 }

@@ -21,10 +21,6 @@
 #include <QDebug>
 #include <QMutex>
 
-bool RigidityFluxPlot::s_efficienciesLoaded = false;
-TH1D* RigidityFluxPlot::s_multiLayerEff = 0;
-TH1D* RigidityFluxPlot::s_trackFindingEff = 0;
-
 RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpectrum, double measurementTime, Type type)
   : PostAnalysisPlot()
   , H1DPlot()
@@ -141,18 +137,13 @@ void RigidityFluxPlot::updateBinTitles()
 
 void RigidityFluxPlot::loadEfficiencies()
 {
-  QMutex mutex;
-  mutex.lock();
-  if (!s_efficienciesLoaded) {
-
-    EfficiencyCorrectionSettings effCorSet;
-
-    s_multiLayerEff = effCorSet.readHistogram(EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey);
-    s_trackFindingEff = effCorSet.readHistogram(EfficiencyCorrectionSettings::s_trackFindingEfficiencyPreKey);
-
-    s_efficienciesLoaded = true;
+  if (m_type == Negative) {
+    m_multiLayerEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->histogram(EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey));
+    m_trackFindingEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->histogram(EfficiencyCorrectionSettings::s_trackFindingEfficiencyPreKey));
+  } else {
+    m_multiLayerEff = EfficiencyCorrectionSettings::instance()->histogram(EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey);
+    m_trackFindingEff = EfficiencyCorrectionSettings::instance()->histogram(EfficiencyCorrectionSettings::s_trackFindingEfficiencyPreKey);
   }
-  mutex.unlock();
 }
 
 void RigidityFluxPlot::selectionChanged()

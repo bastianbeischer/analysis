@@ -593,8 +593,8 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MeasurementTimePlot(first, last));
     RigidityParticleSpectrum* particleSpectrum = new RigidityParticleSpectrum(RigidityParticleSpectrum::NonAlbedo);
     m_ui.plotter->addPlot(particleSpectrum);
-    m_ui.plotter->addPlot(new RigidityFlux(RigidityFlux::Positive, first, last, m_ui.plotter, particleSpectrum->particleHistogram()));
-    m_ui.plotter->addPlot(new RigidityFlux(RigidityFlux::Negative, first, last, m_ui.plotter, particleSpectrum->particleHistogram()));
+    m_ui.plotter->addPlot(new RigidityFlux(RigidityFlux::Positive, first, last, particleSpectrum->particleHistogram()));
+    m_ui.plotter->addPlot(new RigidityFlux(RigidityFlux::Negative, first, last, particleSpectrum->particleHistogram()));
     m_ui.plotter->addPlot(new RigiditySpectrumRatio());
     m_ui.plotter->addPlot(new RigidityMigrationHistogram());
   }
