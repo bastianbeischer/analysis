@@ -80,15 +80,13 @@ void Corrections::postFitCorrections(Particle* particle)
 
 void Corrections::postTOFCorrections(Particle* particle)
 {
-  for (int i = 0; i < 5; i++) {
-    if (m_flags & MultipleScattering) multipleScattering(particle); // should be done first
-  }
+  if (m_flags & MultipleScattering) multipleScattering(particle);
 }
 
 void Corrections::alignment(Hit* hit)
 {
   Setup* setup = Setup::instance();
-  DetectorElement* element = setup->element(hit->detId() - hit->channel());
+  DetectorElement* element = setup->element(hit->elementId());
   if (element->alignmentShift() != 0.)
     hit->setPosition(element->positionForHit(hit));
 }
@@ -98,7 +96,7 @@ void Corrections::timeShift(Hit* hit)
   Setup* setup = Setup::instance();
   if (strcmp(hit->ClassName(), "TOFSipmHit") == 0) {
     TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
-    DetectorElement* element = setup->element(hit->detId() - hit->channel());
+    DetectorElement* element = setup->element(hit->elementId());
     double timeShift = static_cast<TOFBar*>(element)->timeShift(hit->channel());
     tofHit->applyTimeShift(timeShift);
   }
@@ -107,7 +105,7 @@ void Corrections::timeShift(Hit* hit)
     std::vector<Hit*> subHits = cluster->hits();
     for (std::vector<Hit*>::iterator it = subHits.begin(); it != subHits.end(); it++) {
       TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(*it);
-      DetectorElement* element = setup->element(cluster->detId() - cluster->channel());
+      DetectorElement* element = setup->element(cluster->elementId());
       double timeShift = static_cast<TOFBar*>(element)->timeShift((*it)->channel());
       tofHit->applyTimeShift(timeShift);
     }
@@ -418,32 +416,36 @@ double Corrections::photonTravelTimeDifference(double bending, double nonBending
 void Corrections::multipleScattering(Particle* particle)
 {
   Track* track = particle->track();
+  if (!track || !track->fitGood())
+    return;
 
-  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
-    Hit* hit = *it;
-    if (hit->type() == Hit::tracker) {
-      double p = track->rigidity();
-      double beta = particle->beta();
-      if (beta == 0 || p == 0)
-        return;
-      // double m = particle->mass();
-      // double beta = p / sqrt(p*p + m*m);
-      double z = hit->position().z();
-      z = round(z);
-      double parameter = 0;
-      if (qAbs(z) == 236) parameter = 11e-3;
-      else if (qAbs(z) == 218) parameter = 7.4e-3;
-      else if (qAbs(z) == 69) parameter = 35e-3;
-      else if (qAbs(z) == 51) parameter = 31e-3;
+  for (int i = 0; i < 5; i++) {
+    const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
+    for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+      Hit* hit = *it;
+      if (hit->type() == Hit::tracker) {
+        double p = track->rigidity();
+        double beta = particle->beta();
+        if (beta == 0 || p == 0)
+          return;
+        // double m = particle->mass();
+        // double beta = p / sqrt(p*p + m*m);
+        double z = hit->position().z();
+        z = round(z);
+        double parameter = 0;
+        if (qAbs(z) == 236) parameter = 11e-3;
+        else if (qAbs(z) == 218) parameter = 7.4e-3;
+        else if (qAbs(z) == 69) parameter = 35e-3;
+        else if (qAbs(z) == 51) parameter = 31e-3;
 
-      double sipmRes = hit->resolutionEstimate();
-      double mscPart = 1/(p*beta) * parameter;
-      double newRes = sqrt(sipmRes*sipmRes + mscPart*mscPart);
-      hit->setResolution(newRes);
+        double sipmRes = hit->resolutionEstimate();
+        double mscPart = 1/(p*beta) * parameter;
+        double newRes = sqrt(sipmRes*sipmRes + mscPart*mscPart);
+        hit->setResolution(newRes);
+      }
     }
+    track->fit(track->hits());
   }
-  track->fit(track->hits());
 }
 
 void Corrections::photonTravelTime(Particle* particle)

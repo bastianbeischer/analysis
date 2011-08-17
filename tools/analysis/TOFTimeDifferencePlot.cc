@@ -53,7 +53,7 @@ void TOFTimeDifferencePlot::processEvent(const QVector<Hit*>&, const Particle* c
   const QVector<Hit*>::const_iterator endIt = clusters.end();
   for (QVector<Hit*>::const_iterator it = clusters.begin(); it != endIt; ++it) {
     Hit* cluster = *it;
-    if (cluster->type() == Hit::tof && cluster->detId() - cluster->channel() == m_id) {
+    if (cluster->type() == Hit::tof && cluster->elementId() == m_id) {
       TOFCluster* tofCluster= static_cast<TOFCluster*>(cluster);
       double t[4];
       for (int i = 0; i < 4; ++i)

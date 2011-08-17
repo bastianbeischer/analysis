@@ -67,7 +67,7 @@ void SignalHeight2DPlot::processEvent(const QVector<Hit*>&, const Particle* cons
   for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != endIt; ++it) {
     Hit* hit = *it;
     if (hit->type() == Hit::tracker) {
-      unsigned short id = hit->detId() - hit->channel();
+      unsigned short id = hit->elementId();
       histogram()->Fill(m_indexMap[id], hit->signalHeight());
       m_normHisto->Fill(m_indexMap[id]);
     }

@@ -9,8 +9,8 @@
 
 class QVBoxLayout;
 class RootQtWidget;
-
 class AnalysisPlot;
+class QResizeEvent;
 
 class Plotter : public QWidget
 {
@@ -28,6 +28,7 @@ public:
   void selectPlot(int);
   RootPlot::DrawOption drawOption();
   void setDrawOption(RootPlot::DrawOption);
+  void setAspectRatio(double);
   RootPlot::Type selectedPlotType();
   void saveCanvas(const QString& fileName);
   void saveForPostAnalysis(const QString&);

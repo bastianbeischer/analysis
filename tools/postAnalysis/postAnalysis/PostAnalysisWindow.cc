@@ -23,6 +23,15 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
   , m_ui(new Ui_postAnalysisWindow)
 {
   m_ui->setupUi(this);
+  m_ui->aspectRatioComboBox->addItem("auto", -1.);
+  m_ui->aspectRatioComboBox->addItem("3:4", 3./4.);
+  m_ui->aspectRatioComboBox->addItem("1:1", 1./1.);
+  m_ui->aspectRatioComboBox->addItem("5:4", 5./4.);
+  m_ui->aspectRatioComboBox->addItem("4:3", 4./3.);
+  m_ui->aspectRatioComboBox->addItem("16:10", 16./10.);
+  m_ui->aspectRatioComboBox->addItem("16:9", 16./9.);
+  connect(m_ui->aspectRatioComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(aspectRatioChanged(int)));
+
   m_ui->userControlWidget->hide();
   m_ui->userControlWidget->layout()->setAlignment(Qt::AlignLeft | Qt::AlignHCenter);
   connect(m_ui->canvasListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectCanvas(QListWidgetItem*)));
@@ -35,9 +44,9 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
     this, SLOT(plotOptionComboBoxCurrentIndexChanged(const QString&)));
   connect(m_ui->saveButton, SIGNAL(clicked()), this, SLOT(saveButtonClicked()));
   connect(m_ui->saveAllButton, SIGNAL(clicked()), this, SLOT(saveAllButtonClicked()));
-  connect(m_ui->logXCheckBox, SIGNAL(stateChanged(int)), this, SLOT(setLogX(int)));
-  connect(m_ui->logYCheckBox, SIGNAL(stateChanged(int)), this, SLOT(setLogY(int)));
-  connect(m_ui->logZCheckBox, SIGNAL(stateChanged(int)), this, SLOT(setLogZ(int)));
+  connect(m_ui->logXCheckBox, SIGNAL(stateChanged(int)), m_ui->qtWidget, SLOT(setLogX(int)));
+  connect(m_ui->logYCheckBox, SIGNAL(stateChanged(int)), m_ui->qtWidget, SLOT(setLogY(int)));
+  connect(m_ui->logZCheckBox, SIGNAL(stateChanged(int)), m_ui->qtWidget, SLOT(setLogZ(int)));
 }
 
 PostAnalysisWindow::~PostAnalysisWindow()
@@ -188,23 +197,10 @@ void PostAnalysisWindow::addWidget(QWidget* widget)
   static_cast<QBoxLayout*>(m_ui->userControlWidget->layout())->insertWidget(0, widget);
 }
 
-void PostAnalysisWindow::setLogX(int i)
+void PostAnalysisWindow::aspectRatioChanged(int i)
 {
-  m_ui->qtWidget->GetCanvas()->SetLogx(i);
-  gPad->Modified();
-  gPad->Update();
-}
-
-void PostAnalysisWindow::setLogY(int i)
-{
-  m_ui->qtWidget->GetCanvas()->SetLogy(i);
-  gPad->Modified();
-  gPad->Update();
-}
-
-void PostAnalysisWindow::setLogZ(int i)
-{
-  m_ui->qtWidget->GetCanvas()->SetLogz(i);
-  gPad->Modified();
-  gPad->Update();
+  double aspectRatio = m_ui->aspectRatioComboBox->itemData(i).toDouble();
+  m_ui->qtWidget->setAspectRatio(aspectRatio);
+  //adjustSize();
+  //updateGeometry();
 }

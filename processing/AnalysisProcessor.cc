@@ -100,21 +100,21 @@ void AnalysisProcessor::process(SimpleEvent* event)
   // identify particle species
   m_identifier->identify(m_particle);
 
-  if (m_filter->passes(m_particle)) {
-    if (m_mcFilter->passes(clusters, m_particle, event)) {
-      if (m_cuts->passes(clusters, m_particle, event)) {
-        QVector<EventDestination*> postponed;
-        foreach(EventDestination* destination, m_destinations) {
-          bool success = tryProcessingDestination(destination, clusters, m_particle, event);
-          if (!success)
-            postponed.append(destination); // postpone this destination for now.
-        }
-        while(postponed.size() > 0) {
-          bool success = tryProcessingDestination(postponed.front(), clusters, m_particle, event);
-          if (success)
-            postponed.remove(0);
-        }
-      }
+  if (m_filter->passes(m_particle) && m_mcFilter->passes(clusters, m_particle, event) && m_cuts->passes(clusters, m_particle, event)) {
+    QVector<EventDestination*> postponed;
+    foreach(EventDestination* destination, m_destinations) {
+      bool success = tryProcessingDestination(destination, clusters, m_particle, event);
+      if (!success)
+        postponed.append(destination); // postpone this destination for now.
+    }
+    EventDestination** postponedData = postponed.data();
+    unsigned int nPostponed = postponed.size();
+    unsigned int i = 0;
+    while (i < nPostponed) {
+      if (tryProcessingDestination(postponedData[i], clusters, m_particle, event))
+        i++;
+      else
+        usleep(1000); // do not hammer the mutex locker with tryLock calls, better to sleep a ms
     }
   }
 }

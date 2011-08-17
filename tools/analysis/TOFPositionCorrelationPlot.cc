@@ -52,7 +52,7 @@ void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, con
   const QVector<Hit*>::const_iterator endIt = clusters.end();
   for (QVector<Hit*>::const_iterator it = clusters.begin(); it != endIt; ++it) {
     Hit* hit = *it;
-    if (hit->type() == Hit::tof && (hit->detId()-hit->channel()) == m_id)
+    if (hit->type() == Hit::tof && (hit->elementId()) == m_id)
       histogram()->Fill(track->y(hit->position().z()), static_cast<TOFCluster*>(hit)->yEstimate(false));
   }
 }
