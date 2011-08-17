@@ -1,350 +1,135 @@
 #include "SimulationFluxReader.hh"
-
-#include <Constants.hh>
+#include "SimulationFlux.hh"
+#include "Constants.hh"
 
 #include <QFile>
 #include <QDebug>
 #include <QStringList>
 
 #include <TFile.h>
-#include <TObject.h>
 #include <TROOT.h>
 #include <TKey.h>
+#include <TH1.h>
+#include <TH2.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <cmath>
+SimulationFluxReader* SimulationFluxReader::s_instance = 0;
 
-bool SimulationFluxReader::s_constructed = false;
-QMap<SimulationFluxReader::Location, QString> SimulationFluxReader::s_locationNames;
-QMap<SimulationFluxReader::Acceptance, QString> SimulationFluxReader::s_acceptanceNames;
-
-SimulationFluxReader::Location SimulationFluxReader::s_location = SimulationFluxReader::NotSet;
-SimulationFluxReader::Acceptance SimulationFluxReader::s_acceptance = SimulationFluxReader::None;
-QMap<SimulationFluxKey, TH1D*> SimulationFluxReader::s_fluxes;
-QList<double> SimulationFluxReader::s_phis;
-QList<SimulationFluxReader::Acceptance> SimulationFluxReader::s_acceptances;
-QString SimulationFluxReader::s_folder;
-
-void SimulationFluxReader::reset()
+SimulationFluxReader* SimulationFluxReader::instance()
 {
-  SimulationFluxReader::s_constructed = false;
-  s_locationNames.clear();
-  s_acceptanceNames.clear();
-
-  SimulationFluxReader::s_location = SimulationFluxReader::NotSet;
-  SimulationFluxReader::s_acceptance = SimulationFluxReader::None;
-  foreach(TH1D* flux, s_fluxes) {
-    if (flux) {
-      delete flux;
-    }
-  }
-  s_fluxes.clear();
-  s_phis.clear();
-  s_acceptances.clear();
+  if (!s_instance)
+    s_instance = new SimulationFluxReader();
+  return s_instance;
 }
 
-SimulationFluxReader::SimulationFluxReader(Location location)
+SimulationFluxReader::SimulationFluxReader()
+  : m_locations()
+  , m_acceptances()
+  , m_sources()
+  , m_particles()
+  , m_modulationParameters()
+  , m_fluxes()
 {
-  s_acceptance = InsideMagnet;
-  m_mutex.lock();
-
-  construct();
-  if (s_location != location) {
-    s_location = location;
-
-    foreach(TH1D* flux, s_fluxes) {
-      if (flux) {
-        delete flux;
-      }
-    }
-
-    s_fluxes.clear();
-    s_phis.clear();
-
-
-    setPhis();
-
-    QString name = filename(s_folder, s_location);
-
-    TFile* file = 0;
-    if (QFile::exists(name)) {
-      qDebug() << "Opening file"<< name;
-      file = new TFile(qPrintable(name));
-    } else {
-      qFatal("ERROR: Could not find file %s", qPrintable(name));
-    }
-
-    gROOT->cd();
-
-    foreach(double phi, s_phis) {
-      qDebug()<<"reading phi"<<phi;
-      foreach(SimulationFluxKey::Source source, SimulationFluxKey::allSources()) {
-        for(int isAlbedo = 0; isAlbedo < 2; isAlbedo++) {
-          foreach(Particle::Type type, SimulationFluxKey::allParticles()) {
-            SimulationFluxKey currentKey(phi, type, isAlbedo, source);
-            QString hName = assembleHistogramName(InsideMagnet, location, currentKey);
-            TH2D* histogram = ( (TH2D*)(((TH2D*)file->Get(qPrintable(hName)))->Clone()) );
-            SimulationFlux flux(currentKey, histogram);
-            TH1D* h1 = flux.spectrum();
-            s_fluxes.insert(currentKey, h1);
-          }
-        }
-      }
-    }
-
-    file->Close();
-    delete file;
-    file = 0;
-    qDebug("Closed File!");
+  QString dataPath = getenv("PERDAIXDATA_PATH");
+  QString groundFileName = dataPath + "/fluxSimulation/groundKiruna.root";
+  QString flightFileName = dataPath + "/fluxSimulation/flight.root";
+  if (QFile::exists(groundFileName)) {
+  if (m_locations.contains(SimulationFluxKey::GroundEsrange))
+    m_locations.append(SimulationFluxKey::GroundEsrange);
+    readKeys(groundFileName);
   }
-  m_mutex.unlock();
+  if (QFile::exists(flightFileName)) {
+  if (m_locations.contains(SimulationFluxKey::Flight))
+    m_locations.append(SimulationFluxKey::Flight);
+    readKeys(flightFileName);
+  }
+}
+
+void SimulationFluxReader::readKeys(const QString& fileName)
+{
+  TFile file(qPrintable(fileName));
+  gROOT->cd();
+  TList* keyList = file.GetListOfKeys();
+  for (int i = 0; i < keyList->GetSize(); ++i) {
+    Q_ASSERT(!strcmp(keyList->At(i)->ClassName(), "TKey"));
+    TObject* object = static_cast<TKey*>(keyList->At(i))->ReadObj();
+    if (!strcmp(object->ClassName(), "TH2D")) {
+      QString name = QString(object->GetName());
+      if (!name.contains("rigidity", Qt::CaseInsensitive) || name.contains("smeared", Qt::CaseInsensitive))
+        continue;
+      for (int albedo = 0; albedo < 2; ++albedo) {
+        SimulationFluxKey key(object->GetName(), albedo);
+        if (!m_locations.contains(key.location()))
+          m_locations.append(key.location());
+        if (!m_acceptances.contains(key.acceptance()))
+          m_acceptances.append(key.acceptance());
+        if (!m_sources.contains(key.source()))
+          m_sources.append(key.source());
+        if (!m_particles.contains(key.particle()))
+          m_particles.append(key.particle());
+        if (!m_modulationParameters.contains(key.modulationParameter()))
+          m_modulationParameters.append(key.modulationParameter());
+        TH2D* histogram = static_cast<TH2D*>(object);
+        m_fluxes.insert(key, SimulationFlux(key, histogram).spectrum());
+      }
+    }
+  }
+  file.Close();
 }
 
 SimulationFluxReader::~SimulationFluxReader()
 {
-  foreach(TH1D* flux, s_fluxes) {
-    if (flux) {
-      delete flux;
-    }
-  }
-  s_fluxes.clear();
+  qDeleteAll(m_fluxes);
+  s_instance = 0;
 }
 
-void SimulationFluxReader::construct()
+TH1D* SimulationFluxReader::spectrum(const SimulationFluxKey& key) const
 {
-  if (!s_constructed) {
-
-    char* env = getenv("PERDAIXDATA_PATH");
-    s_folder = env;
-    s_folder.append("/fluxSimulation");
-
-    if (checkForFile(s_folder, Flight)) {
-      s_locationNames.insert(Flight, "Flight");
-    }
-    if (checkForFile(s_folder, GroundEsrange)) {
-      s_locationNames.insert(GroundEsrange, "Ground Esrange");
-    }
-
-    s_acceptanceNames.insert(InsideMagnet, "Inside Magnet ("+QString::number(Constants::geometricAcceptance*pow(100, 2))+" cm^2sr)");
-    s_acceptanceNames.insert(Tof, "Tof ("+QString::number(Constants::geometricAcceptanceTof*pow(100, 2))+" cm^2sr)");
-    s_acceptanceNames.insert(TwoPi, "Two Pi");
-    s_constructed = true;
-  }
-}
-
-TH1D* SimulationFluxReader::spectrum(SimulationFluxKey key)
-{
-  TH1D* flux = new TH1D(*s_fluxes[key]);
+  TH1D* flux = new TH1D(*m_fluxes[key]);
   if (!flux->GetSumw2())
     flux->Sumw2();
   return flux;
 }
 
-TH1D* SimulationFluxReader::spectrum(QList<SimulationFluxKey> keys)
+TH1D* SimulationFluxReader::spectrum(const QList<SimulationFluxKey>& keys) const
 {
-  TH1D* flux =  new TH1D(*s_fluxes[keys.at(0)]);
+  TH1D* flux = spectrum(keys.at(0));
   if (!flux->GetSumw2())
     flux->Sumw2();
   QString title = "MC";
-  title.append(" "+Particle(keys.at(0).type()).name());
+  title.append(" "+Particle(keys.at(0).particle()).name());
   for (int i = 1; i < keys.size(); i++) {
     SimulationFluxKey key = keys[i];
-    flux->Add(s_fluxes[keys.at(i)]);
-    title.append(" "+Particle(keys.at(i).type()).name());
+    flux->Add(m_fluxes[keys.at(i)]);
+    title.append(" "+Particle(keys.at(i).particle()).name());
   }
   title.append(" sum");
   flux->SetTitle(qPrintable(title));
-  flux->SetLineColor(kBlue-2);
-  flux->SetMarkerColor(kBlue-2);
+  flux->SetLineColor(kBlue - 2);
+  flux->SetMarkerColor(kBlue - 2);
   return flux;
 }
 
-void SimulationFluxReader::setAcceptances()
+const QVector<SimulationFluxKey::Location>& SimulationFluxReader::locations() const
 {
-  QList<Acceptance> acceptances;
-  QString name = filename(s_folder, s_location);
-  TFile* file = 0;
-  if (QFile::exists(name)) {
-		qDebug() << "Opening file"<< name;
-		file = new TFile(qPrintable(name));
-	} else {
-    qFatal("ERROR: Could not find file %s", qPrintable(name));
-	}
-
-  for (int i = 0; i < file->GetListOfKeys()->GetEntries(); i++) {
-    TKey* key =  (TKey*)file->GetListOfKeys()->At(i);
-    TObject* object = key->ReadObj();
-    QString className = object->ClassName();
-    if (className.contains("TH2D")) {
-      QString objectName = object->GetName();
-      if (!objectName.contains("rigidity")) {
-        continue;
-      }
-      QString currentName = objectName.split(simulationLocation(s_location)+"_").at(1).split("rigidity").at(0);
-
-      Acceptance a;
-      foreach(Acceptance acc, allAcceptances()) {
-        QString accName = simulationAcceptance(acc);
-        if (accName == currentName) {
-          a = acc;
-        }
-      }
-
-      if (!acceptances.contains(a)) {
-        acceptances.push_back(a);
-        int nPhis = 1;
-        if (s_phis.size() != 0) {
-          nPhis = s_phis.size();
-        }
-        i += SimulationFluxKey::allSources().size() * SimulationFluxKey::allParticles().size()*nPhis;
-
-      }
-    }
-  }
-
-  file->Close();
-	delete file;
-	file = 0;
-
-  s_acceptances = acceptances;
+  return m_locations;
 }
 
-bool SimulationFluxReader::checkForFile(QString folder, Location location)
+const QVector<SimulationFluxKey::Acceptance>& SimulationFluxReader::acceptances() const
 {
-  QString name = filename(folder, location);
-  if (QFile::exists(name)) {
-		qDebug("Found file %s", qPrintable(name));
-    return true;
-	} else {
-    qDebug("Could not find file %s", qPrintable(name));
-    return false;
-	}
-
+  return m_acceptances;
 }
 
-void SimulationFluxReader::setPhis()
+const QVector<SimulationFluxKey::Source>& SimulationFluxReader::sources() const
 {
-  QList<double> phis;
-  QString name = filename(s_folder, s_location);
-  TFile* file = 0;
-  if (QFile::exists(name)) {
-		qDebug() << "Opening file"<< name;
-		file = new TFile(qPrintable(name));
-	} else {
-    qFatal("ERROR: Could not find file %s", qPrintable(name));
-	}
-
-  for (int i = 0; i < file->GetListOfKeys()->GetEntries(); i++) {
-    TKey* key =  (TKey*)file->GetListOfKeys()->At(i);
-    TObject* object = key->ReadObj();
-    QString className = object->ClassName();
-    if (className.contains("TH2D")) {
-      QString objectName = object->GetName();
-      if (!objectName.contains("rigidity")) {
-        continue;
-      }
-      double phi = objectName.split("_phi_").at(1).split("_MV_").at(0).toDouble();
-      if (!phis.contains(phi)) {
-        phis.push_back(phi);
-        i += SimulationFluxKey::allSources().size() * SimulationFluxKey::allParticles().size();
-      }
-    }
-  }
-
-  file->Close();
-	delete file;
-	file = 0;
-
-  qSort(phis);
-
-  s_phis = phis;
+  return m_sources;
 }
 
-QString SimulationFluxReader::filename(QString folder, SimulationFluxReader::Location location)
+const QVector<Particle::Type>& SimulationFluxReader::particles() const
 {
-  QString filename = folder+"/";
-  switch (location) {
-    case SimulationFluxReader::GroundEsrange:
-      return filename.append("corsikaAnalysis_2011-07-06.root");
-    case SimulationFluxReader::Flight:
-      return filename.append("planetocosmicsAnalysis_2011-07-06.root");
-    default:
-      qDebug("filename for this location not specified");
-      return "";
-  }
+  return m_particles;
 }
 
-QString SimulationFluxReader::simulationLocation(Location location)
+const QVector<double>& SimulationFluxReader::modulationParameters() const
 {
-  switch (location) {
-    case GroundEsrange:
-      return "corsika";
-    case Flight:
-      return "planetocosmics";
-    default:
-      qDebug("locationName not specified");
-      return "";
-  }
-}
-
-QString SimulationFluxReader::simulationAcceptance(Acceptance acceptance)
-{
-  switch (acceptance) {
-    case InsideMagnet:
-      return "perdaix";
-    case Tof:
-      return "perdaixTof";
-    case TwoPi:
-      return "";
-    default:
-      qDebug("acceptanceName not specified");
-      return "";
-  }
-}
-
-QString SimulationFluxReader::assembleHistogramName(Acceptance acceptance, Location location, SimulationFluxKey key)
-{
-  const QString xAxisName = simulationAcceptance(acceptance)+"rigidity";
-  return simulationLocation(location)+"_"+xAxisName+"_"+key.internalName()+"_phi_"+QString::number(key.phi())+"_MV_"+key.sourceName();
-}
-
-QString SimulationFluxReader::locationName(SimulationFluxReader::Location location)
-{
-  construct();
-  return s_locationNames[location];
-}
-
-QList<SimulationFluxReader::Location> SimulationFluxReader::allLocations()
-{
-  construct();
-  QList<SimulationFluxReader::Location> locs = s_locationNames.keys();
-  if (locs.size() > 1) {
-    locs.swap(0, 1);
-  }
-  return locs;
-}
-
-SimulationFluxReader::Location SimulationFluxReader::location(QString locationName)
-{
-  construct();
-  return s_locationNames.key(locationName);
-}
-
-QString SimulationFluxReader::acceptanceName(SimulationFluxReader::Acceptance acceptance)
-{
-  construct();
-  return s_acceptanceNames[acceptance];
-}
-
-QList<SimulationFluxReader::Acceptance> SimulationFluxReader::allAcceptances()
-{
-  construct();
-  return s_acceptanceNames.keys();
-}
-
-SimulationFluxReader::Acceptance SimulationFluxReader::acceptance(QString acceptanceName)
-{
-  construct();
-  return s_acceptanceNames.key(acceptanceName);
+  return m_modulationParameters;
 }

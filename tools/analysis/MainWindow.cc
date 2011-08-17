@@ -531,18 +531,18 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TOTLayerCollection(new TOTBetaCorrelation()));
     m_ui.plotter->addPlot(new TOTTemperatureCorrelationPlotCollection);
     m_ui.plotter->addPlot(new TOTTimeCorrelationPlotCollection(first, last));
-    // for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
-    //   DetectorElement* element = *elementIt;
-    //   if (element->type() == DetectorElement::tof)
-    //     for (int ch = 0; ch < 4; ++ch)
-    //       m_ui.plotter->addPlot(new TOTTemperatureCorrelationPlot(element->id() | ch));
-    // }
-    // for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
-    //   DetectorElement* element = *elementIt;
-    //   if (element->type() == DetectorElement::tof)
-    //     for (int ch = 0; ch < 4; ++ch)
-    //       m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch, first, last));
-    // }
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
+      if (element->type() == DetectorElement::tof)
+        for (int ch = 0; ch < 4; ++ch)
+          m_ui.plotter->addPlot(new TOTTemperatureCorrelationPlot(element->id() | ch));
+    }
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
+      if (element->type() == DetectorElement::tof)
+        for (int ch = 0; ch < 4; ++ch)
+          m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch, first, last));
+    }
   }
   if (m_ui.trackingCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BendingPositionPlot);

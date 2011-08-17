@@ -19,7 +19,6 @@ m_source(source)
 
 SimulationFluxParticle::~SimulationFluxParticle()
 {
-
 }
 
 void SimulationFluxParticle::construct()

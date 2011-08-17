@@ -97,6 +97,20 @@ void ParticleProperties::setType(const Particle::Type& type)
     m_name = "photon";
     m_color = kGray;
     break;
+  case Particle::Pi0:
+    m_mass = Constants::pi0Mass;
+    m_charge = 0;
+    m_pdgId = 111;
+    m_name = "pi0";
+    m_color = kGray;
+    break;
+  case Particle::Higgs:
+    m_mass = Constants::higgsMass;
+    m_charge = 0;
+    m_pdgId = 25;
+    m_name = "Higgsi";
+    m_color = kYellow;
+    break;
   default:
     break;
   }

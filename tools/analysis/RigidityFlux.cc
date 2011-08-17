@@ -74,7 +74,8 @@ RigidityFlux::RigidityFlux(Type type, const QDateTime& first, const QDateTime& l
   addLatex(gammaLatex);
   addLatex(phiLatex);
 
-  SimulationFluxWidget* secWidget = new SimulationFluxWidget(this, Plotter::rootWidget()->GetCanvas());
+  SimulationFluxWidget* secWidget = new SimulationFluxWidget;
+  connect(secWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
   setSecondaryWidget(secWidget);
 }
 
@@ -191,3 +192,10 @@ void RigidityFlux::efficiencyCorrection()
 //  }
 //  return max;
 //}
+  
+void RigidityFlux::selectionChanged()
+{
+  qDebug() << "ANDI";
+
+  draw(Plotter::rootWidget()->GetCanvas());
+}

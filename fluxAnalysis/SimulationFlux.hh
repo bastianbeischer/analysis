@@ -13,7 +13,6 @@ public:
   SimulationFlux(SimulationFluxKey key, TH2D* h2Spectrum);
 	~SimulationFlux();
 
-  TH2D* h2Spectrum() const;
   TH1D* spectrum();
 
 private:

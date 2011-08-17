@@ -1,31 +1,80 @@
 #include "SimulationFluxKey.hh"
 
+#include <QStringList>
 #include <QDebug>
 
-bool SimulationFluxKey::s_constructed = false;
-QMap<Particle::Type, QString> SimulationFluxKey::s_particleNames;
+QMap<SimulationFluxKey::Location, QString> SimulationFluxKey::s_locationNames;
+QMap<SimulationFluxKey::Acceptance, QString> SimulationFluxKey::s_acceptanceNames;
 QMap<SimulationFluxKey::Source, QString> SimulationFluxKey::s_sourceNames;
+QMap<Particle::Type, QString> SimulationFluxKey::s_particleNames;
 
-SimulationFluxKey::SimulationFluxKey(double phi, Particle::Type type, bool isAlbedo, Source source) :
-m_phi(phi),
-m_type(type),
-m_isAlbedo(isAlbedo),
-m_source(source)
+SimulationFluxKey::SimulationFluxKey(const QString& title, bool isAlbedo)
+  : m_location(UndefinedLocation)
+  , m_acceptance(UndefinedAcceptance)
+  , m_source(UndefinedSource)
+  , m_particle(Particle::Unknown)
+  , m_modulationParameter(-1)
+  , m_isAlbedo(isAlbedo)
 {
   construct();
-  if (!s_particleNames.contains(m_type)) {
-    qFatal("SimulationFluxKey does not have this particle with name %s", qPrintable(Particle(m_type).name()));
+  if (title.contains("corsika", Qt::CaseInsensitive))
+    m_location = GroundEsrange;
+  else if (title.contains("planetocosmics", Qt::CaseInsensitive))
+    m_location = Flight;
+
+  if (title.contains("perdaixTof", Qt::CaseInsensitive))
+    m_acceptance = TofAcceptance;
+  else if (title.contains("perdaix", Qt::CaseInsensitive))
+    m_acceptance = InsideMagnetAcceptance;
+  else
+    m_acceptance = TwoPiAcceptance;
+
+  QMapIterator<Particle::Type, QString> iterator(s_particleNames);
+  while (iterator.hasNext()) {
+    iterator.next();
+    if (title.contains(iterator.value()))
+      m_particle = iterator.key();
+  }
+
+  if (title.contains("total"))
+    m_source = TotalSource;
+  else if (title.contains("primary"))
+    m_source = PrimarySource;
+  else if (title.contains("secondary"))
+    m_source = SecondarySource;
+
+  QString phiString = QString(title).split("phi_").at(1).split("_MV").at(0);
+  m_modulationParameter = phiString.toDouble();
+}
+
+SimulationFluxKey::SimulationFluxKey(Location location, Acceptance acceptance, Source source, Particle::Type particle, double phi, bool isAlbedo)
+  : m_location(location)
+  , m_acceptance(acceptance)
+  , m_source(source)
+  , m_particle(particle)
+  , m_modulationParameter(phi)
+  , m_isAlbedo(isAlbedo)
+{
+  construct();
+  if (!s_particleNames.contains(m_particle)) {
+    qFatal("SimulationFluxKey does not have this particle with name %s", qPrintable(Particle(m_particle).name()));
   }
 }
 
 SimulationFluxKey::~SimulationFluxKey()
 {
-
 }
 
 void SimulationFluxKey::construct()
 {
-  if (!s_constructed) {
+  if (!s_locationNames.count()) {
+    s_locationNames.insert(GroundEsrange, "Ground Esrange");
+    s_locationNames.insert(Flight, "Flight");
+  
+    s_acceptanceNames.insert(InsideMagnetAcceptance, "perdaix");
+    s_acceptanceNames.insert(TofAcceptance, "perdaixTof");
+    s_acceptanceNames.insert(TwoPiAcceptance, "twoPi");
+
     s_particleNames.insert(Particle::Photon, "gamma");
     s_particleNames.insert(Particle::Positron, "positron");
     s_particleNames.insert(Particle::Electron, "electron");
@@ -33,27 +82,83 @@ void SimulationFluxKey::construct()
     s_particleNames.insert(Particle::Muon, "mu-");
     s_particleNames.insert(Particle::PiPlus, "pi+");
     s_particleNames.insert(Particle::PiMinus, "pi-");
+    s_particleNames.insert(Particle::Pi0, "pi0");
     s_particleNames.insert(Particle::Proton, "proton");
     s_particleNames.insert(Particle::AntiProton, "antiproton");
     s_particleNames.insert(Particle::Helium, "alpha");
 
-    s_sourceNames.insert(Total, "total");
-    s_sourceNames.insert(Primary, "primary");
-    s_sourceNames.insert(Secondary, "secondary");
-
-    s_constructed = true;
+    s_sourceNames.insert(TotalSource, "total");
+    s_sourceNames.insert(PrimarySource, "primary");
+    s_sourceNames.insert(SecondarySource, "secondary");
   }
 }
 
-QString SimulationFluxKey::internalName()
+QString SimulationFluxKey::locationName() const
 {
-  return s_particleNames[m_type];
+  return s_locationNames[m_location];
 }
 
-QList<SimulationFluxKey::Source> SimulationFluxKey::allSources()
+QString SimulationFluxKey::acceptanceName() const
+{
+  return s_acceptanceNames[m_acceptance];
+}
+
+QString SimulationFluxKey::sourceName() const
+{
+  return s_sourceNames[m_source];
+}
+
+QString SimulationFluxKey::particleName() const
+{
+  QString name = Particle(m_particle).name();
+  if (m_isAlbedo)
+    name.prepend("albedo ");
+  return name;
+}
+
+QString SimulationFluxKey::modulationParameterName() const
+{
+  return QString("%1 MV").arg(m_modulationParameter);
+}
+
+void SimulationFluxKey::setModulationParameter(double phi)
+{
+  m_modulationParameter = phi;
+}
+
+void SimulationFluxKey::setSource(Source source)
+{
+  m_source = source;
+}
+
+SimulationFluxKey::Location SimulationFluxKey::location(const QString& locationName)
 {
   construct();
-  return s_sourceNames.keys();
+  return s_locationNames.key(locationName);
+}
+
+QString SimulationFluxKey::locationName(Location location)
+{
+  construct();
+  return s_locationNames[location];
+}
+
+SimulationFluxKey::Acceptance SimulationFluxKey::acceptance(const QString& acceptanceName)
+{
+  construct();
+  return s_acceptanceNames.key(acceptanceName);
+}
+
+QString SimulationFluxKey::acceptanceName(Acceptance acceptance)
+{
+  construct();
+  return s_acceptanceNames[acceptance];
+}
+
+SimulationFluxKey::Source SimulationFluxKey::source(const QString& sourceName)
+{
+  construct();
+  return s_sourceNames.key(sourceName);
 }
 
 QString SimulationFluxKey::sourceName(Source source)
@@ -62,46 +167,59 @@ QString SimulationFluxKey::sourceName(Source source)
   return s_sourceNames[source];
 }
 
-QList<Particle::Type> SimulationFluxKey::allParticles()
+Particle::Type SimulationFluxKey::particle(const QString& particleName)
 {
   construct();
-  return s_particleNames.keys();
+  return s_particleNames.key(particleName);
 }
 
-QString SimulationFluxKey::name()
+QString SimulationFluxKey::particleName(Particle::Type particle)
 {
-  QString name = Particle(m_type).name();
-  if (m_isAlbedo) {
-    name.prepend("albedo ");
+  construct();
+  return s_particleNames[particle];
+}
+
+double SimulationFluxKey::modulationParameter(const QString& phiName)
+{
+  construct();
+  qDebug() << qPrintable(">"+phiName.left(phiName.indexOf(" MV"))+"<");
+  return phiName.left(phiName.indexOf(" MV")).toDouble();
+}
+
+QString SimulationFluxKey::modulationParameterName(double phi)
+{
+  construct();
+  return QString("%1 MV").arg(phi);
+}
+
+bool SimulationFluxKey::operator==(const SimulationFluxKey& key)
+{
+  return (m_modulationParameter == key.modulationParameter() && m_source == key.source() && m_particle == key.particle() && m_isAlbedo == key.isAlbedo());
+}
+
+bool operator<(const SimulationFluxKey& le, const SimulationFluxKey& ri)
+{
+  if (le.modulationParameter() != ri.modulationParameter()) {
+    return le.modulationParameter() < ri.modulationParameter();
+  } else {
+    if (le.source() != ri.source()) {
+      return le.source() < ri.source();
+    } else {
+      if (le.particle() != ri.particle()) {
+        return le.particle() < ri.particle();
+      } else {
+        return le.isAlbedo() < ri.isAlbedo();
+      }
+    }
   }
-  return name;
 }
 
-QString SimulationFluxKey::sourceName()
+QDebug operator<<(QDebug debug, const SimulationFluxKey& key)
 {
-  return s_sourceNames[m_source];
+  debug
+    << key.locationName() << key.acceptanceName() << key.sourceName()
+    << key.particleName() << key.modulationParameterName();
+  if (key.isAlbedo())
+    debug << "albedo";
+  return debug;
 }
-
-void SimulationFluxKey::setPhi(double phi)
-{
-  m_phi = phi;
-}
-
-void SimulationFluxKey::setSource(Source source)
-{
-  m_source = source;
-}
-
-SimulationFluxKey::Source SimulationFluxKey::source(QString sourceName)
-{
-  construct();
-  return s_sourceNames.key(sourceName);
-}
-
-bool SimulationFluxKey::operator==(SimulationFluxKey key)
-{
-  return (m_phi == key.phi() && m_source == key.source() && m_type == key.type() && m_isAlbedo == key.isAlbedo());
-}
-
-
-

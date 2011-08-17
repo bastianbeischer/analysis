@@ -85,7 +85,7 @@ RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, double measuremen
   latex(histogram()->GetNbinsX())->SetTitle(qPrintable(m_phiFit->gammaLabel()));
   latex(histogram()->GetNbinsX()+1)->SetTitle(qPrintable(m_phiFit->phiLabel()));
 
-  SimulationFluxWidget* secWidget = new SimulationFluxWidget(this, canvas->canvas());
+  SimulationFluxWidget* secWidget = new SimulationFluxWidget;
   setSecondaryWidget(secWidget);
 }
 

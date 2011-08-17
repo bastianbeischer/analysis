@@ -25,3 +25,5 @@ LIBS += \
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)
 include($$TOPLEVEL/common.pri)
+
+CLASSES -= SimulationFluxRatioWidget

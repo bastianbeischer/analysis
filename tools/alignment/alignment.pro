@@ -10,6 +10,7 @@ INCLUDEPATH += \
 
 LIBS += \
   -L$$TOPLEVEL/lib \
+  -lglobal \
   -lalignment \
   -lprocessing \
   -lSimpleEvent \

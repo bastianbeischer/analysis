@@ -20,8 +20,8 @@ class Particle;
 class SimpleEvent;
 class TF1;
 
-class RigidityFlux : public AnalysisPlot, public H1DPlot {
-
+class RigidityFlux : public QObject, public AnalysisPlot, public H1DPlot {
+Q_OBJECT
 public:
   enum Type {
     All,
@@ -37,6 +37,8 @@ public:
   virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
   virtual void finalize();
   virtual void update();
+private slots:
+  void selectionChanged();
 
 private:
   Type m_type;

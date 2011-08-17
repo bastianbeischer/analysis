@@ -1,40 +1,30 @@
 #include "SimulationFlux.hh"
 
-SimulationFlux::SimulationFlux(SimulationFluxKey key, TH2D* h2Spectrum) :
-  m_key(key),
-  m_h2Spectrum(h2Spectrum)
+SimulationFlux::SimulationFlux(SimulationFluxKey key, TH2D* h2Spectrum)
+  : m_key(key)
+  , m_h2Spectrum(h2Spectrum)
 {
-
 }
 
 SimulationFlux::~SimulationFlux()
 {
-  if (m_h2Spectrum) {
-    delete m_h2Spectrum;
-    m_h2Spectrum = 0;
-  }
-}
-
-TH2D* SimulationFlux::h2Spectrum() const
-{
-  return m_h2Spectrum;
 }
 
 TH1D* SimulationFlux::spectrum()
 {
-  double xMin = 0;
-  double xMax = 1;
+  double xMin = 0.;
+  double xMax = 1.;
 
   if (m_key.isAlbedo()) {
-    xMin = -1;
-    xMax = 0;
+    xMin = -1.;
+    xMax = 0.;
   }
 
   TH1D* histogram = projectionY(m_h2Spectrum, xMin, xMax);
   scaleToBinWidth(histogram);
-  histogram->SetTitle(qPrintable("MC "+Particle(m_key.type()).name()));
-  histogram->SetLineColor(Particle(m_key.type()).color());
-  histogram->SetMarkerColor(Particle(m_key.type()).color());
+  histogram->SetTitle(qPrintable("MC " + Particle(m_key.particle()).name()));
+  histogram->SetLineColor(Particle(m_key.particle()).color());
+  histogram->SetMarkerColor(Particle(m_key.particle()).color());
   return histogram;
 }
 
@@ -60,6 +50,5 @@ TH1D* SimulationFlux::projectionY(TH2D* histogram, double xMin, double xMax) {
 void SimulationFlux::scaleToBinWidth(TH1D* histogram) {
   if (!histogram->GetSumw2())
     histogram->Sumw2();
-	histogram->Scale(1,"width");
+	histogram->Scale(1., "width");
 }
-

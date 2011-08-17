@@ -6,66 +6,63 @@
 #include <QList>
 #include <QString>
 #include <QMap>
+#include <QDebug>
 
 class SimulationFluxKey {
-
 public:
-  enum Source {
-    Total,
-    Primary,
-    Secondary
-  };
+  enum Location {UndefinedLocation, GroundEsrange, Flight};
+  enum Acceptance {UndefinedAcceptance, InsideMagnetAcceptance, TofAcceptance, TwoPiAcceptance};
+  enum Source {UndefinedSource, TotalSource, PrimarySource, SecondarySource};
 
-  SimulationFluxKey(double phi, Particle::Type type, bool isAlbedo, Source source);
+  SimulationFluxKey(const QString&, bool isAlbedo);
+  SimulationFluxKey(Location, Acceptance, Source, Particle::Type, double modulationParameter, bool isAlbedo);
 	~SimulationFluxKey();
 
-  double phi() const {return m_phi;}
-  Particle::Type type() const {return m_type;}
-  bool isAlbedo() const {return m_isAlbedo;}
+  Location location() const {return m_location;}
+  Acceptance acceptance() const {return m_acceptance;}
   Source source() const {return m_source;}
-  QString sourceName();
-  QString internalName();
-  QString name();
+  Particle::Type particle() const {return m_particle;}
+  double modulationParameter() const {return m_modulationParameter;}
+  bool isAlbedo() const {return m_isAlbedo;}
 
-  void setPhi(double phi);
-  void setSource(Source source);
+  QString locationName() const;
+  QString acceptanceName() const;
+  QString sourceName() const;
+  QString particleName() const;
+  QString modulationParameterName() const;
 
-  static QList<Source> allSources();
-  static QString sourceName(Source source);
-  static Source source(QString sourceName);
+  void setModulationParameter(double);
+  void setSource(Source);
 
-  static QList<Particle::Type> allParticles();
+  static Location location(const QString&);
+  static QString locationName(Location);
+  static Acceptance acceptance(const QString&);
+  static QString acceptanceName(Acceptance);
+  static Source source(const QString&);
+  static QString sourceName(Source);
+  static Particle::Type particle(const QString&);
+  static QString particleName(Particle::Type);
+  static double modulationParameter(const QString&);
+  static QString modulationParameterName(double);
 
-  bool operator==(SimulationFluxKey);
+  bool operator==(const SimulationFluxKey&);
 
 private:
-  double m_phi;
-  Particle::Type m_type;
-  bool m_isAlbedo;
+  Location m_location;
+  Acceptance m_acceptance;
   Source m_source;
+  Particle::Type m_particle;
+  double m_modulationParameter;
+  bool m_isAlbedo;
 
-  static bool s_constructed;
   static void construct();
-  static QMap<Particle::Type, QString> s_particleNames;
+  static QMap<Location, QString> s_locationNames;
+  static QMap<Acceptance, QString> s_acceptanceNames;
   static QMap<Source, QString> s_sourceNames;
-
+  static QMap<Particle::Type, QString> s_particleNames;
 };
 
-inline bool operator<(const SimulationFluxKey& le, const SimulationFluxKey& ri)
-{
-  if (le.phi() != ri.phi()) {
-    return le.phi() < ri.phi();
-  } else {
-    if (le.source() != ri.source()) {
-      return le.source() < ri.source();
-    } else {
-      if (le.type() != ri.type()) {
-        return le.type() < ri.type();
-      } else {
-        return le.isAlbedo() < ri.isAlbedo();
-      }
-    }
-  }
-}
+bool operator<(const SimulationFluxKey& le, const SimulationFluxKey& ri);
+QDebug operator<<(QDebug, const SimulationFluxKey&);
 
 #endif
