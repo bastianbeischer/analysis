@@ -103,11 +103,12 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& hi
       }
     }
   }
+  TMatrixT<double> aPrime = a.GetSub(0, 8*nBins-2, 0, 8*nBins-2);
+  TMatrixT<double> aPrimeInverted = aPrime.Invert();
 
   TMatrixT<double> b(8*nBins, 1);
   for (int ai = 0; ai < 8*nBins; ++ai)
     b(ai, 0) = 0;
-
   for (int i = 0; i < 4; ++i) {
     for (int k = 0; k < nBins; ++k) {
       b(i * nBins + k, 0) = sumRelativeSigmaErrorJL(map, i, k);
@@ -118,11 +119,14 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& hi
       b(4 * nBins + j * nBins + l, 0) = sumRelativeSigmaErrorIK(map, j, l);
     }
   }
+  TMatrixT<double> bPrime = b.GetSub(0, 8*nBins-2, 0, 0);
 
-  dumpMatrix(a);
-  dumpMatrix(a.GetSub(0, 8*nBins-2, 0, 8*nBins-2).Invert());
-  TMatrixT<double> v = a.GetSub(0, 8*nBins-2, 0, 8*nBins-2).Invert() * b.GetSub(0, 8*nBins-2, 0, 0);
-  dumpMatrix(v);
+  double r = 0;
+  TMatrixT<double> cPrime(8*nBins, 1);
+  for (int ai = 0; ai < 8*nBins-1; ++ai)
+    cPrime(ai, 0) = r * aPrime(ai, 8*nBins-2);
+ 
+  TMatrixT<double> v = aPrime * (bPrime - cPrime);
 
   for (int i = 0; i < 4; ++i) {
     TGraph* graph = new TGraph(nBins);
