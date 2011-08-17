@@ -17,6 +17,7 @@
 #include <TCanvas.h>
 #include <TLegendEntry.h>
 #include <TList.h>
+#include <TPad.h>
 #include <TF1.h>
 
 #include <QVector>
@@ -199,4 +200,5 @@ void RigidityFlux::selectionChanged()
     legend()->AddEntry(newHisto, newHisto->GetTitle(), "l");
   }
   draw(Plotter::rootWidget()->GetCanvas());
+  gPad->Update();
 }

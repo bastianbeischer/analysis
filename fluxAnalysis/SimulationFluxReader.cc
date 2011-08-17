@@ -1,4 +1,5 @@
 #include "SimulationFluxReader.hh"
+
 #include "SimulationFlux.hh"
 #include "Constants.hh"
 
@@ -30,17 +31,17 @@ SimulationFluxReader::SimulationFluxReader()
   , m_fluxes()
 {
   QString dataPath = getenv("PERDAIXDATA_PATH");
-  QString groundFileName = dataPath + "/fluxSimulation/groundKiruna.root";
   QString flightFileName = dataPath + "/fluxSimulation/flight.root";
+  QString groundFileName = dataPath + "/fluxSimulation/groundKiruna.root";
+  if (QFile::exists(flightFileName)) {
+    if (m_locations.contains(SimulationFluxKey::Flight))
+      m_locations.append(SimulationFluxKey::Flight);
+    readKeys(flightFileName);
+  }
   if (QFile::exists(groundFileName)) {
   if (m_locations.contains(SimulationFluxKey::GroundEsrange))
     m_locations.append(SimulationFluxKey::GroundEsrange);
     readKeys(groundFileName);
-  }
-  if (QFile::exists(flightFileName)) {
-  if (m_locations.contains(SimulationFluxKey::Flight))
-    m_locations.append(SimulationFluxKey::Flight);
-    readKeys(flightFileName);
   }
 }
 
@@ -74,6 +75,9 @@ void SimulationFluxReader::readKeys(const QString& fileName)
     }
   }
   file.Close();
+  qSort(m_acceptances);
+  qSort(m_sources);
+  qSort(m_modulationParameters);
 }
 
 SimulationFluxReader::~SimulationFluxReader()

@@ -2,6 +2,7 @@
 
 #include "Particle.hh"
 #include "SimulationFluxReader.hh"
+#include "SimulationFluxKey.hh"
 
 #include <TH1D.h>
 #include <QList>
@@ -9,7 +10,6 @@
 #include <QDebug>
 #include <QAction>
 #include <QComboBox>
-#include <SimulationFluxKey.hh>
 
 SimulationFluxWidget::SimulationFluxWidget(QWidget* parent)
   : SimulationFluxSelector(2, parent)

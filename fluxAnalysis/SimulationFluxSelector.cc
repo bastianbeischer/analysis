@@ -4,12 +4,6 @@
 #include "RootQtWidget.hh"
 #include "H1DPlot.hh"
 
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <TLegend.h>
-#include <TLegendEntry.h>
-#include <TPad.h>
-
 #include <QDebug>
 #include <QLayout>
 #include <QComboBox>

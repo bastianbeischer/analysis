@@ -32,8 +32,8 @@ protected:
   QVector<QPushButton*> m_buttons;
   QVector<QMenu*> m_buttonMenus;
   QComboBox* m_phiComboBox;
-  bool m_inhibitClear;
   bool m_inhibitUpdate;
+  bool m_inhibitClear;
   QVector<TH1D*> m_selectedHistograms;
 private slots:
   void activate();

@@ -9,11 +9,14 @@
 
 #include <TH1D.h>
 #include <TH2D.h>
-#include <TCanvas.h>
 #include <TAxis.h>
+#include <TPad.h>
 #include <TF1.h>
+#include <TList.h>
+#include <TCanvas.h>
 #include <TLatex.h>
 #include <TLegend.h>
+#include <TLegendEntry.h>
 
 #include <QDebug>
 #include <QMutex>
@@ -22,9 +25,10 @@ bool RigidityFluxPlot::s_efficienciesLoaded = false;
 TH1D* RigidityFluxPlot::s_multiLayerEff = 0;
 TH1D* RigidityFluxPlot::s_trackFindingEff = 0;
 
-RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, double measurementTime, Type type)
+RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpectrum, double measurementTime, Type type)
   : PostAnalysisPlot()
   , H1DPlot()
+  , m_canvas(canvas->canvas())
   , m_particleHistogram(0)
   , m_fluxCalculation(0)
   , m_type(type)
@@ -43,18 +47,18 @@ RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, double measuremen
   }
 
   if (m_type == Negative)
-    m_particleHistogram = Helpers::createMirroredHistogram(canvas->histograms1D().at(0));
+    m_particleHistogram = Helpers::createMirroredHistogram(particleSpectrum);
   else
-    m_particleHistogram = new TH1D(*canvas->histograms1D().at(0));
+    m_particleHistogram = new TH1D(*particleSpectrum);
 
   QString newTitle = QString(canvas->histograms1D().at(0)->GetName()) + m_typeNames[type];
   m_particleHistogram->SetTitle(qPrintable(newTitle));
 
-  //corrections and unfolding before
-  FluxCalculation::efficiencyCorrection(m_particleHistogram, s_multiLayerEff);
-  FluxCalculation::efficiencyCorrection(m_particleHistogram, s_trackFindingEff);
-  FluxCalculation::efficiencyCorrection(m_particleHistogram, 0.843684 / 0.792555);
-  FluxCalculation::efficiencyCorrection(m_particleHistogram, 0.999);//estimate for TOF trigger efficiency
+  //corrections befor flux calculation
+//  FluxCalculation::efficiencyCorrection(m_particleHistogram, s_multiLayerEff);
+//  FluxCalculation::efficiencyCorrection(m_particleHistogram, s_trackFindingEff);
+//  FluxCalculation::efficiencyCorrection(m_particleHistogram, 0.843684 / 0.792555);
+//  FluxCalculation::efficiencyCorrection(m_particleHistogram, 0.999);//estimate for TOF trigger efficiency
   //....todo
   m_fluxCalculation = new FluxCalculation(m_particleHistogram, measurementTime);
 
@@ -67,6 +71,7 @@ RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, double measuremen
 
   setTitle(title);
   addHistogram(m_fluxCalculation->fluxHistogram());
+  histogram()->GetXaxis()->SetMoreLogLabels(true);
   setAxisTitle(m_fluxCalculation->fluxHistogram()->GetXaxis()->GetTitle(), m_fluxCalculation->fluxHistogram()->GetYaxis()->GetTitle());
 
   const int nBins = histogram()->GetNbinsX();
@@ -103,7 +108,8 @@ RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, double measuremen
   latex(m_nBinsNew)->SetTitle(qPrintable(m_phiFit->gammaLabel()));
   latex(m_nBinsNew+1)->SetTitle(qPrintable(m_phiFit->phiLabel()));
 
-  SimulationFluxWidget* secWidget = new SimulationFluxWidget(this, canvas->canvas());
+  SimulationFluxWidget* secWidget = new SimulationFluxWidget;
+  connect(secWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
   setSecondaryWidget(secWidget);
 }
 
@@ -147,4 +153,26 @@ void RigidityFluxPlot::loadEfficiencies()
     s_efficienciesLoaded = true;
   }
   mutex.unlock();
+}
+
+void RigidityFluxPlot::selectionChanged()
+{
+  while (legend()->GetListOfPrimitives()->GetEntries() > 1) {
+    TLegendEntry* entry = (TLegendEntry*)legend()->GetListOfPrimitives()->At(1);
+    legend()->GetListOfPrimitives()->Remove(entry);
+    delete entry;
+    entry = 0;
+  }
+  while(numberOfHistograms() > 1) {
+    removeHistogram(1);
+  }
+  foreach(TH1D* histogram, static_cast<SimulationFluxWidget*>(secondaryWidget())->selectedHistograms()) {
+    TH1D* newHisto = new TH1D(*histogram);
+    if (!newHisto->GetSumw2())
+      newHisto->Sumw2();
+    addHistogram(newHisto, H1DPlot::HIST);
+    legend()->AddEntry(newHisto, newHisto->GetTitle(), "l");
+  }
+  draw(m_canvas);
+  gPad->Update();
 }
