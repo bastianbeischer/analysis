@@ -182,7 +182,6 @@ QString SimulationFluxKey::particleName(Particle::Type particle)
 double SimulationFluxKey::modulationParameter(const QString& phiName)
 {
   construct();
-  qDebug() << qPrintable(">"+phiName.left(phiName.indexOf(" MV"))+"<");
   return phiName.left(phiName.indexOf(" MV")).toDouble();
 }
 

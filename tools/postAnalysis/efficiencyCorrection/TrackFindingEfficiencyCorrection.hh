@@ -14,16 +14,18 @@
 
 class TrackFindingEfficiencyCorrection : public PostAnalysisPlot, public H1DPlot {
 public:
-  TrackFindingEfficiencyCorrection(PostAnalysisCanvas*);
+  enum Type {
+    Positive,
+    Negative
+  };
+  TrackFindingEfficiencyCorrection(Type, PostAnalysisCanvas*);
   virtual ~TrackFindingEfficiencyCorrection();
 
-public:
-
 private:
-  QString m_name;
+  Type m_type;
+  QMap<Type, QString> m_typeNames;
 
   void saveAsSetting();
-
 };
 
 #endif

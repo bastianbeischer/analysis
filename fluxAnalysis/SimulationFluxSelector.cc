@@ -4,8 +4,8 @@
 #include "RootQtWidget.hh"
 #include "H1DPlot.hh"
 
-#include <TCanvas.h>
 #include <TStyle.h>
+#include <TCanvas.h>
 #include <TLegend.h>
 #include <TLegendEntry.h>
 #include <TPad.h>
@@ -29,6 +29,7 @@ SimulationFluxSelector::SimulationFluxSelector(int numberOfSelectors, QWidget* p
   , m_buttonMenus()
   , m_phiComboBox(0)
   , m_inhibitUpdate(false)
+  , m_inhibitClear(false)
 {
   m_layout = new QHBoxLayout(this);
   m_layout->setContentsMargins(0, 0, 0, 0);
@@ -81,7 +82,18 @@ void SimulationFluxSelector::activate()
 }
 
 void SimulationFluxSelector::clear()
-{}
+{
+  if (m_inhibitClear)
+    return;
+  m_inhibitClear = true;
+  for(int iSelector = 0; iSelector < m_numberOfSelectors; ++iSelector) {
+    for (int iMenu = 0; iMenu < m_buttonMenus[iSelector]->actions().size(); ++iMenu) {
+      m_buttonMenus[iSelector]->actions()[iMenu]->setChecked(false);
+    }
+  }
+  m_inhibitClear = false;
+  emit selectionChanged();
+}
 
 void SimulationFluxSelector::selectPositive()
 {}

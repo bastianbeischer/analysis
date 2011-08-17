@@ -10,8 +10,8 @@
 #include <iostream>
 #include <iomanip>
 
-QString EfficiencyCorrectionSettings::s_trackFindingEfficiencyPreKey = "oneHitAllLayersEfficiency_";
-QString EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey = "trackFindingEfficiency_";
+QString EfficiencyCorrectionSettings::s_trackFindingEfficiencyPreKey = "oneHitAllLayersEfficiency";
+QString EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey = "trackFindingEfficiency";
 
 EfficiencyCorrectionSettings::EfficiencyCorrectionSettings()
 {

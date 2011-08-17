@@ -14,11 +14,16 @@
 
 class AllTrackerLayersFlagEfficiencyCorrection : public PostAnalysisPlot, public H1DPlot {
 public:
-  AllTrackerLayersFlagEfficiencyCorrection(PostAnalysisCanvas*);
+  enum Type {
+    Positive,
+    Negative
+  };
+  AllTrackerLayersFlagEfficiencyCorrection(Type, PostAnalysisCanvas*);
   virtual ~AllTrackerLayersFlagEfficiencyCorrection();
 private:
-  QString m_name;
+  Type m_type;
   void saveAsSetting();
+  QMap<Type, QString> m_typeNames;
 };
 
 #endif

@@ -86,14 +86,14 @@ void FluxCalculation::efficiencyCorrection(double efficiency)
 TLatex FluxCalculation::binTitle(int bin)
 {
   m_mutexBinTitle.lock();
-  double x = m_fluxHistogram->GetBinCenter(bin);
+  double x = m_fluxHistogram->GetXaxis()->GetBinCenterLog(bin);
   double y = m_fluxHistogram->GetBinContent(bin);
   double value = m_particleHistogram->GetBinContent(bin);
   m_mutexBinTitle.unlock();
 
   QString text = "#scale[0.6]{"+QString::number(value,'d',0)+"}";
 
-  TLatex latext(x*1.1, y*1.1, qPrintable(text));
+  TLatex latext(x, y*1.1, qPrintable(text));
   latext.SetTextFont(42);
   latext.SetTextSize(0.02);
   latext.SetLineWidth(2);

@@ -15,6 +15,8 @@
 #include <TLatex.h>
 #include <TLegend.h>
 #include <TCanvas.h>
+#include <TLegendEntry.h>
+#include <TList.h>
 #include <TF1.h>
 
 #include <QVector>
@@ -24,8 +26,8 @@
 #include <vector>
 
 bool RigidityFlux::s_efficienciesLoaded = false;
-QMap<RigidityFlux::Type, TH1D*> RigidityFlux::s_multiLayerEff;
-QMap<RigidityFlux::Type, TH1D*> RigidityFlux::s_trackFindingEff;
+TH1D* RigidityFlux::s_multiLayerEff = 0;
+TH1D* RigidityFlux::s_trackFindingEff = 0;
 
 RigidityFlux::RigidityFlux(Type type, const QDateTime& first, const QDateTime& last, Plotter* plotter, TH1D* particleHistogram)
   : AnalysisPlot(AnalysisPlot::MomentumReconstruction)
@@ -33,34 +35,44 @@ RigidityFlux::RigidityFlux(Type type, const QDateTime& first, const QDateTime& l
   , m_type(type)
   , m_plotter(plotter)
   , m_particleHistogram(particleHistogram)
+  , m_particleHistogramMirrored(0)
 {
   loadEfficiencies();
-
   QString title = "flux spectrum";
-
   m_measurementTimeCalculation = new MeasurementTimeCalculation(first, last);
-  m_fluxCalculation = new FluxCalculation(m_particleHistogram, m_measurementTimeCalculation->measurementTime());
-
-  if (m_type == All) {
-    title += " - all";
-  } else if (m_type == Negative) {
+  if (m_type == Negative) {
     title += " - negative";
+    m_particleHistogramMirrored = Helpers::createMirroredHistogram(m_particleHistogram);
   } else if (m_type == Positive) {
     title += " - positive";
-  } else if (m_type == AlbedoPositive) {
-    title += " - positive albedo";
-  } else if (m_type == AlbedoNegative) {
-    title += " - negative albedo";
+  } 
+  if (m_particleHistogramMirrored) {
+    m_fluxCalculation = new FluxCalculation(m_particleHistogramMirrored, m_measurementTimeCalculation->measurementTime());
+  } else {
+    m_fluxCalculation = new FluxCalculation(m_particleHistogram, m_measurementTimeCalculation->measurementTime());
   }
   setTitle(title);
-
   TH1D* histogram = m_fluxCalculation->fluxHistogram();
-
+  histogram->GetXaxis()->SetMoreLogLabels(true);
   setAxisTitle(histogram->GetXaxis()->GetTitle(), histogram->GetYaxis()->GetTitle());
   addHistogram(histogram, H1DPlot::P);
 
-  for(int bin = 0; bin < histogram->GetNbinsX(); bin++)
+  const int nBins = histogram->GetNbinsX();
+  if (nBins%2 == 0)
+    m_nBinsNew = nBins / 2;
+  else
+    m_nBinsNew = (nBins - 1) / 2;
+  
+  if (nBins%2 == 0)
+    m_nBinsStart = m_nBinsNew + 1;
+  else
+    m_nBinsStart = m_nBinsNew + 2;
+  histogram->GetXaxis()->SetRange(m_nBinsStart, nBins);
+  
+  for(int i = 0; i < m_nBinsNew; i++) {
+    double bin = m_nBinsStart -1 + i;
     addLatex(new TLatex(m_fluxCalculation->binTitle(bin+1)));
+  }
 
   TLegend* legend = new TLegend(.80, .72, .98, .98);
   legend->SetFillColor(kWhite);
@@ -89,23 +101,14 @@ RigidityFlux::~RigidityFlux()
 
   QMutex mutex;
   mutex.lock();
-  for (int i = 0; i < s_multiLayerEff.size(); i++) {
-    Type key = s_multiLayerEff.keys()[i];
-    if (s_multiLayerEff[key]) {
-      delete s_multiLayerEff[key];
-      s_multiLayerEff[key] = 0;
-    }
+  if (s_multiLayerEff) {
+    delete s_multiLayerEff;
+    s_multiLayerEff = 0;
   }
-  s_multiLayerEff.clear();
-
-  for (int i = 0; i < s_multiLayerEff.size(); i++) {
-    Type key = s_trackFindingEff.keys()[i];
-    if (s_trackFindingEff[key]) {
-      delete s_trackFindingEff[key];
-      s_trackFindingEff[key] = 0;
-    }
+  if (s_trackFindingEff) {
+    delete s_trackFindingEff;
+    s_trackFindingEff = 0;
   }
-  s_trackFindingEff.clear();
   s_efficienciesLoaded = false;
   mutex.unlock();
   delete m_phiFit;
@@ -119,14 +122,16 @@ void RigidityFlux::processEvent(const QVector<Hit*>&, const Particle* const, con
 
 void RigidityFlux::update()
 {
+  if (m_particleHistogramMirrored)
+    Helpers::updateMirroredHistogram(m_particleHistogramMirrored, m_particleHistogram);
   m_fluxCalculation->setMeasurementTime(m_measurementTimeCalculation->measurementTime());
   m_fluxCalculation->update();
   efficiencyCorrection();
   updateBinTitles();
 
   m_phiFit->fit();
-  latex(histogram()->GetNbinsX())->SetTitle(qPrintable(m_phiFit->gammaLabel()));
-  latex(histogram()->GetNbinsX()+1)->SetTitle(qPrintable(m_phiFit->phiLabel()));
+  latex(m_nBinsNew)->SetTitle(qPrintable(m_phiFit->gammaLabel()));
+  latex(m_nBinsNew+1)->SetTitle(qPrintable(m_phiFit->phiLabel()));
 }
 
 void RigidityFlux::finalize()
@@ -136,8 +141,9 @@ void RigidityFlux::finalize()
 
 void RigidityFlux::updateBinTitles()
 {
-  for (int i = 0; i < histogram()->GetNbinsX(); i++) {
-    TLatex latext = m_fluxCalculation->binTitle(i+1);
+  for (int i = 0; i < m_nBinsNew; i++) {
+    double bin = m_nBinsStart -1 + i;
+    TLatex latext = m_fluxCalculation->binTitle(bin+1);
     double x = latext.GetX();
     double y = latext.GetY();
     QString text = latext.GetTitle();
@@ -154,48 +160,43 @@ void RigidityFlux::loadEfficiencies()
   if (!s_efficienciesLoaded) {
 
     EfficiencyCorrectionSettings effCorSet;
-
-    s_multiLayerEff.insert(All, effCorSet.readHistogram(EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey+"all/"));
-    s_trackFindingEff.insert(All, effCorSet.readHistogram(EfficiencyCorrectionSettings::s_trackFindingEfficiencyPreKey +"all/"));
-
-    s_multiLayerEff.insert(Positive, effCorSet.readHistogram(EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey+"positive/"));
-    s_trackFindingEff.insert(Positive, effCorSet.readHistogram(EfficiencyCorrectionSettings::s_trackFindingEfficiencyPreKey +"positive/"));
-
-    s_multiLayerEff.insert(Negative, effCorSet.readHistogram(EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey+"negative/"));
-    s_trackFindingEff.insert(Negative, effCorSet.readHistogram(EfficiencyCorrectionSettings::s_trackFindingEfficiencyPreKey +"negative/"));
-
+    if (m_type == Negative) {
+      s_multiLayerEff = Helpers::createMirroredHistogram(effCorSet.readHistogram(EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey));
+      s_trackFindingEff = Helpers::createMirroredHistogram(effCorSet.readHistogram(EfficiencyCorrectionSettings::s_trackFindingEfficiencyPreKey));
+    } else {
+      s_multiLayerEff = effCorSet.readHistogram(EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey);
+      s_trackFindingEff = effCorSet.readHistogram(EfficiencyCorrectionSettings::s_trackFindingEfficiencyPreKey);
+    }
     s_efficienciesLoaded = true;
   }
   mutex.unlock();
 }
 
-
-
 void RigidityFlux::efficiencyCorrection()
 {
-  Q_ASSERT(s_multiLayerEff[m_type]);
-  m_fluxCalculation->efficiencyCorrection(s_multiLayerEff[m_type]);
-  Q_ASSERT(s_trackFindingEff[m_type]);
-  m_fluxCalculation->efficiencyCorrection(s_trackFindingEff[m_type]);
+  m_fluxCalculation->efficiencyCorrection(s_multiLayerEff);
+  m_fluxCalculation->efficiencyCorrection(s_trackFindingEff);
   m_fluxCalculation->efficiencyCorrection(0.843684 / 0.792555);
   m_fluxCalculation->efficiencyCorrection(0.999);//estimate for TOF trigger efficiency
 }
-
-//double RigidityFlux::maxFlux()
-//{
-//  double max = histogram(0)->GetBinContent(histogram(0)->GetMaximumBin()) ;
-//  for (int i = 0; i <  numberOfHistograms(); i++) {
-//    double value = histogram(i)->GetBinContent(histogram(i)->GetMaximumBin());
-//    if (value > max) {
-//      max = value;
-//    }
-//  }
-//  return max;
-//}
   
 void RigidityFlux::selectionChanged()
 {
-  qDebug() << "ANDI";
-
+  while (legend()->GetListOfPrimitives()->GetEntries() > 1) {
+    TLegendEntry* entry = (TLegendEntry*)legend()->GetListOfPrimitives()->At(1);
+    legend()->GetListOfPrimitives()->Remove(entry);
+    delete entry;
+    entry = 0;
+  }
+  while(numberOfHistograms() > 1) {
+    removeHistogram(1);
+  }
+  foreach(TH1D* histogram, static_cast<SimulationFluxWidget*>(secondaryWidget())->selectedHistograms()) {
+    TH1D* newHisto = new TH1D(*histogram);
+    if (!newHisto->GetSumw2())
+      newHisto->Sumw2();
+    addHistogram(newHisto, H1DPlot::HIST);
+    legend()->AddEntry(newHisto, newHisto->GetTitle(), "l");
+  }
   draw(Plotter::rootWidget()->GetCanvas());
 }

@@ -1,15 +1,17 @@
 #include "RigiditySpectrumRatio.hh"
 
-#include "SimpleEvent.hh"
-#include "Particle.hh"
-#include "Track.hh"
-#include "ParticleInformation.hh"
-#include "Constants.hh"
 #include "SimulationFluxRatioWidget.hh"
-#include "Plotter.hh"
+#include "ParticleInformation.hh"
 #include "RootQtWidget.hh"
+#include "SimpleEvent.hh"
+#include "Constants.hh"
+#include "Particle.hh"
 #include "Helpers.hh"
+#include "Plotter.hh"
+#include "Track.hh"
 
+#include <TLegendEntry.h>
+#include <TList.h>
 #include <TH1D.h>
 #include <TLegend.h>
 
@@ -54,6 +56,7 @@ RigiditySpectrumRatio::RigiditySpectrumRatio()
   legend()->AddEntry(histogram, "Perdaix Data", "p");
 
   SimulationFluxRatioWidget* secWidget = new SimulationFluxRatioWidget;
+  connect(secWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
   setSecondaryWidget(secWidget);
 }
 
@@ -99,5 +102,26 @@ void RigiditySpectrumRatio::update()
 void RigiditySpectrumRatio::finalize()
 {
   update();
+}
+
+void RigiditySpectrumRatio::selectionChanged()
+{
+  while (legend()->GetListOfPrimitives()->GetEntries() > 1) {
+    TLegendEntry* entry = (TLegendEntry*)legend()->GetListOfPrimitives()->At(1);
+    legend()->GetListOfPrimitives()->Remove(entry);
+    delete entry;
+    entry = 0;
+  }
+  while(numberOfHistograms() > 1) {
+    removeHistogram(1);
+  }
+  foreach(TH1D* histogram, static_cast<SimulationFluxRatioWidget*>(secondaryWidget())->selectedHistograms()) {
+    TH1D* newHisto = new TH1D(*histogram);
+    if (!newHisto->GetSumw2())
+      newHisto->Sumw2();
+    addHistogram(newHisto, H1DPlot::HIST);
+    legend()->AddEntry(newHisto, newHisto->GetTitle(), "l");
+  }
+  draw(Plotter::rootWidget()->GetCanvas());
 }
 

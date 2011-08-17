@@ -15,12 +15,10 @@ public:
 	MeasurementTimeCalculation(QDateTime first, QDateTime last);
   MeasurementTimeCalculation(TH1D* histogram);
 	~MeasurementTimeCalculation();
-
   void update(const SimpleEvent* const event);
   TH1D* histogram();
   double measurementTime();
   double measurementTimeError();
-
 private:
   TH1D* m_histogram;
   double m_measurementTime;

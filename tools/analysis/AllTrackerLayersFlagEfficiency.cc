@@ -15,27 +15,25 @@
 
 #include <QSpinBox>
 
-AllTrackerLayersFlagEfficiency::AllTrackerLayersFlagEfficiency(Type type) :
+AllTrackerLayersFlagEfficiency::AllTrackerLayersFlagEfficiency() :
   AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
   H1DPlot(),
-  m_type(type),
   m_afterCutHisto(0),
   m_normHisto(0)
 {
   QString htitle = "One hit in all layers";
-
-  if (m_type == Positive)
-    htitle += " positive";
-  if (m_type == Negative)
-    htitle += " negative";
-  if (m_type == All)
-    htitle += " all";
   setTitle(htitle);
 
-  const int nBins = 21;
-  const double min = 0.1;
-  const double max = 20;
-  const QVector<double>& axis = Helpers::logBinning(nBins, min, max);
+  const int nBinsData = 42;
+  const double minData = 0.1;
+  const double maxData = 20;
+  QVector<double> axis = Helpers::logBinning(nBinsData, minData, maxData);
+  int axisSize = axis.size()*2;
+  for (int i = 0; i < axisSize; i+=2) {
+    double value = axis.at(i);
+    axis.prepend(-value);
+  }
+  const int nBins = axis.size() - 1;
 
   TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, axis.constData());
   histogram->Sumw2();
@@ -67,20 +65,15 @@ void AllTrackerLayersFlagEfficiency::processEvent(const QVector<Hit*>&, const Pa
 
   if (!(flags & ParticleInformation::InsideMagnet))
     return;
-
+  //TODO: right albedo handling
   double rigidity = track->rigidity();
 
-  if (m_type == Positive && rigidity < 0)
-    return;
-  if (m_type == Negative && rigidity > 0)
-    return;
-
-  m_normHisto->Fill(qAbs(rigidity));
+  m_normHisto->Fill(rigidity);
 
   if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
-  m_afterCutHisto->Fill(qAbs(rigidity));
+  m_afterCutHisto->Fill(rigidity);
 }
 
 void AllTrackerLayersFlagEfficiency::update()

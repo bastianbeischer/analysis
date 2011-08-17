@@ -1,19 +1,13 @@
 #include "MeasurementTimePostAnalysisPlot.hh"
 
-#include <TH1.h>
-#include <TH2.h>
-#include <TH2D.h>
-#include <TCanvas.h>
-#include <TAxis.h>
-#include <TLatex.h>
+#include "PostAnalysisCanvas.hh"
 
-#include <iostream>
-#include <iomanip>
-#include <cmath>
+#include <TH1D.h>
+#include <TCanvas.h>
+#include <TLatex.h>
+#include <TAxis.h>
 
 #include <QDebug>
-#include <QStringList>
-#include <QSettings>
 
 MeasurementTimePostAnalysisPlot::MeasurementTimePostAnalysisPlot(PostAnalysisCanvas* canvas)
   : PostAnalysisPlot()

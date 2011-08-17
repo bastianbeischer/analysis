@@ -1,12 +1,11 @@
 #ifndef MeasurementTimePostAnalysisPlot_hh
 #define MeasurementTimePostAnalysisPlot_hh
 
-#include "PostAnalysisCanvas.hh"
+#include "MeasurementTimeCalculation.hh"
 #include "PostAnalysisPlot.hh"
 #include "H1DPlot.hh"
-#include "MeasurementTimeCalculation.hh"
 
-#include <TH1D.h>
+class PostAnalysisCanvas;
 
 class MeasurementTimePostAnalysisPlot : public PostAnalysisPlot, public H1DPlot {
 public:

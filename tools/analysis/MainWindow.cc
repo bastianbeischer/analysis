@@ -591,19 +591,12 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Inverted));
     m_ui.plotter->addPlot(new AlbedosVsMomentumPlot());
     m_ui.plotter->addPlot(new MeasurementTimePlot(first, last));
-    RigidityParticleSpectrum* particleSpectrumAll = new RigidityParticleSpectrum(RigidityParticleSpectrum::All);
-    m_ui.plotter->addPlot(particleSpectrumAll);
-    RigidityParticleSpectrum* particleSpectrumPositive = new RigidityParticleSpectrum(RigidityParticleSpectrum::Positive);
-    m_ui.plotter->addPlot(particleSpectrumPositive);
-    RigidityParticleSpectrum* particleSpectrumNegative = new RigidityParticleSpectrum(RigidityParticleSpectrum::Negative);
-    m_ui.plotter->addPlot(particleSpectrumNegative);
-    m_ui.plotter->addPlot(new RigidityFlux(RigidityFlux::All, first, last, m_ui.plotter, particleSpectrumAll->particleHistogram()));
-    m_ui.plotter->addPlot(new RigidityFlux(RigidityFlux::Positive, first, last, m_ui.plotter, particleSpectrumPositive->particleHistogram()));
-    m_ui.plotter->addPlot(new RigidityFlux(RigidityFlux::Negative, first, last, m_ui.plotter, particleSpectrumNegative->particleHistogram()));
+    RigidityParticleSpectrum* particleSpectrum = new RigidityParticleSpectrum(RigidityParticleSpectrum::NonAlbedo);
+    m_ui.plotter->addPlot(particleSpectrum);
+    m_ui.plotter->addPlot(new RigidityFlux(RigidityFlux::Positive, first, last, m_ui.plotter, particleSpectrum->particleHistogram()));
+    m_ui.plotter->addPlot(new RigidityFlux(RigidityFlux::Negative, first, last, m_ui.plotter, particleSpectrum->particleHistogram()));
     m_ui.plotter->addPlot(new RigiditySpectrumRatio());
-    m_ui.plotter->addPlot(new RigidityMigrationHistogram(RigidityMigrationHistogram::Positive));
-    m_ui.plotter->addPlot(new RigidityMigrationHistogram(RigidityMigrationHistogram::Negative));
-    m_ui.plotter->addPlot(new RigidityMigrationHistogram(RigidityMigrationHistogram::All));
+    m_ui.plotter->addPlot(new RigidityMigrationHistogram());
   }
   if (m_ui.efficiencyTofCheckBox->isChecked()) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
@@ -638,12 +631,8 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::Positive));
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::Negative));
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::All));
-    m_ui.plotter->addPlot(new TrackFindingEfficiency(TrackFindingEfficiency::Positive));
-    m_ui.plotter->addPlot(new TrackFindingEfficiency(TrackFindingEfficiency::Negative));
-    m_ui.plotter->addPlot(new TrackFindingEfficiency(TrackFindingEfficiency::All));
-    m_ui.plotter->addPlot(new AllTrackerLayersFlagEfficiency(AllTrackerLayersFlagEfficiency::Positive));
-    m_ui.plotter->addPlot(new AllTrackerLayersFlagEfficiency(AllTrackerLayersFlagEfficiency::Negative));
-    m_ui.plotter->addPlot(new AllTrackerLayersFlagEfficiency(AllTrackerLayersFlagEfficiency::All));
+    m_ui.plotter->addPlot(new TrackFindingEfficiency());
+    m_ui.plotter->addPlot(new AllTrackerLayersFlagEfficiency());
   }
   if (m_ui.miscellaneousTRDCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisPlot::MiscellaneousTRD));

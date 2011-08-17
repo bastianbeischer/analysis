@@ -29,37 +29,30 @@
 #include <cmath>
 #include <vector>
 
-TrackFindingEfficiency::TrackFindingEfficiency(Type type)
+TrackFindingEfficiency::TrackFindingEfficiency()
   : AnalysisPlot(AnalysisPlot::MiscellaneousTracker)
   , H1DPlot()
-  , m_type(type)
 {
   m_nTotal = 0;
   m_nReconstructed = 0;
 
   QString title = "Track finding efficiency";
-
-  if (m_type == Negative) {
-    title += " - negative";
-  }
-  if (m_type == Positive) {
-    title += " - positive";
-  }
-  if (m_type == All) {
-    title += " - all";
-  }
-
   setTitle(title);
 
-  const int nBins = 21;
-  const double min = 0.1;
-  const double max = 20;
-  const QVector<double>& axis = Helpers::logBinning(nBins, min, max);
+  const int nBinsData = 42;
+  const double minData = 0.1;
+  const double maxData = 20;
+  QVector<double> axis = Helpers::logBinning(nBinsData, minData, maxData);
+  int axisSize = axis.size()*2;
+  for (int i = 0; i < axisSize; i+=2) {
+    double value = axis.at(i);
+    axis.prepend(-value);
+  }
+  const int nBins = axis.size() - 1;
 
   TH1D* histogram = new TH1D("reconstruction efficiency", "", nBins, axis.constData());
   histogram->Sumw2();
-
-  setAxisTitle("abs(rigidity / GV)", "efficiency");
+  setAxisTitle("rigidity / GV", "efficiency");
   addHistogram(histogram);
 
   m_reconstructed = new TH1D("reconstructed", "", nBins, axis.constData());
@@ -84,33 +77,24 @@ void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, const Particle* 
 
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
   if (settings && settings->situation() == Settings::Testbeam11) {
-    if (m_type == Negative && settings->polarity() > 0)
-      return;
-    if (m_type == Positive && settings->polarity() < 0)
-      return;
     rigidity = settings->momentum();
     fillHistogram = true;
   } else if (event->contentType() == SimpleEvent::MonteCarlo) {
     if (!event->MCInformation()->primary()->isInsideMagnet())
       return;
-
+    //Todo: albedo handling
     int mcPdgId = event->MCInformation()->primary()->pdgID;
     Particle mcParticle(mcPdgId);
     rigidity = event->MCInformation()->primary()->initialMomentum.Mag() / mcParticle.charge();
 
     if (!isTriggerEvent(QVector<Hit*>::fromStdVector(event->hits())))
       return;
-
-    if (m_type == Negative && rigidity > 0)
-      return;
-    if (m_type == Positive && rigidity < 0)
-      return;
     fillHistogram = true;
   }
 
   ++m_nTotal;
   if (fillHistogram)
-    m_total->Fill(qAbs(rigidity));
+    m_total->Fill(rigidity);
 
   const Track* track = particle->track();
   if (!track || !track->fitGood())
@@ -121,7 +105,7 @@ void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, const Particle* 
 
   ++m_nReconstructed;
   if (fillHistogram)
-    m_reconstructed->Fill(qAbs(rigidity));
+    m_reconstructed->Fill(rigidity);
 }
 
 void TrackFindingEfficiency::update()

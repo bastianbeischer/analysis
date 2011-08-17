@@ -5,6 +5,7 @@
 
 class TCanvas;
 class H1DPlot;
+class TH1D;
 class QMenu;
 class QComboBox;
 class QPushButton;
@@ -15,10 +16,12 @@ Q_OBJECT
 public:
   SimulationFluxSelector(int numberOfSelectors, QWidget* = 0);
   virtual ~SimulationFluxSelector();
+  const QVector<TH1D*>& selectedHistograms() const {return m_selectedHistograms;}
 signals:
   void selectionChanged();
 protected slots:
   virtual void update() = 0;
+  void clear();
 protected:
   int m_numberOfSelectors;
   QHBoxLayout* m_layout;
@@ -29,10 +32,11 @@ protected:
   QVector<QPushButton*> m_buttons;
   QVector<QMenu*> m_buttonMenus;
   QComboBox* m_phiComboBox;
+  bool m_inhibitClear;
   bool m_inhibitUpdate;
+  QVector<TH1D*> m_selectedHistograms;
 private slots:
   void activate();
-  void clear();
   void selectPositive();
   void selectNegative();
 private:

@@ -21,32 +21,26 @@ RigidityParticleSpectrum::RigidityParticleSpectrum(Type type)
   , m_type(type)
 {
   QString title = "particle spectrum";
-  if (m_type == All) {
-    title += " - all";
-  } else if (m_type == Negative) {
-    title += " - negative";
-  } else if (m_type == Positive) {
-    title += " - positive";
-  } else if (m_type == AlbedoPositive) {
-    title += " - positive albedo";
-  } else if (m_type == AlbedoNegative) {
-    title += " - negative albedo";
+  if (m_type == NonAlbedo) {
+    title += " - nonAlbedo";
+  } else if (m_type == Albedo) {
+    title += " - albedo";
   }
-
-  const int nBins = 21;
-  const double min = 0.1;
-  const double max = 20;
-  const QVector<double>& axis = Helpers::logBinning(nBins, min, max);
-
-  m_particleHistogram = new TH1D(qPrintable(title), "", nBins, axis.constData());
+  const int nBinsData = 42;
+  const double minData = 0.1;
+  const double maxData = 20;
+  QVector<double> axisData = Helpers::logBinning(nBinsData, minData, maxData);
+  int axisSize = axisData.size()*2;
+  for (int i = 0; i < axisSize; i+=2) {
+    double value = axisData.at(i);
+    axisData.prepend(-value);
+  }
+  m_particleHistogram = new TH1D(qPrintable(title), "", axisData.size()-1, axisData.constData());
   m_particleHistogram->Sumw2();
-  m_particleHistogram->GetXaxis()->SetTitle("abs(rigidity / GV)");
+  m_particleHistogram->GetXaxis()->SetTitle("rigidity / GV");
   m_particleHistogram->GetYaxis()->SetTitle("particles");
-
   setTitle(title);
-
   TH1D* histogram = m_particleHistogram;
-
   setAxisTitle(histogram->GetXaxis()->GetTitle(), histogram->GetYaxis()->GetTitle());
   addHistogram(histogram, H1DPlot::P);
 }
@@ -69,21 +63,14 @@ void RigidityParticleSpectrum::processEvent(const QVector<Hit*>&, const Particle
     return;
   if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
-  if ((m_type == AlbedoPositive || m_type == AlbedoNegative ) && !(flags & ParticleInformation::Albedo))
+  if ((m_type == Albedo ) && !(flags & ParticleInformation::Albedo))
     return;
-  if ((m_type == Positive || m_type == Negative ) && (flags & ParticleInformation::Albedo))
+  if ((m_type == NonAlbedo ) && (flags & ParticleInformation::Albedo))
     return;
   double rigidity = track->rigidity();
-
   if (flags & ParticleInformation::Albedo)
     rigidity *= -1;
-
-  if (m_type == Negative && rigidity >= 0)
-    return;
-  if (m_type == Positive && rigidity <= 0)
-    return;
-  double absRigidity = qAbs(rigidity);
-  m_particleHistogram->Fill(absRigidity);
+  m_particleHistogram->Fill(rigidity);
 }
 
 void RigidityParticleSpectrum::update()

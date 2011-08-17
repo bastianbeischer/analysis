@@ -13,7 +13,6 @@ class SolarModulationFit {
 public:
   SolarModulationFit(TH1D* fluxHistogram);
 	~SolarModulationFit();
-
   TF1* fit();
   QString gammaLabel() const;
   QString phiLabel() const;
@@ -21,7 +20,6 @@ public:
   double gammaError() const {return m_gammaError;}
   double phi() const {return m_phi;}
   double phiError() const {return m_phiError;}
-
 private:
   SolarModulationFit();
   TH1D* m_fluxHistogram;
