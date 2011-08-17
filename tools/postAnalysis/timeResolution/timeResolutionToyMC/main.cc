@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
         for (int lowerBin = 0; lowerBin < nBins; ++lowerBin) {
           double lowerCenter = (0.5 + lowerBin) * binWidth - Constants::tofBarLength / 2.;
           QString label = QString("u%1 l%2").arg(upperCenter).arg(lowerCenter);
-          histograms[i][j]->GetXaxis()->SetBinLabel(upperBin * nBins + lowerBin + 1, qPrintable(label));
+          //histograms[i][j]->GetXaxis()->SetBinLabel(upperBin * nBins + lowerBin + 1, qPrintable(label));
         }
       }
     }
@@ -83,9 +83,13 @@ int main(int argc, char* argv[])
     int lowerBin = (lowerY + Constants::tofBarLength / 2.) / binWidth;
     double ds =
       Helpers::addQuad(upperX - lowerX, upperY - lowerY, Constants::upperTofPosition - Constants::lowerTofPosition);
-    double t1 = random->Gaus(ds / Constants::speedOfLight, resolutionFunction[lowerBar][1]->Eval(lowerY));
-    double t2 = random->Gaus(0, resolutionFunction[upperBar][0]->Eval(upperY));
-    double dt = t2 - (lowerBar == 3 && lowerBin == nBins - 1) ? 0 : t1;
+    double upperResolution = resolutionFunction[upperBar][0]->Eval(upperY);
+    double lowerResolution = resolutionFunction[lowerBar][1]->Eval(lowerY);
+    double t1 = random->Gaus(0, upperResolution);
+    double t2 = random->Gaus(ds / Constants::speedOfLight, lowerResolution);
+    if (lowerBar == 3 && lowerBin == nBins - 1)
+      t2 = ds / Constants::speedOfLight;
+    double dt = t2 - t1;
     histograms[upperBar][lowerBar]->Fill(upperBin * nBins + lowerBin, dt);
   }
 

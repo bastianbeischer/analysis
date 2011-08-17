@@ -126,6 +126,8 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& hi
 
   for (int i = 0; i < 4; ++i) {
     TGraph* graph = new TGraph(nBins);
+    graph->SetLineStyle(1);
+    graph->SetLineColor(1+i);
     graph->SetName(qPrintable(QString("i = %1").arg(i)));
     for (int k = 0; k < nBins; ++k) {
       double sigma = sqrt(v(i * nBins + k, 0));
@@ -138,6 +140,8 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& hi
 
   for (int j = 0; j < 4; ++j) {
     TGraph* graph = new TGraph(nBins);
+    graph->SetLineStyle(2);
+    graph->SetLineColor(1+j);
     graph->SetName(qPrintable(QString("j = %1").arg(j)));
     for (int l = 0; l < nBins; ++l) {
       int ai = (j+4) * nBins + l;
