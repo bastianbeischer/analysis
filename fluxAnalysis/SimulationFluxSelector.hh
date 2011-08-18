@@ -37,14 +37,17 @@ protected:
   QVector<TH1D*> m_selectedHistograms;
 private slots:
   void activate();
-  void selectPositive();
-  void selectNegative();
+  void selectPositive0();
+  void selectNegative0();
+  void selectPositive1();
+  void selectNegative1();
 private:
   void fillLocationComboBox();
   void fillAceptanceComboBox();
   void fillSourceComboBox();
   void fillMenu(QPushButton*);
   void fillPhiComboBox();
+  void selectActions(int iSelector, bool positive);
 };
 
 #endif

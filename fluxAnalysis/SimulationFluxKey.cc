@@ -170,7 +170,7 @@ QString SimulationFluxKey::sourceName(Source source)
 Particle::Type SimulationFluxKey::particle(const QString& particleName)
 {
   construct();
-  return s_particleNames.key(particleName);
+  return s_particleNames.key(particleName, Particle::Unknown);
 }
 
 QString SimulationFluxKey::particleName(Particle::Type particle)

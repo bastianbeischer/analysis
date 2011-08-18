@@ -38,6 +38,8 @@ void SimulationFluxWidget::update()
         SimulationFluxKey::Acceptance acceptance = SimulationFluxKey::acceptance(m_acceptanceComboBox->currentText());
         SimulationFluxKey::Source source = SimulationFluxKey::source(m_sourceComboBox->currentText());
         Particle::Type particleType = SimulationFluxKey::particle(particleString);
+        if (particleType == Particle::Unknown)
+          continue;
         double modulationParameter = SimulationFluxKey::modulationParameter(m_phiComboBox->currentText());
         bool isAlbedo = false;
         if (particleString.contains("albedo", Qt::CaseInsensitive))

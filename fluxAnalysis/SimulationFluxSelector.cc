@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QLayout>
 #include <QComboBox>
+#include <QStringList>
 #include <QPushButton>
 #include <QAction>
 #include <QMenu>
@@ -64,6 +65,29 @@ void SimulationFluxSelector::activate()
     QPushButton* button = new QPushButton("particles", this);
     button->setMenu(menu);
     m_layout->addWidget(button);
+
+    if (i < 2) {
+      QString actionName = "all positive";
+      QAction* action = new QAction(actionName, this);
+      action->setCheckable(false);
+      button->menu()->addAction(action);
+      if (i == 0)
+        connect(action, SIGNAL(triggered()), this, SLOT(selectPositive0()));
+      else if (i == 1)
+        connect(action, SIGNAL(triggered()), this, SLOT(selectPositive1()));
+
+      actionName = "all negative";
+      action = new QAction(actionName, this);
+      action->setCheckable(false);
+      button->menu()->addAction(action);
+      if (i == 0)
+        connect(action, SIGNAL(triggered()), this, SLOT(selectNegative0()));
+      else if (i == 1)
+        connect(action, SIGNAL(triggered()), this, SLOT(selectNegative1()));
+
+      button->menu()->addSeparator ();
+    }
+
     fillMenu(button);
     m_buttons.append(button);
     m_buttonMenus.append(menu);
@@ -90,11 +114,25 @@ void SimulationFluxSelector::clear()
   emit selectionChanged();
 }
 
-void SimulationFluxSelector::selectPositive()
-{}
+void SimulationFluxSelector::selectPositive0()
+{
+  selectActions(0, true);
+}
 
-void SimulationFluxSelector::selectNegative()
-{}
+void SimulationFluxSelector::selectNegative0()
+{
+  selectActions(0, false);
+}
+
+void SimulationFluxSelector::selectPositive1()
+{
+  selectActions(1, true);
+}
+
+void SimulationFluxSelector::selectNegative1()
+{
+  selectActions(1, false);
+}
 
 void SimulationFluxSelector::fillLocationComboBox()
 {
@@ -142,4 +180,21 @@ void SimulationFluxSelector::fillPhiComboBox()
   foreach (double phi, phis) {
     m_phiComboBox->addItem(SimulationFluxKey::modulationParameterName(phi));
   }
+}
+
+void SimulationFluxSelector::selectActions(int iSelector, bool positive)
+{
+  for (int iMenu = 0; iMenu < m_buttonMenus[iSelector]->actions().size(); ++iMenu) {
+    QAction* action = m_buttonMenus[iSelector]->actions()[iMenu];
+    const QString& particleString = action->text();
+    Particle::Type particleType = SimulationFluxKey::particle(particleString);
+    if (particleType == Particle::Unknown)
+      continue;
+    bool isAlbedo = false;
+    if (particleString.contains("albedo", Qt::CaseInsensitive))
+      isAlbedo = true;
+    if (!isAlbedo && ((Particle(particleType).charge() > 0 && positive) || (Particle(particleType).charge() < 0 && !positive)))
+      action->setChecked(true);
+  }
+  emit selectionChanged();
 }
