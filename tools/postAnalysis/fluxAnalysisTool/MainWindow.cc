@@ -45,7 +45,7 @@ void MainWindow::setupAnalysis()
 
   file = new TFile(qPrintable(m_analysisFiles.at(1)));
   gROOT->cd();
-  
+
   name = QString("measurement time canvas");
   canvas = addCanvas(file, qPrintable(name));
   MeasurementTimePostAnalysisPlot* timePlot = new MeasurementTimePostAnalysisPlot(canvas);
@@ -56,23 +56,23 @@ void MainWindow::setupAnalysis()
   canvas = addCanvas(file, qPrintable(name));
   RigidityParticleSpectrum* particleSpectrum = new RigidityParticleSpectrum(canvas);
   addPlot(particleSpectrum);
-  
+
   RigidityUnfolding* rigidityUnfolding= new RigidityUnfolding(rigidityMigrationPlot->migrationHistogram(), particleSpectrum->spectrum());
   addPlot(new PostAnalysisH2DPlot(rigidityUnfolding->rohIj()));
   addPlot(new PostAnalysisGraphPlot(QVector<TGraph*>() << rigidityUnfolding->lCurve() << rigidityUnfolding->bestlcurve()));
   addPlot(new PostAnalysisH1DPlot(rigidityUnfolding->unfoldedHistogram()));
-  
+
   addPlot(new RigidityFluxPlot(canvas, particleSpectrum->spectrum(), measurementTime, RigidityFluxPlot::Positive));
   addPlot(new RigidityFluxPlot(canvas, particleSpectrum->spectrum(), measurementTime, RigidityFluxPlot::Negative));
-  
+
 //  addPlot(new RigidityFluxPlot(canvas, new TH1D(*rigidityUnfolding->unfoldedHistogram()), measurementTime, RigidityFluxPlot::Positive));
 //  addPlot(new RigidityFluxPlot(canvas, rigidityUnfolding->unfoldedHistogram(), measurementTime, RigidityFluxPlot::Negative));
-  
+
 //  name = QString("particle spectrum - albedo canvas");
 //  canvas = addCanvas(file, qPrintable(name));
 //  RigidityParticleSpectrum* particleSpectrumAlbedo = new RigidityParticleSpectrum(canvas);
 //  addPlot(particleSpectrumAlbedo);
-//
+
 //  addPlot(new RigidityFluxPlot(canvas, particleSpectrumAlbedo->spectrum(), measurementTime, RigidityFluxPlot::Positive));
 //  addPlot(new RigidityFluxPlot(canvas, particleSpectrumAlbedo->spectrum(), measurementTime, RigidityFluxPlot::Negative));
 

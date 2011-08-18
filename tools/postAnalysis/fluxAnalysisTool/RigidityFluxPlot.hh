@@ -21,6 +21,8 @@ public:
 private slots:
   void selectionChanged();
 private:
+  void updateBinTitles();
+  void loadEfficiencies();
   TCanvas* m_canvas;
   TH1D* m_particleHistogram;
   FluxCalculation* m_fluxCalculation;
@@ -29,10 +31,6 @@ private:
   SolarModulationFit* m_phiFit;
   int m_nBinsStart;
   int m_nBinsNew;
-
-  void updateBinTitles();
-  void loadEfficiencies();
-
   TH1D* m_multiLayerEff;
   TH1D* m_trackFindingEff;
   QMap<Type, QString> m_typeNames;

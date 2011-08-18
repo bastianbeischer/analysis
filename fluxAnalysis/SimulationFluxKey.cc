@@ -207,7 +207,15 @@ bool operator<(const SimulationFluxKey& le, const SimulationFluxKey& ri)
       if (le.particle() != ri.particle()) {
         return le.particle() < ri.particle();
       } else {
-        return le.isAlbedo() < ri.isAlbedo();
+        if (le.location() != ri.location()) {
+          return le.location() < ri.location();
+        } else {
+          if (le.acceptance() != ri.acceptance()) {
+            return le.acceptance() < ri.acceptance();
+          } else {
+            return le.isAlbedo() < ri.isAlbedo();
+          }
+        }
       }
     }
   }

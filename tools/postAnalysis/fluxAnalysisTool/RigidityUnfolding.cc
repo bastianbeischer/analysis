@@ -3,21 +3,21 @@
 #include <TH1.h>
 #include <TH2.h>
 #include <TAxis.h>
-#include <TUnfold.h>
 #include <TArray.h>
-#include <TGraph.h>
 #include <TSpline.h>
+#include <TUnfold.h>
+#include <TGraph.h>
 
 #include <cmath>
 
 #include <QDebug>
 
 RigidityUnfolding::RigidityUnfolding(TH2D* migrationHistogram, TH1D* unfoldInput)
-: m_migrationHistogram(new TH2D(*migrationHistogram))
-, m_unfoldInput(new TH1D(*unfoldInput))
-, m_unfoldedHistogram(0)
-, m_rhoIj(0)
-, m_lCurve(0)
+  : m_migrationHistogram(new TH2D(*migrationHistogram))
+  , m_unfoldInput(new TH1D(*unfoldInput))
+  , m_unfoldedHistogram(0)
+  , m_rhoIj(0)
+  , m_lCurve(0)
 {
   unfold();
 }
@@ -83,61 +83,3 @@ void RigidityUnfolding::unfold()
   delete[] binMap;
   binMap = 0;
 }
-
-
-
-
-
-//TUnfold unfold(hMigration,TUnfold::kHistMapOutputVert);
-//
-//unfold.SetInput(hPowerSpectrumRec);
-//
-//Int_t nScan=30;
-//Int_t iBest;
-//TSpline *logTauX,*logTauY;
-//TGraph *lCurve;
-//
-//iBest=unfold.ScanLcurve(nScan,1.E-7,1.,&lCurve);
-//
-//std::cout<<"tau="<<unfold.GetTau()<<"\n";
-//
-//TH1D *x=new TH1D("hUnfolded","hUnfolded",nBinlogGen,&xMinGen[0]);
-//unfold.GetOutput(x);
-//TH2D *rhoij=unfold.GetRhoIJ("correlation","myVariable");
-//
-//x->SetLineColor(kBlue);
-//x->SetLineWidth(3);
-//
-//hPowerSpectrumGen->Sumw2();
-//hPowerSpectrumGen->Divide(hNormGen);
-//hPowerSpectrumGen->Draw("hist.E");
-//hPowerSpectrumGen->Fit("FunPowerSpectrum","E");
-//hPowerSpectrumGen->GetXaxis()->SetTitle("P [GeV]");
-//hPowerSpectrumGen->GetYaxis()->SetTitle("N/GeV");
-//
-//hPowerSpectrumRec->Sumw2();
-//hPowerSpectrumRec->Divide(hNormRec);
-//hPowerSpectrumRec->SetLineColor(kRed);
-//hPowerSpectrumRec->Draw("same.hist.E");
-//
-//x->Divide(hNormGen);
-//x->Draw("same");
-//
-//TCanvas* c1 = new TCanvas();
-//lCurve->SetMarkerStyle(20);
-//lCurve->SetMarkerSize(1);
-//lCurve->Draw("AP");
-//
-//TCanvas *cSSC3 = new TCanvas("cSSC3","SSC3",100,0,500,500);
-//cSSC3->SetLogx();
-//cSSC3->SetLogy();
-//cSSC3->SetLeftMargin(0.15);
-//cSSC3->Draw();
-//
-//hMigration->Sumw2();
-//hMigration->Divide(hNorm2);
-//
-//hMigration->Draw("col.z");
-//hMigration->GetXaxis()->SetTitle("Prec [GeV]");
-//hMigration->GetYaxis()->SetTitle("Pgen [GeV]");
-

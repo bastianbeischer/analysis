@@ -9,7 +9,6 @@
 #include <QString>
 
 class SolarModulationFit {
-
 public:
   SolarModulationFit(TH1D* fluxHistogram);
 	~SolarModulationFit();

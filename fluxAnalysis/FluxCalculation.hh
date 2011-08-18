@@ -11,7 +11,6 @@
 #include <QMutex>
 
 class FluxCalculation {
-
 public:
   FluxCalculation(TH1D* particleHistogram, double measurementTime);
 	~FluxCalculation();

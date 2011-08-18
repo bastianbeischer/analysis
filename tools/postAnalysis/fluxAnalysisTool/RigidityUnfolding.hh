@@ -15,12 +15,10 @@ public:
   TH1D* unfoldedHistogram() {return m_unfoldedHistogram;}
   TGraph* lCurve() {return m_lCurve;}
   TGraph* bestlcurve() {return m_bestLcurve;}
-
 private:
+  void unfold();
   TH2D* m_migrationHistogram;
   TH1D* m_unfoldInput;
-
-  void unfold();
   TGraph* m_bestLcurve;
   TH1D* m_unfoldedHistogram;
   TH2D* m_rhoIj;

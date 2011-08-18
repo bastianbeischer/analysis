@@ -13,7 +13,6 @@ RigidityParticleSpectrum::RigidityParticleSpectrum(PostAnalysisCanvas* canvas)
 {
 QString name = canvas->name();
   name.replace("canvas", "original histogram");
-
   TH1D* histogram = new TH1D(*canvas->histograms1D().at(0));
   setTitle(name);
   addHistogram(histogram);
