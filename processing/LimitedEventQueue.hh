@@ -12,7 +12,7 @@ public:
 
   int freeSpace();
   int bufferSize() const {return m_bufferSize;}
-  void setBufferSize(int size) {m_bufferSize = size;}
+  void setBufferSize(int size);
 
 private:
   int m_bufferSize;
