@@ -78,7 +78,6 @@ void RigidityMigrationHistogram::processEvent(const QVector<Hit*>&, const Partic
 double RigidityMigrationHistogram::smearedRigidity(const MCSimpleEventParticle* mcParticle, TRandom3* ran, double factor) {
   Particle particle(mcParticle->pdgID);
   const double charge = particle.charge();
-  
  	double smearedRigidity = smearedMomentum(mcParticle, ran, factor);
   if (charge != 0) {
     smearedRigidity = smearedRigidity / charge;
