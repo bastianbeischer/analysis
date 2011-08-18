@@ -65,8 +65,6 @@ void TRDReconstruction::reset()
 
 void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
 {
-  reset();
-
   std::vector<Hit*>::const_iterator endIt = event->hits().end();
   for (std::vector<Hit*>::const_iterator eventHitIt = event->hits().begin(); eventHitIt != endIt; ++eventHitIt) {
     Hit* hit = *eventHitIt;
