@@ -21,6 +21,7 @@ CLASSES += \
   UniformField
 
 INCLUDEPATH += \
+  $$TOPLEVEL/global \
   $$TOPLEVEL/event
 
 LIBS += \

@@ -5,6 +5,8 @@
 #include <QVector>
 #include <QString>
 
+#include <TH1.h>
+
 namespace Helpers
 {
   double addQuad(double a, double b) {return sqrt(a*a + b*b);}
@@ -32,7 +34,7 @@ namespace Helpers
   TH1D* createMirroredHistogram(TH1D* histogram)
   {
     QString title = histogram->GetTitle();
-    QString name = QString(histogram->GetName())+"_mirrored";
+    QString name = QString(histogram->GetName()) + "_mirrored";
     QVector<double> binning;
     int nBins = histogram->GetNbinsX();
     for (int i = 0; i <= nBins; ++i) {
@@ -52,5 +54,21 @@ namespace Helpers
     updateMirroredHistogram(mirroredHistogram, histogram);
     
     return mirroredHistogram;
+  }
+
+  QString analysisPath()
+  {
+    const char* env = getenv("PERDAIXANA_PATH");
+    if (!env)
+      qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
+    return env;
+  }
+
+  QString dataPath()
+  {
+    const char* env = getenv("PERDAIXDATA_PATH");
+    if (!env)
+      qFatal("ERROR: You need to set PERDAIXDATA_PATH environment variable to the toplevel location of the data!");
+    return env;
   }
 }

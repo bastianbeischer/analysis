@@ -9,6 +9,7 @@
 
 #include "Settings.hh"
 #include "SimpleEvent.hh"
+#include "Helpers.hh"
 
 SettingsManager* SettingsManager::s_instance = 0;
 
@@ -20,12 +21,7 @@ bool settingsCompare(const Settings* s1, const Settings* s2)
 SettingsManager::SettingsManager() :
   m_configFile(0)
 {
-  const char* env = getenv("PERDAIXANA_PATH");
-  if (env == 0) {
-    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
-  }
-  QString path(env);
-  path += "/conf/";
+  QString path = Helpers::analysisPath() + "/conf/";
   QDir dir(path);
   if (!dir.exists("settings.conf")) {
     qFatal("ERROR: settings.conf not found!");

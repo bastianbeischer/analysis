@@ -9,6 +9,7 @@
 #include "SimpleEvent.hh"
 #include "DataDescription.hh"
 #include "Constants.hh"
+#include "Helpers.hh"
 
 #include <cstdlib>
 #include <fstream>
@@ -77,11 +78,7 @@ void DataChain::addFileList(const char* listName)
     if (fullname.endsWith(".txt"))
       addFileList(qPrintable(fullname));
     else if (fullname.endsWith(".root")) {
-      const char* env = getenv("PERDAIXDATA_PATH");
-      if (env == 0) {
-        qFatal("ERROR: You need to set PERDAIXDATA_PATH environment variable to the toplevel location of the data!");
-      }
-      fullname.prepend(QString(env) + "/");
+      fullname.prepend(Helpers::dataPath() + "/");
       addRootFile(qPrintable(fullname));
     }
   }

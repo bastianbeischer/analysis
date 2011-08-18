@@ -3,6 +3,13 @@ TARGET = presentation
 
 TOPLEVEL = ../..
 
+INCLUDEPATH += \
+  $$TOPLEVEL/global
+
+LIBS += \
+  -L$$TOPLEVEL/lib \
+  -lglobal
+ 
 FORMS+= \
   MainWindow.ui
 

@@ -2,8 +2,9 @@
 #define Helpers_hh
 
 #include <QVector>
+#include <QString>
 
-#include <TH1D.h>
+class TH1D;
 
 namespace Helpers
 {
@@ -11,6 +12,8 @@ namespace Helpers
   QVector<double> logBinning(unsigned int nBins, double min, double max);
   TH1D* createMirroredHistogram(TH1D* histogram);
   void updateMirroredHistogram(TH1D* histogramToUpdate, TH1D* dataHistogram);
+  QString analysisPath();
+  QString dataPath();
 }
 
 #endif
