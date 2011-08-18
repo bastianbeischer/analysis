@@ -171,6 +171,8 @@ void SimulationFluxSelector::fillMenu(QPushButton* button)
       connect(action, SIGNAL(triggered()), button, SLOT(showMenu()));
       connect(action, SIGNAL(changed()), this, SLOT(update()));
     }
+    if (isAlbedo == 0)
+      button->menu()->addSeparator ();
   }
 }
 
@@ -180,6 +182,8 @@ void SimulationFluxSelector::fillPhiComboBox()
   foreach (double phi, phis) {
     m_phiComboBox->addItem(SimulationFluxKey::modulationParameterName(phi));
   }
+  int defaultIndex = m_phiComboBox->findText(SimulationFluxKey::modulationParameterName(550));
+  m_phiComboBox->setCurrentIndex(defaultIndex);
 }
 
 void SimulationFluxSelector::selectActions(int iSelector, bool positive)
