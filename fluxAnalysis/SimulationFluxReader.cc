@@ -2,6 +2,7 @@
 
 #include "SimulationFlux.hh"
 #include "Constants.hh"
+#include "Helpers.hh"
 
 #include <QFile>
 #include <QDebug>
@@ -30,7 +31,7 @@ SimulationFluxReader::SimulationFluxReader()
   , m_modulationParameters()
   , m_fluxes()
 {
-  QString dataPath = getenv("PERDAIXDATA_PATH");
+  QString dataPath = Helpers::dataPath();
   QString flightFileName = dataPath + "/fluxSimulation/flight.root";
   QString groundFileName = dataPath + "/fluxSimulation/groundKiruna.root";
   if (QFile::exists(flightFileName)) {

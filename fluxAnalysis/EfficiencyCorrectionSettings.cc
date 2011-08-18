@@ -1,14 +1,12 @@
 #include "EfficiencyCorrectionSettings.hh"
+#include "Helpers.hh"
 
-#include <TH1D.h>
+#include <TH1.h>
 
 #include <QString>
 #include <QVariant>
 #include <QList>
 #include <QVector>
-
-#include <iostream>
-#include <iomanip>
 
 EfficiencyCorrectionSettings* EfficiencyCorrectionSettings::s_instance = 0;
 
@@ -25,12 +23,7 @@ EfficiencyCorrectionSettings::EfficiencyCorrectionSettings()
   , m_trackFindingEfficiency(0)
   , m_allTrackerLayerCutEfficiency(0)
 {
-  const char* env = getenv("PERDAIXANA_PATH");
-  if (env == 0) {
-    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
-  }
-  QString path(env);
-  path += "/conf/";
+  QString path = Helpers::analysisPath() + "/conf/";
   m_settings = new QSettings(path + "EfficiencyCorrections.conf", QSettings::IniFormat);
 
   m_axisKey = "/axis";
