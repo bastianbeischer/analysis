@@ -596,7 +596,6 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new RigidityFlux(RigidityFlux::Positive, first, last, particleSpectrum->particleHistogram()));
     m_ui.plotter->addPlot(new RigidityFlux(RigidityFlux::Negative, first, last, particleSpectrum->particleHistogram()));
     m_ui.plotter->addPlot(new RigiditySpectrumRatio());
-    m_ui.plotter->addPlot(new RigidityMigrationHistogram());
   }
   if (m_ui.efficiencyTofCheckBox->isChecked()) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
@@ -694,6 +693,7 @@ void MainWindow::setupPlots()
         m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisPlot::MonteCarloTracker, layer));
     }
     m_ui.plotter->addPlot(new AzimuthMigrationHistogram());
+    m_ui.plotter->addPlot(new RigidityMigrationHistogram());
   }
   if (m_ui.testbeamCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::MagnetInstalled, first, last));

@@ -14,7 +14,7 @@
 #include <cmath>
 
 RigidityMigrationHistogram::RigidityMigrationHistogram()
-: AnalysisPlot(AnalysisPlot::MomentumReconstruction)
+: AnalysisPlot(AnalysisPlot::MonteCarloTracker)
 , H2DPlot()
 {
   QString title = "Rigidity migration";
