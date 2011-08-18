@@ -1,6 +1,7 @@
 #include "TrackFindingEfficiencyCorrection.hh"
 
 #include "Corrections.hh"
+#include "Helpers.hh"
 
 #include <TH1.h>
 #include <TH2.h>
@@ -58,14 +59,7 @@ void TrackFindingEfficiencyCorrection::saveAsSetting(QString config)
     values.push_back( value );
   }
 
-  const char* env = getenv("PERDAIXANA_PATH");
-  if (env == 0) {
-    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
-  }
-  QString path(env);
-  path += "/conf/";
-
-  path += config+"/";
+  QString path = Helpers::analysisPath() + "/conf/" + config + "/";
 
   QSettings* settings = new QSettings(path + "EfficiencyCorrections.conf", QSettings::IniFormat);
 

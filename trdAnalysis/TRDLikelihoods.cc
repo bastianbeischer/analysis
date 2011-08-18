@@ -1,5 +1,6 @@
 #include "TRDLikelihoods.hh"
 #include "TRDReconstruction.hh"
+#include "Helpers.hh"
 
 #include <QMutex>
 #include <QMutexLocker>
@@ -48,12 +49,8 @@ TRDLikelihoods::TRDLikelihoods()
 {
   for (int i = 0; i < 8; ++i)
     m_LHFunctionTRLayer << prototypeLHFunctionTR();
-
-  const char* env = getenv("PERDAIXANA_PATH");
-  if (env == 0)
-    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
-  QString path(env);
-  path += "/conf/";
+  
+  QString path = Helpers::analysisPath() + "/conf/";
   m_trdLikelihoodSettings = new QSettings(path + "TRDLikelihood.conf", QSettings::IniFormat);
 
   loadLHs();

@@ -95,6 +95,7 @@
 #include "RigidityMigrationHistogram.hh"
 #include "AzimuthPositionCorrelation.hh"
 #include "AzimuthCutStatistics.hh"
+#include "Helpers.hh"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -106,6 +107,7 @@ MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
   , m_processors()
   , m_reader(new EventReader(this))
+  , m_topLevelPath(Helpers::analysisPath())
   , m_activePlots()
   , m_drawOptions()
   , m_inhibitDraw(false)
@@ -113,12 +115,6 @@ MainWindow::MainWindow(QWidget* parent)
   , m_updateTimer()
 {
   m_ui.setupUi(this);
-
-  const char* env = getenv("PERDAIXANA_PATH");
-  if (env == 0) {
-    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
-  }
-  m_topLevelPath = QString(env);
 
   m_topicCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
   m_topicCheckBoxes.append(m_ui.signalHeightTRDCheckBox);

@@ -1,4 +1,5 @@
 #include "Setup.hh"
+#include "Helpers.hh"
 
 #include "Cluster.hh"
 #include "TOFCluster.hh"
@@ -30,12 +31,7 @@ Setup::Setup() :
   m_coordinates(0),
   m_settings(0)
 {
-  const char* env = getenv("PERDAIXANA_PATH");
-  if (env == 0) {
-    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
-  }
-  QString path(env);
-  path += "/conf/";
+  QString path = Helpers::analysisPath() + "/conf/";
   QDir dir(path);
   if (!dir.exists("coordinates.conf")) {
     qFatal("ERROR: coordinates.conf not found. Maybe you need to switch to a configuration, for example: switch_to_config.sh kiruna");

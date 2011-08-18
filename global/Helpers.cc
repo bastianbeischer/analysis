@@ -16,4 +16,20 @@ namespace Helpers
     }
     return binning;
   }
+
+  QString analysisPath()
+  {
+    const char* env = getenv("PERDAIXANA_PATH");
+    if (!env)
+      qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
+    return env;
+  }
+
+  QString dataPath()
+  {
+    const char* env = getenv("PERDAIXDATA_PATH");
+    if (!env)
+      qFatal("ERROR: You need to set PERDAIXDATA_PATH environment variable to the toplevel location of the data!");
+    return env;
+  }
 }
