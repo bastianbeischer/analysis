@@ -11,8 +11,6 @@
 #include <iomanip>
 
 EfficiencyCorrectionSettings* EfficiencyCorrectionSettings::s_instance = 0;
-QString EfficiencyCorrectionSettings::s_trackFindingEfficiencyPreKey = "oneHitAllLayersEfficiency";
-QString EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey = "trackFindingEfficiency";
 
 EfficiencyCorrectionSettings* EfficiencyCorrectionSettings::instance()
 {
@@ -23,6 +21,10 @@ EfficiencyCorrectionSettings* EfficiencyCorrectionSettings::instance()
 
 EfficiencyCorrectionSettings::EfficiencyCorrectionSettings()
   : m_efficienciesLoaded(false)
+  , m_trackFindingKey("trackFindingEfficiency")
+  , m_allTrackerLayerCutKey("oneHitAllLayersEfficiency")
+  , m_trackFindingEfficiency(0)
+  , m_allTrackerLayerCutEfficiency(0)
 {
   const char* env = getenv("PERDAIXANA_PATH");
   if (env == 0) {
@@ -39,7 +41,10 @@ EfficiencyCorrectionSettings::EfficiencyCorrectionSettings()
 
 EfficiencyCorrectionSettings::~EfficiencyCorrectionSettings()
 {
-  qDeleteAll(m_histograms);
+  delete m_allTrackerLayerCutEfficiency;
+  m_allTrackerLayerCutEfficiency = 0;
+  delete m_trackFindingEfficiency;
+  m_trackFindingEfficiency = 0;
   delete m_settings;
   m_settings = 0;
   s_instance = 0;
@@ -70,12 +75,28 @@ void EfficiencyCorrectionSettings::save(const QString& key, TH1D* histogram)
   m_settings->sync();
 }
 
-TH1D* EfficiencyCorrectionSettings::histogram(const QString& key)
+void EfficiencyCorrectionSettings::saveTrackFindingEfficiency(TH1D* histogram)
+{
+  save(m_allTrackerLayerCutKey, histogram);
+}
+
+void EfficiencyCorrectionSettings::saveAllTrackerLayerCutEfficiency(TH1D* histogram)
+{
+  save(m_trackFindingKey, histogram);
+}
+
+TH1D* EfficiencyCorrectionSettings::trackFindingEfficiency()
 {
   if (!m_efficienciesLoaded)
     loadEfficiencies();
-  Q_ASSERT(m_histograms[key]);
-  return m_histograms[key];
+  return m_trackFindingEfficiency;
+}
+
+TH1D* EfficiencyCorrectionSettings::allTrackerLayerCutEfficiency()
+{
+  if (!m_efficienciesLoaded)
+    loadEfficiencies();
+  return m_allTrackerLayerCutEfficiency;
 }
 
 TH1D* EfficiencyCorrectionSettings::readHistogram(const QString& key)
@@ -107,6 +128,6 @@ TH1D* EfficiencyCorrectionSettings::readHistogram(const QString& key)
 
 void EfficiencyCorrectionSettings::loadEfficiencies()
 {
-  m_histograms.insert(s_allTrackerLayerCutEfficiencyPreKey, readHistogram(s_allTrackerLayerCutEfficiencyPreKey));
-  m_histograms.insert(s_trackFindingEfficiencyPreKey, readHistogram(s_trackFindingEfficiencyPreKey));
+  m_trackFindingEfficiency = readHistogram(m_trackFindingKey);
+  m_allTrackerLayerCutEfficiency = readHistogram(m_allTrackerLayerCutKey);
 }

@@ -135,11 +135,11 @@ void RigidityFluxPlot::updateBinTitles()
 void RigidityFluxPlot::loadEfficiencies()
 {
   if (m_type == Negative) {
-    m_multiLayerEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->histogram(EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey));
-    m_trackFindingEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->histogram(EfficiencyCorrectionSettings::s_trackFindingEfficiencyPreKey));
+    m_multiLayerEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency());
+    m_trackFindingEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->trackFindingEfficiency());
   } else {
-    m_multiLayerEff = EfficiencyCorrectionSettings::instance()->histogram(EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey);
-    m_trackFindingEff = EfficiencyCorrectionSettings::instance()->histogram(EfficiencyCorrectionSettings::s_trackFindingEfficiencyPreKey);
+    m_multiLayerEff = EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency();
+    m_trackFindingEff = EfficiencyCorrectionSettings::instance()->trackFindingEfficiency();
   }
 }
 

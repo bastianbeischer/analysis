@@ -57,5 +57,5 @@ void TrackFindingEfficiencyCorrection::saveAsSetting()
 {
   if (m_type != Positive)
     return;
-  EfficiencyCorrectionSettings::instance()->save(EfficiencyCorrectionSettings::s_trackFindingEfficiencyPreKey, histogram());
+  EfficiencyCorrectionSettings::instance()->trackFindingEfficiency();
 }

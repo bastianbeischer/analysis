@@ -56,5 +56,5 @@ void AllTrackerLayersFlagEfficiencyCorrection::saveAsSetting()
 {
   if (m_type != Positive)
     return;
- EfficiencyCorrectionSettings::instance()->save(EfficiencyCorrectionSettings::s_allTrackerLayerCutEfficiencyPreKey, histogram());
+  EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency();
 }
