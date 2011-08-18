@@ -20,6 +20,7 @@
 
 #include "SettingsManager.hh"
 #include "Settings.hh"
+#include "Helpers.hh"
 
 DataManager::DataManager() :
   m_description(0),

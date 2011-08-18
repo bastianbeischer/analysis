@@ -7,11 +7,13 @@ TOPLEVEL = ../..
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \
+  $$TOPLEVEL/global \
   $$TOPLEVEL/setup
 
 LIBS += \
   -L$$TOPLEVEL/lib \
   -lSimpleEvent \
+  -lglobal \
   -lsetup
 
 CLASSES = \
