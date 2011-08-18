@@ -52,11 +52,13 @@ void SimulationFluxRatioWidget::update()
       }
     }
   }
-  TH1D* numeratorHistogram = SimulationFluxReader::instance()->spectrum(numerator);
-  TH1D* denominatorHistogram = SimulationFluxReader::instance()->spectrum(denominator);
-  numeratorHistogram->Divide(denominatorHistogram);
-  m_selectedHistograms.append(numeratorHistogram);
-  delete denominatorHistogram;
+  if (numerator.size() && denominator.size()) {
+    TH1D* numeratorHistogram = SimulationFluxReader::instance()->spectrum(numerator);
+    TH1D* denominatorHistogram = SimulationFluxReader::instance()->spectrum(denominator);
+    numeratorHistogram->Divide(denominatorHistogram);
+    m_selectedHistograms.append(numeratorHistogram);
+    delete denominatorHistogram;
+  }
   m_inhibitUpdate = false;
   emit selectionChanged();
 }
