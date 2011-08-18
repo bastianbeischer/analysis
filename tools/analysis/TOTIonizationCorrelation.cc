@@ -89,7 +89,7 @@ void TOTIonizationCorrelation::processEvent(const QVector<Hit*>&, const Particle
         continue;
       if (!checkLayer(z))
         continue;
-      std::vector<Hit*>& subHits = tofCluster->hits();
+      const std::vector<Hit*>& subHits = tofCluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(*it);
@@ -111,7 +111,7 @@ double TOTIonizationCorrelation::sumOfNonTOFSignalHeights(const Track*, const QV
     Hit* hit = *clusterIt;
     if (hit->type() != Hit::tof && hit->type() == m_type) {
       Cluster* cluster = static_cast<Cluster*>(hit);
-      std::vector<Hit*>& subHits = cluster->hits();
+      const std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         sumSignal+= (*it)->signalHeight();

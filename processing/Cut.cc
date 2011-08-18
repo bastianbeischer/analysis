@@ -86,7 +86,7 @@ bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*
         double z = tofCluster->position().z();
         if (qAbs(track->x(z) - tofCluster->position().x()) > 0.95 * Constants::tofBarWidth / 2.)
           continue;
-        std::vector<Hit*>& subHits = tofCluster->hits();
+        const std::vector<Hit*>& subHits = tofCluster->hits();
         std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
         for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
           TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(*it);

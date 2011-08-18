@@ -62,7 +62,7 @@ void ParticleIdentifier::identify(Particle* particle)
     Hit* hit = *it;
     if (hit->type() == Hit::tof) {
       TOFCluster* tofCluster = static_cast<TOFCluster*>(hit);
-      std::vector<Hit*>& subHits = tofCluster->hits();
+      const std::vector<Hit*>& subHits = tofCluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(*it);
@@ -77,7 +77,7 @@ void ParticleIdentifier::identify(Particle* particle)
     Hit* hit = *clusterIt;
     if (hit->type() == Hit::trd) {
       Cluster* cluster = static_cast<Cluster*>(hit);
-      std::vector<Hit*>& subHits = cluster->hits();
+      const std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         sumTRD += (*it)->signalHeight();

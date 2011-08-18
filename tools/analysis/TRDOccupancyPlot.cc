@@ -83,7 +83,7 @@ void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, const Particle* c
     Cluster* cluster = static_cast<Cluster*>(clusterHit);
 
     //loop over all subhits of the cluster, in most cases just one
-    std::vector<Hit*>& subHits = cluster->hits();
+    const std::vector<Hit*>& subHits = cluster->hits();
     const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       Hit* hit = *it;

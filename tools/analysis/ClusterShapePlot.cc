@@ -61,7 +61,7 @@ void ClusterShapePlot::processEvent(const QVector<Hit*>& hits, const Particle* c
     unsigned short elementId = (*it)->elementId();
     if (elementId == m_id) {
       Cluster* cluster = static_cast<Cluster*>(*it);
-      std::vector<Hit*>& subHits = cluster->hits();
+      const std::vector<Hit*>& subHits = cluster->hits();
 
       Setup* setup = Setup::instance();
       DetectorElement* element = setup->element(elementId);

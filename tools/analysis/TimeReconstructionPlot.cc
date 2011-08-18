@@ -68,7 +68,7 @@ void TimeReconstructionPlot::processEvent(const QVector<Hit*>&, const Particle* 
         continue;
 
 
-      std::vector<Hit*>& subHits = tofCluster->hits();
+      const std::vector<Hit*>& subHits = tofCluster->hits();
       const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator subHitsIt = subHits.begin(); subHitsIt != subHitsEndIt; ++subHitsIt) {
         TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(*subHitsIt);

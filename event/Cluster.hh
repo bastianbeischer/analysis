@@ -24,7 +24,7 @@ public:
   
 public:
   void addHit(Hit* hit) {m_hits.push_back(hit);}
-  std::vector<Hit*>& hits() {return m_hits;}
+  const std::vector<Hit*>& hits() const {return m_hits;}
 
 protected:
   std::vector<Hit*> m_hits;
