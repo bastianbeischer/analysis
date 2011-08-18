@@ -55,11 +55,8 @@ RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpe
 //  FluxCalculation::efficiencyCorrection(m_particleHistogram, s_trackFindingEff);
 //  FluxCalculation::efficiencyCorrection(m_particleHistogram, 0.843684 / 0.792555);
 //  FluxCalculation::efficiencyCorrection(m_particleHistogram, 0.999);//estimate for TOF trigger efficiency
-  //....todo
+  //....todo and particle counting from original histogram
   m_fluxCalculation = new FluxCalculation(m_particleHistogram, measurementTime);
-
-  //corections after flux calculations
-  //....todo
 
   QString title = QString("flux - ") + m_typeNames[m_type];
   if (m_isAlbedo)
