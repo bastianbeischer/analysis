@@ -21,15 +21,13 @@ MeasurementTimePostAnalysisPlot::MeasurementTimePostAnalysisPlot(PostAnalysisCan
   name.replace("canvas", "histogram");
   setTitle(name);
   addHistogram(m_timeCalculation->histogram());
-  setAxisTitle(m_timeCalculation->histogram()->GetXaxis()->GetTitle(),m_timeCalculation->histogram()->GetYaxis()->GetTitle());
+  setAxisTitle(m_timeCalculation->histogram()->GetXaxis()->GetTitle(), m_timeCalculation->histogram()->GetYaxis()->GetTitle());
 }
 
 MeasurementTimePostAnalysisPlot::~MeasurementTimePostAnalysisPlot()
 {
-  if (m_timeCalculation) {
+  if (m_timeCalculation)
     delete m_timeCalculation;
-    m_timeCalculation = 0;
-  }
 }
 
 double MeasurementTimePostAnalysisPlot::measurementTime()
