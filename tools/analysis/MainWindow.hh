@@ -19,8 +19,8 @@
 #include <QTimer>
 
 class QTabBar;
-
 class DataChain;
+class Plotter;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -52,6 +52,7 @@ private slots:
   void plotterPositionChanged(double, double);
   void drawOptionComboBoxCurrentIndexChanged(int);
   void update();
+  void changeAspectRatioTriggered();
 private:
   void setupPlots();
   void setupAnalysis(Track::Type&, Corrections::Flags&, ParticleFilter::Types&, CutFilter&, MCFilter::Types&);

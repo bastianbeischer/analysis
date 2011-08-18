@@ -46,7 +46,7 @@ void SignalHeightPlot::processEvent(const QVector<Hit*>& hits, const Particle* c
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Hit* hit = *it;
-    if (hit->detId() - hit->channel() == m_id)
+    if (hit->elementId() == m_id)
       histogram()->Fill(hit->signalHeight());
   }
 }

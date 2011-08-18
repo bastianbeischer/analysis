@@ -60,7 +60,7 @@
          </widget>
         </item>
         <item>
-         <widget class="TQtWidget" name="qtWidget" native="true">
+         <widget class="RootQtWidget" name="qtWidget" native="true">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
             <horstretch>0</horstretch>
@@ -183,6 +183,9 @@
                   </property>
                  </spacer>
                 </item>
+                <item>
+                 <widget class="QComboBox" name="aspectRatioComboBox"/>
+                </item>
                </layout>
               </item>
               <item>
@@ -280,9 +283,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>TQtWidget</class>
+   <class>RootQtWidget</class>
    <extends>QWidget</extends>
-   <header>TQtWidget.h</header>
+   <header>RootQtWidget.hh</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

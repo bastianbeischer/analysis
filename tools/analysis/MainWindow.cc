@@ -117,7 +117,7 @@ MainWindow::MainWindow(QWidget* parent)
   , m_updateTimer()
 {
   m_ui.setupUi(this);
- 
+
   const char* env = getenv("PERDAIXANA_PATH");
   if (env == 0) {
     qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
@@ -220,7 +220,15 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.mcPositronCheckBox);
   m_controlWidgets.append(m_ui.mcProtonCheckBox);
 
-
+  QActionGroup* aspectRatioGroup = new QActionGroup(this);
+  aspectRatioGroup->addAction(m_ui.viewAutoAction);
+  aspectRatioGroup->addAction(m_ui.view11Action);
+  aspectRatioGroup->addAction(m_ui.view34Action);
+  aspectRatioGroup->addAction(m_ui.view54Action);
+  aspectRatioGroup->addAction(m_ui.view43Action);
+  aspectRatioGroup->addAction(m_ui.view1610Action);
+  aspectRatioGroup->addAction(m_ui.view169Action);
+  m_ui.viewAutoAction->setChecked(true);
 
 
   connect(m_reader, SIGNAL(started()), this, SLOT(toggleControlWidgetsStatus()));
@@ -246,6 +254,14 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.addFileListDialogAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListDialogActionTriggered()));
   connect(m_ui.quitAction, SIGNAL(triggered()), this, SLOT(close()));
   
+  connect(m_ui.viewAutoAction, SIGNAL(triggered()), this, SLOT(changeAspectRatioTriggered()));
+  connect(m_ui.view34Action, SIGNAL(triggered()), this, SLOT(changeAspectRatioTriggered()));
+  connect(m_ui.view11Action, SIGNAL(triggered()), this, SLOT(changeAspectRatioTriggered()));
+  connect(m_ui.view54Action, SIGNAL(triggered()), this, SLOT(changeAspectRatioTriggered()));
+  connect(m_ui.view43Action, SIGNAL(triggered()), this, SLOT(changeAspectRatioTriggered()));
+  connect(m_ui.view1610Action, SIGNAL(triggered()), this, SLOT(changeAspectRatioTriggered()));
+  connect(m_ui.view169Action, SIGNAL(triggered()), this, SLOT(changeAspectRatioTriggered()));
+
   connect(m_ui.plotter, SIGNAL(titleChanged(const QString&)), this, SLOT(plotterTitleChanged(const QString&)));
   connect(m_ui.plotter, SIGNAL(positionChanged(double, double)), this, SLOT(plotterPositionChanged(double, double)));
   connect(m_ui.firstEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
@@ -287,7 +303,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   foreach(QCheckBox* checkBox, m_topicCheckBoxes)
     connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged()));
-
+  
   m_updateTimer.setInterval(50);
   m_ui.numberOfThreadsSpinBox->setValue(QThread::idealThreadCount());
 }
@@ -296,6 +312,7 @@ MainWindow::~MainWindow()
 {
   qDeleteAll(m_processors);
   m_processors.clear();
+  delete m_ui.plotter;
   delete m_reader;
 }
 
@@ -1146,4 +1163,25 @@ void MainWindow::update()
 void MainWindow::drawOptionComboBoxCurrentIndexChanged(int i)
 {
   m_ui.plotter->setDrawOption(m_drawOptions[i]);
+}
+
+void MainWindow::changeAspectRatioTriggered()
+{
+  QObject* s = sender();
+  Q_ASSERT(s);
+  if (s == m_ui.viewAutoAction) {
+    m_ui.plotter->setAspectRatio(-1.);
+  } else if (s == m_ui.view11Action) {
+    m_ui.plotter->setAspectRatio(1.);
+  } else if (s == m_ui.view34Action) {
+    m_ui.plotter->setAspectRatio(3./4.);
+  } else if (s == m_ui.view54Action) {
+    m_ui.plotter->setAspectRatio(5./4.);
+  } else if (s == m_ui.view43Action) {
+    m_ui.plotter->setAspectRatio(4./3.);
+  } else if (s == m_ui.view1610Action) {
+    m_ui.plotter->setAspectRatio(16./10.);
+  } else if (s == m_ui.view169Action) {
+    m_ui.plotter->setAspectRatio(16./9.);
+  }
 }
