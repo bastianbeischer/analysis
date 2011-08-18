@@ -5,6 +5,7 @@
 #include "RootQtWidget.hh"
 
 #include <QLayout>
+#include <QDebug>
 
 PlotCollection::PlotCollection(AnalysisPlot::Topic topic) :
   QObject(),

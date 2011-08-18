@@ -12,14 +12,14 @@ class PlotCollection :
 
 public:
   PlotCollection(AnalysisPlot::Topic);
-  ~PlotCollection();
+  virtual ~PlotCollection();
   
   void addPlot(AnalysisPlot* plot) {m_plots.append(plot);}
   virtual void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);
-  void finalize();
-  void update();
+  virtual void finalize();
+  virtual void update();
+  virtual void draw(TCanvas*);
   void unzoom();
-  void draw(TCanvas*);
   void saveForPostAnalysis();
   void positionChanged(double, double);
 

@@ -26,13 +26,13 @@ FluxCollection::FluxCollection(const QDateTime& first, const QDateTime& last)
   , m_particleHistogram(0)
   , m_particleHistogramAlbedo(0)
 {
-  
-  QWidget* widget = new QWidget();
+  QWidget* widget = new QWidget;
   QHBoxLayout* layout = new QHBoxLayout(widget);
+  layout->setContentsMargins(0, 0, 0, 0);
   QComboBox* comboBox = new QComboBox;
   layout->addWidget(comboBox);
-  setSecondaryWidget(widget);
-  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPlot(int)));
+  layout->addStretch();
+  secondaryWidget()->layout()->addWidget(widget);
   setTitle("Flux Collection");
 
   const int nBinsData = 42;
@@ -70,6 +70,8 @@ FluxCollection::FluxCollection(const QDateTime& first, const QDateTime& last)
   comboBox->addItem("RigidityFlux Negative Albedo");
   addPlot(new RigiditySpectrumRatio());
   comboBox->addItem("RigiditySpectrumRatio");
+
+  connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPlot(int)));
 }
 
 FluxCollection::~FluxCollection()
