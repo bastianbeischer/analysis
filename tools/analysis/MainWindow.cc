@@ -97,6 +97,7 @@
 #include "AzimuthPositionCorrelation.hh"
 #include "AzimuthCutStatistics.hh"
 #include "Helpers.hh"
+#include "FluxCollection.hh"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -601,7 +602,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Inverted));
     m_ui.plotter->addPlot(new AlbedosVsMomentumPlot());
     m_ui.plotter->addPlot(new MeasurementTimePlot(first, last));
-    //m_ui.plotter->addPlot(new FluxCollection(first, last)); TODO
+    m_ui.plotter->addPlot(new FluxCollection(first, last));
   }
   if (m_ui.efficiencyTofCheckBox->isChecked()) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {

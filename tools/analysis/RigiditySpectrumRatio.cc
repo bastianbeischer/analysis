@@ -13,6 +13,7 @@
 #include <TLegendEntry.h>
 #include <TList.h>
 #include <TH1D.h>
+#include <TPad.h>
 #include <TLegend.h>
 
 #include <QVector>
@@ -99,11 +100,6 @@ void RigiditySpectrumRatio::update()
   histogram()->Divide(m_numerator, m_denominator);
 }
 
-void RigiditySpectrumRatio::finalize()
-{
-  update();
-}
-
 void RigiditySpectrumRatio::selectionChanged()
 {
   while (legend()->GetListOfPrimitives()->GetEntries() > 1) {
@@ -123,5 +119,7 @@ void RigiditySpectrumRatio::selectionChanged()
     legend()->AddEntry(newHisto, newHisto->GetTitle(), "l");
   }
   draw(Plotter::rootWidget()->GetCanvas());
+  gPad->Modified();
+  gPad->Update();
 }
 

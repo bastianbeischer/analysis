@@ -18,6 +18,7 @@ INCLUDEPATH += \
 
 LIBS += \
   -L$$TOPLEVEL/lib \
+  -lglobal \
   -lSimpleEvent \
   -lparticle \
   -ltracking

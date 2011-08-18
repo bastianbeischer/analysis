@@ -10,6 +10,7 @@
 #include <TFile.h>
 #include <TROOT.h>
 
+#include "Helpers.hh"
 #include "Converter.hh"
 #include "PreAnalysis.hh"
 #include "SensorsData.hh"

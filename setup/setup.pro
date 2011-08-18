@@ -26,6 +26,7 @@ INCLUDEPATH += \
 
 LIBS += \
   -L$$TOPLEVEL/lib \
+  -lglobal \
   -lSimpleEvent
 
 include($$TOPLEVEL/root.pri)

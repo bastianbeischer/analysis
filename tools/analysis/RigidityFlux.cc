@@ -35,6 +35,7 @@ RigidityFlux::RigidityFlux(Type type, const QDateTime& first, const QDateTime& l
   , m_particleHistogram(particleHistogram)
   , m_particleHistogramMirrored(0)
 {
+  loadEfficiencies();
   QString title = "flux spectrum";
   m_measurementTimeCalculation = new MeasurementTimeCalculation(first, last);
   if (m_type == Negative) {
@@ -123,11 +124,6 @@ void RigidityFlux::update()
   latex(m_nBinsNew + 1)->SetTitle(qPrintable(m_phiFit->phiLabel()));
 }
 
-void RigidityFlux::finalize()
-{
-  update();
-}
-
 void RigidityFlux::updateBinTitles()
 {
   for (int i = 0; i < m_nBinsNew; i++) {
@@ -180,5 +176,6 @@ void RigidityFlux::selectionChanged()
     legend()->AddEntry(newHisto, newHisto->GetTitle(), "l");
   }
   draw(Plotter::rootWidget()->GetCanvas());
+  gPad->Modified();
   gPad->Update();
 }
