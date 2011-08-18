@@ -3,7 +3,6 @@
 
 #include <QSettings>
 #include <QString>
-#include <QMap>
 
 class TH1D;
 
@@ -17,11 +16,9 @@ public:
   TH1D* allTrackerLayerCutEfficiency();
 private:
   EfficiencyCorrectionSettings();
-  void loadEfficiencies();
   TH1D* readHistogram(const QString& key);
   void save(const QString& key, TH1D* histogram);
   static EfficiencyCorrectionSettings* s_instance;
-  bool m_efficienciesLoaded;
   QString m_trackFindingKey;
   QString m_allTrackerLayerCutKey;
   TH1D* m_trackFindingEfficiency;

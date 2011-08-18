@@ -20,8 +20,7 @@ EfficiencyCorrectionSettings* EfficiencyCorrectionSettings::instance()
 }
 
 EfficiencyCorrectionSettings::EfficiencyCorrectionSettings()
-  : m_efficienciesLoaded(false)
-  , m_trackFindingKey("trackFindingEfficiency")
+  : m_trackFindingKey("trackFindingEfficiency")
   , m_allTrackerLayerCutKey("oneHitAllLayersEfficiency")
   , m_trackFindingEfficiency(0)
   , m_allTrackerLayerCutEfficiency(0)
@@ -87,15 +86,15 @@ void EfficiencyCorrectionSettings::saveAllTrackerLayerCutEfficiency(TH1D* histog
 
 TH1D* EfficiencyCorrectionSettings::trackFindingEfficiency()
 {
-  if (!m_efficienciesLoaded)
-    loadEfficiencies();
+  if (!m_trackFindingEfficiency)
+    m_trackFindingEfficiency = readHistogram(m_trackFindingKey);
   return m_trackFindingEfficiency;
 }
 
 TH1D* EfficiencyCorrectionSettings::allTrackerLayerCutEfficiency()
 {
-  if (!m_efficienciesLoaded)
-    loadEfficiencies();
+  if (!m_allTrackerLayerCutEfficiency)
+    m_allTrackerLayerCutEfficiency = readHistogram(m_allTrackerLayerCutKey);
   return m_allTrackerLayerCutEfficiency;
 }
 
@@ -124,10 +123,4 @@ TH1D* EfficiencyCorrectionSettings::readHistogram(const QString& key)
     histogram->SetBinError(bin, error);
   }
   return histogram;
-}
-
-void EfficiencyCorrectionSettings::loadEfficiencies()
-{
-  m_trackFindingEfficiency = readHistogram(m_trackFindingKey);
-  m_allTrackerLayerCutEfficiency = readHistogram(m_allTrackerLayerCutKey);
 }
