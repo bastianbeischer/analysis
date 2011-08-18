@@ -12,7 +12,7 @@
 
 #include <QDebug>
 
-MeasurementTimePlot::MeasurementTimePlot(QDateTime first, QDateTime last)
+MeasurementTimePlot::MeasurementTimePlot(const QDateTime& first, const QDateTime& last)
   : AnalysisPlot(AnalysisPlot::MomentumReconstruction)
   , H1DPlot()
   , m_calculation(first, last)
@@ -39,13 +39,7 @@ void MeasurementTimePlot::update()
 {
   double measurementTime = m_calculation.measurementTime();
   double timeError = m_calculation.measurementTimeError();
-
-  latex(0)->SetTitle(qPrintable(QString("measurement time  = (%1 #pm %2) s").arg(measurementTime).arg(timeError)));
-}
-
-void MeasurementTimePlot::finalize()
-{
-  update();
+  latex()->SetTitle(qPrintable(QString("measurement time  = (%1 #pm %2) s").arg(measurementTime).arg(timeError)));
 }
 
 void MeasurementTimePlot::draw(TCanvas* canvas)

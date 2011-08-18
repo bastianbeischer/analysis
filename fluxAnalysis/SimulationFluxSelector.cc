@@ -24,6 +24,7 @@ SimulationFluxSelector::SimulationFluxSelector(int numberOfSelectors, QWidget* p
   , m_phiComboBox(0)
   , m_inhibitUpdate(false)
   , m_inhibitClear(false)
+  , m_selectedHistograms()
 {
   m_layout = new QHBoxLayout(this);
   m_layout->setContentsMargins(0, 0, 0, 0);

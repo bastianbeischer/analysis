@@ -198,7 +198,7 @@ bool SimulationFluxKey::operator==(const SimulationFluxKey& key)
 
 bool operator<(const SimulationFluxKey& le, const SimulationFluxKey& ri)
 {
-  if (le.modulationParameter() != ri.modulationParameter()) {
+  if (!qFuzzyCompare(le.modulationParameter(), ri.modulationParameter())) {
     return le.modulationParameter() < ri.modulationParameter();
   } else {
     if (le.source() != ri.source()) {

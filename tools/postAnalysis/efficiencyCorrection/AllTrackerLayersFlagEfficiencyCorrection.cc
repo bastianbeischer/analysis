@@ -6,22 +6,9 @@
 
 #include <TH1.h>
 #include <TH2.h>
-#include <TH2D.h>
-#include <TCanvas.h>
 #include <TAxis.h>
-#include <TList.h>
-#include <TF1.h>
-#include <TLatex.h>
-#include <TMultiGraph.h>
-#include <TMath.h>
-
-#include <iostream>
-#include <iomanip>
-#include <cmath>
 
 #include <QDebug>
-#include <QStringList>
-#include <QSettings>
 #include <QVector>
 
 AllTrackerLayersFlagEfficiencyCorrection::AllTrackerLayersFlagEfficiencyCorrection(Type type, PostAnalysisCanvas* canvas)
@@ -45,7 +32,7 @@ AllTrackerLayersFlagEfficiencyCorrection::AllTrackerLayersFlagEfficiencyCorrecti
   addHistogram(histogram);
   setAxisTitle(histogram->GetXaxis()->GetTitle(), "efficiency");
 
-//  saveAsSetting();
+//  saveAsSetting(); TODO: add button.
 }
 
 AllTrackerLayersFlagEfficiencyCorrection::~AllTrackerLayersFlagEfficiencyCorrection()

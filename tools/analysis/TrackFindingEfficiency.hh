@@ -3,23 +3,10 @@
 
 #include "AnalysisPlot.hh"
 #include "H1DPlot.hh"
-#include "Track.hh"
-#include "Hit.hh"
 
-#include <TH2D.h>
-#include <TLatex.h>
-#include <TCanvas.h>
-#include <TVector3.h>
-
-#include <QString>
-#include <QDateTime>
 #include <QVector>
 
-#include <vector>
-
-class Hit;
-class Particle;
-class SimpleEvent;
+class TH1D;
 
 class TrackFindingEfficiency : public AnalysisPlot, public H1DPlot {
   
@@ -27,7 +14,6 @@ public:
   TrackFindingEfficiency();
   ~TrackFindingEfficiency();
   virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
-  virtual void finalize();
   virtual void update();
 private:
   TH1D* m_reconstructed;

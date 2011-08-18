@@ -92,9 +92,6 @@
 #include "ZenithDistributionPlot.hh"
 #include "AzimuthDistributionPlot.hh"
 #include "AzimuthMigrationHistogram.hh"
-#include "RigidityParticleSpectrum.hh"
-#include "RigidityFlux.hh"
-#include "RigiditySpectrumRatio.hh"
 #include "MeasurementTimePlot.hh"
 #include "RigidityMigrationHistogram.hh"
 #include "AzimuthPositionCorrelation.hh"
@@ -604,11 +601,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Inverted));
     m_ui.plotter->addPlot(new AlbedosVsMomentumPlot());
     m_ui.plotter->addPlot(new MeasurementTimePlot(first, last));
-    RigidityParticleSpectrum* particleSpectrum = new RigidityParticleSpectrum(RigidityParticleSpectrum::NonAlbedo);
-    m_ui.plotter->addPlot(particleSpectrum);
-    m_ui.plotter->addPlot(new RigidityFlux(RigidityFlux::Positive, first, last, particleSpectrum->particleHistogram()));
-    m_ui.plotter->addPlot(new RigidityFlux(RigidityFlux::Negative, first, last, particleSpectrum->particleHistogram()));
-    m_ui.plotter->addPlot(new RigiditySpectrumRatio());
+    //m_ui.plotter->addPlot(new FluxCollection(first, last)); TODO
   }
   if (m_ui.efficiencyTofCheckBox->isChecked()) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {

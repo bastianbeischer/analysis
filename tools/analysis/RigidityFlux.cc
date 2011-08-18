@@ -67,8 +67,13 @@ RigidityFlux::RigidityFlux(Type type, const QDateTime& first, const QDateTime& l
   histogram->GetXaxis()->SetRange(m_nBinsStart, nBins);
   
   for(int i = 0; i < m_nBinsNew; i++) {
-    double bin = m_nBinsStart -1 + i;
-    addLatex(new TLatex(m_fluxCalculation->binTitle(bin+1)));
+    TLatex* latex = new TLatex;
+    latex->SetTextFont(42);
+    latex->SetTextSize(0.02);
+    latex->SetLineWidth(2);
+    latex->SetTextAngle(45);
+    latex->SetTextColor(kBlack);
+    addLatex(latex);
   }
 
   TLegend* legend = new TLegend(.80, .72, .98, .98);
@@ -108,14 +113,14 @@ void RigidityFlux::update()
 {
   if (m_particleHistogramMirrored)
     Helpers::updateMirroredHistogram(m_particleHistogramMirrored, m_particleHistogram);
-  m_fluxCalculation->setMeasurementTime(m_measurementTimeCalculation->measurementTime());
-  m_fluxCalculation->update();
+  m_fluxCalculation->update(m_measurementTimeCalculation->measurementTime());
   efficiencyCorrection();
+
   updateBinTitles();
 
   m_phiFit->fit();
   latex(m_nBinsNew)->SetTitle(qPrintable(m_phiFit->gammaLabel()));
-  latex(m_nBinsNew+1)->SetTitle(qPrintable(m_phiFit->phiLabel()));
+  latex(m_nBinsNew + 1)->SetTitle(qPrintable(m_phiFit->phiLabel()));
 }
 
 void RigidityFlux::finalize()
@@ -126,11 +131,11 @@ void RigidityFlux::finalize()
 void RigidityFlux::updateBinTitles()
 {
   for (int i = 0; i < m_nBinsNew; i++) {
-    double bin = m_nBinsStart -1 + i;
-    TLatex latext = m_fluxCalculation->binTitle(bin+1);
-    double x = latext.GetX();
-    double y = latext.GetY();
-    QString text = latext.GetTitle();
+    double bin = m_nBinsStart + i - 1;
+    double x = xAxis()->GetBinCenterLog(bin + 1);
+    double y = histogram()->GetBinContent(bin + 1);
+    double value = m_particleHistogram->GetBinContent(bin);
+    QString text = "#scale[0.6]{"+QString::number(value,'d',0)+"}";
     latex(i)->SetX(x);
     latex(i)->SetY(y);
     latex(i)->SetTitle(qPrintable(text));
@@ -143,17 +148,17 @@ void RigidityFlux::loadEfficiencies()
     m_multiLayerEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency());
     m_trackFindingEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->trackFindingEfficiency());
   } else {
-    m_multiLayerEff =EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency();
+    m_multiLayerEff = EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency();
     m_trackFindingEff = EfficiencyCorrectionSettings::instance()->trackFindingEfficiency();
   }
 }
 
 void RigidityFlux::efficiencyCorrection()
 {
-  m_fluxCalculation->efficiencyCorrection(m_multiLayerEff);
-  m_fluxCalculation->efficiencyCorrection(m_trackFindingEff);
-  m_fluxCalculation->efficiencyCorrection(0.843684 / 0.792555);
-  m_fluxCalculation->efficiencyCorrection(0.999);//estimate for TOF trigger efficiency
+  EfficiencyCorrectionSettings::instance()->efficiencyCorrection(histogram(), m_multiLayerEff);
+  EfficiencyCorrectionSettings::instance()->efficiencyCorrection(histogram(), m_trackFindingEff);
+  EfficiencyCorrectionSettings::instance()->efficiencyCorrection(histogram(), 0.843684 / 0.792555);
+  EfficiencyCorrectionSettings::instance()->efficiencyCorrection(histogram(), 0.999); //estimate for TOF trigger efficiency
 }
   
 void RigidityFlux::selectionChanged()

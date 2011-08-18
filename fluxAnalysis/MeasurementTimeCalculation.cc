@@ -1,17 +1,19 @@
 #include "MeasurementTimeCalculation.hh"
+#include "SimpleEvent.hh"
 
 #include <QDebug>
 
 #include <cmath>
 
+#include <TH1.h>
+
 MeasurementTimeCalculation::MeasurementTimeCalculation()
+  : m_histogram(0)
 {
-  m_measurementTimeError = 0;
-  m_measurementTime = 0;
 }
 
-MeasurementTimeCalculation::MeasurementTimeCalculation(QDateTime first, QDateTime last) :
-  m_measurementTime(0)
+MeasurementTimeCalculation::MeasurementTimeCalculation(const QDateTime& first, const QDateTime& last)
+  : m_histogram(0)
 {
   int t1 = first.toTime_t();
   t1-= (t1 % 60) + 60;
@@ -22,14 +24,11 @@ MeasurementTimeCalculation::MeasurementTimeCalculation(QDateTime first, QDateTim
   m_histogram->GetXaxis()->SetTitle("time");
   m_histogram->GetYaxis()->SetTitle("events");
 
-  double binWidth = m_histogram->GetBinWidth(1);
-  m_measurementTimeError = binWidth / sqrt(12);
 }
 
-MeasurementTimeCalculation::MeasurementTimeCalculation(TH1D* histogram) :
-  m_histogram(histogram)
+MeasurementTimeCalculation::MeasurementTimeCalculation(TH1D* histogram)
+  : m_histogram(histogram)
 {
-
 }
 
 MeasurementTimeCalculation::~MeasurementTimeCalculation()
@@ -38,24 +37,21 @@ MeasurementTimeCalculation::~MeasurementTimeCalculation()
 
 void MeasurementTimeCalculation::update(const SimpleEvent* const event)
 {
-  m_mutex.lock();
   if (!event->contentType() == SimpleEvent::MonteCarlo && (event->time() < m_histogram->GetXaxis()->GetXmin() || event->time() > m_histogram->GetXaxis()->GetXmax()))
     qDebug() << "Eventtime is not between first and last" << event->time();
   else
     m_histogram->Fill(event->time());
-  m_mutex.unlock();
 }
 
-TH1D* MeasurementTimeCalculation::histogram()
+TH1D* MeasurementTimeCalculation::histogram() const
 {
   return m_histogram;
 }
 
-double MeasurementTimeCalculation::measurementTime()
+double MeasurementTimeCalculation::measurementTime() const
 {
   const double minEvents = 1;
   double measurementTime = 0;
-  m_mutex.lock();
 
   double binWidth = m_histogram->GetBinWidth(1);
 
@@ -65,15 +61,11 @@ double MeasurementTimeCalculation::measurementTime()
       measurementTime += binWidth;
     }
   }
-  m_measurementTime = measurementTime;
-  m_mutex.unlock();
-  return m_measurementTime;
+  return measurementTime;
 }
 
-double MeasurementTimeCalculation::measurementTimeError()
+double MeasurementTimeCalculation::measurementTimeError() const
 {
   double binWidth = m_histogram->GetBinWidth(1);
-  m_measurementTimeError = binWidth / sqrt(12);
-
-  return m_measurementTimeError;
+  return binWidth / sqrt(12.);
 }

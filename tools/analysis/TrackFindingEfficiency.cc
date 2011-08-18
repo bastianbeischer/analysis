@@ -15,16 +15,10 @@
 
 #include <TH1D.h>
 #include <TLatex.h>
-#include <TF1.h>
 #include <TVector3.h>
 
 #include <QVector>
 #include <QDebug>
-#include <QWidget>
-#include <QSpinBox>
-#include <QLayout>
-#include <QLabel>
-#include <QPushButton>
 
 #include <cmath>
 #include <vector>
@@ -32,10 +26,11 @@
 TrackFindingEfficiency::TrackFindingEfficiency()
   : AnalysisPlot(AnalysisPlot::MiscellaneousTracker)
   , H1DPlot()
+  , m_reconstructed(0)
+  , m_total(0)
+  , m_nTotal(0)
+  , m_nReconstructed(0)
 {
-  m_nTotal = 0;
-  m_nReconstructed = 0;
-
   QString title = "Track finding efficiency";
   setTitle(title);
 
@@ -117,11 +112,6 @@ void TrackFindingEfficiency::update()
   double efficiencyError = efficiency * Helpers::addQuad(recError/m_nReconstructed, totError/m_nTotal);
 
   latex()->SetTitle(qPrintable(QString("efficiency  = %1 #pm %2").arg(efficiency).arg(efficiencyError)));
-}
-
-void TrackFindingEfficiency::finalize()
-{
-  update();
 }
 
 bool TrackFindingEfficiency::isTriggerEvent(const QVector<Hit*>& clusters)

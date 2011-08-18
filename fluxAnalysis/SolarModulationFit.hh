@@ -1,16 +1,14 @@
 #ifndef SolarModulationFit_hh
 #define SolarModulationFit_hh
 
-#include "SimpleEvent.hh"
-
-#include <TH1D.h>
-#include <TF1.h>
-
 #include <QString>
+
+class TF1;
+class TH1D;
 
 class SolarModulationFit {
 public:
-  SolarModulationFit(TH1D* fluxHistogram);
+  SolarModulationFit(TH1D* fluxHistogram, int pdgId = 2212);
 	~SolarModulationFit();
   TF1* fit();
   QString gammaLabel() const;
@@ -21,8 +19,10 @@ public:
   double phiError() const {return m_phiError;}
 private:
   SolarModulationFit();
+  double powerLaw(double* x, double* p);
   TH1D* m_fluxHistogram;
   TF1* m_phiFit;
+  int m_pdgId;
   double m_gamma;
   double m_gammaError;
   double m_phi;

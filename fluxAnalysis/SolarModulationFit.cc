@@ -2,13 +2,15 @@
 
 #include "Particle.hh"
 
+#include <TH1.h>
+#include <TF1.h>
+
 #include <cmath>
 
-double myFluxPhi(Double_t *x, Double_t *par)
+double SolarModulationFit::powerLaw(double* x, double* par)
 {
-  const int pdgId = 2212;
-  const double z =  Particle(pdgId).charge();
-  const double m = Particle(pdgId).mass();
+  const double z =  Particle(m_pdgId).charge();
+  const double m = Particle(m_pdgId).mass();
 
   double R = x[0];
   double J0 = par[0];
@@ -25,8 +27,9 @@ double myFluxPhi(Double_t *x, Double_t *par)
   return f;
 }
 
-SolarModulationFit::SolarModulationFit(TH1D* fluxHistogram) :
-  m_fluxHistogram(fluxHistogram)
+SolarModulationFit::SolarModulationFit(TH1D* fluxHistogram, int pdgId)
+  : m_fluxHistogram(fluxHistogram)
+  , m_pdgId(pdgId)
 {
   QString title = fluxHistogram->GetTitle();
 
@@ -34,7 +37,7 @@ SolarModulationFit::SolarModulationFit(TH1D* fluxHistogram) :
   const double fitMin = 0.8;
   const double fitMax = 20;
   const QString fTitle = title + " phiFit";
-  m_phiFit = new TF1(qPrintable(fTitle), myFluxPhi, fitMin, fitMax, nParams);
+  m_phiFit = new TF1(qPrintable(fTitle), this, &SolarModulationFit::powerLaw, fitMin, fitMax, nParams, "SolarModulationFit", "powerLaw");
   m_phiFit->SetLineColor(kGreen);
   m_phiFit->SetParameters(0, 1.8*1e4);
   m_phiFit->SetParameters(1, 2.7);

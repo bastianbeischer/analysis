@@ -15,11 +15,11 @@
 
 #include <QSpinBox>
 
-AllTrackerLayersFlagEfficiency::AllTrackerLayersFlagEfficiency() :
-  AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
-  H1DPlot(),
-  m_afterCutHisto(0),
-  m_normHisto(0)
+AllTrackerLayersFlagEfficiency::AllTrackerLayersFlagEfficiency()
+  : AnalysisPlot(AnalysisPlot::MiscellaneousTracker)
+  , H1DPlot()
+  , m_afterCutHisto(0)
+  , m_normHisto(0)
 {
   QString htitle = "One hit in all layers";
   setTitle(htitle);
@@ -79,9 +79,4 @@ void AllTrackerLayersFlagEfficiency::processEvent(const QVector<Hit*>&, const Pa
 void AllTrackerLayersFlagEfficiency::update()
 {
   histogram()->Divide(m_afterCutHisto, m_normHisto);
-}
-
-void AllTrackerLayersFlagEfficiency::finalize()
-{
-  update();
 }

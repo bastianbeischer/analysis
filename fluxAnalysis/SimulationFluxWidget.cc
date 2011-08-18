@@ -18,6 +18,7 @@ SimulationFluxWidget::SimulationFluxWidget(QWidget* parent)
 
 SimulationFluxWidget::~SimulationFluxWidget()
 {
+  qDeleteAll(m_selectedHistograms);
 }
 
 void SimulationFluxWidget::update()
@@ -25,12 +26,7 @@ void SimulationFluxWidget::update()
   if (m_inhibitUpdate)
     return;
   m_inhibitUpdate = true;
-  for (int i = 0; i < m_selectedHistograms.size(); ++i) {
-    if (m_selectedHistograms[i]) {
-      delete m_selectedHistograms[i];
-      m_selectedHistograms[i] = 0;
-    }
-  }
+  qDeleteAll(m_selectedHistograms);
   m_selectedHistograms.clear();
   for(int iSelector = 0; iSelector < m_numberOfSelectors; ++iSelector) {
     QList<SimulationFluxKey> selectedHistograms;

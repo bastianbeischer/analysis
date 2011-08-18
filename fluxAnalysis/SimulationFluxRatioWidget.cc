@@ -18,6 +18,7 @@ SimulationFluxRatioWidget::SimulationFluxRatioWidget(QWidget* parent)
 
 SimulationFluxRatioWidget::~SimulationFluxRatioWidget()
 {
+  qDeleteAll(m_selectedHistograms);
 }
 
 void SimulationFluxRatioWidget::update()
@@ -25,13 +26,10 @@ void SimulationFluxRatioWidget::update()
   if (m_inhibitUpdate)
     return;
   m_inhibitUpdate = true;
-  for (int i = 0; i < m_selectedHistograms.size(); ++i) {
-    if (m_selectedHistograms[i]) {
-      delete m_selectedHistograms[i];
-      m_selectedHistograms[i] = 0;
-    }
-  }
+  qDeleteAll(m_selectedHistograms);
   m_selectedHistograms.clear();
+  QList<SimulationFluxKey> numerator;
+  QList<SimulationFluxKey> denominator;
   for(int iSelector = 0; iSelector < m_numberOfSelectors; ++iSelector) {
     QList<SimulationFluxKey> selectedHistograms;
     for (int iMenu = 0; iMenu < m_buttonMenus[iSelector]->actions().size(); ++iMenu) {
@@ -47,11 +45,18 @@ void SimulationFluxRatioWidget::update()
         if (particleString.contains("albedo", Qt::CaseInsensitive))
           isAlbedo = true;
         const SimulationFluxKey key(location, acceptance, source, particleType, modulationParameter, isAlbedo);
-        selectedHistograms << key;
+        if (iSelector == 0)
+          numerator << key;
+        else
+          denominator << key;
       }
     }
-    m_selectedHistograms.append(SimulationFluxReader::instance()->spectrum(selectedHistograms));
   }
+  TH1D* numeratorHistogram = SimulationFluxReader::instance()->spectrum(numerator);
+  TH1D* denominatorHistogram = SimulationFluxReader::instance()->spectrum(denominator);
+  numeratorHistogram->Divide(denominatorHistogram);
+  m_selectedHistograms.append(numeratorHistogram);
+  delete denominatorHistogram;
   m_inhibitUpdate = false;
   emit selectionChanged();
 }

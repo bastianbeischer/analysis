@@ -80,9 +80,15 @@ RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpe
   histogram()->GetXaxis()->SetRange(m_nBinsStart, nBins);
 
   for(int i = 0; i < m_nBinsNew; i++) {
-    double bin = m_nBinsStart -1 + i;
-    addLatex(new TLatex(m_fluxCalculation->binTitle(bin+1)));
+    TLatex* latex = new TLatex;
+    latex->SetTextFont(42);
+    latex->SetTextSize(0.02);
+    latex->SetLineWidth(2);
+    latex->SetTextAngle(45);
+    latex->SetTextColor(kBlack);
+    addLatex(latex);
   }
+
   updateBinTitles();
 
   TLegend* legend = new TLegend(.80, .72, .98, .98);
@@ -121,11 +127,11 @@ RigidityFluxPlot::~RigidityFluxPlot()
 void RigidityFluxPlot::updateBinTitles()
 {
   for (int i = 0; i < m_nBinsNew; i++) {
-    double bin = m_nBinsStart -1 + i;
-    TLatex latext = m_fluxCalculation->binTitle(bin+1);
-    double x = latext.GetX();
-    double y = latext.GetY();
-    QString text = latext.GetTitle();
+    double bin = m_nBinsStart + i - 1;
+    double x = xAxis()->GetBinCenterLog(bin + 1);
+    double y = histogram()->GetBinContent(bin + 1);
+    double value = m_particleHistogram->GetBinContent(bin);
+    QString text = "#scale[0.6]{"+QString::number(value,'d',0)+"}";
     latex(i)->SetX(x);
     latex(i)->SetY(y);
     latex(i)->SetTitle(qPrintable(text));

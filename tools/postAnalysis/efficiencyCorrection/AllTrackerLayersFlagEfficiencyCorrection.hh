@@ -14,10 +14,7 @@
 
 class AllTrackerLayersFlagEfficiencyCorrection : public PostAnalysisPlot, public H1DPlot {
 public:
-  enum Type {
-    Positive,
-    Negative
-  };
+  enum Type {Positive, Negative};
   AllTrackerLayersFlagEfficiencyCorrection(Type, PostAnalysisCanvas*);
   virtual ~AllTrackerLayersFlagEfficiencyCorrection();
 private:

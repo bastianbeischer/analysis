@@ -18,27 +18,21 @@ EfficiencyCorrectionSettings* EfficiencyCorrectionSettings::instance()
 }
 
 EfficiencyCorrectionSettings::EfficiencyCorrectionSettings()
-  : m_trackFindingKey("trackFindingEfficiency")
-  , m_allTrackerLayerCutKey("oneHitAllLayersEfficiency")
-  , m_trackFindingEfficiency(0)
+  : m_trackFindingEfficiency(0)
   , m_allTrackerLayerCutEfficiency(0)
+  , m_settings(Helpers::analysisPath() + "/conf/EfficiencyCorrections.conf", QSettings::IniFormat)
+  , m_trackFindingKey("trackFindingEfficiency")
+  , m_allTrackerLayerCutKey("oneHitAllLayersEfficiency")
+  , m_axisKey("/axis")
+  , m_contentKey("/content")
+  , m_errorKey("/error")
 {
-  QString path = Helpers::analysisPath() + "/conf/";
-  m_settings = new QSettings(path + "EfficiencyCorrections.conf", QSettings::IniFormat);
-
-  m_axisKey = "/axis";
-  m_contentKey = "/content";
-  m_errorKey = "/error";
 }
 
 EfficiencyCorrectionSettings::~EfficiencyCorrectionSettings()
 {
   delete m_allTrackerLayerCutEfficiency;
-  m_allTrackerLayerCutEfficiency = 0;
   delete m_trackFindingEfficiency;
-  m_trackFindingEfficiency = 0;
-  delete m_settings;
-  m_settings = 0;
   s_instance = 0;
 }
 
@@ -51,20 +45,17 @@ void EfficiencyCorrectionSettings::save(const QString& key, TH1D* histogram)
 
   QList<QVariant> content;
   QList<QVariant> error;
-  for (int i = 0; i < histogram->GetNbinsX(); ++i) {
-    double binContent = histogram->GetBinContent(i+1);
-//    if (binContent == 0)
-//      binContent = 1;
-    double binError = histogram->GetBinError(i+1);
+  for (int bin = 1; bin <= histogram->GetNbinsX(); ++bin) {
+    double binContent = histogram->GetBinContent(bin);
+    double binError = histogram->GetBinError(bin);
     content.push_back(binContent);
     error.push_back(binError);
   }
 
-  const QString& prefix = key;
-  m_settings->setValue(prefix+m_axisKey, axis);
-  m_settings->setValue(prefix+m_contentKey, content);
-  m_settings->setValue(prefix+m_errorKey, error);
-  m_settings->sync();
+  m_settings.setValue(key + m_axisKey, axis);
+  m_settings.setValue(key + m_contentKey, content);
+  m_settings.setValue(key + m_errorKey, error);
+  m_settings.sync();
 }
 
 void EfficiencyCorrectionSettings::saveTrackFindingEfficiency(TH1D* histogram)
@@ -93,17 +84,15 @@ TH1D* EfficiencyCorrectionSettings::allTrackerLayerCutEfficiency()
 
 TH1D* EfficiencyCorrectionSettings::readHistogram(const QString& key)
 {
-  const QString& prefix = key;
-  QList<QVariant> axisVariant = m_settings->value(prefix+m_axisKey).toList();
-  QList<QVariant> contentVariant = m_settings->value(prefix+m_contentKey).toList();
-  QList<QVariant> errorVariant = m_settings->value(prefix+m_errorKey).toList();
+  const QList<QVariant>& axisVariant = m_settings.value(key + m_axisKey).toList();
+  const QList<QVariant>& contentVariant = m_settings.value(key + m_contentKey).toList();
+  const QList<QVariant>& errorVariant = m_settings.value(key + m_errorKey).toList();
 
   QVector<double> axis;
-  for (int i = 0; i < axisVariant.size(); ++i) {
+  for (int i = 0; i < axisVariant.size(); ++i)
     axis.push_back(axisVariant[i].toDouble());
-  }
 
-  const int nBins = axis.size()-1;
+  const int nBins = axis.size() - 1;
 
   TH1D* histogram = new TH1D(qPrintable(key), "", nBins, axis.constData());
   histogram->Sumw2();
@@ -111,9 +100,23 @@ TH1D* EfficiencyCorrectionSettings::readHistogram(const QString& key)
   for (int i = 0; i < nBins; ++i) {
     double content = contentVariant[i].toDouble();
     double error = errorVariant[i].toDouble();
-    int bin = i+1;
+    int bin = i + 1;
     histogram->SetBinContent(bin, content);
     histogram->SetBinError(bin, error);
   }
   return histogram;
+}
+
+void EfficiencyCorrectionSettings::efficiencyCorrection(TH1D* histogramToCorrect, double efficiency)
+{
+  if (!histogramToCorrect->GetSumw2())
+    histogramToCorrect->Sumw2();
+  histogramToCorrect->Scale(1. / efficiency);
+}
+
+void EfficiencyCorrectionSettings::efficiencyCorrection(TH1D* histogramToCorrect, TH1D* efficiencyHistogram)
+{
+  if (!histogramToCorrect->GetSumw2())
+    histogramToCorrect->Sumw2();
+  histogramToCorrect->Divide(efficiencyHistogram);
 }

@@ -14,8 +14,8 @@
 #include <cmath>
 
 RigidityMigrationHistogram::RigidityMigrationHistogram()
-: AnalysisPlot(AnalysisPlot::MonteCarloTracker)
-, H2DPlot()
+  : AnalysisPlot(AnalysisPlot::MonteCarloTracker)
+  , H2DPlot()
 {
   QString title = "Rigidity migration";
   setTitle(title);
@@ -43,16 +43,13 @@ RigidityMigrationHistogram::RigidityMigrationHistogram()
   histogram->Sumw2();
   setAxisTitle("reconstructed rigidity", "generated rigidity", "");
   addHistogram(histogram);
-
-  m_random = new TRandom3();
-  m_random->SetSeed(0);
 }
 
 RigidityMigrationHistogram::~RigidityMigrationHistogram()
 {
 }
 
-void RigidityMigrationHistogram::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
+void RigidityMigrationHistogram::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
 {
   if (event->contentType() != SimpleEvent::MonteCarlo)
     return;
@@ -68,37 +65,14 @@ void RigidityMigrationHistogram::processEvent(const QVector<Hit*>&, const Partic
   double rigidityGenerated = event->MCInformation()->primary()->initialMomentum.Mag() / charge;
   if (rigidityGenerated < histogram()->GetYaxis()->GetBinLowEdge(1) || histogram()->GetYaxis()->GetBinLowEdge(histogram()->GetNbinsY()+1) <= rigidityGenerated)
     return;
-  for (int i = 0; i < 50; ++i) {
-    double rigidityData = smearedRigidity(event->MCInformation()->primary(), m_random);
-    //TODO take non gaussian tails into account if neccessary
-    histogram()->Fill(rigidityData, rigidityGenerated);
-  }
-}
-
-double RigidityMigrationHistogram::smearedRigidity(const MCSimpleEventParticle* mcParticle, TRandom3* ran, double factor) {
-  Particle particle(mcParticle->pdgID);
-  const double charge = particle.charge();
- 	double smearedRigidity = smearedMomentum(mcParticle, ran, factor);
-  if (charge != 0) {
-    smearedRigidity = smearedRigidity / charge;
-  }
-	return smearedRigidity;
-}
-
-double RigidityMigrationHistogram::smearedMomentum(const MCSimpleEventParticle* mcParticle, TRandom3* ran, double factor) {
-  double momentum = mcParticle->initialMomentum.Mag();
-  double beta = betaFromMc(mcParticle);
-	const double sigmaPoverP = perdaixMomentumResolution(momentum, beta, factor);
-	return momentum /  ran->Gaus(1, sigmaPoverP);
-}
-
-double RigidityMigrationHistogram::perdaixMomentumResolution(double momentum, double beta, double factor) {
-	return sqrt( pow(0.25 / qAbs(beta), 2) + pow(0.08 * momentum, 2)) * factor;
-}
-
-double RigidityMigrationHistogram::betaFromMc(const MCSimpleEventParticle* mcParticle) {
-	Particle particle(mcParticle->pdgID);
-  double m = particle.mass();
-  double p = mcParticle->initialMomentum.Mag();
-  return 1. / sqrt(1 + pow(m / p, 2));
+  const Track* track = particle->track();
+  if (!track || !track->fitGood())
+     return;
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & (ParticleInformation::Chi2Good)))
+    return;
+  if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
+    return;
+  double rigidityData = track->rigidity();
+  histogram()->Fill(rigidityData, rigidityGenerated);
 }
