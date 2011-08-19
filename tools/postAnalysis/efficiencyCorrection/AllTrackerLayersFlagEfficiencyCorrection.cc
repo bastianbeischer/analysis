@@ -10,6 +10,9 @@
 
 #include <QDebug>
 #include <QVector>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QWidget>
 
 AllTrackerLayersFlagEfficiencyCorrection::AllTrackerLayersFlagEfficiencyCorrection(Type type, PostAnalysisCanvas* canvas)
   : PostAnalysisPlot()
@@ -32,14 +35,21 @@ AllTrackerLayersFlagEfficiencyCorrection::AllTrackerLayersFlagEfficiencyCorrecti
   addHistogram(histogram);
   setAxisTitle(histogram->GetXaxis()->GetTitle(), "efficiency");
 
-//  saveAsSetting(); TODO: add button.
+  QWidget* widget = new QWidget;
+  QHBoxLayout* layout = new QHBoxLayout(widget);
+  layout->setContentsMargins(0, 0, 0, 0);
+  QPushButton* saveButton = new QPushButton("save");
+  layout->addWidget(saveButton);
+  layout->addStretch();
+  setSecondaryWidget(widget);
+  connect(saveButton, SIGNAL(clicked()), this, SLOT(save()));
 }
 
 AllTrackerLayersFlagEfficiencyCorrection::~AllTrackerLayersFlagEfficiencyCorrection()
 {
 }
 
-void AllTrackerLayersFlagEfficiencyCorrection::saveAsSetting()
+void AllTrackerLayersFlagEfficiencyCorrection::save()
 {
   if (m_type != Positive)
     return;

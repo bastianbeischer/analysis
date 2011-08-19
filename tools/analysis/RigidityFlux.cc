@@ -82,12 +82,14 @@ RigidityFlux::RigidityFlux(Type type, const QDateTime& first, const QDateTime& l
   legend->AddEntry(histogram, "Data", "p");
   addLegend(legend);
 
-  m_phiFit = new SolarModulationFit(histogram);
-  addFunction(m_phiFit->fit());
-  TLatex* gammaLatex = RootPlot::newLatex(.4, .88);
-  TLatex* phiLatex = RootPlot::newLatex(.4, .83);
-  addLatex(gammaLatex);
-  addLatex(phiLatex);
+  if (m_type == Positive) {
+    m_phiFit = new SolarModulationFit(histogram);
+    addFunction(m_phiFit->fit());
+    TLatex* gammaLatex = RootPlot::newLatex(.4, .88);
+    TLatex* phiLatex = RootPlot::newLatex(.4, .83);
+    addLatex(gammaLatex);
+    addLatex(phiLatex);
+  }
 
   SimulationFluxWidget* secWidget = new SimulationFluxWidget;
   connect(secWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
@@ -118,10 +120,11 @@ void RigidityFlux::update()
   efficiencyCorrection();
 
   updateBinTitles();
-
-  m_phiFit->fit();
-  latex(m_nBinsNew)->SetTitle(qPrintable(m_phiFit->gammaLabel()));
-  latex(m_nBinsNew + 1)->SetTitle(qPrintable(m_phiFit->phiLabel()));
+  if (m_type == Positive) {
+    m_phiFit->fit();
+    latex(m_nBinsNew)->SetTitle(qPrintable(m_phiFit->gammaLabel()));
+    latex(m_nBinsNew + 1)->SetTitle(qPrintable(m_phiFit->phiLabel()));
+  }
 }
 
 void RigidityFlux::updateBinTitles()

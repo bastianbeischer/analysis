@@ -33,7 +33,7 @@ FluxCollection::FluxCollection(const QDateTime& first, const QDateTime& last)
   layout->addWidget(comboBox);
   layout->addStretch();
   secondaryWidget()->layout()->addWidget(widget);
-  setTitle("Flux Collection");
+  setTitle("flux collection");
 
   const int nBinsData = 42;
   const double minData = 0.1;

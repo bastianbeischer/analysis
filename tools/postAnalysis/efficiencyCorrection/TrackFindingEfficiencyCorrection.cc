@@ -9,6 +9,9 @@
 
 #include <QDebug>
 #include <QVector>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QWidget>
 
 TrackFindingEfficiencyCorrection::TrackFindingEfficiencyCorrection(Type type, PostAnalysisCanvas* canvas)
   : PostAnalysisPlot()
@@ -31,14 +34,21 @@ TrackFindingEfficiencyCorrection::TrackFindingEfficiencyCorrection(Type type, Po
   addHistogram(histogram);
   setAxisTitle(histogram->GetXaxis()->GetTitle(), "efficiency");
 
-//  saveAsSetting();
+  QWidget* widget = new QWidget;
+  QHBoxLayout* layout = new QHBoxLayout(widget);
+  layout->setContentsMargins(0, 0, 0, 0);
+  QPushButton* saveButton = new QPushButton("save as correction");
+  layout->addWidget(saveButton);
+  layout->addStretch();
+  setSecondaryWidget(widget);
+  connect(saveButton, SIGNAL(clicked()), this, SLOT(save()));
 }
 
 TrackFindingEfficiencyCorrection::~TrackFindingEfficiencyCorrection()
 {
 }
 
-void TrackFindingEfficiencyCorrection::saveAsSetting()
+void TrackFindingEfficiencyCorrection::save()
 {
   if (m_type != Positive)
     return;
