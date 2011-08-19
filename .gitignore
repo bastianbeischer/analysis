@@ -1,5 +1,6 @@
 .tmp
 Makefile
+Makefile.*
 /bin
 /lib
 /data

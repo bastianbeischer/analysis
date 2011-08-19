@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
         for (int lowerBin = 0; lowerBin < nBins; ++lowerBin) {
           double lowerCenter = (0.5 + lowerBin) * binWidth - Constants::tofBarLength / 2.;
           QString label = QString("u%1 l%2").arg(upperCenter).arg(lowerCenter);
-          //histograms[i][j]->GetXaxis()->SetBinLabel(upperBin * nBins + lowerBin + 1, qPrintable(label));
+          histograms[i][j]->GetXaxis()->SetBinLabel(upperBin * nBins + lowerBin + 1, qPrintable(label));
         }
       }
     }
