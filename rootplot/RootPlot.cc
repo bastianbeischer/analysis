@@ -27,7 +27,7 @@ RootPlot::~RootPlot()
   qDeleteAll(m_legend);
   qDeleteAll(m_function);
 }
-  
+
 TLatex* RootPlot::newLatex(double rx, double ry)
 {
   TLatex* latex = new TLatex(rx, ry, 0);
@@ -113,12 +113,12 @@ QString RootPlot::drawOption(DrawOption option)
   }
   return QString();
 }
-  
+
 RootPlot::DrawOption RootPlot::drawOption()
 {
   return m_drawOption;
 }
-  
+
 void RootPlot::setDrawOption(DrawOption option)
 {
   m_drawOption = option;
@@ -129,4 +129,19 @@ void RootPlot::setSecondaryWidget(QWidget* widget)
   if (m_secondaryWidget)
     delete m_secondaryWidget;
   m_secondaryWidget = widget;
+}
+
+int RootPlot::numberOfLatexs() const
+{
+  return m_latex.count();
+}
+
+int RootPlot::numberOfLegends() const
+{
+  return m_legend.count();
+}
+
+int RootPlot::numberOfFunctions() const
+{
+  return m_function.count();
 }

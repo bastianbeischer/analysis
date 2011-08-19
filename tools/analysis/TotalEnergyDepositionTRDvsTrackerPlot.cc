@@ -68,7 +68,7 @@ void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hi
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Cluster* cluster = static_cast<Cluster*>(*it);
     if (cluster->type() == Hit::trd){
-      std::vector<Hit*>& subHits = cluster->hits();
+      const std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         Hit* trdHit = *it;

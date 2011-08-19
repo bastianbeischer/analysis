@@ -11,6 +11,7 @@
 #include "Constants.hh"
 #include "SensorTypes.hh"
 #include "SimpleEvent.hh"
+#include "Helpers.hh"
 
 #include <TSpline.h>
 
@@ -30,12 +31,7 @@ Corrections::Corrections(Flags flags)
   , m_flags(flags)
   , m_TRDSplineTime(0)
 {
-  const char* env = getenv("PERDAIXANA_PATH");
-  if (env == 0) {
-    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
-  }
-  QString path(env);
-  path += "/conf/";
+  QString path = Helpers::analysisPath() + "/conf/";
   QDir dir(path);
   if (!dir.exists("TRDCorrections.conf")) {
     qFatal("ERROR: TRDCorrections.conf not found. Maybe you need to switch to a configuration, for example: switch_to_config.sh kiruna");
@@ -126,7 +122,7 @@ void Corrections::trdMopv(Hit* hit)
   else if (strcmp(hit->ClassName(), "Cluster") == 0) {
     Cluster* cluster = static_cast<Cluster*>(hit);
     double clusterAmplitude = 0;
-    for (std::vector<Hit*>::iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
+    for (std::vector<Hit*>::const_iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
       Hit* trdHit = *it;
       double trdScalingFactor = this->trdScalingFactor(trdHit->detId());
       double newHitAmplitude = trdHit->signalHeight() * trdScalingFactor;
@@ -152,7 +148,7 @@ void Corrections::trdTime(Hit* hit, SimpleEvent* event)
   else if (strcmp(hit->ClassName(), "Cluster") == 0) {
     Cluster* cluster = static_cast<Cluster*>(hit);
     double clusterAmplitude = 0;
-    for (std::vector<Hit*>::iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
+    for (std::vector<Hit*>::const_iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
       Hit* trdHit = *it;
       double newHitAmplitude = trdHit->signalHeight() * trdTimeFactor;
       trdHit->setSignalHeight(newHitAmplitude);
@@ -177,7 +173,7 @@ void Corrections::trdPressure(Hit* hit, SimpleEvent* event)
   else if (strcmp(hit->ClassName(), "Cluster") == 0) {
     Cluster* cluster = static_cast<Cluster*>(hit);
     double clusterAmplitude = 0;
-    for (std::vector<Hit*>::iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
+    for (std::vector<Hit*>::const_iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
       Hit* trdHit = *it;
       double newHitAmplitude = trdHit->signalHeight() * trdScalingFactor;
       trdHit->setSignalHeight(newHitAmplitude);
@@ -209,7 +205,7 @@ void Corrections::trdTemperature(Hit* hit, SimpleEvent* event)
   else if (strcmp(hit->ClassName(), "Cluster") == 0) {
     Cluster* cluster = static_cast<Cluster*>(hit);
     double clusterAmplitude = 0;
-    for (std::vector<Hit*>::iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
+    for (std::vector<Hit*>::const_iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
       Hit* trdHit = *it;
       double newHitAmplitude = trdHit->signalHeight() * trdScalingFactor;
       trdHit->setSignalHeight(newHitAmplitude);

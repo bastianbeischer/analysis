@@ -105,7 +105,7 @@ void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, const Partic
         if (cluster->type() != Hit::trd)
           continue;
 
-        std::vector<Hit*>& subHits = cluster->hits();
+        const std::vector<Hit*>& subHits = cluster->hits();
         const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
         for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
           Hit* subHit = *it;

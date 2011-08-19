@@ -5,25 +5,22 @@
 #include "PostAnalysisPlot.hh"
 #include "H1DPlot.hh"
 
+#include <QObject>
 #include <QString>
-#include <QVector>
 #include <QMap>
-#include <TGraphErrors.h>
-#include <TF1.h>
-#include <TH1D.h>
 
-class TrackFindingEfficiencyCorrection : public PostAnalysisPlot, public H1DPlot {
+class TrackFindingEfficiencyCorrection : public QObject, public PostAnalysisPlot, public H1DPlot {
+Q_OBJECT
 public:
-  TrackFindingEfficiencyCorrection(PostAnalysisCanvas*, QString config);
+  enum Type {Positive, Negative};
+
+  TrackFindingEfficiencyCorrection(Type, PostAnalysisCanvas*);
   virtual ~TrackFindingEfficiencyCorrection();
-
-public:
-
+private slots:
+  void save();
 private:
-  QString m_name;
-
-  void saveAsSetting(QString config);
-
+  Type m_type;
+  QMap<Type, QString> m_typeNames;
 };
 
 #endif

@@ -21,10 +21,12 @@ CLASSES += \
   UniformField
 
 INCLUDEPATH += \
+  $$TOPLEVEL/global \
   $$TOPLEVEL/event
 
 LIBS += \
   -L$$TOPLEVEL/lib \
+  -lglobal \
   -lSimpleEvent
 
 include($$TOPLEVEL/root.pri)

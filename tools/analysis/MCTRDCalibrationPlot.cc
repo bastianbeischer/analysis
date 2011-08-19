@@ -42,7 +42,7 @@ void MCTRDCalibrationPlot::processEvent(const QVector<Hit*>&, const Particle* co
     if (hit->type() != Hit::trd)
       continue;
     Cluster* cluster = static_cast<Cluster*>(hit);
-    std::vector<Hit*>& subHits = cluster->hits();
+    const std::vector<Hit*>& subHits = cluster->hits();
     const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       trdHits << *it;

@@ -1,80 +1,57 @@
 #include "AllTrackerLayersFlagEfficiencyCorrection.hh"
 
 #include "Corrections.hh"
+#include "EfficiencyCorrectionSettings.hh"
+#include "Helpers.hh"
 
 #include <TH1.h>
 #include <TH2.h>
-#include <TH2D.h>
-#include <TCanvas.h>
 #include <TAxis.h>
-#include <TList.h>
-#include <TF1.h>
-#include <TLatex.h>
-#include <TMultiGraph.h>
-#include <TMath.h>
-
-#include <iostream>
-#include <iomanip>
-#include <cmath>
 
 #include <QDebug>
-#include <QStringList>
-#include <QSettings>
 #include <QVector>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QWidget>
 
-AllTrackerLayersFlagEfficiencyCorrection::AllTrackerLayersFlagEfficiencyCorrection(PostAnalysisCanvas* canvas, const QString& config)
+AllTrackerLayersFlagEfficiencyCorrection::AllTrackerLayersFlagEfficiencyCorrection(Type type, PostAnalysisCanvas* canvas)
   : PostAnalysisPlot()
   , H1DPlot()
+  , m_type(type)
 {
-  TH1D* histogram = new TH1D(*canvas->histograms1D().at(0));
+  m_typeNames.insert(Positive, "positive");
+  m_typeNames.insert(Negative, "negative");
+  
+  TH1D* histogram = 0;
+  if (m_type == Negative)
+    histogram = Helpers::createMirroredHistogram(canvas->histograms1D().at(0));
+  else
+    histogram = new TH1D(*canvas->histograms1D().at(0));
 
   QString title = QString(canvas->name()).replace("canvas", "histogram");
+  title.append(QString(" - ") + m_typeNames[m_type]);
   setTitle(title);
 
-//  TH1D* histogram = h2->ProjectionX(qPrintable(title+"projection"), 8, 8);
-
   addHistogram(histogram);
-  setAxisTitle("abs(rigidity/GV)", "efficiency");
-  m_name = QString(canvas->name()).remove("One hit in all layers ").remove(" canvas");
+  setAxisTitle(histogram->GetXaxis()->GetTitle(), "efficiency");
 
-//  saveAsSetting(config);
+  QWidget* widget = new QWidget;
+  QHBoxLayout* layout = new QHBoxLayout(widget);
+  layout->setContentsMargins(0, 0, 0, 0);
+  QPushButton* saveButton = new QPushButton("save");
+  layout->addWidget(saveButton);
+  layout->addStretch();
+  setSecondaryWidget(widget);
+  connect(saveButton, SIGNAL(clicked()), this, SLOT(save()));
 }
 
 AllTrackerLayersFlagEfficiencyCorrection::~AllTrackerLayersFlagEfficiencyCorrection()
 {
 }
 
-void AllTrackerLayersFlagEfficiencyCorrection::saveAsSetting(const QString& config)
+void AllTrackerLayersFlagEfficiencyCorrection::save()
 {
-  QList<QVariant> axis;
-  for (int i = 0; i <=  histogram()->GetNbinsX(); ++i) {
-    axis.push_back( histogram()->GetBinLowEdge(i+1) );
-  }
-
-  QList<QVariant> values;
-  for (int i = 0; i <  histogram()->GetNbinsX(); ++i) {
-    double value = histogram()->GetBinContent(i+1);
-    if (value == 0)
-      value = 1;
-    values.push_back( value );
-  }
-
-  const char* env = getenv("PERDAIXANA_PATH");
-  if (env == 0) {
-    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
-  }
-  QString path(env);
-  path += "/conf/";
-
-  path += config+"/";
-
-  QSettings* settings = new QSettings(path + "EfficiencyCorrections.conf", QSettings::IniFormat);
-
-  QString prefix = "oneHitAllLayersEfficiency_"+m_name;
-  settings->setValue(prefix+"/axis", axis);
-  settings->setValue(prefix+"/values", values);
-  settings->sync();
-
-  delete settings;
-  settings = 0;
+  if (m_type != Positive)
+    return;
+  EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency();
 }

@@ -13,34 +13,33 @@
 #include <iostream>
 #include <cmath>
 
-RigidityMigrationHistogram::RigidityMigrationHistogram(Type type)
-: AnalysisPlot(AnalysisPlot::MomentumReconstruction)
-, H2DPlot()
-, m_type(type)
+RigidityMigrationHistogram::RigidityMigrationHistogram()
+  : AnalysisPlot(AnalysisPlot::MonteCarloTracker)
+  , H2DPlot()
 {
   QString title = "Rigidity migration";
-  if (m_type == Negative) {
-    title += " - negative";
-  }
-  if (m_type == Positive) {
-    title += " - positive";
-  }
-  if (m_type == All) {
-    title += " - all";
-  }
   setTitle(title);
 
   const int nBinsGenerated = 21;
   const double minGenerated = 0.1;
   const double maxGenerated = 20;
-  const QVector<double>& axisGenerated = Helpers::logBinning(nBinsGenerated, minGenerated, maxGenerated);
-
+  QVector<double> axisGenerated = Helpers::logBinning(nBinsGenerated, minGenerated, maxGenerated);
+  int axisSize = axisGenerated.size()*2;
+  for (int i = 0; i < axisSize; i+=2) {
+    double value = axisGenerated.at(i);
+    axisGenerated.prepend(-value);
+  }
   const int nBinsData = 42;
   const double minData = 0.1;
   const double maxData = 20;
-  const QVector<double>& axisData = Helpers::logBinning(nBinsData, minData, maxData);
+  QVector<double> axisData = Helpers::logBinning(nBinsData, minData, maxData);
+  axisSize = axisData.size()*2;
+  for (int i = 0; i < axisSize; i+=2) {
+    double value = axisData.at(i);
+    axisData.prepend(-value);
+  }
 
-  TH2D* histogram = new TH2D(qPrintable(title), "", nBinsData, axisData.constData(),  nBinsGenerated, axisGenerated.constData());
+  TH2D* histogram = new TH2D(qPrintable(title), "", axisData.size()-1, axisData.constData(),  axisGenerated.size()-1, axisGenerated.constData());
   histogram->Sumw2();
   setAxisTitle("reconstructed rigidity", "generated rigidity", "");
   addHistogram(histogram);
@@ -54,31 +53,26 @@ void RigidityMigrationHistogram::processEvent(const QVector<Hit*>&, const Partic
 {
   if (event->contentType() != SimpleEvent::MonteCarlo)
     return;
-
   if (event->MCInformation()->primary()->initialMomentum.Z() > 0)
     return;
-
-  const Track* track = particle->track();
-
-  if (!track || !track->fitGood())
+  if (!event->MCInformation()->primary()->isInsideMagnet())
     return;
-
+  int mcPdgId = event->MCInformation()->primary()->pdgID;
+  Particle mcParticle(mcPdgId);
+  const double charge = mcParticle.charge();
+  if (charge == 0)
+    return;
+  double rigidityGenerated = event->MCInformation()->primary()->initialMomentum.Mag() / charge;
+  if (rigidityGenerated < histogram()->GetYaxis()->GetBinLowEdge(1) || histogram()->GetYaxis()->GetBinLowEdge(histogram()->GetNbinsY()+1) <= rigidityGenerated)
+    return;
+  const Track* track = particle->track();
+  if (!track || !track->fitGood())
+     return;
   ParticleInformation::Flags flags = particle->information()->flags();
   if (!(flags & (ParticleInformation::Chi2Good)))
     return;
   if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
     return;
-
-  int mcPdgId = event->MCInformation()->primary()->pdgID;
-  Particle mcParticle(mcPdgId);
-  double rigidityGenerated = event->MCInformation()->primary()->initialMomentum.Mag() / mcParticle.charge();
-
   double rigidityData = track->rigidity();
-
-  if (m_type == Negative && rigidityData >= 0)
-    return;
-  if (m_type == Positive && rigidityData < 0)
-    return;
-
-  histogram()->Fill(qAbs(rigidityData), qAbs(rigidityGenerated));
+  histogram()->Fill(rigidityData, rigidityGenerated);
 }

@@ -61,7 +61,7 @@ void TOTBetaCorrelation::processEvent(const QVector<Hit*>&, const Particle* cons
         continue;
       if (!checkLayer(z))
         continue;
-      std::vector<Hit*>& subHits = tofCluster->hits();
+      const std::vector<Hit*>& subHits = tofCluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(*it);

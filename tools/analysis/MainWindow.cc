@@ -92,9 +92,12 @@
 #include "ZenithDistributionPlot.hh"
 #include "AzimuthDistributionPlot.hh"
 #include "AzimuthMigrationHistogram.hh"
+#include "MeasurementTimePlot.hh"
 #include "RigidityMigrationHistogram.hh"
 #include "AzimuthPositionCorrelation.hh"
 #include "AzimuthCutStatistics.hh"
+#include "Helpers.hh"
+#include "FluxCollection.hh"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -106,6 +109,7 @@ MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
   , m_processors()
   , m_reader(new EventReader(this))
+  , m_topLevelPath(Helpers::analysisPath())
   , m_activePlots()
   , m_drawOptions()
   , m_inhibitDraw(false)
@@ -113,12 +117,6 @@ MainWindow::MainWindow(QWidget* parent)
   , m_updateTimer()
 {
   m_ui.setupUi(this);
-
-  const char* env = getenv("PERDAIXANA_PATH");
-  if (env == 0) {
-    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
-  }
-  m_topLevelPath = QString(env);
 
   m_topicCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
   m_topicCheckBoxes.append(m_ui.signalHeightTRDCheckBox);
@@ -544,18 +542,18 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TOTLayerCollection(new TOTBetaCorrelation()));
     m_ui.plotter->addPlot(new TOTTemperatureCorrelationPlotCollection);
     m_ui.plotter->addPlot(new TOTTimeCorrelationPlotCollection(first, last));
-    // for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
-    //   DetectorElement* element = *elementIt;
-    //   if (element->type() == DetectorElement::tof)
-    //     for (int ch = 0; ch < 4; ++ch)
-    //       m_ui.plotter->addPlot(new TOTTemperatureCorrelationPlot(element->id() | ch));
-    // }
-    // for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
-    //   DetectorElement* element = *elementIt;
-    //   if (element->type() == DetectorElement::tof)
-    //     for (int ch = 0; ch < 4; ++ch)
-    //       m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch, first, last));
-    // }
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
+      if (element->type() == DetectorElement::tof)
+        for (int ch = 0; ch < 4; ++ch)
+          m_ui.plotter->addPlot(new TOTTemperatureCorrelationPlot(element->id() | ch));
+    }
+    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+      DetectorElement* element = *elementIt;
+      if (element->type() == DetectorElement::tof)
+        for (int ch = 0; ch < 4; ++ch)
+          m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch, first, last));
+    }
   }
   if (m_ui.trackingCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new BendingPositionPlot);
@@ -603,9 +601,8 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Negative));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Inverted));
     m_ui.plotter->addPlot(new AlbedosVsMomentumPlot());
-    m_ui.plotter->addPlot(new RigidityMigrationHistogram(RigidityMigrationHistogram::Positive));
-    m_ui.plotter->addPlot(new RigidityMigrationHistogram(RigidityMigrationHistogram::Negative));
-    m_ui.plotter->addPlot(new RigidityMigrationHistogram(RigidityMigrationHistogram::All));
+    m_ui.plotter->addPlot(new MeasurementTimePlot(first, last));
+    m_ui.plotter->addPlot(new FluxCollection(first, last));
   }
   if (m_ui.efficiencyTofCheckBox->isChecked()) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
@@ -640,12 +637,8 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::Positive));
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::Negative));
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::All));
-    m_ui.plotter->addPlot(new TrackFindingEfficiency(TrackFindingEfficiency::Positive));
-    m_ui.plotter->addPlot(new TrackFindingEfficiency(TrackFindingEfficiency::Negative));
-    m_ui.plotter->addPlot(new TrackFindingEfficiency(TrackFindingEfficiency::All));
-    m_ui.plotter->addPlot(new AllTrackerLayersFlagEfficiency(AllTrackerLayersFlagEfficiency::Positive));
-    m_ui.plotter->addPlot(new AllTrackerLayersFlagEfficiency(AllTrackerLayersFlagEfficiency::Negative));
-    m_ui.plotter->addPlot(new AllTrackerLayersFlagEfficiency(AllTrackerLayersFlagEfficiency::All));
+    m_ui.plotter->addPlot(new TrackFindingEfficiency());
+    m_ui.plotter->addPlot(new AllTrackerLayersFlagEfficiency());
   }
   if (m_ui.miscellaneousTRDCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisPlot::MiscellaneousTRD));
@@ -707,6 +700,7 @@ void MainWindow::setupPlots()
         m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisPlot::MonteCarloTracker, layer));
     }
     m_ui.plotter->addPlot(new AzimuthMigrationHistogram());
+    m_ui.plotter->addPlot(new RigidityMigrationHistogram());
   }
   if (m_ui.testbeamCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::MagnetInstalled, first, last));

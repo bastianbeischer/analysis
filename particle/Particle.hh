@@ -16,8 +16,8 @@ class Particle
 {
 
 public:
-  enum Type {START=0x1<<0, Unknown=START, Proton=0x1<<1, AntiProton=0x1<<2, Helium=0x1<<3, Electron=0x1<<4, Positron=0x1<<5,
-             Muon=0x1<<6, AntiMuon=0x1<<7, PiPlus=0x1<<8, PiMinus=0x1<<9, Photon=0x1<<10, END=Photon};
+  enum Type {START=1<<0, Unknown=START, Proton=1<<1, AntiProton=1<<2, Helium=1<<3, Electron=1<<4, Positron=1<<5,
+             Muon=1<<6, AntiMuon=1<<7, PiPlus=1<<8, PiMinus=1<<9, Photon=1<<10, Pi0=1<<11, Higgs=1<<12, END=Higgs};
   Q_DECLARE_FLAGS(Types, Type);
 
 public:

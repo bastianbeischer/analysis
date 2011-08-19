@@ -3,21 +3,25 @@ TARGET = trdAnalysis
 
 CONFIG += debug
 
-TOPLEVEL    = ../
+TOPLEVEL = ../
 
-CLASSES += TRDElectronIdentifierCutBased \
-           TRDElectronIdentifierLikelihood \
-           TRDLikelihoods
+CLASSES += \
+  TRDElectronIdentifierCutBased \
+  TRDElectronIdentifierLikelihood \
+  TRDLikelihoods
 
+INCLUDEPATH += \
+  $$TOPLEVEL/event \
+  $$TOPLEVEL/particle \
+  $$TOPLEVEL/tracking \
+  $$TOPLEVEL/global
 
-INCLUDEPATH += $$TOPLEVEL/event \
-               $$TOPLEVEL/particle \
-               $$TOPLEVEL/tracking
-
-LIBS += -L$$TOPLEVEL/lib -lSimpleEvent \
-                         -lparticle \
-                         -ltracking
-
+LIBS += \
+  -L$$TOPLEVEL/lib \
+  -lglobal \
+  -lSimpleEvent \
+  -lparticle \
+  -ltracking
 
 include($$TOPLEVEL/common.pri)
 include($$TOPLEVEL/root.pri)

@@ -5,6 +5,7 @@
 #include "PostAnalysisPlot.hh"
 #include "H1DPlot.hh"
 
+#include <QObject>
 #include <QString>
 #include <QVector>
 #include <QMap>
@@ -12,13 +13,17 @@
 #include <TF1.h>
 #include <TH1D.h>
 
-class AllTrackerLayersFlagEfficiencyCorrection : public PostAnalysisPlot, public H1DPlot {
+class AllTrackerLayersFlagEfficiencyCorrection : public QObject, public PostAnalysisPlot, public H1DPlot {
+Q_OBJECT
 public:
-  AllTrackerLayersFlagEfficiencyCorrection(PostAnalysisCanvas*, const QString& config);
+  enum Type {Positive, Negative};
+  AllTrackerLayersFlagEfficiencyCorrection(Type, PostAnalysisCanvas*);
   virtual ~AllTrackerLayersFlagEfficiencyCorrection();
+private slots:
+  void save();
 private:
-  QString m_name;
-  void saveAsSetting(const QString& config);
+  Type m_type;
+  QMap<Type, QString> m_typeNames;
 };
 
 #endif
