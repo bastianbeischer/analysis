@@ -2,6 +2,7 @@
 #define SimulationFluxSelector_hh
 
 #include <QWidget>
+#include "SimulationFluxKey.hh"
 
 class TCanvas;
 class H1DPlot;
@@ -33,21 +34,21 @@ protected:
   QVector<QMenu*> m_buttonMenus;
   QComboBox* m_phiComboBox;
   bool m_inhibitUpdate;
-  bool m_inhibitClear;
   QVector<TH1D*> m_selectedHistograms;
 private slots:
   void activate();
-  void selectPositive0();
-  void selectNegative0();
-  void selectPositive1();
-  void selectNegative1();
+  void selectPositive();
+  void selectNegative();
+  void locationChanged();
 private:
   void fillLocationComboBox();
   void fillAceptanceComboBox();
   void fillSourceComboBox();
   void fillMenu(QPushButton*);
   void fillPhiComboBox();
-  void selectActions(int iSelector, bool positive);
+  void checkParticles(QAction*, bool positive);
+
+  SimulationFluxKey::Location m_location;
 };
 
 #endif

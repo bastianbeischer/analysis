@@ -24,26 +24,15 @@ SimulationFluxReader* SimulationFluxReader::instance()
 }
 
 SimulationFluxReader::SimulationFluxReader()
-  : m_locations()
-  , m_acceptances()
-  , m_sources()
-  , m_particles()
-  , m_modulationParameters()
-  , m_fluxes()
+  : m_fluxes()
 {
   QString dataPath = Helpers::dataPath();
   QString flightFileName = dataPath + "/fluxSimulation/flight.root";
   QString groundFileName = dataPath + "/fluxSimulation/groundKiruna.root";
-  if (QFile::exists(flightFileName)) {
-    if (m_locations.contains(SimulationFluxKey::Flight))
-      m_locations.append(SimulationFluxKey::Flight);
+  if (QFile::exists(flightFileName))
     readKeys(flightFileName);
-  }
-  if (QFile::exists(groundFileName)) {
-  if (m_locations.contains(SimulationFluxKey::GroundEsrange))
-    m_locations.append(SimulationFluxKey::GroundEsrange);
+  if (QFile::exists(groundFileName))
     readKeys(groundFileName);
-  }
 }
 
 void SimulationFluxReader::readKeys(const QString& fileName)
@@ -60,25 +49,12 @@ void SimulationFluxReader::readKeys(const QString& fileName)
         continue;
       for (int albedo = 0; albedo < 2; ++albedo) {
         SimulationFluxKey key(object->GetName(), albedo);
-        if (!m_locations.contains(key.location()))
-          m_locations.append(key.location());
-        if (!m_acceptances.contains(key.acceptance()))
-          m_acceptances.append(key.acceptance());
-        if (!m_sources.contains(key.source()))
-          m_sources.append(key.source());
-        if (!m_particles.contains(key.particle()))
-          m_particles.append(key.particle());
-        if (!m_modulationParameters.contains(key.modulationParameter()))
-          m_modulationParameters.append(key.modulationParameter());
         TH2D* histogram = static_cast<TH2D*>(object);
         m_fluxes.insert(key, SimulationFlux(key, histogram).spectrum());
       }
     }
   }
   file.Close();
-  qSort(m_acceptances);
-  qSort(m_sources);
-  qSort(m_modulationParameters);
 }
 
 SimulationFluxReader::~SimulationFluxReader()
@@ -114,27 +90,50 @@ TH1D* SimulationFluxReader::spectrum(const QList<SimulationFluxKey>& keys) const
   return flux;
 }
 
-const QVector<SimulationFluxKey::Location>& SimulationFluxReader::locations() const
+QVector<SimulationFluxKey::Location> SimulationFluxReader::locations() const
 {
-  return m_locations;
+  QVector<SimulationFluxKey::Location> locations;
+  foreach (SimulationFluxKey key, m_fluxes.keys())
+    if (!locations.contains(key.location()))
+      locations.append(key.location());
+  return locations;
 }
 
-const QVector<SimulationFluxKey::Acceptance>& SimulationFluxReader::acceptances() const
+QVector<SimulationFluxKey::Acceptance> SimulationFluxReader::acceptances(SimulationFluxKey::Location location) const
 {
-  return m_acceptances;
+  QVector<SimulationFluxKey::Acceptance> acceptances;
+  foreach (SimulationFluxKey key, m_fluxes.keys())
+    if (location == key.location() && !acceptances.contains(key.acceptance()))
+      acceptances.append(key.acceptance());
+  qSort(acceptances);
+  return acceptances;
 }
 
-const QVector<SimulationFluxKey::Source>& SimulationFluxReader::sources() const
+QVector<SimulationFluxKey::Source> SimulationFluxReader::sources(SimulationFluxKey::Location location) const
 {
-  return m_sources;
+  QVector<SimulationFluxKey::Source> sources;
+  foreach (SimulationFluxKey key, m_fluxes.keys())
+    if (location == key.location() && !sources.contains(key.source()))
+      sources.append(key.source());
+  qSort(sources);
+  return sources;
 }
 
-const QVector<Particle::Type>& SimulationFluxReader::particles() const
+QVector<Particle::Type> SimulationFluxReader::particles(SimulationFluxKey::Location location) const
 {
-  return m_particles;
+  QVector<Particle::Type> particles;
+  foreach (SimulationFluxKey key, m_fluxes.keys())
+    if (location == key.location() && !particles.contains(key.particle()))
+      particles.append(key.particle());
+  return particles;
 }
 
-const QVector<double>& SimulationFluxReader::modulationParameters() const
+QVector<double> SimulationFluxReader::modulationParameters(SimulationFluxKey::Location location) const
 {
-  return m_modulationParameters;
+  QVector<double> modulationParameters;
+  foreach (SimulationFluxKey key, m_fluxes.keys())
+    if (location == key.location() && !modulationParameters.contains(key.modulationParameter()))
+      modulationParameters.append(key.modulationParameter());
+  qSort(modulationParameters);
+  return modulationParameters;
 }
