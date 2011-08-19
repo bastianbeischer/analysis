@@ -122,7 +122,7 @@ void Corrections::trdMopv(Hit* hit)
   else if (strcmp(hit->ClassName(), "Cluster") == 0) {
     Cluster* cluster = static_cast<Cluster*>(hit);
     double clusterAmplitude = 0;
-    for (std::vector<Hit*>::iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
+    for (std::vector<Hit*>::const_iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
       Hit* trdHit = *it;
       double trdScalingFactor = this->trdScalingFactor(trdHit->detId());
       double newHitAmplitude = trdHit->signalHeight() * trdScalingFactor;
@@ -148,7 +148,7 @@ void Corrections::trdTime(Hit* hit, SimpleEvent* event)
   else if (strcmp(hit->ClassName(), "Cluster") == 0) {
     Cluster* cluster = static_cast<Cluster*>(hit);
     double clusterAmplitude = 0;
-    for (std::vector<Hit*>::iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
+    for (std::vector<Hit*>::const_iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
       Hit* trdHit = *it;
       double newHitAmplitude = trdHit->signalHeight() * trdTimeFactor;
       trdHit->setSignalHeight(newHitAmplitude);
@@ -173,7 +173,7 @@ void Corrections::trdPressure(Hit* hit, SimpleEvent* event)
   else if (strcmp(hit->ClassName(), "Cluster") == 0) {
     Cluster* cluster = static_cast<Cluster*>(hit);
     double clusterAmplitude = 0;
-    for (std::vector<Hit*>::iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
+    for (std::vector<Hit*>::const_iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
       Hit* trdHit = *it;
       double newHitAmplitude = trdHit->signalHeight() * trdScalingFactor;
       trdHit->setSignalHeight(newHitAmplitude);
@@ -205,7 +205,7 @@ void Corrections::trdTemperature(Hit* hit, SimpleEvent* event)
   else if (strcmp(hit->ClassName(), "Cluster") == 0) {
     Cluster* cluster = static_cast<Cluster*>(hit);
     double clusterAmplitude = 0;
-    for (std::vector<Hit*>::iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
+    for (std::vector<Hit*>::const_iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
       Hit* trdHit = *it;
       double newHitAmplitude = trdHit->signalHeight() * trdScalingFactor;
       trdHit->setSignalHeight(newHitAmplitude);

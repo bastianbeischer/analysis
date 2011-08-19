@@ -44,7 +44,7 @@ void TimeOfFlight::calculateTimes(const Track* track)
       double z = cluster->position().z();
       if (qAbs(track->x(z) - tofCluster->position().x()) > 1.2 * Constants::tofBarWidth / 2.)
         continue;
-      std::vector<Hit*>& subHits = tofCluster->hits();
+      const std::vector<Hit*>& subHits = tofCluster->hits();
       const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator subHitsIt = subHits.begin(); subHitsIt != subHitsEndIt; ++subHitsIt) {
         TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(*subHitsIt);

@@ -17,14 +17,14 @@ public:
   virtual ~Cluster();
   
 public:
-  virtual void       processHits();
+  virtual void processHits();
 
 public:
   double resolutionEstimate() const;
   
 public:
-  void               addHit(Hit* hit) {m_hits.push_back(hit);}
-  std::vector<Hit*>& hits() {return m_hits;}
+  void addHit(Hit* hit) {m_hits.push_back(hit);}
+  const std::vector<Hit*>& hits() const {return m_hits;}
 
 protected:
   std::vector<Hit*> m_hits;

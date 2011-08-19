@@ -14,6 +14,7 @@ LIBS += \
   -L$$TOPLEVEL/lib \
   -lglobal \
   -lSimpleEvent \
+  -lglobal \
   -lsetup
 
 CLASSES = \

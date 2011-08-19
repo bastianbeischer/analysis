@@ -65,8 +65,6 @@ void TRDReconstruction::reset()
 
 void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
 {
-  reset();
-
   std::vector<Hit*>::const_iterator endIt = event->hits().end();
   for (std::vector<Hit*>::const_iterator eventHitIt = event->hits().begin(); eventHitIt != endIt; ++eventHitIt) {
     Hit* hit = *eventHitIt;
@@ -75,7 +73,7 @@ void TRDReconstruction::reconstructTRD(SimpleEvent* event, Track* globalTrack)
     QVector<Hit*> hits;
     Cluster* cluster = static_cast<Cluster*>(hit);
     if (cluster) {
-      std::vector<Hit*>& subHits = cluster->hits();
+      const std::vector<Hit*>& subHits = cluster->hits();
       const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it)
         hits << *it;

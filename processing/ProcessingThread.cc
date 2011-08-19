@@ -35,7 +35,6 @@ void ProcessingThread::stop()
 
 LimitedEventQueue* ProcessingThread::queue()
 {
-  QMutexLocker locker(&m_mutex);
   return m_queue;
 }
 

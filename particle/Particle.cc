@@ -53,6 +53,7 @@ void Particle::reset()
   if (m_track)
     m_track->reset();
   m_tof->reset();
+  m_trd->reset();
   m_information->reset();
 }
 

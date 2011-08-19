@@ -111,8 +111,12 @@ void EventReader::run()
   Q_ASSERT(m_firstEvent <= m_lastEvent && m_lastEvent < m_chain->nEntries());
   unsigned int nEvents = m_lastEvent - m_firstEvent + 1;
 
+  const QVector<ProcessingThread*>::const_iterator endIt = m_threads.constEnd();
+  const QVector<ProcessingThread*>::const_iterator beginIt = m_threads.constBegin();
+  QVector<ProcessingThread*>::const_iterator it;
   for (m_readEvents = 0; m_readEvents < nEvents;) {
-    foreach(ProcessingThread* thread, m_threads) {
+    for(it = beginIt; it != endIt; it++) {
+      ProcessingThread* thread = *it;
       if (thread->queue()->freeSpace() > 0 && m_readEvents < nEvents) {
         SimpleEvent* event = m_chain->event(m_firstEvent + m_readEvents);
         thread->queue()->enqueue(event);
