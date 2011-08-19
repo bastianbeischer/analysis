@@ -51,5 +51,6 @@ void MainWindow::setupAnalysis()
     }
   }
   addPlot(new TimeResolutionPlot(timeOfFlightHistograms, sqrt(nBins)));
+  addCanvas(&file, "timeResolutionToyMC canvas");
   file.Close();
 }

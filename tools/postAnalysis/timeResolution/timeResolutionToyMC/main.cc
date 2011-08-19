@@ -15,6 +15,11 @@
 
 #include <QDebug>
 
+double resolutionDistribution(double* x, double* p)
+{
+  return 0.3 / sqrt(2.) + p[0] * pow(2. * (x[0]-p[1]) / Constants::tofBarLength, 2);
+}
+
 int main(int argc, char* argv[])
 {
   RootStyle::set();
@@ -33,9 +38,9 @@ int main(int argc, char* argv[])
     for (int layer = 0; layer < 2; ++layer) {
       char name[128];
       sprintf(name, "resolutionFunction_%d_%d", bar, layer);
-      char function[128];
-      sprintf(function, "0.3 / sqrt(2.)+ %d * 0.1 * (x/200.)^2", bar + 1);
-      resolutionFunction[bar][layer] = new TF1(name, function);
+      resolutionFunction[bar][layer] = new TF1(name, resolutionDistribution, -Constants::tofBarLength / 2., Constants::tofBarLength / 2., 2);
+      resolutionFunction[bar][layer]->SetParameter(0, 0.1 * (bar + 1));
+      resolutionFunction[bar][layer]->SetParameter(1, (0.5 * layer + bar - 2.5) * 20);
     }
   }
 
@@ -56,7 +61,6 @@ int main(int argc, char* argv[])
   histograms[3][1] = new TH2D("time resolution 0x800c 0x801c, 0x8024 0x8034", ";;#Deltat / ns;", nBins*nBins, 0., nBins*nBins, 30, 0., 6.);
   histograms[3][2] = new TH2D("time resolution 0x800c 0x801c, 0x8028 0x8038", ";;#Deltat / ns;", nBins*nBins, 0., nBins*nBins, 30, 0., 6.);
   histograms[3][3] = new TH2D("time resolution 0x800c 0x801c, 0x802c 0x803c", ";;#Deltat / ns;", nBins*nBins, 0., nBins*nBins, 30, 0., 6.);
-
   
   for (int i = 0; i < 4; ++i) {
     for (int j = 0; j < 4; ++j) {
@@ -87,8 +91,6 @@ int main(int argc, char* argv[])
     double lowerResolution = resolutionFunction[lowerBar][1]->Eval(lowerY);
     double t1 = random->Gaus(0, upperResolution);
     double t2 = random->Gaus(ds / Constants::speedOfLight, lowerResolution);
-    if (lowerBar == 3 && lowerBin == nBins - 1)
-      t2 = ds / Constants::speedOfLight;
     double dt = t2 - t1;
     histograms[upperBar][lowerBar]->Fill(upperBin * nBins + lowerBin, dt);
   }
@@ -102,10 +104,30 @@ int main(int argc, char* argv[])
       histograms[i][j]->Draw("COLZ");
     }
   }
+  TCanvas* canvas = new TCanvas("timeResolutionToyMC canvas", "timeResolutionToyMC", 1);
+  for (int bar = 0; bar < 4; ++bar) {
+    resolutionFunction[bar][0]->SetLineStyle(1);
+    resolutionFunction[bar][1]->SetLineStyle(2);
+    resolutionFunction[bar][0]->SetLineColor(1 + bar);
+    resolutionFunction[bar][1]->SetLineColor(1 + bar);
+    resolutionFunction[bar][0]->SetLineWidth(2);
+    resolutionFunction[bar][1]->SetLineStyle(2);
+    if (bar == 0) {
+      resolutionFunction[bar][0]->Draw();
+      resolutionFunction[bar][0]->GetXaxis()->SetTitle("y / mm");
+      resolutionFunction[bar][0]->GetYaxis()->SetRangeUser(0., 0.75);
+      resolutionFunction[bar][0]->GetYaxis()->SetTitle("#sigma / ns");
+    } else {
+      resolutionFunction[bar][0]->Draw("SAME");
+    }
+    resolutionFunction[bar][1]->Draw("SAME");
+  }
+
   TFile file(outputFileName, "RECREATE");
   for (int i = 0; i < 4; ++i)
     for (int j = 0; j < 4; ++j)
       canvases[i][j]->Write();
+  canvas->Write();
   file.Close();
   application.Run();
   return 0;

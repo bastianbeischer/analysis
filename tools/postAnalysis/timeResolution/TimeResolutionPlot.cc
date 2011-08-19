@@ -121,8 +121,8 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& hi
   }
   TMatrixT<double> bPrime = b.GetSub(0, 8*nBins-2, 0, 0);
 
-  double r = 0;
-  TMatrixT<double> cPrime(8*nBins, 1);
+  double r = pow(0.53, 2.);
+  TMatrixT<double> cPrime(8*nBins-1, 1);
   for (int ai = 0; ai < 8*nBins-1; ++ai)
     cPrime(ai, 0) = r * aPrime(ai, 8*nBins-2);
  
