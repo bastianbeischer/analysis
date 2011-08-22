@@ -640,7 +640,6 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::All));
     m_ui.plotter->addPlot(new TrackFindingEfficiency());
     m_ui.plotter->addPlot(new AllTrackerLayersFlagEfficiency());
-    m_ui.plotter->addPlot(new EventTimeDifferencePlot(m_ui.numberOfThreadsSpinBox->value()));
   }
   if (m_ui.miscellaneousTRDCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisPlot::MiscellaneousTRD));
@@ -666,6 +665,7 @@ void MainWindow::setupPlots()
       if (element->type() == DetectorElement::tof)
         m_ui.plotter->addPlot(new TOFPositionCorrelationPlot(element->id()));
     }
+    m_ui.plotter->addPlot(new EventTimeDifferencePlot(m_ui.numberOfThreadsSpinBox->value()));
   }
   if (m_ui.slowControlCheckBox->isChecked()) {
     QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());

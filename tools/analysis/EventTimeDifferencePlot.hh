@@ -12,9 +12,9 @@ public:
   void update();
   void finalize();
 private:
-  double exponentialDistribution(double* x, double* par);
-  const int m_numberOfThreads;
+  double exponentialDistribution(double*, double*);
   double m_lastEventTime;
+  bool m_active;
 };
 
 #endif
