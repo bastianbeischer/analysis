@@ -29,13 +29,13 @@ StraightLine::~StraightLine()
 
 void StraightLine::retrieveFitResults()
 {
-  TVectorD solution = m_matrix->solution();
+  double* solution = m_matrix->solution();
     
   // return information from the fit.
-  m_x0      = solution(0);
-  m_y0      = solution(1);
-  m_slopeX  = solution(2);
-  m_slopeY  = solution(3);
+  m_x0      = solution[0];
+  m_y0      = solution[1];
+  m_slopeX  = solution[2];
+  m_slopeY  = solution[3];
   m_chi2    = m_matrix->chi2();
   m_ndf     = m_matrix->ndf();
 

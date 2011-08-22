@@ -12,7 +12,7 @@ public:
   virtual ~CenteredBrokenLineMatrix2D();
   
 protected:
-  void fillMatrixFromHit(TMatrixD& A, unsigned int i, double k, double c, double s) const;
+  void fillMatrixFromHit(double** A, unsigned int i, double k, double c, double s) const;
   
 };
 

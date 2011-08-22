@@ -31,15 +31,15 @@ BrokenLine::~BrokenLine()
 
 void BrokenLine::retrieveFitResults()
 {
-  TVectorD solution = m_matrix->solution();
+  double* solution = m_matrix->solution();
 
   // return information from the fit.
-  m_upperX0       = solution(0);
-  m_lowerX0       = solution(1);
-  m_y0            = solution(2);
-  m_upperSlopeX   = solution(3);
-  m_lowerSlopeX   = solution(4);
-  m_slopeY        = solution(5);
+  m_upperX0       = solution[0];
+  m_lowerX0       = solution[1];
+  m_y0            = solution[2];
+  m_upperSlopeX   = solution[3];
+  m_lowerSlopeX   = solution[4];
+  m_slopeY        = solution[5];
   m_chi2          = m_matrix->chi2();
   m_ndf           = m_matrix->ndf();
   m_zIntersection = (m_upperX0 - m_lowerX0) / (m_lowerSlopeX - m_upperSlopeX);

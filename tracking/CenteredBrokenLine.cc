@@ -30,14 +30,14 @@ CenteredBrokenLine::~CenteredBrokenLine()
 
 void CenteredBrokenLine::retrieveFitResults()
 {
-  TVectorD solution = m_matrix->solution();
+  double* solution = m_matrix->solution();
 
   // return information from the fit.
-  m_x0            = solution(0);
-  m_y0            = solution(1);
-  m_upperSlopeX   = solution(2);
-  m_lowerSlopeX   = solution(3);
-  m_slopeY        = solution(4);
+  m_x0            = solution[0];
+  m_y0            = solution[1];
+  m_upperSlopeX   = solution[2];
+  m_lowerSlopeX   = solution[3];
+  m_slopeY        = solution[4];
   m_chi2          = m_matrix->chi2();
   m_ndf           = m_matrix->ndf();
 
