@@ -11,6 +11,8 @@
 Matrix::Matrix() :
   m_nRow(0),
   m_nCol(0),
+  m_chi2(0),
+  m_ndf(0),
   m_solution(TVectorD(0))
 {
 }
