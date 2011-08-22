@@ -20,8 +20,9 @@ private:
     int i, j, k, l;
   };
   struct Value {
-    Value(double, double);
+    Value(double, double, double, double);
     double v, vError;
+    double upperY, lowerY;
   };
   
   double sumSigmaErrorJL(const QMap<Key, Value>& map, int i, int k);

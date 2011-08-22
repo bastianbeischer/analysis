@@ -9,7 +9,6 @@ Makefile.*
 /TAGS
 /plots
 /forPostAnalysis
-perdaix.log
 /*.txt
 *.png
 *.pdf
@@ -22,3 +21,5 @@ fort.66
 build
 foo
 out
+*.aux
+*.log

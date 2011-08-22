@@ -4,7 +4,6 @@
 
 #include <TGraph.h>
 #include <TMatrix.h>
-#include <TRandom.h>
 #include <TAxis.h>
 
 #include <QMap>
@@ -40,9 +39,11 @@ bool TimeResolutionPlot::Key::operator<(const Key& other) const
   return false;
 }
 
-TimeResolutionPlot::Value::Value(double variance, double varianceError)
+TimeResolutionPlot::Value::Value(double variance, double varianceError, double yUp, double yLow)
   : v(variance)
   , vError(varianceError)
+  , upperY(yUp)
+  , lowerY(yLow)
 {
 }
 
@@ -55,13 +56,9 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& hi
   Q_ASSERT(histograms.count());
   QMap<Key, Value> map;
   foreach (TimeOfFlightHistogram* histogram, histograms) {
-    double vError = 0;
-    if (histogram->fitted()) {
-      vError = histogram->vError();
-    } else {
-      vError = 2 * histogram->v() * gRandom->Gaus(0.4, 0.05);
-    }
-    map.insert(Key(histogram), Value(histogram->v(), vError));
+    Value value = Value(histogram->v(), histogram->vError(),
+      histogram->upperY(), histogram->lowerY());
+    map.insert(Key(histogram), value);
   }
 
   TMatrixT<double> a(8*nBins, 8*nBins);
@@ -104,7 +101,7 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& hi
     }
   }
   TMatrixT<double> aPrime = a.GetSub(0, 8*nBins-2, 0, 8*nBins-2);
-  TMatrixT<double> aPrimeInverted = aPrime.Invert();
+  TMatrixT<double> aPrimeInverted = a.GetSub(0, 8*nBins-2, 0, 8*nBins-2).Invert();
 
   TMatrixT<double> b(8*nBins, 1);
   for (int ai = 0; ai < 8*nBins; ++ai)
@@ -119,14 +116,12 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& hi
       b(4 * nBins + j * nBins + l, 0) = sumRelativeSigmaErrorIK(map, j, l);
     }
   }
-  TMatrixT<double> bPrime = b.GetSub(0, 8*nBins-2, 0, 0);
-
-  double r = pow(0.53, 2.);
-  TMatrixT<double> cPrime(8*nBins-1, 1);
+  TMatrixT<double> bPrime(8*nBins-1, 1);
+  double r = pow(0.467, 2.);
   for (int ai = 0; ai < 8*nBins-1; ++ai)
-    cPrime(ai, 0) = r * aPrime(ai, 8*nBins-2);
- 
-  TMatrixT<double> v = aPrime * (bPrime - cPrime);
+    bPrime(ai, 0) = b(ai, 0) - r * a(ai, 8*nBins-1);
+
+  TMatrixT<double> v = aPrimeInverted * bPrime;
 
   for (int i = 0; i < 4; ++i) {
     TGraph* graph = new TGraph(nBins);
@@ -134,9 +129,12 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& hi
     graph->SetLineColor(1+i);
     graph->SetName(qPrintable(QString("i = %1").arg(i)));
     for (int k = 0; k < nBins; ++k) {
-      double sigma = sqrt(v(i * nBins + k, 0));
-      graph->SetPoint(k, k, sigma);
-      qDebug() << i << k << v(i * nBins + k, 0) << sigma;
+      int ai = i * nBins + k;
+      double y = map.find(Key(i, 0, k, 0))->upperY;
+      double variance = v(ai, 0);
+      double sigma = sqrt(variance);
+      graph->SetPoint(k, y, sigma);
+      fprintf(stdout, "i=%d  k=%02d  y=%0.3f  V=%0.3f  s=%0.3f\n", i, k, y, variance, sigma);
     }
     setDrawOption(ALP);
     addGraph(graph, LP);
@@ -148,10 +146,12 @@ TimeResolutionPlot::TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>& hi
     graph->SetLineColor(1+j);
     graph->SetName(qPrintable(QString("j = %1").arg(j)));
     for (int l = 0; l < nBins; ++l) {
-      int ai = (j+4) * nBins + l;
-      double sigma = sqrt((ai < 8*nBins - 1) ? v(ai, 0) : 0);
-      graph->SetPoint(l, l, sigma);
-      qDebug() << sigma;
+      int ai = (j + 4) * nBins + l;
+      double y = map.find(Key(0, j, 0, l))->lowerY;
+      double variance = (j == 3 && l == nBins - 1) ? r : v(ai, 0);
+      double sigma = sqrt(variance);
+      graph->SetPoint(l, y, sigma);
+      fprintf(stdout, "j=%d  l=%02d  y=%0.3f  V=%0.3f  s=%0.3f\n", j, l, y, variance, sigma);
     }
     setDrawOption(ALP);
     addGraph(graph, LP);
