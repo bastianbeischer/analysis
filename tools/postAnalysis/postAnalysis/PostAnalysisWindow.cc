@@ -47,6 +47,7 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
   connect(m_ui->logXCheckBox, SIGNAL(stateChanged(int)), m_ui->qtWidget, SLOT(setLogX(int)));
   connect(m_ui->logYCheckBox, SIGNAL(stateChanged(int)), m_ui->qtWidget, SLOT(setLogY(int)));
   connect(m_ui->logZCheckBox, SIGNAL(stateChanged(int)), m_ui->qtWidget, SLOT(setLogZ(int)));
+  connect(m_ui->qtWidget, SIGNAL(positionChanged(double, double)), this, SLOT(canvasPositionChanged(double, double)));
 }
 
 PostAnalysisWindow::~PostAnalysisWindow()
@@ -201,6 +202,11 @@ void PostAnalysisWindow::aspectRatioChanged(int i)
 {
   double aspectRatio = m_ui->aspectRatioComboBox->itemData(i).toDouble();
   m_ui->qtWidget->setAspectRatio(aspectRatio);
-  //adjustSize();
-  //updateGeometry();
+}
+
+void PostAnalysisWindow::canvasPositionChanged(double x, double y)
+{
+  m_ui->positionLabel->setText(QString("%1%2  %3%4")
+      .arg(x < 0 ? '-' : '+').arg(qAbs(x), 7, 'f', 3, '0')
+      .arg(y < 0 ? '-' : '+').arg(qAbs(y), 7, 'f', 3, '0'));
 }

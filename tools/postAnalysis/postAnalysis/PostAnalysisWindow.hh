@@ -16,7 +16,6 @@ public:
   PostAnalysisWindow(QWidget* parent = 0);
   ~PostAnalysisWindow();
   void addAnalysisFiles(const QStringList&);
-
 protected:
   void addWidget(QWidget*);
   virtual void setupAnalysis() = 0;
@@ -32,6 +31,7 @@ private slots:
   void selectCanvas(QListWidgetItem*, QListWidgetItem*);
   void selectPlot(QListWidgetItem*);
   void selectPlot(QListWidgetItem*, QListWidgetItem*);
+  void canvasPositionChanged(double, double);
   void plotOptionComboBoxCurrentIndexChanged(const QString& option);
   void aspectRatioChanged(int);
 protected:
