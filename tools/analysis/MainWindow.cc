@@ -98,7 +98,7 @@
 #include "AzimuthCutStatistics.hh"
 #include "Helpers.hh"
 #include "FluxCollection.hh"
-#include "TimeBetweenEventsPlot.hh"
+#include "EventTimeDifferencePlot.hh"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -640,7 +640,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::All));
     m_ui.plotter->addPlot(new TrackFindingEfficiency());
     m_ui.plotter->addPlot(new AllTrackerLayersFlagEfficiency());
-    m_ui.plotter->addPlot(new TimeBetweenEventsPlot(m_ui.numberOfThreadsSpinBox->value()));
+    m_ui.plotter->addPlot(new EventTimeDifferencePlot(m_ui.numberOfThreadsSpinBox->value()));
   }
   if (m_ui.miscellaneousTRDCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisPlot::MiscellaneousTRD));
