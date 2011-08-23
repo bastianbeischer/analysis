@@ -58,6 +58,7 @@ const Settings* SettingsManager::settingsForRun(int run) const
   const QVector<const Settings*>::const_iterator it = qBinaryFind(m_settings.begin(), m_settings.end(), &temp, &settingsCompare);
   if (it != m_settings.constEnd())
     return *it;
+  Q_ASSERT(false);
   return 0;
 }
 
@@ -81,6 +82,8 @@ void SettingsManager::readSettings()
     else if (situationString == "kirunamuons") situation = Settings::KirunaMuons;
     else if (situationString == "kirunaflight") situation = Settings::KirunaFlight;
     else if (situationString == "testbeam11") situation = Settings::Testbeam11;
+
+    Q_ASSERT(firstRun <= lastRun);
 
     Settings* settings = new Settings;
     settings->setIdentifier(identifier);
