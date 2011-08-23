@@ -100,7 +100,6 @@ void EventReader::stop()
   m_mutex.lock();
   m_abort = true;
   m_mutex.unlock();
-  wait();
 }
 
 void EventReader::run()

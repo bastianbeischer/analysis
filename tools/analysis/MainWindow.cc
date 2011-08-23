@@ -936,6 +936,7 @@ void MainWindow::analyzeButtonClicked()
     m_reader->start(m_processors, m_ui.firstEventSpinBox->value(), m_ui.lastEventSpinBox->value());
   } else {
     m_reader->stop();
+    m_ui.analyzeButton->setText("&stopping...");
   }
 }
 
