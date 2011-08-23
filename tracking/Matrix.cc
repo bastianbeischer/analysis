@@ -34,9 +34,12 @@ void Matrix::reset()
 int Matrix::fit(const QVector<Hit*>& hits)
 {
   QVector<Hit*> filteredHits;
-  foreach(Hit* hit, hits)
+  const QVector<Hit*>::const_iterator hitsEnd = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != hitsEnd; ++it) {
+    Hit* hit = *it;
     if (hit->type() != Hit::tof)
       filteredHits.append(hit);
+  }
 
   // basic dimensions of matrices
   m_nRow = filteredHits.size();
