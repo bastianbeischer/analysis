@@ -23,7 +23,7 @@ public:
   
 protected:
   virtual bool checkInvertability(const QVector<Hit*>& hits) const;
-  virtual void fillMatrixFromHit(double** A, unsigned int i, double k, double c, double s) const = 0;
+  virtual void fillMatrixFromHit(double* A, double k, double c, double s) const = 0;
 
 protected:
   unsigned int m_nRow;

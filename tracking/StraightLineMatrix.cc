@@ -15,10 +15,10 @@ StraightLineMatrix::~StraightLineMatrix()
 {
 }
 
-void StraightLineMatrix::fillMatrixFromHit(double** A, unsigned int i, double k, double c, double s) const
+void StraightLineMatrix::fillMatrixFromHit(double* A, double k, double c, double s) const
 {
-  A[i][0] = c;
-  A[i][1] = -s;
-  A[i][2] = k*c;
-  A[i][3] = -k*s;
+  A[0] = c;
+  A[1] = -s;
+  A[2] = k*c;
+  A[3] = -k*s;
 }

@@ -12,7 +12,7 @@ public:
   virtual ~BrokenLineMatrix();
   
 protected:
-  void fillMatrixFromHit(double** A, unsigned int i, double k, double c, double s) const;
+  void fillMatrixFromHit(double* A, double k, double c, double s) const;
   
 };
 

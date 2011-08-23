@@ -68,7 +68,7 @@ int Matrix::fit(const QVector<Hit*>& hits)
 
     for (unsigned int j = 0; j < m_nCol; j++)
       A[i][j] = 0.;
-    fillMatrixFromHit(A, i, k, c, s);
+    fillMatrixFromHit(A[i], k, c, s);
 
     weights[i] = 1./(sigmaU*sigmaU); // this is the inverse of the sigma for the i'th measurement
   } // loop over hits

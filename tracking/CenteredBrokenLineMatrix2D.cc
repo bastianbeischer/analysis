@@ -11,13 +11,13 @@ CenteredBrokenLineMatrix2D::~CenteredBrokenLineMatrix2D()
 {
 }
 
-void CenteredBrokenLineMatrix2D::fillMatrixFromHit(double** A, unsigned int i, double k, double c, double s) const
+void CenteredBrokenLineMatrix2D::fillMatrixFromHit(double* A, double k, double c, double s) const
 {
   int slopeXindex = k > 0. ? 2 : 3;
   int slopeYindex = k > 0. ? 4 : 5;
 
-  A[i][0]            = c;
-  A[i][1]            = -s;
-  A[i][slopeXindex]  = k*c;
-  A[i][slopeYindex]  = -k*s;
+  A[0]            = c;
+  A[1]            = -s;
+  A[slopeXindex]  = k*c;
+  A[slopeYindex]  = -k*s;
 }
