@@ -79,7 +79,7 @@ int Matrix::fit(const QVector<Hit*>& hits)
     for (unsigned int j = 0; j < m_nCol; j++) {
       double entry = 0.;
       for (unsigned int k = 0; k < m_nRow; k++) {
-        entry += A[k][i]*weights[k]*A[k][j]; // A^T * U^(-1) * A
+        entry += A[k][i]*weights[k]*A[k][j]; // M = A^T * U^(-1) * A
       }
       Minv(i,j) = entry;
     }
@@ -90,14 +90,14 @@ int Matrix::fit(const QVector<Hit*>& hits)
   for (unsigned int i = 0; i < m_nCol; i++) {
     c[i] = 0.;
     for (unsigned int k = 0; k < m_nRow; k++)
-      c[i] += A[k][i]*weights[k]*b[k]; // A^T * U^(-1) * b
+      c[i] += A[k][i]*weights[k]*b[k]; // c = A^T * U^(-1) * b
   }
 
   // solution
   for (unsigned int i = 0; i < m_nCol; i++) {
     m_solution[i] = 0.;
     for (unsigned int j = 0; j < m_nCol; j++)
-      m_solution[i] += Minv(i,j) * c[j]; // M * c
+      m_solution[i] += Minv(i,j) * c[j]; // x = M^(-1) * c
   }
 
   // calculate chi2 and track positions from fit parameters
