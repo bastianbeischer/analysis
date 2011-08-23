@@ -46,12 +46,10 @@ int Matrix::fit(const QVector<Hit*>& hits)
   }
 
   // declare matrices for the calculation
-  double** A = new double*[m_nRow];
-  for (unsigned int i = 0; i < m_nRow; i++)
-    A[i] = new double[m_nCol];
-  double* b = new double[m_nRow];
-  double* weights = new double[m_nRow];
-  double* c = new double[m_nCol];
+  double A[m_nRow][m_nCol];
+  double b[m_nRow];
+  double weights[m_nRow];
+  double c[m_nCol];
 
   for (unsigned int i = 0; i < m_nRow; i++) {
     Hit* hit = filteredHits.at(i);
@@ -110,14 +108,6 @@ int Matrix::fit(const QVector<Hit*>& hits)
   }
 
   m_ndf = m_nRow - m_nCol;
-
-  for (unsigned int i = 0; i < m_nRow; i++) {
-    delete [] A[i];
-  }
-  delete [] A;
-  delete [] b;
-  delete [] c;
-  delete [] weights;
 
   return 1;
 }
