@@ -104,7 +104,7 @@ int Matrix::fit(const QVector<Hit*>& hits)
     double prediction = 0;
     for (unsigned int j = 0; j < m_nCol; j++)
       prediction += A[i][j]*m_solution[j];
-    m_chi2 += pow(prediction - b[i], 2.) * weights[i];
+    m_chi2 += (prediction - b[i])*(prediction - b[i]) * weights[i];
   }
 
   m_ndf = m_nRow - m_nCol;
