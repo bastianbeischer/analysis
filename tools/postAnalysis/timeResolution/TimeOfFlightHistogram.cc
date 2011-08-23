@@ -14,7 +14,6 @@
 #include <iomanip>
 
 #include <QDebug>
-#include <QStringList>
 
 TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin)
   : PostAnalysisPlot()
@@ -34,45 +33,23 @@ TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin
   , m_v(NAN)
   , m_vError(NAN)
   , m_fitted(false)
+  , m_fitGood(false)
 { 
   TH2D* histogram = canvas->histograms2D().at(0);
   histogram->Draw("COLZ");
-  QString axisLabel(histogram->GetXaxis()->GetBinLabel(bin));
-  m_upperY = axisLabel.section(' ', 0, 0).remove(0, 1).toDouble();
-  m_lowerY = axisLabel.section(' ', 1, 1).remove(0, 1).toDouble();
-  QString title = canvas->name().remove("time resolution ").remove(" canvas");
-  m_upperId = title.mid(2, 4).toInt(0, 16);
-  m_lowerId = title.mid(17, 4).toInt(0, 16);
-
-  if (m_upperId == 0x8000) m_i = 0;
-  else if (m_upperId == 0x8004) m_i = 1;
-  else if (m_upperId == 0x8008) m_i = 2;
-  else if (m_upperId == 0x800c) m_i = 3;
-
-  if (m_lowerId == 0x8020) m_j = 0;
-  else if (m_lowerId == 0x8024) m_j = 1;
-  else if (m_lowerId == 0x8028) m_j = 2;
-  else if (m_lowerId == 0x802c) m_j = 3;
-
-  int nBarPositions = sqrt(canvas->histograms2D().at(0)->GetXaxis()->GetNbins());
-  m_k = (bin - 1) / nBarPositions;
-  m_l = (bin - 1) % nBarPositions;
-
-  title.append(QString(" upper=%1mm lower=%2mm").arg(m_upperY).arg(m_lowerY));
-  setTitle(title);
+  extractIndizes(canvas->name(), histogram, bin);
   TH1D* projection = histogram->ProjectionY("tmp", bin, bin);
+  addHistogram(projection);
   //projection->Smooth();
   int nBins = projection->GetXaxis()->GetNbins();
   int entries = 0;
   for (int bin = 1; bin <= nBins; ++bin)
     entries+= projection->GetBinContent(bin);
-  projection->SetName(qPrintable(title));
-  setAxisTitle("#Deltat / ns", "");
-  TF1* function = new TF1(qPrintable(title + "Function"), "gaus", projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
+  projection->SetName(qPrintable(title()));
+  TF1* function = new TF1(qPrintable(title() + "Function"), "gaus", projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
+  addFunction(function);
   function->SetParameters(projection->GetMaximum(), 2.6, 0.4);
-  function->SetParError(1, 5.);
-  function->SetParError(2, 5.);
-  if (entries > 100) {
+  if (entries > 10) {
     function->SetParameters(projection->GetMaximum(), 2.6, 0.4);
     function->SetParError(1, .2);
     function->SetParError(2, .2);
@@ -88,23 +65,20 @@ TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin
     m_fitted = true;
   }
 
-  m_mean = function->GetParameter(1);
-  m_meanError = function->GetParError(1);
-  m_sigma = function->GetParameter(2);
-  m_sigmaError = function->GetParError(2);
-  m_v = m_sigma * m_sigma;
-  m_vError = 2 * m_sigma * m_sigmaError;
-  TF1* functionR = new TF1(qPrintable(title + "FunctionR"), "gaus", function->GetXmin(), function->GetXmax());
-  function->SetRange(projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
-  QStringList stringList = title.split(" ");
-  addHistogram(projection);
-  function->SetNpx(1000);
-  addFunction(function);
-  functionR->SetParameters(function->GetParameter(0), function->GetParameter(1), function->GetParameter(2));
-  functionR->SetLineColor(kRed);
-  functionR->SetNpx(1000);
-  if (m_fitted)
+  extractParameters();
+
+  setAxisTitle("#Deltat / ns", "");
+
+  if (m_fitGood) {
+    TF1* functionR = new TF1(qPrintable(title() + "FunctionR"), "gaus", function->GetXmin(), function->GetXmax());
+    functionR->SetParameters(function->GetParameter(0), function->GetParameter(1), function->GetParameter(2));
+    functionR->SetLineColor(kRed);
+    functionR->SetNpx(1000);
     addFunction(functionR);
+  }
+
+  function->SetNpx(1000);
+  function->SetRange(projection->GetXaxis()->GetXmin(), projection->GetXaxis()->GetXmax());
 
   TLatex* latex = 0;
 
@@ -136,6 +110,51 @@ TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin
 
 TimeOfFlightHistogram::~TimeOfFlightHistogram()
 {}
+
+void TimeOfFlightHistogram::extractIndizes(const QString& canvasName, const TH2D* const histogram, int bin)
+{
+  QString axisLabel = histogram->GetXaxis()->GetBinLabel(bin);
+  m_upperY = axisLabel.section(' ', 0, 0).remove(0, 1).toDouble();
+  m_lowerY = axisLabel.section(' ', 1, 1).remove(0, 1).toDouble();
+  QString title = canvasName;
+  title.remove("time resolution ").remove(" canvas");
+  m_upperId = title.mid(2, 4).toInt(0, 16);
+  m_lowerId = title.mid(17, 4).toInt(0, 16);
+  title.append(QString(" upper=%1mm lower=%2mm").arg(m_upperY).arg(m_lowerY));
+  setTitle(title);
+
+  if (m_upperId == 0x8000) m_i = 0;
+  else if (m_upperId == 0x8004) m_i = 1;
+  else if (m_upperId == 0x8008) m_i = 2;
+  else if (m_upperId == 0x800c) m_i = 3;
+
+  if (m_lowerId == 0x8020) m_j = 0;
+  else if (m_lowerId == 0x8024) m_j = 1;
+  else if (m_lowerId == 0x8028) m_j = 2;
+  else if (m_lowerId == 0x802c) m_j = 3;
+
+  int nBarPositions = sqrt(histogram->GetXaxis()->GetNbins());
+  m_k = (bin - 1) / nBarPositions;
+  m_l = (bin - 1) % nBarPositions;
+}
+
+void TimeOfFlightHistogram::extractParameters()
+{
+  m_fitGood = true;
+  if (!m_fitted)
+    m_fitGood = false;
+  if (function()->GetChisquare() / function()->GetNDF() > 5.)
+    m_fitGood = false;
+  if (function()->GetParError(2) > 1.)
+    m_fitGood = false;
+
+  m_mean = m_fitGood ? function()->GetParameter(1) : 0.;
+  m_meanError = m_fitGood ? function()->GetParError(1) : 1000.;
+  m_sigma = m_fitGood ? function()->GetParameter(2) : 1000.;
+  m_sigmaError = m_fitGood ? function()->GetParError(2) : 1000.;
+  m_v = m_sigma * m_sigma;
+  m_vError = 2 * m_sigma * m_sigmaError;
+}
 
 int TimeOfFlightHistogram::upperId() const
 {

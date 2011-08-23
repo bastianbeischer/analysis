@@ -4,9 +4,8 @@
 #include "PostAnalysisPlot.hh"
 #include "H1DPlot.hh"
 
-class TF1;
-class TH2D;
 class PostAnalysisCanvas;
+class TH2D;
 
 class TimeOfFlightHistogram : public PostAnalysisPlot, public H1DPlot {
 public:
@@ -28,6 +27,9 @@ public:
   double vError() const;
   bool fitted() const;
 private:
+  void extractIndizes(const QString& canvasName, const TH2D* const histogram, int bin);
+  void extractParameters();
+
   int m_upperId;
   int m_lowerId;
   int m_i, m_j, m_k, m_l;
@@ -40,6 +42,7 @@ private:
   double m_v;
   double m_vError;
   bool m_fitted;
+  bool m_fitGood;
 };
 
 #endif
