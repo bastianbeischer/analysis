@@ -15,14 +15,30 @@ PostAnalysisCanvas::PostAnalysisCanvas(TCanvas* canvas)
 {
 }
 
-PostAnalysisCanvas::PostAnalysisCanvas(TFile* file, const QString& name)
+PostAnalysisCanvas::PostAnalysisCanvas()
   : m_palette(RootStyle::DefaultPalette)
-  , m_canvas(static_cast<TCanvas*>(file->Get(qPrintable(name))->Clone()))
+  , m_canvas(0)
 {
 }
 
 PostAnalysisCanvas::~PostAnalysisCanvas()
 {}
+
+PostAnalysisCanvas* PostAnalysisCanvas::fromFile(TFile* file, const QString& name)
+{
+  TObject* object = file->Get(qPrintable(name));
+  if (!object) {
+    qDebug() << name << "does not exist in" << file->GetEndpointUrl()->GetFile();
+    return 0;
+  }
+  if (strcmp(object->ClassName(), "TCanvas")) {
+    qDebug() << name << "has type" << object->ClassName() << "not TCanvas!";
+    return 0;
+  }
+  PostAnalysisCanvas* postAnalysisCanvas = new PostAnalysisCanvas;
+  postAnalysisCanvas->setCanvas(static_cast<TCanvas*>(object->Clone()));
+  return postAnalysisCanvas;
+}
 
 void PostAnalysisCanvas::draw(TCanvas* canvas)
 {

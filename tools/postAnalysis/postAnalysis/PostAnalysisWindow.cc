@@ -115,7 +115,9 @@ void PostAnalysisWindow::addAnalysisFiles(const QStringList& files)
 
 PostAnalysisCanvas* PostAnalysisWindow::addCanvas(TFile* file, const QString& name)
 {
-  PostAnalysisCanvas* canvas = new PostAnalysisCanvas(file, name);
+  PostAnalysisCanvas* canvas = PostAnalysisCanvas::fromFile(file, name);
+  if (!canvas)
+    return 0;
   m_canvases.append(canvas);
   QListWidgetItem* item = new QListWidgetItem(canvas->name());
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);

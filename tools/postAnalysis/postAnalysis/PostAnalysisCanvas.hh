@@ -14,9 +14,9 @@ class TCanvas;
 
 class PostAnalysisCanvas {
 public:
-  PostAnalysisCanvas(TFile*, const QString& name);
   PostAnalysisCanvas(TCanvas*);
   virtual ~PostAnalysisCanvas();
+  static PostAnalysisCanvas* fromFile(TFile*, const QString& name);
   void draw(TCanvas*);
   void setPalette(RootStyle::PaletteType);
   QString name();
@@ -25,6 +25,8 @@ public:
   QVector<TF1*> functions();
   TCanvas* canvas() const {return m_canvas;}
 private:
+  void setCanvas(TCanvas* canvas) {m_canvas = canvas;}
+  PostAnalysisCanvas();
   RootStyle::PaletteType m_palette;
   TCanvas* m_canvas;
 };
