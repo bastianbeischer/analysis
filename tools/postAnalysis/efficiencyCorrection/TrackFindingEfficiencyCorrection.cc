@@ -38,6 +38,7 @@ TrackFindingEfficiencyCorrection::TrackFindingEfficiencyCorrection(Type type, Po
   QHBoxLayout* layout = new QHBoxLayout(widget);
   layout->setContentsMargins(0, 0, 0, 0);
   QPushButton* saveButton = new QPushButton("save as correction");
+  saveButton->setToolTip("save histogram in efficiency correction settings file. be sure to have switched to right settings with \"switch_to_config.sh\" to write desired file");
   layout->addWidget(saveButton);
   layout->addStretch();
   setSecondaryWidget(widget);

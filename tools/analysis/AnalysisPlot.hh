@@ -15,6 +15,8 @@ public:
 public:
   AnalysisPlot(Topic);
   virtual ~AnalysisPlot();
+  virtual void finalize() {}
+  virtual void update() {}
   Topic topic() const;
 private:
   Topic m_topic;

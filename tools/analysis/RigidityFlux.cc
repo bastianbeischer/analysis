@@ -31,9 +31,12 @@ RigidityFlux::RigidityFlux(Type type, const QDateTime& first, const QDateTime& l
   : AnalysisPlot(AnalysisPlot::MomentumReconstruction)
   , H1DPlot()
   , m_type(type)
-  , m_effCor(0)
+  , m_measurementTimeCalculation(0)
+  , m_fluxCalculation(0)
+
   , m_particleHistogram(particleHistogram)
   , m_particleHistogramMirrored(0)
+  , m_phiFit(0)
 {
   loadEfficiencies();
   QString title = "flux spectrum";
@@ -98,13 +101,19 @@ RigidityFlux::RigidityFlux(Type type, const QDateTime& first, const QDateTime& l
 
 RigidityFlux::~RigidityFlux()
 {
-  delete m_measurementTimeCalculation->histogram();
-  delete m_measurementTimeCalculation;
-  m_measurementTimeCalculation = 0;
-  delete m_fluxCalculation;
-  m_fluxCalculation = 0;
-  delete m_phiFit;
-  m_phiFit = 0;
+  if (m_measurementTimeCalculation) {
+    delete m_measurementTimeCalculation->histogram();
+    delete m_measurementTimeCalculation;
+    m_measurementTimeCalculation = 0;
+  }
+  if (m_fluxCalculation) {
+    delete m_fluxCalculation;
+    m_fluxCalculation = 0;
+  }
+  if (m_phiFit) {
+    delete m_phiFit;
+    m_phiFit = 0;
+  }
 }
 
 void RigidityFlux::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)

@@ -38,7 +38,6 @@ private:
   void efficiencyCorrection();
   void updateBinTitles();
   Type m_type;
-  EfficiencyCorrectionSettings* m_effCor;
   MeasurementTimeCalculation* m_measurementTimeCalculation;
   FluxCalculation* m_fluxCalculation;
   TH1D* m_particleHistogram;

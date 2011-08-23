@@ -98,6 +98,7 @@
 #include "AzimuthCutStatistics.hh"
 #include "Helpers.hh"
 #include "FluxCollection.hh"
+#include "EventTimeDifferencePlot.hh"
 
 #include <QCloseEvent>
 #include <QFileDialog>
@@ -664,6 +665,7 @@ void MainWindow::setupPlots()
       if (element->type() == DetectorElement::tof)
         m_ui.plotter->addPlot(new TOFPositionCorrelationPlot(element->id()));
     }
+    m_ui.plotter->addPlot(new EventTimeDifferencePlot(m_ui.numberOfThreadsSpinBox->value()));
   }
   if (m_ui.slowControlCheckBox->isChecked()) {
     QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());
