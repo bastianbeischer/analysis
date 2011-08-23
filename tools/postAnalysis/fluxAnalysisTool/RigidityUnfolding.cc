@@ -22,8 +22,8 @@ RigidityUnfolding::RigidityUnfolding(TH2D* migrationHistogram, TH1D* unfoldInput
   , m_rhoIj(0)
   , m_lCurve(0)
 {
-	m_unfoldInput->SetBinContent(0, 0);
-	m_unfoldInput->SetBinContent(m_unfoldInput->GetNbinsX() + 1, 0);
+  m_unfoldInput->SetBinContent(0, 0);
+  m_unfoldInput->SetBinContent(m_unfoldInput->GetNbinsX() + 1, 0);
   unfold();
 }
 

@@ -13,9 +13,9 @@ class SimpleEvent;
 // correct!
 class MeasurementTimeCalculation {
 public:
-	MeasurementTimeCalculation(const QDateTime& first, const QDateTime& last);
+  MeasurementTimeCalculation(const QDateTime& first, const QDateTime& last);
   MeasurementTimeCalculation(TH1D* histogram);
-	~MeasurementTimeCalculation();
+  ~MeasurementTimeCalculation();
   void update(const SimpleEvent* const event);
   TH1D* histogram() const;
   double measurementTime() const;

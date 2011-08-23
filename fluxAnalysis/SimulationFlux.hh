@@ -10,7 +10,7 @@
 class SimulationFlux {
 public:
   SimulationFlux(SimulationFluxKey key, TH2D* h2Spectrum);
-	~SimulationFlux();
+  ~SimulationFlux();
   TH1D* spectrum();
 private:
   void scaleYToBinWidth(TH2D* histogram);

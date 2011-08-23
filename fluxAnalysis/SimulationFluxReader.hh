@@ -13,7 +13,7 @@ class TH1D;
 class SimulationFluxReader {
 public:
   static SimulationFluxReader* instance();
-	~SimulationFluxReader();
+  ~SimulationFluxReader();
   QVector<SimulationFluxKey::Location> locations() const;
   QVector<SimulationFluxKey::Acceptance> acceptances(SimulationFluxKey::Location) const;
   QVector<SimulationFluxKey::Source> sources(SimulationFluxKey::Location) const;

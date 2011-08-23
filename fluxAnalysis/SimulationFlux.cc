@@ -29,26 +29,26 @@ TH1D* SimulationFlux::spectrum()
 }
 
 void SimulationFlux::scaleYToBinWidth(TH2D* histogram) {
-	for(int i = 0; i < histogram->GetNbinsX(); i++) {
-		for(int j = 0; j < histogram->GetNbinsY(); j++) {
-			histogram->SetBinContent(i+1,j+1,((histogram->GetBinContent(i+1,j+1))/histogram->GetYaxis()->GetBinWidth(j+1)));
-			histogram->SetBinError(i+1,j+1,((histogram->GetBinError(i+1,j+1))/histogram->GetYaxis()->GetBinWidth(j+1)));
-		}
-	}
+  for(int i = 0; i < histogram->GetNbinsX(); i++) {
+    for(int j = 0; j < histogram->GetNbinsY(); j++) {
+      histogram->SetBinContent(i+1,j+1,((histogram->GetBinContent(i+1,j+1))/histogram->GetYaxis()->GetBinWidth(j+1)));
+      histogram->SetBinError(i+1,j+1,((histogram->GetBinError(i+1,j+1))/histogram->GetYaxis()->GetBinWidth(j+1)));
+    }
+  }
 }
 
 TH1D* SimulationFlux::projectionY(TH2D* histogram, double xMin, double xMax) {
-	QString projectionName = QString(histogram->GetName()) + "_projY_" + QString::number(xMin) + "_to_" + QString::number(xMax);
-	int firstBin = histogram->GetXaxis()->FindBin(xMin);
-	int lastBin = histogram->GetXaxis()->FindBin(xMax);
-	TH1D* projHistogram = histogram->ProjectionY(qPrintable(projectionName), firstBin, lastBin);
+  QString projectionName = QString(histogram->GetName()) + "_projY_" + QString::number(xMin) + "_to_" + QString::number(xMax);
+  int firstBin = histogram->GetXaxis()->FindBin(xMin);
+  int lastBin = histogram->GetXaxis()->FindBin(xMax);
+  TH1D* projHistogram = histogram->ProjectionY(qPrintable(projectionName), firstBin, lastBin);
   if (!projHistogram->GetSumw2())
     projHistogram->Sumw2();
-	return projHistogram;
+  return projHistogram;
 }
 
 void SimulationFlux::scaleToBinWidth(TH1D* histogram) {
   if (!histogram->GetSumw2())
     histogram->Sumw2();
-	histogram->Scale(1., "width");
+  histogram->Scale(1., "width");
 }

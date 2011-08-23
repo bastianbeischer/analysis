@@ -9,7 +9,7 @@ class TH1D;
 class EfficiencyCorrectionSettings {
 public:
   static EfficiencyCorrectionSettings* instance();
-	~EfficiencyCorrectionSettings();
+  ~EfficiencyCorrectionSettings();
   void saveTrackFindingEfficiency(TH1D*);
   void saveAllTrackerLayerCutEfficiency(TH1D*);
   TH1D* trackFindingEfficiency();

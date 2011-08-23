@@ -9,7 +9,7 @@ class TH1D;
 class SolarModulationFit {
 public:
   SolarModulationFit(TH1D* fluxHistogram, int pdgId = 2212);
-	~SolarModulationFit();
+  ~SolarModulationFit();
   TF1* fit();
   QString gammaLabel() const;
   QString phiLabel() const;

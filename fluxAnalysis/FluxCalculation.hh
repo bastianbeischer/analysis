@@ -6,7 +6,7 @@ class TH1D;
 class FluxCalculation {
 public:
   FluxCalculation(TH1D* particleHistogram, double measurementTime);
-	~FluxCalculation();
+  ~FluxCalculation();
   TH1D* fluxHistogram() const;
   void update(double measurementTime);
 private:

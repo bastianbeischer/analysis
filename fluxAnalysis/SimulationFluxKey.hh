@@ -16,7 +16,7 @@ public:
 
   SimulationFluxKey(const QString&, bool isAlbedo);
   SimulationFluxKey(Location, Acceptance, Source, Particle::Type, double modulationParameter, bool isAlbedo);
-	~SimulationFluxKey();
+  ~SimulationFluxKey();
 
   Location location() const {return m_location;}
   Acceptance acceptance() const {return m_acceptance;}
