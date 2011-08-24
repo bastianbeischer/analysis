@@ -87,8 +87,7 @@
 #include "ZSquareTRDPlot.hh"
 #include "TOFBarShiftPlotCollection.hh"
 #include "TimeReconstructionPlot.hh"
-#include "TrackFindingEfficiency.hh"
-#include "AllTrackerLayersFlagEfficiency.hh"
+#include "EfficiencyCollection.hh"
 #include "ZenithDistributionPlot.hh"
 #include "AzimuthDistributionPlot.hh"
 #include "AzimuthMigrationHistogram.hh"
@@ -638,8 +637,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::Positive));
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::Negative));
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::All));
-    m_ui.plotter->addPlot(new TrackFindingEfficiency());
-    m_ui.plotter->addPlot(new AllTrackerLayersFlagEfficiency());
+    m_ui.plotter->addPlot(new EfficiencyCollection());
   }
   if (m_ui.miscellaneousTRDCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisPlot::MiscellaneousTRD));

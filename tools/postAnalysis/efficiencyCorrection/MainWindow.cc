@@ -3,6 +3,7 @@
 #include "PostAnalysisPlot.hh"
 #include "PostAnalysisCanvas.hh"
 #include "AllTrackerLayersFlagEfficiencyCorrection.hh"
+#include "EfficiencyCorrectionSettings.hh"
 #include "TrackFindingEfficiencyCorrection.hh"
 
 #include <TCanvas.h>
@@ -27,21 +28,27 @@ void MainWindow::setupAnalysis()
   PostAnalysisCanvas* canvas = 0;
   TFile file(qPrintable(m_analysisFiles.at(0)));
   gROOT->cd();
-  
-  QString name = QString("One hit in all layers canvas");
+
+  EfficiencyCorrectionSettings::BinQuantity quantity = EfficiencyCorrectionSettings::Raw;
+  QString name = QString("All Tracker Layers Flag Efficiency - " + EfficiencyCorrectionSettings::instance()->binQuantityName(quantity) + " canvas");
   canvas = addCanvas(&file, qPrintable(name));
   addPlot(new AllTrackerLayersFlagEfficiencyCorrection(AllTrackerLayersFlagEfficiencyCorrection::Positive, canvas));
-  
-  name = QString("One hit in all layers canvas");
-  canvas = addCanvas(&file, qPrintable(name));
   addPlot(new AllTrackerLayersFlagEfficiencyCorrection(AllTrackerLayersFlagEfficiencyCorrection::Negative, canvas));
-  
-  name = QString("Track finding efficiency canvas");
+
+  name = QString("Track finding efficiency - " + EfficiencyCorrectionSettings::instance()->binQuantityName(quantity) + " canvas");
   canvas = addCanvas(&file, qPrintable(name));
   addPlot(new TrackFindingEfficiencyCorrection(TrackFindingEfficiencyCorrection::Positive, canvas));
-  
-  name = QString("Track finding efficiency canvas");
+  addPlot(new TrackFindingEfficiencyCorrection(TrackFindingEfficiencyCorrection::Negative, canvas));
+
+  quantity = EfficiencyCorrectionSettings::Unfolded;
+  name = QString("All Tracker Layers Flag Efficiency - " + EfficiencyCorrectionSettings::instance()->binQuantityName(quantity) + " canvas");
   canvas = addCanvas(&file, qPrintable(name));
+  addPlot(new AllTrackerLayersFlagEfficiencyCorrection(AllTrackerLayersFlagEfficiencyCorrection::Positive, canvas));
+  addPlot(new AllTrackerLayersFlagEfficiencyCorrection(AllTrackerLayersFlagEfficiencyCorrection::Negative, canvas));
+
+  name = QString("Track finding efficiency - " + EfficiencyCorrectionSettings::instance()->binQuantityName(quantity) + " canvas");
+  canvas = addCanvas(&file, qPrintable(name));
+  addPlot(new TrackFindingEfficiencyCorrection(TrackFindingEfficiencyCorrection::Positive, canvas));
   addPlot(new TrackFindingEfficiencyCorrection(TrackFindingEfficiencyCorrection::Negative, canvas));
 
   file.Close();

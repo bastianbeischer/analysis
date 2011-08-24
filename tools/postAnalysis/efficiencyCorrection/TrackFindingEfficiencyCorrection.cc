@@ -1,7 +1,7 @@
 #include "TrackFindingEfficiencyCorrection.hh"
 
+#include "Constants.hh"
 #include "Corrections.hh"
-#include "EfficiencyCorrectionSettings.hh"
 #include "Helpers.hh"
 
 #include <TH1.h>
@@ -20,15 +20,28 @@ TrackFindingEfficiencyCorrection::TrackFindingEfficiencyCorrection(Type type, Po
 {
   m_typeNames.insert(Positive, "positive");
   m_typeNames.insert(Negative, "negative");
-  
+
   TH1D* histogram = 0;
   if (m_type == Negative)
     histogram = Helpers::createMirroredHistogram(canvas->histograms1D().at(0));
   else
     histogram = new TH1D(*canvas->histograms1D().at(0));
 
+  const int nBins = histogram->GetNbinsX();
+  double nBinsNew;
+  if (nBins%2 == 0)
+    nBinsNew = nBins / 2;
+  else
+    nBinsNew = (nBins - 1) / 2;
+  m_quantity = EfficiencyCorrectionSettings::instance()->binQuantity(nBinsNew);
+
+//  for (int i = 0; i < histogram->GetNbinsX(); ++i) {
+//    histogram->SetBinContent(i+1, 1);
+//    histogram->SetBinError(i+1, 0);
+//  }
+
   QString title = QString(canvas->name()).replace("canvas", "histogram");
-  title.append(QString(" - ") + m_typeNames[m_type]);
+  title.append(QString(" - ") + m_typeNames[m_type] + EfficiencyCorrectionSettings::instance()->binQuantityName(m_quantity));
   setTitle(title);
 
   addHistogram(histogram);
@@ -51,7 +64,9 @@ TrackFindingEfficiencyCorrection::~TrackFindingEfficiencyCorrection()
 
 void TrackFindingEfficiencyCorrection::save()
 {
-  if (m_type != Positive)
+  if (m_type != Positive) {
+    qDebug("you have to save the positive histogram");
     return;
-  EfficiencyCorrectionSettings::instance()->trackFindingEfficiency();
+  }
+  EfficiencyCorrectionSettings::instance()->saveTrackFindingEfficiency(m_quantity, histogram());
 }

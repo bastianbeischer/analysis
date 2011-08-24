@@ -1,10 +1,13 @@
 #include "EfficiencyCorrectionSettings.hh"
+
+#include "Constants.hh"
 #include "Helpers.hh"
 
 #include <TH1.h>
 
 #include <QString>
 #include <QVariant>
+#include <QDebug>
 #include <QList>
 #include <QVector>
 
@@ -18,21 +21,25 @@ EfficiencyCorrectionSettings* EfficiencyCorrectionSettings::instance()
 }
 
 EfficiencyCorrectionSettings::EfficiencyCorrectionSettings()
-  : m_trackFindingEfficiency(0)
-  , m_allTrackerLayerCutEfficiency(0)
-  , m_settings(Helpers::analysisPath() + "/conf/EfficiencyCorrections.conf", QSettings::IniFormat)
+  : m_settings(Helpers::analysisPath() + "/conf/EfficiencyCorrections.conf", QSettings::IniFormat)
   , m_trackFindingKey("trackFindingEfficiency")
   , m_allTrackerLayerCutKey("oneHitAllLayersEfficiency")
   , m_axisKey("/axis")
   , m_contentKey("/content")
   , m_errorKey("/error")
 {
+  m_binQuantities.insert(Raw, Constants::nRigidityBinsRaw);
+  m_binQuantities.insert(Unfolded, Constants::nRigidityBinsUnfolded);
+  m_trackFindingEfficiency.insert(Raw, 0);
+  m_trackFindingEfficiency.insert(Unfolded, 0);
+  m_allTrackerLayerCutEfficiency.insert(Raw, 0);
+  m_allTrackerLayerCutEfficiency.insert(Unfolded, 0);
 }
 
 EfficiencyCorrectionSettings::~EfficiencyCorrectionSettings()
 {
-  delete m_allTrackerLayerCutEfficiency;
-  delete m_trackFindingEfficiency;
+  qDeleteAll(m_allTrackerLayerCutEfficiency);
+  qDeleteAll(m_trackFindingEfficiency);
   s_instance = 0;
 }
 
@@ -58,28 +65,45 @@ void EfficiencyCorrectionSettings::save(const QString& key, TH1D* histogram)
   m_settings.sync();
 }
 
-void EfficiencyCorrectionSettings::saveTrackFindingEfficiency(TH1D* histogram)
+void EfficiencyCorrectionSettings::saveTrackFindingEfficiency(BinQuantity quantity, TH1D* histogram)
 {
-  save(m_allTrackerLayerCutKey, histogram);
+  save(m_allTrackerLayerCutKey + "_" + binQuantityName(quantity), histogram);
 }
 
-void EfficiencyCorrectionSettings::saveAllTrackerLayerCutEfficiency(TH1D* histogram)
+void EfficiencyCorrectionSettings::saveAllTrackerLayerCutEfficiency(BinQuantity quantity, TH1D* histogram)
 {
-  save(m_trackFindingKey, histogram);
+  save(m_trackFindingKey + "_" + binQuantityName(quantity), histogram);
 }
 
-TH1D* EfficiencyCorrectionSettings::trackFindingEfficiency()
+TH1D* EfficiencyCorrectionSettings::trackFindingEfficiency(BinQuantity quantity)
 {
-  if (!m_trackFindingEfficiency)
-    m_trackFindingEfficiency = readHistogram(m_trackFindingKey);
-  return m_trackFindingEfficiency;
+  if (!m_trackFindingEfficiency[quantity])
+    m_trackFindingEfficiency[quantity] = readHistogram(m_trackFindingKey + "_" + binQuantityName(quantity));
+  return m_trackFindingEfficiency[quantity];
 }
 
-TH1D* EfficiencyCorrectionSettings::allTrackerLayerCutEfficiency()
+TH1D* EfficiencyCorrectionSettings::allTrackerLayerCutEfficiency(BinQuantity quantity)
 {
-  if (!m_allTrackerLayerCutEfficiency)
-    m_allTrackerLayerCutEfficiency = readHistogram(m_allTrackerLayerCutKey);
-  return m_allTrackerLayerCutEfficiency;
+  if (!m_allTrackerLayerCutEfficiency[quantity])
+    m_allTrackerLayerCutEfficiency[quantity] = readHistogram(m_allTrackerLayerCutKey + "_" + binQuantityName(quantity));
+  return m_allTrackerLayerCutEfficiency[quantity];
+}
+
+EfficiencyCorrectionSettings::BinQuantity EfficiencyCorrectionSettings::binQuantity(int nBins) const
+{
+  Q_ASSERT(m_binQuantities.values().contains(nBins));
+  return m_binQuantities.key(nBins);
+}
+
+QString EfficiencyCorrectionSettings::binQuantityName(int nBins) const
+{
+  return binQuantityName(binQuantity(nBins));
+}
+
+QString EfficiencyCorrectionSettings::binQuantityName(BinQuantity quantity) const
+{
+  Q_ASSERT(m_binQuantities[quantity]);
+  return QString("%1_bins").arg(m_binQuantities[quantity]);
 }
 
 TH1D* EfficiencyCorrectionSettings::readHistogram(const QString& key)

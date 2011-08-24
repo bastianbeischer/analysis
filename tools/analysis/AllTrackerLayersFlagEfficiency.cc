@@ -1,5 +1,8 @@
 #include "AllTrackerLayersFlagEfficiency.hh"
 
+#include "EfficiencyCorrectionSettings.hh"
+#include "EfficiencyCollection.hh"
+
 #include <cmath>
 
 #include <TH1D.h>
@@ -15,16 +18,15 @@
 
 #include <QSpinBox>
 
-AllTrackerLayersFlagEfficiency::AllTrackerLayersFlagEfficiency()
+AllTrackerLayersFlagEfficiency::AllTrackerLayersFlagEfficiency(const int nBinsData)
   : AnalysisPlot(AnalysisPlot::MiscellaneousTracker)
   , H1DPlot()
   , m_afterCutHisto(0)
   , m_normHisto(0)
 {
-  QString htitle = "One hit in all layers";
+  const QString& htitle = QString("All Tracker Layers Flag Efficiency - ") + EfficiencyCorrectionSettings::instance()->binQuantityName(nBinsData);
   setTitle(htitle);
 
-  const int nBinsData = 42;
   const double minData = 0.1;
   const double maxData = 20;
   QVector<double> axis = Helpers::logBinning(nBinsData, minData, maxData);

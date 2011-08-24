@@ -34,6 +34,9 @@ namespace Constants
 
   const double geometricAcceptance = 0.00318198;    // m^2sr
   const double geometricAcceptanceTof = 0.00848509; // m^2sr
+
+  const int nRigidityBinsUnfolded = 31;
+  const int nRigidityBinsRaw = 4 * nRigidityBinsUnfolded;
 }
 
 #endif

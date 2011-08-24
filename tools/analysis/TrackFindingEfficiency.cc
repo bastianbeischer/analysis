@@ -3,6 +3,7 @@
 #include "SimpleEvent.hh"
 #include "Particle.hh"
 #include "Track.hh"
+#include "EfficiencyCorrectionSettings.hh"
 #include "ParticleInformation.hh"
 #include "Constants.hh"
 #include "Settings.hh"
@@ -23,7 +24,7 @@
 #include <cmath>
 #include <vector>
 
-TrackFindingEfficiency::TrackFindingEfficiency()
+TrackFindingEfficiency::TrackFindingEfficiency(const int nBinsData)
   : AnalysisPlot(AnalysisPlot::MiscellaneousTracker)
   , H1DPlot()
   , m_reconstructed(0)
@@ -31,10 +32,9 @@ TrackFindingEfficiency::TrackFindingEfficiency()
   , m_nTotal(0)
   , m_nReconstructed(0)
 {
-  QString title = "Track finding efficiency";
-  setTitle(title);
+  const QString& htitle = QString("Track finding efficiency - ") + EfficiencyCorrectionSettings::instance()->binQuantityName(nBinsData);;
+  setTitle(htitle);
 
-  const int nBinsData = 42;
   const double minData = 0.1;
   const double maxData = 20;
   QVector<double> axis = Helpers::logBinning(nBinsData, minData, maxData);

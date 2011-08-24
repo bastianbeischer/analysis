@@ -1,17 +1,14 @@
 #ifndef AllTrackerLayersFlagEfficiencyCorrection_hh
 #define AllTrackerLayersFlagEfficiencyCorrection_hh
 
-#include "PostAnalysisCanvas.hh"
 #include "PostAnalysisPlot.hh"
+#include "PostAnalysisCanvas.hh"
+#include "EfficiencyCorrectionSettings.hh"
 #include "H1DPlot.hh"
 
 #include <QObject>
 #include <QString>
-#include <QVector>
 #include <QMap>
-#include <TGraphErrors.h>
-#include <TF1.h>
-#include <TH1D.h>
 
 class AllTrackerLayersFlagEfficiencyCorrection : public QObject, public PostAnalysisPlot, public H1DPlot {
 Q_OBJECT
@@ -24,6 +21,7 @@ private slots:
 private:
   Type m_type;
   QMap<Type, QString> m_typeNames;
+  EfficiencyCorrectionSettings::BinQuantity m_quantity;
 };
 
 #endif

@@ -140,12 +140,13 @@ void RigidityFluxPlot::updateBinTitles()
 
 void RigidityFluxPlot::loadEfficiencies()
 {
+  const EfficiencyCorrectionSettings::BinQuantity quantity = EfficiencyCorrectionSettings::Unfolded;
   if (m_type == Negative) {
-    m_multiLayerEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency());
-    m_trackFindingEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->trackFindingEfficiency());
+    m_multiLayerEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(quantity));
+    m_trackFindingEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(quantity));
   } else {
-    m_multiLayerEff = EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency();
-    m_trackFindingEff = EfficiencyCorrectionSettings::instance()->trackFindingEfficiency();
+    m_multiLayerEff = EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(quantity);
+    m_trackFindingEff = EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(quantity);
   }
 }
 

@@ -3,27 +3,32 @@
 
 #include <QString>
 #include <QSettings>
+#include <QMap>
 
 class TH1D;
 
 class EfficiencyCorrectionSettings {
 public:
+  enum BinQuantity {Raw, Unfolded, Undefined};
   static EfficiencyCorrectionSettings* instance();
   ~EfficiencyCorrectionSettings();
-  void saveTrackFindingEfficiency(TH1D*);
-  void saveAllTrackerLayerCutEfficiency(TH1D*);
-  TH1D* trackFindingEfficiency();
-  TH1D* allTrackerLayerCutEfficiency();
+  void saveTrackFindingEfficiency(BinQuantity quantity, TH1D*);
+  void saveAllTrackerLayerCutEfficiency(BinQuantity quantity, TH1D*);
+  TH1D* trackFindingEfficiency(BinQuantity quantity);
+  TH1D* allTrackerLayerCutEfficiency(BinQuantity quantity);
+  BinQuantity binQuantity(int nBins) const;
+  QString binQuantityName(int nBins) const;
+  QString binQuantityName(BinQuantity quantity) const;
   static void efficiencyCorrection(TH1D* histogramToCorrect, double efficiency);
   static void efficiencyCorrection(TH1D* histogramToCorrect, TH1D* efficiencyHistogram);
 private:
   EfficiencyCorrectionSettings();
   TH1D* readHistogram(const QString& key);
   void save(const QString& key, TH1D*);
-
   static EfficiencyCorrectionSettings* s_instance;
-  TH1D* m_trackFindingEfficiency;
-  TH1D* m_allTrackerLayerCutEfficiency;
+  QMap<BinQuantity, TH1D*> m_trackFindingEfficiency;
+  QMap<BinQuantity, TH1D*> m_allTrackerLayerCutEfficiency;
+  QMap<BinQuantity, int> m_binQuantities;
   QSettings m_settings;
   QString m_trackFindingKey;
   QString m_allTrackerLayerCutKey;

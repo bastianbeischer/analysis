@@ -127,7 +127,6 @@ void RigidityFlux::update()
     Helpers::updateMirroredHistogram(m_particleHistogramMirrored, m_particleHistogram);
   m_fluxCalculation->update(m_measurementTimeCalculation->measurementTime());
   efficiencyCorrection();
-
   updateBinTitles();
   if (m_type == Positive) {
     m_phiFit->fit();
@@ -152,12 +151,13 @@ void RigidityFlux::updateBinTitles()
 
 void RigidityFlux::loadEfficiencies()
 {
+  const EfficiencyCorrectionSettings::BinQuantity quantity = EfficiencyCorrectionSettings::Raw;
   if (m_type == Negative) {
-    m_multiLayerEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency());
-    m_trackFindingEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->trackFindingEfficiency());
+    m_multiLayerEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(quantity));
+    m_trackFindingEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(quantity));
   } else {
-    m_multiLayerEff = EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency();
-    m_trackFindingEff = EfficiencyCorrectionSettings::instance()->trackFindingEfficiency();
+    m_multiLayerEff = EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(quantity);
+    m_trackFindingEff = EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(quantity);
   }
 }
 

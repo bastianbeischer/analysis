@@ -11,7 +11,7 @@ class TH1D;
 class TrackFindingEfficiency : public AnalysisPlot, public H1DPlot {
   
 public:
-  TrackFindingEfficiency();
+  TrackFindingEfficiency(const int nBinsData);
   ~TrackFindingEfficiency();
   virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
   virtual void update();
