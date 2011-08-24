@@ -31,7 +31,7 @@ RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpe
 {
   m_typeNames.insert(Positive, "positive");
   m_typeNames.insert(Negative, "negative");
-  loadEfficiencies();
+//  loadEfficiencies();
 
   QString name = canvas->name();
   name.remove(" canvas");
@@ -51,10 +51,10 @@ RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpe
   m_particleHistogram->SetTitle(qPrintable(newTitle));
 
   //corrections befor flux calculation
-//  FluxCalculation::efficiencyCorrection(m_particleHistogram, s_multiLayerEff);
-//  FluxCalculation::efficiencyCorrection(m_particleHistogram, s_trackFindingEff);
-//  FluxCalculation::efficiencyCorrection(m_particleHistogram, 0.843684 / 0.792555);
-//  FluxCalculation::efficiencyCorrection(m_particleHistogram, 0.999);//estimate for TOF trigger efficiency
+//  EfficiencyCorrectionSettings::instance()->efficiencyCorrection(m_particleHistogram, m_multiLayerEff);
+//  EfficiencyCorrectionSettings::instance()->efficiencyCorrection(m_particleHistogram, m_trackFindingEff);
+//  EfficiencyCorrectionSettings::instance()->efficiencyCorrection(m_particleHistogram, 0.843684 / 0.792555);
+//  EfficiencyCorrectionSettings::instance()->efficiencyCorrection(m_particleHistogram, 0.999);//estimate for TOF trigger efficiency
   //....todo and particle counting from original histogram
   m_fluxCalculation = new FluxCalculation(m_particleHistogram, measurementTime);
 
@@ -138,17 +138,17 @@ void RigidityFluxPlot::updateBinTitles()
   }
 }
 
-void RigidityFluxPlot::loadEfficiencies()
-{
-  const EfficiencyCorrectionSettings::BinQuantity quantity = EfficiencyCorrectionSettings::Unfolded;
-  if (m_type == Negative) {
-    m_multiLayerEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(quantity));
-    m_trackFindingEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(quantity));
-  } else {
-    m_multiLayerEff = EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(quantity);
-    m_trackFindingEff = EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(quantity);
-  }
-}
+//void RigidityFluxPlot::loadEfficiencies()
+//{
+//  const EfficiencyCorrectionSettings::BinQuantity quantity = EfficiencyCorrectionSettings::Unfolded;
+//  if (m_type == Negative) {
+//    m_multiLayerEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(quantity));
+//    m_trackFindingEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(quantity));
+//  } else {
+//    m_multiLayerEff = EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(quantity);
+//    m_trackFindingEff = EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(quantity);
+//  }
+//}
 
 void RigidityFluxPlot::selectionChanged()
 {

@@ -5,6 +5,7 @@
 #include "RigidityMigrationPlot.hh"
 #include "MeasurementTimePostAnalysisPlot.hh"
 #include "SmearedRigidityComparissonPlot.hh"
+#include "EfficiencyCorrectionSettings.hh"
 #include "RigidityParticleSpectrum.hh"
 #include "PostAnalysisGraphPlot.hh"
 #include "RigidityMcSpectrum.hh"
@@ -15,6 +16,7 @@
 
 #include <TCanvas.h>
 #include <TFile.h>
+#include <TH1D.h>
 #include <TROOT.h>
 
 #include <cmath>
@@ -75,17 +77,38 @@ void MainWindow::setupAnalysis()
   canvas = addCanvas(file, qPrintable(name));
   RigidityParticleSpectrum* particleSpectrum = new RigidityParticleSpectrum(canvas);
   addPlot(particleSpectrum);
+  
+  TH1D* rawSpectrum = new TH1D(*particleSpectrum->spectrum());
+  EfficiencyCorrectionSettings::BinQuantity quantity = EfficiencyCorrectionSettings::Raw;
+  TH1D* multiLayerEff = EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(quantity);
+  TH1D* trackFindingEff = EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(quantity);
+  EfficiencyCorrectionSettings::instance()->efficiencyCorrection(rawSpectrum, multiLayerEff);
+  EfficiencyCorrectionSettings::instance()->efficiencyCorrection(rawSpectrum, trackFindingEff);
+  EfficiencyCorrectionSettings::instance()->efficiencyCorrection(rawSpectrum, 0.843684 / 0.792555);
+  EfficiencyCorrectionSettings::instance()->efficiencyCorrection(rawSpectrum, 0.999);//estimate for TOF trigger efficiency
+  
+  addPlot(new RigidityFluxPlot(canvas, rawSpectrum, measurementTime, RigidityFluxPlot::Positive));
+  addPlot(new RigidityFluxPlot(canvas, rawSpectrum, measurementTime, RigidityFluxPlot::Negative));
 
   RigidityUnfolding* rigidityUnfolding= new RigidityUnfolding(rigidityMigrationPlot->migrationHistogram(), particleSpectrum->spectrum());
   addPlot(new PostAnalysisH2DPlot(rigidityUnfolding->rohIj()));
   addPlot(new PostAnalysisGraphPlot(QVector<TGraph*>() << rigidityUnfolding->lCurve() << rigidityUnfolding->bestlcurve()));
-  addPlot(new PostAnalysisH1DPlot(QVector<TH1D*>() << rigidityUnfolding->unfoldedHistogram() << particleSpectrum->spectrum()));
+//  addPlot(new PostAnalysisH1DPlot(QVector<TH1D*>() << rigidityUnfolding->unfoldedHistogram() << particleSpectrum->spectrum()));
+  
+  TH1D* unfoldedSpectrum = new TH1D(*rigidityUnfolding->unfoldedHistogram());
+  
+  quantity = EfficiencyCorrectionSettings::Unfolded;
+  delete multiLayerEff;
+  delete trackFindingEff;
+  multiLayerEff = EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(quantity);
+  trackFindingEff = EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(quantity);
+  EfficiencyCorrectionSettings::instance()->efficiencyCorrection(unfoldedSpectrum, multiLayerEff);
+  EfficiencyCorrectionSettings::instance()->efficiencyCorrection(unfoldedSpectrum, trackFindingEff);
+  EfficiencyCorrectionSettings::instance()->efficiencyCorrection(unfoldedSpectrum, 0.843684 / 0.792555);
+  EfficiencyCorrectionSettings::instance()->efficiencyCorrection(unfoldedSpectrum, 0.999);//estimate for TOF trigger efficiency
 
-  addPlot(new RigidityFluxPlot(canvas, particleSpectrum->spectrum(), measurementTime, RigidityFluxPlot::Positive));
-  addPlot(new RigidityFluxPlot(canvas, particleSpectrum->spectrum(), measurementTime, RigidityFluxPlot::Negative));
-
-  addPlot(new RigidityFluxPlot(canvas, new TH1D(*rigidityUnfolding->unfoldedHistogram()), measurementTime, RigidityFluxPlot::Positive));
-  addPlot(new RigidityFluxPlot(canvas, rigidityUnfolding->unfoldedHistogram(), measurementTime, RigidityFluxPlot::Negative));
+  addPlot(new RigidityFluxPlot(canvas, unfoldedSpectrum, measurementTime, RigidityFluxPlot::Positive));
+  addPlot(new RigidityFluxPlot(canvas, unfoldedSpectrum, measurementTime, RigidityFluxPlot::Negative));
 
   name = QString("particle spectrum - albedo canvas");
   canvas = addCanvas(file, qPrintable(name));

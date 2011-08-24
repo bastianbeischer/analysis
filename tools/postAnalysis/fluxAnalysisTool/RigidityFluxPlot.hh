@@ -31,8 +31,8 @@ private:
   SolarModulationFit* m_phiFit;
   int m_nBinsStart;
   int m_nBinsNew;
-  TH1D* m_multiLayerEff;
-  TH1D* m_trackFindingEff;
+//  TH1D* m_multiLayerEff;
+//  TH1D* m_trackFindingEff;
   QMap<Type, QString> m_typeNames;
 };
 
