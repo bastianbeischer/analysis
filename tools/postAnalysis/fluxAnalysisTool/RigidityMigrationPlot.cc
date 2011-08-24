@@ -48,7 +48,6 @@ TH1D* RigidityMigrationPlot::createRecordedSpectrum()
     nBinsNew = nBins / 2;
   else
     nBinsNew = (nBins - 1) / 2;
-  
   if (nBins%2 == 0)
     nBinsStart = nBinsNew + 1;
   else
@@ -75,7 +74,6 @@ TH1D* RigidityMigrationPlot::createGeneratedSpectrum()
     nBinsNew = nBins / 2;
   else
     nBinsNew = (nBins - 1) / 2;
-  
   if (nBins%2 == 0)
     nBinsStart = nBinsNew + 1;
   else
