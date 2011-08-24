@@ -5,6 +5,7 @@
 #include "TimeOfFlightHistogram.hh"
 #include "RootStyle.hh"
 #include "TimeResolutionPlot.hh"
+#include "TimeResolutionAnalysis.hh"
 
 #include <TCanvas.h>
 #include <TFile.h>
@@ -50,7 +51,9 @@ void MainWindow::setupAnalysis()
       }
     }
   }
-  addPlot(new TimeResolutionPlot(timeOfFlightHistograms, sqrt(nBins)));
+  TimeResolutionAnalysis* analysis = new TimeResolutionAnalysis(timeOfFlightHistograms, sqrt(nBins));
+  addPlot(new TimeResolutionPlot(analysis, TimeResolutionPlot::Variance));
+  addPlot(new TimeResolutionPlot(analysis, TimeResolutionPlot::StandardDeviation));
   addCanvas(&file, "timeResolutionToyMC canvas");
   file.Close();
 }

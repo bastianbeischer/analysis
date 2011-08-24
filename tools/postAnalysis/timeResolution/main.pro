@@ -19,7 +19,8 @@ LIBS += \
 CLASSES = \
   MainWindow \
   TimeOfFlightHistogram \
-  TimeResolutionPlot
+  TimeResolutionPlot \
+  TimeResolutionAnalysis
 
 SOURCES = \
   main.cc
