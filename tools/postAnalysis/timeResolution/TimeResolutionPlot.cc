@@ -38,7 +38,7 @@ TimeResolutionPlot::TimeResolutionPlot(const TimeResolutionAnalysis* const analy
     addGraph(graph, LP);
   }
 
-  yAxis()->SetRangeUser((type == Variance) ? -1. : 0., 1.);
+  yAxis()->SetRangeUser(0., 1.);
   setAxisTitle("y / mm", (type == Variance) ? QString("variance / ns^{2}") : QString("#sigma / ns"));
 }
 

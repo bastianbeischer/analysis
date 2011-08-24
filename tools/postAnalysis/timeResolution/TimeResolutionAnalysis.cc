@@ -62,27 +62,15 @@ TimeResolutionAnalysis::TimeResolutionAnalysis(const QVector<TimeOfFlightHistogr
   }
 
   TMatrixT<double> a(8*nBins, 8*nBins);
-
-  for (int row = 0; row < 8*nBins; ++row) {
-    for (int column = 0; column < 8*nBins; ++column) {
+  for (int row = 0; row < 8*nBins; ++row)
+    for (int column = 0; column < 8*nBins; ++column)
       a(row, column) = 0;
-    }
-  }
-
-  for (int i = 0; i < 4; ++i) {
-    for (int k = 0; k < nBins; ++k) {
-      int d = i * nBins + k;
-      a(d, d) = sumSigmaErrorJL(map, i, k);
-    }
-  }
-
-  for (int j = 0; j < 4; ++j) {
-    for (int l = 0; l < nBins; ++l) {
-      int d = 4 * nBins + j * nBins + l;
-      a(d, d) = sumSigmaErrorIK(map, j, l);
-    }
-  }
-
+  for (int i = 0; i < 4; ++i)
+    for (int k = 0; k < nBins; ++k)
+      a(i * nBins + k, i * nBins + k) = sumSigmaErrorJL(map, i, k);
+  for (int j = 0; j < 4; ++j)
+    for (int l = 0; l < nBins; ++l)
+      a(4 * nBins + j * nBins + l, 4 * nBins + j * nBins + l) = sumSigmaErrorIK(map, j, l);
   for (int i = 0; i < 4; ++i) {
     for (int j = 0; j < 4; ++j) {
       for (int k = 0; k < nBins; ++k) {
@@ -100,31 +88,49 @@ TimeResolutionAnalysis::TimeResolutionAnalysis(const QVector<TimeOfFlightHistogr
       }
     }
   }
-  TMatrixT<double> aPrime = a.GetSub(0, 8*nBins-2, 0, 8*nBins-2);
-  TMatrixT<double> aPrimeInverted = a.GetSub(0, 8*nBins-2, 0, 8*nBins-2).Invert();
-
   TMatrixT<double> b(8*nBins, 1);
   for (int ai = 0; ai < 8*nBins; ++ai)
     b(ai, 0) = 0;
-  for (int i = 0; i < 4; ++i) {
-    for (int k = 0; k < nBins; ++k) {
+  for (int i = 0; i < 4; ++i)
+    for (int k = 0; k < nBins; ++k)
       b(i * nBins + k, 0) = sumRelativeSigmaErrorJL(map, i, k);
-    }
-  }
-  for (int j = 0; j < 4; ++j) {
-    for (int l = 0; l < nBins; ++l) {
+  for (int j = 0; j < 4; ++j)
+    for (int l = 0; l < nBins; ++l)
       b(4 * nBins + j * nBins + l, 0) = sumRelativeSigmaErrorIK(map, j, l);
+
+
+  TMatrixT<double> aPrime = a.GetSub(0, 8*nBins-2, 0, 8*nBins-2);
+  TMatrixT<double> aPrimeInverted = a.GetSub(0, 8*nBins-2, 0, 8*nBins-2).Invert();
+  TMatrixT<double> bPrime = b.GetSub(0, 8*nBins-2, 0, 0);
+  TMatrixT<double> cPrime = a.GetSub(0, 8*nBins-2, 8*nBins-1, 8*nBins-1);
+  TMatrixT<double> vPrime = aPrimeInverted * bPrime;
+  TMatrixT<double> dPrime = aPrimeInverted * cPrime;
+  double vUpperSum = 0;
+  double vLowerSum = 0;
+  double dUpperSum = 0;
+  double dLowerSum = 0;
+
+  for (int row = 0; row < 4*nBins; ++row) {
+    vUpperSum+= vPrime(row, 0);
+    dUpperSum+= dPrime(row, 0);
+    if (row < 4*nBins-1) {
+      vLowerSum+= vPrime(4 * nBins + row, 0);
+      dLowerSum+= dPrime(4 * nBins + row, 0);
     }
   }
-  TMatrixT<double> bPrime(8*nBins-1, 1);
-  double r = pow(0.467, 2.);
-  for (int ai = 0; ai < 8*nBins-1; ++ai)
-    bPrime(ai, 0) = b(ai, 0) - r * a(ai, 8*nBins-1);
+  double r = (vUpperSum - vLowerSum) / (1. + dUpperSum - dLowerSum);
+  TMatrixT<double> v = vPrime - r * dPrime;
 
-  TMatrixT<double> v = aPrimeInverted * bPrime;
   for (int ai = 0; ai < 8*nBins-1; ++ai)
     m_variance.append(v(ai, 0));
   m_variance.append(r);
+
+  double sum1 = 0;
+  double sum2 = 0;
+  for (int row = 0; row < 4*nBins; ++row) {
+    sum1+= m_variance[row];
+    sum2+= m_variance[4*nBins+row];
+  }
 }
 
 TimeResolutionAnalysis::~TimeResolutionAnalysis()
