@@ -1,45 +1,55 @@
 #include "TimeResolutionPlot.hh"
 #include "TimeResolutionAnalysis.hh"
+#include "PostAnalysisCanvas.hh"
+#include "Constants.hh"
 
-#include <TGraph.h>
+#include <TH1D.h>
 #include <TAxis.h>
 
 #include <QDebug>
 
-TimeResolutionPlot::TimeResolutionPlot(const TimeResolutionAnalysis* const analysis, Type type)
+TimeResolutionPlot::TimeResolutionPlot(const TimeResolutionAnalysis* const analysis, Type type, PostAnalysisCanvas* simulationCanvas)
   : PostAnalysisPlot()
-  , GraphPlot()
+  , H1DPlot()
 {
   QString title = "time resolution plot";
-  title.append((type == Variance) ? QString(" variance") : QString(" standard deviation"));
+  QString postFix = (type == Variance) ? QString(" variance") : QString(" standard deviation");
+  if (simulationCanvas)
+    postFix.append(" with MC");
+  title.append(postFix);
   setTitle(title);
   
   int nBins = analysis->nBins();
 
   for (int i = 0; i < 4; ++i) {
-    TGraph* graph = new TGraph(nBins);
-    graph->SetLineStyle(1);
-    graph->SetLineColor(1+i);
-    graph->SetName(qPrintable(QString("i = %1").arg(i)));
+    TH1D* histogram = new TH1D(qPrintable(QString("reconstructed i = %1").arg(i) + postFix), "", nBins,
+      -Constants::tofBarLength / 2., Constants::tofBarLength / 2.);
+    histogram->SetLineStyle(1);
+    histogram->SetLineColor(1+i);
+    histogram->SetMarkerColor(1+i);
     for (int k = 0; k < nBins; ++k)
-      graph->SetPoint(k, analysis->y(k), (type == Variance) ? analysis->vIK(i, k) : analysis->sigmaIK(i, k));
-    setDrawOption(ALP);
-    addGraph(graph, LP);
+      histogram->SetBinContent(k+1, (type == Variance) ? analysis->vIK(i, k) : analysis->sigmaIK(i, k));
+    addHistogram(histogram, P);
   }
 
   for (int j = 0; j < 4; ++j) {
-    TGraph* graph = new TGraph(nBins);
-    graph->SetLineStyle(2);
-    graph->SetLineColor(1+j);
-    graph->SetName(qPrintable(QString("j = %1").arg(j)));
+    TH1D* histogram = new TH1D(qPrintable(QString("reconstructed j = %1").arg(j) + postFix), "", nBins,
+      -Constants::tofBarLength / 2., Constants::tofBarLength / 2.);
+    histogram->SetLineStyle(2);
+    histogram->SetLineColor(1+j);
+    histogram->SetMarkerColor(1+j);
     for (int l = 0; l < nBins; ++l)
-      graph->SetPoint(l, analysis->y(l), (type == Variance) ? analysis->vJL(j, l) : analysis->sigmaJL(j, l));
-    setDrawOption(ALP);
-    addGraph(graph, LP);
+      histogram->SetBinContent(l+1, (type == Variance) ? analysis->vJL(j, l) : analysis->sigmaJL(j, l));
+    addHistogram(histogram, P);
   }
 
+  setDrawOption(P);
   yAxis()->SetRangeUser(0., 1.);
   setAxisTitle("y / mm", (type == Variance) ? QString("variance / ns^{2}") : QString("#sigma / ns"));
+  if (simulationCanvas) {
+    foreach (TH1D* histogram, simulationCanvas->histograms1D())
+      addHistogram(static_cast<TH1D*>(histogram->Clone()));
+  }
 }
 
 TimeResolutionPlot::~TimeResolutionPlot()

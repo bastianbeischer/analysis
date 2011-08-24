@@ -49,8 +49,10 @@ TimeResolutionAnalysis::Value::Value(double variance, double varianceError, doub
 
 TimeResolutionAnalysis::TimeResolutionAnalysis(const QVector<TimeOfFlightHistogram*>& histograms, int nBins)
   : m_nBins(nBins)
+  , m_r()
   , m_y()
   , m_variance()
+  , m_varianceCorrection()
 {
   Q_ASSERT(histograms.count());
   QMap<Key, Value> map;
@@ -118,18 +120,12 @@ TimeResolutionAnalysis::TimeResolutionAnalysis(const QVector<TimeOfFlightHistogr
       dLowerSum+= dPrime(4 * nBins + row, 0);
     }
   }
-  double r = (vUpperSum - vLowerSum) / (1. + dUpperSum - dLowerSum);
-  TMatrixT<double> v = vPrime - r * dPrime;
+  m_r = (vUpperSum - vLowerSum) / (1. + dUpperSum - dLowerSum);
+  TMatrixT<double> v = vPrime - m_r * dPrime;
 
-  for (int ai = 0; ai < 8*nBins-1; ++ai)
-    m_variance.append(v(ai, 0));
-  m_variance.append(r);
-
-  double sum1 = 0;
-  double sum2 = 0;
-  for (int row = 0; row < 4*nBins; ++row) {
-    sum1+= m_variance[row];
-    sum2+= m_variance[4*nBins+row];
+  for (int ai = 0; ai < 8*nBins-1; ++ai) {
+    m_variance.append(vPrime(ai, 0));
+    m_varianceCorrection.append(dPrime(ai, 0));
   }
 }
 
@@ -213,22 +209,26 @@ double TimeResolutionAnalysis::y(int kl) const
   return m_y[kl];
 }
 
-double TimeResolutionAnalysis::vIK(int i, int k) const
+double TimeResolutionAnalysis::vIK(int i, int k, double r) const
 {
-  return m_variance[i * m_nBins + k];
+  int row = i * m_nBins + k;
+  return m_variance[row] - ((r < 0) ? m_r : r) * m_varianceCorrection[row];
 }
 
-double TimeResolutionAnalysis::vJL(int j, int l) const
+double TimeResolutionAnalysis::vJL(int j, int l, double r) const
 {
-  return m_variance[(j + 4) * m_nBins + l];
+  if (j == 3 && l == m_nBins-1)
+    return (r < 0) ? m_r : r;
+  int row = (j + 4) * m_nBins + l;
+  return m_variance[row] - ((r < 0) ? m_r : r) * m_varianceCorrection[row];
 }
 
-double TimeResolutionAnalysis::sigmaIK(int i, int k) const
+double TimeResolutionAnalysis::sigmaIK(int i, int k, double r) const
 {
-  return sqrt(vIK(i, k));
+  return sqrt(vIK(i, k, r));
 }
 
-double TimeResolutionAnalysis::sigmaJL(int j, int l) const
+double TimeResolutionAnalysis::sigmaJL(int j, int l, double r) const
 {
-  return sqrt(vJL(j, l));
+  return sqrt(vJL(j, l, r));
 }

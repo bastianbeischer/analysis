@@ -51,9 +51,10 @@ void MainWindow::setupAnalysis()
       }
     }
   }
+  PostAnalysisCanvas* mcCanvas = addCanvas(&file, "timeResolutionToyMC canvas");
   TimeResolutionAnalysis* analysis = new TimeResolutionAnalysis(timeOfFlightHistograms, sqrt(nBins));
   addPlot(new TimeResolutionPlot(analysis, TimeResolutionPlot::Variance));
   addPlot(new TimeResolutionPlot(analysis, TimeResolutionPlot::StandardDeviation));
-  addCanvas(&file, "timeResolutionToyMC canvas");
+  addPlot(new TimeResolutionPlot(analysis, TimeResolutionPlot::StandardDeviation, mcCanvas));
   file.Close();
 }

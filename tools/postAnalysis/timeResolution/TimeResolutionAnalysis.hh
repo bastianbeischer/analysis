@@ -14,10 +14,10 @@ public:
 
   int nBins() const;
   double y(int) const;
-  double vIK(int, int) const;
-  double vJL(int, int) const;
-  double sigmaIK(int, int) const;
-  double sigmaJL(int, int) const;
+  double vIK(int, int, double r = -1.) const;
+  double vJL(int, int, double r = -1.) const;
+  double sigmaIK(int, int, double r = -1.) const;
+  double sigmaJL(int, int, double r = -1.) const;
 private:
   struct Key {
     Key(int vi, int vj, int vk, int vl);
@@ -39,8 +39,10 @@ private:
   void dumpMatrix(const TMatrixT<double>& m);
 
   int m_nBins;
+  double m_r;
   QMap<int, double> m_y;
   QVector<double> m_variance;
+  QVector<double> m_varianceCorrection;
 };
 
 #endif
