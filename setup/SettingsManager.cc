@@ -58,7 +58,6 @@ const Settings* SettingsManager::settingsForRun(int run) const
   const QVector<const Settings*>::const_iterator it = qBinaryFind(m_settings.begin(), m_settings.end(), &temp, &settingsCompare);
   if (it != m_settings.constEnd())
     return *it;
-  Q_ASSERT(false);
   return 0;
 }
 
