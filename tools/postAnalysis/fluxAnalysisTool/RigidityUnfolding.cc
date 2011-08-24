@@ -15,16 +15,19 @@
 
 #include <QDebug>
 
-RigidityUnfolding::RigidityUnfolding(TH2D* migrationHistogram, TH1D* unfoldInput)
+RigidityUnfolding::RigidityUnfolding(TH2D* migrationHistogram, TH1D* unfoldInput, double tau)
   : m_migrationHistogram(new TH2D(*migrationHistogram))
   , m_unfoldInput(new TH1D(*unfoldInput))
+  , m_tauOverride(false)
   , m_unfoldedHistogram(0)
   , m_rhoIj(0)
   , m_lCurve(0)
 {
+  if (!qFuzzyCompare(tau, 9999.))
+    m_tauOverride = true;
   m_unfoldInput->SetBinContent(0, 0);
   m_unfoldInput->SetBinContent(m_unfoldInput->GetNbinsX() + 1, 0);
-  unfold();
+  unfold(tau);
 }
 
 RigidityUnfolding::~RigidityUnfolding()
@@ -35,7 +38,7 @@ RigidityUnfolding::~RigidityUnfolding()
   delete m_lCurve;
 }
 
-void RigidityUnfolding::unfold()
+void RigidityUnfolding::unfold(double tau)
 {
   TUnfold unfold(m_migrationHistogram, TUnfold::kHistMapOutputVert);
   const int nGen = m_migrationHistogram->GetNbinsY();
@@ -44,19 +47,26 @@ void RigidityUnfolding::unfold()
   if (unfold.SetInput(m_unfoldInput) >= 10000)
     qDebug() << "Unfolding result may be wrong";
 
-  int nScan = 70;
-  double tauMin = 1e-7; // to use automatic L-curve scan start with taumin = taumax = 0.0
-  double tauMax = 1.;
+  int nScan = 100;//70
+  double tauMin = 1e-7;//1e-7; // to use automatic L-curve scan start with taumin = taumax = 0.0
+  double tauMax = 1;//1.;
   int iBest;
   TSpline *logTauX = 0, *logTauY = 0;
   TGraph* lCurve = 0;
 
   iBest = unfold.ScanLcurve(nScan, tauMin, tauMax, &lCurve, &logTauX, &logTauY);
   m_lCurve = new TGraph(*lCurve);
+  m_lCurve->GetXaxis()->SetTitle("log_{10}(#Chi^{2})");
+  m_lCurve->GetYaxis()->SetTitle("log_{10}(regularisation condition)");
 
   double t = 0, x = 0, y = 0;
   logTauX->GetKnot(iBest, t, x);
   logTauY->GetKnot(iBest, t, y);
+  if (m_tauOverride) {
+    unfold.DoUnfold(tau);
+    x = log10(tau);
+    y = m_lCurve->Eval(x);
+  }
   TGraph* bestLcurve = new TGraph(1, &x, &y);
 
   m_bestLcurve = new TGraph(*bestLcurve);

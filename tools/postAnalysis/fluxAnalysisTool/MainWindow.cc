@@ -4,8 +4,10 @@
 #include "PostAnalysisCanvas.hh"
 #include "RigidityMigrationPlot.hh"
 #include "MeasurementTimePostAnalysisPlot.hh"
+#include "SmearedRigidityComparissonPlot.hh"
 #include "RigidityParticleSpectrum.hh"
 #include "PostAnalysisGraphPlot.hh"
+#include "RigidityMcSpectrum.hh"
 #include "PostAnalysisH2DPlot.hh"
 #include "PostAnalysisH1DPlot.hh"
 #include "RigidityUnfolding.hh"
@@ -14,6 +16,8 @@
 #include <TCanvas.h>
 #include <TFile.h>
 #include <TROOT.h>
+
+#include <cmath>
 
 #include <QDebug>
 #include <QVector>
@@ -38,6 +42,21 @@ void MainWindow::setupAnalysis()
   canvas = addCanvas(file, qPrintable(name));
   RigidityMigrationPlot* rigidityMigrationPlot = new RigidityMigrationPlot(canvas);
   addPlot(rigidityMigrationPlot);
+  addPlot(new PostAnalysisH2DPlot(rigidityMigrationPlot->createMigrationHistogramNormalizedToArea()));
+
+  name = QString("Rigidity Mc Plot Generated canvas");
+  PostAnalysisCanvas* genCanvas = addCanvas(file, qPrintable(name));
+  name = QString("Rigidity Mc Plot Reconstructed canvas");
+  PostAnalysisCanvas* recCanvas = addCanvas(file, qPrintable(name));
+  RigidityMcSpectrum* rigidityMcSpectrum = new RigidityMcSpectrum(genCanvas, recCanvas);
+  addPlot(new SmearedRigidityComparissonPlot(SmearedRigidityComparissonPlot::Positive, rigidityMcSpectrum->createGeneratedSpectrum(), rigidityMcSpectrum->createRecordedSpectrum()));
+  addPlot(new SmearedRigidityComparissonPlot(SmearedRigidityComparissonPlot::Negative, rigidityMcSpectrum->createGeneratedSpectrum(), rigidityMcSpectrum->createRecordedSpectrum()));
+
+  RigidityUnfolding* testUnfolding= new RigidityUnfolding(rigidityMigrationPlot->migrationHistogram(), rigidityMcSpectrum->createRecordedSpectrum());
+  addPlot(new PostAnalysisH2DPlot(testUnfolding->rohIj()));
+  addPlot(new PostAnalysisGraphPlot(QVector<TGraph*>() << testUnfolding->lCurve() << testUnfolding->bestlcurve()));
+  addPlot(new SmearedRigidityComparissonPlot(SmearedRigidityComparissonPlot::Positive, rigidityMcSpectrum->createGeneratedSpectrum(), rigidityMcSpectrum->createRecordedSpectrum(), testUnfolding->unfoldedHistogram()));
+  addPlot(new SmearedRigidityComparissonPlot(SmearedRigidityComparissonPlot::Negative, rigidityMcSpectrum->createGeneratedSpectrum(), rigidityMcSpectrum->createRecordedSpectrum(), testUnfolding->unfoldedHistogram()));
 
   file->Close();
   delete file;
