@@ -97,14 +97,14 @@ TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin
   latex->SetTitle(qPrintable(QString("(%1 %2 %3 %4)").arg(m_i).arg(m_j).arg(m_k).arg(m_l)));
   addLatex(latex);
 
-  latex = RootPlot::newLatex(0.60, 0.85);
-  latex->SetTitle(qPrintable(QString("chi2  = %1").arg(function->GetChisquare(), 0, 'f', 3, ' ')));
+  latex = RootPlot::newLatex(0.55, 0.85);
+  latex->SetTitle(qPrintable(QString("chi2 / ndf = %1 / %2").arg(function->GetChisquare(), 0, 'f', 3, ' ').arg(function->GetNDF())));
   addLatex(latex);
-  latex = RootPlot::newLatex(0.60, 0.82);
-  latex->SetTitle(qPrintable(QString("mean  = %1 #pm %2 ns").arg(m_mean, 0, 'f', 3, ' ').arg(m_meanError, 0, 'f', 3, ' ')));
+  latex = RootPlot::newLatex(0.55, 0.82);
+  latex->SetTitle(qPrintable(QString("mean       = %1 #pm %2 ns").arg(m_mean, 0, 'f', 3, ' ').arg(m_meanError, 0, 'f', 3, ' ')));
   addLatex(latex);
-  latex = RootPlot::newLatex(0.60, 0.79);
-  latex->SetTitle(qPrintable(QString("sigma = %1 #pm %2 ns").arg(m_sigma, 0, 'f', 3, ' ').arg(m_sigmaError, 0, 'f', 3, ' ')));
+  latex = RootPlot::newLatex(0.55, 0.79);
+  latex->SetTitle(qPrintable(QString("sigma      = %1 #pm %2 ns").arg(m_sigma, 0, 'f', 3, ' ').arg(m_sigmaError, 0, 'f', 3, ' ')));
   addLatex(latex);
 }
 
