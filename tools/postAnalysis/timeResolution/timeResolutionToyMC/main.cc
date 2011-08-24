@@ -17,7 +17,7 @@
 
 double resolutionDistribution(double* x, double* p)
 {
-  return 0.3 / sqrt(2.) + p[0] * pow(2. * (x[0]-p[1]) / Constants::tofBarLength, 2);
+  return p[0] + p[1] * pow(2. * (x[0]-p[2]) / Constants::tofBarLength, 2);
 }
 
 int main(int argc, char* argv[])
@@ -34,13 +34,20 @@ int main(int argc, char* argv[])
   TApplication application("timeResolutionToyMC", &argc, argv);
 
   TF1* resolutionFunction[4][2];
+  TH1D* resolutionHistogram[4][2];
   for (int bar = 0; bar < 4; ++bar) {
     for (int layer = 0; layer < 2; ++layer) {
       char name[128];
       sprintf(name, "resolutionFunction_%d_%d", bar, layer);
-      resolutionFunction[bar][layer] = new TF1(name, resolutionDistribution, -Constants::tofBarLength / 2., Constants::tofBarLength / 2., 2);
-      resolutionFunction[bar][layer]->SetParameter(0, 0.1 * (bar + 1));
-      resolutionFunction[bar][layer]->SetParameter(1, (0.5 * layer + bar - 2.5) * 20);
+      resolutionFunction[bar][layer] = new TF1(name, resolutionDistribution, -Constants::tofBarLength / 2., Constants::tofBarLength / 2., 3);
+      resolutionFunction[bar][layer]->SetParameter(0, 0.05 * bar + 0.3 / sqrt(2.));
+      resolutionFunction[bar][layer]->SetParameter(1, 0.1 * (bar + 1));
+      resolutionFunction[bar][layer]->SetParameter(2, (0.5 * layer + bar - 2.5) * 20);
+      resolutionHistogram[bar][layer] = new TH1D(name, ";y / mm;#sigma / ns", nBins, -Constants::tofBarLength / 2., Constants::tofBarLength / 2.);
+      for (int bin = 1; bin <= nBins; ++bin) {
+        double y = resolutionHistogram[bar][layer]->GetXaxis()->GetBinCenter(bin);
+        resolutionHistogram[bar][layer]->SetBinContent(bin, resolutionFunction[bar][layer]->Eval(y));
+      }
     }
   }
 
@@ -87,8 +94,8 @@ int main(int argc, char* argv[])
     int lowerBin = (lowerY + Constants::tofBarLength / 2.) / binWidth;
     double ds =
       Helpers::addQuad(upperX - lowerX, upperY - lowerY, Constants::upperTofPosition - Constants::lowerTofPosition);
-    double upperResolution = resolutionFunction[upperBar][0]->Eval(upperY);
-    double lowerResolution = resolutionFunction[lowerBar][1]->Eval(lowerY);
+    double upperResolution = resolutionHistogram[upperBar][0]->GetBinContent(upperBin + 1);
+    double lowerResolution = resolutionHistogram[lowerBar][1]->GetBinContent(lowerBin + 1);
     double t1 = random->Gaus(0, upperResolution);
     double t2 = random->Gaus(ds / Constants::speedOfLight, lowerResolution);
     double dt = t2 - t1;
@@ -106,21 +113,19 @@ int main(int argc, char* argv[])
   }
   TCanvas* canvas = new TCanvas("timeResolutionToyMC canvas", "timeResolutionToyMC", 1);
   for (int bar = 0; bar < 4; ++bar) {
-    resolutionFunction[bar][0]->SetLineStyle(1);
-    resolutionFunction[bar][1]->SetLineStyle(2);
-    resolutionFunction[bar][0]->SetLineColor(1 + bar);
-    resolutionFunction[bar][1]->SetLineColor(1 + bar);
-    resolutionFunction[bar][0]->SetLineWidth(2);
-    resolutionFunction[bar][1]->SetLineStyle(2);
+    resolutionHistogram[bar][0]->SetLineStyle(1);
+    resolutionHistogram[bar][1]->SetLineStyle(2);
+    resolutionHistogram[bar][0]->SetLineColor(1 + bar);
+    resolutionHistogram[bar][1]->SetLineColor(1 + bar);
+    resolutionHistogram[bar][0]->SetLineWidth(2);
+    resolutionHistogram[bar][1]->SetLineStyle(2);
     if (bar == 0) {
-      resolutionFunction[bar][0]->Draw();
-      resolutionFunction[bar][0]->GetXaxis()->SetTitle("y / mm");
-      resolutionFunction[bar][0]->GetYaxis()->SetRangeUser(0., 0.75);
-      resolutionFunction[bar][0]->GetYaxis()->SetTitle("#sigma / ns");
+      resolutionHistogram[bar][0]->Draw();
+      resolutionHistogram[bar][0]->GetYaxis()->SetRangeUser(0., 1.);
     } else {
-      resolutionFunction[bar][0]->Draw("SAME");
+      resolutionHistogram[bar][0]->Draw("SAME");
     }
-    resolutionFunction[bar][1]->Draw("SAME");
+    resolutionHistogram[bar][1]->Draw("SAME");
   }
 
   TFile file(outputFileName, "RECREATE");
