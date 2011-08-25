@@ -7,6 +7,7 @@
 #include "TimeResolutionPlot.hh"
 #include "TimeResolutionAnalysis.hh"
 #include "ResiduePlot.hh"
+#include "PullPlot.hh"
 
 #include <TCanvas.h>
 #include <TFile.h>
@@ -73,6 +74,7 @@ void MainWindow::setupAnalysis()
   m_plots.append(new TimeResolutionPlot(analysis, TimeResolutionPlot::Variance));
   m_plots.append(new TimeResolutionPlot(analysis, TimeResolutionPlot::StandardDeviation));
   m_plots.append(new ResiduePlot(timeOfFlightHistograms, analysis));
+  m_plots.append(new PullPlot(timeOfFlightHistograms, analysis));
   if (mcCanvas)
     m_plots.append(new TimeResolutionPlot(analysis, TimeResolutionPlot::StandardDeviation, mcCanvas));
   file.Close();

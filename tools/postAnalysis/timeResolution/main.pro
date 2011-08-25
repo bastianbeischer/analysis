@@ -21,7 +21,8 @@ CLASSES = \
   TimeOfFlightHistogram \
   TimeResolutionPlot \
   TimeResolutionAnalysis \
-  ResiduePlot
+  ResiduePlot \
+  PullPlot
 
 SOURCES = \
   main.cc

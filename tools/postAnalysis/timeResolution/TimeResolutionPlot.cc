@@ -37,6 +37,7 @@ TimeResolutionPlot::TimeResolutionPlot(const TimeResolutionAnalysis* const analy
     histogram->SetLineStyle(1);
     histogram->SetLineColor(1+i);
     histogram->SetMarkerColor(1+i);
+    histogram->SetMarkerStyle(22);
     for (int k = 0; k < nBins; ++k)
       histogram->SetBinContent(k+1, (type == Variance) ? analysis->vIK(i, k, r) : analysis->sigmaIK(i, k, r));
     addHistogram(histogram, P);
@@ -48,6 +49,7 @@ TimeResolutionPlot::TimeResolutionPlot(const TimeResolutionAnalysis* const analy
     histogram->SetLineStyle(2);
     histogram->SetLineColor(1+j);
     histogram->SetMarkerColor(1+j);
+    histogram->SetMarkerStyle(23);
     for (int l = 0; l < nBins; ++l)
       histogram->SetBinContent(l+1, (type == Variance) ? analysis->vJL(j, l, r) : analysis->sigmaJL(j, l, r));
     addHistogram(histogram, P);
