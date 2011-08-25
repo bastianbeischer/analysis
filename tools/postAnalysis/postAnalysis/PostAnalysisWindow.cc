@@ -160,7 +160,11 @@ void PostAnalysisWindow::saveButtonClicked()
     filters.append( description + "(*." + ending + ")" );
   }
   QString selectedFilter;
-  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "All Files(*.*);;" + filters.join(";;"), &selectedFilter);
+  QFileDialog::Options options = 0;
+  #ifdef Q_WS_MAC
+  options = QFileDialog::DontUseNativeDialog;
+  #endif
+  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "All Files(*.*);;" + filters.join(";;"), &selectedFilter, options);
 
   if (fileName.isEmpty())
     return;

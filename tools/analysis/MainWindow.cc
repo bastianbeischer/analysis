@@ -942,8 +942,12 @@ void MainWindow::analyzeButtonClicked()
 
 void MainWindow::setOrAddFileListDialogActionTriggered()
 {
+  QFileDialog::Options options = 0;
+#ifdef Q_WS_MAC
+  options = QFileDialog::DontUseNativeDialog;
+#endif
   QStringList files = QFileDialog::getOpenFileNames(this,
-    "Select one or more file lists to open", "", "*.txt;;*.*;;*");
+    "Select one or more file lists to open", "", "*.txt;;*.*;;*", 0, options);
   if (sender() == m_ui.setFileListDialogAction) {
     foreach(QString file, files)
       m_reader->setFileList(file);
@@ -987,7 +991,11 @@ void MainWindow::saveCanvasDialogActionTriggered()
     filters.append( description + "(*." + ending + ")" );
   }
   QString selectedFilter;
-  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "All Files(*.*);;" + filters.join(";;"), &selectedFilter);
+  QFileDialog::Options options = 0;
+#ifdef Q_WS_MAC
+  options = QFileDialog::DontUseNativeDialog;
+#endif  
+  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "All Files(*.*);;" + filters.join(";;"), &selectedFilter, options);
 
   if (fileName.isEmpty())
     return;
@@ -1035,6 +1043,9 @@ void MainWindow::saveAllCanvasDialogActionTriggered()
   QStringList fileFormatEndings;
   fileFormatEndings << "svg" << "pdf" << "eps" << "root" << "png";
   QFileDialog dialog(this, "save all canvases displayed", ".");
+#ifdef Q_WS_MAC
+  dialog.setOption(QFileDialog::DontUseNativeDialog);
+#endif
   dialog.setFileMode(QFileDialog::DirectoryOnly);
   if (dialog.exec())
     for (int i = 0; i < m_ui.listWidget->count(); ++i) {
@@ -1056,7 +1067,11 @@ void MainWindow::saveForPostAnalysisActionTriggered()
 void MainWindow::saveForPostAnalysisDialogActionTriggered()
 {
   QString fileEnding;
-  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "*.root", &fileEnding);
+  QFileDialog::Options options = 0;
+#ifdef Q_WS_MAC
+  options = QFileDialog::DontUseNativeDialog;
+#endif  
+  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "*.root", &fileEnding, options);
   if (fileName.isEmpty())
     return;
   fileEnding.remove(0, 1);
