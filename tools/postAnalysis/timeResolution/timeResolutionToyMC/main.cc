@@ -43,6 +43,7 @@ int main(int argc, char* argv[])
       resolutionFunction[bar][layer]->SetParameter(0, 0.05 * bar + 0.3 / sqrt(2.));
       resolutionFunction[bar][layer]->SetParameter(1, 0.1 * (bar + 1));
       resolutionFunction[bar][layer]->SetParameter(2, (0.5 * layer + bar - 2.5) * 20);
+      sprintf(name, "resolutionHistogram_%d_%d", bar, layer);
       resolutionHistogram[bar][layer] = new TH1D(name, ";y / mm;#sigma / ns", nBins, -Constants::tofBarLength / 2., Constants::tofBarLength / 2.);
       for (int bin = 1; bin <= nBins; ++bin) {
         double y = resolutionHistogram[bar][layer]->GetXaxis()->GetBinCenter(bin);

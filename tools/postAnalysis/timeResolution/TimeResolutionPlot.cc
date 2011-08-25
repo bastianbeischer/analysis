@@ -21,6 +21,16 @@ TimeResolutionPlot::TimeResolutionPlot(const TimeResolutionAnalysis* const analy
   
   int nBins = analysis->nBins();
 
+  double r = -1;
+  if (simulationCanvas) {
+    foreach (TH1D* histogram, simulationCanvas->histograms1D()) {
+      if (!strcmp(histogram->GetName(), "resolutionHistogram_3_1")) {
+        double sigma = histogram->GetBinContent(histogram->GetXaxis()->GetNbins());
+        r = sigma * sigma;
+      }
+    }
+  }
+
   for (int i = 0; i < 4; ++i) {
     TH1D* histogram = new TH1D(qPrintable(QString("reconstructed i = %1").arg(i) + postFix), "", nBins,
       -Constants::tofBarLength / 2., Constants::tofBarLength / 2.);
@@ -28,7 +38,7 @@ TimeResolutionPlot::TimeResolutionPlot(const TimeResolutionAnalysis* const analy
     histogram->SetLineColor(1+i);
     histogram->SetMarkerColor(1+i);
     for (int k = 0; k < nBins; ++k)
-      histogram->SetBinContent(k+1, (type == Variance) ? analysis->vIK(i, k) : analysis->sigmaIK(i, k));
+      histogram->SetBinContent(k+1, (type == Variance) ? analysis->vIK(i, k, r) : analysis->sigmaIK(i, k, r));
     addHistogram(histogram, P);
   }
 
@@ -39,7 +49,7 @@ TimeResolutionPlot::TimeResolutionPlot(const TimeResolutionAnalysis* const analy
     histogram->SetLineColor(1+j);
     histogram->SetMarkerColor(1+j);
     for (int l = 0; l < nBins; ++l)
-      histogram->SetBinContent(l+1, (type == Variance) ? analysis->vJL(j, l) : analysis->sigmaJL(j, l));
+      histogram->SetBinContent(l+1, (type == Variance) ? analysis->vJL(j, l, r) : analysis->sigmaJL(j, l, r));
     addHistogram(histogram, P);
   }
 
