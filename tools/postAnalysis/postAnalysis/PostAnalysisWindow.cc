@@ -8,8 +8,13 @@
 #include <TCanvas.h>
 #include <TFile.h>
 #include <TROOT.h>
+#include <TGraph.h>
+#include <TGraphErrors.h>
+#include <TH1.h>
 #include <TH2.h>
 #include <TF2.h>
+#include <TAxis.h>
+
 #include <RootQtWidget.hh>
 
 #include <QDebug>
@@ -47,6 +52,8 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
   connect(m_ui->logXCheckBox, SIGNAL(stateChanged(int)), m_ui->qtWidget, SLOT(setLogX(int)));
   connect(m_ui->logYCheckBox, SIGNAL(stateChanged(int)), m_ui->qtWidget, SLOT(setLogY(int)));
   connect(m_ui->logZCheckBox, SIGNAL(stateChanged(int)), m_ui->qtWidget, SLOT(setLogZ(int)));
+  connect(m_ui->qtWidget, SIGNAL(positionChanged(double, double)), this, SLOT(canvasPositionChanged(double, double)));
+  connect(m_ui->qtWidget, SIGNAL(unzoomButtonPressed()), this, SLOT(unzoom()));
 }
 
 PostAnalysisWindow::~PostAnalysisWindow()
@@ -114,7 +121,9 @@ void PostAnalysisWindow::addAnalysisFiles(const QStringList& files)
 
 PostAnalysisCanvas* PostAnalysisWindow::addCanvas(TFile* file, const QString& name)
 {
-  PostAnalysisCanvas* canvas = new PostAnalysisCanvas(file, name);
+  PostAnalysisCanvas* canvas = PostAnalysisCanvas::fromFile(file, name);
+  if (!canvas)
+    return 0;
   m_canvases.append(canvas);
   QListWidgetItem* item = new QListWidgetItem(canvas->name());
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -128,6 +137,16 @@ void PostAnalysisWindow::addPlot(PostAnalysisPlot* plot)
   QListWidgetItem* item = new QListWidgetItem(plot->title());
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
   m_ui->plotListWidget->addItem(item);
+}
+
+void PostAnalysisWindow::clearPlots()
+{
+  m_ui->plotListWidget->disconnect();
+  m_ui->plotListWidget->clear();
+  m_plots.clear();
+  connect(m_ui->plotListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectPlot(QListWidgetItem*)));
+  connect(m_ui->plotListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
+    this, SLOT(selectPlot(QListWidgetItem*, QListWidgetItem*)));
 }
 
 void PostAnalysisWindow::saveButtonClicked()
@@ -201,6 +220,37 @@ void PostAnalysisWindow::aspectRatioChanged(int i)
 {
   double aspectRatio = m_ui->aspectRatioComboBox->itemData(i).toDouble();
   m_ui->qtWidget->setAspectRatio(aspectRatio);
-  //adjustSize();
-  //updateGeometry();
+}
+
+void PostAnalysisWindow::canvasPositionChanged(double x, double y)
+{
+  m_ui->positionLabel->setText(QString("%1%2  %3%4")
+      .arg(x < 0 ? '-' : '+').arg(qAbs(x), 7, 'f', 3, '0')
+      .arg(y < 0 ? '-' : '+').arg(qAbs(y), 7, 'f', 3, '0'));
+}
+
+void PostAnalysisWindow::unzoom()
+{
+  TCanvas* canvas = m_ui->qtWidget->GetCanvas();
+  for (int i = 0; i < canvas->GetListOfPrimitives()->GetSize(); ++i) {
+    if (!strcmp(canvas->GetListOfPrimitives()->At(i)->ClassName(), "TGraph")) {
+      (static_cast<TGraph*>(canvas->GetListOfPrimitives()->At(i)))->GetXaxis()->UnZoom();
+      (static_cast<TGraph*>(canvas->GetListOfPrimitives()->At(i)))->GetYaxis()->UnZoom();
+    }
+    if (!strcmp(canvas->GetListOfPrimitives()->At(i)->ClassName(), "TGraphErrors")) {
+      (static_cast<TGraphErrors*>(canvas->GetListOfPrimitives()->At(i)))->GetXaxis()->UnZoom();
+      (static_cast<TGraphErrors*>(canvas->GetListOfPrimitives()->At(i)))->GetYaxis()->UnZoom();
+    }
+    if (!strcmp(canvas->GetListOfPrimitives()->At(i)->ClassName(), "TH1D")) {
+      (static_cast<TH1D*>(canvas->GetListOfPrimitives()->At(i)))->GetXaxis()->UnZoom();
+      (static_cast<TH1D*>(canvas->GetListOfPrimitives()->At(i)))->GetYaxis()->UnZoom();
+    }
+    if (!strcmp(canvas->GetListOfPrimitives()->At(i)->ClassName(), "TH2D")) {
+      (static_cast<TH2D*>(canvas->GetListOfPrimitives()->At(i)))->GetXaxis()->UnZoom();
+      (static_cast<TH2D*>(canvas->GetListOfPrimitives()->At(i)))->GetYaxis()->UnZoom();
+      (static_cast<TH2D*>(canvas->GetListOfPrimitives()->At(i)))->GetZaxis()->UnZoom();
+    }
+  }
+  gPad->Modified();
+  gPad->Update();
 }

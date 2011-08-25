@@ -7,7 +7,7 @@
 #include <TMultiGraph.h>
 
 const QVector<RootPlot::DrawOption> GraphPlot::s_drawOptions = QVector<DrawOption>()
-  << P << AP << AC << ALP << ACP << ALX << LX;
+  << P << AP << AC << ALP << ACP << ALX << LX << LP;
 
 GraphPlot::GraphPlot()
   : RootPlot()

@@ -265,6 +265,22 @@
                 </item>
                </layout>
               </item>
+              <item>
+               <widget class="QLabel" name="positionLabel">
+                <property name="font">
+                 <font>
+                  <family>DejaVu Sans Mono</family>
+                  <pointsize>12</pointsize>
+                 </font>
+                </property>
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignCenter</set>
+                </property>
+               </widget>
+              </item>
              </layout>
             </item>
             <item>

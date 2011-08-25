@@ -2,13 +2,15 @@
 #define TimeResolutionPlot_hh
 
 #include "PostAnalysisPlot.hh"
-#include "GraphPlot.hh"
+#include "H1DPlot.hh"
 
-class TimeOfFlightHistogram;
+class TimeResolutionAnalysis;
+class PostAnalysisCanvas;
 
-class TimeResolutionPlot : public PostAnalysisPlot, public GraphPlot {
+class TimeResolutionPlot : public PostAnalysisPlot, public H1DPlot {
 public:
-  TimeResolutionPlot(const QVector<TimeOfFlightHistogram*>&);
+  enum Type {Variance, StandardDeviation};
+  TimeResolutionPlot(const TimeResolutionAnalysis* const, Type, PostAnalysisCanvas* = 0);
   virtual ~TimeResolutionPlot();
 };
 

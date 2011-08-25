@@ -2,6 +2,8 @@
 #include "TimeResolutionPlot.hh"
 #include "TOFChannelSelectionWidget.hh"
 
+#include "Constants.hh"
+
 #include <QLayout>
 
 TimeResolutionPlotCollection::TimeResolutionPlotCollection() :
@@ -16,8 +18,11 @@ TimeResolutionPlotCollection::TimeResolutionPlotCollection() :
       unsigned int id2 = upperBars[upperBar][1];
       unsigned int id3 = lowerBars[lowerBar][0];
       unsigned int id4 = lowerBars[lowerBar][1];
-      addPlot(new TimeResolutionPlot(id1, id2, id3, id4));
-      moduleIDs.append(QString("0x%1 0x%2 0x%3 0x%4").arg(id1, 0, 16).arg(id2, 0, 16).arg(id3, 0, 16).arg(id4, 0, 16));
+      TimeResolutionPlot* plot = new TimeResolutionPlot(id1, id2, id3, id4);
+      addPlot(plot);
+      QString title = QString("0x%1 0x%2 0x%4 0x%5")
+        .arg(id1, 0, 16).arg(id2, 0, 16).arg(id3, 0, 16).arg(id4, 0, 16);
+      moduleIDs.append(title);
     }
   }
   TOFChannelSelectionWidget* widget = new TOFChannelSelectionWidget(moduleIDs);
