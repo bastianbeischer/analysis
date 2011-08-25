@@ -1486,6 +1486,30 @@ reconstruction</string>
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="saveEpsButton">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>50</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="font">
+               <font>
+                <family>DejaVu Sans</family>
+               </font>
+              </property>
+              <property name="text">
+               <string>&amp;eps</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="savePngButton">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Maximum" vsizetype="Fixed">

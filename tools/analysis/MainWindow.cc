@@ -237,6 +237,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   connect(m_ui.analyzeButton, SIGNAL(clicked()), this, SLOT(analyzeButtonClicked()));
   connect(m_ui.savePdfButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
+  connect(m_ui.saveEpsButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
   connect(m_ui.savePngButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
   connect(m_ui.saveRootButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
   
@@ -961,6 +962,8 @@ void MainWindow::saveButtonsClicked()
   QPushButton* b = static_cast<QPushButton*>(sender());
   if (b == m_ui.savePdfButton) {
     fileName+= ".pdf";
+  } else if (b == m_ui.saveEpsButton) {
+    fileName+= ".eps";
   } else if (b == m_ui.savePngButton) {
     fileName+= ".png";
   } else if (b == m_ui.saveRootButton) {
