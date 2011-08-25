@@ -4,6 +4,7 @@
 #include <TLatex.h>
 
 #include "Hit.hh"
+#include "EfficiencyCorrectionSettings.hh"
 #include "ParticleInformation.hh"
 #include "Particle.hh"
 #include "Track.hh"
@@ -20,7 +21,7 @@ RigidityMigrationHistogram::RigidityMigrationHistogram()
   QString title = "Rigidity migration";
   setTitle(title);
 
-  const int nBinsGenerated = 21;
+  const int nBinsGenerated = EfficiencyCorrectionSettings::numberOfBins(EfficiencyCorrectionSettings::Unfolded);
   const double minGenerated = 0.1;
   const double maxGenerated = 20;
   QVector<double> axisGenerated = Helpers::logBinning(nBinsGenerated, minGenerated, maxGenerated);
@@ -29,7 +30,7 @@ RigidityMigrationHistogram::RigidityMigrationHistogram()
     double value = axisGenerated.at(i);
     axisGenerated.prepend(-value);
   }
-  const int nBinsData = 42;
+  const int nBinsData = EfficiencyCorrectionSettings::numberOfBins(EfficiencyCorrectionSettings::Raw);
   const double minData = 0.1;
   const double maxData = 20;
   QVector<double> axisData = Helpers::logBinning(nBinsData, minData, maxData);
