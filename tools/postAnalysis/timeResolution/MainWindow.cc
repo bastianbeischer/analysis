@@ -16,11 +16,23 @@
 
 #include <cmath>
 
+#include <QComboBox>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget* parent)
   : PostAnalysisWindow(parent)
+  , m_plotComboBox(new QComboBox)
+  , m_plots()
+  , m_evaluatedPlots()
+  , m_discardedPlots()
+  , m_bothPlots()
 {
+  m_plotComboBox->addItem("none");
+  m_plotComboBox->addItem("evaluated");
+  m_plotComboBox->addItem("discarded");
+  m_plotComboBox->addItem("evaluated+discarded");
+  connect(m_plotComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(plotSelectionChanged(int)));
+  addWidget(m_plotComboBox);
 }
 
 MainWindow::~MainWindow()
@@ -46,15 +58,37 @@ void MainWindow::setupAnalysis()
       Q_ASSERT(nBins == canvas->histograms2D().at(0)->GetXaxis()->GetNbins());
       for (int bin = 1; bin <= nBins; ++bin) {
         TimeOfFlightHistogram* h = new TimeOfFlightHistogram(canvas, bin);
-        addPlot(h);
+        m_bothPlots.append(h);
+        if (h->fitGood())
+          m_evaluatedPlots.append(h);
+        else
+          m_discardedPlots.append(h);
         timeOfFlightHistograms.append(h);
       }
     }
   }
   PostAnalysisCanvas* mcCanvas = addCanvas(&file, "timeResolutionToyMC canvas");
   TimeResolutionAnalysis* analysis = new TimeResolutionAnalysis(timeOfFlightHistograms, sqrt(nBins));
-  addPlot(new TimeResolutionPlot(analysis, TimeResolutionPlot::Variance));
-  addPlot(new TimeResolutionPlot(analysis, TimeResolutionPlot::StandardDeviation));
-  addPlot(new TimeResolutionPlot(analysis, TimeResolutionPlot::StandardDeviation, mcCanvas));
+  m_plots.append(new TimeResolutionPlot(analysis, TimeResolutionPlot::Variance));
+  m_plots.append(new TimeResolutionPlot(analysis, TimeResolutionPlot::StandardDeviation));
+  m_plots.append(new TimeResolutionPlot(analysis, TimeResolutionPlot::StandardDeviation, mcCanvas));
   file.Close();
+  plotSelectionChanged(0);
+}
+
+void MainWindow::plotSelectionChanged(int i)
+{
+  clearPlots();
+  foreach (PostAnalysisPlot* plot, m_plots)
+    addPlot(plot);
+  if (i == 1) {
+    foreach (PostAnalysisPlot* plot, m_evaluatedPlots)
+      addPlot(plot);
+  } else if (i == 2) {
+    foreach (PostAnalysisPlot* plot, m_discardedPlots)
+      addPlot(plot);
+  } else if (i == 3) {
+    foreach (PostAnalysisPlot* plot, m_bothPlots)
+      addPlot(plot);
+  }
 }

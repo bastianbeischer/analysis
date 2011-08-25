@@ -21,6 +21,7 @@ protected:
   virtual void setupAnalysis() = 0;
   PostAnalysisCanvas* addCanvas(TFile*, const QString& name);
   void addPlot(PostAnalysisPlot*);
+  void clearPlots();
   QStringList m_analysisFiles;
   QVector<PostAnalysisCanvas*> m_canvases;
   QVector<PostAnalysisPlot*> m_plots;

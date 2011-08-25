@@ -133,6 +133,16 @@ void PostAnalysisWindow::addPlot(PostAnalysisPlot* plot)
   m_ui->plotListWidget->addItem(item);
 }
 
+void PostAnalysisWindow::clearPlots()
+{
+  m_ui->plotListWidget->disconnect();
+  m_ui->plotListWidget->clear();
+  m_plots.clear();
+  connect(m_ui->plotListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectPlot(QListWidgetItem*)));
+  connect(m_ui->plotListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
+    this, SLOT(selectPlot(QListWidgetItem*, QListWidgetItem*)));
+}
+
 void PostAnalysisWindow::saveButtonClicked()
 {
   addWidget(new QPushButton());

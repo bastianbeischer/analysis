@@ -25,7 +25,7 @@ public:
   double sigmaError() const;
   double v() const;
   double vError() const;
-  bool fitted() const;
+  bool fitGood() const;
 private:
   void extractIndizes(const QString& canvasName, const TH2D* const histogram, int bin);
   void extractParameters();

@@ -226,7 +226,7 @@ double TimeOfFlightHistogram::vError() const
     return m_vError;
 }
 
-bool TimeOfFlightHistogram::fitted() const
+bool TimeOfFlightHistogram::fitGood() const
 {
-  return m_fitted;
+  return m_fitGood;
 }
