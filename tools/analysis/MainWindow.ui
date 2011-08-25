@@ -2469,6 +2469,7 @@ over threshold</string>
      <string>Sa&amp;ve</string>
     </property>
     <addaction name="saveCanvasDialogAction"/>
+    <addaction name="saveAllCanvasesAction"/>
     <addaction name="saveAllCanvasesDialogAction"/>
     <addaction name="saveForPostAnalysisAction"/>
     <addaction name="saveForPostAnalysisDialogAction"/>
@@ -2519,6 +2520,14 @@ over threshold</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="saveAllCanvasesAction">
+   <property name="text">
+    <string>Save &amp;all canvases</string>
+   </property>
+   <property name="font">
+    <font/>
    </property>
   </action>
   <action name="saveAllCanvasesDialogAction">

@@ -31,6 +31,7 @@ class MainWindow : public QMainWindow {
 private slots:
   void setOrAddFileListDialogActionTriggered();
   void saveCanvasDialogActionTriggered();
+  void saveAllCanvasActionTriggered();
   void saveAllCanvasDialogActionTriggered();
   void saveForPostAnalysisActionTriggered();
   void saveForPostAnalysisDialogActionTriggered();

@@ -243,6 +243,7 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.saveCanvasDialogAction, SIGNAL(triggered()), this, SLOT(saveCanvasDialogActionTriggered()));
   connect(m_ui.saveAllCanvasesDialogAction, SIGNAL(triggered()), this, SLOT(saveAllCanvasDialogActionTriggered()));
   connect(m_ui.saveForPostAnalysisAction, SIGNAL(triggered()), this, SLOT(saveForPostAnalysisActionTriggered()));
+  connect(m_ui.saveAllCanvasesAction, SIGNAL(triggered()), this, SLOT(saveAllCanvasActionTriggered()));
   connect(m_ui.saveForPostAnalysisDialogAction, SIGNAL(triggered()), this, SLOT(saveForPostAnalysisDialogActionTriggered()));
   connect(m_ui.setFileListDialogAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListDialogActionTriggered()));
   connect(m_ui.addFileListDialogAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListDialogActionTriggered()));
@@ -1008,6 +1009,21 @@ void MainWindow::saveCanvasDialogActionTriggered()
     if (!fileName.endsWith(fileEnding))
       fileName.append(fileEnding);
     m_ui.plotter->saveCanvas(fileName);
+  }
+}
+
+void MainWindow::saveAllCanvasActionTriggered()
+{
+  QDir dir(m_topLevelPath);
+  if (!dir.exists("plots"))
+    dir.mkdir("plots");
+  QStringList fileFormatEndings;
+  fileFormatEndings << "svg" << "pdf" << "eps" << "root" << "png";
+  for (int i = 0; i < m_ui.listWidget->count(); ++i) {
+    m_ui.listWidget->setCurrentRow(i);
+    const QString& directoryName = m_topLevelPath + "/plots/";
+    foreach (QString fileFormatEnding, fileFormatEndings)
+    m_ui.plotter->saveCanvas(directoryName + '/' + m_ui.plotter->plotTitle(m_activePlots[i]) + "." + fileFormatEnding);
   }
 }
 
