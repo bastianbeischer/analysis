@@ -20,7 +20,8 @@ CLASSES = \
   MainWindow \
   TimeOfFlightHistogram \
   TimeResolutionPlot \
-  TimeResolutionAnalysis
+  TimeResolutionAnalysis \
+  ResiduePlot
 
 SOURCES = \
   main.cc
