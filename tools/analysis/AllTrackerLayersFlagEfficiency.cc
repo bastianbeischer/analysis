@@ -18,20 +18,21 @@
 
 #include <QSpinBox>
 
-AllTrackerLayersFlagEfficiency::AllTrackerLayersFlagEfficiency(const int nBinsData)
+AllTrackerLayersFlagEfficiency::AllTrackerLayersFlagEfficiency(EfficiencyCorrectionSettings::FoldingType type)
   : AnalysisPlot(AnalysisPlot::MiscellaneousTracker)
   , H1DPlot()
   , m_afterCutHisto(0)
   , m_normHisto(0)
 {
-  const QString& htitle = QString("All Tracker Layers Flag Efficiency - ") + EfficiencyCorrectionSettings::instance()->binQuantityName(nBinsData);
+  const QString& htitle = QString("All Tracker Layers Flag Efficiency - ") + EfficiencyCorrectionSettings::instance()->foldingTypeName(type);
+  int nBinsData = EfficiencyCorrectionSettings::numberOfBins(type);
   setTitle(htitle);
 
   const double minData = 0.1;
   const double maxData = 20;
   QVector<double> axis = Helpers::logBinning(nBinsData, minData, maxData);
-  int axisSize = axis.size()*2;
-  for (int i = 0; i < axisSize; i+=2) {
+  int axisSize = 2 * axis.size();
+  for (int i = 0; i < axisSize; i+= 2) {
     double value = axis.at(i);
     axis.prepend(-value);
   }

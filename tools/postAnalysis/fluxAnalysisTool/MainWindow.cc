@@ -79,9 +79,9 @@ void MainWindow::setupAnalysis()
   addPlot(particleSpectrum);
   
   TH1D* rawSpectrum = new TH1D(*particleSpectrum->spectrum());
-  EfficiencyCorrectionSettings::BinQuantity quantity = EfficiencyCorrectionSettings::Raw;
-  TH1D* multiLayerEff = EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(quantity);
-  TH1D* trackFindingEff = EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(quantity);
+  EfficiencyCorrectionSettings::FoldingType type = EfficiencyCorrectionSettings::Raw;
+  TH1D* multiLayerEff = EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(type);
+  TH1D* trackFindingEff = EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(type);
   EfficiencyCorrectionSettings::instance()->efficiencyCorrection(rawSpectrum, multiLayerEff);
   EfficiencyCorrectionSettings::instance()->efficiencyCorrection(rawSpectrum, trackFindingEff);
   EfficiencyCorrectionSettings::instance()->efficiencyCorrection(rawSpectrum, 0.843684 / 0.792555);
@@ -97,11 +97,11 @@ void MainWindow::setupAnalysis()
   
   TH1D* unfoldedSpectrum = new TH1D(*rigidityUnfolding->unfoldedHistogram());
   
-  quantity = EfficiencyCorrectionSettings::Unfolded;
+  type = EfficiencyCorrectionSettings::Unfolded;
   delete multiLayerEff;
   delete trackFindingEff;
-  multiLayerEff = EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(quantity);
-  trackFindingEff = EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(quantity);
+  multiLayerEff = EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(type);
+  trackFindingEff = EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(type);
   EfficiencyCorrectionSettings::instance()->efficiencyCorrection(unfoldedSpectrum, multiLayerEff);
   EfficiencyCorrectionSettings::instance()->efficiencyCorrection(unfoldedSpectrum, trackFindingEff);
   EfficiencyCorrectionSettings::instance()->efficiencyCorrection(unfoldedSpectrum, 0.843684 / 0.792555);

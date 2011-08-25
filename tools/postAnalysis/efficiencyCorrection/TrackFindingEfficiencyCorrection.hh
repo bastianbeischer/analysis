@@ -21,7 +21,7 @@ private slots:
 private:
   Type m_type;
   QMap<Type, QString> m_typeNames;
-  EfficiencyCorrectionSettings::BinQuantity m_quantity;
+  EfficiencyCorrectionSettings::FoldingType m_foldingType;
 };
 
 #endif

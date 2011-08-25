@@ -1,8 +1,8 @@
 #include "EfficiencyCollection.hh"
-
 #include "AllTrackerLayersFlagEfficiency.hh"
 #include "TrackFindingEfficiency.hh"
 #include "Constants.hh"
+#include "EfficiencyCorrectionSettings.hh"
 
 #include <cmath>
 #include <vector>
@@ -25,19 +25,16 @@ EfficiencyCollection::EfficiencyCollection()
   secondaryWidget()->layout()->addWidget(widget);
   setTitle("efficiency collection");
 
-  int nBins = 0;
-  nBins = Constants::nRigidityBinsUnfolded;
-  addPlot(new AllTrackerLayersFlagEfficiency(nBins));
-  comboBox->addItem(QString("AllTrackerLayersFlagEfficiency %1").arg(nBins));
-  nBins = Constants::nRigidityBinsRaw;
-  addPlot(new AllTrackerLayersFlagEfficiency(nBins));
-  comboBox->addItem(QString("AllTrackerLayersFlagEfficiency %1").arg(nBins));
-  nBins = Constants::nRigidityBinsUnfolded;
-  addPlot(new TrackFindingEfficiency(nBins));
-  comboBox->addItem(QString("TrackFindingEfficiency %1").arg(nBins));
-  nBins = Constants::nRigidityBinsRaw;
-  addPlot(new TrackFindingEfficiency(nBins));
-  comboBox->addItem(QString("TrackFindingEfficiency %1").arg(nBins));
+  int nBinsUnfolded = EfficiencyCorrectionSettings::numberOfBins(EfficiencyCorrectionSettings::Unfolded);
+  int nBinsRaw = EfficiencyCorrectionSettings::numberOfBins(EfficiencyCorrectionSettings::Raw);
+  addPlot(new AllTrackerLayersFlagEfficiency(EfficiencyCorrectionSettings::Unfolded));
+  comboBox->addItem(QString("AllTrackerLayersFlagEfficiency %1").arg(nBinsUnfolded));
+  addPlot(new AllTrackerLayersFlagEfficiency(EfficiencyCorrectionSettings::Raw));
+  comboBox->addItem(QString("AllTrackerLayersFlagEfficiency %1").arg(nBinsRaw));
+  addPlot(new TrackFindingEfficiency(EfficiencyCorrectionSettings::Unfolded));
+  comboBox->addItem(QString("TrackFindingEfficiency %1").arg(nBinsUnfolded));
+  addPlot(new TrackFindingEfficiency(EfficiencyCorrectionSettings::Raw));
+  comboBox->addItem(QString("TrackFindingEfficiency %1").arg(nBinsRaw));
 
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPlot(int)));
 }

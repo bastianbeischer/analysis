@@ -28,8 +28,6 @@ EfficiencyCorrectionSettings::EfficiencyCorrectionSettings()
   , m_contentKey("/content")
   , m_errorKey("/error")
 {
-  m_binQuantities.insert(Raw, Constants::nRigidityBinsRaw);
-  m_binQuantities.insert(Unfolded, Constants::nRigidityBinsUnfolded);
   m_trackFindingEfficiency.insert(Raw, 0);
   m_trackFindingEfficiency.insert(Unfolded, 0);
   m_allTrackerLayerCutEfficiency.insert(Raw, 0);
@@ -65,45 +63,33 @@ void EfficiencyCorrectionSettings::save(const QString& key, TH1D* histogram)
   m_settings.sync();
 }
 
-void EfficiencyCorrectionSettings::saveTrackFindingEfficiency(BinQuantity quantity, TH1D* histogram)
+void EfficiencyCorrectionSettings::saveTrackFindingEfficiency(FoldingType type, TH1D* histogram)
 {
-  save(m_allTrackerLayerCutKey + "_" + binQuantityName(quantity), histogram);
+  save(m_allTrackerLayerCutKey + "_" + foldingTypeName(type), histogram);
 }
 
-void EfficiencyCorrectionSettings::saveAllTrackerLayerCutEfficiency(BinQuantity quantity, TH1D* histogram)
+void EfficiencyCorrectionSettings::saveAllTrackerLayerCutEfficiency(FoldingType type, TH1D* histogram)
 {
-  save(m_trackFindingKey + "_" + binQuantityName(quantity), histogram);
+  save(m_trackFindingKey + "_" + foldingTypeName(type), histogram);
 }
 
-TH1D* EfficiencyCorrectionSettings::trackFindingEfficiency(BinQuantity quantity)
+TH1D* EfficiencyCorrectionSettings::trackFindingEfficiency(FoldingType type)
 {
-  if (!m_trackFindingEfficiency[quantity])
-    m_trackFindingEfficiency[quantity] = readHistogram(m_trackFindingKey + "_" + binQuantityName(quantity));
-  return m_trackFindingEfficiency[quantity];
+  if (!m_trackFindingEfficiency[type])
+    m_trackFindingEfficiency[type] = readHistogram(m_trackFindingKey + "_" + foldingTypeName(type));
+  return m_trackFindingEfficiency[type];
 }
 
-TH1D* EfficiencyCorrectionSettings::allTrackerLayerCutEfficiency(BinQuantity quantity)
+TH1D* EfficiencyCorrectionSettings::allTrackerLayerCutEfficiency(FoldingType type)
 {
-  if (!m_allTrackerLayerCutEfficiency[quantity])
-    m_allTrackerLayerCutEfficiency[quantity] = readHistogram(m_allTrackerLayerCutKey + "_" + binQuantityName(quantity));
-  return m_allTrackerLayerCutEfficiency[quantity];
+  if (!m_allTrackerLayerCutEfficiency[type])
+    m_allTrackerLayerCutEfficiency[type] = readHistogram(m_allTrackerLayerCutKey + "_" + foldingTypeName(type));
+  return m_allTrackerLayerCutEfficiency[type];
 }
 
-EfficiencyCorrectionSettings::BinQuantity EfficiencyCorrectionSettings::binQuantity(int nBins) const
+QString EfficiencyCorrectionSettings::foldingTypeName(FoldingType type) const
 {
-  Q_ASSERT(m_binQuantities.values().contains(nBins));
-  return m_binQuantities.key(nBins);
-}
-
-QString EfficiencyCorrectionSettings::binQuantityName(int nBins) const
-{
-  return binQuantityName(binQuantity(nBins));
-}
-
-QString EfficiencyCorrectionSettings::binQuantityName(BinQuantity quantity) const
-{
-  Q_ASSERT(m_binQuantities[quantity]);
-  return QString("%1_bins").arg(m_binQuantities[quantity]);
+  return QString("%1_bins").arg(numberOfBins(type));
 }
 
 TH1D* EfficiencyCorrectionSettings::readHistogram(const QString& key)
@@ -143,4 +129,28 @@ void EfficiencyCorrectionSettings::efficiencyCorrection(TH1D* histogramToCorrect
   if (!histogramToCorrect->GetSumw2())
     histogramToCorrect->Sumw2();
   histogramToCorrect->Divide(efficiencyHistogram);
+}
+
+int EfficiencyCorrectionSettings::numberOfBins(FoldingType type)
+{
+  switch (type) {
+    case Raw: return s_nBinsRaw;
+    case Unfolded: return s_nBinsUnfolded;
+    default : return 0;
+  }
+}
+
+EfficiencyCorrectionSettings::FoldingType EfficiencyCorrectionSettings::foldingType(int nBins) const
+{
+  if (nBins == s_nBinsRaw) {
+    return Raw;
+  } else if (nBins == s_nBinsUnfolded) {
+    return Unfolded;
+  }
+  return Undefined;
+}
+
+QString EfficiencyCorrectionSettings::foldingTypeName(int nBins) const
+{
+  return foldingTypeName(foldingType(nBins));
 }

@@ -35,7 +35,7 @@ FluxCollection::FluxCollection(const QDateTime& first, const QDateTime& last)
   secondaryWidget()->layout()->addWidget(widget);
   setTitle("flux collection");
 
-  const int nBinsData = Constants::nRigidityBinsRaw;
+  const int nBinsData = EfficiencyCorrectionSettings::numberOfBins(EfficiencyCorrectionSettings::Raw);
   const double minData = 0.1;
   const double maxData = 20;
   QVector<double> axisData = Helpers::logBinning(nBinsData, minData, maxData);

@@ -24,7 +24,7 @@
 #include <cmath>
 #include <vector>
 
-TrackFindingEfficiency::TrackFindingEfficiency(const int nBinsData)
+TrackFindingEfficiency::TrackFindingEfficiency(EfficiencyCorrectionSettings::FoldingType type)
   : AnalysisPlot(AnalysisPlot::MiscellaneousTracker)
   , H1DPlot()
   , m_reconstructed(0)
@@ -32,9 +32,9 @@ TrackFindingEfficiency::TrackFindingEfficiency(const int nBinsData)
   , m_nTotal(0)
   , m_nReconstructed(0)
 {
-  const QString& htitle = QString("Track finding efficiency - ") + EfficiencyCorrectionSettings::instance()->binQuantityName(nBinsData);;
+  const QString& htitle = QString("Track finding efficiency - ") + EfficiencyCorrectionSettings::instance()->foldingTypeName(type);
+  int nBinsData = EfficiencyCorrectionSettings::numberOfBins(type);
   setTitle(htitle);
-
   const double minData = 0.1;
   const double maxData = 20;
   QVector<double> axis = Helpers::logBinning(nBinsData, minData, maxData);

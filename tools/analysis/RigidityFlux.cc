@@ -151,13 +151,13 @@ void RigidityFlux::updateBinTitles()
 
 void RigidityFlux::loadEfficiencies()
 {
-  const EfficiencyCorrectionSettings::BinQuantity quantity = EfficiencyCorrectionSettings::Raw;
+  const EfficiencyCorrectionSettings::FoldingType type = EfficiencyCorrectionSettings::Raw;
   if (m_type == Negative) {
-    m_multiLayerEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(quantity));
-    m_trackFindingEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(quantity));
+    m_multiLayerEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(type));
+    m_trackFindingEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(type));
   } else {
-    m_multiLayerEff = EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(quantity);
-    m_trackFindingEff = EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(quantity);
+    m_multiLayerEff = EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(type);
+    m_trackFindingEff = EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(type);
   }
 }
 

@@ -32,15 +32,10 @@ AllTrackerLayersFlagEfficiencyCorrection::AllTrackerLayersFlagEfficiencyCorrecti
     nBinsNew = nBins / 2;
   else
     nBinsNew = (nBins - 1) / 2;
-  m_quantity = EfficiencyCorrectionSettings::instance()->binQuantity(nBinsNew);
-
-//  for (int i = 0; i < histogram->GetNbinsX(); ++i) {
-//    histogram->SetBinContent(i+1, 1);
-//    histogram->SetBinError(i+1, 0);
-//  }
+  m_foldingType = EfficiencyCorrectionSettings::instance()->foldingType(nBinsNew);
 
   QString title = QString(canvas->name()).replace("canvas", "histogram");
-  title.append(QString(" - ") + m_typeNames[m_type] + EfficiencyCorrectionSettings::instance()->binQuantityName(m_quantity));
+  title.append(QString(" - ") + m_typeNames[m_type] + EfficiencyCorrectionSettings::instance()->foldingTypeName(m_foldingType));
   setTitle(title);
 
   addHistogram(histogram);
@@ -67,5 +62,5 @@ void AllTrackerLayersFlagEfficiencyCorrection::save()
     qDebug("you have to save the positive histogram");
     return;
   }
-  EfficiencyCorrectionSettings::instance()->saveAllTrackerLayerCutEfficiency(m_quantity, histogram());
+  EfficiencyCorrectionSettings::instance()->saveAllTrackerLayerCutEfficiency(m_foldingType, histogram());
 }
