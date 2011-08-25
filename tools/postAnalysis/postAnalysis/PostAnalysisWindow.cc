@@ -25,8 +25,12 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
   : QMainWindow(parent)
   , m_canvases()
   , m_plots()
+  , m_dialogOptions(0)
   , m_ui(new Ui_postAnalysisWindow)
 {
+#ifdef Q_WS_MAC
+  m_dialogOptions = QFileDialog::DontUseNativeDialog;
+#endif
   m_ui->setupUi(this);
   m_ui->aspectRatioComboBox->addItem("auto", -1.);
   m_ui->aspectRatioComboBox->addItem("3:4", 3./4.);
@@ -160,11 +164,7 @@ void PostAnalysisWindow::saveButtonClicked()
     filters.append( description + "(*." + ending + ")" );
   }
   QString selectedFilter;
-  QFileDialog::Options options = 0;
-  #ifdef Q_WS_MAC
-  options = QFileDialog::DontUseNativeDialog;
-  #endif
-  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "All Files(*.*);;" + filters.join(";;"), &selectedFilter, options);
+  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "All Files(*.*);;" + filters.join(";;"), &selectedFilter, m_dialogOptions);
 
   if (fileName.isEmpty())
     return;
@@ -197,6 +197,7 @@ void PostAnalysisWindow::saveAllButtonClicked()
   QStringList fileFormatEndings;
   fileFormatEndings << "svg" << "pdf" << "eps" << "root" << "png";
   QFileDialog dialog(this, "save all canvases displayed", ".");
+  dialog.setOptions(m_dialogOptions);
   dialog.setFileMode(QFileDialog::DirectoryOnly);
   if (dialog.exec()) {
     for (int i = 0; i < m_ui->canvasListWidget->count(); ++i) {

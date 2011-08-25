@@ -100,7 +100,6 @@
 #include "EventTimeDifferencePlot.hh"
 
 #include <QCloseEvent>
-#include <QFileDialog>
 #include <QVBoxLayout>
 #include <QDateTime>
 #include <QDebug>
@@ -115,7 +114,11 @@ MainWindow::MainWindow(QWidget* parent)
   , m_inhibitDraw(false)
   , m_time()
   , m_updateTimer()
+  , m_dialogOptions(0)
 {
+#ifdef Q_WS_MAC
+  m_dialogOptions = QFileDialog::DontUseNativeDialog;
+#endif
   m_ui.setupUi(this);
 
   m_topicCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
@@ -942,12 +945,8 @@ void MainWindow::analyzeButtonClicked()
 
 void MainWindow::setOrAddFileListDialogActionTriggered()
 {
-  QFileDialog::Options options = 0;
-#ifdef Q_WS_MAC
-  options = QFileDialog::DontUseNativeDialog;
-#endif
   QStringList files = QFileDialog::getOpenFileNames(this,
-    "Select one or more file lists to open", "", "*.txt;;*.*;;*", 0, options);
+    "Select one or more file lists to open", "", "*.txt;;*.*;;*", 0, m_dialogOptions);
   if (sender() == m_ui.setFileListDialogAction) {
     foreach(QString file, files)
       m_reader->setFileList(file);
@@ -991,11 +990,7 @@ void MainWindow::saveCanvasDialogActionTriggered()
     filters.append( description + "(*." + ending + ")" );
   }
   QString selectedFilter;
-  QFileDialog::Options options = 0;
-#ifdef Q_WS_MAC
-  options = QFileDialog::DontUseNativeDialog;
-#endif  
-  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "All Files(*.*);;" + filters.join(";;"), &selectedFilter, options);
+  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "All Files(*.*);;" + filters.join(";;"), &selectedFilter, m_dialogOptions);
 
   if (fileName.isEmpty())
     return;
@@ -1043,9 +1038,7 @@ void MainWindow::saveAllCanvasDialogActionTriggered()
   QStringList fileFormatEndings;
   fileFormatEndings << "svg" << "pdf" << "eps" << "root" << "png";
   QFileDialog dialog(this, "save all canvases displayed", ".");
-#ifdef Q_WS_MAC
-  dialog.setOption(QFileDialog::DontUseNativeDialog);
-#endif
+  dialog.setOptions(m_dialogOptions);
   dialog.setFileMode(QFileDialog::DirectoryOnly);
   if (dialog.exec())
     for (int i = 0; i < m_ui.listWidget->count(); ++i) {
@@ -1066,12 +1059,8 @@ void MainWindow::saveForPostAnalysisActionTriggered()
 
 void MainWindow::saveForPostAnalysisDialogActionTriggered()
 {
-  QString fileEnding;
-  QFileDialog::Options options = 0;
-#ifdef Q_WS_MAC
-  options = QFileDialog::DontUseNativeDialog;
-#endif  
-  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "*.root", &fileEnding, options);
+  QString fileEnding; 
+  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "*.root", &fileEnding, m_dialogOptions);
   if (fileName.isEmpty())
     return;
   fileEnding.remove(0, 1);

@@ -12,6 +12,7 @@
 #include "CutFilter.hh"
 
 #include <QMainWindow>
+#include <QFileDialog>
 #include <QString>
 #include <QVector>
 #include <QList>
@@ -77,6 +78,7 @@ private:
   bool m_inhibitDraw;
   QTime m_time;
   QTimer m_updateTimer;
+  QFileDialog::Options m_dialogOptions;
 };
 
 #endif

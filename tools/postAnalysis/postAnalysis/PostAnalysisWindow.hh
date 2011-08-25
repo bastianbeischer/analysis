@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QListWidgetItem>
+#include <QFileDialog>
 #include <QStringList>
 
 class TFile;
@@ -25,6 +26,7 @@ protected:
   QStringList m_analysisFiles;
   QVector<PostAnalysisCanvas*> m_canvases;
   QVector<PostAnalysisPlot*> m_plots;
+  QFileDialog::Options m_dialogOptions;
 private slots:
   void saveButtonClicked();
   void saveAllButtonClicked();
