@@ -35,6 +35,7 @@ private slots:
   void canvasPositionChanged(double, double);
   void plotOptionComboBoxCurrentIndexChanged(const QString& option);
   void aspectRatioChanged(int);
+  void unzoom();
 protected:
   Ui_postAnalysisWindow* m_ui;
 };
