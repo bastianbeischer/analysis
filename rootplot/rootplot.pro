@@ -19,7 +19,8 @@ CLASSES += \
   DetectorSelectionWidget \
   TOFChannelSelectionWidget \
   GraphPlot \
-  PerdaixDisplay
+  PerdaixDisplay \
+  H3DPlot
 
 LIBS += \
   -L$$TOPLEVEL/lib \
