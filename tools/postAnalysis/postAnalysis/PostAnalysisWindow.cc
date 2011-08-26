@@ -25,12 +25,9 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
   : QMainWindow(parent)
   , m_canvases()
   , m_plots()
-  , m_dialogOptions(0)
+  , m_dialogOptions(QFileDialog::DontUseNativeDialog)
   , m_ui(new Ui_postAnalysisWindow)
 {
-#ifdef Q_WS_MAC
-  m_dialogOptions = QFileDialog::DontUseNativeDialog;
-#endif
   m_ui->setupUi(this);
   m_ui->aspectRatioComboBox->addItem("auto", -1.);
   m_ui->aspectRatioComboBox->addItem("3:4", 3./4.);

@@ -114,11 +114,8 @@ MainWindow::MainWindow(QWidget* parent)
   , m_inhibitDraw(false)
   , m_time()
   , m_updateTimer()
-  , m_dialogOptions(0)
+  , m_dialogOptions(QFileDialog::DontUseNativeDialog)
 {
-#ifdef Q_WS_MAC
-  m_dialogOptions = QFileDialog::DontUseNativeDialog;
-#endif
   m_ui.setupUi(this);
 
   m_topicCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
