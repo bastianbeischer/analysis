@@ -40,6 +40,7 @@ private slots:
   void unzoom();
 protected:
   Ui_postAnalysisWindow* m_ui;
+  int m_selectedPlot;
 };
 
 #endif

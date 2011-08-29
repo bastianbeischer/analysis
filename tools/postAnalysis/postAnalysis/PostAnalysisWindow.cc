@@ -27,6 +27,7 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
   , m_plots()
   , m_dialogOptions(QFileDialog::DontUseNativeDialog)
   , m_ui(new Ui_postAnalysisWindow)
+  , m_selectedPlot(-1)
 {
   m_ui->setupUi(this);
   m_ui->aspectRatioComboBox->addItem("auto", -1.);
@@ -69,6 +70,7 @@ void PostAnalysisWindow::selectCanvas(QListWidgetItem* item, QListWidgetItem*)
 
 void PostAnalysisWindow::selectCanvas(QListWidgetItem* item)
 {
+  m_selectedPlot = -1;
   RootStyle::setPalette(RootStyle::DefaultPalette);
   m_ui->qtWidget->GetCanvas()->cd();
   m_ui->qtWidget->GetCanvas()->Clear();
@@ -88,10 +90,11 @@ void PostAnalysisWindow::selectPlot(QListWidgetItem* item, QListWidgetItem*)
 void PostAnalysisWindow::selectPlot(QListWidgetItem* item)
 {
   gPad->Clear();
-  m_plots[m_ui->plotListWidget->row(item)]->draw(m_ui->qtWidget->GetCanvas());
+  m_selectedPlot = m_ui->plotListWidget->row(item);
+  m_plots[m_selectedPlot]->draw(m_ui->qtWidget->GetCanvas());
   plotOptionComboBoxCurrentIndexChanged(m_ui->plotOptionComboBox->currentText());
   m_ui->titleLabel->setText(item->text());
-  QWidget* secondaryWidget = m_plots[m_ui->plotListWidget->row(item)]->secondaryWidget();
+  QWidget* secondaryWidget = m_plots[m_selectedPlot]->secondaryWidget();
   if (m_ui->verticalLayoutLeft->count() > 3) {
     m_ui->verticalLayoutLeft->itemAt(1)->widget()->close();
   }
@@ -226,6 +229,8 @@ void PostAnalysisWindow::aspectRatioChanged(int i)
 
 void PostAnalysisWindow::canvasPositionChanged(double x, double y)
 {
+  if (m_selectedPlot >= 0)
+    m_plots[m_selectedPlot]->positionChanged(x, y);
   m_ui->positionLabel->setText(QString("%1%2  %3%4")
       .arg(x < 0 ? '-' : '+').arg(qAbs(x), 7, 'f', 3, '0')
       .arg(y < 0 ? '-' : '+').arg(qAbs(y), 7, 'f', 3, '0'));
