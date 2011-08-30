@@ -66,11 +66,8 @@ void H2DProjectionPlot::positionChanged(double posX, double posY)
     int binx, biny, binz;
     histogram()->GetBinXYZ(bin, binx, biny, binz);
     TH1D* proj = 0;
-    //double x = qMin(histogram()->GetXaxis()->GetXmax(), qMax(histogram()->GetXaxis()->GetXmin(), posX));
-    //double y = qMin(histogram()->GetYaxis()->GetXmax(), qMax(histogram()->GetYaxis()->GetXmin(), posY));
-
-    double x = qMin(gPad->GetUxmax(), qMax(gPad->GetUxmin(), posX));
-    double y = qMin(gPad->GetUymax(), qMax(gPad->GetUymin(), posY));
+    double x = qBound(gPad->GetUxmin(), posX, gPad->GetUxmax());
+    double y = qBound(gPad->GetUymin(), posY, gPad->GetUymax());
     switch(m_type) {
     case ProjectionOnX:
       m_projectionHistX = histogram()->ProjectionX(qPrintable(title() + "_px"), biny - numberOfBins/2, biny + numberOfBins/2);
