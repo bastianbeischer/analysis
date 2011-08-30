@@ -105,7 +105,6 @@ void MainWindow::saveToConfigFile(bool withBarShift)
   QFileDialog dialog(this, "save time shifts...", ".", "CONF files (*.conf)");
   dialog.setDefaultSuffix("conf");
   dialog.setAcceptMode(QFileDialog::AcceptSave);
-  QStringList fileNames;
   if (dialog.exec())
     TimeShiftContainer::instance()->saveToConfigfile(dialog.selectedFiles()[0], withBarShift);
 }
