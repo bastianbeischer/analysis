@@ -8,6 +8,7 @@
 #include "ParticleFilter.hh"
 #include "MCFilter.hh"
 #include "CutFilter.hh"
+#include "Cut.hh"
 
 class Particle;
 class TrackFinding;
@@ -25,6 +26,7 @@ public:
   void setParticleFilter(ParticleFilter::Types);
   void setMCFilter(MCFilter::Types);
   void setCutFilter(CutFilter cuts);
+  void setCherenkovCut(const Cut&);
 
   void process(SimpleEvent*);
 
@@ -35,6 +37,7 @@ public:
   const Corrections* corrections() const {return m_corrections;}
   const ParticleIdentifier* particleIdentifier() const {return m_identifier;}
   const CutFilter* cutFilter() const {return m_cuts;}
+  const Cut cherenkovCut() const {return m_CherenkovCut;}
 
 private:
   Particle* m_particle;
@@ -44,6 +47,7 @@ private:
   Corrections* m_corrections;
   ParticleIdentifier* m_identifier;
   CutFilter* m_cuts;
+  Cut m_CherenkovCut;
 };
 
 #endif

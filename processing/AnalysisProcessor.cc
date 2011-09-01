@@ -23,6 +23,7 @@ AnalysisProcessor::AnalysisProcessor()
   , m_corrections(new Corrections)
   , m_identifier(new ParticleIdentifier)
   , m_cuts(new CutFilter)
+  , m_CherenkovCut(Cut::cherenkov)
 {
 }
 
@@ -34,6 +35,8 @@ AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, Tr
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections(flags))
   , m_identifier(new ParticleIdentifier)
+  , m_cuts(new CutFilter)
+  , m_CherenkovCut(Cut::cherenkov)
 {
   setTrackType(track);
   setCorrectionFlags(flags);
@@ -74,13 +77,23 @@ void AnalysisProcessor::setCutFilter(CutFilter cuts)
   m_cuts->setCuts(cuts);
 }
 
+void AnalysisProcessor::setCherenkovCut(const Cut& cherenkovCut)
+{
+  if (cherenkovCut.type() == Cut::cherenkov)
+    m_CherenkovCut = cherenkovCut;
+}
+
 void AnalysisProcessor::process(SimpleEvent* event)
 {
   m_particle->reset();
-
   m_corrections->preFitCorrections(event);
 
   QVector<Hit*> clusters = QVector<Hit*>::fromStdVector(event->hits());
+
+  //check filters which need no reconstruction
+  if (!(m_mcFilter->passes(event) && (!m_CherenkovCut.valid() || m_CherenkovCut.passes(clusters, m_particle, event))))
+    return;
+
   QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
 
   Track* track = m_particle->track();
@@ -100,7 +113,7 @@ void AnalysisProcessor::process(SimpleEvent* event)
   // identify particle species
   m_identifier->identify(m_particle);
 
-  if (m_filter->passes(m_particle) && m_mcFilter->passes(clusters, m_particle, event) && m_cuts->passes(clusters, m_particle, event)) {
+  if (m_filter->passes(m_particle) && m_mcFilter->passes(event) && m_cuts->passes(clusters, m_particle, event)) {
     QVector<EventDestination*> postponed;
     foreach(EventDestination* destination, m_destinations) {
       bool success = tryProcessingDestination(destination, clusters, m_particle, event);

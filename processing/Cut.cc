@@ -11,11 +11,11 @@
 
 #include <math.h>
 
-Cut::Cut(Type type) :
-  m_type(type)
+Cut::Cut(Type type)
+  : m_type(type)
+  , m_minIsSet(false)
+  , m_maxIsSet(false)
 {
-  m_minIsSet = false;
-  m_maxIsSet = false;
 }
 
 Cut::~Cut() 
@@ -34,23 +34,29 @@ void Cut::setMax(double max)
   m_max = max;
 }
 
-bool Cut::passesCuts(double value) 
+bool Cut::passesCuts(double value) const
 {
-  if (m_minIsSet && m_maxIsSet) {
-    if (m_min <= value && value <= m_max)
-      return true;
-  } else if (m_minIsSet) {
-    if (m_min <= value)
-      return true;
-  } else if (m_maxIsSet) {
-    if (value <= m_max)
-      return true;
-  }
-  return false;
+  if (m_minIsSet && m_maxIsSet)
+    return (m_min <= value && value <= m_max);
+  else if (m_minIsSet)
+    return (m_min <= value);
+  else if (m_maxIsSet)
+    return (value <= m_max);
+  else
+    return true;
 }
 
-bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent* event)
+bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent* event) const
 {
+  if (m_type == cherenkov) {
+    //get settings if present
+    const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+    if (!settings || settings->situation() != Settings::Testbeam11)
+      return true;
+    double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
+    double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
+    return (passesCuts(c1Signal) && passesCuts(c2Signal));
+  }
   if (m_type == rigidity) {
     const Track* track = particle->track();
     if (!track || !track->fitGood())
@@ -111,20 +117,11 @@ bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*
       return false;
     return passesCuts(sumOfSignalHeights(Hit::trd, track, clusters));
   }
-  if (m_type == cherenkov) {
-    //get settings if present
-    const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
-    if (!settings || settings->situation() != Settings::Testbeam11)
-      return true;
-    double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
-    double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
-    return (passesCuts(c1Signal) && passesCuts(c2Signal));
-  }
   qFatal("m_type does not match any CutType::type!");
   return false;
 }
 
-double Cut::sumOfSignalHeights(const Hit::ModuleType type, const Track* track, const QVector<Hit*>& /*clusters*/)
+double Cut::sumOfSignalHeights(const Hit::ModuleType type, const Track* track, const QVector<Hit*>& /*clusters*/) const
 {
   double sumSignal = 0;
   const QVector<Hit*>::const_iterator endIt = track->hits().constEnd();
