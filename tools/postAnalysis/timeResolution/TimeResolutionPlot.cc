@@ -5,6 +5,7 @@
 
 #include <TH1D.h>
 #include <TAxis.h>
+#include <TLegend.h>
 
 #include <QDebug>
 
@@ -14,7 +15,8 @@ TimeResolutionPlot::TimeResolutionPlot(const TimeResolutionAnalysis* const analy
 {
   QString title = "time resolution plot";
   QString postFix = (type == Variance) ? QString(" variance") : QString(" standard deviation");
-  if (simulationCanvas)
+  bool mc = simulationCanvas;
+  if (mc)
     postFix.append(" with MC");
   title.append(postFix);
   setTitle(title);
@@ -31,34 +33,40 @@ TimeResolutionPlot::TimeResolutionPlot(const TimeResolutionAnalysis* const analy
     }
   }
 
+  TLegend* legend = new TLegend(.65, .65, .88, .88);
+  addLegend(legend);
+
   for (int i = 0; i < 4; ++i) {
     TH1D* histogram = new TH1D(qPrintable(QString("reconstructed i = %1").arg(i) + postFix), "", nBins,
       -Constants::tofBarLength / 2., Constants::tofBarLength / 2.);
-    histogram->SetLineStyle(1);
-    histogram->SetLineColor(1+i);
-    histogram->SetMarkerColor(1+i);
+    histogram->SetLineStyle(2);
+    histogram->SetLineColor(i == 2 ? kMagenta : i+1);
+    histogram->SetMarkerColor(i == 2 ? kMagenta : i+1);
     histogram->SetMarkerStyle(22);
     for (int k = 0; k < nBins; ++k)
       histogram->SetBinContent(k+1, (type == Variance) ? analysis->vIK(i, k, r) : analysis->sigmaIK(i, k, r));
-    addHistogram(histogram, P);
+    addHistogram(histogram, mc ? P : LP);
+    legend->AddEntry(histogram, qPrintable(QString("upper double bar %1").arg(i + 1)));
   }
 
   for (int j = 0; j < 4; ++j) {
     TH1D* histogram = new TH1D(qPrintable(QString("reconstructed j = %1").arg(j) + postFix), "", nBins,
       -Constants::tofBarLength / 2., Constants::tofBarLength / 2.);
     histogram->SetLineStyle(2);
-    histogram->SetLineColor(1+j);
-    histogram->SetMarkerColor(1+j);
+    histogram->SetLineColor(j == 2 ? kMagenta : j+1);
+    histogram->SetMarkerColor(j == 2 ? kMagenta : j+1);
     histogram->SetMarkerStyle(23);
     for (int l = 0; l < nBins; ++l)
       histogram->SetBinContent(l+1, (type == Variance) ? analysis->vJL(j, l, r) : analysis->sigmaJL(j, l, r));
-    addHistogram(histogram, P);
+    histogram->SetLineStyle(2);
+    addHistogram(histogram, mc ? P : LP);
+    legend->AddEntry(histogram, qPrintable(QString("lower double bar %1").arg(j + 1)));
   }
 
-  setDrawOption(P);
+  setDrawOption(mc ? P : LP);
   yAxis()->SetRangeUser(0., 1.);
   setAxisTitle("y / mm", (type == Variance) ? QString("variance / ns^{2}") : QString("#sigma / ns"));
-  if (simulationCanvas) {
+  if (mc) {
     foreach (TH1D* histogram, simulationCanvas->histograms1D())
       addHistogram(static_cast<TH1D*>(histogram->Clone()));
   }
