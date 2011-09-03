@@ -725,7 +725,7 @@ void MainWindow::setupPlots()
   }
 }
 
-void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes, CutFilter& cutFilter, Cut& cherenkovCut, MCFilter::Types& mcFilterTypes)
+void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes, CutFilter& cutFilter, MCFilter::Types& mcFilterTypes)
 {
   if (m_ui.alignmentCorrectionCheckBox->isChecked())
     flags|= Corrections::Alignment;
@@ -841,11 +841,13 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
     cutFilter.addCut(cut);
   }
   if (m_ui.cherenkovCutCheckBox->isChecked()) {
+    Cut cut(Cut::cherenkov);
     double cherenkovLimit = m_ui.cherenkovCutDoubleSpinBox->value();
     if (m_ui.cherenkovCutBelowRadioButton->isChecked())
-      cherenkovCut.setMax(cherenkovLimit);
+      cut.setMax(cherenkovLimit);
     else
-      cherenkovCut.setMin(cherenkovLimit);
+      cut.setMin(cherenkovLimit);
+    cutFilter.addCut(cut);
   }
   
   if (m_ui.trackComboBox->currentText() == "centered broken line") {
@@ -914,9 +916,8 @@ void MainWindow::analyzeButtonClicked()
     Corrections::Flags flags;
     ParticleFilter::Types filterTypes;
     CutFilter cutFilter;
-    Cut cherenkovCut(Cut::cherenkov);
     MCFilter::Types mcFilterTypes;
-    setupAnalysis(type, flags, filterTypes, cutFilter, cherenkovCut, mcFilterTypes);
+    setupAnalysis(type, flags, filterTypes, cutFilter, mcFilterTypes);
     setupPlots();
 
     qDeleteAll(m_processors);
@@ -929,7 +930,6 @@ void MainWindow::analyzeButtonClicked()
       processor->setCorrectionFlags(flags);
       processor->setParticleFilter(filterTypes);
       processor->setCutFilter(cutFilter);
-      processor->setCherenkovCut(cherenkovCut);
       processor->setMCFilter(mcFilterTypes);
       m_processors.append(processor);
     }

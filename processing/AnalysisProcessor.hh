@@ -21,33 +21,30 @@ public:
   AnalysisProcessor(QVector<EventDestination*>, Track::Type, Corrections::Flags);
   ~AnalysisProcessor();
 
-  void setTrackType(Track::Type);
-  void setCorrectionFlags(Corrections::Flags);
-  void setParticleFilter(ParticleFilter::Types);
-  void setMCFilter(MCFilter::Types);
-  void setCutFilter(CutFilter cuts);
-  void setCherenkovCut(const Cut&);
+  void setTrackType(const Track::Type&);
+  void setCorrectionFlags(const Corrections::Flags&);
+  void setParticleFilter(const ParticleFilter::Types&);
+  void setMCFilter(const MCFilter::Types&);
+  void setCutFilter(const CutFilter& cuts);
 
   void process(SimpleEvent*);
 
   const Particle* particle() const {return m_particle;}
-  const ParticleFilter* particleFilter() const {return m_filter;}
+  const ParticleFilter* particleFilter() const {return m_particleFilter;}
   const MCFilter* mcFilter() const {return m_mcFilter;}
+  const CutFilter* cutFilter() const {return m_cutFilter;}
   const TrackFinding* trackFinding() const {return m_trackFinding;}
   const Corrections* corrections() const {return m_corrections;}
   const ParticleIdentifier* particleIdentifier() const {return m_identifier;}
-  const CutFilter* cutFilter() const {return m_cuts;}
-  const Cut cherenkovCut() const {return m_CherenkovCut;}
 
 private:
   Particle* m_particle;
-  ParticleFilter* m_filter;
+  ParticleFilter* m_particleFilter;
+  CutFilter* m_cutFilter;
   MCFilter* m_mcFilter;
   TrackFinding* m_trackFinding;
   Corrections* m_corrections;
   ParticleIdentifier* m_identifier;
-  CutFilter* m_cuts;
-  Cut m_CherenkovCut;
 };
 
 #endif

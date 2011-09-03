@@ -46,7 +46,7 @@ bool Cut::passesCuts(double value) const
     return true;
 }
 
-bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent* event) const
+bool Cut::passes(const SimpleEvent* event) const
 {
   if (m_type == cherenkov) {
     //get settings if present
@@ -57,6 +57,11 @@ bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*
     double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
     return (passesCuts(c1Signal) && passesCuts(c2Signal));
   }
+  return true;
+}
+
+bool Cut::passes(const QVector<Hit*>& clusters, const Particle* particle) const
+{
   if (m_type == rigidity) {
     const Track* track = particle->track();
     if (!track || !track->fitGood())
@@ -117,8 +122,7 @@ bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*
       return false;
     return passesCuts(sumOfSignalHeights(Hit::trd, track, clusters));
   }
-  qFatal("m_type does not match any CutType::type!");
-  return false;
+  return true;
 }
 
 double Cut::sumOfSignalHeights(const Hit::ModuleType type, const Track* track, const QVector<Hit*>& /*clusters*/) const

@@ -57,7 +57,7 @@ private slots:
   void changeAspectRatioTriggered();
 private:
   void setupPlots();
-  void setupAnalysis(Track::Type&, Corrections::Flags&, ParticleFilter::Types&, CutFilter&, Cut&, MCFilter::Types&);
+  void setupAnalysis(Track::Type&, Corrections::Flags&, ParticleFilter::Types&, CutFilter&, MCFilter::Types&);
   void startAnalysis();
   void changeTopicGroupStatus(QVector<QCheckBox*>&);
   void removeListWidgetItem(int);
