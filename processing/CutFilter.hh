@@ -18,8 +18,9 @@ public:
   CutFilter();
   ~CutFilter();
   void addCut(Cut);
-  bool passes(const QVector<Hit*>&, Particle*, SimpleEvent*);
-  void setCuts(CutFilter);
+  void setCuts(const CutFilter&);
+  bool passes(const SimpleEvent*) const;
+  bool passes(const QVector<Hit*>&, const Particle*) const;
 
 private:
   QList<Cut> m_cuts;
