@@ -34,12 +34,26 @@ TimeOverThresholdScaling::TimeOverThresholdScaling(PostAnalysisCanvas* canvas, u
   setTitle(title);
   TGraphErrors* graph = new TGraphErrors(TimeOverThresholdScaling::timeOverThresholdScalingGraphs[tofId]);
   addGraph(graph, P);
+  TF1& f = TimeOverThresholdScaling::timeOverThresholdScalingFits[tofId];
+  addFunction(&f);
   setAxisTitle("temperature /  #circC", "time over threshold / ns");
-  
+
   TLatex* latex = 0;
-  latex = RootPlot::newLatex(.67, .85);
+  latex = RootPlot::newLatex(.47, .85);
   latex->SetTitle(qPrintable(QString("id = 0x%1").arg(QString::number(tofId, 16))));
   addLatex(latex);
+
+  latex = RootPlot::newLatex(.47, .82);
+  latex->SetTitle(qPrintable(QString("offset = %1 ns").arg(f.GetParameter(0))));
+  addLatex(latex);
+
+  latex = RootPlot::newLatex(.47, .79);
+  latex->SetTitle(qPrintable(QString("slope = %1 ns / #circC").arg(f.GetParameter(1))));
+  addLatex(latex);
+
+  graph->GetYaxis()->SetRangeUser(15, 40);
+  function()->SetRange(graph->GetXaxis()->GetBinLowEdge(1), graph->GetXaxis()->GetBinLowEdge(graph->GetXaxis()->GetNbins()));
+
 }
 
 TimeOverThresholdScaling::~TimeOverThresholdScaling()
