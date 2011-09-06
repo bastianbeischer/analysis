@@ -116,8 +116,8 @@ int main(int argc, char* argv[])
   for (int bar = 0; bar < 4; ++bar) {
     resolutionHistogram[bar][0]->SetLineStyle(1);
     resolutionHistogram[bar][1]->SetLineStyle(2);
-    resolutionHistogram[bar][0]->SetLineColor(1 + bar);
-    resolutionHistogram[bar][1]->SetLineColor(1 + bar);
+    resolutionHistogram[bar][0]->SetLineColor(bar == 2 ? kMagenta : 1 + bar);
+    resolutionHistogram[bar][1]->SetLineColor(bar == 2 ? kMagenta : 1 + bar);
     resolutionHistogram[bar][0]->SetLineWidth(2);
     resolutionHistogram[bar][1]->SetLineStyle(2);
     if (bar == 0) {

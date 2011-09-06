@@ -39,6 +39,7 @@ TimeResolutionPlot::TimeResolutionPlot(const TimeResolutionAnalysis* const analy
   for (int i = 0; i < 4; ++i) {
     TH1D* histogram = new TH1D(qPrintable(QString("reconstructed i = %1").arg(i) + postFix), "", nBins,
       -Constants::tofBarLength / 2., Constants::tofBarLength / 2.);
+    histogram->SetLineWidth(1);
     histogram->SetLineStyle(2);
     histogram->SetLineColor(i == 2 ? kMagenta : i+1);
     histogram->SetMarkerColor(i == 2 ? kMagenta : i+1);
@@ -52,6 +53,7 @@ TimeResolutionPlot::TimeResolutionPlot(const TimeResolutionAnalysis* const analy
   for (int j = 0; j < 4; ++j) {
     TH1D* histogram = new TH1D(qPrintable(QString("reconstructed j = %1").arg(j) + postFix), "", nBins,
       -Constants::tofBarLength / 2., Constants::tofBarLength / 2.);
+    histogram->SetLineWidth(1);
     histogram->SetLineStyle(2);
     histogram->SetLineColor(j == 2 ? kMagenta : j+1);
     histogram->SetMarkerColor(j == 2 ? kMagenta : j+1);
