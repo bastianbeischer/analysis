@@ -6,5 +6,5 @@
 PressureTimePlot::PressureTimePlot(SensorTypes::Type type, QDateTime first, QDateTime last)
   : SensorTimePlot(type, first, last)
 {
-  setAxisTitle("pressure", "p / mBar");
+  setAxisTitle("time", "p / mBar");
 }

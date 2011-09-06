@@ -100,7 +100,6 @@ void EventReader::stop()
   m_mutex.lock();
   m_abort = true;
   m_mutex.unlock();
-  wait();
 }
 
 void EventReader::run()
@@ -128,8 +127,16 @@ void EventReader::run()
       break;
   }
   
+  do {
+    usleep(10000);
+  } while (queuedEvents());
+
   foreach (ProcessingThread* thread, m_threads)
     thread->stop();
+
+  m_mutex.lock();
+  m_abort = true;
+  m_mutex.unlock();
 
   qDeleteAll(m_threads);
   m_threads.clear();
