@@ -24,7 +24,7 @@ AzimuthDistributionPlot::AzimuthDistributionPlot()
   double xMax = 180;
   TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, xMin, xMax);
   histogram->Sumw2();
-  setAxisTitle("azimuth / degree", "");
+  setAxisTitle("azimuth / degree", "entries");
   addHistogram(histogram);
   addLatex(RootPlot::newLatex(.15, .85));
 }
