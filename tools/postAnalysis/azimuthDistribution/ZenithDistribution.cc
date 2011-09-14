@@ -25,11 +25,14 @@ ZenithDistribution::ZenithDistribution(PostAnalysisCanvas* canvas)
 
   addHistogram(histogram);
   setAxisTitle(histogram->GetXaxis()->GetTitle(), "propability");
+
   if (readFile())
     addHistogram(m_zenithAcceptance);
+
   int low = histogram->GetXaxis()->FindBin(0.8);
   int up = histogram->GetXaxis()->FindBin(1);
   histogram->GetXaxis()->SetRange(low, up);
+  histogram->GetYaxis()->SetTitleOffset(2);
 }
 
 ZenithDistribution::~ZenithDistribution()
@@ -56,6 +59,7 @@ bool ZenithDistribution::readFile()
   m_zenithAcceptance = zenithAcceptance;
   m_zenithAcceptance->SetMarkerColor(kBlue);
   m_zenithAcceptance->SetLineColor(kBlue);
+  m_zenithAcceptance->SetLineWidth(2);
   return true;
 }
 

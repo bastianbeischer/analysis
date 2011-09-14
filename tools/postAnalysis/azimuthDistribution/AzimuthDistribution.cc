@@ -18,15 +18,16 @@ AzimuthDistribution::AzimuthDistribution(PostAnalysisCanvas* canvas)
   TH1D* histogram = new TH1D(*canvas->histograms1D().at(0));
 
   double integral = histogram->Integral("width");
-  histogram->Scale(100/integral);
+  histogram->Scale(1/integral);
 
   QString title = QString(canvas->name()).replace("canvas", "histogram");
   setTitle(title);
 
-  addHistogram(histogram);
-  setAxisTitle(histogram->GetXaxis()->GetTitle(), histogram->GetYaxis()->GetTitle());
   if (readFile())
     addHistogram(m_azimuthAcceptance);
+
+  addHistogram(histogram);
+  setAxisTitle(histogram->GetXaxis()->GetTitle(), "probability");
 }
 
 AzimuthDistribution::~AzimuthDistribution()
@@ -45,7 +46,7 @@ bool AzimuthDistribution::readFile()
   gROOT->cd();
   TH1D* azimuthAcceptance = (TH1D*)(((TH1D*)openfile->Get(qPrintable(hName)))->Clone());
   double integral = azimuthAcceptance->Integral("width");
-  azimuthAcceptance->Scale(100/integral);
+  azimuthAcceptance->Scale(1/integral);
   openfile->Close();
   delete openfile;
   openfile = 0;
@@ -61,6 +62,8 @@ bool AzimuthDistribution::readFile()
   azimuthAcceptance = 0;
   m_azimuthAcceptance->SetMarkerColor(kBlue);
   m_azimuthAcceptance->SetLineColor(kBlue);
+  m_azimuthAcceptance->SetLineWidth(2);
+  m_azimuthAcceptance->GetYaxis()->SetTitleOffset(2);
   return true;
 }
 
