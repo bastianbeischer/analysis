@@ -74,11 +74,11 @@ void TimeOverThresholdScaling::scaling(unsigned int tofId, TH2D* histogram)
     TF1* function = new TF1(qPrintable(QString(histogram->GetTitle()) + "Function"), "landau", histogram->GetXaxis()->GetXmin(), histogram->GetXaxis()->GetXmax());
     projectionHistogram->Fit(function, "EQN0");
     double mpv = function->GetParameter(1);
-    double sigma = function->GetParameter(2);
+    double sigma = projectionHistogram->GetRMS();
     delete function;
 
     double tot = mpv;
-    double totError = sigma;
+    double totError = sigma / sqrt(nEntries);
     double temperature = histogram->GetBinCenter(bin+1);
     double temperatureError = histogram->GetBinWidth(bin+1)/sqrt(12);
     
