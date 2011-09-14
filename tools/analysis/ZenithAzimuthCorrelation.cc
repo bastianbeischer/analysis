@@ -28,7 +28,7 @@ ZenithAzimuthCorrelation::ZenithAzimuthCorrelation() :
   histogram->Sumw2();
   setAxisTitle("azimuth / degree", "cos(zenith)", "");
   addHistogram(histogram);
-  addLatex(RootPlot::newLatex(.15, .85));
+  addLatex(RootPlot::newLatex(.4, .4));
   int low = histogram->GetYaxis()->FindBin(0.8);
   int up = histogram->GetYaxis()->FindBin(1);
   histogram->GetYaxis()->SetRange(low, up);
@@ -69,5 +69,7 @@ void ZenithAzimuthCorrelation::processEvent(const QVector<Hit*>&, const Particle
 
 void ZenithAzimuthCorrelation::update()
 {
-
+  int value = histogram()->GetEntries();
+  QString text = "entries: "+QString::number(value,'d',0);
+  latex()->SetTitle(qPrintable(text));
 }
