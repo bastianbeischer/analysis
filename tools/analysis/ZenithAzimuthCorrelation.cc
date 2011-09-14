@@ -32,6 +32,7 @@ ZenithAzimuthCorrelation::ZenithAzimuthCorrelation() :
   int low = histogram->GetYaxis()->FindBin(0.8);
   int up = histogram->GetYaxis()->FindBin(1);
   histogram->GetYaxis()->SetRange(low, up);
+  histogram->GetYaxis()->SetTitleOffset(1.2);
 }
 
 ZenithAzimuthCorrelation::~ZenithAzimuthCorrelation()
