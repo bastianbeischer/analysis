@@ -1,0 +1,57 @@
+#include "ZenithAzimuthCorrelation.hh"
+
+#include <TH2D.h>
+#include <TLatex.h>
+
+#include "Hit.hh"
+#include "ParticleInformation.hh"
+#include "Particle.hh"
+#include "Track.hh"
+#include "SimpleEvent.hh"
+
+#include <iostream>
+#include <cmath>
+
+ZenithAzimuthCorrelation::ZenithAzimuthCorrelation() :
+  AnalysisPlot(AnalysisPlot::Tracking),
+  H2DPlot()
+{
+  setTitle("Zenith Azimuth Correlation");
+  int nBinsAzmuth = 45;
+  double xMinAzmuth = -180;
+  double xMaxAzmuth = 180;
+  int nBinsZenith = 200;
+  double xMinZenith = 0;
+  double xMaxZenith = 1;
+  TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsAzmuth, xMinAzmuth, xMaxAzmuth, nBinsZenith, xMinZenith, xMaxZenith);
+  histogram->Sumw2();
+  setAxisTitle("azimuth / degree", "cos(zenith)", "");
+  addHistogram(histogram);
+  addLatex(RootPlot::newLatex(.15, .85));
+}
+
+ZenithAzimuthCorrelation::~ZenithAzimuthCorrelation()
+{
+}
+
+void ZenithAzimuthCorrelation::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+{
+  const Track* track = particle->track();
+
+  if (!track || !track->fitGood())
+    return;
+
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )//!(flags & ParticleInformation::BetaGood)
+    return;
+  
+  double azimuth = track->azimuthAngle() * 180. / M_PI;
+  double zenith = track->zenithAngle();
+
+  histogram()->Fill(azimuth, cos(zenith));
+}
+
+void ZenithAzimuthCorrelation::update()
+{
+
+}
