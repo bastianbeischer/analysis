@@ -27,6 +27,9 @@ ZenithDistribution::ZenithDistribution(PostAnalysisCanvas* canvas)
   setAxisTitle(histogram->GetXaxis()->GetTitle(), "propability");
   if (readFile())
     addHistogram(m_zenithAcceptance);
+  int low = histogram->GetXaxis()->FindBin(0.8);
+  int up = histogram->GetXaxis()->FindBin(1);
+  histogram->GetXaxis()->SetRange(low, up);
 }
 
 ZenithDistribution::~ZenithDistribution()
