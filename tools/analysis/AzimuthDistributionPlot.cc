@@ -7,6 +7,7 @@
 
 #include "Hit.hh"
 #include "ParticleInformation.hh"
+#include "Constants.hh"
 #include "Particle.hh"
 #include "Track.hh"
 #include "SimpleEvent.hh"
@@ -43,6 +44,17 @@ void AzimuthDistributionPlot::processEvent(const QVector<Hit*>&, const Particle*
   ParticleInformation::Flags flags = particle->information()->flags();
   if ( !(flags & ParticleInformation::Chi2Good) || !(flags & ParticleInformation::InsideMagnet) || !(flags & ParticleInformation::BetaGood) || (flags & ParticleInformation::Albedo) )
     return;
+  
+//  double xU = track->x(Constants::upperTofPosition);
+//  double yU = track->y(Constants::upperTofPosition);
+//  
+//  double xL = track->x(Constants::lowerTofPosition);
+//  double yL = track->y(Constants::lowerTofPosition);
+//  
+//  if (qAbs(yU) > Constants::tofBarLength/2. || qAbs(xU) > Constants::tofBarWidth*2.)
+//    return;
+//  if (qAbs(yL) > Constants::tofBarLength/2. || qAbs(xL) > Constants::tofBarWidth*2.)
+//    return;
 
   double azimuth = track->azimuthAngle() * 180. / M_PI;
 
