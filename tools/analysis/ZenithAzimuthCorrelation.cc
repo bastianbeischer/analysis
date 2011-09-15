@@ -13,9 +13,9 @@
 #include <iostream>
 #include <cmath>
 
-ZenithAzimuthCorrelation::ZenithAzimuthCorrelation() :
-  AnalysisPlot(AnalysisPlot::Tracking),
-  H2DPlot()
+ZenithAzimuthCorrelation::ZenithAzimuthCorrelation()
+  : AnalysisPlot(AnalysisPlot::Tracking)
+  , H2DPlot()
 {
   setTitle("Zenith Azimuth Correlation");
   int nBinsAzmuth = 45;
@@ -47,20 +47,22 @@ void ZenithAzimuthCorrelation::processEvent(const QVector<Hit*>&, const Particle
     return;
 
   ParticleInformation::Flags flags = particle->information()->flags();
-  if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )//!(flags & ParticleInformation::BetaGood)
+
+  if (!(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) ||
+    (flags & ParticleInformation::Albedo) || (flags & ParticleInformation::BetaGood))
     return;
   
-//  double xU = track->x(Constants::upperTofPosition);
-//  double yU = track->y(Constants::upperTofPosition);
-//  
-//  double xL = track->x(Constants::lowerTofPosition);
-//  double yL = track->y(Constants::lowerTofPosition);
-//  
-//  if (qAbs(yU) > Constants::tofBarLength/2. || qAbs(xU) > Constants::tofBarWidth*2.)
-//    return;
-//  if (qAbs(yL) > Constants::tofBarLength/2. || qAbs(xL) > Constants::tofBarWidth*2.)
-//    return;
-  
+  double xU = track->x(Constants::upperTofPosition);
+  double yU = track->y(Constants::upperTofPosition);
+
+  double xL = track->x(Constants::lowerTofPosition);
+  double yL = track->y(Constants::lowerTofPosition);
+
+  if (qAbs(yU) > Constants::tofBarLength / 2. || qAbs(xU) > Constants::tofBarWidth * 2.)
+    return;
+  if (qAbs(yL) > Constants::tofBarLength / 2. || qAbs(xL) > Constants::tofBarWidth * 2.)
+    return;
+
   double azimuth = track->azimuthAngle() * 180. / M_PI;
   double zenith = track->zenithAngle();
 
@@ -70,6 +72,6 @@ void ZenithAzimuthCorrelation::processEvent(const QVector<Hit*>&, const Particle
 void ZenithAzimuthCorrelation::update()
 {
   int value = histogram()->GetEntries();
-  QString text = "entries: "+QString::number(value,'d',0);
+  QString text = "entries: " + QString::number(value, 'd', 0);
   latex()->SetTitle(qPrintable(text));
 }
