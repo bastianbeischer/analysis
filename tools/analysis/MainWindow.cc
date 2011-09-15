@@ -99,6 +99,7 @@
 #include "Helpers.hh"
 #include "FluxCollection.hh"
 #include "EventTimeDifferencePlot.hh"
+#include "MeasurementTimeDistributionPlot.hh"
 
 #include <QCloseEvent>
 #include <QVBoxLayout>
@@ -668,6 +669,7 @@ void MainWindow::setupPlots()
         m_ui.plotter->addPlot(new TOFPositionCorrelationPlot(element->id()));
     }
     m_ui.plotter->addPlot(new EventTimeDifferencePlot(m_ui.numberOfThreadsSpinBox->value()));
+    m_ui.plotter->addPlot(new MeasurementTimeDistributionPlot(m_ui.numberOfThreadsSpinBox->value()));
   }
   if (m_ui.slowControlCheckBox->isChecked()) {
     QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());

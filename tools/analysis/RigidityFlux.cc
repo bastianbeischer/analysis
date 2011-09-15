@@ -165,7 +165,6 @@ void RigidityFlux::efficiencyCorrection()
 {
   EfficiencyCorrectionSettings::instance()->efficiencyCorrection(histogram(), m_multiLayerEff);
   EfficiencyCorrectionSettings::instance()->efficiencyCorrection(histogram(), m_trackFindingEff);
-  EfficiencyCorrectionSettings::instance()->efficiencyCorrection(histogram(), 0.843684 / 0.792555);
   EfficiencyCorrectionSettings::instance()->efficiencyCorrection(histogram(), 0.999); //estimate for TOF trigger efficiency
 }
   

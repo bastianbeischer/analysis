@@ -19,8 +19,14 @@ MeasurementTimeCalculation::MeasurementTimeCalculation(const QDateTime& first, c
   t1-= (t1 % 60) + 60;
   int t2 = last.toTime_t();
   t2+= 120 - (t2 % 60);
-  int nBins = (t2 - t1);
-  m_histogram = new TH1D("measurement time", "", nBins, t1, t2);
+  const int maxDuration = t2 - t1;
+  double binWidth = 0;
+  if (maxDuration < 10000.)
+    binWidth = 2.1;
+  else
+    binWidth = 30;
+  int nBins = int(maxDuration / binWidth) + 1;
+  m_histogram = new TH1D("measurement time", "", nBins, t1, t1 + nBins * binWidth);
   m_histogram->GetXaxis()->SetTitle("time");
   m_histogram->GetYaxis()->SetTitle("events");
 
