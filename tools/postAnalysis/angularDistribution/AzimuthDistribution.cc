@@ -18,7 +18,7 @@ AzimuthDistribution::AzimuthDistribution(PostAnalysisCanvas* canvas)
   TH1D* histogram = new TH1D(*canvas->histograms1D().at(0));
 
   double integral = histogram->Integral("width");
-  histogram->Scale(1/integral);
+  histogram->Scale(1./integral);
 
   QString title = QString(canvas->name()).replace("canvas", "histogram");
   setTitle(title);
@@ -44,9 +44,9 @@ bool AzimuthDistribution::readFile()
   if (openfile->IsZombie())
     return false;
   gROOT->cd();
-  TH1D* azimuthAcceptance = (TH1D*)(((TH1D*)openfile->Get(qPrintable(hName)))->Clone());
+  TH1D* azimuthAcceptance = static_cast<TH1D*>(openfile->Get(qPrintable(hName))->Clone());
   double integral = azimuthAcceptance->Integral("width");
-  azimuthAcceptance->Scale(1/integral);
+  azimuthAcceptance->Scale(1./integral);
   openfile->Close();
   delete openfile;
   openfile = 0;
