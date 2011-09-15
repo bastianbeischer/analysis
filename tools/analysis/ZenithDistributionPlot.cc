@@ -6,6 +6,7 @@
 #include "Hit.hh"
 #include "ParticleInformation.hh"
 #include "Particle.hh"
+#include "Constants.hh"
 #include "Track.hh"
 #include "SimpleEvent.hh"
 
@@ -41,6 +42,17 @@ void ZenithDistributionPlot::processEvent(const QVector<Hit*>&, const Particle* 
   ParticleInformation::Flags flags = particle->information()->flags();
   if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
     return;
+
+//  double xU = track->x(Constants::upperTofPosition);
+//  double yU = track->y(Constants::upperTofPosition);
+//  
+//  double xL = track->x(Constants::lowerTofPosition);
+//  double yL = track->y(Constants::lowerTofPosition);
+//  
+//  if (qAbs(yU) > Constants::tofBarLength/2. || qAbs(xU) > Constants::tofBarWidth*2.)
+//    return;
+//  if (qAbs(yL) > Constants::tofBarLength/2. || qAbs(xL) > Constants::tofBarWidth*2.)
+//    return;
   
   double zenith = track->zenithAngle();
 

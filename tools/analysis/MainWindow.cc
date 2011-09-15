@@ -89,6 +89,7 @@
 #include "TimeReconstructionPlot.hh"
 #include "EfficiencyCollection.hh"
 #include "ZenithDistributionPlot.hh"
+#include "ZenithAzimuthCorrelation.hh"
 #include "AzimuthDistributionPlot.hh"
 #include "AzimuthMigrationHistogram.hh"
 #include "MeasurementTimePlot.hh"
@@ -566,6 +567,7 @@ void MainWindow::setupPlots()
       m_ui.plotter->addPlot(new Chi2Plot(ndf));
     m_ui.plotter->addPlot(new Chi2PerNdfPlot);
     m_ui.plotter->addPlot(new Chi2VsMomentumPlot);
+    m_ui.plotter->addPlot(new ZenithAzimuthCorrelation());
     m_ui.plotter->addPlot(new ZenithDistributionPlot());
     m_ui.plotter->addPlot(new AzimuthDistributionPlot());
     m_ui.plotter->addPlot(new AzimuthCutStatistics());
