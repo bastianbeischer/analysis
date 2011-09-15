@@ -48,10 +48,9 @@ void ZenithAzimuthCorrelation::processEvent(const QVector<Hit*>&, const Particle
 
   ParticleInformation::Flags flags = particle->information()->flags();
 
-  if (!(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) ||
-    (flags & ParticleInformation::Albedo) || (flags & ParticleInformation::BetaGood))
+  if ( !(flags & ParticleInformation::Chi2Good) || !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo))
     return;
-  
+
   double xU = track->x(Constants::upperTofPosition);
   double yU = track->y(Constants::upperTofPosition);
 
