@@ -15,5 +15,5 @@ SUBDIRS  = \
   trdMoPV \
   fileCompare \
   efficiencyCorrection \
-  azimuthDistribution \
+  angularDistribution \
   fluxAnalysisTool

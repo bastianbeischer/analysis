@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = azimuthDistribution
+TARGET = angularDistribution
 
 CONFIG += debug
 
