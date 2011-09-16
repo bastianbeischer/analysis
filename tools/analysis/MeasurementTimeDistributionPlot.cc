@@ -13,19 +13,19 @@
 MeasurementTimeDistributionPlot::MeasurementTimeDistributionPlot(int numberOfThreads)
   : AnalysisPlot(AnalysisPlot::MiscellaneousTOF)
   , H1DPlot()
-  , m_lastEventTime(-1)
   , m_active(numberOfThreads == 1)
+  , m_lastEventTime(-1)
+  , m_histogram(0)
 {
-  setTitle("Measurement Time Distribution Plot");
+  setTitle("measurement time distribution plot");
   const int nBins = 5000;
-  const double min = 50;
-  const double max = 600000;
+  const double min = 0.05;
+  const double max = 600.;
   QVector<double> binning = Helpers::logBinning(nBins, min, max);
-
+  m_histogram = new TH1D(qPrintable("dt " + title()), "", nBins, binning.constData());
   TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, binning.constData());
-  histogram->Sumw2();
-  setAxisTitle("t_{cut} / ms", "measurement time / s");
-  addHistogram(histogram, H1DPlot::P);
+  setAxisTitle("t_{cut} / s", "measurement time / s");
+  addHistogram(histogram);
   if (!m_active) { 
     const int prevNumberOfLatexs = numberOfLatexs();
     addLatex(RootPlot::newLatex(.2, .55));
@@ -43,28 +43,22 @@ void MeasurementTimeDistributionPlot::processEvent(const QVector<Hit*>&, const P
 {
   if (!m_active)
     return;
-  double eventTime = event->time() * 1000;
+  double eventTime = event->time();
   if (m_lastEventTime > -1) {
     double deltaT = eventTime - m_lastEventTime;
+    //qDebug() << QString::number(eventTime, 30, 10) << QString::number(eventTime2, 30, 10) << QString::number(deltaT, 30, 10);
     if (deltaT < 0)
-      qDebug("time between events is smaller than 0");
-    for (int i = 0; i < histogram()->GetNbinsX(); ++i) {
-      double tCut = histogram()->GetBinCenter(i+1);
-      if (deltaT < tCut) {
-        double oldContent = histogram()->GetBinContent(i+1);
-        double newContent = oldContent + deltaT / 1000.;
-        histogram()->SetBinContent(i+1, newContent);
-      }
-    }
+      qDebug("time between events is smaller than 0, check run list order!");
+    m_histogram->Fill(deltaT);
   }
   m_lastEventTime = eventTime;
 }
 
 void MeasurementTimeDistributionPlot::update()
 {
+  double sum = 0;
+  for (int cutBin = 1; cutBin <= histogram()->GetNbinsX(); ++cutBin) {
+    sum+= m_histogram->GetBinWidth(cutBin) * m_histogram->GetBinContent(cutBin);
+    histogram()->SetBinContent(cutBin, sum);
+  }
 }
-
-void MeasurementTimeDistributionPlot::finalize()
-{
-}
-

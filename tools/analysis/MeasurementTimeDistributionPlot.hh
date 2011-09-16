@@ -4,16 +4,18 @@
 #include "AnalysisPlot.hh"
 #include "H1DPlot.hh"
 
+class TH1D;
+
 class MeasurementTimeDistributionPlot : public AnalysisPlot, public H1DPlot {
 public:
   MeasurementTimeDistributionPlot(int numberOfThreads);
   virtual ~MeasurementTimeDistributionPlot();
   void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
-  void update();
-  void finalize();
+  virtual void update();
 private:
-  double m_lastEventTime;
   bool m_active;
+  double m_lastEventTime;
+  TH1D* m_histogram;
 };
 
 #endif
