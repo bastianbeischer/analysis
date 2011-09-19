@@ -15,18 +15,21 @@ MeasurementTimeDistributionPlot::MeasurementTimeDistributionPlot(int numberOfThr
   , H1DPlot()
   , m_active(numberOfThreads == 1)
   , m_lastEventTime(-1)
+  , m_positionInsideBin()
+  , m_positionInsideBinCounter()
   , m_histogram(0)
 {
   setTitle("measurement time distribution plot");
-  const int nBins = 5000;
-  const double min = 0.05;
+  const int nBins = 60000;
+  const double min = 0.;
   const double max = 600.;
-  QVector<double> binning = Helpers::logBinning(nBins, min, max);
-  m_histogram = new TH1D(qPrintable("dt " + title()), "", nBins, binning.constData());
-  TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, binning.constData());
+  m_positionInsideBin.resize(nBins);
+  m_positionInsideBinCounter.resize(nBins);
+  m_histogram = new TH1D(qPrintable("dt " + title()), "", nBins, min, max);
+  TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, min, max);
   setAxisTitle("t_{cut} / s", "measurement time / s");
   addHistogram(histogram);
-  if (!m_active) { 
+  if (!m_active) {
     const int prevNumberOfLatexs = numberOfLatexs();
     addLatex(RootPlot::newLatex(.2, .55));
     latex(prevNumberOfLatexs)->SetTextColor(kRed);
@@ -46,10 +49,12 @@ void MeasurementTimeDistributionPlot::processEvent(const QVector<Hit*>&, const P
   double eventTime = event->time();
   if (m_lastEventTime > -1) {
     double deltaT = eventTime - m_lastEventTime;
-    //qDebug() << QString::number(eventTime, 30, 10) << QString::number(eventTime2, 30, 10) << QString::number(deltaT, 30, 10);
     if (deltaT < 0)
       qDebug("time between events is smaller than 0, check run list order!");
     m_histogram->Fill(deltaT);
+    int bin = m_histogram->FindBin(deltaT);
+    m_positionInsideBin[bin-1]+= deltaT;
+    ++m_positionInsideBinCounter[bin-1];
   }
   m_lastEventTime = eventTime;
 }
@@ -58,7 +63,9 @@ void MeasurementTimeDistributionPlot::update()
 {
   double sum = 0;
   for (int cutBin = 1; cutBin <= histogram()->GetNbinsX(); ++cutBin) {
-    sum+= m_histogram->GetBinWidth(cutBin) * m_histogram->GetBinContent(cutBin);
+    double binContent = m_histogram->GetBinContent(cutBin);
+    if (binContent > 0)
+      sum+= m_histogram->GetBinContent(cutBin) * m_positionInsideBin[cutBin-1] / m_positionInsideBinCounter[cutBin-1];
     histogram()->SetBinContent(cutBin, sum);
   }
 }

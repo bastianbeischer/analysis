@@ -15,6 +15,8 @@ public:
 private:
   bool m_active;
   double m_lastEventTime;
+  QVector<double> m_positionInsideBin;
+  QVector<int> m_positionInsideBinCounter;
   TH1D* m_histogram;
 };
 
