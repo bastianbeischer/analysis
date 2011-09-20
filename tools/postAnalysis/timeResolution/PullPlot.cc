@@ -27,7 +27,7 @@ PullPlot::PullPlot(const QVector<TimeOfFlightHistogram*>& histograms, const Time
     histogram->Fill(res / resError);
     ++counter;
   }
-  setAxisTitle("", "pull");
+  setAxisTitle("pull", "");
 }
 
 PullPlot::~PullPlot()
