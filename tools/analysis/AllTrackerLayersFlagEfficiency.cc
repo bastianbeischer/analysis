@@ -81,5 +81,17 @@ void AllTrackerLayersFlagEfficiency::processEvent(const QVector<Hit*>&, const Pa
 
 void AllTrackerLayersFlagEfficiency::update()
 {
-  histogram()->Divide(m_afterCutHisto, m_normHisto);
+  //  histogram()->Divide(m_reconstructed, m_total);
+  for (int i = 0; i < m_normHisto->GetNbinsX(); ++i) {
+    int reconstructed = m_afterCutHisto->GetBinContent(i+1);
+    int total = m_normHisto->GetBinContent(i+1);
+    double efficiency = 0;
+    double efficiencyError = 0;
+    if (total != 0) {
+      efficiency = double(reconstructed) / double(total);
+      efficiencyError =  sqrt(efficiency * (1 - efficiency) / double(total));
+    }
+    histogram()->SetBinContent(i+1, efficiency);
+    histogram()->SetBinError(i+1, efficiencyError);
+  }
 }

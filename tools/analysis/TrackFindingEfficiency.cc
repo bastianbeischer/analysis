@@ -105,12 +105,21 @@ void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, const Particle* 
 
 void TrackFindingEfficiency::update()
 {
-  histogram()->Divide(m_reconstructed, m_total);
+//  histogram()->Divide(m_reconstructed, m_total);
+  for (int i = 0; i < m_total->GetNbinsX(); ++i) {
+    int reconstructed = m_reconstructed->GetBinContent(i+1);
+    int total = m_total->GetBinContent(i+1);
+    double efficiency = 0;
+    double efficiencyError = 0;
+    if (total != 0) {
+      efficiency = double(reconstructed) / double(total);
+      efficiencyError =  sqrt(efficiency * (1 - efficiency) / double(total));
+    }
+    histogram()->SetBinContent(i+1, efficiency);
+    histogram()->SetBinError(i+1, efficiencyError);
+  }
   double efficiency = double(m_nReconstructed) / double(m_nTotal);
-  double recError = sqrt(m_nReconstructed);
-  double totError = sqrt(m_nTotal);
-  double efficiencyError = efficiency * Helpers::addQuad(recError/m_nReconstructed, totError/m_nTotal);
-
+  double efficiencyError = sqrt(efficiency * (1 - efficiency) / m_nTotal);
   latex()->SetTitle(qPrintable(QString("efficiency  = %1 #pm %2").arg(efficiency).arg(efficiencyError)));
 }
 
