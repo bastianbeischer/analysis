@@ -14,7 +14,7 @@
 #include <cmath>
 
 MomentumSpectrumPlot::MomentumSpectrumPlot(Type type) :
-  AnalysisPlot(AnalysisPlot::MomentumReconstruction),
+  AnalysisPlot(AnalysisTopic::MomentumReconstruction),
   H1DPlot(),
   m_type(type)
 {

@@ -3,23 +3,17 @@
 
 #include "RootPlot.hh"
 #include "EventDestination.hh"
+#include "AnalysisTopic.hh"
 
 class AnalysisPlot : virtual public RootPlot, public EventDestination {
 public:
-  enum Topic {TopicBegin, SignalHeightTracker = TopicBegin, SignalHeightTRD,
-              ClusterShapeTracker, ClusterShapeTRD, TimeOverThreshold, Tracking, Occupancy,
-              ResidualsTracker, ResidualsTRD, MomentumReconstruction, EfficiencyTOF,
-              ResolutionTOF, CalibrationTOF, MiscellaneousTracker, MiscellaneousTRD,
-              MiscellaneousTOF, SlowControl, MonteCarloTracker, MonteCarloTRD, MonteCarloTOF,
-              MonteCarlo, Testbeam, TopicEnd};
-public:
-  AnalysisPlot(Topic);
+  AnalysisPlot(AnalysisTopic);
   virtual ~AnalysisPlot();
   virtual void finalize() {}
   virtual void update() {}
-  Topic topic() const;
+  AnalysisTopic topic() const;
 private:
-  Topic m_topic;
+  AnalysisTopic m_topic;
 };
 
 #endif

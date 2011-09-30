@@ -12,7 +12,7 @@
 #include <QDebug>
 
 SettingTimePlot::SettingTimePlot(SettingType type, QDateTime first, QDateTime last)
-  : AnalysisPlot(AnalysisPlot::Testbeam)
+  : AnalysisPlot(AnalysisTopic::Testbeam)
   , H1DPlot()
   , m_type(type)
 {

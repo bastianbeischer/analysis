@@ -7,7 +7,7 @@
 #include <QLayout>
 #include <QDebug>
 
-PlotCollection::PlotCollection(AnalysisPlot::Topic topic) :
+PlotCollection::PlotCollection(AnalysisTopic topic) :
   QObject(),
   AnalysisPlot(topic),
   m_selectedPlot(0)

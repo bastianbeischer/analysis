@@ -8,7 +8,7 @@
 #include <TLine.h>
 
 TRDTimeCorrectionPlot::TRDTimeCorrectionPlot(QDateTime first, QDateTime last)
-  : AnalysisPlot(AnalysisPlot::MiscellaneousTRD)
+  : AnalysisPlot(AnalysisTopic::MiscellaneousTRD)
   , H1DPlot()
   , m_t1(first.toTime_t())
   , m_t2(last.toTime_t())

@@ -13,7 +13,7 @@
 #include "Helpers.hh"
 
 SingleLayerTrackingEfficiencyPlot::SingleLayerTrackingEfficiencyPlot(Type type) :
-  AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
+  AnalysisPlot(AnalysisTopic::MiscellaneousTracker),
   H2DPlot(),
   m_type(type),
   m_normHisto(0),

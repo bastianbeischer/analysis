@@ -9,7 +9,7 @@
 #include "Cluster.hh"
 
 TotalSignalHeightPlot::TotalSignalHeightPlot() :
-  AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
+  AnalysisPlot(AnalysisTopic::MiscellaneousTracker),
   H1DPlot()
 {
   double maximum = 5e4;

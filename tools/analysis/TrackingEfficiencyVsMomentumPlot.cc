@@ -12,7 +12,7 @@
 #include <cmath>
 
 TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot(Type type)
-  : AnalysisPlot(AnalysisPlot::MiscellaneousTracker)
+  : AnalysisPlot(AnalysisTopic::MiscellaneousTracker)
   , H2DPlot()
   , m_type(type)
 {

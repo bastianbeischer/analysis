@@ -6,7 +6,7 @@
 #include <QLayout>
 
 TOFTimeShiftPlotCollection::TOFTimeShiftPlotCollection() :
-  PlotCollection(AnalysisPlot::CalibrationTOF)
+  PlotCollection(AnalysisTopic::CalibrationTOF)
 {
   unsigned int bars[][2] = {
     {0x8000, 0x8010}, {0x8004, 0x8014}, {0x8008, 0x8018}, {0x800c, 0x801c},

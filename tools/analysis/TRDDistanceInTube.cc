@@ -9,7 +9,7 @@
 #include "ParticleInformation.hh"
 #include "TRDReconstruction.hh"
 
-TRDDistanceInTube::TRDDistanceInTube(AnalysisPlot::Topic topic) :
+TRDDistanceInTube::TRDDistanceInTube(AnalysisTopic topic) :
   AnalysisPlot(topic),
   H1DPlot()
 {

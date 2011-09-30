@@ -16,7 +16,7 @@
 #include <vector>
 
 RigidityParticleSpectrum::RigidityParticleSpectrum(Type type, TH1D* particleHistogram)
-  : AnalysisPlot(AnalysisPlot::MomentumReconstruction)
+  : AnalysisPlot(AnalysisTopic::MomentumReconstruction)
   , H1DPlot()
   , m_type(type)
 {

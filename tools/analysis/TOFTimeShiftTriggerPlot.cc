@@ -18,7 +18,7 @@
 #include <QDebug>
 
 TOFTimeShiftTriggerPlot::TOFTimeShiftTriggerPlot()
-  : AnalysisPlot(AnalysisPlot::CalibrationTOF)
+  : AnalysisPlot(AnalysisTopic::CalibrationTOF)
   , H2DProjectionPlot()
 {
   setTitle("time shift tigger");

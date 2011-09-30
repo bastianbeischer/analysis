@@ -13,7 +13,7 @@ class Track;
 class ResidualPlot : public AnalysisPlot, public H2DProjectionPlot {
   
 public:
-  ResidualPlot(AnalysisPlot::Topic topic, Layer* layer);
+  ResidualPlot(AnalysisTopic topic, Layer* layer);
   ~ResidualPlot();
   
 public:

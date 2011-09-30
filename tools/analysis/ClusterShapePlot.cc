@@ -16,7 +16,7 @@
 #include <cmath>
 
 ClusterShapePlot::ClusterShapePlot(unsigned short id) :
-  AnalysisPlot(AnalysisPlot::ClusterShapeTracker),
+  AnalysisPlot(AnalysisTopic::ClusterShapeTracker),
   H1DPlot(),
   m_id(id),
   m_eventCounter(0)

@@ -36,6 +36,7 @@ private slots:
   void saveAllCanvasDialogActionTriggered();
   void saveForPostAnalysisActionTriggered();
   void saveForPostAnalysisDialogActionTriggered();
+  void saveForBatchJobActionTriggered();
   void listWidgetItemChanged(QListWidgetItem*);
   void listWidgetCurrentRowChanged(int);
   void selectAllButtonClicked();

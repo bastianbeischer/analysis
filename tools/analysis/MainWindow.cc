@@ -247,6 +247,8 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.saveForPostAnalysisAction, SIGNAL(triggered()), this, SLOT(saveForPostAnalysisActionTriggered()));
   connect(m_ui.saveAllCanvasesAction, SIGNAL(triggered()), this, SLOT(saveAllCanvasActionTriggered()));
   connect(m_ui.saveForPostAnalysisDialogAction, SIGNAL(triggered()), this, SLOT(saveForPostAnalysisDialogActionTriggered()));
+  connect(m_ui.saveForBatchJobAction, SIGNAL(triggered()), this, SLOT(saveForBatchJobActionTriggered()));
+
   connect(m_ui.setFileListDialogAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListDialogActionTriggered()));
   connect(m_ui.addFileListDialogAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListDialogActionTriggered()));
   connect(m_ui.quitAction, SIGNAL(triggered()), this, SLOT(close()));
@@ -338,51 +340,51 @@ void MainWindow::processArguments(QStringList arguments)
 void MainWindow::showButtonsClicked()
 {
   QPushButton* b = static_cast<QPushButton*>(sender());
-  AnalysisPlot::Topic topic = AnalysisPlot::TopicEnd;
+  AnalysisTopic topic;
   if (b == m_ui.signalHeightTrackerButton) {
-    topic = AnalysisPlot::SignalHeightTracker;
+    topic = AnalysisTopic::SignalHeightTracker;
   } else if (b == m_ui.signalHeightTRDButton) {
-    topic = AnalysisPlot::SignalHeightTRD;
+    topic = AnalysisTopic::SignalHeightTRD;
   } else if (b == m_ui.clusterShapeTrackerButton) {
-    topic = AnalysisPlot::ClusterShapeTracker;
+    topic = AnalysisTopic::ClusterShapeTracker;
   } else if (b == m_ui.clusterShapeTRDButton) {
-    topic = AnalysisPlot::ClusterShapeTRD;
+    topic = AnalysisTopic::ClusterShapeTRD;
   } else if (b == m_ui.timeOverThresholdButton) {
-    topic = AnalysisPlot::TimeOverThreshold;
+    topic = AnalysisTopic::TimeOverThreshold;
   } else if (b == m_ui.trackingButton) {
-    topic = AnalysisPlot::Tracking;
+    topic = AnalysisTopic::Tracking;
   } else if (b == m_ui.occupancyButton) {
-    topic = AnalysisPlot::Occupancy;
+    topic = AnalysisTopic::Occupancy;
   } else if (b == m_ui.residualsTrackerButton) {
-    topic = AnalysisPlot::ResidualsTracker;
+    topic = AnalysisTopic::ResidualsTracker;
   } else if (b == m_ui.residualsTRDButton) {
-    topic = AnalysisPlot::ResidualsTRD;
+    topic = AnalysisTopic::ResidualsTRD;
   } else if (b == m_ui.momentumReconstructionButton) {
-    topic = AnalysisPlot::MomentumReconstruction;
+    topic = AnalysisTopic::MomentumReconstruction;
   } else if (b == m_ui.efficiencyTofButton) {
-    topic = AnalysisPlot::EfficiencyTOF;
+    topic = AnalysisTopic::EfficiencyTOF;
   } else if (b == m_ui.resolutionTofButton) {
-    topic = AnalysisPlot::ResolutionTOF;
+    topic = AnalysisTopic::ResolutionTOF;
   } else if (b == m_ui.calibrationTofButton) {
-    topic = AnalysisPlot::CalibrationTOF;
+    topic = AnalysisTopic::CalibrationTOF;
   } else if (b == m_ui.mcTrackerButton) {
-    topic = AnalysisPlot::MonteCarloTracker;
+    topic = AnalysisTopic::MonteCarloTracker;
   } else if (b == m_ui.mcTRDButton) {
-    topic = AnalysisPlot::MonteCarloTRD;
+    topic = AnalysisTopic::MonteCarloTRD;
   } else if (b == m_ui.mcTOFButton) {
-    topic = AnalysisPlot::MonteCarloTOF;
+    topic = AnalysisTopic::MonteCarloTOF;
   } else if (b == m_ui.mcButton) {
-    topic = AnalysisPlot::MonteCarlo;
+    topic = AnalysisTopic::MonteCarlo;
   } else if (b == m_ui.testbeamButton) {
-    topic = AnalysisPlot::Testbeam;
+    topic = AnalysisTopic::Testbeam;
   } else if (b == m_ui.miscellaneousTrackerButton) {
-    topic = AnalysisPlot::MiscellaneousTracker;
+    topic = AnalysisTopic::MiscellaneousTracker;
   } else if (b == m_ui.miscellaneousTRDButton) {
-    topic = AnalysisPlot::MiscellaneousTRD;
+    topic = AnalysisTopic::MiscellaneousTRD;
   } else if (b == m_ui.miscellaneousTOFButton) {
-    topic = AnalysisPlot::MiscellaneousTOF;
+    topic = AnalysisTopic::MiscellaneousTOF;
   } else if (b == m_ui.slowControlButton) {
-    topic = AnalysisPlot::SlowControl;
+    topic = AnalysisTopic::SlowControl;
   }
   if (b->text() == "+") {
     b->setText("-");
@@ -498,7 +500,7 @@ void MainWindow::setupPlots()
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tracker)
-        m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightTracker, element->id()));
+        m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisTopic::SignalHeightTracker, element->id()));
     }
   }
   if (m_ui.signalHeightTRDCheckBox->isChecked()) {
@@ -506,7 +508,7 @@ void MainWindow::setupPlots()
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::trd)
-        m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisPlot::SignalHeightTRD, element->id()));
+        m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisTopic::SignalHeightTRD, element->id()));
     }
 
     m_ui.plotter->addPlot(new TRDSpectrumPlot());
@@ -524,7 +526,7 @@ void MainWindow::setupPlots()
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tracker) {
-        m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterShapeTracker, element->id()));
+        m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisTopic::ClusterShapeTracker, element->id()));
         m_ui.plotter->addPlot(new ClusterShapePlot(element->id()));
       }
     }
@@ -533,7 +535,7 @@ void MainWindow::setupPlots()
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::trd)
-        m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisPlot::ClusterShapeTRD, element->id()));
+        m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisTopic::ClusterShapeTRD, element->id()));
     }
   }
   if (m_ui.timeOverThresholdCheckBox->isChecked()) {
@@ -588,14 +590,14 @@ void MainWindow::setupPlots()
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       if (layer->z() > -240 && layer->z() < 240)
-        m_ui.plotter->addPlot(new ResidualPlot(AnalysisPlot::ResidualsTracker, layer));
+        m_ui.plotter->addPlot(new ResidualPlot(AnalysisTopic::ResidualsTracker, layer));
     }
   }
   if (m_ui.residualsTRDCheckBox->isChecked()) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       if (layer->z() > -520 && layer->z() < -240)
-        m_ui.plotter->addPlot(new ResidualPlot(AnalysisPlot::ResidualsTRD, layer));
+        m_ui.plotter->addPlot(new ResidualPlot(AnalysisTopic::ResidualsTRD, layer));
     }
   }
   if (m_ui.momentumReconstructionCheckBox->isChecked()) {
@@ -644,11 +646,11 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new EfficiencyCollection());
   }
   if (m_ui.miscellaneousTRDCheckBox->isChecked()) {
-    m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisPlot::MiscellaneousTRD));
-    m_ui.plotter->addPlot(new TRDDistanceWireToTrackPlot(AnalysisPlot::MiscellaneousTRD));
-    m_ui.plotter->addPlot(new TRDDistanceInTube(AnalysisPlot::MiscellaneousTRD));
+    m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisTopic::MiscellaneousTRD));
+    m_ui.plotter->addPlot(new TRDDistanceWireToTrackPlot(AnalysisTopic::MiscellaneousTRD));
+    m_ui.plotter->addPlot(new TRDDistanceInTube(AnalysisTopic::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TotalEnergyDepositionPlot());
-    m_ui.plotter->addPlot(new TRDEnergyDepositionOverMomentumPlot(AnalysisPlot::MiscellaneousTRD));
+    m_ui.plotter->addPlot(new TRDEnergyDepositionOverMomentumPlot(AnalysisTopic::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TotalEnergyDepositionTRDvsTrackerPlot());
     m_ui.plotter->addPlot(new TRDEfficiencyPlot());
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::numberOfHits));
@@ -686,10 +688,10 @@ void MainWindow::setupPlots()
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       if (layer->z() > -520 && layer->z() < -240)
-        m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisPlot::MonteCarloTRD, layer));
+        m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisTopic::MonteCarloTRD, layer));
     }
     m_ui.plotter->addPlot(new MCTRDCalibrationPlot());
-    m_ui.plotter->addPlot(new TRDLikelihoodPlot(AnalysisPlot::MonteCarloTRD));
+    m_ui.plotter->addPlot(new TRDLikelihoodPlot(AnalysisTopic::MonteCarloTRD));
   }
   if (m_ui.mcTrackerCheckBox->isChecked()) {
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Positron));
@@ -701,7 +703,7 @@ void MainWindow::setupPlots()
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       if (layer->z() > -240 && layer->z() < 240)
-        m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisPlot::MonteCarloTracker, layer));
+        m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisTopic::MonteCarloTracker, layer));
     }
     m_ui.plotter->addPlot(new AzimuthMigrationHistogram());
     m_ui.plotter->addPlot(new RigidityMigrationHistogram());
@@ -716,7 +718,7 @@ void MainWindow::setupPlots()
     foreach(SensorTypes::Type sensor, beamSensors)
       m_ui.plotter->addPlot(new PMTPlot(sensor));
     m_ui.plotter->addPlot(new PMTCorrelationPlot);
-    m_ui.plotter->addPlot(new TRDLikelihoodPlot(AnalysisPlot::Testbeam));
+    m_ui.plotter->addPlot(new TRDLikelihoodPlot(AnalysisTopic::Testbeam));
     m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Horizontal));
     m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Vertical));
     m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::Positron));
@@ -1197,4 +1199,16 @@ void MainWindow::changeAspectRatioTriggered()
   } else if (s == m_ui.view169Action) {
     m_ui.plotter->setAspectRatio(16./9.);
   }
+}
+  
+void MainWindow::saveForBatchJobActionTriggered()
+{
+  QString fileEnding; 
+  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "*.root", &fileEnding, m_dialogOptions);
+  if (fileName.isEmpty())
+    return;
+  fileEnding.remove(0, 1);
+  if (!fileName.endsWith(fileEnding))
+    fileName.append(fileEnding);
+
 }

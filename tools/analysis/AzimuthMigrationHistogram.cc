@@ -15,7 +15,7 @@
 #include <cmath>
 
 AzimuthMigrationHistogram::AzimuthMigrationHistogram() :
-AnalysisPlot(AnalysisPlot::MonteCarloTracker),
+AnalysisPlot(AnalysisTopic::MonteCarloTracker),
 H2DPlot()
 {
   setTitle("Azimuth migration");

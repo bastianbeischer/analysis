@@ -2,6 +2,7 @@
 #define PlotCollection_hh
 
 #include "AnalysisPlot.hh"
+
 #include <QObject>
 
 class PlotCollection :
@@ -11,7 +12,7 @@ class PlotCollection :
   Q_OBJECT
 
 public:
-  PlotCollection(AnalysisPlot::Topic);
+  PlotCollection(AnalysisTopic);
   virtual ~PlotCollection();
   
   void addPlot(AnalysisPlot* plot) {m_plots.append(plot);}

@@ -7,7 +7,7 @@
 #include "ParticleInformation.hh"
 
 AlbedosVsMomentumPlot::AlbedosVsMomentumPlot() :
-  AnalysisPlot(AnalysisPlot::MomentumReconstruction),
+  AnalysisPlot(AnalysisTopic::MomentumReconstruction),
   H1DPlot(),
   m_albedoHisto(0),
   m_totalHisto(0)

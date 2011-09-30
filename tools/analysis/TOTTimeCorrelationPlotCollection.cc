@@ -8,7 +8,7 @@
 #include <QLayout>
 
 TOTTimeCorrelationPlotCollection::TOTTimeCorrelationPlotCollection(const QDateTime& first, const QDateTime& last) :
-  PlotCollection(AnalysisPlot::TimeOverThreshold)
+  PlotCollection(AnalysisTopic::TimeOverThreshold)
 {
   QStringList moduleIDs;
 

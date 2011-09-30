@@ -9,7 +9,7 @@
 #include "Track.hh"
 
 Chi2PerNdfPlot::Chi2PerNdfPlot() :
-  AnalysisPlot(AnalysisPlot::Tracking),
+  AnalysisPlot(AnalysisTopic::Tracking),
   H1DPlot()
 {
   setTitle("chi2 / ndf");

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1204</width>
-    <height>637</height>
+    <height>644</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -111,7 +111,7 @@
             <x>0</x>
             <y>0</y>
             <width>235</width>
-            <height>850</height>
+            <height>877</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -2461,7 +2461,7 @@ over threshold</string>
      <x>0</x>
      <y>0</y>
      <width>1204</width>
-     <height>25</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="font">
@@ -2497,6 +2497,8 @@ over threshold</string>
     <addaction name="saveAllCanvasesDialogAction"/>
     <addaction name="saveForPostAnalysisAction"/>
     <addaction name="saveForPostAnalysisDialogAction"/>
+    <addaction name="separator"/>
+    <addaction name="saveForBatchJobAction"/>
    </widget>
    <widget class="QMenu" name="menu_View">
     <property name="font">
@@ -2637,6 +2639,11 @@ over threshold</string>
   <action name="view11Action">
    <property name="text">
     <string>1:1 = 1.00</string>
+   </property>
+  </action>
+  <action name="saveForBatchJobAction">
+   <property name="text">
+    <string>Save for &amp;batch job...</string>
    </property>
   </action>
  </widget>

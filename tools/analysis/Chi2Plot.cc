@@ -20,7 +20,7 @@ double chisquare(double* x, double* p)
 }
 
 Chi2Plot::Chi2Plot(unsigned short ndf) :
-  AnalysisPlot(AnalysisPlot::Tracking),
+  AnalysisPlot(AnalysisTopic::Tracking),
   H1DPlot(),
   m_ndf(ndf)
 {

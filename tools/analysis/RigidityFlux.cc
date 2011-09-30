@@ -28,7 +28,7 @@
 #include <vector>
 
 RigidityFlux::RigidityFlux(Type type, const QDateTime& first, const QDateTime& last, TH1D* particleHistogram)
-  : AnalysisPlot(AnalysisPlot::MomentumReconstruction)
+  : AnalysisPlot(AnalysisTopic::MomentumReconstruction)
   , H1DPlot()
   , m_type(type)
   , m_measurementTimeCalculation(0)

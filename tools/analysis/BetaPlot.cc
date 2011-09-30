@@ -19,7 +19,7 @@
 #include <QDebug>
 
 BetaPlot::BetaPlot()
-  : AnalysisPlot(AnalysisPlot::MiscellaneousTOF)
+  : AnalysisPlot(AnalysisTopic::MiscellaneousTOF)
   , H1DPlot()
   , m_cut(0)
   , m_line(new TLine)

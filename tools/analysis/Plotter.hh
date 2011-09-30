@@ -22,9 +22,9 @@ public:
   unsigned int numberOfPlots();
   void addPlot(AnalysisPlot*);
   void clearPlots();
-  QVector<unsigned int> plotIndices(AnalysisPlot::Topic topic);
+  QVector<unsigned int> plotIndices(AnalysisTopic topic);
   const QString& plotTitle(unsigned int);
-  AnalysisPlot::Topic plotTopic(unsigned int);
+  AnalysisTopic plotTopic(unsigned int);
   void selectPlot(int);
   RootPlot::DrawOption drawOption();
   void setDrawOption(RootPlot::DrawOption);

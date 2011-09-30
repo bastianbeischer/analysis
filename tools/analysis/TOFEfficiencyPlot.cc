@@ -18,7 +18,7 @@
 #include <QDebug>
 
 TOFEfficiencyPlot::TOFEfficiencyPlot(unsigned short id)
-  : AnalysisPlot(AnalysisPlot::EfficiencyTOF)
+  : AnalysisPlot(AnalysisTopic::EfficiencyTOF)
   , H2DPlot()
   , m_id(id)
   , m_updateCounter(0)

@@ -17,7 +17,7 @@
 #include <iostream>
 
 SignalHeight2DPlot::SignalHeight2DPlot() :
-  AnalysisPlot(SignalHeightTracker),
+  AnalysisPlot(AnalysisTopic::SignalHeightTracker),
   H2DProjectionPlot(),
   m_normHisto(0)
 {

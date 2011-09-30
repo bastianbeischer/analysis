@@ -2,7 +2,7 @@
 
 #include <QWidget>
 
-AnalysisPlot::AnalysisPlot(Topic topic)
+AnalysisPlot::AnalysisPlot(AnalysisTopic topic)
   : m_topic(topic)
 {
   setNeedsLocking(true);
@@ -12,7 +12,7 @@ AnalysisPlot::~AnalysisPlot()
 {
 }
 
-AnalysisPlot::Topic AnalysisPlot::topic() const
+AnalysisTopic AnalysisPlot::topic() const
 {
   return m_topic;
 }

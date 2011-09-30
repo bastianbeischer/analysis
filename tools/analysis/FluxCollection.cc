@@ -22,7 +22,7 @@
 #include <QDebug>
 
 FluxCollection::FluxCollection(const QDateTime& first, const QDateTime& last) 
-  : PlotCollection(AnalysisPlot::MomentumReconstruction)
+  : PlotCollection(AnalysisTopic::MomentumReconstruction)
   , m_particleHistogram(0)
   , m_particleHistogramAlbedo(0)
 {

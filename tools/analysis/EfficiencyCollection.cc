@@ -14,7 +14,7 @@
 #include <QDebug>
 
 EfficiencyCollection::EfficiencyCollection() 
-  : PlotCollection(AnalysisPlot::MiscellaneousTracker)
+  : PlotCollection(AnalysisTopic::MiscellaneousTracker)
 {
   QWidget* widget = new QWidget;
   QHBoxLayout* layout = new QHBoxLayout(widget);

@@ -9,7 +9,7 @@
 
 
 TRDSpectrumCherenkovPlotCollection::TRDSpectrumCherenkovPlotCollection() :
-  PlotCollection(AnalysisPlot::Testbeam)
+  PlotCollection(AnalysisTopic::Testbeam)
 {
   QComboBox* comboBox = new QComboBox();
 

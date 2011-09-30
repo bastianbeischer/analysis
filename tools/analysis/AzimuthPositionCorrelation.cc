@@ -18,7 +18,7 @@
 #include <cmath>
 
 AzimuthPositionCorrelation::AzimuthPositionCorrelation(Direction direction, Type type)
-  : AnalysisPlot(AnalysisPlot::Tracking)
+  : AnalysisPlot(AnalysisTopic::Tracking)
   , H2DProjectionPlot()
   , m_direction(direction)
   , m_type(type)

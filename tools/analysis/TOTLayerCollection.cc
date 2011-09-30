@@ -10,7 +10,7 @@
 #include <QString>
 
 TOTLayerCollection::TOTLayerCollection(TOTLayer* plot) :
-  PlotCollection(AnalysisPlot::TimeOverThreshold)
+  PlotCollection(AnalysisTopic::TimeOverThreshold)
 {  
   QComboBox* comboBox = new QComboBox();
   

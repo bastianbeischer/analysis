@@ -20,7 +20,7 @@
 #include <QDebug>
 
 TOTPlot::TOTPlot()
-  : AnalysisPlot(TimeOverThreshold)
+  : AnalysisPlot(AnalysisTopic::TimeOverThreshold)
   , H2DProjectionPlot()
 {
   controlWidget()->spinBox()->setMaximum(64);

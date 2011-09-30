@@ -24,7 +24,7 @@
 #include <QDebug>
 
 TOFBarShiftPlot::TOFBarShiftPlot(unsigned short idTop1, unsigned short idTop2, unsigned short idBottom1, unsigned short idBottom2)
-  : AnalysisPlot(AnalysisPlot::CalibrationTOF)
+  : AnalysisPlot(AnalysisTopic::CalibrationTOF)
   , H1DPlot()
   , m_idTop1(idTop1)
   , m_idTop2(idTop2)

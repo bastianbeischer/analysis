@@ -21,7 +21,7 @@
 #include <math.h>
 
 TRDSpectrumVsTimePlot::TRDSpectrumVsTimePlot(QDateTime first, QDateTime last, unsigned short id, TRDSpectrumPlot::TRDSpectrumType spectrumType)
-  : AnalysisPlot(AnalysisPlot:: SignalHeightTRD)
+  : AnalysisPlot(AnalysisTopic:: SignalHeightTRD)
   , H2DPlot()
   , m_id(id)
   , m_spectrumType(spectrumType)
