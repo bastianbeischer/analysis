@@ -10,6 +10,10 @@ public:
     EfficiencyTOF, ResolutionTOF, CalibrationTOF, MiscellaneousTracker, MiscellaneousTRD, MiscellaneousTOF,
     SlowControl, MonteCarloTracker, MonteCarloTRD, MonteCarloTOF, MonteCarlo, Testbeam;
   static const QVector<AnalysisTopic>& topics();
+  static const QVector<AnalysisTopic>& trackerTopics();
+  static const QVector<AnalysisTopic>& trdTopics();
+  static const QVector<AnalysisTopic>& tofTopics();
+  static const QVector<AnalysisTopic>& otherTopics();
 
   AnalysisTopic();
   const char* label() const;
@@ -21,9 +25,13 @@ private:
     EnumMomentumReconstruction, EnumEfficiencyTOF, EnumResolutionTOF, EnumCalibrationTOF, EnumMiscellaneousTracker,
     EnumMiscellaneousTRD, EnumMiscellaneousTOF, EnumSlowControl, EnumMonteCarloTracker, EnumMonteCarloTRD,
     EnumMonteCarloTOF, EnumMonteCarlo, EnumTestbeam};
-  AnalysisTopic(Topic);
   static const QVector<AnalysisTopic> s_topics;
+  static const QVector<AnalysisTopic> s_trackerTopics;
+  static const QVector<AnalysisTopic> s_trdTopics;
+  static const QVector<AnalysisTopic> s_tofTopics;
+  static const QVector<AnalysisTopic> s_otherTopics;
   
+  AnalysisTopic(Topic);
   Topic m_topic;
 };
 

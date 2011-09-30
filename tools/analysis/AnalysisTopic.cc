@@ -32,7 +32,25 @@ const QVector<AnalysisTopic> AnalysisTopic::s_topics = QVector<AnalysisTopic>()
   << AnalysisTopic::MiscellaneousTOF << AnalysisTopic::SlowControl << AnalysisTopic::MonteCarloTracker
   << AnalysisTopic::MonteCarloTRD << AnalysisTopic::MonteCarloTOF << AnalysisTopic::MonteCarlo
   << AnalysisTopic::Testbeam;
-  
+
+const QVector<AnalysisTopic> AnalysisTopic::s_trackerTopics = QVector<AnalysisTopic>()
+  << AnalysisTopic::SignalHeightTracker << AnalysisTopic::ClusterShapeTracker << AnalysisTopic::Tracking
+  << AnalysisTopic::ResidualsTracker << AnalysisTopic::MomentumReconstruction << AnalysisTopic::MonteCarloTracker
+  << AnalysisTopic::MiscellaneousTracker;
+
+const QVector<AnalysisTopic> AnalysisTopic::s_trdTopics = QVector<AnalysisTopic>()
+  << AnalysisTopic::SignalHeightTRD << AnalysisTopic::ClusterShapeTRD << AnalysisTopic::ResidualsTRD
+  << AnalysisTopic::MonteCarloTRD << AnalysisTopic::MiscellaneousTRD;
+
+const QVector<AnalysisTopic> AnalysisTopic::s_tofTopics = QVector<AnalysisTopic>()
+  << AnalysisTopic::TimeOverThreshold << AnalysisTopic::MomentumReconstruction << AnalysisTopic::EfficiencyTOF
+  << AnalysisTopic::ResolutionTOF << AnalysisTopic::CalibrationTOF << AnalysisTopic::MonteCarloTOF
+  << AnalysisTopic::MiscellaneousTOF;
+
+const QVector<AnalysisTopic> AnalysisTopic::s_otherTopics = QVector<AnalysisTopic>()
+  << AnalysisTopic::MomentumReconstruction << AnalysisTopic::Occupancy << AnalysisTopic::MonteCarlo
+  << AnalysisTopic::SlowControl << AnalysisTopic::Testbeam;
+
 AnalysisTopic::AnalysisTopic()
   : m_topic(EnumUndefined)
 {
@@ -77,4 +95,24 @@ const char* AnalysisTopic::label() const
 const QVector<AnalysisTopic>& AnalysisTopic::topics()
 {
   return s_topics;
+}
+
+const QVector<AnalysisTopic>& AnalysisTopic::trackerTopics()
+{
+  return s_trackerTopics;
+}
+
+const QVector<AnalysisTopic>& AnalysisTopic::trdTopics()
+{
+  return s_trdTopics;
+}
+
+const QVector<AnalysisTopic>& AnalysisTopic::tofTopics()
+{
+  return s_tofTopics;
+}
+
+const QVector<AnalysisTopic>& AnalysisTopic::otherTopics()
+{
+  return s_otherTopics;
 }
