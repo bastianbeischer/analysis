@@ -99,6 +99,8 @@
 #include "Helpers.hh"
 #include "FluxCollection.hh"
 #include "EventTimeDifferencePlot.hh"
+#include "TopicSelector.hh"
+#include "Caption.hh"
 
 #include <QCloseEvent>
 #include <QVBoxLayout>
@@ -119,53 +121,8 @@ MainWindow::MainWindow(QWidget* parent)
 {
   m_ui.setupUi(this);
 
-  m_topicCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
-  m_topicCheckBoxes.append(m_ui.signalHeightTRDCheckBox);
-  m_topicCheckBoxes.append(m_ui.clusterShapeTrackerCheckBox);
-  m_topicCheckBoxes.append(m_ui.clusterShapeTRDCheckBox);
-  m_topicCheckBoxes.append(m_ui.timeOverThresholdCheckBox);
-  m_topicCheckBoxes.append(m_ui.trackingCheckBox);
-  m_topicCheckBoxes.append(m_ui.occupancyCheckBox);
-  m_topicCheckBoxes.append(m_ui.residualsTrackerCheckBox);
-  m_topicCheckBoxes.append(m_ui.residualsTRDCheckBox);
-  m_topicCheckBoxes.append(m_ui.momentumReconstructionCheckBox);
-  m_topicCheckBoxes.append(m_ui.efficiencyTofCheckBox);
-  m_topicCheckBoxes.append(m_ui.resolutionTofCheckBox);
-  m_topicCheckBoxes.append(m_ui.calibrationTofCheckBox);
-  m_topicCheckBoxes.append(m_ui.mcTrackerCheckBox);
-  m_topicCheckBoxes.append(m_ui.mcTRDCheckBox);
-  m_topicCheckBoxes.append(m_ui.mcTOFCheckBox);
-  m_topicCheckBoxes.append(m_ui.mcCheckBox);
-  m_topicCheckBoxes.append(m_ui.testbeamCheckBox);
-  m_topicCheckBoxes.append(m_ui.miscellaneousTrackerCheckBox);
-  m_topicCheckBoxes.append(m_ui.miscellaneousTRDCheckBox);
-  m_topicCheckBoxes.append(m_ui.miscellaneousTOFCheckBox);
-  m_topicCheckBoxes.append(m_ui.slowControlCheckBox);
+  setupTopicSelectors();
 
-  m_trackerCheckBoxes.append(m_ui.signalHeightTrackerCheckBox);
-  m_trackerCheckBoxes.append(m_ui.clusterShapeTrackerCheckBox);
-  m_trackerCheckBoxes.append(m_ui.trackingCheckBox);
-  m_trackerCheckBoxes.append(m_ui.residualsTrackerCheckBox);
-  m_trackerCheckBoxes.append(m_ui.momentumReconstructionCheckBox);
-  m_trackerCheckBoxes.append(m_ui.mcTrackerCheckBox);
-  m_trackerCheckBoxes.append(m_ui.miscellaneousTrackerCheckBox);
-
-  m_trdCheckBoxes.append(m_ui.signalHeightTRDCheckBox);
-  m_trdCheckBoxes.append(m_ui.clusterShapeTRDCheckBox);
-  m_trdCheckBoxes.append(m_ui.residualsTRDCheckBox);
-  m_trdCheckBoxes.append(m_ui.mcTRDCheckBox);
-  m_trdCheckBoxes.append(m_ui.miscellaneousTRDCheckBox);
-
-  m_tofCheckBoxes.append(m_ui.timeOverThresholdCheckBox);
-  m_tofCheckBoxes.append(m_ui.momentumReconstructionCheckBox);
-  m_tofCheckBoxes.append(m_ui.efficiencyTofCheckBox);
-  m_tofCheckBoxes.append(m_ui.resolutionTofCheckBox);
-  m_tofCheckBoxes.append(m_ui.calibrationTofCheckBox);
-  m_tofCheckBoxes.append(m_ui.mcTOFCheckBox);
-  m_tofCheckBoxes.append(m_ui.miscellaneousTOFCheckBox);
-  
-  foreach(QCheckBox* checkBox, m_topicCheckBoxes)
-    m_controlWidgets.append(checkBox);
   m_controlWidgets.append(m_ui.selectAllButton);
   m_controlWidgets.append(m_ui.selectTrackerButton);
   m_controlWidgets.append(m_ui.selectTrdButton);
@@ -266,10 +223,10 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.firstEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
   connect(m_ui.lastEventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(firstOrLastEventChanged(int)));
 
-  connect(m_ui.selectAllButton, SIGNAL(clicked()), this, SLOT(selectAllButtonClicked()));
-  connect(m_ui.selectTrackerButton, SIGNAL(clicked()), this, SLOT(selectTrackerButtonClicked()));
-  connect(m_ui.selectTrdButton, SIGNAL(clicked()), this, SLOT(selectTrdButtonClicked()));
-  connect(m_ui.selectTofButton, SIGNAL(clicked()), this, SLOT(selectTofButtonClicked()));
+  connect(m_ui.selectAllButton, SIGNAL(clicked()), this, SLOT(changeTopicGroup()));
+  connect(m_ui.selectTrackerButton, SIGNAL(clicked()), this, SLOT(changeTopicGroup()));
+  connect(m_ui.selectTrdButton, SIGNAL(clicked()), this, SLOT(changeTopicGroup()));
+  connect(m_ui.selectTofButton, SIGNAL(clicked()), this, SLOT(changeTopicGroup()));
   connect(m_ui.gridCheckBox, SIGNAL(stateChanged(int)), m_ui.plotter->rootWidget(), SLOT(setGrid(int)));
   connect(m_ui.logXCheckBox, SIGNAL(stateChanged(int)), m_ui.plotter->rootWidget(), SLOT(setLogX(int)));
   connect(m_ui.logYCheckBox, SIGNAL(stateChanged(int)), m_ui.plotter->rootWidget(), SLOT(setLogY(int)));
@@ -277,32 +234,6 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.listWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(listWidgetItemChanged(QListWidgetItem*)));
   connect(m_ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(listWidgetCurrentRowChanged(int)));
 
-  connect(m_ui.signalHeightTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.signalHeightTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.clusterShapeTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.clusterShapeTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.timeOverThresholdButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.trackingButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.occupancyButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.residualsTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.residualsTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.momentumReconstructionButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.efficiencyTofButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.resolutionTofButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.calibrationTofButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.mcTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.mcTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.mcTOFButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.mcButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.testbeamButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.miscellaneousTrackerButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.miscellaneousTRDButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.miscellaneousTOFButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-  connect(m_ui.slowControlButton, SIGNAL(clicked()), this, SLOT(showButtonsClicked()));
-
-  foreach(QCheckBox* checkBox, m_topicCheckBoxes)
-    connect(checkBox, SIGNAL(stateChanged(int)), this, SLOT(checkBoxChanged()));
-  
   m_updateTimer.setInterval(50);
   m_ui.numberOfThreadsSpinBox->setValue(QThread::idealThreadCount());
 }
@@ -314,6 +245,48 @@ MainWindow::~MainWindow()
   delete m_ui.plotter;
   delete m_reader;
 }
+
+void MainWindow::setupTopicSelectors()
+{
+  m_ui.scrollAreaWidgetContents_2->layout()->addWidget(new Caption("tracker"));
+  foreach (AnalysisTopic topic, AnalysisTopic::trackerTopics()) {
+    if (!AnalysisTopic::otherTopics().contains(topic)) {
+      TopicSelector* selector = new TopicSelector(topic);
+      m_topicSelectors.append(selector);
+      m_trackerSelectors.append(selector);
+      connect(selector, SIGNAL(show(AnalysisTopic)), this, SLOT(showTopic(AnalysisTopic)));
+      m_ui.scrollAreaWidgetContents_2->layout()->addWidget(selector);
+    }
+  }
+  m_ui.scrollAreaWidgetContents_2->layout()->addWidget(new Caption("TRD"));
+  foreach (AnalysisTopic topic, AnalysisTopic::trdTopics()) {
+    if (!AnalysisTopic::otherTopics().contains(topic)) {
+      TopicSelector* selector = new TopicSelector(topic);
+      m_topicSelectors.append(selector);
+      m_trdSelectors.append(selector);
+      connect(selector, SIGNAL(show(AnalysisTopic)), this, SLOT(showTopic(AnalysisTopic)));
+      m_ui.scrollAreaWidgetContents_2->layout()->addWidget(selector);
+    }
+  }
+  m_ui.scrollAreaWidgetContents_2->layout()->addWidget(new Caption("TOF"));
+  foreach (AnalysisTopic topic, AnalysisTopic::tofTopics()) {
+    if (!AnalysisTopic::otherTopics().contains(topic)) {
+      TopicSelector* selector = new TopicSelector(topic);
+      m_topicSelectors.append(selector);
+      m_tofSelectors.append(selector);
+      connect(selector, SIGNAL(show(AnalysisTopic)), this, SLOT(showTopic(AnalysisTopic)));
+      m_ui.scrollAreaWidgetContents_2->layout()->addWidget(selector);
+    }
+  }
+  m_ui.scrollAreaWidgetContents_2->layout()->addWidget(new Caption("other"));
+  foreach (AnalysisTopic topic, AnalysisTopic::otherTopics()) {
+    TopicSelector* selector = new TopicSelector(topic);
+    m_topicSelectors.append(selector);
+    connect(selector, SIGNAL(show(AnalysisTopic)), this, SLOT(showTopic(AnalysisTopic)));
+    m_ui.scrollAreaWidgetContents_2->layout()->addWidget(selector);
+  }
+}
+
 
 void MainWindow::processArguments(QStringList arguments)
 {
@@ -337,80 +310,32 @@ void MainWindow::processArguments(QStringList arguments)
   }
 }
 
-void MainWindow::showButtonsClicked()
+void MainWindow::showTopic(AnalysisTopic topic)
 {
-  QPushButton* b = static_cast<QPushButton*>(sender());
-  AnalysisTopic topic;
-  if (b == m_ui.signalHeightTrackerButton) {
-    topic = AnalysisTopic::SignalHeightTracker;
-  } else if (b == m_ui.signalHeightTRDButton) {
-    topic = AnalysisTopic::SignalHeightTRD;
-  } else if (b == m_ui.clusterShapeTrackerButton) {
-    topic = AnalysisTopic::ClusterShapeTracker;
-  } else if (b == m_ui.clusterShapeTRDButton) {
-    topic = AnalysisTopic::ClusterShapeTRD;
-  } else if (b == m_ui.timeOverThresholdButton) {
-    topic = AnalysisTopic::TimeOverThreshold;
-  } else if (b == m_ui.trackingButton) {
-    topic = AnalysisTopic::Tracking;
-  } else if (b == m_ui.occupancyButton) {
-    topic = AnalysisTopic::Occupancy;
-  } else if (b == m_ui.residualsTrackerButton) {
-    topic = AnalysisTopic::ResidualsTracker;
-  } else if (b == m_ui.residualsTRDButton) {
-    topic = AnalysisTopic::ResidualsTRD;
-  } else if (b == m_ui.momentumReconstructionButton) {
-    topic = AnalysisTopic::MomentumReconstruction;
-  } else if (b == m_ui.efficiencyTofButton) {
-    topic = AnalysisTopic::EfficiencyTOF;
-  } else if (b == m_ui.resolutionTofButton) {
-    topic = AnalysisTopic::ResolutionTOF;
-  } else if (b == m_ui.calibrationTofButton) {
-    topic = AnalysisTopic::CalibrationTOF;
-  } else if (b == m_ui.mcTrackerButton) {
-    topic = AnalysisTopic::MonteCarloTracker;
-  } else if (b == m_ui.mcTRDButton) {
-    topic = AnalysisTopic::MonteCarloTRD;
-  } else if (b == m_ui.mcTOFButton) {
-    topic = AnalysisTopic::MonteCarloTOF;
-  } else if (b == m_ui.mcButton) {
-    topic = AnalysisTopic::MonteCarlo;
-  } else if (b == m_ui.testbeamButton) {
-    topic = AnalysisTopic::Testbeam;
-  } else if (b == m_ui.miscellaneousTrackerButton) {
-    topic = AnalysisTopic::MiscellaneousTracker;
-  } else if (b == m_ui.miscellaneousTRDButton) {
-    topic = AnalysisTopic::MiscellaneousTRD;
-  } else if (b == m_ui.miscellaneousTOFButton) {
-    topic = AnalysisTopic::MiscellaneousTOF;
-  } else if (b == m_ui.slowControlButton) {
-    topic = AnalysisTopic::SlowControl;
+  QVector<unsigned int> plotIndices = m_ui.plotter->plotIndices(topic);
+  for (int i = 0; i < plotIndices.size(); ++i) {
+    m_activePlots.append(plotIndices[i]);
+    QListWidgetItem* item = new QListWidgetItem(m_ui.plotter->plotTitle(plotIndices[i]));
+    item->setCheckState(Qt::Checked);
+    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
+    m_ui.listWidget->addItem(item);
   }
-  if (b->text() == "+") {
-    b->setText("-");
-    QVector<unsigned int> plotIndices = m_ui.plotter->plotIndices(topic);
-    for (int i = 0; i < plotIndices.size(); ++i) {
-      m_activePlots.append(plotIndices[i]);
-      QListWidgetItem* item = new QListWidgetItem(m_ui.plotter->plotTitle(plotIndices[i]));
-      item->setCheckState(Qt::Checked);
-      item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-      m_ui.listWidget->addItem(item);
-    }
-  } else {
-    b->setText("+");
-    QVector<int> matchingItems;
-    for (int i = m_ui.listWidget->count() - 1; i >= 0; --i) {
-      if (m_ui.plotter->plotTopic(m_activePlots[i]) == topic)
-        matchingItems << i;
-    }
-    if (matchingItems.size() > 0)
-      m_inhibitDraw = true;
-    foreach(int i, matchingItems) {
-      removeListWidgetItem(i);
-      if (i == matchingItems.last()) {
-        m_inhibitDraw = false;
-        listWidgetCurrentRowChanged(m_ui.listWidget->currentRow());
-      }
+}
+
+void MainWindow::hideTopic(AnalysisTopic topic)
+{
+  QVector<int> matchingItems;
+  for (int i = m_ui.listWidget->count() - 1; i >= 0; --i) {
+    if (m_ui.plotter->plotTopic(m_activePlots[i]) == topic)
+      matchingItems << i;
+  }
+  if (matchingItems.size() > 0)
+    m_inhibitDraw = true;
+  foreach(int i, matchingItems) {
+    removeListWidgetItem(i);
+    if (i == matchingItems.last()) {
+      m_inhibitDraw = false;
+      listWidgetCurrentRowChanged(m_ui.listWidget->currentRow());
     }
   }
 }
@@ -865,52 +790,6 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
   } else if (m_ui.trackComboBox->currentText() == "none") {
     type = Track::None;
   }
- 
-  m_ui.signalHeightTrackerButton->setText("+");
-  m_ui.signalHeightTRDButton->setText("+");
-  m_ui.clusterShapeTrackerButton->setText("+");
-  m_ui.clusterShapeTRDButton->setText("+");
-  m_ui.timeOverThresholdButton->setText("+");
-  m_ui.trackingButton->setText("+");
-  m_ui.occupancyButton->setText("+");
-  m_ui.residualsTrackerButton->setText("+");
-  m_ui.residualsTRDButton->setText("+");
-  m_ui.momentumReconstructionButton->setText("+");
-  m_ui.efficiencyTofButton->setText("+");
-  m_ui.resolutionTofButton->setText("+");
-  m_ui.calibrationTofButton->setText("+");
-  m_ui.mcTrackerButton->setText("+");
-  m_ui.mcTRDButton->setText("+");
-  m_ui.mcTOFButton->setText("+");
-  m_ui.mcButton->setText("+");
-  m_ui.testbeamButton->setText("+");
-  m_ui.miscellaneousTrackerButton->setText("+");
-  m_ui.miscellaneousTRDButton->setText("+");
-  m_ui.miscellaneousTOFButton->setText("+");
-  m_ui.slowControlButton->setText("+");
-
-  m_ui.signalHeightTrackerButton->setEnabled(m_ui.signalHeightTrackerCheckBox->isChecked());
-  m_ui.signalHeightTRDButton->setEnabled(m_ui.signalHeightTRDCheckBox->isChecked());
-  m_ui.clusterShapeTrackerButton->setEnabled(m_ui.clusterShapeTrackerCheckBox->isChecked());
-  m_ui.clusterShapeTRDButton->setEnabled(m_ui.clusterShapeTRDCheckBox->isChecked());
-  m_ui.timeOverThresholdButton->setEnabled(m_ui.timeOverThresholdCheckBox->isChecked());
-  m_ui.trackingButton->setEnabled(m_ui.trackingCheckBox->isChecked());
-  m_ui.occupancyButton->setEnabled(m_ui.occupancyCheckBox->isChecked());
-  m_ui.residualsTrackerButton->setEnabled(m_ui.residualsTrackerCheckBox->isChecked());
-  m_ui.residualsTRDButton->setEnabled(m_ui.residualsTRDCheckBox->isChecked());
-  m_ui.momentumReconstructionButton->setEnabled(m_ui.momentumReconstructionCheckBox->isChecked());
-  m_ui.efficiencyTofButton->setEnabled(m_ui.efficiencyTofCheckBox->isChecked());
-  m_ui.resolutionTofButton->setEnabled(m_ui.resolutionTofCheckBox->isChecked());
-  m_ui.calibrationTofButton->setEnabled(m_ui.calibrationTofCheckBox->isChecked());
-  m_ui.mcTrackerButton->setEnabled(m_ui.mcTrackerCheckBox->isChecked());
-  m_ui.mcTRDButton->setEnabled(m_ui.mcTRDCheckBox->isChecked());
-  m_ui.mcTOFButton->setEnabled(m_ui.mcTOFCheckBox->isChecked());
-  m_ui.mcButton->setEnabled(m_ui.mcCheckBox->isChecked());
-  m_ui.testbeamButton->setEnabled(m_ui.testbeamCheckBox->isChecked());
-  m_ui.miscellaneousTrackerButton->setEnabled(m_ui.miscellaneousTrackerCheckBox->isChecked());
-  m_ui.miscellaneousTRDButton->setEnabled(m_ui.miscellaneousTRDCheckBox->isChecked());
-  m_ui.miscellaneousTOFButton->setEnabled(m_ui.miscellaneousTOFCheckBox->isChecked());
-  m_ui.slowControlButton->setEnabled(m_ui.slowControlCheckBox->isChecked());
 }
 
 void MainWindow::analyzeButtonClicked()
@@ -1075,15 +954,27 @@ void MainWindow::checkBoxChanged()
   checkSelectAll();
 }
 
-void MainWindow::changeTopicGroupStatus(QVector<QCheckBox*>& group)
+void MainWindow::changeTopicGroup()
 {
+  QVector<TopicSelector*> group;
+  QObject* button = sender();
+  if (button == m_ui.selectAllButton) {
+    group = m_topicSelectors;
+  } else if (button == m_ui.selectTrackerButton) {
+    group = m_trackerSelectors;
+  } else if (button == m_ui.selectTrdButton) {
+    group = m_trdSelectors;
+  } else if (button == m_ui.selectTofButton) {
+    group = m_tofSelectors;
+  }
+
   bool groupAlreadyChecked = true;
-  foreach(QCheckBox* checkBox, group)
-    groupAlreadyChecked = groupAlreadyChecked && checkBox->isChecked();
+  foreach(TopicSelector* selector, group)
+    groupAlreadyChecked = groupAlreadyChecked && selector->checked();
 
   bool newState = groupAlreadyChecked ? false : true;
-  foreach(QCheckBox* checkBox, group)
-    checkBox->setChecked(newState);
+  foreach(TopicSelector* selector, group)
+    selector->setChecked(newState);
 
   checkSelectAll();
 }
@@ -1091,30 +982,10 @@ void MainWindow::changeTopicGroupStatus(QVector<QCheckBox*>& group)
 void MainWindow::checkSelectAll()
 {
   bool allTopicsChecked = true;
-  foreach(QCheckBox* checkBox, m_topicCheckBoxes)
-    allTopicsChecked = allTopicsChecked && checkBox->isChecked();
+  foreach(TopicSelector* selector, m_topicSelectors)
+    allTopicsChecked = allTopicsChecked && selector->checked();
 
   m_ui.selectAllButton->setText(allTopicsChecked ? "deselect &all" : "select &all");
-}
-
-void MainWindow::selectAllButtonClicked()
-{
-  changeTopicGroupStatus(m_topicCheckBoxes);
-}
-
-void MainWindow::selectTrackerButtonClicked()
-{
-  changeTopicGroupStatus(m_trackerCheckBoxes);
-}
-
-void MainWindow::selectTrdButtonClicked()
-{
-  changeTopicGroupStatus(m_trdCheckBoxes);
-}
- 
-void MainWindow::selectTofButtonClicked()
-{
-  changeTopicGroupStatus(m_tofCheckBoxes);
 }
 
 void MainWindow::closeEvent(QCloseEvent* event)
@@ -1210,5 +1081,4 @@ void MainWindow::saveForBatchJobActionTriggered()
   fileEnding.remove(0, 1);
   if (!fileName.endsWith(fileEnding))
     fileName.append(fileEnding);
-
 }

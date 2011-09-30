@@ -22,6 +22,7 @@
 class QTabBar;
 class DataChain;
 class Plotter;
+class TopicSelector;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -39,11 +40,9 @@ private slots:
   void saveForBatchJobActionTriggered();
   void listWidgetItemChanged(QListWidgetItem*);
   void listWidgetCurrentRowChanged(int);
-  void selectAllButtonClicked();
-  void selectTrackerButtonClicked();
-  void selectTrdButtonClicked();
-  void selectTofButtonClicked();
-  void showButtonsClicked();
+  void changeTopicGroup();
+  void showTopic(AnalysisTopic);
+  void hideTopic(AnalysisTopic);
   void analyzeButtonClicked();
   void saveButtonsClicked();
   void firstOrLastEventChanged(int = 0);
@@ -57,10 +56,10 @@ private slots:
   void update();
   void changeAspectRatioTriggered();
 private:
+  void setupTopicSelectors();
   void setupPlots();
   void setupAnalysis(Track::Type&, Corrections::Flags&, ParticleFilter::Types&, CutFilter&, MCFilter::Types&);
   void startAnalysis();
-  void changeTopicGroupStatus(QVector<QCheckBox*>&);
   void removeListWidgetItem(int);
   void closeEvent(QCloseEvent*);
   void setDrawOptionComboBox();
@@ -70,10 +69,11 @@ private:
   EventReader* m_reader;
   QString m_topLevelPath;
   QVector<unsigned int> m_activePlots;
-  QVector<QCheckBox*> m_topicCheckBoxes;
-  QVector<QCheckBox*> m_tofCheckBoxes;
-  QVector<QCheckBox*> m_trdCheckBoxes;
-  QVector<QCheckBox*> m_trackerCheckBoxes;
+  QVector<TopicSelector*> m_topicSelectors;
+  QVector<TopicSelector*> m_trackerSelectors;
+  QVector<TopicSelector*> m_trdSelectors;
+  QVector<TopicSelector*> m_tofSelectors;
+  
   QVector<QWidget*> m_controlWidgets;
   QVector<RootPlot::DrawOption> m_drawOptions;
   bool m_inhibitDraw;

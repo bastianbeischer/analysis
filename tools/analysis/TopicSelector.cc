@@ -1,0 +1,71 @@
+#include "TopicSelector.hh"
+
+#include <QCheckBox>
+#include <QPushButton>
+#include <QHBoxLayout>
+
+TopicSelector::TopicSelector(AnalysisTopic topic, QWidget* parent)
+  : QWidget(parent)
+  , m_topic(topic)
+  , m_active(false)
+{
+  m_checkBox = new QCheckBox(topic.label());
+  
+  m_button = new QPushButton;
+  m_button->setMaximumWidth(27);
+  m_button->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+
+  QHBoxLayout* layout = new QHBoxLayout;
+  layout->addWidget(m_checkBox);
+  layout->addWidget(m_button);
+  setLayout(layout);
+  deactivate();
+
+  connect(m_button, SIGNAL(clicked()), this, SLOT(toggleButton()));
+}
+
+TopicSelector::~TopicSelector()
+{}
+
+AnalysisTopic TopicSelector::topic() const
+{
+  return m_topic;
+}
+
+void TopicSelector::activate()
+{
+  m_active = true;
+  m_checkBox->setEnabled(false);
+  if (m_checkBox->isChecked())
+    m_button->setEnabled(true);
+  m_button->setText("+");
+}
+
+void TopicSelector::deactivate()
+{
+  m_active = false;
+  m_checkBox->setEnabled(true);
+  m_button->setEnabled(false);
+  m_button->setText("+");
+}
+
+void TopicSelector::toggleButton()
+{
+  if (m_button->text() == "+") {
+    m_button->setText("-");
+    emit hide(m_topic);
+  } else {
+    m_button->setText("+");
+    emit show(m_topic);
+  }
+}
+
+bool TopicSelector::checked() const
+{
+  return m_checkBox->checkState() == Qt::Checked;
+}
+
+void TopicSelector::setChecked(bool value)
+{
+  m_checkBox->setChecked(value ? Qt::Checked : Qt::Unchecked);
+}
