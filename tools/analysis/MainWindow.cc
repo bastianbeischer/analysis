@@ -248,45 +248,44 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupTopicSelectors()
 {
-  m_ui.scrollAreaWidgetContents_2->layout()->addWidget(new Caption("tracker"));
+  m_ui.scrollAreaWidgetContents->layout()->addWidget(new Caption("tracker"));
   foreach (AnalysisTopic topic, AnalysisTopic::trackerTopics()) {
     if (!AnalysisTopic::otherTopics().contains(topic)) {
       TopicSelector* selector = new TopicSelector(topic);
       m_topicSelectors.append(selector);
       m_trackerSelectors.append(selector);
-      connect(selector, SIGNAL(show(AnalysisTopic)), this, SLOT(showTopic(AnalysisTopic)));
-      m_ui.scrollAreaWidgetContents_2->layout()->addWidget(selector);
+      m_ui.scrollAreaWidgetContents->layout()->addWidget(selector);
     }
   }
-  m_ui.scrollAreaWidgetContents_2->layout()->addWidget(new Caption("TRD"));
+  m_ui.scrollAreaWidgetContents->layout()->addWidget(new Caption("TRD"));
   foreach (AnalysisTopic topic, AnalysisTopic::trdTopics()) {
     if (!AnalysisTopic::otherTopics().contains(topic)) {
       TopicSelector* selector = new TopicSelector(topic);
       m_topicSelectors.append(selector);
       m_trdSelectors.append(selector);
-      connect(selector, SIGNAL(show(AnalysisTopic)), this, SLOT(showTopic(AnalysisTopic)));
-      m_ui.scrollAreaWidgetContents_2->layout()->addWidget(selector);
+      m_ui.scrollAreaWidgetContents->layout()->addWidget(selector);
     }
   }
-  m_ui.scrollAreaWidgetContents_2->layout()->addWidget(new Caption("TOF"));
+  m_ui.scrollAreaWidgetContents->layout()->addWidget(new Caption("TOF"));
   foreach (AnalysisTopic topic, AnalysisTopic::tofTopics()) {
     if (!AnalysisTopic::otherTopics().contains(topic)) {
       TopicSelector* selector = new TopicSelector(topic);
       m_topicSelectors.append(selector);
       m_tofSelectors.append(selector);
-      connect(selector, SIGNAL(show(AnalysisTopic)), this, SLOT(showTopic(AnalysisTopic)));
-      m_ui.scrollAreaWidgetContents_2->layout()->addWidget(selector);
+      m_ui.scrollAreaWidgetContents->layout()->addWidget(selector);
     }
   }
-  m_ui.scrollAreaWidgetContents_2->layout()->addWidget(new Caption("other"));
+  m_ui.scrollAreaWidgetContents->layout()->addWidget(new Caption("other"));
   foreach (AnalysisTopic topic, AnalysisTopic::otherTopics()) {
     TopicSelector* selector = new TopicSelector(topic);
     m_topicSelectors.append(selector);
+    m_ui.scrollAreaWidgetContents->layout()->addWidget(selector);
+  }
+  foreach (TopicSelector* selector, m_topicSelectors) {
     connect(selector, SIGNAL(show(AnalysisTopic)), this, SLOT(showTopic(AnalysisTopic)));
-    m_ui.scrollAreaWidgetContents_2->layout()->addWidget(selector);
+    connect(selector, SIGNAL(hide(AnalysisTopic)), this, SLOT(hideTopic(AnalysisTopic)));
   }
 }
-
 
 void MainWindow::processArguments(QStringList arguments)
 {
@@ -420,7 +419,12 @@ void MainWindow::setupPlots()
   QDateTime first = m_reader->startTime();
   QDateTime last = m_reader->stopTime();
 
-  if (m_ui.signalHeightTrackerCheckBox->isChecked()) {
+  QVector<AnalysisTopic> topics;
+  foreach (TopicSelector* selector, m_topicSelectors)
+    if (selector->checked())
+      topics.append(selector->topic());
+
+  if (topics.contains(AnalysisTopic::SignalHeightTracker)) {
     m_ui.plotter->addPlot(new SignalHeight2DPlot);
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
@@ -428,7 +432,8 @@ void MainWindow::setupPlots()
         m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisTopic::SignalHeightTracker, element->id()));
     }
   }
-  if (m_ui.signalHeightTRDCheckBox->isChecked()) {
+
+  if (topics.contains(AnalysisTopic::SignalHeightTRD)) {
     m_ui.plotter->addPlot(new ZSquareTRDPlot);
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
@@ -447,7 +452,8 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDSpectrumVsTemperaturePlot());
     m_ui.plotter->addPlot(new TRDSpectrumVsPressurePlot());
   }
-  if (m_ui.clusterShapeTrackerCheckBox->isChecked()) {
+
+  if (topics.contains(AnalysisTopic::ClusterShapeTracker)) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tracker) {
@@ -456,14 +462,14 @@ void MainWindow::setupPlots()
       }
     }
   }
-  if (m_ui.clusterShapeTRDCheckBox->isChecked()) {
+  if (topics.contains(AnalysisTopic::ClusterShapeTRD)) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::trd)
         m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisTopic::ClusterShapeTRD, element->id()));
     }
   }
-  if (m_ui.timeOverThresholdCheckBox->isChecked()) {
+  if (topics.contains(AnalysisTopic::TimeOverThreshold)) {
     m_ui.plotter->addPlot(new TOTPlot);
     m_ui.plotter->addPlot(new TOTLayerCollection(new TOTLayerPlot()));
     m_ui.plotter->addPlot(new TOTLayerCollection(new TOTIonizationCorrelation(Hit::trd)));
@@ -485,7 +491,7 @@ void MainWindow::setupPlots()
           m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch, first, last));
     }
   }
-  if (m_ui.trackingCheckBox->isChecked()) {
+  if (topics.contains(AnalysisTopic::Tracking)) {
     m_ui.plotter->addPlot(new BendingPositionPlot);
     m_ui.plotter->addPlot(new BendingAnglePlot);
     for (double cut = .004; cut < .008; cut+=.001)
@@ -505,27 +511,27 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, AzimuthPositionCorrelation::Negative));
     m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, AzimuthPositionCorrelation::All));
   }
-  if (m_ui.occupancyCheckBox->isChecked()) {
+  if (topics.contains(AnalysisTopic::Occupancy)) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       m_ui.plotter->addPlot(new GeometricOccupancyPlot(layer->z()));
     }
   }
-  if (m_ui.residualsTrackerCheckBox->isChecked()) {
+  if (topics.contains(AnalysisTopic::ResidualsTracker)) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       if (layer->z() > -240 && layer->z() < 240)
         m_ui.plotter->addPlot(new ResidualPlot(AnalysisTopic::ResidualsTracker, layer));
     }
   }
-  if (m_ui.residualsTRDCheckBox->isChecked()) {
+  if (topics.contains(AnalysisTopic::ResidualsTRD)) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       if (layer->z() > -520 && layer->z() < -240)
         m_ui.plotter->addPlot(new ResidualPlot(AnalysisTopic::ResidualsTRD, layer));
     }
   }
-  if (m_ui.momentumReconstructionCheckBox->isChecked()) {
+  if (topics.contains(AnalysisTopic::MomentumReconstruction)) {
     m_ui.plotter->addPlot(new BetaMomentumCorrelationPlot());
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::All));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Positive));
@@ -535,7 +541,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MeasurementTimePlot(first, last));
     m_ui.plotter->addPlot(new FluxCollection(first, last));
   }
-  if (m_ui.efficiencyTofCheckBox->isChecked()) {
+  if (topics.contains(AnalysisTopic::EfficiencyTOF)) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof) {
@@ -545,17 +551,17 @@ void MainWindow::setupPlots()
       }
     }
   }
-  if (m_ui.resolutionTofCheckBox->isChecked()) {
+  if (topics.contains(AnalysisTopic::ResolutionTOF)) {
     m_ui.plotter->addPlot(new TimeResolutionPlotCollection);
   }
-  if (m_ui.calibrationTofCheckBox->isChecked()) {
+  if (topics.contains(AnalysisTopic::CalibrationTOF)) {
     m_ui.plotter->addPlot(new ChannelTriggerProbabilityPlot);
     m_ui.plotter->addPlot(new TOFTimeShiftTriggerPlot);
     m_ui.plotter->addPlot(new TOFTimeShiftPlotCollection);
     m_ui.plotter->addPlot(new TOFTimeDifferencePlotCollection);
     m_ui.plotter->addPlot(new TOFBarShiftPlotCollection);
   }
-  if (m_ui.miscellaneousTrackerCheckBox->isChecked()) {
+  if (topics.contains(AnalysisTopic::MiscellaneousTracker)) {
     m_ui.plotter->addPlot(new TotalSignalHeightPlot);
     m_ui.plotter->addPlot(new CutStatisticsPlot);
     m_ui.plotter->addPlot(new TrackerLayerStatisticsPlot);
@@ -570,7 +576,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::All));
     m_ui.plotter->addPlot(new EfficiencyCollection());
   }
-  if (m_ui.miscellaneousTRDCheckBox->isChecked()) {
+  if (topics.contains(AnalysisTopic::MiscellaneousTRD)) {
     m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisTopic::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TRDDistanceWireToTrackPlot(AnalysisTopic::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TRDDistanceInTube(AnalysisTopic::MiscellaneousTRD));
@@ -585,7 +591,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDTimeCorrectionPlot(first, last));
     m_ui.plotter->addPlot(new TRDLikelihoodFunctionsPlot());
   }
-  if (m_ui.miscellaneousTOFCheckBox->isChecked()) {
+  if (topics.contains(AnalysisTopic::MiscellaneousTOF)) {
     m_ui.plotter->addPlot(new BetaPlot);
     m_ui.plotter->addPlot(new TimeReconstructionPlot(TimeReconstructionPlot::Mean));
     m_ui.plotter->addPlot(new TimeReconstructionPlot(TimeReconstructionPlot::Median));
@@ -596,7 +602,7 @@ void MainWindow::setupPlots()
     }
     m_ui.plotter->addPlot(new EventTimeDifferencePlot(m_ui.numberOfThreadsSpinBox->value()));
   }
-  if (m_ui.slowControlCheckBox->isChecked()) {
+  if (topics.contains(AnalysisTopic::SlowControl)) {
     QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());
     foreach(SensorTypes::Type sensor, temperatureSensors)
       m_ui.plotter->addPlot(new TemperatureTimePlot(sensor, first, last));
@@ -605,10 +611,10 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TriggerRateTimePlot(first, last));
     m_ui.plotter->addPlot(new HeightTimePlot(first, last));
   }
-  if (m_ui.mcCheckBox->isChecked()) {
+  if (topics.contains(AnalysisTopic::MonteCarlo)) {
     m_ui.plotter->addPlot(new MCTotalEnergyDepositionTRDvsTrackerPlot());
   }
-  if (m_ui.mcTRDCheckBox->isChecked()) {
+  if (topics.contains(AnalysisTopic::MonteCarloTRD)) {
     m_ui.plotter->addPlot(new MCTRDSpectrumPlot());
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
@@ -618,7 +624,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MCTRDCalibrationPlot());
     m_ui.plotter->addPlot(new TRDLikelihoodPlot(AnalysisTopic::MonteCarloTRD));
   }
-  if (m_ui.mcTrackerCheckBox->isChecked()) {
+  if (topics.contains(AnalysisTopic::MonteCarloTracker)) {
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Positron));
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Electron));
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Proton));
@@ -633,7 +639,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new AzimuthMigrationHistogram());
     m_ui.plotter->addPlot(new RigidityMigrationHistogram());
   }
-  if (m_ui.testbeamCheckBox->isChecked()) {
+  if (topics.contains(AnalysisTopic::Testbeam)) {
     m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::MagnetInstalled, first, last));
     m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::Momentum, first, last));
     m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::Polarity, first, last));
@@ -879,8 +885,7 @@ void MainWindow::saveCanvasDialogActionTriggered()
   QString fileEnding;
   if (fileName.contains('.')) {
     fileEnding = fileName.split('.').last().toLower();
-  }
-  else {
+  } else {
     fileEnding = selectedFilter.split("(").first().toLower();
   }
 
@@ -888,8 +893,7 @@ void MainWindow::saveCanvasDialogActionTriggered()
   if(fileEnding == "all files"){
     foreach(QString fileFormatEnding, fileFormatEndings)
       m_ui.plotter->saveCanvas(fileName + "." + fileFormatEnding);
-  }
-  else{
+  } else {
     if (!fileEnding.startsWith('.'))
       fileEnding.prepend('.');
     if (!fileName.endsWith(fileEnding))
@@ -1017,6 +1021,8 @@ void MainWindow::toggleControlWidgetsStatus()
 {
   foreach(QWidget* widget, m_controlWidgets)
     widget->setEnabled(!widget->isEnabled());
+  foreach(TopicSelector* selector, m_topicSelectors)
+    selector->setActive(!selector->isActive());
   if (m_ui.analyzeButton->text() == "&start") {
     m_ui.analyzeButton->setText("&stop");
     m_time.restart();
@@ -1071,10 +1077,10 @@ void MainWindow::changeAspectRatioTriggered()
     m_ui.plotter->setAspectRatio(16./9.);
   }
 }
-  
+
 void MainWindow::saveForBatchJobActionTriggered()
 {
-  QString fileEnding; 
+  QString fileEnding;
   QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "*.root", &fileEnding, m_dialogOptions);
   if (fileName.isEmpty())
     return;

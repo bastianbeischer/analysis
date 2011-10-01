@@ -14,8 +14,8 @@ public:
   TopicSelector(AnalysisTopic, QWidget* = 0);
   ~TopicSelector();
   AnalysisTopic topic() const;
-  void activate();
-  void deactivate();
+  bool isActive() const;
+  void setActive(bool);
   bool checked() const;
   void setChecked(bool);
 signals:
@@ -25,7 +25,6 @@ private slots:
   void toggleButton();
 private:
   AnalysisTopic m_topic;
-  bool m_active;
   QCheckBox* m_checkBox;
   QPushButton* m_button;
 };
