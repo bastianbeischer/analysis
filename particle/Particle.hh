@@ -28,7 +28,7 @@ public:
 
   void setType(const Type&);
   void setPdgId(const int&);
-  void setTrackType(const Track::Type&);
+  void setTrackType(const Enums::TrackType&);
 
   const ParticleProperties* properties() const {return m_properties;}
   Track* track() const {return m_track;}

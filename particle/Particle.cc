@@ -67,20 +67,20 @@ void Particle::setPdgId(const int& pdgId)
   m_properties = ParticleDB::instance()->lookupPdgId(pdgId);
 }
 
-void Particle::setTrackType(const Track::Type& trackType)
+void Particle::setTrackType(const Enums::TrackType& trackType)
 {
   if (m_track)
     delete m_track;
 
-  if (trackType == Track::None)
+  if (trackType == Enums::None)
     m_track = 0;
-  if (trackType == Track::CenteredBrokenLine)
+  if (trackType == Enums::CenteredBrokenLine)
     m_track = new CenteredBrokenLine;
-  else if (trackType == Track::CenteredBrokenLine2D)
+  else if (trackType == Enums::CenteredBrokenLine2D)
     m_track = new CenteredBrokenLine2D;
-  else if (trackType == Track::BrokenLine)
+  else if (trackType == Enums::BrokenLine)
     m_track = new BrokenLine;
-  else if (trackType == Track::StraightLine)
+  else if (trackType == Enums::StraightLine)
     m_track = new StraightLine;
 }
 

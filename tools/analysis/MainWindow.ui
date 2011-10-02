@@ -151,31 +151,6 @@
              <family>DejaVu Sans</family>
             </font>
            </property>
-           <item>
-            <property name="text">
-             <string>centered broken line</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>centered broken line 2D</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>broken line</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>straight line</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>none</string>
-            </property>
-           </item>
           </widget>
          </item>
          <item row="3" column="1">

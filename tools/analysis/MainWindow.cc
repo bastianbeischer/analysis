@@ -123,6 +123,10 @@ MainWindow::MainWindow(QWidget* parent)
 
   setupTopicSelectors();
 
+  for (QMap<Enums::TrackType, QString>::ConstIterator it = Enums::trackTypeBegin(); it != Enums::trackTypeEnd(); ++it)
+    m_ui.trackComboBox->addItem(it.value());
+  m_ui.trackComboBox->setCurrentIndex(m_ui.trackComboBox->findText(Enums::label(Enums::CenteredBrokenLine)));
+
   m_controlWidgets.append(m_ui.selectAllButton);
   m_controlWidgets.append(m_ui.selectTrackerButton);
   m_controlWidgets.append(m_ui.selectTrdButton);
@@ -660,8 +664,10 @@ void MainWindow::setupPlots()
   }
 }
 
-void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes, CutFilter& cutFilter, MCFilter::Types& mcFilterTypes)
+void MainWindow::setupAnalysis(Enums::TrackType& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes, CutFilter& cutFilter, MCFilter::Types& mcFilterTypes)
 {
+  type = Enums::trackType(m_ui.trackComboBox->currentText());
+
   if (m_ui.alignmentCorrectionCheckBox->isChecked())
     flags|= Corrections::Alignment;
   if (m_ui.timeShiftCorrectionCheckBox->isChecked())
@@ -784,24 +790,12 @@ void MainWindow::setupAnalysis(Track::Type& type, Corrections::Flags& flags, Par
       cut.setMin(cherenkovLimit);
     cutFilter.addCut(cut);
   }
-  
-  if (m_ui.trackComboBox->currentText() == "centered broken line") {
-    type = Track::CenteredBrokenLine;
-  } else if (m_ui.trackComboBox->currentText() == "centered broken line 2D") {
-    type = Track::CenteredBrokenLine2D;
-  } else if (m_ui.trackComboBox->currentText() == "broken line") {
-    type = Track::BrokenLine;
-  } else if (m_ui.trackComboBox->currentText() == "straight line") {
-    type = Track::StraightLine;
-  } else if (m_ui.trackComboBox->currentText() == "none") {
-    type = Track::None;
-  }
 }
 
 void MainWindow::analyzeButtonClicked()
 {
   if (m_ui.analyzeButton->text() == "&start") {
-    Track::Type type = Track::None;
+    Enums::TrackType type = Enums::None;
     Corrections::Flags flags;
     ParticleFilter::Types filterTypes;
     CutFilter cutFilter;

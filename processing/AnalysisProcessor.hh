@@ -18,10 +18,10 @@ class ParticleIdentifier;
 class AnalysisProcessor : public EventProcessor {
 public:
   AnalysisProcessor();
-  AnalysisProcessor(QVector<EventDestination*>, Track::Type, Corrections::Flags);
+  AnalysisProcessor(QVector<EventDestination*>, Enums::TrackType, Corrections::Flags);
   ~AnalysisProcessor();
 
-  void setTrackType(const Track::Type&);
+  void setTrackType(const Enums::TrackType&);
   void setCorrectionFlags(const Corrections::Flags&);
   void setParticleFilter(const ParticleFilter::Types&);
   void setMCFilter(const MCFilter::Types&);

@@ -19,7 +19,7 @@ CenteredBrokenLine::CenteredBrokenLine() :
   m_slopeY(0),
   m_zIntersection(0.)
 {
-  m_type = Track::CenteredBrokenLine;
+  m_type = Enums::CenteredBrokenLine;
   m_matrix = new CenteredBrokenLineMatrix;
 }
 

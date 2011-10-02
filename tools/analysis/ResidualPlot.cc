@@ -121,13 +121,13 @@ Track* ResidualPlot::referenceTrack(const QVector<Hit*>&, const Particle* const 
   }
 
   Track* mytrack = 0;
-  if (track->type() == Track::StraightLine)
+  if (track->type() == Enums::StraightLine)
     mytrack = new StraightLine;
-  else if (track->type() == Track::BrokenLine)
+  else if (track->type() == Enums::BrokenLine)
     mytrack = new BrokenLine;
-  else if (track->type() == Track::CenteredBrokenLine)
+  else if (track->type() == Enums::CenteredBrokenLine)
     mytrack = new CenteredBrokenLine;
-  else if (track->type() == Track::CenteredBrokenLine2D)
+  else if (track->type() == Enums::CenteredBrokenLine2D)
     mytrack = new CenteredBrokenLine2D;
   else mytrack = 0;
 

@@ -28,7 +28,7 @@ void BendingPositionPlot::processEvent(const QVector<Hit*>&, const Particle* con
   if(!track || !track->fitGood())
     return;
 
-  if (track->type() == Track::BrokenLine) {
+  if (track->type() == Enums::BrokenLine) {
     const BrokenLine* line = static_cast<const BrokenLine*>(track);
 
     ParticleInformation::Flags flags = particle->information()->flags();

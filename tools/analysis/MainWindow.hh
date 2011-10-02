@@ -58,7 +58,7 @@ private slots:
 private:
   void setupTopicSelectors();
   void setupPlots();
-  void setupAnalysis(Track::Type&, Corrections::Flags&, ParticleFilter::Types&, CutFilter&, MCFilter::Types&);
+  void setupAnalysis(Enums::TrackType&, Corrections::Flags&, ParticleFilter::Types&, CutFilter&, MCFilter::Types&);
   void startAnalysis();
   void removeListWidgetItem(int);
   void closeEvent(QCloseEvent*);

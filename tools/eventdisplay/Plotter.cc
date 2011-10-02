@@ -93,7 +93,7 @@ void Plotter::mouseMoveEvent(QMouseEvent* event)
   }
 }
 
-void Plotter::drawEvent(unsigned int i, Track::Type type, bool allClusters, QPlainTextEdit& infoTextEdit, TQtWidget& trackFindingWidget)
+void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters, QPlainTextEdit& infoTextEdit, TQtWidget& trackFindingWidget)
 {
   TCanvas* canvas = GetCanvas();
   canvas->cd();
