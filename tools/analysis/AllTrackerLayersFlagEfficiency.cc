@@ -19,7 +19,7 @@
 #include <QSpinBox>
 
 AllTrackerLayersFlagEfficiency::AllTrackerLayersFlagEfficiency(EfficiencyCorrectionSettings::FoldingType type)
-  : AnalysisPlot(AnalysisTopic::MiscellaneousTracker)
+  : AnalysisPlot(Enums::MiscellaneousTracker)
   , H1DPlot()
   , m_afterCutHisto(0)
   , m_normHisto(0)

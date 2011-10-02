@@ -6,11 +6,11 @@
 #include <QEvent>
 #include <QDebug>
 
-TopicSelector::TopicSelector(AnalysisTopic topic, QWidget* parent)
+TopicSelector::TopicSelector(Enums::AnalysisTopic topic, QWidget* parent)
   : QWidget(parent)
   , m_topic(topic)
 {
-  m_checkBox = new QCheckBox(topic.label());
+  m_checkBox = new QCheckBox(Enums::label(topic));
   
   m_button = new QPushButton("+");
   m_button->setEnabled(false);
@@ -28,7 +28,7 @@ TopicSelector::TopicSelector(AnalysisTopic topic, QWidget* parent)
 TopicSelector::~TopicSelector()
 {}
 
-AnalysisTopic TopicSelector::topic() const
+Enums::AnalysisTopic TopicSelector::topic() const
 {
   return m_topic;
 }

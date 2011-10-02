@@ -16,7 +16,7 @@
 #include <QDebug>
 
 TOFPositionCorrelationPlot::TOFPositionCorrelationPlot(unsigned short id)
-  : AnalysisPlot(AnalysisTopic::MiscellaneousTOF)
+  : AnalysisPlot(Enums::MiscellaneousTOF)
   , H2DPlot()
   , m_id(id)
   , m_correlationGraph(new TGraphErrors)

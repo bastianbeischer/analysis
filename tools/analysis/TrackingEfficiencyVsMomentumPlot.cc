@@ -12,7 +12,7 @@
 #include <cmath>
 
 TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot(Enums::ChargeSigns type)
-  : AnalysisPlot(AnalysisTopic::MiscellaneousTracker)
+  : AnalysisPlot(Enums::MiscellaneousTracker)
   , H2DPlot()
   , m_type(type)
 {

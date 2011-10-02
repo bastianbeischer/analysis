@@ -18,7 +18,7 @@
 #include <cmath>
 
 AzimuthCutStatistics::AzimuthCutStatistics()
-  : AnalysisPlot(AnalysisTopic::Tracking)
+  : AnalysisPlot(Enums::Tracking)
   , H2DProjectionPlot()
 {
   setTitle("Azimuth cut satistics");

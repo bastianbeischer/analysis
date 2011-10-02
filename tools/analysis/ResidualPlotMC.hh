@@ -6,7 +6,7 @@
 class ResidualPlotMC : public ResidualPlot
 {
 public:
-  ResidualPlotMC(AnalysisTopic topic, Layer* layer);
+  ResidualPlotMC(Enums::AnalysisTopic topic, Layer* layer);
 private:
   virtual Track* referenceTrack(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
 };

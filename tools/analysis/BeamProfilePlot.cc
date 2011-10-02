@@ -20,7 +20,7 @@
 
 BeamProfilePlot::BeamProfilePlot(Type type) :
   H2DProjectionPlot(),
-  AnalysisPlot(AnalysisTopic::Testbeam),
+  AnalysisPlot(Enums::Testbeam),
   m_type(type),
   m_fileNameLineEdit(new QLineEdit("beamprofile.root"))
 {

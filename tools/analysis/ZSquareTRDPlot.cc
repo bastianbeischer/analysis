@@ -14,7 +14,7 @@
 #include <QDebug>
 
 ZSquareTRDPlot::ZSquareTRDPlot()
-  : AnalysisPlot(AnalysisTopic::SignalHeightTRD)
+  : AnalysisPlot(Enums::SignalHeightTRD)
   , H2DPlot()
 {
   setTitle(QString("z square TRD"));

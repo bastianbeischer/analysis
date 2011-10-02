@@ -14,7 +14,7 @@
 #include <cmath>
 
 ZenithAzimuthCorrelation::ZenithAzimuthCorrelation()
-  : AnalysisPlot(AnalysisTopic::Tracking)
+  : AnalysisPlot(Enums::Tracking)
   , H2DPlot()
 {
   setTitle("Zenith Azimuth Correlation");

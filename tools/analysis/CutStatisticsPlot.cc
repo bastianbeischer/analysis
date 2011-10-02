@@ -8,7 +8,7 @@
 #include "ParticleInformation.hh"
 
 CutStatisticsPlot::CutStatisticsPlot() :
-  AnalysisPlot(AnalysisTopic::MiscellaneousTracker),
+  AnalysisPlot(Enums::MiscellaneousTracker),
   H1DPlot()
 {
   setTitle("cut statistics");

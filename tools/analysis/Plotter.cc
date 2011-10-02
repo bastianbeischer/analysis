@@ -99,7 +99,7 @@ const QString& Plotter::plotTitle(unsigned int i)
   return m_plots[i]->title();
 }
 
-QVector<unsigned int> Plotter::plotIndices(AnalysisTopic topic)
+QVector<unsigned int> Plotter::plotIndices(Enums::AnalysisTopic topic)
 {
   QVector<unsigned int> ret;
   for (int i = 0; i < m_plots.size(); ++i)
@@ -108,7 +108,7 @@ QVector<unsigned int> Plotter::plotIndices(AnalysisTopic topic)
   return ret;
 }
 
-AnalysisTopic Plotter::plotTopic(unsigned int i)
+Enums::AnalysisTopic Plotter::plotTopic(unsigned int i)
 {
   Q_ASSERT(i < numberOfPlots());
   return m_plots[i]->topic();

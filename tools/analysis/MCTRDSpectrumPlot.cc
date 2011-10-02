@@ -20,7 +20,7 @@
 #include <math.h>
 
 MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumPlot::TRDSpectrumType spectrumType)
-  : AnalysisPlot(AnalysisTopic::MonteCarloTRD)
+  : AnalysisPlot(Enums::MonteCarloTRD)
   , H1DPlot()
   , m_colorCounter(0)
   , m_id(id)

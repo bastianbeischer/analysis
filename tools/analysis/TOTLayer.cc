@@ -1,7 +1,7 @@
 #include "TOTLayer.hh"
 
 TOTLayer::TOTLayer(Layer layer)
-  : AnalysisPlot(AnalysisTopic::TimeOverThreshold)
+  : AnalysisPlot(Enums::TimeOverThreshold)
   , m_layer(layer)
 {
   m_plotName = layerName(layer);

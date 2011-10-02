@@ -11,7 +11,7 @@ class RootQtWidget;
 class TRDLikelihoodPlot: public AnalysisPlot, public H1DPlot
 {
 public:
-    TRDLikelihoodPlot(AnalysisTopic);
+    TRDLikelihoodPlot(Enums::AnalysisTopic);
     virtual void processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event);
     virtual void update();
     virtual void finalize();

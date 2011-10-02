@@ -7,17 +7,17 @@
 #include "ParticleInformation.hh"
 #include "Hit.hh"
 
-SignalHeightPlot::SignalHeightPlot(AnalysisTopic topic, unsigned short id) :
+SignalHeightPlot::SignalHeightPlot(Enums::AnalysisTopic topic, unsigned short id) :
   AnalysisPlot(topic),
   H1DPlot(),
   m_id(id)
 {
   int maximum = 0, bins = 0;
-  if (topic == AnalysisTopic::SignalHeightTracker) {
+  if (topic == Enums::SignalHeightTracker) {
     maximum = 4096;
     bins = 100;
   }
-  else if (topic == AnalysisTopic::SignalHeightTRD) {
+  else if (topic == Enums::SignalHeightTRD) {
     maximum = 1500;
     bins = 1500;
   }

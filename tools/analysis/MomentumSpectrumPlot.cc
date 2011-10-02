@@ -14,7 +14,7 @@
 #include <cmath>
 
 MomentumSpectrumPlot::MomentumSpectrumPlot(Enums::ChargeSigns type, bool inverted)
-  : AnalysisPlot(AnalysisTopic::MomentumReconstruction)
+  : AnalysisPlot(Enums::MomentumReconstruction)
   , H1DPlot()
   , m_type(type)
   , m_inverted(inverted)

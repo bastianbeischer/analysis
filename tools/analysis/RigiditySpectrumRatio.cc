@@ -23,7 +23,7 @@
 #include <vector>
 
 RigiditySpectrumRatio::RigiditySpectrumRatio()
-  : AnalysisPlot(AnalysisTopic::MomentumReconstruction)
+  : AnalysisPlot(Enums::MomentumReconstruction)
   , H1DPlot()
 {
   QString title = "rigidity spectrum ratio";

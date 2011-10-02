@@ -4,7 +4,7 @@
 #include "ParticleProperties.hh"
 
 MCRigidityResolutionPlot::MCRigidityResolutionPlot(const Particle::Type& type) :
-  RigidityResolutionPlot(AnalysisTopic::MonteCarloTracker, type)
+  RigidityResolutionPlot(Enums::MonteCarloTracker, type)
 {
 }
 

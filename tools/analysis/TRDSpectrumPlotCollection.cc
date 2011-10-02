@@ -8,7 +8,7 @@
 #include <QLayout>
 
 TRDSpectrumPlotCollection::TRDSpectrumPlotCollection() :
-  PlotCollection(AnalysisTopic::SignalHeightTRD)
+  PlotCollection(Enums::SignalHeightTRD)
 {
   QStringList moduleIDs;
 

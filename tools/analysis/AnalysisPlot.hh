@@ -4,16 +4,17 @@
 #include "RootPlot.hh"
 #include "EventDestination.hh"
 #include "AnalysisTopic.hh"
+#include "Enums.hh"
 
 class AnalysisPlot : virtual public RootPlot, public EventDestination {
 public:
-  AnalysisPlot(AnalysisTopic);
+  AnalysisPlot(Enums::AnalysisTopic);
   virtual ~AnalysisPlot();
   virtual void finalize() {}
   virtual void update() {}
-  AnalysisTopic topic() const;
+  Enums::AnalysisTopic topic() const;
 private:
-  AnalysisTopic m_topic;
+  Enums::AnalysisTopic m_topic;
 };
 
 #endif

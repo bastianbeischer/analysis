@@ -18,7 +18,7 @@
 #include <TPaletteAxis.h>
 
 TRDOccupancyPlot::TRDOccupancyPlot(TrdOccupancyType occupancyType, bool onlyOnTrack)
-  : AnalysisPlot(AnalysisTopic::MiscellaneousTRD)
+  : AnalysisPlot(Enums::MiscellaneousTRD)
   , H2DPlot()
   , m_occupancyType(occupancyType)
   , m_onlyOnTrack(onlyOnTrack)

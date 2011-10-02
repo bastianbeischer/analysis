@@ -22,7 +22,7 @@
 #include <cmath>
 #include <iostream>
 
-ResidualPlot::ResidualPlot(AnalysisTopic topic, Layer* layer)
+ResidualPlot::ResidualPlot(Enums::AnalysisTopic topic, Layer* layer)
   : AnalysisPlot(topic)
   , H2DProjectionPlot()
   , m_layer(layer)
@@ -33,9 +33,9 @@ ResidualPlot::ResidualPlot(AnalysisTopic topic, Layer* layer)
   setTitle(QString("Residuals layer at %1").arg(layer->z()));
 
   double max = 0.;
-  if (topic == AnalysisTopic::ResidualsTracker || topic == AnalysisTopic::MonteCarloTracker)
+  if (topic == Enums::ResidualsTracker || topic == Enums::MonteCarloTracker)
     max = 3.;
-  if (topic == AnalysisTopic::ResidualsTRD || topic == AnalysisTopic::MonteCarloTRD)
+  if (topic == Enums::ResidualsTRD || topic == Enums::MonteCarloTRD)
     max = 10.;
 
   unsigned short nElements = layer->nElements();

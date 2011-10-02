@@ -9,7 +9,7 @@
 #include "ParticleInformation.hh"
 
 TrackerLayerStatisticsPlot::TrackerLayerStatisticsPlot() :
-  AnalysisPlot(AnalysisTopic::MiscellaneousTracker),
+  AnalysisPlot(Enums::MiscellaneousTracker),
   H1DPlot()
 {
   setTitle("tracker layer statistics");

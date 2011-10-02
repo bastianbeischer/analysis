@@ -23,7 +23,7 @@
 
 #include "TF1.h"
 
-RigidityResolutionPlot::RigidityResolutionPlot(AnalysisTopic topic, const Particle::Type& type)
+RigidityResolutionPlot::RigidityResolutionPlot(Enums::AnalysisTopic topic, const Particle::Type& type)
   : AnalysisPlot(topic)
   , H1DPlot()
   , m_particle(ParticleDB::instance()->lookupType(type))

@@ -10,7 +10,7 @@
 const int PMTPlot::s_threshold = 200.;
 
 PMTPlot::PMTPlot(SensorTypes::Type type) :
-  AnalysisPlot(AnalysisTopic::Testbeam),
+  AnalysisPlot(Enums::Testbeam),
   H1DPlot(),
   m_type(type)
 {

@@ -25,7 +25,7 @@
 #include <QSpinBox>
 
 TimeResolutionPlot::TimeResolutionPlot(unsigned short id1, unsigned short id2, unsigned short id3, unsigned short id4)
-  : AnalysisPlot(AnalysisTopic::ResolutionTOF)
+  : AnalysisPlot(Enums::ResolutionTOF)
   , H2DProjectionPlot()
   , m_idTop1(id1)
   , m_idTop2(id2)

@@ -13,7 +13,7 @@
 #include "ParticleInformation.hh"
 
 Chi2VsMomentumPlot::Chi2VsMomentumPlot() :
-  AnalysisPlot(AnalysisTopic::Tracking),
+  AnalysisPlot(Enums::Tracking),
   H2DPlot()
 {
   setTitle("Chi2 vs Momentum");

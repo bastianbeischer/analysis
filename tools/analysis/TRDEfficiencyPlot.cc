@@ -21,7 +21,7 @@
 #include <math.h>
 
 TRDEfficiencyPlot::TRDEfficiencyPlot()
-  : AnalysisPlot(AnalysisTopic::MiscellaneousTRD)
+  : AnalysisPlot(Enums::MiscellaneousTRD)
   , H2DPlot()
 {
   setTitle("TRD efficiency (hits / was on track)");

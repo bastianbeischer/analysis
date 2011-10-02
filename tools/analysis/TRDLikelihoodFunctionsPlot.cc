@@ -8,7 +8,7 @@
 #include <TColor.h>
 
 TRDLikelihoodFunctionsPlot::TRDLikelihoodFunctionsPlot()
-  : AnalysisPlot(AnalysisTopic::MiscellaneousTRD)
+  : AnalysisPlot(Enums::MiscellaneousTRD)
   , H1DPlot()
 {
   setTitle("TRD pdfs");

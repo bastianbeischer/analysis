@@ -6,7 +6,7 @@
 #include "Settings.hh"
 
 TestbeamRigidityResolutionPlot::TestbeamRigidityResolutionPlot(const Particle::Type& type) :
-  RigidityResolutionPlot(AnalysisTopic::Testbeam, type)
+  RigidityResolutionPlot(Enums::Testbeam, type)
 {
 }
 

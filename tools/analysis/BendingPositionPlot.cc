@@ -9,7 +9,7 @@
 #include <TH1.h>
 
 BendingPositionPlot::BendingPositionPlot()
-  : AnalysisPlot(AnalysisTopic::Tracking)
+  : AnalysisPlot(Enums::Tracking)
   , H1DPlot()
 {
   setTitle("bending position");

@@ -11,7 +11,7 @@
 #include <cmath>
 
 BendingAnglePlot::BendingAnglePlot()
-  : AnalysisPlot(AnalysisTopic::Tracking)
+  : AnalysisPlot(Enums::Tracking)
   , H1DPlot()
 {
   setTitle("bending angle");

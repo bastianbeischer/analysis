@@ -13,7 +13,7 @@
 #include "Helpers.hh"
 
 SingleLayerTrackingEfficiencyPlot::SingleLayerTrackingEfficiencyPlot(Enums::ChargeSigns type)
-  : AnalysisPlot(AnalysisTopic::MiscellaneousTracker)
+  : AnalysisPlot(Enums::MiscellaneousTracker)
   , H2DPlot()
   , m_type(type)
   , m_normHisto(0)

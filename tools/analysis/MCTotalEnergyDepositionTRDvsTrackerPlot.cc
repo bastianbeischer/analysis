@@ -18,7 +18,7 @@
 #include "RootStyle.hh"
 
 MCTotalEnergyDepositionTRDvsTrackerPlot::MCTotalEnergyDepositionTRDvsTrackerPlot()
-  : AnalysisPlot(AnalysisTopic::MonteCarlo)
+  : AnalysisPlot(Enums::MonteCarlo)
   , GraphPlot()
   , m_colorCounter(0)
 {

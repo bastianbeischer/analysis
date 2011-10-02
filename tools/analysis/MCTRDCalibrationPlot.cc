@@ -10,7 +10,7 @@
 #include "Cluster.hh"
 
 MCTRDCalibrationPlot::MCTRDCalibrationPlot()
-  : AnalysisPlot(AnalysisTopic::MonteCarloTRD)
+  : AnalysisPlot(Enums::MonteCarloTRD)
   , H2DPlot()
 {
   setTitle("MC TRD Calibration");

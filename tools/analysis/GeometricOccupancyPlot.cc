@@ -13,7 +13,7 @@
 #include <TAxis.h>
 
 GeometricOccupancyPlot::GeometricOccupancyPlot(double zPosition)
-  : AnalysisPlot(AnalysisTopic::Occupancy)
+  : AnalysisPlot(Enums::Occupancy)
   , H2DProjectionPlot()
   , m_zPosition(zPosition)
 {

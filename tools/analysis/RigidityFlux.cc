@@ -28,7 +28,7 @@
 #include <vector>
 
 RigidityFlux::RigidityFlux(Enums::ChargeSign type, const QDateTime& first, const QDateTime& last, TH1D* particleHistogram)
-  : AnalysisPlot(AnalysisTopic::MomentumReconstruction)
+  : AnalysisPlot(Enums::MomentumReconstruction)
   , H1DPlot()
   , m_type(type)
   , m_measurementTimeCalculation(0)

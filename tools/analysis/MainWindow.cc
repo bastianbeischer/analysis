@@ -249,7 +249,7 @@ MainWindow::~MainWindow()
 void MainWindow::setupTopicSelectors()
 {
   m_ui.scrollAreaWidgetContents->layout()->addWidget(new Caption("tracker"));
-  foreach (AnalysisTopic topic, AnalysisTopic::trackerTopics()) {
+  foreach (Enums::AnalysisTopic topic, AnalysisTopic::trackerTopics()) {
     if (!AnalysisTopic::otherTopics().contains(topic)) {
       TopicSelector* selector = new TopicSelector(topic);
       m_topicSelectors.append(selector);
@@ -258,7 +258,7 @@ void MainWindow::setupTopicSelectors()
     }
   }
   m_ui.scrollAreaWidgetContents->layout()->addWidget(new Caption("TRD"));
-  foreach (AnalysisTopic topic, AnalysisTopic::trdTopics()) {
+  foreach (Enums::AnalysisTopic topic, AnalysisTopic::trdTopics()) {
     if (!AnalysisTopic::otherTopics().contains(topic)) {
       TopicSelector* selector = new TopicSelector(topic);
       m_topicSelectors.append(selector);
@@ -267,7 +267,7 @@ void MainWindow::setupTopicSelectors()
     }
   }
   m_ui.scrollAreaWidgetContents->layout()->addWidget(new Caption("TOF"));
-  foreach (AnalysisTopic topic, AnalysisTopic::tofTopics()) {
+  foreach (Enums::AnalysisTopic topic, AnalysisTopic::tofTopics()) {
     if (!AnalysisTopic::otherTopics().contains(topic)) {
       TopicSelector* selector = new TopicSelector(topic);
       m_topicSelectors.append(selector);
@@ -276,14 +276,14 @@ void MainWindow::setupTopicSelectors()
     }
   }
   m_ui.scrollAreaWidgetContents->layout()->addWidget(new Caption("other"));
-  foreach (AnalysisTopic topic, AnalysisTopic::otherTopics()) {
+  foreach (Enums::AnalysisTopic topic, AnalysisTopic::otherTopics()) {
     TopicSelector* selector = new TopicSelector(topic);
     m_topicSelectors.append(selector);
     m_ui.scrollAreaWidgetContents->layout()->addWidget(selector);
   }
   foreach (TopicSelector* selector, m_topicSelectors) {
-    connect(selector, SIGNAL(show(AnalysisTopic)), this, SLOT(showTopic(AnalysisTopic)));
-    connect(selector, SIGNAL(hide(AnalysisTopic)), this, SLOT(hideTopic(AnalysisTopic)));
+    connect(selector, SIGNAL(show(Enums::AnalysisTopic)), this, SLOT(showTopic(Enums::AnalysisTopic)));
+    connect(selector, SIGNAL(hide(Enums::AnalysisTopic)), this, SLOT(hideTopic(Enums::AnalysisTopic)));
   }
 }
 
@@ -309,7 +309,7 @@ void MainWindow::processArguments(QStringList arguments)
   }
 }
 
-void MainWindow::showTopic(AnalysisTopic topic)
+void MainWindow::showTopic(Enums::AnalysisTopic topic)
 {
   QVector<unsigned int> plotIndices = m_ui.plotter->plotIndices(topic);
   for (int i = 0; i < plotIndices.size(); ++i) {
@@ -321,7 +321,7 @@ void MainWindow::showTopic(AnalysisTopic topic)
   }
 }
 
-void MainWindow::hideTopic(AnalysisTopic topic)
+void MainWindow::hideTopic(Enums::AnalysisTopic topic)
 {
   QVector<int> matchingItems;
   for (int i = m_ui.listWidget->count() - 1; i >= 0; --i) {
@@ -419,26 +419,26 @@ void MainWindow::setupPlots()
   QDateTime first = m_reader->startTime();
   QDateTime last = m_reader->stopTime();
 
-  QVector<AnalysisTopic> topics;
+  QVector<Enums::AnalysisTopic> topics;
   foreach (TopicSelector* selector, m_topicSelectors)
     if (selector->checked())
       topics.append(selector->topic());
 
-  if (topics.contains(AnalysisTopic::SignalHeightTracker)) {
+  if (topics.contains(Enums::SignalHeightTracker)) {
     m_ui.plotter->addPlot(new SignalHeight2DPlot);
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tracker)
-        m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisTopic::SignalHeightTracker, element->id()));
+        m_ui.plotter->addPlot(new SignalHeightPlot(Enums::SignalHeightTracker, element->id()));
     }
   }
 
-  if (topics.contains(AnalysisTopic::SignalHeightTRD)) {
+  if (topics.contains(Enums::SignalHeightTRD)) {
     m_ui.plotter->addPlot(new ZSquareTRDPlot);
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::trd)
-        m_ui.plotter->addPlot(new SignalHeightPlot(AnalysisTopic::SignalHeightTRD, element->id()));
+        m_ui.plotter->addPlot(new SignalHeightPlot(Enums::SignalHeightTRD, element->id()));
     }
 
     m_ui.plotter->addPlot(new TRDSpectrumPlot());
@@ -453,23 +453,23 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDSpectrumVsPressurePlot());
   }
 
-  if (topics.contains(AnalysisTopic::ClusterShapeTracker)) {
+  if (topics.contains(Enums::ClusterShapeTracker)) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tracker) {
-        m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisTopic::ClusterShapeTracker, element->id()));
+        m_ui.plotter->addPlot(new ClusterLengthPlot(Enums::ClusterShapeTracker, element->id()));
         m_ui.plotter->addPlot(new ClusterShapePlot(element->id()));
       }
     }
   }
-  if (topics.contains(AnalysisTopic::ClusterShapeTRD)) {
+  if (topics.contains(Enums::ClusterShapeTRD)) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::trd)
-        m_ui.plotter->addPlot(new ClusterLengthPlot(AnalysisTopic::ClusterShapeTRD, element->id()));
+        m_ui.plotter->addPlot(new ClusterLengthPlot(Enums::ClusterShapeTRD, element->id()));
     }
   }
-  if (topics.contains(AnalysisTopic::TimeOverThreshold)) {
+  if (topics.contains(Enums::TimeOverThreshold)) {
     m_ui.plotter->addPlot(new TOTPlot);
     m_ui.plotter->addPlot(new TOTLayerCollection(new TOTLayerPlot()));
     m_ui.plotter->addPlot(new TOTLayerCollection(new TOTIonizationCorrelation(Hit::trd)));
@@ -491,7 +491,7 @@ void MainWindow::setupPlots()
           m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch, first, last));
     }
   }
-  if (topics.contains(AnalysisTopic::Tracking)) {
+  if (topics.contains(Enums::Tracking)) {
     m_ui.plotter->addPlot(new BendingPositionPlot);
     m_ui.plotter->addPlot(new BendingAnglePlot);
     for (double cut = .004; cut < .008; cut+=.001)
@@ -511,27 +511,27 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, Enums::Negative));
     m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, Enums::Positive | Enums::Negative));
   }
-  if (topics.contains(AnalysisTopic::Occupancy)) {
+  if (topics.contains(Enums::Occupancy)) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       m_ui.plotter->addPlot(new GeometricOccupancyPlot(layer->z()));
     }
   }
-  if (topics.contains(AnalysisTopic::ResidualsTracker)) {
+  if (topics.contains(Enums::ResidualsTracker)) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       if (layer->z() > -240 && layer->z() < 240)
-        m_ui.plotter->addPlot(new ResidualPlot(AnalysisTopic::ResidualsTracker, layer));
+        m_ui.plotter->addPlot(new ResidualPlot(Enums::ResidualsTracker, layer));
     }
   }
-  if (topics.contains(AnalysisTopic::ResidualsTRD)) {
+  if (topics.contains(Enums::ResidualsTRD)) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       if (layer->z() > -520 && layer->z() < -240)
-        m_ui.plotter->addPlot(new ResidualPlot(AnalysisTopic::ResidualsTRD, layer));
+        m_ui.plotter->addPlot(new ResidualPlot(Enums::ResidualsTRD, layer));
     }
   }
-  if (topics.contains(AnalysisTopic::MomentumReconstruction)) {
+  if (topics.contains(Enums::MomentumReconstruction)) {
     m_ui.plotter->addPlot(new BetaMomentumCorrelationPlot());
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(Enums::Positive));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(Enums::Negative));
@@ -541,7 +541,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MeasurementTimePlot(first, last));
     m_ui.plotter->addPlot(new FluxCollection(first, last));
   }
-  if (topics.contains(AnalysisTopic::EfficiencyTOF)) {
+  if (topics.contains(Enums::EfficiencyTOF)) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof) {
@@ -551,17 +551,17 @@ void MainWindow::setupPlots()
       }
     }
   }
-  if (topics.contains(AnalysisTopic::ResolutionTOF)) {
+  if (topics.contains(Enums::ResolutionTOF)) {
     m_ui.plotter->addPlot(new TimeResolutionPlotCollection);
   }
-  if (topics.contains(AnalysisTopic::CalibrationTOF)) {
+  if (topics.contains(Enums::CalibrationTOF)) {
     m_ui.plotter->addPlot(new ChannelTriggerProbabilityPlot);
     m_ui.plotter->addPlot(new TOFTimeShiftTriggerPlot);
     m_ui.plotter->addPlot(new TOFTimeShiftPlotCollection);
     m_ui.plotter->addPlot(new TOFTimeDifferencePlotCollection);
     m_ui.plotter->addPlot(new TOFBarShiftPlotCollection);
   }
-  if (topics.contains(AnalysisTopic::MiscellaneousTracker)) {
+  if (topics.contains(Enums::MiscellaneousTracker)) {
     m_ui.plotter->addPlot(new TotalSignalHeightPlot);
     m_ui.plotter->addPlot(new CutStatisticsPlot);
     m_ui.plotter->addPlot(new TrackerLayerStatisticsPlot);
@@ -576,12 +576,12 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::All));
     m_ui.plotter->addPlot(new EfficiencyCollection());
   }
-  if (topics.contains(AnalysisTopic::MiscellaneousTRD)) {
-    m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(AnalysisTopic::MiscellaneousTRD));
-    m_ui.plotter->addPlot(new TRDDistanceWireToTrackPlot(AnalysisTopic::MiscellaneousTRD));
-    m_ui.plotter->addPlot(new TRDDistanceInTube(AnalysisTopic::MiscellaneousTRD));
+  if (topics.contains(Enums::MiscellaneousTRD)) {
+    m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(Enums::MiscellaneousTRD));
+    m_ui.plotter->addPlot(new TRDDistanceWireToTrackPlot(Enums::MiscellaneousTRD));
+    m_ui.plotter->addPlot(new TRDDistanceInTube(Enums::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TotalEnergyDepositionPlot());
-    m_ui.plotter->addPlot(new TRDEnergyDepositionOverMomentumPlot(AnalysisTopic::MiscellaneousTRD));
+    m_ui.plotter->addPlot(new TRDEnergyDepositionOverMomentumPlot(Enums::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TotalEnergyDepositionTRDvsTrackerPlot());
     m_ui.plotter->addPlot(new TRDEfficiencyPlot());
     m_ui.plotter->addPlot(new TRDOccupancyPlot(TRDOccupancyPlot::numberOfHits));
@@ -591,7 +591,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDTimeCorrectionPlot(first, last));
     m_ui.plotter->addPlot(new TRDLikelihoodFunctionsPlot());
   }
-  if (topics.contains(AnalysisTopic::MiscellaneousTOF)) {
+  if (topics.contains(Enums::MiscellaneousTOF)) {
     m_ui.plotter->addPlot(new BetaPlot);
     m_ui.plotter->addPlot(new TimeReconstructionPlot(TimeReconstructionPlot::Mean));
     m_ui.plotter->addPlot(new TimeReconstructionPlot(TimeReconstructionPlot::Median));
@@ -602,7 +602,7 @@ void MainWindow::setupPlots()
     }
     m_ui.plotter->addPlot(new EventTimeDifferencePlot(m_ui.numberOfThreadsSpinBox->value()));
   }
-  if (topics.contains(AnalysisTopic::SlowControl)) {
+  if (topics.contains(Enums::SlowControl)) {
     QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());
     foreach(SensorTypes::Type sensor, temperatureSensors)
       m_ui.plotter->addPlot(new TemperatureTimePlot(sensor, first, last));
@@ -611,20 +611,20 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TriggerRateTimePlot(first, last));
     m_ui.plotter->addPlot(new HeightTimePlot(first, last));
   }
-  if (topics.contains(AnalysisTopic::MonteCarlo)) {
+  if (topics.contains(Enums::MonteCarlo)) {
     m_ui.plotter->addPlot(new MCTotalEnergyDepositionTRDvsTrackerPlot());
   }
-  if (topics.contains(AnalysisTopic::MonteCarloTRD)) {
+  if (topics.contains(Enums::MonteCarloTRD)) {
     m_ui.plotter->addPlot(new MCTRDSpectrumPlot());
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       if (layer->z() > -520 && layer->z() < -240)
-        m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisTopic::MonteCarloTRD, layer));
+        m_ui.plotter->addPlot(new ResidualPlotMC(Enums::MonteCarloTRD, layer));
     }
     m_ui.plotter->addPlot(new MCTRDCalibrationPlot());
-    m_ui.plotter->addPlot(new TRDLikelihoodPlot(AnalysisTopic::MonteCarloTRD));
+    m_ui.plotter->addPlot(new TRDLikelihoodPlot(Enums::MonteCarloTRD));
   }
-  if (topics.contains(AnalysisTopic::MonteCarloTracker)) {
+  if (topics.contains(Enums::MonteCarloTracker)) {
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Positron));
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Electron));
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Proton));
@@ -634,12 +634,12 @@ void MainWindow::setupPlots()
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       if (layer->z() > -240 && layer->z() < 240)
-        m_ui.plotter->addPlot(new ResidualPlotMC(AnalysisTopic::MonteCarloTracker, layer));
+        m_ui.plotter->addPlot(new ResidualPlotMC(Enums::MonteCarloTracker, layer));
     }
     m_ui.plotter->addPlot(new AzimuthMigrationHistogram());
     m_ui.plotter->addPlot(new RigidityMigrationHistogram());
   }
-  if (topics.contains(AnalysisTopic::Testbeam)) {
+  if (topics.contains(Enums::Testbeam)) {
     m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::MagnetInstalled, first, last));
     m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::Momentum, first, last));
     m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::Polarity, first, last));
@@ -649,7 +649,7 @@ void MainWindow::setupPlots()
     foreach(SensorTypes::Type sensor, beamSensors)
       m_ui.plotter->addPlot(new PMTPlot(sensor));
     m_ui.plotter->addPlot(new PMTCorrelationPlot);
-    m_ui.plotter->addPlot(new TRDLikelihoodPlot(AnalysisTopic::Testbeam));
+    m_ui.plotter->addPlot(new TRDLikelihoodPlot(Enums::Testbeam));
     m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Horizontal));
     m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Vertical));
     m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::Positron));

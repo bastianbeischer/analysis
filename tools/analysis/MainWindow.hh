@@ -10,7 +10,7 @@
 #include "EventReader.hh"
 #include "RootPlot.hh"
 #include "CutFilter.hh"
-
+#include "Enums.hh"
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QString>
@@ -41,8 +41,8 @@ private slots:
   void listWidgetItemChanged(QListWidgetItem*);
   void listWidgetCurrentRowChanged(int);
   void changeTopicGroup();
-  void showTopic(AnalysisTopic);
-  void hideTopic(AnalysisTopic);
+  void showTopic(Enums::AnalysisTopic);
+  void hideTopic(Enums::AnalysisTopic);
   void analyzeButtonClicked();
   void saveButtonsClicked();
   void firstOrLastEventChanged(int = 0);

@@ -7,10 +7,10 @@
 #include <QLayout>
 #include <QDebug>
 
-PlotCollection::PlotCollection(AnalysisTopic topic) :
-  QObject(),
-  AnalysisPlot(topic),
-  m_selectedPlot(0)
+PlotCollection::PlotCollection(Enums::AnalysisTopic topic)
+  : QObject()
+  , AnalysisPlot(topic)
+  , m_selectedPlot(0)
 {
   QWidget* widget = new QWidget;
   QVBoxLayout* layout = new QVBoxLayout;

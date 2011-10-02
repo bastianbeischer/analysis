@@ -7,7 +7,7 @@
 #include <QLayout>
 
 TOFTimeDifferencePlotCollection::TOFTimeDifferencePlotCollection() :
-  PlotCollection(AnalysisTopic::CalibrationTOF)
+  PlotCollection(Enums::CalibrationTOF)
 {
   QStringList moduleIDs;
   const ElementIterator itEnd = Setup::instance()->lastElement();

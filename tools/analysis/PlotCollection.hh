@@ -12,7 +12,7 @@ class PlotCollection :
   Q_OBJECT
 
 public:
-  PlotCollection(AnalysisTopic);
+  PlotCollection(Enums::AnalysisTopic);
   virtual ~PlotCollection();
   
   void addPlot(AnalysisPlot* plot) {m_plots.append(plot);}

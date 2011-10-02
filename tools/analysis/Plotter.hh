@@ -2,6 +2,7 @@
 #define Plotter_hh
 
 #include "AnalysisPlot.hh"
+#include "Enums.hh"
 
 #include <QWidget>
 #include <QVector>
@@ -22,9 +23,9 @@ public:
   unsigned int numberOfPlots();
   void addPlot(AnalysisPlot*);
   void clearPlots();
-  QVector<unsigned int> plotIndices(AnalysisTopic topic);
+  QVector<unsigned int> plotIndices(Enums::AnalysisTopic topic);
   const QString& plotTitle(unsigned int);
-  AnalysisTopic plotTopic(unsigned int);
+  Enums::AnalysisTopic plotTopic(unsigned int);
   void selectPlot(int);
   RootPlot::DrawOption drawOption();
   void setDrawOption(RootPlot::DrawOption);

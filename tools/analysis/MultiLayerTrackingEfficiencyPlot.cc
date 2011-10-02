@@ -17,7 +17,7 @@
 #include <QSpinBox>
 
 MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot(Type type) :
-  AnalysisPlot(AnalysisTopic::MiscellaneousTracker),
+  AnalysisPlot(Enums::MiscellaneousTracker),
   H2DProjectionPlot(),
   m_type(type),
   m_normHisto(0),

@@ -11,20 +11,20 @@ class QPushButton;
 class TopicSelector : public QWidget {
 Q_OBJECT
 public:
-  TopicSelector(AnalysisTopic, QWidget* = 0);
+  TopicSelector(Enums::AnalysisTopic, QWidget* = 0);
   ~TopicSelector();
-  AnalysisTopic topic() const;
+  Enums::AnalysisTopic topic() const;
   bool isActive() const;
   void setActive(bool);
   bool checked() const;
   void setChecked(bool);
 signals:
-  void show(AnalysisTopic);
-  void hide(AnalysisTopic);
+  void show(Enums::AnalysisTopic);
+  void hide(Enums::AnalysisTopic);
 private slots:
   void toggleButton();
 private:
-  AnalysisTopic m_topic;
+  Enums::AnalysisTopic m_topic;
   QCheckBox* m_checkBox;
   QPushButton* m_button;
 };

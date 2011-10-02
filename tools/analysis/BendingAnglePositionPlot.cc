@@ -13,7 +13,7 @@
 #include <cmath>
 
 BendingAnglePositionPlot::BendingAnglePositionPlot(double cut)
-  : AnalysisPlot(AnalysisTopic::Tracking)
+  : AnalysisPlot(Enums::Tracking)
   , H2DPlot()
   , m_cut(cut)
   , m_normHisto(0)

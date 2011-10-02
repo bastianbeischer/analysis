@@ -21,7 +21,7 @@
 #include <math.h>
 
 TOTTimeCorrelationPlot::TOTTimeCorrelationPlot(unsigned int id, QDateTime first, QDateTime last)
-  : AnalysisPlot(AnalysisTopic::TimeOverThreshold)
+  : AnalysisPlot(Enums::TimeOverThreshold)
   , H2DProjectionPlot()
   , m_id(id)
 {

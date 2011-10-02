@@ -13,7 +13,7 @@
 #include "SettingsManager.hh"
 #include "RootQtWidget.hh"
 
-TRDLikelihoodPlot::TRDLikelihoodPlot(AnalysisTopic topic)
+TRDLikelihoodPlot::TRDLikelihoodPlot(Enums::AnalysisTopic topic)
   : AnalysisPlot(topic)
   , H1DPlot()
   , m_NonTRHisto(0)

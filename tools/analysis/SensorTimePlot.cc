@@ -10,7 +10,7 @@
 #include <cmath>
 
 SensorTimePlot::SensorTimePlot(SensorTypes::Type type, QDateTime first, QDateTime last)
-  : AnalysisPlot(AnalysisTopic::SlowControl)
+  : AnalysisPlot(Enums::SlowControl)
   , H1DPlot()
   , m_type(type)
 {

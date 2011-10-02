@@ -18,7 +18,7 @@
 #include <cmath>
 
 AzimuthPositionCorrelation::AzimuthPositionCorrelation(Direction direction, Enums::ChargeSigns type)
-  : AnalysisPlot(AnalysisTopic::Tracking)
+  : AnalysisPlot(Enums::Tracking)
   , H2DProjectionPlot()
   , m_direction(direction)
   , m_type(type)

@@ -20,7 +20,7 @@
 #include <QDebug>
 
 TimeReconstructionPlot::TimeReconstructionPlot(Method method)
-  : AnalysisPlot(AnalysisTopic::MiscellaneousTOF)
+  : AnalysisPlot(Enums::MiscellaneousTOF)
   , H2DProjectionPlot()
   , m_method(method)
 {

@@ -19,7 +19,7 @@
 #include <QDebug>
 
 ChannelTriggerProbabilityPlot::ChannelTriggerProbabilityPlot()
-  : AnalysisPlot(AnalysisTopic::CalibrationTOF)
+  : AnalysisPlot(Enums::CalibrationTOF)
   , H1DPlot()
   , m_normalizationHistogram(new TH1D("ChannelTriggerProbabilityPlotNormalizationHistogram", "", Constants::nTofChannels, 0, Constants::nTofChannels))
 {

@@ -8,7 +8,7 @@ class TRDDistanceWireToTrackPlot : public AnalysisPlot, public H1DPlot
 {
 
 public:
-  TRDDistanceWireToTrackPlot(AnalysisTopic);
+  TRDDistanceWireToTrackPlot(Enums::AnalysisTopic);
   ~TRDDistanceWireToTrackPlot();
 
   virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);

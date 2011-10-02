@@ -9,9 +9,9 @@
 #include "ParticleInformation.hh"
 #include "TRDReconstruction.hh"
 
-TRDDistanceInTube::TRDDistanceInTube(AnalysisTopic topic) :
-  AnalysisPlot(topic),
-  H1DPlot()
+TRDDistanceInTube::TRDDistanceInTube(Enums::AnalysisTopic topic)
+  : AnalysisPlot(topic)
+  , H1DPlot()
 {
   setTitle("TRD length in tube");
   setAxisTitle("length through tube / mm", "entries");

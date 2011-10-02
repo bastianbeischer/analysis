@@ -25,7 +25,7 @@ double betaMomentumCorrelationFunction(double x[], double p[])
 }
 
 BetaMomentumCorrelationPlot::BetaMomentumCorrelationPlot()
-  : AnalysisPlot(AnalysisTopic::MomentumReconstruction)
+  : AnalysisPlot(Enums::MomentumReconstruction)
   , H2DPlot()
 {
   setTitle(QString("beta vs momentum"));
