@@ -13,16 +13,13 @@
 #include <QHBoxLayout>
 #include <QWidget>
 
-AllTrackerLayersFlagEfficiencyCorrection::AllTrackerLayersFlagEfficiencyCorrection(Type type, PostAnalysisCanvas* canvas)
+AllTrackerLayersFlagEfficiencyCorrection::AllTrackerLayersFlagEfficiencyCorrection(Enums::ChargeSign chargeSign, PostAnalysisCanvas* canvas)
   : PostAnalysisPlot()
   , H1DPlot()
-  , m_type(type)
+  , m_chargeSign(chargeSign)
 {
-  m_typeNames.insert(Positive, "positive");
-  m_typeNames.insert(Negative, "negative");
-  
   TH1D* histogram = 0;
-  if (m_type == Negative)
+  if (m_chargeSign == Enums::Negative)
     histogram = Helpers::createMirroredHistogram(canvas->histograms1D().at(0));
   else
     histogram = new TH1D(*canvas->histograms1D().at(0));
@@ -35,7 +32,7 @@ AllTrackerLayersFlagEfficiencyCorrection::AllTrackerLayersFlagEfficiencyCorrecti
   m_foldingType = EfficiencyCorrectionSettings::instance()->foldingType(nBinsNew);
 
   QString title = QString(canvas->name()).replace("canvas", "histogram");
-  title.append(QString(" - ") + m_typeNames[m_type] + EfficiencyCorrectionSettings::instance()->foldingTypeName(m_foldingType));
+  title.append(QString(" - ") + Enums::label(m_chargeSign) + EfficiencyCorrectionSettings::instance()->foldingTypeName(m_foldingType));
   setTitle(title);
 
   addHistogram(histogram);
@@ -58,7 +55,7 @@ AllTrackerLayersFlagEfficiencyCorrection::~AllTrackerLayersFlagEfficiencyCorrect
 
 void AllTrackerLayersFlagEfficiencyCorrection::save()
 {
-  if (m_type != Positive) {
+  if (m_chargeSign != Enums::Positive) {
     qDebug("you have to save the positive histogram");
     return;
   }

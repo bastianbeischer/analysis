@@ -504,12 +504,12 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new ZenithDistributionPlot());
     m_ui.plotter->addPlot(new AzimuthDistributionPlot());
     m_ui.plotter->addPlot(new AzimuthCutStatistics());
-    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::X, AzimuthPositionCorrelation::Positive));
-    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::X, AzimuthPositionCorrelation::Negative));
-    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::X, AzimuthPositionCorrelation::All));
-    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, AzimuthPositionCorrelation::Positive));
-    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, AzimuthPositionCorrelation::Negative));
-    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, AzimuthPositionCorrelation::All));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::X, Enums::Positive));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::X, Enums::Negative));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::X, Enums::Positive | Enums::Negative));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, Enums::Positive));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, Enums::Negative));
+    m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, Enums::Positive | Enums::Negative));
   }
   if (topics.contains(AnalysisTopic::Occupancy)) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
@@ -533,10 +533,10 @@ void MainWindow::setupPlots()
   }
   if (topics.contains(AnalysisTopic::MomentumReconstruction)) {
     m_ui.plotter->addPlot(new BetaMomentumCorrelationPlot());
-    m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::All));
-    m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Positive));
-    m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Negative));
-    m_ui.plotter->addPlot(new MomentumSpectrumPlot(MomentumSpectrumPlot::Inverted));
+    m_ui.plotter->addPlot(new MomentumSpectrumPlot(Enums::Positive));
+    m_ui.plotter->addPlot(new MomentumSpectrumPlot(Enums::Negative));
+    m_ui.plotter->addPlot(new MomentumSpectrumPlot(Enums::Positive | Enums::Negative));
+    m_ui.plotter->addPlot(new MomentumSpectrumPlot(Enums::Positive | Enums::Negative, true));
     m_ui.plotter->addPlot(new AlbedosVsMomentumPlot());
     m_ui.plotter->addPlot(new MeasurementTimePlot(first, last));
     m_ui.plotter->addPlot(new FluxCollection(first, last));
@@ -565,12 +565,12 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TotalSignalHeightPlot);
     m_ui.plotter->addPlot(new CutStatisticsPlot);
     m_ui.plotter->addPlot(new TrackerLayerStatisticsPlot);
-    m_ui.plotter->addPlot(new TrackingEfficiencyVsMomentumPlot(TrackingEfficiencyVsMomentumPlot::Positive));
-    m_ui.plotter->addPlot(new TrackingEfficiencyVsMomentumPlot(TrackingEfficiencyVsMomentumPlot::Negative));
-    m_ui.plotter->addPlot(new TrackingEfficiencyVsMomentumPlot(TrackingEfficiencyVsMomentumPlot::All));
-    m_ui.plotter->addPlot(new SingleLayerTrackingEfficiencyPlot(SingleLayerTrackingEfficiencyPlot::Positive));
-    m_ui.plotter->addPlot(new SingleLayerTrackingEfficiencyPlot(SingleLayerTrackingEfficiencyPlot::Negative));
-    m_ui.plotter->addPlot(new SingleLayerTrackingEfficiencyPlot(SingleLayerTrackingEfficiencyPlot::All));
+    m_ui.plotter->addPlot(new TrackingEfficiencyVsMomentumPlot(Enums::Positive));
+    m_ui.plotter->addPlot(new TrackingEfficiencyVsMomentumPlot(Enums::Negative));
+    m_ui.plotter->addPlot(new TrackingEfficiencyVsMomentumPlot(Enums::Positive | Enums::Negative));
+    m_ui.plotter->addPlot(new SingleLayerTrackingEfficiencyPlot(Enums::Positive));
+    m_ui.plotter->addPlot(new SingleLayerTrackingEfficiencyPlot(Enums::Negative));
+    m_ui.plotter->addPlot(new SingleLayerTrackingEfficiencyPlot(Enums::Positive | Enums::Negative));
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::Positive));
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::Negative));
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::All));

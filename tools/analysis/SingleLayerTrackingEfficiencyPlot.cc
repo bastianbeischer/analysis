@@ -12,21 +12,21 @@
 #include "ParticleInformation.hh"
 #include "Helpers.hh"
 
-SingleLayerTrackingEfficiencyPlot::SingleLayerTrackingEfficiencyPlot(Type type) :
-  AnalysisPlot(AnalysisTopic::MiscellaneousTracker),
-  H2DPlot(),
-  m_type(type),
-  m_normHisto(0),
-  m_nLayers(8),
-  m_layerZ(new double[m_nLayers])
+SingleLayerTrackingEfficiencyPlot::SingleLayerTrackingEfficiencyPlot(Enums::ChargeSigns type)
+  : AnalysisPlot(AnalysisTopic::MiscellaneousTracker)
+  , H2DPlot()
+  , m_type(type)
+  , m_normHisto(0)
+  , m_nLayers(8)
+  , m_layerZ(new double[m_nLayers])
 {
   QString htitle = "Single Layer Efficiency";
 
-  if (m_type == Positive)
+  if (m_type == Enums::Positive)
     htitle += " positive";
-  if (m_type == Negative)
+  if (m_type == Enums::Negative)
     htitle += " negative";
-  if (m_type == All)
+  if (m_type == (Enums::Positive | Enums::Negative))
     htitle += " all";
   setTitle(htitle);
 
@@ -92,9 +92,9 @@ void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, 
 
     double rigidity = track->rigidity();
 
-    if (m_type == Positive && rigidity < 0)
+    if (m_type == Enums::Positive && rigidity < 0)
       return;
-    if (m_type == Negative && rigidity > 0)
+    if (m_type == Enums::Negative && rigidity > 0)
       return;
 
     // fill histograms

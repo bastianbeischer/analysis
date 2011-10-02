@@ -7,7 +7,8 @@ TOPLEVEL = ..
 
 CLASSES += \
   RootStyle \
-  Helpers
+  Helpers \
+  Enums
 
 HEADERS += \
   Constants.hh

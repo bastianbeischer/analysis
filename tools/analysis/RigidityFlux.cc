@@ -27,13 +27,12 @@
 #include <cmath>
 #include <vector>
 
-RigidityFlux::RigidityFlux(Type type, const QDateTime& first, const QDateTime& last, TH1D* particleHistogram)
+RigidityFlux::RigidityFlux(Enums::ChargeSign type, const QDateTime& first, const QDateTime& last, TH1D* particleHistogram)
   : AnalysisPlot(AnalysisTopic::MomentumReconstruction)
   , H1DPlot()
   , m_type(type)
   , m_measurementTimeCalculation(0)
   , m_fluxCalculation(0)
-
   , m_particleHistogram(particleHistogram)
   , m_particleHistogramMirrored(0)
   , m_phiFit(0)
@@ -41,10 +40,10 @@ RigidityFlux::RigidityFlux(Type type, const QDateTime& first, const QDateTime& l
   loadEfficiencies();
   QString title = "flux spectrum";
   m_measurementTimeCalculation = new MeasurementTimeCalculation(first, last);
-  if (m_type == Negative) {
+  if (m_type == Enums::Negative) {
     title += " - negative";
     m_particleHistogramMirrored = Helpers::createMirroredHistogram(m_particleHistogram);
-  } else if (m_type == Positive) {
+  } else if (m_type == Enums::Positive) {
     title += " - positive";
   } 
   if (m_particleHistogramMirrored) {
@@ -85,7 +84,7 @@ RigidityFlux::RigidityFlux(Type type, const QDateTime& first, const QDateTime& l
   legend->AddEntry(histogram, "Data", "p");
   addLegend(legend);
 
-  if (m_type == Positive) {
+  if (m_type == Enums::Positive) {
     m_phiFit = new SolarModulationFit(histogram);
     addFunction(m_phiFit->fit());
     TLatex* gammaLatex = RootPlot::newLatex(.4, .88);
@@ -128,7 +127,7 @@ void RigidityFlux::update()
   m_fluxCalculation->update(m_measurementTimeCalculation->measurementTime());
   efficiencyCorrection();
   updateBinTitles();
-  if (m_type == Positive) {
+  if (m_type == Enums::Positive) {
     m_phiFit->fit();
     latex(m_nBinsNew)->SetTitle(qPrintable(m_phiFit->gammaLabel()));
     latex(m_nBinsNew + 1)->SetTitle(qPrintable(m_phiFit->phiLabel()));
@@ -152,7 +151,7 @@ void RigidityFlux::updateBinTitles()
 void RigidityFlux::loadEfficiencies()
 {
   const EfficiencyCorrectionSettings::FoldingType type = EfficiencyCorrectionSettings::Raw;
-  if (m_type == Negative) {
+  if (m_type == Enums::Negative) {
     m_multiLayerEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(type));
     m_trackFindingEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(type));
   } else {
