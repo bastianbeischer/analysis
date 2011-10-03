@@ -119,9 +119,9 @@ QVector<SimulationFluxKey::Source> SimulationFluxReader::sources(SimulationFluxK
   return sources;
 }
 
-QVector<Particle::Type> SimulationFluxReader::particles(SimulationFluxKey::Location location) const
+QVector<Enums::Particle> SimulationFluxReader::particles(SimulationFluxKey::Location location) const
 {
-  QVector<Particle::Type> particles;
+  QVector<Enums::Particle> particles;
   foreach (SimulationFluxKey key, m_fluxes.keys())
     if (location == key.location() && !particles.contains(key.particle()))
       particles.append(key.particle());

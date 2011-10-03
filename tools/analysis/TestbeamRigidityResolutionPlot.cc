@@ -5,7 +5,7 @@
 #include "SettingsManager.hh"
 #include "Settings.hh"
 
-TestbeamRigidityResolutionPlot::TestbeamRigidityResolutionPlot(const Particle::Type& type) :
+TestbeamRigidityResolutionPlot::TestbeamRigidityResolutionPlot(const Enums::Particle& type) :
   RigidityResolutionPlot(Enums::Testbeam, type)
 {
 }

@@ -36,13 +36,26 @@ public:
   static const QString label(Corrections);
   static Corrections corrections(const QString&);
 
+  enum Particle {NoParticle=0, Proton=1<<0, AntiProton=1<<1, Helium=1<<2, Electron=1<<3, Positron=1<<4,
+    Muon=1<<5, AntiMuon=1<<6, PiPlus=1<<7, PiMinus=1<<8, Photon=1<<9, Pi0=1<<10, Higgs=1<<11};
+  static const QString label(Particle);
+  static Particle particle(const QString&);
+  static QMap<Particle, QString>::ConstIterator particleBegin();
+  static QMap<Particle, QString>::ConstIterator particleEnd();
+  Q_DECLARE_FLAGS(Particles, Particle);
+  static const QString label(Particles);
+  static Particles particles(const QString&);
+
 private:
   static const QMap<ChargeSign, QString> s_chargeSignMap;
   static const QMap<AnalysisTopic, QString> s_analysisTopicMap;
   static const QMap<TrackType, QString> s_trackTypeMap;
   static const QMap<Correction, QString> s_correctionMap;
+  static const QMap<Particle, QString> s_particleMap;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::ChargeSigns);
+Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::Corrections);
+Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::Particles);
 
 #endif

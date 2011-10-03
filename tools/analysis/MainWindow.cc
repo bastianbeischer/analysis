@@ -104,6 +104,7 @@
 
 #include <QCloseEvent>
 #include <QVBoxLayout>
+#include <QGridLayout>
 #include <QDateTime>
 #include <QDebug>
 
@@ -123,6 +124,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   setupTopicSelectors();
   setupCorrectionsCheckBoxes();
+  setupFilterCheckBoxes();
 
   for (QMap<Enums::TrackType, QString>::ConstIterator it = Enums::trackTypeBegin(); it != Enums::trackTypeEnd(); ++it)
     m_ui.trackComboBox->addItem(it.value());
@@ -136,12 +138,6 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.firstEventSpinBox);
   m_controlWidgets.append(m_ui.lastEventSpinBox);
   m_controlWidgets.append(m_ui.numberOfThreadsSpinBox);
-  m_controlWidgets.append(m_ui.protonCheckBox);
-  m_controlWidgets.append(m_ui.heliumCheckBox);
-  m_controlWidgets.append(m_ui.electronCheckBox);
-  m_controlWidgets.append(m_ui.positronCheckBox);
-  m_controlWidgets.append(m_ui.muonCheckBox);
-  m_controlWidgets.append(m_ui.antiMuonCheckBox);
   m_controlWidgets.append(m_ui.rigidityCutCheckBox);
   m_controlWidgets.append(m_ui.rigidityLineEditMax);
   m_controlWidgets.append(m_ui.rigidityLineEditMin);
@@ -159,17 +155,6 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.cherenkovCutAboveRadioButton);
   m_controlWidgets.append(m_ui.cherenkovCutDoubleSpinBox);
 
-  m_controlWidgets.append(m_ui.mcAntiMuonCheckBox);
-  m_controlWidgets.append(m_ui.mcAntiPionCheckBox);
-  m_controlWidgets.append(m_ui.mcAntiprotonCheckBox);
-  m_controlWidgets.append(m_ui.mcElectronCheckBox);
-  m_controlWidgets.append(m_ui.mcGammaCheckBox);
-  m_controlWidgets.append(m_ui.mcHeliumCheckBox);
-  m_controlWidgets.append(m_ui.mcMuonCheckBox);
-  m_controlWidgets.append(m_ui.mcPionCheckBox);
-  m_controlWidgets.append(m_ui.mcPositronCheckBox);
-  m_controlWidgets.append(m_ui.mcProtonCheckBox);
-
   QActionGroup* aspectRatioGroup = new QActionGroup(this);
   aspectRatioGroup->addAction(m_ui.viewAutoAction);
   aspectRatioGroup->addAction(m_ui.view11Action);
@@ -179,7 +164,6 @@ MainWindow::MainWindow(QWidget* parent)
   aspectRatioGroup->addAction(m_ui.view1610Action);
   aspectRatioGroup->addAction(m_ui.view169Action);
   m_ui.viewAutoAction->setChecked(true);
-
 
   connect(m_reader, SIGNAL(started()), this, SLOT(toggleControlWidgetsStatus()));
   connect(m_reader, SIGNAL(finished()), this, SLOT(toggleControlWidgetsStatus()));
@@ -246,43 +230,45 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupTopicSelectors()
 {
-  m_ui.scrollAreaWidgetContents->layout()->addWidget(new Caption("tracker"));
+  QVBoxLayout* layout = new QVBoxLayout;
+  layout->addWidget(new Caption("tracker"));
   foreach (Enums::AnalysisTopic topic, AnalysisTopic::trackerTopics()) {
     if (!AnalysisTopic::otherTopics().contains(topic)) {
       TopicSelector* selector = new TopicSelector(topic);
       m_topicSelectors.append(selector);
       m_trackerSelectors.append(selector);
-      m_ui.scrollAreaWidgetContents->layout()->addWidget(selector);
+      layout->addWidget(selector);
     }
   }
-  m_ui.scrollAreaWidgetContents->layout()->addWidget(new Caption("TRD"));
+  layout->addWidget(new Caption("TRD"));
   foreach (Enums::AnalysisTopic topic, AnalysisTopic::trdTopics()) {
     if (!AnalysisTopic::otherTopics().contains(topic)) {
       TopicSelector* selector = new TopicSelector(topic);
       m_topicSelectors.append(selector);
       m_trdSelectors.append(selector);
-      m_ui.scrollAreaWidgetContents->layout()->addWidget(selector);
+      layout->addWidget(selector);
     }
   }
-  m_ui.scrollAreaWidgetContents->layout()->addWidget(new Caption("TOF"));
+  layout->addWidget(new Caption("TOF"));
   foreach (Enums::AnalysisTopic topic, AnalysisTopic::tofTopics()) {
     if (!AnalysisTopic::otherTopics().contains(topic)) {
       TopicSelector* selector = new TopicSelector(topic);
       m_topicSelectors.append(selector);
       m_tofSelectors.append(selector);
-      m_ui.scrollAreaWidgetContents->layout()->addWidget(selector);
+      layout->addWidget(selector);
     }
   }
-  m_ui.scrollAreaWidgetContents->layout()->addWidget(new Caption("other"));
+  layout->addWidget(new Caption("other"));
   foreach (Enums::AnalysisTopic topic, AnalysisTopic::otherTopics()) {
     TopicSelector* selector = new TopicSelector(topic);
     m_topicSelectors.append(selector);
-    m_ui.scrollAreaWidgetContents->layout()->addWidget(selector);
+    layout->addWidget(selector);
   }
   foreach (TopicSelector* selector, m_topicSelectors) {
     connect(selector, SIGNAL(show(Enums::AnalysisTopic)), this, SLOT(showTopic(Enums::AnalysisTopic)));
     connect(selector, SIGNAL(hide(Enums::AnalysisTopic)), this, SLOT(hideTopic(Enums::AnalysisTopic)));
   }
+  m_ui.scrollAreaWidgetContents->setLayout(layout);
 }
 
 void MainWindow::setupCorrectionsCheckBoxes()
@@ -298,6 +284,42 @@ void MainWindow::setupCorrectionsCheckBoxes()
     m_correctionCheckBoxes.append(checkBox);
   }
   m_ui.correctionsTab->setLayout(layout);
+}
+
+void MainWindow::setupFilterCheckBoxes()
+{
+  Enums::Particles particles = Enums::NoParticle;
+  int row;
+  
+  QGridLayout* layout = new QGridLayout;
+  particles = Enums::Proton | Enums::Helium | Enums::Electron | Enums::Positron | Enums::Muon | Enums::AntiMuon;
+  layout->addWidget(new QLabel("data:"), 0, 0);
+  row = 1;
+  for (QMap<Enums::Particle, QString>::ConstIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
+    if (it.key() != Enums::NoParticle && (it.key() & particles) == it.key()) {
+      QCheckBox* checkBox = new QCheckBox(it.value());
+      checkBox->setCheckState(Qt::Checked);
+      layout->addWidget(checkBox, row, 0);
+      m_controlWidgets.append(checkBox);
+      m_particleFilterCheckBoxes.append(checkBox);
+      ++row;
+    }
+  }
+  particles = Enums::Proton | Enums::AntiProton | Enums::Helium | Enums::Electron | Enums::Positron | Enums::Muon
+    | Enums::AntiMuon | Enums::PiPlus | Enums::PiMinus | Enums::Photon;
+  layout->addWidget(new QLabel("mc:"), 0, 1);
+  row = 1;
+  for (QMap<Enums::Particle, QString>::ConstIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
+    if (it.key() != Enums::NoParticle && (it.key() & particles) == it.key()) {
+      QCheckBox* checkBox = new QCheckBox(it.value());
+      checkBox->setCheckState(Qt::Checked);
+      layout->addWidget(checkBox, row, 1);
+      m_controlWidgets.append(checkBox);
+      m_mcFilterCheckBoxes.append(checkBox);
+      ++row;
+    }
+  }
+  m_ui.filterTab->setLayout(layout);
 }
 
 void MainWindow::processArguments(QStringList arguments)
@@ -638,12 +660,12 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDLikelihoodPlot(Enums::MonteCarloTRD));
   }
   if (topics.contains(Enums::MonteCarloTracker)) {
-    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Positron));
-    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Electron));
-    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Proton));
-    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::PiMinus));
-    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::PiPlus));
-    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Particle::Helium));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Enums::Positron));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Enums::Electron));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Enums::Proton));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Enums::PiMinus));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Enums::PiPlus));
+    m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Enums::Helium));
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       if (layer->z() > -240 && layer->z() < 240)
@@ -665,15 +687,15 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDLikelihoodPlot(Enums::Testbeam));
     m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Horizontal));
     m_ui.plotter->addPlot(new BeamProfilePlot(BeamProfilePlot::Vertical));
-    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::Positron));
-    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::Electron));
-    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::Proton));
-    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::PiMinus));
-    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Particle::PiPlus));
+    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Enums::Positron));
+    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Enums::Electron));
+    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Enums::Proton));
+    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Enums::PiMinus));
+    m_ui.plotter->addPlot(new TestbeamRigidityResolutionPlot(Enums::PiPlus));
   }
 }
 
-void MainWindow::setupAnalysis(Enums::TrackType& type, Enums::Corrections& flags, ParticleFilter::Types& filterTypes, CutFilter& cutFilter, MCFilter::Types& mcFilterTypes)
+void MainWindow::setupAnalysis(Enums::TrackType& type, Enums::Corrections& flags, Enums::Particles& filterTypes, CutFilter& cutFilter, Enums::Particles& mcFilterTypes)
 {
   type = Enums::trackType(m_ui.trackComboBox->currentText());
 
@@ -682,39 +704,15 @@ void MainWindow::setupAnalysis(Enums::TrackType& type, Enums::Corrections& flags
     if (checkBox->isChecked())
       flags|= Enums::correction(checkBox->text());
 
-  if (m_ui.protonCheckBox->isChecked())
-    filterTypes |= Particle::Proton;
-  if (m_ui.heliumCheckBox->isChecked())
-    filterTypes |= Particle::Helium;
-  if (m_ui.electronCheckBox->isChecked())
-    filterTypes |= Particle::Electron;
-  if (m_ui.positronCheckBox->isChecked())
-    filterTypes |= Particle::Positron;
-  if (m_ui.muonCheckBox->isChecked())
-    filterTypes |= Particle::Muon;
-  if (m_ui.antiMuonCheckBox->isChecked())
-    filterTypes |= Particle::AntiMuon;
+  filterTypes = Enums::NoParticle;
+  foreach (QCheckBox* checkBox, m_particleFilterCheckBoxes)
+    if (checkBox->isChecked())
+      filterTypes|= Enums::particle(checkBox->text());
 
-  if (m_ui.mcProtonCheckBox->isChecked())
-    mcFilterTypes |= Particle::Proton;
-  if (m_ui.mcAntiprotonCheckBox->isChecked())
-    mcFilterTypes |= Particle::AntiProton;
-  if (m_ui.mcElectronCheckBox->isChecked())
-    mcFilterTypes |= Particle::Electron;
-  if (m_ui.mcPositronCheckBox->isChecked())
-    mcFilterTypes |= Particle::Positron;
-  if (m_ui.mcMuonCheckBox->isChecked())
-    mcFilterTypes |= Particle::Muon;
-  if (m_ui.mcAntiMuonCheckBox->isChecked())
-    mcFilterTypes |= Particle::AntiMuon;
-  if (m_ui.mcPionCheckBox->isChecked())
-    mcFilterTypes |= Particle::PiPlus;
-  if (m_ui.mcAntiPionCheckBox->isChecked())
-    mcFilterTypes |= Particle::PiMinus;
-  if (m_ui.mcHeliumCheckBox->isChecked())
-    mcFilterTypes |= Particle::Helium;
-  if (m_ui.mcGammaCheckBox->isChecked())
-    mcFilterTypes |= Particle::Photon;
+  mcFilterTypes = Enums::NoParticle;
+  foreach (QCheckBox* checkBox, m_mcFilterCheckBoxes)
+    if (checkBox->isChecked())
+      mcFilterTypes|= Enums::particle(checkBox->text());
   
   if (m_ui.rigidityCutCheckBox->isChecked()) {
     Cut cut(Cut::rigidity);
@@ -796,9 +794,9 @@ void MainWindow::analyzeButtonClicked()
   if (m_ui.analyzeButton->text() == "&start") {
     Enums::TrackType type = Enums::NoTrack;
     Enums::Corrections flags;
-    ParticleFilter::Types filterTypes;
+    Enums::Particles filterTypes;
     CutFilter cutFilter;
-    MCFilter::Types mcFilterTypes;
+    Enums::Particles mcFilterTypes;
     setupAnalysis(type, flags, filterTypes, cutFilter, mcFilterTypes);
     setupPlots();
 

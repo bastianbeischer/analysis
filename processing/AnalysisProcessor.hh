@@ -23,8 +23,8 @@ public:
 
   void setTrackType(const Enums::TrackType&);
   void setCorrectionFlags(const Enums::Corrections&);
-  void setParticleFilter(const ParticleFilter::Types&);
-  void setMCFilter(const MCFilter::Types&);
+  void setParticleFilter(const Enums::Particles&);
+  void setMCFilter(const Enums::Particles&);
   void setCutFilter(const CutFilter& cuts);
 
   void process(SimpleEvent*);

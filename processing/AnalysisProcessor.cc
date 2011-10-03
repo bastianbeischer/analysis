@@ -61,12 +61,12 @@ void AnalysisProcessor::setCorrectionFlags(const Enums::Corrections& flags)
   m_corrections->setFlags(flags);
 }
 
-void AnalysisProcessor::setParticleFilter(const ParticleFilter::Types& types)
+void AnalysisProcessor::setParticleFilter(const Enums::Particles& types)
 {
   m_particleFilter->setTypes(types);
 }
 
-void AnalysisProcessor::setMCFilter(const MCFilter::Types& types)
+void AnalysisProcessor::setMCFilter(const Enums::Particles& types)
 {
   m_mcFilter->setTypes(types);
 }

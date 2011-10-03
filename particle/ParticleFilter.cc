@@ -2,8 +2,8 @@
 
 #include "ParticleProperties.hh"
 
-ParticleFilter::ParticleFilter(Types types) :
-  m_types(types)
+ParticleFilter::ParticleFilter(Enums::Particles types)
+  : m_types(types)
 {
 }
 

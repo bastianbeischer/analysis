@@ -58,8 +58,9 @@ private slots:
 private:
   void setupTopicSelectors();
   void setupCorrectionsCheckBoxes();
+  void setupFilterCheckBoxes();
   void setupPlots();
-  void setupAnalysis(Enums::TrackType&, Enums::Corrections&, ParticleFilter::Types&, CutFilter&, MCFilter::Types&);
+  void setupAnalysis(Enums::TrackType&, Enums::Corrections&, Enums::Particles& particleFilter, CutFilter&, Enums::Particles& mcFilter);
   void startAnalysis();
   void removeListWidgetItem(int);
   void closeEvent(QCloseEvent*);
@@ -77,6 +78,8 @@ private:
   
   QVector<QWidget*> m_controlWidgets;
   QVector<QCheckBox*> m_correctionCheckBoxes;
+  QVector<QCheckBox*> m_particleFilterCheckBoxes;
+  QVector<QCheckBox*> m_mcFilterCheckBoxes;
   QVector<RootPlot::DrawOption> m_drawOptions;
   bool m_inhibitDraw;
   QTime m_time;

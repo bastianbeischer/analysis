@@ -15,7 +15,7 @@ class RootQtWidget;
 class RigidityResolutionPlot : public AnalysisPlot, public H1DPlot
 {
 public:
-  RigidityResolutionPlot(Enums::AnalysisTopic, const Particle::Type& = Particle::Electron);
+  RigidityResolutionPlot(Enums::AnalysisTopic, const Enums::Particle& = Enums::Electron);
   ~RigidityResolutionPlot();
 
   virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);

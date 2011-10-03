@@ -7,21 +7,17 @@
 
 class ParticleFilter
 {
-  
 public:
-  Q_DECLARE_FLAGS(Types, Particle::Type);
-
-public:
-  ParticleFilter(Types = ~Types(0));
+  ParticleFilter(Enums::Particles = Enums::NoParticle);
   ~ParticleFilter();
   
-  void setTypes(Types types) {m_types = types;}
+  void setTypes(Enums::Particles types) {m_types = types;}
 
-  Types types() const {return m_types;}
+  Enums::Particles types() const {return m_types;}
   bool passes(Particle*) const;
 
 private:
-  Types m_types;
+  Enums::Particles m_types;
   
 };
 

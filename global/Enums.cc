@@ -57,6 +57,21 @@ const QMap<Enums::Correction, QString> Enums::s_correctionMap = InitializableMap
    << QPair<Enums::Correction, QString>(Enums::MultipleScattering, "multiple scattering")
    << QPair<Enums::Correction, QString>(Enums::PhotonTravelTime, "photon travel time");
 
+const QMap<Enums::Particle, QString> Enums::s_particleMap = InitializableMap<Enums::Particle, QString>()
+   << QPair<Enums::Particle, QString>(Enums::NoParticle, "no particle")
+   << QPair<Enums::Particle, QString>(Enums::Proton, "p+")
+   << QPair<Enums::Particle, QString>(Enums::AntiProton, "p-")
+   << QPair<Enums::Particle, QString>(Enums::Helium, "alpha")
+   << QPair<Enums::Particle, QString>(Enums::Electron, "e-")
+   << QPair<Enums::Particle, QString>(Enums::Positron, "e+")
+   << QPair<Enums::Particle, QString>(Enums::Muon, "mu+")
+   << QPair<Enums::Particle, QString>(Enums::AntiMuon, "mu-")
+   << QPair<Enums::Particle, QString>(Enums::PiPlus, "pi+")
+   << QPair<Enums::Particle, QString>(Enums::PiMinus, "pi-")
+   << QPair<Enums::Particle, QString>(Enums::Photon, "gamma")
+   << QPair<Enums::Particle, QString>(Enums::Pi0, "pi0")
+   << QPair<Enums::Particle, QString>(Enums::Higgs, "H");
+
 // ChargeSign
 const QString Enums::label(Enums::ChargeSign key) {return s_chargeSignMap.value(key);}
 Enums::ChargeSign Enums::chargeSign(const QString& value) {return s_chargeSignMap.key(value);}
@@ -98,22 +113,27 @@ Enums::Corrections Enums::corrections(const QString& value)
   return corrections;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Particle
+const QString Enums::label(Enums::Particle key) {return s_particleMap.value(key);}
+Enums::Particle Enums::particle(const QString& value) {return s_particleMap.key(value);}
+QMap<Enums::Particle, QString>::ConstIterator Enums::particleBegin() {return s_particleMap.constBegin();}
+QMap<Enums::Particle, QString>::ConstIterator Enums::particleEnd() {return s_particleMap.constEnd();}
+const QString Enums::label(Enums::Particles keys)
+{
+  QString list;
+  for (QMap<Enums::Particle, QString>::ConstIterator it = particleBegin(); it != particleEnd(); ++it) {
+    if (keys & it.key()) {
+      if (!list.isEmpty())
+        list+= " | ";
+      list+= it.value();
+    }
+  }
+  return list;  
+}
+Enums::Particles Enums::particles(const QString& value)
+{
+  Enums::Particles particles;
+  foreach (QString string, value.split(" | "))
+    particles|= particle(string);
+  return particles;
+}
