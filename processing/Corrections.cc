@@ -24,7 +24,7 @@
 #include <cstring>
 #include <cmath>
 
-Corrections::Corrections(Flags flags)
+Corrections::Corrections(Enums::Corrections flags)
   : m_tofTotScalingPrefix("TimeOverThresholdScaling/")
   , m_trdSettings(0)
   , m_tofSettings(0)
@@ -59,24 +59,24 @@ void Corrections::preFitCorrections(SimpleEvent* event)
   const std::vector<Hit*>::const_iterator hitsEnd = event->hits().end();
   for (std::vector<Hit*>::const_iterator it = event->hits().begin(); it != hitsEnd; ++it) {
     Hit* hit = *it;
-    if (m_flags & Alignment) alignment(hit);
-    if (m_flags & TimeShifts) timeShift(hit);
-    if (m_flags & TrdMopv) trdMopv(hit);
-    if (m_flags & TrdTime) trdTime(hit, event);
-    //if (m_flags & TrdPressure) trdPressure(hit, event);
-    //if (m_flags & TrdTemperature) trdTemperature(hit, event);
-    if (m_flags & TofTimeOverThreshold) tofTot(hit, event);
+    if (m_flags & Enums::Alignment) alignment(hit);
+    if (m_flags & Enums::TimeShifts) timeShift(hit);
+    if (m_flags & Enums::TrdMopv) trdMopv(hit);
+    if (m_flags & Enums::TrdTime) trdTime(hit, event);
+    //if (m_flags & Enums::TrdPressure) trdPressure(hit, event);
+    //if (m_flags & Enums::TrdTemperature) trdTemperature(hit, event);
+    if (m_flags & Enums::TofTimeOverThreshold) tofTot(hit, event);
   }
 }
 
 void Corrections::postFitCorrections(Particle* particle)
 {
-  if (m_flags & PhotonTravelTime) photonTravelTime(particle); // multiple scattering needs "beta"
+  if (m_flags & Enums::PhotonTravelTime) photonTravelTime(particle); // multiple scattering needs "beta"
 }
 
 void Corrections::postTOFCorrections(Particle* particle)
 {
-  if (m_flags & MultipleScattering) multipleScattering(particle);
+  if (m_flags & Enums::MultipleScattering) multipleScattering(particle);
 }
 
 void Corrections::alignment(Hit* hit)

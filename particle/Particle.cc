@@ -72,7 +72,7 @@ void Particle::setTrackType(const Enums::TrackType& trackType)
   if (m_track)
     delete m_track;
 
-  if (trackType == Enums::None)
+  if (trackType == Enums::NoTrack)
     m_track = 0;
   if (trackType == Enums::CenteredBrokenLine)
     m_track = new CenteredBrokenLine;

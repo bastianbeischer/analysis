@@ -1,5 +1,7 @@
 #include "Enums.hh"
 
+#include <QStringList>
+
 template <class Key, class T> class InitializableMap : public QMap<Key, T> {
 public:
   inline InitializableMap<Key, T>& operator<< (const QPair<Key, T>& pair) {
@@ -37,11 +39,23 @@ const QMap<Enums::AnalysisTopic, QString> Enums::s_analysisTopicMap = Initializa
   << QPair<Enums::AnalysisTopic, QString>(Enums::Testbeam, "testbeam");
 
 const QMap<Enums::TrackType, QString> Enums::s_trackTypeMap = InitializableMap<Enums::TrackType, QString>()
-  << QPair<Enums::TrackType, QString>(Enums::None, "none")
+  << QPair<Enums::TrackType, QString>(Enums::NoTrack, "no track")
   << QPair<Enums::TrackType, QString>(Enums::StraightLine, "straight line")
   << QPair<Enums::TrackType, QString>(Enums::BrokenLine, "broken line")
   << QPair<Enums::TrackType, QString>(Enums::CenteredBrokenLine, "centered broken line")
   << QPair<Enums::TrackType, QString>(Enums::CenteredBrokenLine2D, "centered broken line 2D");
+
+const QMap<Enums::Correction, QString> Enums::s_correctionMap = InitializableMap<Enums::Correction, QString>()
+   << QPair<Enums::Correction, QString>(Enums::NoCorrection, "no correction")
+   << QPair<Enums::Correction, QString>(Enums::Alignment, "alignment")
+   << QPair<Enums::Correction, QString>(Enums::TimeShifts, "time shifts")
+   << QPair<Enums::Correction, QString>(Enums::TrdMopv, "TRD mop value")
+   << QPair<Enums::Correction, QString>(Enums::TrdTime, "TRD time")
+   << QPair<Enums::Correction, QString>(Enums::TrdPressure, "TRD pressure")
+   << QPair<Enums::Correction, QString>(Enums::TrdTemperature, "TRD temperature")
+   << QPair<Enums::Correction, QString>(Enums::TofTimeOverThreshold, "time over threshold")
+   << QPair<Enums::Correction, QString>(Enums::MultipleScattering, "multiple scattering")
+   << QPair<Enums::Correction, QString>(Enums::PhotonTravelTime, "photon travel time");
 
 // ChargeSign
 const QString Enums::label(Enums::ChargeSign key) {return s_chargeSignMap.value(key);}
@@ -58,4 +72,48 @@ const QString Enums::label(Enums::TrackType key) {return s_trackTypeMap.value(ke
 Enums::TrackType Enums::trackType(const QString& value) {return s_trackTypeMap.key(value);}
 QMap<Enums::TrackType, QString>::ConstIterator Enums::trackTypeBegin() {return s_trackTypeMap.constBegin();}
 QMap<Enums::TrackType, QString>::ConstIterator Enums::trackTypeEnd() {return s_trackTypeMap.constEnd();}
+
+// Correction
+const QString Enums::label(Enums::Correction key) {return s_correctionMap.value(key);}
+Enums::Correction Enums::correction(const QString& value) {return s_correctionMap.key(value);}
+QMap<Enums::Correction, QString>::ConstIterator Enums::correctionBegin() {return s_correctionMap.constBegin();}
+QMap<Enums::Correction, QString>::ConstIterator Enums::correctionEnd() {return s_correctionMap.constEnd();}
+const QString Enums::label(Enums::Corrections keys)
+{
+  QString list;
+  for (QMap<Enums::Correction, QString>::ConstIterator it = correctionBegin(); it != correctionEnd(); ++it) {
+    if (keys & it.key()) {
+      if (!list.isEmpty())
+        list+= " | ";
+      list+= it.value();
+    }
+  }
+  return list;  
+}
+Enums::Corrections Enums::corrections(const QString& value)
+{
+  Enums::Corrections corrections;
+  foreach (QString string, value.split(" | "))
+    corrections|= correction(string);
+  return corrections;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

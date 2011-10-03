@@ -118,9 +118,9 @@ void MainWindow::update()
   m_ui.fitMethodComboBox->setEnabled(drawTracks);
   m_ui.allClustersCheckBox->setEnabled(drawTracks);
 
-  Enums::TrackType type = Enums::None;
+  Enums::TrackType type = Enums::NoTrack;
   int index = m_ui.fitMethodComboBox->currentIndex();
-  if (!drawTracks) type = Enums::None;
+  if (!drawTracks) type = Enums::NoTrack;
   else if (index == 0) type = Enums::CenteredBrokenLine;
   else if (index == 1) type = Enums::StraightLine;
   else if (index == 2) type = Enums::BrokenLine;

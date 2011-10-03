@@ -122,6 +122,7 @@ MainWindow::MainWindow(QWidget* parent)
   m_ui.setupUi(this);
 
   setupTopicSelectors();
+  setupCorrectionsCheckBoxes();
 
   for (QMap<Enums::TrackType, QString>::ConstIterator it = Enums::trackTypeBegin(); it != Enums::trackTypeEnd(); ++it)
     m_ui.trackComboBox->addItem(it.value());
@@ -135,13 +136,6 @@ MainWindow::MainWindow(QWidget* parent)
   m_controlWidgets.append(m_ui.firstEventSpinBox);
   m_controlWidgets.append(m_ui.lastEventSpinBox);
   m_controlWidgets.append(m_ui.numberOfThreadsSpinBox);
-  m_controlWidgets.append(m_ui.alignmentCorrectionCheckBox);
-  m_controlWidgets.append(m_ui.timeShiftCorrectionCheckBox);
-  m_controlWidgets.append(m_ui.trdMopValueCorrectionCheckBox);
-  m_controlWidgets.append(m_ui.trdTimeDependencyCorrectionCheckBox);
-  m_controlWidgets.append(m_ui.timeOverThresholdCorrectionCheckBox);
-  m_controlWidgets.append(m_ui.multipleScatteringCorrectionCheckBox);
-  m_controlWidgets.append(m_ui.photonTravelTimeCorrectionCheckBox);
   m_controlWidgets.append(m_ui.protonCheckBox);
   m_controlWidgets.append(m_ui.heliumCheckBox);
   m_controlWidgets.append(m_ui.electronCheckBox);
@@ -289,6 +283,21 @@ void MainWindow::setupTopicSelectors()
     connect(selector, SIGNAL(show(Enums::AnalysisTopic)), this, SLOT(showTopic(Enums::AnalysisTopic)));
     connect(selector, SIGNAL(hide(Enums::AnalysisTopic)), this, SLOT(hideTopic(Enums::AnalysisTopic)));
   }
+}
+
+void MainWindow::setupCorrectionsCheckBoxes()
+{
+  QVBoxLayout* layout = new QVBoxLayout;
+  for (QMap<Enums::Correction, QString>::ConstIterator it = Enums::correctionBegin(); it != Enums::correctionEnd(); ++it) {
+    if (it.key() == Enums::NoCorrection)
+      continue;
+    QCheckBox* checkBox = new QCheckBox(it.value());
+    checkBox->setCheckState(Qt::Checked);
+    layout->addWidget(checkBox);
+    m_controlWidgets.append(checkBox);
+    m_correctionCheckBoxes.append(checkBox);
+  }
+  m_ui.correctionsTab->setLayout(layout);
 }
 
 void MainWindow::processArguments(QStringList arguments)
@@ -664,24 +673,14 @@ void MainWindow::setupPlots()
   }
 }
 
-void MainWindow::setupAnalysis(Enums::TrackType& type, Corrections::Flags& flags, ParticleFilter::Types& filterTypes, CutFilter& cutFilter, MCFilter::Types& mcFilterTypes)
+void MainWindow::setupAnalysis(Enums::TrackType& type, Enums::Corrections& flags, ParticleFilter::Types& filterTypes, CutFilter& cutFilter, MCFilter::Types& mcFilterTypes)
 {
   type = Enums::trackType(m_ui.trackComboBox->currentText());
 
-  if (m_ui.alignmentCorrectionCheckBox->isChecked())
-    flags|= Corrections::Alignment;
-  if (m_ui.timeShiftCorrectionCheckBox->isChecked())
-    flags|= Corrections::TimeShifts;
-  if (m_ui.multipleScatteringCorrectionCheckBox->isChecked())
-    flags|= Corrections::MultipleScattering;
-  if (m_ui.photonTravelTimeCorrectionCheckBox->isChecked())
-    flags|= Corrections::PhotonTravelTime;
-  if (m_ui.trdMopValueCorrectionCheckBox->isChecked())
-    flags|= Corrections::TrdMopv;
-  if (m_ui.trdTimeDependencyCorrectionCheckBox->isChecked())
-    flags|= Corrections::TrdTime;
-  if (m_ui.timeOverThresholdCorrectionCheckBox->isChecked())
-    flags|= Corrections::TofTimeOverThreshold;
+  flags = Enums::NoCorrection;
+  foreach (QCheckBox* checkBox, m_correctionCheckBoxes)
+    if (checkBox->isChecked())
+      flags|= Enums::correction(checkBox->text());
 
   if (m_ui.protonCheckBox->isChecked())
     filterTypes |= Particle::Proton;
@@ -795,8 +794,8 @@ void MainWindow::setupAnalysis(Enums::TrackType& type, Corrections::Flags& flags
 void MainWindow::analyzeButtonClicked()
 {
   if (m_ui.analyzeButton->text() == "&start") {
-    Enums::TrackType type = Enums::None;
-    Corrections::Flags flags;
+    Enums::TrackType type = Enums::NoTrack;
+    Enums::Corrections flags;
     ParticleFilter::Types filterTypes;
     CutFilter cutFilter;
     MCFilter::Types mcFilterTypes;

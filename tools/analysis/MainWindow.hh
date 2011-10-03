@@ -57,8 +57,9 @@ private slots:
   void changeAspectRatioTriggered();
 private:
   void setupTopicSelectors();
+  void setupCorrectionsCheckBoxes();
   void setupPlots();
-  void setupAnalysis(Enums::TrackType&, Corrections::Flags&, ParticleFilter::Types&, CutFilter&, MCFilter::Types&);
+  void setupAnalysis(Enums::TrackType&, Enums::Corrections&, ParticleFilter::Types&, CutFilter&, MCFilter::Types&);
   void startAnalysis();
   void removeListWidgetItem(int);
   void closeEvent(QCloseEvent*);
@@ -75,6 +76,7 @@ private:
   QVector<TopicSelector*> m_tofSelectors;
   
   QVector<QWidget*> m_controlWidgets;
+  QVector<QCheckBox*> m_correctionCheckBoxes;
   QVector<RootPlot::DrawOption> m_drawOptions;
   bool m_inhibitDraw;
   QTime m_time;
