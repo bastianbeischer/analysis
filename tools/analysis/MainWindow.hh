@@ -59,6 +59,7 @@ private:
   void setupTopicSelectors();
   void setupCorrectionsCheckBoxes();
   void setupFilterCheckBoxes();
+  void setupViewActions();
   void setupPlots();
   void setupAnalysis(Enums::TrackType&, Enums::Corrections&, Enums::Particles& particleFilter, CutFilter&, Enums::Particles& mcFilter);
   void startAnalysis();

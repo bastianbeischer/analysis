@@ -125,45 +125,20 @@ MainWindow::MainWindow(QWidget* parent)
   setupTopicSelectors();
   setupCorrectionsCheckBoxes();
   setupFilterCheckBoxes();
+  setupViewActions();
 
   for (QMap<Enums::TrackType, QString>::ConstIterator it = Enums::trackTypeBegin(); it != Enums::trackTypeEnd(); ++it)
     m_ui.trackComboBox->addItem(it.value());
   m_ui.trackComboBox->setCurrentIndex(m_ui.trackComboBox->findText(Enums::label(Enums::CenteredBrokenLine)));
 
-  m_controlWidgets.append(m_ui.selectAllButton);
-  m_controlWidgets.append(m_ui.selectTrackerButton);
-  m_controlWidgets.append(m_ui.selectTrdButton);
-  m_controlWidgets.append(m_ui.selectTofButton);
-  m_controlWidgets.append(m_ui.trackComboBox);
-  m_controlWidgets.append(m_ui.firstEventSpinBox);
-  m_controlWidgets.append(m_ui.lastEventSpinBox);
-  m_controlWidgets.append(m_ui.numberOfThreadsSpinBox);
-  m_controlWidgets.append(m_ui.rigidityCutCheckBox);
-  m_controlWidgets.append(m_ui.rigidityLineEditMax);
-  m_controlWidgets.append(m_ui.rigidityLineEditMin);
-  m_controlWidgets.append(m_ui.betaCutCheckBox);
-  m_controlWidgets.append(m_ui.betaLineEditMax);
-  m_controlWidgets.append(m_ui.betaLineEditMin);
-  m_controlWidgets.append(m_ui.tofTotCutCheckBox);
-  m_controlWidgets.append(m_ui.tofTotLineEditMax);
-  m_controlWidgets.append(m_ui.tofTotLineEditMin);
-  m_controlWidgets.append(m_ui.trdDepositionCutCheckBox);
-  m_controlWidgets.append(m_ui.trdDepositionLineEditMax);
-  m_controlWidgets.append(m_ui.trdDepositionLineEditMin);
-  m_controlWidgets.append(m_ui.cherenkovCutCheckBox);
-  m_controlWidgets.append(m_ui.cherenkovCutBelowRadioButton);
-  m_controlWidgets.append(m_ui.cherenkovCutAboveRadioButton);
-  m_controlWidgets.append(m_ui.cherenkovCutDoubleSpinBox);
-
-  QActionGroup* aspectRatioGroup = new QActionGroup(this);
-  aspectRatioGroup->addAction(m_ui.viewAutoAction);
-  aspectRatioGroup->addAction(m_ui.view11Action);
-  aspectRatioGroup->addAction(m_ui.view34Action);
-  aspectRatioGroup->addAction(m_ui.view54Action);
-  aspectRatioGroup->addAction(m_ui.view43Action);
-  aspectRatioGroup->addAction(m_ui.view1610Action);
-  aspectRatioGroup->addAction(m_ui.view169Action);
-  m_ui.viewAutoAction->setChecked(true);
+  m_controlWidgets
+    << m_ui.selectAllButton << m_ui.selectTrackerButton << m_ui.selectTrdButton << m_ui.selectTofButton
+    << m_ui.trackComboBox << m_ui.firstEventSpinBox << m_ui.lastEventSpinBox << m_ui.numberOfThreadsSpinBox
+    << m_ui.rigidityCutCheckBox << m_ui.rigidityLineEditMax << m_ui.rigidityLineEditMin << m_ui.betaCutCheckBox
+    << m_ui.betaLineEditMax << m_ui.betaLineEditMin << m_ui.tofTotCutCheckBox << m_ui.tofTotLineEditMax
+    << m_ui.tofTotLineEditMin << m_ui.trdDepositionCutCheckBox << m_ui.trdDepositionLineEditMax
+    << m_ui.trdDepositionLineEditMin << m_ui.cherenkovCutCheckBox << m_ui.cherenkovCutBelowRadioButton
+    << m_ui.cherenkovCutAboveRadioButton << m_ui.cherenkovCutDoubleSpinBox;
 
   connect(m_reader, SIGNAL(started()), this, SLOT(toggleControlWidgetsStatus()));
   connect(m_reader, SIGNAL(finished()), this, SLOT(toggleControlWidgetsStatus()));
@@ -191,14 +166,6 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.setFileListDialogAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListDialogActionTriggered()));
   connect(m_ui.addFileListDialogAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListDialogActionTriggered()));
   connect(m_ui.quitAction, SIGNAL(triggered()), this, SLOT(close()));
-  
-  connect(m_ui.viewAutoAction, SIGNAL(triggered()), this, SLOT(changeAspectRatioTriggered()));
-  connect(m_ui.view34Action, SIGNAL(triggered()), this, SLOT(changeAspectRatioTriggered()));
-  connect(m_ui.view11Action, SIGNAL(triggered()), this, SLOT(changeAspectRatioTriggered()));
-  connect(m_ui.view54Action, SIGNAL(triggered()), this, SLOT(changeAspectRatioTriggered()));
-  connect(m_ui.view43Action, SIGNAL(triggered()), this, SLOT(changeAspectRatioTriggered()));
-  connect(m_ui.view1610Action, SIGNAL(triggered()), this, SLOT(changeAspectRatioTriggered()));
-  connect(m_ui.view169Action, SIGNAL(triggered()), this, SLOT(changeAspectRatioTriggered()));
 
   connect(m_ui.plotter, SIGNAL(titleChanged(const QString&)), this, SLOT(plotterTitleChanged(const QString&)));
   connect(m_ui.plotter, SIGNAL(positionChanged(double, double)), this, SLOT(plotterPositionChanged(double, double)));
@@ -320,6 +287,18 @@ void MainWindow::setupFilterCheckBoxes()
     }
   }
   m_ui.filterTab->setLayout(layout);
+}
+
+void MainWindow::setupViewActions()
+{
+  m_ui.viewAutoAction->setChecked(true);
+  QVector<QAction*> actions = QVector<QAction*>() << m_ui.viewAutoAction << m_ui.view11Action << m_ui.view34Action
+    << m_ui.view54Action << m_ui.view43Action << m_ui.view1610Action << m_ui.view169Action;
+  QActionGroup* aspectRatioGroup = new QActionGroup(this);
+  foreach (QAction* action, actions) {
+    aspectRatioGroup->addAction(action);
+    connect(action, SIGNAL(triggered()), this, SLOT(changeAspectRatioTriggered()));
+  }
 }
 
 void MainWindow::processArguments(QStringList arguments)
