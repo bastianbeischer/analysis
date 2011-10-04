@@ -657,8 +657,6 @@
     <addaction name="saveAllCanvasesDialogAction"/>
     <addaction name="saveForPostAnalysisAction"/>
     <addaction name="saveForPostAnalysisDialogAction"/>
-    <addaction name="separator"/>
-    <addaction name="saveForBatchJobAction"/>
    </widget>
    <widget class="QMenu" name="menu_View">
     <property name="font">
@@ -677,8 +675,16 @@
     <addaction name="view1610Action"/>
     <addaction name="view169Action"/>
    </widget>
+   <widget class="QMenu" name="settingMenu">
+    <property name="title">
+     <string>Setting</string>
+    </property>
+    <addaction name="loadSettingAction"/>
+    <addaction name="saveSettingAction"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSave"/>
+   <addaction name="settingMenu"/>
    <addaction name="menu_View"/>
   </widget>
   <action name="addFileListDialogAction">
@@ -801,9 +807,19 @@
     <string>1:1 = 1.00</string>
    </property>
   </action>
-  <action name="saveForBatchJobAction">
+  <action name="saveSettingAction">
    <property name="text">
-    <string>Save for &amp;batch job...</string>
+    <string>Save...</string>
+   </property>
+  </action>
+  <action name="actionLoad_previous_setting">
+   <property name="text">
+    <string>load previous</string>
+   </property>
+  </action>
+  <action name="loadSettingAction">
+   <property name="text">
+    <string>Load...</string>
    </property>
   </action>
  </widget>

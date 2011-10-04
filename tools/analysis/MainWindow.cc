@@ -158,7 +158,8 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.saveForPostAnalysisAction, SIGNAL(triggered()), this, SLOT(saveForPostAnalysisActionTriggered()));
   connect(m_ui.saveAllCanvasesAction, SIGNAL(triggered()), this, SLOT(saveAllCanvasActionTriggered()));
   connect(m_ui.saveForPostAnalysisDialogAction, SIGNAL(triggered()), this, SLOT(saveForPostAnalysisDialogActionTriggered()));
-  connect(m_ui.saveForBatchJobAction, SIGNAL(triggered()), this, SLOT(saveForBatchJobActionTriggered()));
+  connect(m_ui.loadSettingAction, SIGNAL(triggered()), this, SLOT(loadSettingActionTriggered()));
+  connect(m_ui.saveSettingAction, SIGNAL(triggered()), this, SLOT(saveSettingActionTriggered()));
 
   connect(m_ui.setFileListDialogAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListDialogActionTriggered()));
   connect(m_ui.addFileListDialogAction, SIGNAL(triggered()), this, SLOT(setOrAddFileListDialogActionTriggered()));
@@ -444,12 +445,7 @@ void MainWindow::setupPlots()
   QDateTime first = m_reader->startTime();
   QDateTime last = m_reader->stopTime();
 
-  QVector<Enums::AnalysisTopic> topics;
-  foreach (TopicSelector* selector, m_topicSelectors)
-    if (selector->checked())
-      topics.append(selector->topic());
-
-  if (topics.contains(Enums::SignalHeightTracker)) {
+  if (m_analysisSetting.analysisTopics & Enums::SignalHeightTracker) {
     m_ui.plotter->addPlot(new SignalHeight2DPlot);
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
@@ -458,7 +454,7 @@ void MainWindow::setupPlots()
     }
   }
 
-  if (topics.contains(Enums::SignalHeightTRD)) {
+  if (m_analysisSetting.analysisTopics & Enums::SignalHeightTRD) {
     m_ui.plotter->addPlot(new ZSquareTRDPlot);
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
@@ -478,7 +474,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDSpectrumVsPressurePlot());
   }
 
-  if (topics.contains(Enums::ClusterShapeTracker)) {
+  if (m_analysisSetting.analysisTopics & Enums::ClusterShapeTracker) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tracker) {
@@ -487,14 +483,14 @@ void MainWindow::setupPlots()
       }
     }
   }
-  if (topics.contains(Enums::ClusterShapeTRD)) {
+  if (m_analysisSetting.analysisTopics & Enums::ClusterShapeTRD) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::trd)
         m_ui.plotter->addPlot(new ClusterLengthPlot(Enums::ClusterShapeTRD, element->id()));
     }
   }
-  if (topics.contains(Enums::TimeOverThreshold)) {
+  if (m_analysisSetting.analysisTopics & Enums::TimeOverThreshold) {
     m_ui.plotter->addPlot(new TOTPlot);
     m_ui.plotter->addPlot(new TOTLayerCollection(new TOTLayerPlot()));
     m_ui.plotter->addPlot(new TOTLayerCollection(new TOTIonizationCorrelation(Hit::trd)));
@@ -516,7 +512,7 @@ void MainWindow::setupPlots()
           m_ui.plotter->addPlot(new TOTTimeCorrelationPlot(element->id() | ch, first, last));
     }
   }
-  if (topics.contains(Enums::Tracking)) {
+  if (m_analysisSetting.analysisTopics & Enums::Tracking) {
     m_ui.plotter->addPlot(new BendingPositionPlot);
     m_ui.plotter->addPlot(new BendingAnglePlot);
     for (double cut = .004; cut < .008; cut+=.001)
@@ -536,27 +532,27 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, Enums::Negative));
     m_ui.plotter->addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, Enums::Positive | Enums::Negative));
   }
-  if (topics.contains(Enums::Occupancy)) {
+  if (m_analysisSetting.analysisTopics & Enums::Occupancy) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       m_ui.plotter->addPlot(new GeometricOccupancyPlot(layer->z()));
     }
   }
-  if (topics.contains(Enums::ResidualsTracker)) {
+  if (m_analysisSetting.analysisTopics & Enums::ResidualsTracker) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       if (layer->z() > -240 && layer->z() < 240)
         m_ui.plotter->addPlot(new ResidualPlot(Enums::ResidualsTracker, layer));
     }
   }
-  if (topics.contains(Enums::ResidualsTRD)) {
+  if (m_analysisSetting.analysisTopics & Enums::ResidualsTRD) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       if (layer->z() > -520 && layer->z() < -240)
         m_ui.plotter->addPlot(new ResidualPlot(Enums::ResidualsTRD, layer));
     }
   }
-  if (topics.contains(Enums::MomentumReconstruction)) {
+  if (m_analysisSetting.analysisTopics & Enums::MomentumReconstruction) {
     m_ui.plotter->addPlot(new BetaMomentumCorrelationPlot());
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(Enums::Positive));
     m_ui.plotter->addPlot(new MomentumSpectrumPlot(Enums::Negative));
@@ -566,7 +562,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MeasurementTimePlot(first, last));
     m_ui.plotter->addPlot(new FluxCollection(first, last));
   }
-  if (topics.contains(Enums::EfficiencyTOF)) {
+  if (m_analysisSetting.analysisTopics & Enums::EfficiencyTOF) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof) {
@@ -576,17 +572,17 @@ void MainWindow::setupPlots()
       }
     }
   }
-  if (topics.contains(Enums::ResolutionTOF)) {
+  if (m_analysisSetting.analysisTopics & Enums::ResolutionTOF) {
     m_ui.plotter->addPlot(new TimeResolutionPlotCollection);
   }
-  if (topics.contains(Enums::CalibrationTOF)) {
+  if (m_analysisSetting.analysisTopics & Enums::CalibrationTOF) {
     m_ui.plotter->addPlot(new ChannelTriggerProbabilityPlot);
     m_ui.plotter->addPlot(new TOFTimeShiftTriggerPlot);
     m_ui.plotter->addPlot(new TOFTimeShiftPlotCollection);
     m_ui.plotter->addPlot(new TOFTimeDifferencePlotCollection);
     m_ui.plotter->addPlot(new TOFBarShiftPlotCollection);
   }
-  if (topics.contains(Enums::MiscellaneousTracker)) {
+  if (m_analysisSetting.analysisTopics & Enums::MiscellaneousTracker) {
     m_ui.plotter->addPlot(new TotalSignalHeightPlot);
     m_ui.plotter->addPlot(new CutStatisticsPlot);
     m_ui.plotter->addPlot(new TrackerLayerStatisticsPlot);
@@ -601,7 +597,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::All));
     m_ui.plotter->addPlot(new EfficiencyCollection());
   }
-  if (topics.contains(Enums::MiscellaneousTRD)) {
+  if (m_analysisSetting.analysisTopics & Enums::MiscellaneousTRD) {
     m_ui.plotter->addPlot(new TRDClustersOnTrackPlot(Enums::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TRDDistanceWireToTrackPlot(Enums::MiscellaneousTRD));
     m_ui.plotter->addPlot(new TRDDistanceInTube(Enums::MiscellaneousTRD));
@@ -616,7 +612,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TRDTimeCorrectionPlot(first, last));
     m_ui.plotter->addPlot(new TRDLikelihoodFunctionsPlot());
   }
-  if (topics.contains(Enums::MiscellaneousTOF)) {
+  if (m_analysisSetting.analysisTopics & Enums::MiscellaneousTOF) {
     m_ui.plotter->addPlot(new BetaPlot);
     m_ui.plotter->addPlot(new TimeReconstructionPlot(TimeReconstructionPlot::Mean));
     m_ui.plotter->addPlot(new TimeReconstructionPlot(TimeReconstructionPlot::Median));
@@ -627,7 +623,7 @@ void MainWindow::setupPlots()
     }
     m_ui.plotter->addPlot(new EventTimeDifferencePlot(m_ui.numberOfThreadsSpinBox->value()));
   }
-  if (topics.contains(Enums::SlowControl)) {
+  if (m_analysisSetting.analysisTopics & Enums::SlowControl) {
     QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());
     foreach(SensorTypes::Type sensor, temperatureSensors)
       m_ui.plotter->addPlot(new TemperatureTimePlot(sensor, first, last));
@@ -636,10 +632,10 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new TriggerRateTimePlot(first, last));
     m_ui.plotter->addPlot(new HeightTimePlot(first, last));
   }
-  if (topics.contains(Enums::MonteCarlo)) {
+  if (m_analysisSetting.analysisTopics & Enums::MonteCarlo) {
     m_ui.plotter->addPlot(new MCTotalEnergyDepositionTRDvsTrackerPlot());
   }
-  if (topics.contains(Enums::MonteCarloTRD)) {
+  if (m_analysisSetting.analysisTopics & Enums::MonteCarloTRD) {
     m_ui.plotter->addPlot(new MCTRDSpectrumPlot());
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
@@ -649,7 +645,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new MCTRDCalibrationPlot());
     m_ui.plotter->addPlot(new TRDLikelihoodPlot(Enums::MonteCarloTRD));
   }
-  if (topics.contains(Enums::MonteCarloTracker)) {
+  if (m_analysisSetting.analysisTopics & Enums::MonteCarloTracker) {
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Enums::Positron));
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Enums::Electron));
     m_ui.plotter->addPlot(new MCRigidityResolutionPlot(Enums::Proton));
@@ -664,7 +660,7 @@ void MainWindow::setupPlots()
     m_ui.plotter->addPlot(new AzimuthMigrationHistogram());
     m_ui.plotter->addPlot(new RigidityMigrationHistogram());
   }
-  if (topics.contains(Enums::Testbeam)) {
+  if (m_analysisSetting.analysisTopics & Enums::Testbeam) {
     m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::MagnetInstalled, first, last));
     m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::Momentum, first, last));
     m_ui.plotter->addPlot(new SettingTimePlot(SettingTimePlot::Polarity, first, last));
@@ -685,55 +681,61 @@ void MainWindow::setupPlots()
   }
 }
 
-void MainWindow::setupAnalysis(Enums::TrackType& type, Enums::Corrections& flags, Enums::Particles& filterTypes, CutFilter& cutFilter, Enums::Particles& mcFilterTypes)
+void MainWindow::updateAnalysisSetting()
 {
-  type = Enums::trackType(m_ui.trackComboBox->currentText());
+  m_analysisSetting.clear();
 
-  flags = Enums::NoCorrection;
+  m_analysisSetting.firstEvent = m_ui.firstEventSpinBox->value();
+  m_analysisSetting.lastEvent = m_ui.lastEventSpinBox->value();
+  m_analysisSetting.numberOfThreads = m_ui.numberOfThreadsSpinBox->value();
+
+  m_analysisSetting.analysisTopics = Enums::NoTopic;
+  foreach (TopicSelector* selector, m_topicSelectors)
+    if (selector->checked())
+      m_analysisSetting.analysisTopics|= selector->topic();
+
+  m_analysisSetting.trackType = Enums::trackType(m_ui.trackComboBox->currentText());
+
+  m_analysisSetting.corrections = Enums::NoCorrection;
   foreach (QCheckBox* checkBox, m_correctionCheckBoxes)
     if (checkBox->isChecked())
-      flags|= Enums::correction(checkBox->text());
+      m_analysisSetting.corrections|= Enums::correction(checkBox->text());
 
-  filterTypes = Enums::NoParticle;
+  m_analysisSetting.particleFilter = Enums::NoParticle;
   foreach (QCheckBox* checkBox, m_particleFilterCheckBoxes)
     if (checkBox->isChecked())
-      filterTypes|= Enums::particle(checkBox->text());
+      m_analysisSetting.particleFilter|= Enums::particle(checkBox->text());
 
-  mcFilterTypes = Enums::NoParticle;
+  m_analysisSetting.mcParticleFilter = Enums::NoParticle;
   foreach (QCheckBox* checkBox, m_mcFilterCheckBoxes)
     if (checkBox->isChecked())
-      mcFilterTypes|= Enums::particle(checkBox->text());
+      m_analysisSetting.mcParticleFilter|= Enums::particle(checkBox->text());
   
-  foreach (CutSelector* selector, m_cutSelectors) {
-    cutFilter.addCut(selector->cut());
-  }
+  foreach (CutSelector* selector, m_cutSelectors)
+    if (selector->checked())
+      m_analysisSetting.cutFilter.addCut(selector->cut());
 }
 
 void MainWindow::analyzeButtonClicked()
 {
   if (m_ui.analyzeButton->text() == "&start") {
-    Enums::TrackType type = Enums::NoTrack;
-    Enums::Corrections flags;
-    Enums::Particles filterTypes;
-    CutFilter cutFilter;
-    Enums::Particles mcFilterTypes;
-    setupAnalysis(type, flags, filterTypes, cutFilter, mcFilterTypes);
+    updateAnalysisSetting();
     setupPlots();
 
     qDeleteAll(m_processors);
     m_processors.clear();
-    for (int i = 0; i < m_ui.numberOfThreadsSpinBox->value(); i++) {
+    for (int i = 0; i < m_analysisSetting.numberOfThreads; ++i) {
       AnalysisProcessor* processor = new AnalysisProcessor;
       foreach(AnalysisPlot* plot, m_ui.plotter->plots())
         processor->addDestination(plot);
-      processor->setTrackType(type);
-      processor->setCorrectionFlags(flags);
-      processor->setParticleFilter(filterTypes);
-      processor->setCutFilter(cutFilter);
-      processor->setMCFilter(mcFilterTypes);
+      processor->setTrackType(m_analysisSetting.trackType);
+      processor->setCorrectionFlags(m_analysisSetting.corrections);
+      processor->setParticleFilter(m_analysisSetting.particleFilter);
+      processor->setMCFilter(m_analysisSetting.mcParticleFilter);
+      processor->setCutFilter(m_analysisSetting.cutFilter);
       m_processors.append(processor);
     }
-    m_reader->start(m_processors, m_ui.firstEventSpinBox->value(), m_ui.lastEventSpinBox->value());
+    m_reader->start(m_processors, m_analysisSetting.firstEvent, m_analysisSetting.lastEvent);
   } else {
     m_reader->stop();
     m_ui.analyzeButton->setText("&stopping...");
@@ -989,13 +991,68 @@ void MainWindow::changeAspectRatioTriggered()
   }
 }
 
-void MainWindow::saveForBatchJobActionTriggered()
+void MainWindow::saveSettingActionTriggered()
 {
   QString fileEnding;
-  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "*.root", &fileEnding, m_dialogOptions);
+  QString fileName = QFileDialog::getSaveFileName(this, "save setting", ".", "*.conf", &fileEnding, m_dialogOptions);
   if (fileName.isEmpty())
     return;
   fileEnding.remove(0, 1);
   if (!fileName.endsWith(fileEnding))
     fileName.append(fileEnding);
+  updateAnalysisSetting();
+  m_analysisSetting.save(fileName);
+}
+
+void MainWindow::loadSettingActionTriggered()
+{
+  QString fileEnding;
+  QString fileName = QFileDialog::getOpenFileName(this, "load setting", ".", "*.conf", &fileEnding, m_dialogOptions);
+  if (fileName.isEmpty())
+    return;
+  fileEnding.remove(0, 1);
+  if (!fileName.endsWith(fileEnding))
+    fileName.append(fileEnding);
+  updateAnalysisSetting();
+  m_analysisSetting.load(fileName);
+
+  m_ui.firstEventSpinBox->setValue(m_analysisSetting.firstEvent);
+  m_ui.lastEventSpinBox->setValue(m_analysisSetting.lastEvent);
+  m_ui.numberOfThreadsSpinBox->setValue(m_analysisSetting.numberOfThreads);
+
+  foreach (TopicSelector* selector, m_topicSelectors)
+    selector->setChecked(m_analysisSetting.analysisTopics & selector->topic());
+
+  m_ui.trackComboBox->setCurrentIndex(m_ui.trackComboBox->findText(Enums::label(m_analysisSetting.trackType)));
+
+  foreach (QCheckBox* checkBox, m_correctionCheckBoxes)
+    if (m_analysisSetting.corrections & Enums::correction(checkBox->text())) {
+      checkBox->setCheckState(Qt::Checked);
+    } else {
+      checkBox->setCheckState(Qt::Unchecked);
+    }
+
+  foreach (QCheckBox* checkBox, m_particleFilterCheckBoxes)
+    if (m_analysisSetting.particleFilter & Enums::particle(checkBox->text())) {
+      checkBox->setCheckState(Qt::Checked);
+    } else {
+      checkBox->setCheckState(Qt::Unchecked);
+    }
+
+  foreach (QCheckBox* checkBox, m_mcFilterCheckBoxes)
+    if (m_analysisSetting.mcParticleFilter & Enums::particle(checkBox->text())) {
+      checkBox->setCheckState(Qt::Checked);
+    } else {
+      checkBox->setCheckState(Qt::Unchecked);
+    }
+
+  foreach (CutSelector* selector, m_cutSelectors) {
+    foreach (Cut cut, m_analysisSetting.cutFilter.cuts()) {
+      if (selector->cut().type() == cut.type()) {
+        selector->setChecked(true);
+        if (cut.minIsSet()) selector->setMinimum(cut.min());
+        if (cut.maxIsSet()) selector->setMaximum(cut.max());
+      }
+    }
+  }
 }

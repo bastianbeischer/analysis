@@ -11,6 +11,8 @@
 #include "RootPlot.hh"
 #include "CutFilter.hh"
 #include "Enums.hh"
+#include "AnalysisSetting.hh"
+
 #include <QMainWindow>
 #include <QFileDialog>
 #include <QString>
@@ -38,7 +40,8 @@ private slots:
   void saveAllCanvasDialogActionTriggered();
   void saveForPostAnalysisActionTriggered();
   void saveForPostAnalysisDialogActionTriggered();
-  void saveForBatchJobActionTriggered();
+  void loadSettingActionTriggered();
+  void saveSettingActionTriggered();
   void listWidgetItemChanged(QListWidgetItem*);
   void listWidgetCurrentRowChanged(int);
   void changeTopicGroup();
@@ -63,7 +66,8 @@ private:
   void setupCutSelectors();
   void setupViewActions();
   void setupPlots();
-  void setupAnalysis(Enums::TrackType&, Enums::Corrections&, Enums::Particles& particleFilter, CutFilter&, Enums::Particles& mcFilter);
+  //void setupAnalysis(Enums::TrackType&, Enums::Corrections&, Enums::Particles& particleFilter, CutFilter&, Enums::Particles& mcFilter);
+  void updateAnalysisSetting();
   void startAnalysis();
   void removeListWidgetItem(int);
   void closeEvent(QCloseEvent*);
@@ -72,6 +76,7 @@ private:
   Ui_mainWindow m_ui;
   QVector<EventProcessor*> m_processors;
   EventReader* m_reader;
+  AnalysisSetting m_analysisSetting;
   QString m_topLevelPath;
   QVector<unsigned int> m_activePlots;
   QVector<TopicSelector*> m_topicSelectors;

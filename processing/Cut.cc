@@ -9,13 +9,28 @@
 #include "Settings.hh"
 #include "SettingsManager.hh"
 
-#include <math.h>
+#include <cmath>
+
+#include <QDebug>
+#include <QStringList>
 
 Cut::Cut(Enums::Cut type)
   : m_type(type)
   , m_minIsSet(false)
   , m_maxIsSet(false)
 {
+}
+
+Cut::Cut(const QString& string)
+  : m_minIsSet(false)
+  , m_maxIsSet(false)
+{
+  QStringList stringList = string.split(" | ");
+  m_type = Enums::cut(stringList[0]);
+  if (!stringList[1].isEmpty())
+    setMin(stringList[1].toDouble());
+  if (!stringList[2].isEmpty())
+    setMax(stringList[2].toDouble());
 }
 
 Cut::~Cut() 
@@ -136,4 +151,15 @@ double Cut::sumOfSignalHeights(const Hit::ModuleType type, const Track* track, c
     }
   }
   return sumSignal;
+}
+
+QString Cut::toString() const
+{
+  QString string = Enums::label(m_type) + " | ";
+  if (m_minIsSet)
+    string+= QString::number(m_min);
+  string+= " | ";
+  if (m_maxIsSet)
+    string+= QString::number(m_max);
+  return string;
 }

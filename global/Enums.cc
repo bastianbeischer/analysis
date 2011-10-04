@@ -19,12 +19,12 @@ const QMap<Enums::AnalysisTopic, QString> Enums::s_analysisTopicMap = Initializa
   << QPair<Enums::AnalysisTopic, QString>(Enums::SignalHeightTRD, "signal height TRD")
   << QPair<Enums::AnalysisTopic, QString>(Enums::ClusterShapeTracker, "cluster shape tracker")
   << QPair<Enums::AnalysisTopic, QString>(Enums::ClusterShapeTRD, "cluster shape TRD")
-  << QPair<Enums::AnalysisTopic, QString>(Enums::TimeOverThreshold, "time over\nthreshold")
+  << QPair<Enums::AnalysisTopic, QString>(Enums::TimeOverThreshold, "time over threshold")
   << QPair<Enums::AnalysisTopic, QString>(Enums::Tracking, "tracking")
   << QPair<Enums::AnalysisTopic, QString>(Enums::Occupancy, "occupancy")
   << QPair<Enums::AnalysisTopic, QString>(Enums::ResidualsTracker, "residuals tracker")
   << QPair<Enums::AnalysisTopic, QString>(Enums::ResidualsTRD, "residuals TRD")
-  << QPair<Enums::AnalysisTopic, QString>(Enums::MomentumReconstruction, "momentum\nreconstruction")
+  << QPair<Enums::AnalysisTopic, QString>(Enums::MomentumReconstruction, "momentum")
   << QPair<Enums::AnalysisTopic, QString>(Enums::EfficiencyTOF, "efficiency TOF")
   << QPair<Enums::AnalysisTopic, QString>(Enums::ResolutionTOF, "resolution TOF")
   << QPair<Enums::AnalysisTopic, QString>(Enums::CalibrationTOF, "calibration TOF")
@@ -51,8 +51,8 @@ const QMap<Enums::Correction, QString> Enums::s_correctionMap = InitializableMap
    << QPair<Enums::Correction, QString>(Enums::TimeShifts, "time shifts")
    << QPair<Enums::Correction, QString>(Enums::TrdMopv, "TRD mop value")
    << QPair<Enums::Correction, QString>(Enums::TrdTime, "TRD time")
-   << QPair<Enums::Correction, QString>(Enums::TrdPressure, "TRD pressure")
-   << QPair<Enums::Correction, QString>(Enums::TrdTemperature, "TRD temperature")
+   //<< QPair<Enums::Correction, QString>(Enums::TrdPressure, "TRD pressure")
+   //<< QPair<Enums::Correction, QString>(Enums::TrdTemperature, "TRD temperature")
    << QPair<Enums::Correction, QString>(Enums::TofTimeOverThreshold, "time over threshold")
    << QPair<Enums::Correction, QString>(Enums::MultipleScattering, "multiple scattering")
    << QPair<Enums::Correction, QString>(Enums::PhotonTravelTime, "photon travel time");
@@ -88,6 +88,25 @@ const QString Enums::label(Enums::AnalysisTopic key) {return s_analysisTopicMap.
 Enums::AnalysisTopic Enums::analysisTopic(const QString& value) {return s_analysisTopicMap.key(value);}
 QMap<Enums::AnalysisTopic, QString>::ConstIterator Enums::analysisTopicBegin() {return s_analysisTopicMap.constBegin();}
 QMap<Enums::AnalysisTopic, QString>::ConstIterator Enums::analysisTopicEnd() {return s_analysisTopicMap.constEnd();}
+const QString Enums::label(Enums::AnalysisTopics keys)
+{
+  QString list;
+  for (QMap<Enums::AnalysisTopic, QString>::ConstIterator it = analysisTopicBegin(); it != analysisTopicEnd(); ++it) {
+    if (keys & it.key()) {
+      if (!list.isEmpty())
+        list+= " | ";
+      list+= it.value();
+    }
+  }
+  return list;
+}
+Enums::AnalysisTopics Enums::analysisTopics(const QString& value)
+{
+  Enums::AnalysisTopics analysisTopics;
+  foreach (QString string, value.split(" | "))
+    analysisTopics|= analysisTopic(string);
+  return analysisTopics;
+}
 
 // TrackType
 const QString Enums::label(Enums::TrackType key) {return s_trackTypeMap.value(key);}
@@ -110,7 +129,7 @@ const QString Enums::label(Enums::Corrections keys)
       list+= it.value();
     }
   }
-  return list;  
+  return list;
 }
 Enums::Corrections Enums::corrections(const QString& value)
 {
@@ -135,7 +154,7 @@ const QString Enums::label(Enums::Particles keys)
       list+= it.value();
     }
   }
-  return list;  
+  return list; 
 }
 Enums::Particles Enums::particles(const QString& value)
 {
