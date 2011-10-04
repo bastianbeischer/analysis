@@ -23,6 +23,7 @@ class QTabBar;
 class DataChain;
 class Plotter;
 class TopicSelector;
+class CutSelector;
 
 class MainWindow : public QMainWindow {
   Q_OBJECT
@@ -59,6 +60,7 @@ private:
   void setupTopicSelectors();
   void setupCorrectionsCheckBoxes();
   void setupFilterCheckBoxes();
+  void setupCutSelectors();
   void setupViewActions();
   void setupPlots();
   void setupAnalysis(Enums::TrackType&, Enums::Corrections&, Enums::Particles& particleFilter, CutFilter&, Enums::Particles& mcFilter);
@@ -81,6 +83,7 @@ private:
   QVector<QCheckBox*> m_correctionCheckBoxes;
   QVector<QCheckBox*> m_particleFilterCheckBoxes;
   QVector<QCheckBox*> m_mcFilterCheckBoxes;
+  QVector<CutSelector*> m_cutSelectors;
   QVector<RootPlot::DrawOption> m_drawOptions;
   bool m_inhibitDraw;
   QTime m_time;

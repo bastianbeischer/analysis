@@ -46,12 +46,19 @@ public:
   static const QString label(Particles);
   static Particles particles(const QString&);
 
+  enum Cut {RigidityCut, BetaCut, TimeOverThresholdCut, TrdSignalCut, CherenkovCut};
+  static const QString label(Cut);
+  static Cut cut(const QString&);
+  static QMap<Cut, QString>::ConstIterator cutBegin();
+  static QMap<Cut, QString>::ConstIterator cutEnd();
+
 private:
   static const QMap<ChargeSign, QString> s_chargeSignMap;
   static const QMap<AnalysisTopic, QString> s_analysisTopicMap;
   static const QMap<TrackType, QString> s_trackTypeMap;
   static const QMap<Correction, QString> s_correctionMap;
   static const QMap<Particle, QString> s_particleMap;
+  static const QMap<Cut, QString> s_cutMap;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::ChargeSigns);

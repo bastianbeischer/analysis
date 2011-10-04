@@ -11,7 +11,7 @@
 
 #include <math.h>
 
-Cut::Cut(Type type)
+Cut::Cut(Enums::Cut type)
   : m_type(type)
   , m_minIsSet(false)
   , m_maxIsSet(false)
@@ -48,7 +48,7 @@ bool Cut::passesCuts(double value) const
 
 bool Cut::passes(const SimpleEvent* event) const
 {
-  if (m_type == cherenkov) {
+  if (m_type == Enums::CherenkovCut) {
     //get settings if present
     const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
     if (!settings || settings->situation() != Settings::Testbeam11)
@@ -62,7 +62,7 @@ bool Cut::passes(const SimpleEvent* event) const
 
 bool Cut::passes(const QVector<Hit*>& clusters, const Particle* particle) const
 {
-  if (m_type == rigidity) {
+  if (m_type == Enums::RigidityCut) {
     const Track* track = particle->track();
     if (!track || !track->fitGood())
       return false;
@@ -71,7 +71,7 @@ bool Cut::passes(const QVector<Hit*>& clusters, const Particle* particle) const
       return false;
     return passesCuts(track->rigidity());
   }
-  if (m_type == beta) {
+  if (m_type == Enums::BetaCut) {
     const Track* track = particle->track();
     if (!track || !track->fitGood())
       return false;
@@ -80,7 +80,7 @@ bool Cut::passes(const QVector<Hit*>& clusters, const Particle* particle) const
       return false;
     return passesCuts(particle->beta());
   }
-  if (m_type == tofTimeOverThreshold) {
+  if (m_type == Enums::TimeOverThresholdCut) {
     const Track* track = particle->track();
     if (!track || !track->fitGood())
       return false;
@@ -113,7 +113,7 @@ bool Cut::passes(const QVector<Hit*>& clusters, const Particle* particle) const
       return false;
     }
   }
-  if (m_type == trdDeposition) {
+  if (m_type == Enums::TrdSignalCut) {
     const Track* track = particle->track();
     if (!track || !track->fitGood())
       return false;

@@ -100,6 +100,7 @@
 #include "FluxCollection.hh"
 #include "EventTimeDifferencePlot.hh"
 #include "TopicSelector.hh"
+#include "CutSelector.hh"
 #include "Caption.hh"
 
 #include <QCloseEvent>
@@ -125,6 +126,7 @@ MainWindow::MainWindow(QWidget* parent)
   setupTopicSelectors();
   setupCorrectionsCheckBoxes();
   setupFilterCheckBoxes();
+  setupCutSelectors();
   setupViewActions();
 
   for (QMap<Enums::TrackType, QString>::ConstIterator it = Enums::trackTypeBegin(); it != Enums::trackTypeEnd(); ++it)
@@ -133,12 +135,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   m_controlWidgets
     << m_ui.selectAllButton << m_ui.selectTrackerButton << m_ui.selectTrdButton << m_ui.selectTofButton
-    << m_ui.trackComboBox << m_ui.firstEventSpinBox << m_ui.lastEventSpinBox << m_ui.numberOfThreadsSpinBox
-    << m_ui.rigidityCutCheckBox << m_ui.rigidityLineEditMax << m_ui.rigidityLineEditMin << m_ui.betaCutCheckBox
-    << m_ui.betaLineEditMax << m_ui.betaLineEditMin << m_ui.tofTotCutCheckBox << m_ui.tofTotLineEditMax
-    << m_ui.tofTotLineEditMin << m_ui.trdDepositionCutCheckBox << m_ui.trdDepositionLineEditMax
-    << m_ui.trdDepositionLineEditMin << m_ui.cherenkovCutCheckBox << m_ui.cherenkovCutBelowRadioButton
-    << m_ui.cherenkovCutAboveRadioButton << m_ui.cherenkovCutDoubleSpinBox;
+    << m_ui.trackComboBox << m_ui.firstEventSpinBox << m_ui.lastEventSpinBox << m_ui.numberOfThreadsSpinBox;
 
   connect(m_reader, SIGNAL(started()), this, SLOT(toggleControlWidgetsStatus()));
   connect(m_reader, SIGNAL(finished()), this, SLOT(toggleControlWidgetsStatus()));
@@ -287,6 +284,20 @@ void MainWindow::setupFilterCheckBoxes()
     }
   }
   m_ui.filterTab->setLayout(layout);
+}
+
+void MainWindow::setupCutSelectors()
+{
+  QVBoxLayout* layout = new QVBoxLayout;
+  for (QMap<Enums::Cut, QString>::ConstIterator it = Enums::cutBegin(); it != Enums::cutEnd(); ++it) {
+    CutSelector* selector = new CutSelector(it.key());
+    layout->addWidget(selector);
+    m_cutSelectors.append(selector);
+    m_controlWidgets.append(selector);
+    if (it.key() == Enums::CherenkovCut)
+      selector->setMinimum(200);
+  }
+  m_ui.cutTab->setLayout(layout);
 }
 
 void MainWindow::setupViewActions()
@@ -693,78 +704,8 @@ void MainWindow::setupAnalysis(Enums::TrackType& type, Enums::Corrections& flags
     if (checkBox->isChecked())
       mcFilterTypes|= Enums::particle(checkBox->text());
   
-  if (m_ui.rigidityCutCheckBox->isChecked()) {
-    Cut cut(Cut::rigidity);
-    QString minText = m_ui.rigidityLineEditMin->text();
-    QString maxText = m_ui.rigidityLineEditMax->text();
-    bool minIsNumber = false;
-    double min = minText.toDouble(&minIsNumber);
-    if (minIsNumber) {
-      cut.setMin(min);
-    }
-    bool maxIsNumber = false;
-    double max = maxText.toDouble(&maxIsNumber);
-    if (maxIsNumber) {
-      cut.setMax(max);
-    }
-    cutFilter.addCut(cut);
-  }
-  if (m_ui.betaCutCheckBox->isChecked()) {
-    Cut cut(Cut::beta);
-    QString minText = m_ui.betaLineEditMin->text();
-    QString maxText = m_ui.betaLineEditMax->text();
-    bool minIsNumber = false;
-    double min = minText.toDouble(&minIsNumber);
-    if (minIsNumber) {
-      cut.setMin(min);
-    }
-    bool maxIsNumber = false;
-    double max = maxText.toDouble(&maxIsNumber);
-    if (maxIsNumber) {
-      cut.setMax(max);
-    }
-    cutFilter.addCut(cut);
-  }
-  if (m_ui.trdDepositionCutCheckBox->isChecked()) {
-    Cut cut(Cut::trdDeposition);
-    QString minText = m_ui.trdDepositionLineEditMin->text();
-    QString maxText = m_ui.trdDepositionLineEditMax->text();
-    bool minIsNumber = false;
-    double min = minText.toDouble(&minIsNumber);
-    if (minIsNumber) {
-      cut.setMin(min);
-    }
-    bool maxIsNumber = false;
-    double max = maxText.toDouble(&maxIsNumber);
-    if (maxIsNumber) {
-      cut.setMax(max);
-    }
-    cutFilter.addCut(cut);
-  }
-  if (m_ui.tofTotCutCheckBox->isChecked()) {
-    Cut cut(Cut::tofTimeOverThreshold);
-    QString minText = m_ui.tofTotLineEditMin->text();
-    QString maxText = m_ui.tofTotLineEditMax->text();
-    bool minIsNumber = false;
-    double min = minText.toDouble(&minIsNumber);
-    if (minIsNumber) {
-      cut.setMin(min);
-    }
-    bool maxIsNumber = false;
-    double max = maxText.toDouble(&maxIsNumber);
-    if (maxIsNumber) {
-      cut.setMax(max);
-    }
-    cutFilter.addCut(cut);
-  }
-  if (m_ui.cherenkovCutCheckBox->isChecked()) {
-    Cut cut(Cut::cherenkov);
-    double cherenkovLimit = m_ui.cherenkovCutDoubleSpinBox->value();
-    if (m_ui.cherenkovCutBelowRadioButton->isChecked())
-      cut.setMax(cherenkovLimit);
-    else
-      cut.setMin(cherenkovLimit);
-    cutFilter.addCut(cut);
+  foreach (CutSelector* selector, m_cutSelectors) {
+    cutFilter.addCut(selector->cut());
   }
 }
 

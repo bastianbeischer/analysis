@@ -72,6 +72,13 @@ const QMap<Enums::Particle, QString> Enums::s_particleMap = InitializableMap<Enu
    << QPair<Enums::Particle, QString>(Enums::Pi0, "pi0")
    << QPair<Enums::Particle, QString>(Enums::Higgs, "H");
 
+const QMap<Enums::Cut, QString> Enums::s_cutMap = InitializableMap<Enums::Cut, QString>()
+  << QPair<Enums::Cut, QString>(Enums::RigidityCut, "rigidity cut")
+  << QPair<Enums::Cut, QString>(Enums::BetaCut, "beta cut")
+  << QPair<Enums::Cut, QString>(Enums::TimeOverThresholdCut, "TOT cut")
+  << QPair<Enums::Cut, QString>(Enums::TrdSignalCut, "TRD signal cut")
+  << QPair<Enums::Cut, QString>(Enums::CherenkovCut, "cherenkov cut");
+
 // ChargeSign
 const QString Enums::label(Enums::ChargeSign key) {return s_chargeSignMap.value(key);}
 Enums::ChargeSign Enums::chargeSign(const QString& value) {return s_chargeSignMap.key(value);}
@@ -137,3 +144,10 @@ Enums::Particles Enums::particles(const QString& value)
     particles|= particle(string);
   return particles;
 }
+
+// Cut
+const QString Enums::label(Enums::Cut key) {return s_cutMap.value(key);}
+Enums::Cut Enums::cut(const QString& value) {return s_cutMap.key(value);}
+QMap<Enums::Cut, QString>::ConstIterator Enums::cutBegin() {return s_cutMap.constBegin();}
+QMap<Enums::Cut, QString>::ConstIterator Enums::cutEnd() {return s_cutMap.constEnd();}
+
