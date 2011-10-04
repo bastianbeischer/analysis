@@ -16,7 +16,7 @@ for(class, CLASSES) {
   SOURCES += $${class}.cc
 }
 
-QMAKE_LFLAGS -= -Wl,--as-needed
+QMAKE_LFLAGS += -Wl,--no-as-needed
 
 # Seperate source & build dirs
 
