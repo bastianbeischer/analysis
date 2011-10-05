@@ -20,7 +20,10 @@ TopicSelector::TopicSelector(Enums::AnalysisTopic topic, QWidget* parent)
   QHBoxLayout* layout = new QHBoxLayout;
   layout->addWidget(m_checkBox);
   layout->addWidget(m_button);
+  layout->setContentsMargins(0, 0, 0, 0);
   setLayout(layout);
+
+  setMaximumHeight(27);
 
   connect(m_button, SIGNAL(clicked()), this, SLOT(toggleButton()));
 }

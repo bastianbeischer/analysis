@@ -23,13 +23,13 @@
      <widget class="QWidget" name="leftWidget" native="true">
       <property name="minimumSize">
        <size>
-        <width>250</width>
+        <width>200</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>251</width>
+        <width>201</width>
         <height>16777215</height>
        </size>
       </property>
@@ -102,7 +102,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>251</width>
+            <width>201</width>
             <height>663</height>
            </rect>
           </property>
@@ -473,13 +473,13 @@
      <widget class="QWidget" name="rightWidget" native="true">
       <property name="minimumSize">
        <size>
-        <width>250</width>
+        <width>200</width>
         <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
-        <width>251</width>
+        <width>201</width>
         <height>16777215</height>
        </size>
       </property>

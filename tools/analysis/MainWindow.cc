@@ -110,6 +110,7 @@ MainWindow::~MainWindow()
 void MainWindow::setupTopicSelectors()
 {
   QVBoxLayout* layout = new QVBoxLayout;
+  layout->setContentsMargins(0, 0, 0, 0);
   layout->addWidget(new Caption("tracker"));
   foreach (Enums::AnalysisTopic topic, AnalysisTopic::trackerTopics()) {
     if (!AnalysisTopic::otherTopics().contains(topic)) {
@@ -204,6 +205,7 @@ void MainWindow::setupFilterCheckBoxes()
 void MainWindow::setupCutSelectors()
 {
   QVBoxLayout* layout = new QVBoxLayout;
+  layout->setContentsMargins(0, 0, 0, 0);
   for (QMap<Enums::Cut, QString>::ConstIterator it = Enums::cutBegin(); it != Enums::cutEnd(); ++it) {
     CutSelector* selector = new CutSelector(it.key());
     layout->addWidget(selector);
