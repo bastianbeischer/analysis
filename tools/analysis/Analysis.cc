@@ -115,17 +115,26 @@ Analysis::Analysis()
   , m_processors()
   , m_plots()
 {
-  connect(m_reader, SIGNAL(started()), this, SLOT(toggleControlWidgetsStatus()));
-  connect(m_reader, SIGNAL(finished()), this, SLOT(toggleControlWidgetsStatus()));
-  connect(m_reader, SIGNAL(numberOfEventsChanged(int)), this, SIGNAL(numberOfEventsChanged(int)));
+  connect(m_reader, SIGNAL(started()), this, SIGNAL(started()));
+  connect(m_reader, SIGNAL(numberOfEventsChanged(int)), this, SIGNAL(chainChanged(int)));
   connect(m_reader, SIGNAL(finished()), this, SLOT(finalize()));
 }
 
 Analysis::~Analysis()
 {
-  qDeleteAll(m_plots);
-  qDeleteAll(m_processors);
   delete m_reader;
+  qDeleteAll(m_processors);
+  qDeleteAll(m_plots);
+}
+
+void Analysis::clearFileList()
+{
+  m_reader->clearFileList();
+}
+
+void Analysis::addFileList(const QString& fileName)
+{
+  m_reader->addFileList(fileName);
 }
 
 void Analysis::start(const AnalysisSetting& analysisSetting)
@@ -159,7 +168,7 @@ void Analysis::finalize()
     plot->finalize();
     plot->update(); // TODO: Remove and check all Plots which implemented finalize() in the following way: finalize() {update();}
   }
-  emit(finished());
+  emit finished();
 }
 
 void Analysis::stop()
@@ -209,6 +218,16 @@ Enums::AnalysisTopic Analysis::plotTopic(unsigned int i)
   return m_plots[i]->topic();
 }
 
+double Analysis::progress() const
+{
+  return m_reader->progress();
+}
+
+double Analysis::buffer() const
+{
+  return m_reader->buffer();
+}
+
 void Analysis::save(const QString& fileName, TCanvas* canvas)
 {
   canvas->cd();
@@ -227,31 +246,27 @@ void Analysis::save(const QString& fileName, TCanvas* canvas)
   file.Close();
   canvas->SetName(qPrintable(canvasName));
 }
-/*
-#include "Setup.hh"
-#include "Layer.hh"
 
-void MainWindow::processArguments(QStringList arguments)
+void Analysis::processArguments(QStringList arguments)
 {
   arguments.removeFirst();
-  QRegExp onlyDigits("^\\d+$");
   foreach(QString argument, arguments) {
-    if (!onlyDigits.exactMatch(argument)) {
-      if (argument.endsWith(".root"))
-        m_reader->addRootFile(argument);
-      else
-        m_reader->addFileList(argument);
+    if (argument.endsWith(".conf", Qt::CaseInsensitive)) {
+      m_analysisSetting.load(argument);
+    } else if (argument.endsWith(".root", Qt::CaseInsensitive)) {
+      m_reader->addRootFile(argument);
+    } else if (argument.endsWith(".txt", Qt::CaseInsensitive)){
+      m_reader->addFileList(argument);
+    } else {
+      qDebug() << argument << "has an unknown file ending.";
     }
   }
-  QStringList eventRange = arguments.filter(onlyDigits);
-  if (eventRange.size() == 2) {
-    int firstEvent = eventRange.at(0).toInt();
-    int lastEvent = eventRange.at(1).toInt();
-    m_ui.firstEventSpinBox->setValue(firstEvent);
-    m_ui.lastEventSpinBox->setValue(lastEvent);
-    firstOrLastEventChanged();
-  }
-}*/
+}
+
+int Analysis::numberOfEvents() const
+{
+  return m_reader->numberOfEvents();
+}
 
 void Analysis::setupPlots()
 {

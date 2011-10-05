@@ -1,5 +1,6 @@
 #include "MainWindow.hh"
 #include "RootStyle.hh"
+#include "Analysis.hh"
 
 #include <QApplication>
 #include <QStringList>
@@ -13,8 +14,9 @@ int main(int argc, char* argv[])
   TH1::AddDirectory(false);
 
   QApplication application(argc, argv);
-  MainWindow window;
-  window.processArguments(application.arguments());
+  Analysis analysis;
+  analysis.processArguments(application.arguments());
+  MainWindow window(&analysis);
   window.showMaximized();
   return application.exec();
 }

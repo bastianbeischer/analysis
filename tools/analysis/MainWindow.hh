@@ -21,16 +21,15 @@
 #include <QTime>
 #include <QTimer>
 
-class QTabBar;
-class DataChain;
 class Plotter;
+class Analysis;
 class TopicSelector;
 class CutSelector;
 
 class MainWindow : public QMainWindow {
-  Q_OBJECT
-  public:
-  MainWindow(QWidget* parent = 0);
+Q_OBJECT
+public:
+  MainWindow(Analysis*, QWidget* parent = 0);
   ~MainWindow();
   void processArguments(QStringList);
 private slots:
@@ -54,7 +53,6 @@ private slots:
   void toggleControlWidgetsStatus();
   void checkBoxChanged();
   void checkSelectAll();
-  void plotterTitleChanged(const QString&);
   void plotterPositionChanged(double, double);
   void drawOptionComboBoxCurrentIndexChanged(int);
   void update();
@@ -65,8 +63,6 @@ private:
   void setupFilterCheckBoxes();
   void setupCutSelectors();
   void setupViewActions();
-  void setupPlots();
-  //void setupAnalysis(Enums::TrackType&, Enums::Corrections&, Enums::Particles& particleFilter, CutFilter&, Enums::Particles& mcFilter);
   void updateAnalysisSetting();
   void startAnalysis();
   void removeListWidgetItem(int);
@@ -74,10 +70,11 @@ private:
   void setDrawOptionComboBox();
 
   Ui_mainWindow m_ui;
-  QVector<EventProcessor*> m_processors;
-  EventReader* m_reader;
+
   AnalysisSetting m_analysisSetting;
-  QString m_topLevelPath;
+  Analysis* m_analysis;
+  const QString m_analysisPath;
+
   QVector<unsigned int> m_activePlots;
   QVector<TopicSelector*> m_topicSelectors;
   QVector<TopicSelector*> m_trackerSelectors;

@@ -40,8 +40,9 @@ MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumPlot::TRDSpec
   case TRDSpectrumPlot::layer:
     strType = "MC TRD layer";
     break;
-    break;
   }
+
+  setTitle(strType);
 
   setAxisTitle(TRDReconstruction::xAxisTitle(), "entries");
 

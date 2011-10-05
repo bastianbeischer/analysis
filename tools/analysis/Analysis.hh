@@ -18,6 +18,9 @@ Q_OBJECT
 public:
   Analysis();
   virtual ~Analysis();
+  void clearFileList();
+  void addFileList(const QString&);
+  void processArguments(QStringList);
   void start(const AnalysisSetting&);
   void stop();
   void clearPlots();
@@ -28,9 +31,13 @@ public:
   const QString& plotTitle(unsigned int);
   Enums::AnalysisTopic plotTopic(unsigned int);
   void save(const QString&, TCanvas*);
+  int numberOfEvents() const;
+  double buffer() const;
+  double progress() const;
 signals:
   void started();
   void finished();
+  void chainChanged(int);
 private slots:
   void finalize();
   void addPlot(AnalysisPlot*);
