@@ -5,12 +5,11 @@
 
 #include <QObject>
 
-class PlotCollection :
-  public QObject,
-  public AnalysisPlot
+class TCanvas;
+
+class PlotCollection : public QObject, public AnalysisPlot
 {
   Q_OBJECT
-
 public:
   PlotCollection(Enums::AnalysisTopic);
   virtual ~PlotCollection();
@@ -20,8 +19,10 @@ public:
   virtual void finalize();
   virtual void update();
   virtual void draw(TCanvas*);
+  virtual bool isPlotCollection();
+
   void unzoom();
-  void saveForPostAnalysis();
+  void saveForPostAnalysis(TCanvas*);
   void positionChanged(double, double);
 
 protected slots:

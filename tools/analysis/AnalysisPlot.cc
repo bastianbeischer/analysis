@@ -16,3 +16,8 @@ Enums::AnalysisTopic AnalysisPlot::topic() const
 {
   return m_topic;
 }
+
+bool AnalysisPlot::isPlotCollection()
+{
+  return false;
+}

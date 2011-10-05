@@ -67,9 +67,8 @@ void Plotter::saveForPostAnalysis(const QString& fileName)
   TFile file(qPrintable(fileName), "RECREATE");
   for (unsigned int i = 0; i < numberOfPlots(); ++i) {
     AnalysisPlot* plot = m_plots.at(i);
-    PlotCollection* pc = dynamic_cast<PlotCollection*>(plot);
-    if (pc) {
-      pc->saveForPostAnalysis();
+    if (plot->isPlotCollection()) {
+      static_cast<PlotCollection*>(plot)->saveForPostAnalysis(s_rootWidget->GetCanvas());
     } else {
       m_plots[i]->draw(s_rootWidget->GetCanvas());
       s_rootWidget->GetCanvas()->SetName(qPrintable(plotTitle(i) + " canvas"));

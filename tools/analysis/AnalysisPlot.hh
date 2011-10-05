@@ -12,6 +12,7 @@ public:
   virtual ~AnalysisPlot();
   virtual void finalize() {}
   virtual void update() {}
+  virtual bool isPlotCollection();
   Enums::AnalysisTopic topic() const;
 private:
   Enums::AnalysisTopic m_topic;
