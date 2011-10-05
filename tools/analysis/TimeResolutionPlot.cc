@@ -137,7 +137,6 @@ void TimeResolutionPlot::update()
     m_lines[bin]->SetX2((bin + 1) * m_nBins);
     m_lines[bin]->SetY1(0);
     m_lines[bin]->SetY2(yAxis()->GetXmax());
-    m_lines[bin]->Draw();
   }
   AnalysisPlot::update();
 }
@@ -145,5 +144,6 @@ void TimeResolutionPlot::update()
 void TimeResolutionPlot::draw(TCanvas* canvas)
 {
   H2DPlot::draw(canvas);
-  update();
+  for (int bin = 0; bin < m_nBins - 1; ++bin)
+    m_lines[bin]->Draw();
 }
