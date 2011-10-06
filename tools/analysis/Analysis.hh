@@ -18,6 +18,7 @@ Q_OBJECT
 public:
   Analysis();
   virtual ~Analysis();
+  AnalysisSetting analysisSetting();
   void clearFileList();
   void addFileList(const QString&);
   void processArguments(QStringList);

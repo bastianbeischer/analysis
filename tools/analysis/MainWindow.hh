@@ -29,7 +29,7 @@ class CutSelector;
 class MainWindow : public QMainWindow {
 Q_OBJECT
 public:
-  MainWindow(Analysis*, QWidget* parent = 0);
+  MainWindow(Analysis*, bool batch, QWidget* parent = 0);
   ~MainWindow();
   void processArguments(QStringList);
 private slots:
@@ -63,7 +63,8 @@ private:
   void setupFilterCheckBoxes();
   void setupCutSelectors();
   void setupViewActions();
-  void updateAnalysisSetting();
+  void guiToAnalysisSetting();
+  void analysisSettingToGui();
   void startAnalysis();
   void removeListWidgetItem(int);
   void closeEvent(QCloseEvent*);
@@ -71,8 +72,9 @@ private:
 
   Ui_mainWindow m_ui;
 
-  AnalysisSetting m_analysisSetting;
+  bool m_batch;
   Analysis* m_analysis;
+  AnalysisSetting m_analysisSetting;
   const QString m_analysisPath;
 
   QVector<unsigned int> m_activePlots;

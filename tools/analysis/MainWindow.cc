@@ -29,10 +29,11 @@
 #include <QDateTime>
 #include <QDebug>
 
-MainWindow::MainWindow(Analysis* analysis, QWidget* parent)
+MainWindow::MainWindow(Analysis* analysis, bool batch, QWidget* parent)
   : QMainWindow(parent)
-  , m_analysisSetting()
+  , m_batch(batch)
   , m_analysis(analysis)
+  , m_analysisSetting(analysis->analysisSetting())
   , m_analysisPath(Helpers::analysisPath())
   , m_activePlots()
   , m_drawOptions()
@@ -98,9 +99,16 @@ MainWindow::MainWindow(Analysis* analysis, QWidget* parent)
   connect(m_ui.listWidget, SIGNAL(itemChanged(QListWidgetItem*)), this, SLOT(listWidgetItemChanged(QListWidgetItem*)));
   connect(m_ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(listWidgetCurrentRowChanged(int)));
 
-  m_updateTimer.setInterval(50);
+  m_updateTimer.setInterval(m_batch ? 1000 : 50);
   m_ui.numberOfThreadsSpinBox->setValue(QThread::idealThreadCount());
   numberOfEventsChanged(m_analysis->numberOfEvents());
+
+  analysisSettingToGui();
+  if (batch) {
+    analyzeButtonClicked();
+  } else {
+    showMaximized();
+  }
 }
 
 MainWindow::~MainWindow()
@@ -324,7 +332,7 @@ void MainWindow::setDrawOptionComboBox()
     this, SLOT(drawOptionComboBoxCurrentIndexChanged(int)));
 }
 
-void MainWindow::updateAnalysisSetting()
+void MainWindow::guiToAnalysisSetting()
 {
   m_analysisSetting.clear();
 
@@ -359,10 +367,55 @@ void MainWindow::updateAnalysisSetting()
       m_analysisSetting.cutFilter.addCut(selector->cut());
 }
 
+void MainWindow::analysisSettingToGui()
+{
+  if (m_analysisSetting.numberOfThreads < 0)
+    return;
+  m_ui.firstEventSpinBox->setValue(m_analysisSetting.firstEvent);
+  m_ui.lastEventSpinBox->setValue(m_analysisSetting.lastEvent);
+  m_ui.numberOfThreadsSpinBox->setValue(m_analysisSetting.numberOfThreads);
+
+  foreach (TopicSelector* selector, m_topicSelectors)
+    selector->setChecked(m_analysisSetting.analysisTopics & selector->topic());
+
+  m_ui.trackComboBox->setCurrentIndex(m_ui.trackComboBox->findText(Enums::label(m_analysisSetting.trackType)));
+
+  foreach (QCheckBox* checkBox, m_correctionCheckBoxes)
+    if (m_analysisSetting.corrections & Enums::correction(checkBox->text())) {
+      checkBox->setCheckState(Qt::Checked);
+    } else {
+      checkBox->setCheckState(Qt::Unchecked);
+    }
+
+  foreach (QCheckBox* checkBox, m_particleFilterCheckBoxes)
+    if (m_analysisSetting.particleFilter & Enums::particle(checkBox->text())) {
+      checkBox->setCheckState(Qt::Checked);
+    } else {
+      checkBox->setCheckState(Qt::Unchecked);
+    }
+
+  foreach (QCheckBox* checkBox, m_mcFilterCheckBoxes)
+    if (m_analysisSetting.mcParticleFilter & Enums::particle(checkBox->text())) {
+      checkBox->setCheckState(Qt::Checked);
+    } else {
+      checkBox->setCheckState(Qt::Unchecked);
+    }
+
+  foreach (CutSelector* selector, m_cutSelectors) {
+    foreach (Cut cut, m_analysisSetting.cutFilter.cuts()) {
+      if (selector->cut().type() == cut.type()) {
+        selector->setChecked(true);
+        if (cut.minIsSet()) selector->setMinimum(cut.min());
+        if (cut.maxIsSet()) selector->setMaximum(cut.max());
+      }
+    }
+  }
+}
+
 void MainWindow::analyzeButtonClicked()
 {
   if (m_ui.analyzeButton->text() == "&start") {
-    updateAnalysisSetting();
+    guiToAnalysisSetting();
     m_ui.plotter->setPlot(0);
     m_activePlots.clear();
     m_ui.listWidget->clear();
@@ -570,6 +623,8 @@ void MainWindow::toggleControlWidgetsStatus()
   } else {
     m_ui.analyzeButton->setText("&start");
     update();
+    if (m_batch)
+      m_analysis->save("batch.root", Plotter::rootWidget()->GetCanvas());
   }
   m_ui.plotter->toggleUpdateTimer();
 }
@@ -586,6 +641,9 @@ void MainWindow::update()
   m_ui.dataChainProgressBar->setValue(m_analysis->progress());
   m_ui.eventQueueProgressBar->setValue(m_analysis->buffer());
   m_ui.timeLabel->setText(QString("%1s").arg(m_time.elapsed()/1000));
+  if (m_batch) {
+    qDebug() << m_analysis->progress() << "%";
+  }
 }
 
 void MainWindow::drawOptionComboBoxCurrentIndexChanged(int i)
@@ -623,7 +681,7 @@ void MainWindow::saveSettingActionTriggered()
   fileEnding.remove(0, 1);
   if (!fileName.endsWith(fileEnding))
     fileName.append(fileEnding);
-  updateAnalysisSetting();
+  guiToAnalysisSetting();
   m_analysisSetting.save(fileName);
 }
 
@@ -636,46 +694,6 @@ void MainWindow::loadSettingActionTriggered()
   fileEnding.remove(0, 1);
   if (!fileName.endsWith(fileEnding))
     fileName.append(fileEnding);
-  updateAnalysisSetting();
   m_analysisSetting.load(fileName);
-
-  m_ui.firstEventSpinBox->setValue(m_analysisSetting.firstEvent);
-  m_ui.lastEventSpinBox->setValue(m_analysisSetting.lastEvent);
-  m_ui.numberOfThreadsSpinBox->setValue(m_analysisSetting.numberOfThreads);
-
-  foreach (TopicSelector* selector, m_topicSelectors)
-    selector->setChecked(m_analysisSetting.analysisTopics & selector->topic());
-
-  m_ui.trackComboBox->setCurrentIndex(m_ui.trackComboBox->findText(Enums::label(m_analysisSetting.trackType)));
-
-  foreach (QCheckBox* checkBox, m_correctionCheckBoxes)
-    if (m_analysisSetting.corrections & Enums::correction(checkBox->text())) {
-      checkBox->setCheckState(Qt::Checked);
-    } else {
-      checkBox->setCheckState(Qt::Unchecked);
-    }
-
-  foreach (QCheckBox* checkBox, m_particleFilterCheckBoxes)
-    if (m_analysisSetting.particleFilter & Enums::particle(checkBox->text())) {
-      checkBox->setCheckState(Qt::Checked);
-    } else {
-      checkBox->setCheckState(Qt::Unchecked);
-    }
-
-  foreach (QCheckBox* checkBox, m_mcFilterCheckBoxes)
-    if (m_analysisSetting.mcParticleFilter & Enums::particle(checkBox->text())) {
-      checkBox->setCheckState(Qt::Checked);
-    } else {
-      checkBox->setCheckState(Qt::Unchecked);
-    }
-
-  foreach (CutSelector* selector, m_cutSelectors) {
-    foreach (Cut cut, m_analysisSetting.cutFilter.cuts()) {
-      if (selector->cut().type() == cut.type()) {
-        selector->setChecked(true);
-        if (cut.minIsSet()) selector->setMinimum(cut.min());
-        if (cut.maxIsSet()) selector->setMaximum(cut.max());
-      }
-    }
-  }
+  analysisSettingToGui();
 }

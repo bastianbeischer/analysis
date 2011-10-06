@@ -127,6 +127,11 @@ Analysis::~Analysis()
   qDeleteAll(m_plots);
 }
 
+AnalysisSetting Analysis::analysisSetting()
+{
+  return m_analysisSetting;
+}
+
 void Analysis::clearFileList()
 {
   m_reader->clearFileList();
@@ -249,7 +254,6 @@ void Analysis::save(const QString& fileName, TCanvas* canvas)
 
 void Analysis::processArguments(QStringList arguments)
 {
-  arguments.removeFirst();
   foreach(QString argument, arguments) {
     if (argument.endsWith(".conf", Qt::CaseInsensitive)) {
       m_analysisSetting.load(argument);
