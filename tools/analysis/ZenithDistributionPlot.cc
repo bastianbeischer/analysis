@@ -14,7 +14,7 @@
 #include <cmath>
 
 ZenithDistributionPlot::ZenithDistributionPlot() :
-  AnalysisPlot(AnalysisPlot::Tracking),
+  AnalysisPlot(Enums::Tracking),
   H1DPlot()
 {
   setTitle("Zenith distribution");

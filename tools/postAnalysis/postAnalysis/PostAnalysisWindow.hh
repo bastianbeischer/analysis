@@ -28,6 +28,7 @@ protected:
   QVector<PostAnalysisPlot*> m_plots;
   QFileDialog::Options m_dialogOptions;
 private slots:
+  void filterChanged(const QString&);
   void saveButtonClicked();
   void saveAllButtonClicked();
   void selectCanvas(QListWidgetItem*);

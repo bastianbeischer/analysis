@@ -9,7 +9,7 @@
 #include "Hit.hh"
 #include "Cluster.hh"
 
-ClusterLengthPlot::ClusterLengthPlot(AnalysisPlot::Topic topic, unsigned short id) :
+ClusterLengthPlot::ClusterLengthPlot(Enums::AnalysisTopic topic, unsigned short id) :
   AnalysisPlot(topic),
   H1DPlot(),
   m_id(id)

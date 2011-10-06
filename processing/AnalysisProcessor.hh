@@ -18,13 +18,13 @@ class ParticleIdentifier;
 class AnalysisProcessor : public EventProcessor {
 public:
   AnalysisProcessor();
-  AnalysisProcessor(QVector<EventDestination*>, Track::Type, Corrections::Flags);
+  AnalysisProcessor(QVector<EventDestination*>, Enums::TrackType, Enums::Corrections);
   ~AnalysisProcessor();
 
-  void setTrackType(const Track::Type&);
-  void setCorrectionFlags(const Corrections::Flags&);
-  void setParticleFilter(const ParticleFilter::Types&);
-  void setMCFilter(const MCFilter::Types&);
+  void setTrackType(const Enums::TrackType&);
+  void setCorrectionFlags(const Enums::Corrections&);
+  void setParticleFilter(const Enums::Particles&);
+  void setMCFilter(const Enums::Particles&);
   void setCutFilter(const CutFilter& cuts);
 
   void process(SimpleEvent*);

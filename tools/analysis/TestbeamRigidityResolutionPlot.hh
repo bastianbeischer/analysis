@@ -8,7 +8,7 @@ class TestbeamRigidityResolutionPlot :
 {
   
 public:
-  TestbeamRigidityResolutionPlot(const Particle::Type& = Particle::Electron);
+  TestbeamRigidityResolutionPlot(const Enums::Particle& = Enums::Electron);
   ~TestbeamRigidityResolutionPlot();
   
   void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);

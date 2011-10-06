@@ -18,6 +18,7 @@ public:
   ~DataChain();
   
 public:
+  void clear();
   void setFileList(const char* listName);
   void addFileList(const char* listName);
   void addRootFile(const char* fileName);
@@ -40,9 +41,6 @@ public:
   QDateTime time(int event);
   QDateTime startTime();
   QDateTime stopTime();
-
-private:
-  void init();
 
 public:
   static QMutex    s_mutex;

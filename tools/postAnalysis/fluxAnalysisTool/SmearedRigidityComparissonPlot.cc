@@ -7,7 +7,7 @@
 #include <QString>
 #include <QDebug>
 
-SmearedRigidityComparissonPlot::SmearedRigidityComparissonPlot(Type type, TH1D* generatedSpectrum, TH1D* reconstructedSpectrum, TH1D* unfoldedSpectrum)
+SmearedRigidityComparissonPlot::SmearedRigidityComparissonPlot(Enums::ChargeSign type, TH1D* generatedSpectrum, TH1D* reconstructedSpectrum, TH1D* unfoldedSpectrum)
   : PostAnalysisPlot()
   , H1DPlot()
   , m_type(type)
@@ -15,13 +15,11 @@ SmearedRigidityComparissonPlot::SmearedRigidityComparissonPlot(Type type, TH1D* 
   , m_reconstructedSpectrum(reconstructedSpectrum)
   , m_unfoldedSpectrum(unfoldedSpectrum)
 {
-  m_typeNames.insert(Positive, "positive");
-  m_typeNames.insert(Negative, "negative");
-  QString name = QString("SmearedRigidityComparissonPlot ") + m_typeNames[m_type];
+  QString name = QString("SmearedRigidityComparissonPlot ") + Enums::label(type);
   if (m_unfoldedSpectrum)
    name.append(" unfolded");
   setTitle(name);
-  if (m_type == Negative) {
+  if (m_type == Enums::Negative) {
     m_generatedSpectrum = Helpers::createMirroredHistogram(generatedSpectrum);
     m_reconstructedSpectrum = Helpers::createMirroredHistogram(reconstructedSpectrum);
     if (m_unfoldedSpectrum)

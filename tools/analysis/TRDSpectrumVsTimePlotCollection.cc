@@ -8,7 +8,7 @@
 #include <QLayout>
 
 TRDSpectrumVsTimePlotCollection::TRDSpectrumVsTimePlotCollection(const QDateTime& first, const QDateTime& last) :
-  PlotCollection(AnalysisPlot::SignalHeightTRD)
+  PlotCollection(Enums::SignalHeightTRD)
 {
   QStringList moduleIDs;
 

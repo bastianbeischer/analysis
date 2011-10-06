@@ -22,7 +22,7 @@
 #include <cmath>
 #include <iostream>
 
-ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer)
+ResidualPlot::ResidualPlot(Enums::AnalysisTopic topic, Layer* layer)
   : AnalysisPlot(topic)
   , H2DProjectionPlot()
   , m_layer(layer)
@@ -33,9 +33,9 @@ ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer)
   setTitle(QString("Residuals layer at %1").arg(layer->z()));
 
   double max = 0.;
-  if (topic == AnalysisPlot::ResidualsTracker || topic == AnalysisPlot::MonteCarloTracker)
+  if (topic == Enums::ResidualsTracker || topic == Enums::MonteCarloTracker)
     max = 3.;
-  if (topic == AnalysisPlot::ResidualsTRD || topic == AnalysisPlot::MonteCarloTRD)
+  if (topic == Enums::ResidualsTRD || topic == Enums::MonteCarloTRD)
     max = 10.;
 
   unsigned short nElements = layer->nElements();
@@ -121,13 +121,13 @@ Track* ResidualPlot::referenceTrack(const QVector<Hit*>&, const Particle* const 
   }
 
   Track* mytrack = 0;
-  if (track->type() == Track::StraightLine)
+  if (track->type() == Enums::StraightLine)
     mytrack = new StraightLine;
-  else if (track->type() == Track::BrokenLine)
+  else if (track->type() == Enums::BrokenLine)
     mytrack = new BrokenLine;
-  else if (track->type() == Track::CenteredBrokenLine)
+  else if (track->type() == Enums::CenteredBrokenLine)
     mytrack = new CenteredBrokenLine;
-  else if (track->type() == Track::CenteredBrokenLine2D)
+  else if (track->type() == Enums::CenteredBrokenLine2D)
     mytrack = new CenteredBrokenLine2D;
   else mytrack = 0;
 

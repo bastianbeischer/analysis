@@ -16,7 +16,7 @@
 #include <QFile>
 #include <QStringList>
 
-bool verbose = true;
+bool verbose = false;
 
 void compareKeys(const QStringList& keys1, const QStringList& keys2,
       QStringList& common, QStringList& missing1, QStringList& missing2)

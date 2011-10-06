@@ -2,6 +2,7 @@
 #define Corrections_hh
 
 #include "Constants.hh"
+#include "Enums.hh"
 
 #include <QFlags>
 #include <QVector>
@@ -19,23 +20,15 @@ class Hit;
 class Particle;
 class SimpleEvent;
 
-
 class Corrections
 {
-  
 public:
-  enum Flag {None = 0x0, Alignment = 0x1<<0, TimeShifts = 0x1<<1, TrdMopv = 0x1<<2, TrdTime = 0x1<<3
-             , TrdPressure = 0x1<<4, TrdTemperature = 0x1<<5
-             , TofTimeOverThreshold = 0x1<<6, MultipleScattering = 0x1<<7, PhotonTravelTime = 0x1<<8};
-  Q_DECLARE_FLAGS(Flags, Flag);
-
-public:
-  Corrections(Flags = ~Flags(0));
+  Corrections(Enums::Corrections = Enums::NoCorrection);
   ~Corrections();
   
 public:
-  void setFlags(const Flags& flags) {m_flags = flags;}
-  Flags flags() const {return m_flags;}
+  void setFlags(const Enums::Corrections& flags) {m_flags = flags;}
+  Enums::Corrections flags() const {return m_flags;}
 
 public:
   void preFitCorrections(SimpleEvent*);
@@ -89,11 +82,9 @@ public:
 private:
   QSettings* m_trdSettings;
   QSettings* m_tofSettings;
-  Flags      m_flags;
-  TSpline3*   m_TRDSplineTime;
+  Enums::Corrections m_flags;
+  TSpline3* m_TRDSplineTime;
   QMap<double, double> m_TRDMapTime;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(Corrections::Flags);
 
 #endif /* Corrections_hh */

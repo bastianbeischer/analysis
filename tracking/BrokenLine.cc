@@ -20,7 +20,7 @@ BrokenLine::BrokenLine() :
   m_slopeY(0),
   m_zIntersection(0)
 {
-  m_type = Track::BrokenLine;
+  m_type = Enums::BrokenLine;
   m_matrix = new BrokenLineMatrix;
 }
 

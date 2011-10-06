@@ -15,13 +15,13 @@ public:
   enum Source {UndefinedSource, TotalSource, PrimarySource, SecondarySource};
 
   SimulationFluxKey(const QString&, bool isAlbedo);
-  SimulationFluxKey(Location, Acceptance, Source, Particle::Type, double modulationParameter, bool isAlbedo);
+  SimulationFluxKey(Location, Acceptance, Source, Enums::Particle, double modulationParameter, bool isAlbedo);
   ~SimulationFluxKey();
 
   Location location() const {return m_location;}
   Acceptance acceptance() const {return m_acceptance;}
   Source source() const {return m_source;}
-  Particle::Type particle() const {return m_particle;}
+  Enums::Particle particle() const {return m_particle;}
   double modulationParameter() const {return m_modulationParameter;}
   bool isAlbedo() const {return m_isAlbedo;}
 
@@ -40,8 +40,8 @@ public:
   static QString acceptanceName(Acceptance);
   static Source source(const QString&);
   static QString sourceName(Source);
-  static Particle::Type particle(const QString&);
-  static QString particleName(Particle::Type);
+  static Enums::Particle particle(const QString&);
+  static QString particleName(Enums::Particle);
   static double modulationParameter(const QString&);
   static QString modulationParameterName(double);
 
@@ -51,7 +51,7 @@ private:
   Location m_location;
   Acceptance m_acceptance;
   Source m_source;
-  Particle::Type m_particle;
+  Enums::Particle m_particle;
   double m_modulationParameter;
   bool m_isAlbedo;
 
@@ -59,7 +59,7 @@ private:
   static QMap<Location, QString> s_locationNames;
   static QMap<Acceptance, QString> s_acceptanceNames;
   static QMap<Source, QString> s_sourceNames;
-  static QMap<Particle::Type, QString> s_particleNames;
+  static QMap<Enums::Particle, QString> s_particleNames;
 };
 
 bool operator<(const SimulationFluxKey& le, const SimulationFluxKey& ri);

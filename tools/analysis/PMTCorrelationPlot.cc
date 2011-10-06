@@ -12,7 +12,7 @@
 
 
 PMTCorrelationPlot::PMTCorrelationPlot() :
-  AnalysisPlot(AnalysisPlot::Testbeam),
+  AnalysisPlot(Enums::Testbeam),
   H2DProjectionPlot(),
   m_c1Threshold(200),
   m_c2Threshold(200)

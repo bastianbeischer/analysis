@@ -25,7 +25,7 @@
 #include <vector>
 
 TrackFindingEfficiency::TrackFindingEfficiency(EfficiencyCorrectionSettings::FoldingType type)
-  : AnalysisPlot(AnalysisPlot::MiscellaneousTracker)
+  : AnalysisPlot(Enums::MiscellaneousTracker)
   , H1DPlot()
   , m_reconstructed(0)
   , m_total(0)

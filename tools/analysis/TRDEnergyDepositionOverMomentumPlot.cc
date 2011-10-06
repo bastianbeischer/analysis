@@ -13,7 +13,7 @@
 #include "ParticleInformation.hh"
 #include "TRDReconstruction.hh"
 
-TRDEnergyDepositionOverMomentumPlot::TRDEnergyDepositionOverMomentumPlot(AnalysisPlot::Topic topic) :
+TRDEnergyDepositionOverMomentumPlot::TRDEnergyDepositionOverMomentumPlot(Enums::AnalysisTopic topic) :
   AnalysisPlot(topic),
   H2DPlot()
 {

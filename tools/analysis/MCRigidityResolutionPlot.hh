@@ -10,7 +10,7 @@ class MCRigidityResolutionPlot :
 {
   
 public:
-  MCRigidityResolutionPlot(const Particle::Type& = Particle::Electron);
+  MCRigidityResolutionPlot(const Enums::Particle& = Enums::Electron);
   ~MCRigidityResolutionPlot();
   
   void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);

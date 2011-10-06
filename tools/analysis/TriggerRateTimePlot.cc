@@ -8,7 +8,7 @@
 #include <QDebug>
 
 TriggerRateTimePlot::TriggerRateTimePlot(QDateTime first, QDateTime last)
-  : AnalysisPlot(AnalysisPlot::SlowControl)
+  : AnalysisPlot(Enums::SlowControl)
   , H1DPlot()
 {
   setTitle("trigger rate");

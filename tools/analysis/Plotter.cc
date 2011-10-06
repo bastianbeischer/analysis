@@ -19,13 +19,14 @@ RootQtWidget* Plotter::s_rootWidget = 0;
 Plotter::Plotter(QWidget* parent)
   : QWidget(parent)
   , m_layout(new QVBoxLayout(this))
+  , m_plot(0)
   , m_updateTimer(this)
-  , m_selectedPlot(-1)
 {
+  gROOT->cd();
   m_layout->setContentsMargins(0, 0, 0, 0);
   s_rootWidget = new RootQtWidget(this);
   m_layout->addWidget(s_rootWidget);
-  gROOT->cd();
+  setLayout(m_layout);
   setMouseTracking(true);
   connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
   connect(s_rootWidget, SIGNAL(unzoomButtonPressed()), this, SLOT(unzoom()));
@@ -35,25 +36,13 @@ Plotter::Plotter(QWidget* parent)
 
 Plotter::~Plotter()
 {
-  qDeleteAll(m_plots);
 }
   
-QVector<AnalysisPlot*> Plotter::plots()
-{
-  return m_plots;
-}
-
-unsigned int Plotter::numberOfPlots()
-{
-  return m_plots.size();
-}
-
 void Plotter::canvasPositionChanged(double x, double y)
 {
-  if (m_selectedPlot < 0)
+  if (!m_plot)
     return;
-  
-  m_plots[m_selectedPlot]->positionChanged(x,y);
+  m_plot->positionChanged(x, y);
   emit(positionChanged(x, y));
 }
 
@@ -62,96 +51,43 @@ void Plotter::saveCanvas(const QString& fileName)
   s_rootWidget->GetCanvas()->SaveAs(qPrintable(fileName));
 }
 
-void Plotter::saveForPostAnalysis(const QString& fileName)
-{
-  TFile file(qPrintable(fileName), "RECREATE");
-  for (unsigned int i = 0; i < numberOfPlots(); ++i) {
-    AnalysisPlot* plot = m_plots.at(i);
-    PlotCollection* pc = dynamic_cast<PlotCollection*>(plot);
-    if (pc) {
-      pc->saveForPostAnalysis();
-    } else {
-      m_plots[i]->draw(s_rootWidget->GetCanvas());
-      s_rootWidget->GetCanvas()->SetName(qPrintable(plotTitle(i) + " canvas"));
-      s_rootWidget->GetCanvas()->Write();
-    }
-  }
-  file.Close();
-  selectPlot(m_selectedPlot);
-  s_rootWidget->GetCanvas()->SetName("tqtwidget");
-}
-
 void Plotter::update()
 {
-  if (0 <= m_selectedPlot && m_selectedPlot < m_plots.size())
-    m_plots[m_selectedPlot]->update();
+  if (m_plot)
+    m_plot->update();
   s_rootWidget->updateCanvas();
 }
 
-void Plotter::addPlot(AnalysisPlot* plot)
+AnalysisPlot* Plotter::plot()
 {
-  m_plots.append(plot);
+  return m_plot;
 }
 
-const QString& Plotter::plotTitle(unsigned int i)
+void Plotter::setPlot(AnalysisPlot* plot)
 {
-  Q_ASSERT(i < numberOfPlots());
-  return m_plots[i]->title();
-}
+  m_plot = plot;
 
-QVector<unsigned int> Plotter::plotIndices(AnalysisPlot::Topic topic)
-{
-  QVector<unsigned int> ret;
-  for (int i = 0; i < m_plots.size(); ++i)
-    if (m_plots[i]->topic() == topic)
-      ret.append(i);
-  return ret;
-}
+  if (m_layout->count() > 1) {
+    QWidget* prevWidget = m_layout->itemAt(0)->widget();
+    prevWidget->close();
+    m_layout->removeWidget(prevWidget);
+    prevWidget->setParent(0);
+  }
 
-AnalysisPlot::Topic Plotter::plotTopic(unsigned int i)
-{
-  Q_ASSERT(i < numberOfPlots());
-  return m_plots[i]->topic();
-}
-
-void Plotter::selectPlot(int i)
-{
-  Q_ASSERT(i < int(numberOfPlots()));
-  if (i < 0) {
-    emit(titleChanged(QString()));
-    emit(positionChanged(0, 0));
-    gPad->Clear();
-  } else {
-    emit(titleChanged(m_plots[i]->title()));
-    m_plots[i]->draw(s_rootWidget->GetCanvas());
-    if (m_layout->count() > 1) {
-      QWidget* prevWidget = m_layout->itemAt(0)->widget();
-      m_layout->removeWidget(prevWidget);
-      prevWidget->close();
-    }
-    QWidget* secondaryWidget = m_plots[i]->secondaryWidget();
+  if (m_plot) {
+    m_plot->draw(s_rootWidget->GetCanvas());
+    QWidget* secondaryWidget = m_plot->secondaryWidget();
     if (secondaryWidget) {
       m_layout->insertWidget(0, secondaryWidget);
       secondaryWidget->show();
     }
     s_rootWidget->updateCanvas();
+  } else {
+    emit(positionChanged(0, 0));
+    gPad->Clear();
   }
-  m_selectedPlot = i;
-}
 
-void Plotter::clearPlots()
-{
-  qDeleteAll(m_plots);
-  m_plots.clear();
-}
-
-void Plotter::finalizeAnalysis()
-{
-  foreach(AnalysisPlot* plot, m_plots) {
-    plot->finalize();
-    plot->update();
-  }
-  s_rootWidget->updateCanvas();
+  update();
 }
 
 void Plotter::toggleUpdateTimer()
@@ -164,34 +100,10 @@ void Plotter::toggleUpdateTimer()
 
 void Plotter::unzoom()
 {
-  if (m_selectedPlot < 0)
+  if (!m_plot)
     return;
-  m_plots[m_selectedPlot]->unzoom();
+  m_plot->unzoom();
   s_rootWidget->updateCanvas();
-}
-
-RootPlot::Type Plotter::selectedPlotType()
-{
-  if (m_selectedPlot < 0) {
-    return RootPlot::Undefined;
-  }
-  return m_plots[m_selectedPlot]->type();
-}
-  
-RootPlot::DrawOption Plotter::drawOption()
-{
-  if (m_selectedPlot < 0) {
-    return RootPlot::UndefinedDrawOption;
-  }
-  return m_plots[m_selectedPlot]->drawOption();
-}
-  
-void Plotter::setDrawOption(RootPlot::DrawOption option)
-{
-  if (m_selectedPlot < 0)
-    return;
-  m_plots[m_selectedPlot]->setDrawOption(option);
-  selectPlot(m_selectedPlot);
 }
 
 RootQtWidget* Plotter::rootWidget()
@@ -203,4 +115,3 @@ void Plotter::setAspectRatio(double aspectRatio)
 {
   s_rootWidget->setAspectRatio(aspectRatio);
 }
-

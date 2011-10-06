@@ -6,13 +6,13 @@
 QMap<SimulationFluxKey::Location, QString> SimulationFluxKey::s_locationNames;
 QMap<SimulationFluxKey::Acceptance, QString> SimulationFluxKey::s_acceptanceNames;
 QMap<SimulationFluxKey::Source, QString> SimulationFluxKey::s_sourceNames;
-QMap<Particle::Type, QString> SimulationFluxKey::s_particleNames;
+QMap<Enums::Particle, QString> SimulationFluxKey::s_particleNames;
 
 SimulationFluxKey::SimulationFluxKey(const QString& title, bool isAlbedo)
   : m_location(UndefinedLocation)
   , m_acceptance(UndefinedAcceptance)
   , m_source(UndefinedSource)
-  , m_particle(Particle::Unknown)
+  , m_particle(Enums::NoParticle)
   , m_modulationParameter(-1)
   , m_isAlbedo(isAlbedo)
 {
@@ -29,7 +29,7 @@ SimulationFluxKey::SimulationFluxKey(const QString& title, bool isAlbedo)
   else
     m_acceptance = TwoPiAcceptance;
 
-  QMapIterator<Particle::Type, QString> iterator(s_particleNames);
+  QMapIterator<Enums::Particle, QString> iterator(s_particleNames);
   while (iterator.hasNext()) {
     iterator.next();
     if (title.contains(iterator.value()))
@@ -47,7 +47,7 @@ SimulationFluxKey::SimulationFluxKey(const QString& title, bool isAlbedo)
   m_modulationParameter = phiString.toDouble();
 }
 
-SimulationFluxKey::SimulationFluxKey(Location location, Acceptance acceptance, Source source, Particle::Type particle, double phi, bool isAlbedo)
+SimulationFluxKey::SimulationFluxKey(Location location, Acceptance acceptance, Source source, Enums::Particle particle, double phi, bool isAlbedo)
   : m_location(location)
   , m_acceptance(acceptance)
   , m_source(source)
@@ -75,17 +75,17 @@ void SimulationFluxKey::construct()
     s_acceptanceNames.insert(TofAcceptance, "perdaixTof");
     s_acceptanceNames.insert(TwoPiAcceptance, "twoPi");
 
-    s_particleNames.insert(Particle::Photon, "gamma");
-    s_particleNames.insert(Particle::Positron, "positron");
-    s_particleNames.insert(Particle::Electron, "electron");
-    s_particleNames.insert(Particle::AntiMuon, "mu+");
-    s_particleNames.insert(Particle::Muon, "mu-");
-    s_particleNames.insert(Particle::PiPlus, "pi+");
-    s_particleNames.insert(Particle::PiMinus, "pi-");
-    s_particleNames.insert(Particle::Pi0, "pi0");
-    s_particleNames.insert(Particle::Proton, "proton");
-    s_particleNames.insert(Particle::AntiProton, "antiproton");
-    s_particleNames.insert(Particle::Helium, "alpha");
+    s_particleNames.insert(Enums::Photon, "gamma");
+    s_particleNames.insert(Enums::Positron, "positron");
+    s_particleNames.insert(Enums::Electron, "electron");
+    s_particleNames.insert(Enums::AntiMuon, "mu+");
+    s_particleNames.insert(Enums::Muon, "mu-");
+    s_particleNames.insert(Enums::PiPlus, "pi+");
+    s_particleNames.insert(Enums::PiMinus, "pi-");
+    s_particleNames.insert(Enums::Pi0, "pi0");
+    s_particleNames.insert(Enums::Proton, "proton");
+    s_particleNames.insert(Enums::AntiProton, "antiproton");
+    s_particleNames.insert(Enums::Helium, "alpha");
 
     s_sourceNames.insert(TotalSource, "total");
     s_sourceNames.insert(PrimarySource, "primary");
@@ -167,13 +167,13 @@ QString SimulationFluxKey::sourceName(Source source)
   return s_sourceNames[source];
 }
 
-Particle::Type SimulationFluxKey::particle(const QString& particleName)
+Enums::Particle SimulationFluxKey::particle(const QString& particleName)
 {
   construct();
-  return s_particleNames.key(particleName, Particle::Unknown);
+  return s_particleNames.key(particleName, Enums::NoParticle);
 }
 
-QString SimulationFluxKey::particleName(Particle::Type particle)
+QString SimulationFluxKey::particleName(Enums::Particle particle)
 {
   construct();
   return s_particleNames[particle];

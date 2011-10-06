@@ -20,7 +20,7 @@ CenteredBrokenLine2D::CenteredBrokenLine2D() :
   m_lowerSlopeY(0),
   m_zIntersection(0.)
 {
-  m_type = Track::CenteredBrokenLine2D;
+  m_type = Enums::CenteredBrokenLine2D;
   m_matrix = new CenteredBrokenLineMatrix2D;
 }
 

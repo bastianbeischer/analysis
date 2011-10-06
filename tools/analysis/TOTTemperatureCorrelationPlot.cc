@@ -21,7 +21,7 @@
 #include <cmath>
 
 TOTTemperatureCorrelationPlot::TOTTemperatureCorrelationPlot(unsigned int id)
-  : AnalysisPlot(TimeOverThreshold)
+  : AnalysisPlot(Enums::TimeOverThreshold)
   , H2DProjectionPlot()
   , m_id(id)
 {

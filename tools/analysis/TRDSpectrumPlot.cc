@@ -19,7 +19,7 @@
 #include <QList>
 
 TRDSpectrumPlot::TRDSpectrumPlot(unsigned short id, TRDSpectrumType spectrumType) :
-  AnalysisPlot(AnalysisPlot::SignalHeightTRD),
+  AnalysisPlot(Enums::SignalHeightTRD),
   H1DPlot(),
   m_id(id),
   m_spectrumType(spectrumType)

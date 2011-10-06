@@ -10,6 +10,8 @@
 #include "EventReader.hh"
 #include "RootPlot.hh"
 #include "CutFilter.hh"
+#include "Enums.hh"
+#include "AnalysisSetting.hh"
 
 #include <QMainWindow>
 #include <QFileDialog>
@@ -19,14 +21,15 @@
 #include <QTime>
 #include <QTimer>
 
-class QTabBar;
-class DataChain;
 class Plotter;
+class Analysis;
+class TopicSelector;
+class CutSelector;
 
 class MainWindow : public QMainWindow {
-  Q_OBJECT
-  public:
-  MainWindow(QWidget* parent = 0);
+Q_OBJECT
+public:
+  MainWindow(Analysis*, bool batch, QWidget* parent = 0);
   ~MainWindow();
   void processArguments(QStringList);
 private slots:
@@ -36,13 +39,13 @@ private slots:
   void saveAllCanvasDialogActionTriggered();
   void saveForPostAnalysisActionTriggered();
   void saveForPostAnalysisDialogActionTriggered();
+  void loadSettingActionTriggered();
+  void saveSettingActionTriggered();
   void listWidgetItemChanged(QListWidgetItem*);
   void listWidgetCurrentRowChanged(int);
-  void selectAllButtonClicked();
-  void selectTrackerButtonClicked();
-  void selectTrdButtonClicked();
-  void selectTofButtonClicked();
-  void showButtonsClicked();
+  void changeTopicGroup();
+  void showTopic(Enums::AnalysisTopic);
+  void hideTopic(Enums::AnalysisTopic);
   void analyzeButtonClicked();
   void saveButtonsClicked();
   void firstOrLastEventChanged(int = 0);
@@ -50,30 +53,41 @@ private slots:
   void toggleControlWidgetsStatus();
   void checkBoxChanged();
   void checkSelectAll();
-  void plotterTitleChanged(const QString&);
   void plotterPositionChanged(double, double);
   void drawOptionComboBoxCurrentIndexChanged(int);
   void update();
   void changeAspectRatioTriggered();
 private:
-  void setupPlots();
-  void setupAnalysis(Track::Type&, Corrections::Flags&, ParticleFilter::Types&, CutFilter&, MCFilter::Types&);
+  void setupTopicSelectors();
+  void setupCorrectionsCheckBoxes();
+  void setupFilterCheckBoxes();
+  void setupCutSelectors();
+  void setupViewActions();
+  void guiToAnalysisSetting();
+  void analysisSettingToGui();
   void startAnalysis();
-  void changeTopicGroupStatus(QVector<QCheckBox*>&);
   void removeListWidgetItem(int);
   void closeEvent(QCloseEvent*);
   void setDrawOptionComboBox();
 
   Ui_mainWindow m_ui;
-  QVector<EventProcessor*> m_processors;
-  EventReader* m_reader;
-  QString m_topLevelPath;
+
+  bool m_batch;
+  Analysis* m_analysis;
+  AnalysisSetting m_analysisSetting;
+  const QString m_analysisPath;
+
   QVector<unsigned int> m_activePlots;
-  QVector<QCheckBox*> m_topicCheckBoxes;
-  QVector<QCheckBox*> m_tofCheckBoxes;
-  QVector<QCheckBox*> m_trdCheckBoxes;
-  QVector<QCheckBox*> m_trackerCheckBoxes;
+  QVector<TopicSelector*> m_topicSelectors;
+  QVector<TopicSelector*> m_trackerSelectors;
+  QVector<TopicSelector*> m_trdSelectors;
+  QVector<TopicSelector*> m_tofSelectors;
+  
   QVector<QWidget*> m_controlWidgets;
+  QVector<QCheckBox*> m_correctionCheckBoxes;
+  QVector<QCheckBox*> m_particleFilterCheckBoxes;
+  QVector<QCheckBox*> m_mcFilterCheckBoxes;
+  QVector<CutSelector*> m_cutSelectors;
   QVector<RootPlot::DrawOption> m_drawOptions;
   bool m_inhibitDraw;
   QTime m_time;

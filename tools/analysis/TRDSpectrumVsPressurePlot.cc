@@ -21,7 +21,7 @@
 #include <math.h>
 
 TRDSpectrumVsPressurePlot::TRDSpectrumVsPressurePlot(unsigned short id, TRDSpectrumPlot::TRDSpectrumType spectrumType, double lowerMom, double upperMom):
-  AnalysisPlot(AnalysisPlot:: SignalHeightTRD),
+  AnalysisPlot(Enums:: SignalHeightTRD),
   H2DPlot(),
   m_id(id),
   m_spectrumType(spectrumType),

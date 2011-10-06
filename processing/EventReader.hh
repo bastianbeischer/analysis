@@ -22,12 +22,14 @@ public:
   void stop();
 
   int queuedEvents() const;
+  int numberOfEvents() const;
   double progress() const;
   double buffer() const;
 
   int bufferSize() const;
   void setBufferSize(int bufferSize);
 
+  void clearFileList();
   void setFileList(const QString& fileName);
   void addFileList(const QString& fileName);
   void addRootFile(const QString& file);

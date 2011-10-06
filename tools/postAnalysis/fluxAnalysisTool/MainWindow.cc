@@ -51,14 +51,14 @@ void MainWindow::setupAnalysis()
   name = QString("Rigidity Mc Plot Reconstructed canvas");
   PostAnalysisCanvas* recCanvas = addCanvas(file, qPrintable(name));
   RigidityMcSpectrum* rigidityMcSpectrum = new RigidityMcSpectrum(genCanvas, recCanvas);
-  addPlot(new SmearedRigidityComparissonPlot(SmearedRigidityComparissonPlot::Positive, rigidityMcSpectrum->createGeneratedSpectrum(), rigidityMcSpectrum->createRecordedSpectrum()));
-  addPlot(new SmearedRigidityComparissonPlot(SmearedRigidityComparissonPlot::Negative, rigidityMcSpectrum->createGeneratedSpectrum(), rigidityMcSpectrum->createRecordedSpectrum()));
+  addPlot(new SmearedRigidityComparissonPlot(Enums::Positive, rigidityMcSpectrum->createGeneratedSpectrum(), rigidityMcSpectrum->createRecordedSpectrum()));
+  addPlot(new SmearedRigidityComparissonPlot(Enums::Negative, rigidityMcSpectrum->createGeneratedSpectrum(), rigidityMcSpectrum->createRecordedSpectrum()));
 
   RigidityUnfolding* testUnfolding= new RigidityUnfolding(rigidityMigrationPlot->migrationHistogram(), rigidityMcSpectrum->createRecordedSpectrum());
   addPlot(new PostAnalysisH2DPlot(testUnfolding->rohIj()));
   addPlot(new PostAnalysisGraphPlot(QVector<TGraph*>() << testUnfolding->lCurve() << testUnfolding->bestlcurve()));
-  addPlot(new SmearedRigidityComparissonPlot(SmearedRigidityComparissonPlot::Positive, rigidityMcSpectrum->createGeneratedSpectrum(), rigidityMcSpectrum->createRecordedSpectrum(), testUnfolding->unfoldedHistogram()));
-  addPlot(new SmearedRigidityComparissonPlot(SmearedRigidityComparissonPlot::Negative, rigidityMcSpectrum->createGeneratedSpectrum(), rigidityMcSpectrum->createRecordedSpectrum(), testUnfolding->unfoldedHistogram()));
+  addPlot(new SmearedRigidityComparissonPlot(Enums::Positive, rigidityMcSpectrum->createGeneratedSpectrum(), rigidityMcSpectrum->createRecordedSpectrum(), testUnfolding->unfoldedHistogram()));
+  addPlot(new SmearedRigidityComparissonPlot(Enums::Negative, rigidityMcSpectrum->createGeneratedSpectrum(), rigidityMcSpectrum->createRecordedSpectrum(), testUnfolding->unfoldedHistogram()));
 
   file->Close();
   delete file;
@@ -87,8 +87,8 @@ void MainWindow::setupAnalysis()
   EfficiencyCorrectionSettings::instance()->efficiencyCorrection(rawSpectrum, 0.843684 / 0.792555);
   EfficiencyCorrectionSettings::instance()->efficiencyCorrection(rawSpectrum, 0.999);//estimate for TOF trigger efficiency
   
-  addPlot(new RigidityFluxPlot(canvas, rawSpectrum, measurementTime, RigidityFluxPlot::Positive));
-  addPlot(new RigidityFluxPlot(canvas, rawSpectrum, measurementTime, RigidityFluxPlot::Negative));
+  addPlot(new RigidityFluxPlot(canvas, rawSpectrum, measurementTime, Enums::Positive));
+  addPlot(new RigidityFluxPlot(canvas, rawSpectrum, measurementTime, Enums::Negative));
 
   RigidityUnfolding* rigidityUnfolding= new RigidityUnfolding(rigidityMigrationPlot->migrationHistogram(), particleSpectrum->spectrum());
   addPlot(new PostAnalysisH2DPlot(rigidityUnfolding->rohIj()));
@@ -107,16 +107,16 @@ void MainWindow::setupAnalysis()
   EfficiencyCorrectionSettings::instance()->efficiencyCorrection(unfoldedSpectrum, 0.843684 / 0.792555);
   EfficiencyCorrectionSettings::instance()->efficiencyCorrection(unfoldedSpectrum, 0.999);//estimate for TOF trigger efficiency
 
-  addPlot(new RigidityFluxPlot(canvas, unfoldedSpectrum, measurementTime, RigidityFluxPlot::Positive));
-  addPlot(new RigidityFluxPlot(canvas, unfoldedSpectrum, measurementTime, RigidityFluxPlot::Negative));
+  addPlot(new RigidityFluxPlot(canvas, unfoldedSpectrum, measurementTime, Enums::Positive));
+  addPlot(new RigidityFluxPlot(canvas, unfoldedSpectrum, measurementTime, Enums::Negative));
 
   name = QString("particle spectrum - albedo canvas");
   canvas = addCanvas(file, qPrintable(name));
   RigidityParticleSpectrum* particleSpectrumAlbedo = new RigidityParticleSpectrum(canvas);
   addPlot(particleSpectrumAlbedo);
 
-  addPlot(new RigidityFluxPlot(canvas, particleSpectrumAlbedo->spectrum(), measurementTime, RigidityFluxPlot::Positive));
-  addPlot(new RigidityFluxPlot(canvas, particleSpectrumAlbedo->spectrum(), measurementTime, RigidityFluxPlot::Negative));
+  addPlot(new RigidityFluxPlot(canvas, particleSpectrumAlbedo->spectrum(), measurementTime, Enums::Positive));
+  addPlot(new RigidityFluxPlot(canvas, particleSpectrumAlbedo->spectrum(), measurementTime, Enums::Negative));
 
   file->Close();
   delete file;

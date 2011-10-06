@@ -17,7 +17,7 @@ public:
   QVector<SimulationFluxKey::Location> locations() const;
   QVector<SimulationFluxKey::Acceptance> acceptances(SimulationFluxKey::Location) const;
   QVector<SimulationFluxKey::Source> sources(SimulationFluxKey::Location) const;
-  QVector<Particle::Type> particles(SimulationFluxKey::Location) const;
+  QVector<Enums::Particle> particles(SimulationFluxKey::Location) const;
   QVector<double> modulationParameters(SimulationFluxKey::Location) const;
   TH1D* spectrum(const SimulationFluxKey&) const;
   TH1D* spectrum(const QList<SimulationFluxKey>&) const;

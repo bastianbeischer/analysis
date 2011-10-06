@@ -5,9 +5,10 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "ParticleInformation.hh"
+#include "Enums.hh"
 
 AlbedosVsMomentumPlot::AlbedosVsMomentumPlot() :
-  AnalysisPlot(AnalysisPlot::MomentumReconstruction),
+  AnalysisPlot(Enums::MomentumReconstruction),
   H1DPlot(),
   m_albedoHisto(0),
   m_totalHisto(0)

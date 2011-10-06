@@ -18,7 +18,7 @@ Particle::Particle()
   init();
 }
 
-Particle::Particle(const Type& type)
+Particle::Particle(const Enums::Particle& type)
 {
   init();
   setType(type);
@@ -40,7 +40,7 @@ Particle::~Particle()
 
 void Particle::init()
 {
-  m_properties = ParticleDB::instance()->lookupType(Unknown);
+  m_properties = ParticleDB::instance()->lookupType(Enums::NoParticle);
   m_track = new CenteredBrokenLine;
   m_tof = new TimeOfFlight;
   m_trd = new TRDReconstruction;
@@ -49,7 +49,7 @@ void Particle::init()
 
 void Particle::reset()
 {
-  m_properties = ParticleDB::instance()->lookupType(Unknown);
+  m_properties = ParticleDB::instance()->lookupType(Enums::NoParticle);
   if (m_track)
     m_track->reset();
   m_tof->reset();
@@ -57,7 +57,7 @@ void Particle::reset()
   m_information->reset();
 }
 
-void Particle::setType(const Type& type)
+void Particle::setType(const Enums::Particle& type)
 {
   m_properties = ParticleDB::instance()->lookupType(type);
 }
@@ -67,20 +67,20 @@ void Particle::setPdgId(const int& pdgId)
   m_properties = ParticleDB::instance()->lookupPdgId(pdgId);
 }
 
-void Particle::setTrackType(const Track::Type& trackType)
+void Particle::setTrackType(const Enums::TrackType& trackType)
 {
   if (m_track)
     delete m_track;
 
-  if (trackType == Track::None)
+  if (trackType == Enums::NoTrack)
     m_track = 0;
-  if (trackType == Track::CenteredBrokenLine)
+  if (trackType == Enums::CenteredBrokenLine)
     m_track = new CenteredBrokenLine;
-  else if (trackType == Track::CenteredBrokenLine2D)
+  else if (trackType == Enums::CenteredBrokenLine2D)
     m_track = new CenteredBrokenLine2D;
-  else if (trackType == Track::BrokenLine)
+  else if (trackType == Enums::BrokenLine)
     m_track = new BrokenLine;
-  else if (trackType == Track::StraightLine)
+  else if (trackType == Enums::StraightLine)
     m_track = new StraightLine;
 }
 
@@ -108,7 +108,7 @@ double Particle::beta() const
 //////////////////////////////////////////////////
 // loopthrough functions for convenience
 
-Particle::Type Particle::type() const
+Enums::Particle Particle::type() const
 {
   return m_properties->type();
 }

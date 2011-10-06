@@ -5,6 +5,7 @@
 #include "AllTrackerLayersFlagEfficiencyCorrection.hh"
 #include "EfficiencyCorrectionSettings.hh"
 #include "TrackFindingEfficiencyCorrection.hh"
+#include "Enums.hh"
 
 #include <TCanvas.h>
 #include <TFile.h>
@@ -32,24 +33,24 @@ void MainWindow::setupAnalysis()
   EfficiencyCorrectionSettings::FoldingType type = EfficiencyCorrectionSettings::Raw;
   QString name = QString("All Tracker Layers Flag Efficiency - " + EfficiencyCorrectionSettings::instance()->foldingTypeName(type) + " canvas");
   canvas = addCanvas(&file, qPrintable(name));
-  addPlot(new AllTrackerLayersFlagEfficiencyCorrection(AllTrackerLayersFlagEfficiencyCorrection::Positive, canvas));
-  addPlot(new AllTrackerLayersFlagEfficiencyCorrection(AllTrackerLayersFlagEfficiencyCorrection::Negative, canvas));
+  addPlot(new AllTrackerLayersFlagEfficiencyCorrection(Enums::Positive, canvas));
+  addPlot(new AllTrackerLayersFlagEfficiencyCorrection(Enums::Negative, canvas));
 
   name = QString("Track finding efficiency - " + EfficiencyCorrectionSettings::instance()->foldingTypeName(type) + " canvas");
   canvas = addCanvas(&file, qPrintable(name));
-  addPlot(new TrackFindingEfficiencyCorrection(TrackFindingEfficiencyCorrection::Positive, canvas));
-  addPlot(new TrackFindingEfficiencyCorrection(TrackFindingEfficiencyCorrection::Negative, canvas));
+  addPlot(new TrackFindingEfficiencyCorrection(Enums::Positive, canvas));
+  addPlot(new TrackFindingEfficiencyCorrection(Enums::Negative, canvas));
 
   type = EfficiencyCorrectionSettings::Unfolded;
   name = QString("All Tracker Layers Flag Efficiency - " + EfficiencyCorrectionSettings::instance()->foldingTypeName(type) + " canvas");
   canvas = addCanvas(&file, qPrintable(name));
-  addPlot(new AllTrackerLayersFlagEfficiencyCorrection(AllTrackerLayersFlagEfficiencyCorrection::Positive, canvas));
-  addPlot(new AllTrackerLayersFlagEfficiencyCorrection(AllTrackerLayersFlagEfficiencyCorrection::Negative, canvas));
+  addPlot(new AllTrackerLayersFlagEfficiencyCorrection(Enums::Positive, canvas));
+  addPlot(new AllTrackerLayersFlagEfficiencyCorrection(Enums::Negative, canvas));
 
   name = QString("Track finding efficiency - " + EfficiencyCorrectionSettings::instance()->foldingTypeName(type) + " canvas");
   canvas = addCanvas(&file, qPrintable(name));
-  addPlot(new TrackFindingEfficiencyCorrection(TrackFindingEfficiencyCorrection::Positive, canvas));
-  addPlot(new TrackFindingEfficiencyCorrection(TrackFindingEfficiencyCorrection::Negative, canvas));
+  addPlot(new TrackFindingEfficiencyCorrection(Enums::Positive, canvas));
+  addPlot(new TrackFindingEfficiencyCorrection(Enums::Negative, canvas));
 
   file.Close();
 }
