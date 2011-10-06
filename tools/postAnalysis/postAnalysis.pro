@@ -16,4 +16,5 @@ SUBDIRS  = \
   fileCompare \
   efficiencyCorrection \
   angularDistribution \
-  fluxAnalysisTool
+  fluxAnalysisTool \
+  browser

@@ -55,11 +55,31 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
   connect(m_ui->logZCheckBox, SIGNAL(stateChanged(int)), m_ui->qtWidget, SLOT(setLogZ(int)));
   connect(m_ui->qtWidget, SIGNAL(positionChanged(double, double)), this, SLOT(canvasPositionChanged(double, double)));
   connect(m_ui->qtWidget, SIGNAL(unzoomButtonPressed()), this, SLOT(unzoom()));
+
+  connect(m_ui->filterEdit, SIGNAL(textChanged(const QString&)), this, SLOT(filterChanged(const QString&)));
+
+  m_ui->plotListWidget->hide();
 }
 
 PostAnalysisWindow::~PostAnalysisWindow()
 {
   delete m_ui;
+}
+
+void PostAnalysisWindow::filterChanged(const QString& text)
+{
+  m_ui->canvasListWidget->disconnect();
+  m_ui->canvasListWidget->clear();
+  foreach(PostAnalysisCanvas* canvas, m_canvases) {
+    if (canvas->name().contains(QRegExp(text))) {
+      QListWidgetItem* item = new QListWidgetItem(canvas->name());
+      item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+      m_ui->canvasListWidget->addItem(item);
+    }
+  }
+  connect(m_ui->canvasListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectCanvas(QListWidgetItem*)));
+  connect(m_ui->canvasListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
+    this, SLOT(selectCanvas(QListWidgetItem*, QListWidgetItem*)));
 }
 
 void PostAnalysisWindow::selectCanvas(QListWidgetItem* item, QListWidgetItem*)
@@ -72,7 +92,9 @@ void PostAnalysisWindow::selectCanvas(QListWidgetItem* item)
   RootStyle::setPalette(RootStyle::DefaultPalette);
   m_ui->qtWidget->GetCanvas()->cd();
   m_ui->qtWidget->GetCanvas()->Clear();
-  m_canvases[m_ui->canvasListWidget->row(item)]->draw(m_ui->qtWidget->GetCanvas());
+  foreach (PostAnalysisCanvas* canvas, m_canvases)
+    if (item->text() == canvas->name())
+      canvas->draw(m_ui->qtWidget->GetCanvas());
   plotOptionComboBoxCurrentIndexChanged(m_ui->plotOptionComboBox->currentText());
   m_ui->titleLabel->setText(item->text());
   if (m_ui->verticalLayoutLeft->count() > 3) {
@@ -138,6 +160,7 @@ void PostAnalysisWindow::addPlot(PostAnalysisPlot* plot)
   QListWidgetItem* item = new QListWidgetItem(plot->title());
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
   m_ui->plotListWidget->addItem(item);
+  m_ui->plotListWidget->show();
 }
 
 void PostAnalysisWindow::clearPlots()
