@@ -101,6 +101,7 @@
 #include "FluxCollection.hh"
 #include "EventTimeDifferencePlot.hh"
 #include "MeasurementTimeDistributionPlot.hh"
+#include "TOFLikelihood.hh"
 
 #include <TPad.h>
 #include <TCanvas.h>
@@ -504,6 +505,7 @@ void Analysis::setupPlots()
     addPlot(new RigidityMigrationHistogram());
   }
   if (m_analysisSetting.analysisTopics & Enums::Testbeam) {
+    addPlot(new TOFLikelihood);
     addPlot(new SettingTimePlot(SettingTimePlot::MagnetInstalled, first, last));
     addPlot(new SettingTimePlot(SettingTimePlot::Momentum, first, last));
     addPlot(new SettingTimePlot(SettingTimePlot::Polarity, first, last));

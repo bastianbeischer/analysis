@@ -13,7 +13,8 @@ CLASSES += \
   ParticleInformation \
   ParticleProperties \
   TimeOfFlight \
-  TRDReconstruction
+  TRDReconstruction \
+  KineticVariable
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \
