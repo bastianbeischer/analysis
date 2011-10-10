@@ -1,15 +1,15 @@
-#ifndef TOFLikelihood_hh
-#define TOFLikelihood_hh
+#ifndef TOFProbabilityDensityFunction_hh
+#define TOFProbabilityDensityFunction_hh
 
 #include "AnalysisPlot.hh"
 #include "H1DPlot.hh"
 
 class TH1D;
 
-class TOFLikelihood : public AnalysisPlot, public H1DPlot {
+class TOFProbabilityDensityFunction : public AnalysisPlot, public H1DPlot {
 public:
-  TOFLikelihood();
-  virtual ~TOFLikelihood();
+  TOFProbabilityDensityFunction();
+  virtual ~TOFProbabilityDensityFunction();
   virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
   virtual void update();
   virtual void finalize();
