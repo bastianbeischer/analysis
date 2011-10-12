@@ -17,8 +17,9 @@ public:
     SlowControl = 1<<16, MonteCarloTracker = 1<<17, MonteCarloTRD = 1<<18, MonteCarloTOF = 1<<19, MonteCarlo = 1<<20, Testbeam = 1<<21};
   static const QString label(AnalysisTopic);
   static AnalysisTopic analysisTopic(const QString&);
-  static QMap<AnalysisTopic, QString>::ConstIterator analysisTopicBegin();
-  static QMap<AnalysisTopic, QString>::ConstIterator analysisTopicEnd();
+  typedef QMap<AnalysisTopic, QString>::ConstIterator AnalysisTopicIterator;
+  static AnalysisTopicIterator analysisTopicBegin();
+  static AnalysisTopicIterator analysisTopicEnd();
   Q_DECLARE_FLAGS(AnalysisTopics, AnalysisTopic);
   static const QString label(AnalysisTopics);
   static AnalysisTopics analysisTopics(const QString&);
@@ -26,15 +27,17 @@ public:
   enum TrackType {NoTrack = 0, StraightLine, BrokenLine, CenteredBrokenLine, CenteredBrokenLine2D};
   static const QString label(TrackType);
   static TrackType trackType(const QString&);
-  static QMap<TrackType, QString>::ConstIterator trackTypeBegin();
-  static QMap<TrackType, QString>::ConstIterator trackTypeEnd();
+  typedef QMap<TrackType, QString>::ConstIterator TrackTypeIterator;
+  static TrackTypeIterator trackTypeBegin();
+  static TrackTypeIterator trackTypeEnd();
 
   enum Correction {NoCorrection = 0, Alignment = 1<<0, TimeShifts = 1<<1, TrdMopv = 1<<2, TrdTime = 1<<3, TrdPressure = 1<<4,
     TrdTemperature = 1<<5, TofTimeOverThreshold = 1<<6, MultipleScattering = 1<<7, PhotonTravelTime = 1<<8};
   static const QString label(Correction);
   static Correction correction(const QString&);
-  static QMap<Correction, QString>::ConstIterator correctionBegin();
-  static QMap<Correction, QString>::ConstIterator correctionEnd();
+  typedef QMap<Correction, QString>::ConstIterator CorrectionIterator;
+  static CorrectionIterator correctionBegin();
+  static CorrectionIterator correctionEnd();
   Q_DECLARE_FLAGS(Corrections, Correction);
   static const QString label(Corrections);
   static Corrections corrections(const QString&);
@@ -43,8 +46,9 @@ public:
     Muon = 1<<5, AntiMuon = 1<<6, PiPlus = 1<<7, PiMinus = 1<<8, Photon = 1<<9, Pi0 = 1<<10, Higgs = 1<<11};
   static const QString label(Particle);
   static Particle particle(const QString&);
-  static QMap<Particle, QString>::ConstIterator particleBegin();
-  static QMap<Particle, QString>::ConstIterator particleEnd();
+  typedef QMap<Particle, QString>::ConstIterator ParticleIterator;
+  static ParticleIterator particleBegin();
+  static ParticleIterator particleEnd();
   Q_DECLARE_FLAGS(Particles, Particle);
   static const QString label(Particles);
   static Particles particles(const QString&);
@@ -52,8 +56,16 @@ public:
   enum Cut {RigidityCut, BetaCut, TimeOverThresholdCut, TrdSignalCut, CherenkovCut};
   static const QString label(Cut);
   static Cut cut(const QString&);
-  static QMap<Cut, QString>::ConstIterator cutBegin();
-  static QMap<Cut, QString>::ConstIterator cutEnd();
+  typedef QMap<Cut, QString>::ConstIterator CutIterator;
+  static CutIterator cutBegin();
+  static CutIterator cutEnd();
+
+  enum LikelihoodVariable {SignalHeightTrackerLikelihood, SignalHeightTRDLikelihood, TimeOverThresholdLikelihood, TimeOfFlightLikelihood};
+  static const QString label(LikelihoodVariable);
+  static LikelihoodVariable likelihoodVariable(const QString&);
+  typedef QMap<LikelihoodVariable, QString>::ConstIterator LikelihoodVariableIterator;
+  static LikelihoodVariableIterator likelihoodVariableBegin();
+  static LikelihoodVariableIterator likelihoodVariableEnd();
 
 private:
   static const QMap<ChargeSign, QString> s_chargeSignMap;
@@ -62,6 +74,7 @@ private:
   static const QMap<Correction, QString> s_correctionMap;
   static const QMap<Particle, QString> s_particleMap;
   static const QMap<Cut, QString> s_cutMap;
+  static const QMap<LikelihoodVariable, QString> s_likelihoodVariableMap;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::AnalysisTopics);

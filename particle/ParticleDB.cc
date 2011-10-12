@@ -24,7 +24,7 @@ ParticleDB* ParticleDB::instance()
 
 void ParticleDB::initializeDatabase()
 {
-  for (QMap<Enums::Particle, QString>::ConstIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
+  for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
     const ParticleProperties* props = new ParticleProperties(it.key());
     int pdgId = props->pdgId();
     m_pdgIdMap[it.key()] = pdgId;

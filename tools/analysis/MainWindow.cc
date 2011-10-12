@@ -50,7 +50,7 @@ MainWindow::MainWindow(Analysis* analysis, bool batch, QWidget* parent)
   setupCutSelectors();
   setupViewActions();
 
-  for (QMap<Enums::TrackType, QString>::ConstIterator it = Enums::trackTypeBegin(); it != Enums::trackTypeEnd(); ++it)
+  for (Enums::TrackTypeIterator it = Enums::trackTypeBegin(); it != Enums::trackTypeEnd(); ++it)
     m_ui.trackComboBox->addItem(it.value());
   m_ui.trackComboBox->setCurrentIndex(m_ui.trackComboBox->findText(Enums::label(Enums::CenteredBrokenLine)));
 
@@ -162,7 +162,7 @@ void MainWindow::setupTopicSelectors()
 void MainWindow::setupCorrectionsCheckBoxes()
 {
   QVBoxLayout* layout = new QVBoxLayout;
-  for (QMap<Enums::Correction, QString>::ConstIterator it = Enums::correctionBegin(); it != Enums::correctionEnd(); ++it) {
+  for (Enums::CorrectionIterator it = Enums::correctionBegin(); it != Enums::correctionEnd(); ++it) {
     if (it.key() == Enums::NoCorrection)
       continue;
     QCheckBox* checkBox = new QCheckBox(it.value());
@@ -183,7 +183,7 @@ void MainWindow::setupFilterCheckBoxes()
   particles = Enums::Proton | Enums::Helium | Enums::Electron | Enums::Positron | Enums::Muon | Enums::AntiMuon;
   layout->addWidget(new QLabel("data:"), 0, 0);
   row = 1;
-  for (QMap<Enums::Particle, QString>::ConstIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
+  for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
     if (it.key() != Enums::NoParticle && (it.key() & particles) == it.key()) {
       QCheckBox* checkBox = new QCheckBox(it.value());
       checkBox->setCheckState(Qt::Checked);
@@ -197,7 +197,7 @@ void MainWindow::setupFilterCheckBoxes()
     | Enums::AntiMuon | Enums::PiPlus | Enums::PiMinus | Enums::Photon;
   layout->addWidget(new QLabel("mc:"), 0, 1);
   row = 1;
-  for (QMap<Enums::Particle, QString>::ConstIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
+  for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
     if (it.key() != Enums::NoParticle && (it.key() & particles) == it.key()) {
       QCheckBox* checkBox = new QCheckBox(it.value());
       checkBox->setCheckState(Qt::Checked);
@@ -214,7 +214,7 @@ void MainWindow::setupCutSelectors()
 {
   QVBoxLayout* layout = new QVBoxLayout;
   layout->setContentsMargins(0, 0, 0, 0);
-  for (QMap<Enums::Cut, QString>::ConstIterator it = Enums::cutBegin(); it != Enums::cutEnd(); ++it) {
+  for (Enums::CutIterator it = Enums::cutBegin(); it != Enums::cutEnd(); ++it) {
     CutSelector* selector = new CutSelector(it.key());
     layout->addWidget(selector);
     m_cutSelectors.append(selector);

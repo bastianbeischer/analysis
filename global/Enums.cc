@@ -79,6 +79,12 @@ const QMap<Enums::Cut, QString> Enums::s_cutMap = InitializableMap<Enums::Cut, Q
   << QPair<Enums::Cut, QString>(Enums::TrdSignalCut, "TRD signal cut")
   << QPair<Enums::Cut, QString>(Enums::CherenkovCut, "cherenkov cut");
 
+const QMap<Enums::LikelihoodVariable, QString> Enums::s_likelihoodVariableMap = InitializableMap<Enums::LikelihoodVariable, QString>()
+  << QPair<Enums::LikelihoodVariable, QString>(Enums::SignalHeightTrackerLikelihood, "signal height tracker likelihood")
+  << QPair<Enums::LikelihoodVariable, QString>(Enums::SignalHeightTRDLikelihood, "signal height TRD likelihood")
+  << QPair<Enums::LikelihoodVariable, QString>(Enums::TimeOverThresholdLikelihood, "time over threshold likelihood")
+  << QPair<Enums::LikelihoodVariable, QString>(Enums::TimeOfFlightLikelihood, "time of flight likelihood");
+
 // ChargeSign
 const QString Enums::label(Enums::ChargeSign key) {return s_chargeSignMap.value(key);}
 Enums::ChargeSign Enums::chargeSign(const QString& value) {return s_chargeSignMap.key(value);}
@@ -86,12 +92,12 @@ Enums::ChargeSign Enums::chargeSign(const QString& value) {return s_chargeSignMa
 // AnalysisTopic
 const QString Enums::label(Enums::AnalysisTopic key) {return s_analysisTopicMap.value(key);}
 Enums::AnalysisTopic Enums::analysisTopic(const QString& value) {return s_analysisTopicMap.key(value);}
-QMap<Enums::AnalysisTopic, QString>::ConstIterator Enums::analysisTopicBegin() {return s_analysisTopicMap.constBegin();}
-QMap<Enums::AnalysisTopic, QString>::ConstIterator Enums::analysisTopicEnd() {return s_analysisTopicMap.constEnd();}
+Enums::AnalysisTopicIterator Enums::analysisTopicBegin() {return s_analysisTopicMap.constBegin();}
+Enums::AnalysisTopicIterator Enums::analysisTopicEnd() {return s_analysisTopicMap.constEnd();}
 const QString Enums::label(Enums::AnalysisTopics keys)
 {
   QString list;
-  for (QMap<Enums::AnalysisTopic, QString>::ConstIterator it = analysisTopicBegin(); it != analysisTopicEnd(); ++it) {
+  for (Enums::AnalysisTopicIterator it = analysisTopicBegin(); it != analysisTopicEnd(); ++it) {
     if (keys & it.key()) {
       if (!list.isEmpty())
         list+= " | ";
@@ -111,18 +117,18 @@ Enums::AnalysisTopics Enums::analysisTopics(const QString& value)
 // TrackType
 const QString Enums::label(Enums::TrackType key) {return s_trackTypeMap.value(key);}
 Enums::TrackType Enums::trackType(const QString& value) {return s_trackTypeMap.key(value);}
-QMap<Enums::TrackType, QString>::ConstIterator Enums::trackTypeBegin() {return s_trackTypeMap.constBegin();}
-QMap<Enums::TrackType, QString>::ConstIterator Enums::trackTypeEnd() {return s_trackTypeMap.constEnd();}
+Enums::TrackTypeIterator Enums::trackTypeBegin() {return s_trackTypeMap.constBegin();}
+Enums::TrackTypeIterator Enums::trackTypeEnd() {return s_trackTypeMap.constEnd();}
 
 // Correction
 const QString Enums::label(Enums::Correction key) {return s_correctionMap.value(key);}
 Enums::Correction Enums::correction(const QString& value) {return s_correctionMap.key(value);}
-QMap<Enums::Correction, QString>::ConstIterator Enums::correctionBegin() {return s_correctionMap.constBegin();}
-QMap<Enums::Correction, QString>::ConstIterator Enums::correctionEnd() {return s_correctionMap.constEnd();}
+Enums::CorrectionIterator Enums::correctionBegin() {return s_correctionMap.constBegin();}
+Enums::CorrectionIterator Enums::correctionEnd() {return s_correctionMap.constEnd();}
 const QString Enums::label(Enums::Corrections keys)
 {
   QString list;
-  for (QMap<Enums::Correction, QString>::ConstIterator it = correctionBegin(); it != correctionEnd(); ++it) {
+  for (Enums::CorrectionIterator it = correctionBegin(); it != correctionEnd(); ++it) {
     if (keys & it.key()) {
       if (!list.isEmpty())
         list+= " | ";
@@ -142,12 +148,12 @@ Enums::Corrections Enums::corrections(const QString& value)
 // Particle
 const QString Enums::label(Enums::Particle key) {return s_particleMap.value(key);}
 Enums::Particle Enums::particle(const QString& value) {return s_particleMap.key(value);}
-QMap<Enums::Particle, QString>::ConstIterator Enums::particleBegin() {return s_particleMap.constBegin();}
-QMap<Enums::Particle, QString>::ConstIterator Enums::particleEnd() {return s_particleMap.constEnd();}
+Enums::ParticleIterator Enums::particleBegin() {return s_particleMap.constBegin();}
+Enums::ParticleIterator Enums::particleEnd() {return s_particleMap.constEnd();}
 const QString Enums::label(Enums::Particles keys)
 {
   QString list;
-  for (QMap<Enums::Particle, QString>::ConstIterator it = particleBegin(); it != particleEnd(); ++it) {
+  for (Enums::ParticleIterator it = particleBegin(); it != particleEnd(); ++it) {
     if (keys & it.key()) {
       if (!list.isEmpty())
         list+= " | ";
@@ -167,6 +173,11 @@ Enums::Particles Enums::particles(const QString& value)
 // Cut
 const QString Enums::label(Enums::Cut key) {return s_cutMap.value(key);}
 Enums::Cut Enums::cut(const QString& value) {return s_cutMap.key(value);}
-QMap<Enums::Cut, QString>::ConstIterator Enums::cutBegin() {return s_cutMap.constBegin();}
-QMap<Enums::Cut, QString>::ConstIterator Enums::cutEnd() {return s_cutMap.constEnd();}
+Enums::CutIterator Enums::cutBegin() {return s_cutMap.constBegin();}
+Enums::CutIterator Enums::cutEnd() {return s_cutMap.constEnd();}
 
+// LikelihoodVariable
+const QString Enums::label(Enums::LikelihoodVariable key) {return s_likelihoodVariableMap.value(key);}
+Enums::LikelihoodVariable Enums::likelihoodVariable(const QString& value) {return s_likelihoodVariableMap.key(value);}
+Enums::LikelihoodVariableIterator Enums::likelihoodVariableBegin() {return s_likelihoodVariableMap.constBegin();}
+Enums::LikelihoodVariableIterator Enums::likelihoodVariableEnd() {return s_likelihoodVariableMap.constEnd();}
