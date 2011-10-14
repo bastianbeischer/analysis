@@ -17,4 +17,5 @@ SUBDIRS = \
   alignment \
   rootplot \
   fluxAnalysis \
+  likelihood \
   tools

@@ -44,7 +44,7 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
   connect(m_ui->canvasListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectCanvas(QListWidgetItem*)));
   connect(m_ui->canvasListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
     this, SLOT(selectCanvas(QListWidgetItem*, QListWidgetItem*)));
-  connect(m_ui->plotListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectPlot(QListWidgetItem*)));
+  //connect(m_ui->plotListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectPlot(QListWidgetItem*)));
   connect(m_ui->plotListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
     this, SLOT(selectPlot(QListWidgetItem*, QListWidgetItem*)));
   connect(m_ui->plotOptionComboBox, SIGNAL(currentIndexChanged(const QString&)),

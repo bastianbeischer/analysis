@@ -32,14 +32,14 @@ H1DPlot::~H1DPlot()
 
 void H1DPlot::draw(TCanvas* canvas)
 {
-  if (!numberOfHistograms())
-    return;
-  canvas->cd();
-  histogram(0)->SetTitle(qPrintable(";" + m_xAxisTitle + ";" + m_yAxisTitle));
-  histogram(0)->Draw(qPrintable(drawOption(m_drawOption)));
-  for (int i = 1; i < numberOfHistograms(); ++i)
-    histogram(i)->Draw(qPrintable("SAME" + drawOption(m_drawOptions[i])));
-  m_drawn = true;
+  if (numberOfHistograms()) {
+    canvas->cd();
+    histogram(0)->SetTitle(qPrintable(";" + m_xAxisTitle + ";" + m_yAxisTitle));
+    histogram(0)->Draw(qPrintable(drawOption(m_drawOption)));
+    for (int i = 1; i < numberOfHistograms(); ++i)
+      histogram(i)->Draw(qPrintable("SAME" + drawOption(m_drawOptions[i])));
+    m_drawn = true;
+  }
   RootPlot::draw(canvas);
 }
 

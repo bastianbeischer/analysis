@@ -17,4 +17,5 @@ SUBDIRS  = \
   efficiencyCorrection \
   angularDistribution \
   fluxAnalysisTool \
-  browser
+  browser \
+  likelihood

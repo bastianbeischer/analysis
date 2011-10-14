@@ -6,6 +6,7 @@
 #include <TF1.h>
 
 #include <QWidget>
+#include <QDebug>
 
 RootPlot::RootPlot()
   : m_title(QString())
@@ -41,12 +42,12 @@ TLatex* RootPlot::newLatex(double rx, double ry)
 void RootPlot::draw(TCanvas* canvas)
 {
   canvas->cd();
+  for (int i = 0; i < m_function.size(); ++i)
+    m_function[i]->Draw((m_drawn || i) ? "SAME" : "");
   foreach(TLatex* latex, m_latex)
     latex->Draw("SAME");
   foreach(TLegend* legend, m_legend)
     legend->Draw("SAME");
-  foreach(TF1* function, m_function)
-    function->Draw("SAME");
 }
 
 void RootPlot::addLatex(TLatex* latex)

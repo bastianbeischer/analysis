@@ -18,7 +18,7 @@ public:
   PostAnalysisCanvas(TCanvas*);
   virtual ~PostAnalysisCanvas();
   static PostAnalysisCanvas* fromFile(TFile*, const QString& name);
-  void draw(TCanvas*);
+  virtual void draw(TCanvas*);
   void setPalette(RootStyle::PaletteType);
   QString name();
   QVector<TH1D*> histograms1D();
