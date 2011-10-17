@@ -9,7 +9,7 @@ class Likelihood;
 
 class LikelihoodPDF : public TF1 {
 public:
-  LikelihoodPDF(const Likelihood*, Enums::Particle, double momentum, double min, double max);
+  LikelihoodPDF(const Likelihood*, Enums::Particle, double momentum);
   ~LikelihoodPDF();
   Enums::Particle particle() const;
   double momentum() const;

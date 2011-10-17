@@ -9,7 +9,7 @@ class Likelihood;
 
 class LikelihoodRatio : public TF1 {
 public:
-  LikelihoodRatio(const Likelihood*, Enums::Particle, double momentum, double min, double max);
+  LikelihoodRatio(const Likelihood*, Enums::Particle, double momentum);
   ~LikelihoodRatio();
   Enums::Particle particle() const;
   double momentum() const;

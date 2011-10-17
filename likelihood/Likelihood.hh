@@ -24,19 +24,19 @@ public:
   virtual double min() const = 0;
   virtual double max() const = 0;
   virtual int numberOfParameters() const = 0;
-  virtual double eval(double measuredValue, Enums::Particle, double momentum) const = 0;
+  virtual double eval(double p, Enums::Particle, double realMomentum) const = 0;
   
-  virtual LikelihoodPDF* pdf(Enums::Particle, double momentum) const;
-  virtual LikelihoodRatio* ratio(Enums::Particle, double momentum) const;
-  virtual double ratio(double measuredValue, Enums::Particle, double momentum) const;
+  virtual LikelihoodPDF* pdf(Enums::Particle, double realMomentum) const;
+  virtual LikelihoodRatio* ratio(Enums::Particle, double realMomentum) const;
+  virtual double ratio(double p, Enums::Particle, double realMomentum) const;
 
   Enums::Particles particles() const;
   
   MomentumMap::ConstIterator end(Enums::Particle) const;
-  MomentumMap::ConstIterator lowerNode(Enums::Particle, double momentum) const;
-  MomentumMap::ConstIterator upperNode(Enums::Particle, double momentum) const;
+  MomentumMap::ConstIterator lowerNode(Enums::Particle, double realMomentum) const;
+  MomentumMap::ConstIterator upperNode(Enums::Particle, double realMomentum) const;
 
-  QVector<double> linearInterpolation(Enums::Particle, double momentum) const;
+  QVector<double> linearInterpolation(Enums::Particle, double realMomentum) const;
 private:
   virtual void loadNodes();
 

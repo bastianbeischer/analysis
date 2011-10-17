@@ -7,8 +7,6 @@
 
 #include <QDebug>
 
-const double TimeOfFlightLikelihood::s_cutoffMomentum = 100.;
-
 TimeOfFlightLikelihood::TimeOfFlightLikelihood()
   : Likelihood()
 {
@@ -21,18 +19,12 @@ TimeOfFlightLikelihood::~TimeOfFlightLikelihood()
 
 double TimeOfFlightLikelihood::min() const
 {
-  double min = 0.0;
-  double max = s_cutoffMomentum;
-  double range = max - min;
-  return min - 0.05 * range;
+  return 0.;
 }
 
 double TimeOfFlightLikelihood::max() const
 {
-  double min = 0.0;
-  double max = s_cutoffMomentum;
-  double range = max - min;
-  return max + 0.05 * range;
+  return 100.;
 }
 
 int TimeOfFlightLikelihood::numberOfParameters() const
@@ -40,18 +32,18 @@ int TimeOfFlightLikelihood::numberOfParameters() const
   return 1;
 }
 
-double TimeOfFlightLikelihood::eval(double p, Enums::Particle particle, double reconstructedMomentum) const
+double TimeOfFlightLikelihood::eval(double p, Enums::Particle particle, double realMomentum) const
 {
-  if (p < 0 || p > s_cutoffMomentum)
+  if (p < min() || p > max())
     return 0;
   double mass = Particle(particle).mass();
   double timeResolution = 0.4;
   double length = Constants::upperTofPosition - Constants::lowerTofPosition;
   double invBetaResolution = Constants::speedOfLight * timeResolution / length;
 
-  double reconstructedInvBeta = Helpers::addQuad(mass, reconstructedMomentum) / reconstructedMomentum;
-  QVector<double> parameters = linearInterpolation(particle, reconstructedMomentum);
+  double realInvBeta = Helpers::addQuad(mass, realMomentum) / realMomentum;
+  QVector<double> parameters = linearInterpolation(particle, realMomentum);
   Q_ASSERT(parameters.size());
-  double area = linearInterpolation(particle, reconstructedMomentum).at(0);
-  return TMath::Gaus(Helpers::addQuad(mass, p) / p, reconstructedInvBeta, invBetaResolution, true) / area;
+  double area = linearInterpolation(particle, realMomentum).at(0);
+  return TMath::Gaus(Helpers::addQuad(mass, p) / p, realInvBeta, invBetaResolution, true) / area;
 }
