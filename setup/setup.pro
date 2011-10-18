@@ -15,7 +15,6 @@ CLASSES += \
   TOFBar \
   Settings \
   SettingsManager \
-  FieldManager \
   InhomField \
   MagneticField \
   UniformField

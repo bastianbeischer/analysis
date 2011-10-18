@@ -3,7 +3,7 @@
 #include "Matrix.hh"
 #include "Hit.hh"
 
-#include "FieldManager.hh"
+#include "Setup.hh"
 #include "MagneticField.hh"
 #include "Constants.hh"
 #include "Helpers.hh"
@@ -54,7 +54,7 @@ void Track::calculateTransverseRigidity()
   if (alpha == 0.)
     m_transverseRigidity = DBL_MAX;
   else {
-    const MagneticField* field = FieldManager::instance()->field();
+    const MagneticField* field = Setup::instance()->field();
     double B_estimate = field->fieldEstimate(); // tesla
     B_estimate *= 0.93;
 
@@ -70,7 +70,7 @@ void Track::calculateTransverseRigidity()
 
 TVector3 Track::meanFieldAlongTrack()
 {
-  const MagneticField* field = FieldManager::instance()->field();
+  const MagneticField* field = Setup::instance()->field();
   double z0 = field->z0();
   double z1 = field->z1();
   int nSteps = 1e2;
