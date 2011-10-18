@@ -81,7 +81,6 @@ void AllTrackerLayersFlagEfficiency::processEvent(const QVector<Hit*>&, const Pa
 
 void AllTrackerLayersFlagEfficiency::update()
 {
-  //  histogram()->Divide(m_reconstructed, m_total);
   for (int i = 0; i < m_normHisto->GetNbinsX(); ++i) {
     int reconstructed = m_afterCutHisto->GetBinContent(i+1);
     int total = m_normHisto->GetBinContent(i+1);

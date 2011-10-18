@@ -105,7 +105,6 @@ void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, const Particle* 
 
 void TrackFindingEfficiency::update()
 {
-//  histogram()->Divide(m_reconstructed, m_total);
   for (int i = 0; i < m_total->GetNbinsX(); ++i) {
     int reconstructed = m_reconstructed->GetBinContent(i+1);
     int total = m_total->GetBinContent(i+1);
