@@ -1,7 +1,7 @@
 #include "EventQueue.hh"
 
 #include "SimpleEvent.hh"
-#include <iostream>
+
 EventQueue::EventQueue()
   : m_queue()
 {}

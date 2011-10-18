@@ -24,7 +24,7 @@
 #include <QDebug>
 
 TOFBarShiftPlot::TOFBarShiftPlot(unsigned short idTop1, unsigned short idTop2, unsigned short idBottom1, unsigned short idBottom2)
-  : AnalysisPlot(AnalysisPlot::CalibrationTOF)
+  : AnalysisPlot(Enums::CalibrationTOF)
   , H1DPlot()
   , m_idTop1(idTop1)
   , m_idTop2(idTop2)
@@ -53,7 +53,7 @@ TOFBarShiftPlot::TOFBarShiftPlot(unsigned short idTop1, unsigned short idTop2, u
 TOFBarShiftPlot::~TOFBarShiftPlot()
 {}
 
-void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
+void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
 {
   const Track* track = particle->track();
   if (!track || !track->fitGood())
@@ -75,7 +75,7 @@ void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, Particle* particle, Sim
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Hit* hit = *it;
-    unsigned short barId = hit->detId() - hit->channel();
+    unsigned short barId = hit->elementId();
     if (!idTop1 && barId == m_idTop1) idTop1 = true;
     if (!idTop2 && barId == m_idTop2) idTop2 = true;
     if (!idBottom1 && barId == m_idBottom1) idBottom1 = true;

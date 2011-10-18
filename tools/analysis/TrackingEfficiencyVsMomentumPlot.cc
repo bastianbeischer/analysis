@@ -3,18 +3,35 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "ParticleInformation.hh"
+#include "Helpers.hh"
 
 #include <QMap>
 
 #include <TH2D.h>
 
-TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot()
-  : AnalysisPlot(AnalysisPlot::MiscellaneousTracker)
+#include <cmath>
+
+TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot(Enums::ChargeSigns type)
+  : AnalysisPlot(Enums::MiscellaneousTracker)
   , H2DPlot()
+  , m_type(type)
 {
-  setTitle(QString("Efficiency vs momentum"));
-  
-  TH2D* histogram = new TH2D(qPrintable(title()), "", 10, 0., 10., 7, 1.5, 8.5);
+  QString htitle = "Efficiency vs momentum";
+
+  if (m_type == Enums::Positive)
+    htitle += " positive";
+  if (m_type == Enums::Negative)
+    htitle += " negative";
+  if (m_type == (Enums::Positive | Enums::Negative))
+    htitle += " all";
+  setTitle(htitle);
+
+  const int nBins = 21;
+  const double min = 0.1;
+  const double max = 20;
+  const QVector<double>& axis = Helpers::logBinning(nBins, min, max);
+
+  TH2D* histogram = new TH2D(qPrintable(title()), "", nBins, axis.constData(), 7, 1.5, 8.5);
   setAxisTitle("R / GV", "layers with exactly one hit", "");
   addHistogram(histogram);
   setDrawOption(COLZTEXT);
@@ -24,7 +41,7 @@ TrackingEfficiencyVsMomentumPlot::~TrackingEfficiencyVsMomentumPlot()
 {
 }
 
-void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 
@@ -49,7 +66,14 @@ void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, Partic
 
   double rigidity = track->rigidity();
 
-  histogram()->Fill(rigidity,nLayers);
+  if (m_type == Enums::Positive && rigidity < 0) {
+    return;
+  }
+  if (m_type == Enums::Negative && rigidity > 0) {
+    return;
+  }
+
+  histogram()->Fill(qAbs(rigidity), nLayers);
 }
 
 void TrackingEfficiencyVsMomentumPlot::finalize()
@@ -64,6 +88,6 @@ void TrackingEfficiencyVsMomentumPlot::finalize()
     for (int binY = 1; binY <= nBinsY; binY++) {
       double bc = histogram()->GetBinContent(binX, binY);
       histogram()->SetBinContent(binX, binY, bc/sum);
-    }    
+    }
   }
 }

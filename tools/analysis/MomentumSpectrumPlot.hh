@@ -3,25 +3,17 @@
 
 #include "AnalysisPlot.hh"
 #include "H1DPlot.hh"
+#include "Enums.hh"
 
-class MomentumSpectrumPlot :
-  public AnalysisPlot,
-  public H1DPlot
-{
-  
+class MomentumSpectrumPlot : public AnalysisPlot, public H1DPlot {
 public:
-  enum Type {All=0, Positive=1, Negative=2, Inverted=3};
-
-public:
-  MomentumSpectrumPlot(Type range = All);
+  MomentumSpectrumPlot(Enums::ChargeSigns, bool inverted = false);
   ~MomentumSpectrumPlot();
-  
-  void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
   void update();
-
 private:
-  Type m_type;
-
+  Enums::ChargeSigns m_type;
+  bool m_inverted;
 };
 
 #endif /* MomentumSpectrumPlot_hh */

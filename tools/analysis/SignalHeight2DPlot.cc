@@ -17,7 +17,7 @@
 #include <iostream>
 
 SignalHeight2DPlot::SignalHeight2DPlot() :
-  AnalysisPlot(SignalHeightTracker),
+  AnalysisPlot(Enums::SignalHeightTracker),
   H2DProjectionPlot(),
   m_normHisto(0)
 {
@@ -52,7 +52,7 @@ SignalHeight2DPlot::~SignalHeight2DPlot()
   delete m_normHisto;
 }
 
-void SignalHeight2DPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void SignalHeight2DPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 
@@ -67,7 +67,7 @@ void SignalHeight2DPlot::processEvent(const QVector<Hit*>&, Particle* particle, 
   for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != endIt; ++it) {
     Hit* hit = *it;
     if (hit->type() == Hit::tracker) {
-      unsigned short id = hit->detId() - hit->channel();
+      unsigned short id = hit->elementId();
       histogram()->Fill(m_indexMap[id], hit->signalHeight());
       m_normHisto->Fill(m_indexMap[id]);
     }

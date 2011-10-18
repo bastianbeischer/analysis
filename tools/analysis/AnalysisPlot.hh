@@ -3,25 +3,19 @@
 
 #include "RootPlot.hh"
 #include "EventDestination.hh"
-
-#include <QMutex>
+#include "AnalysisTopic.hh"
+#include "Enums.hh"
 
 class AnalysisPlot : virtual public RootPlot, public EventDestination {
 public:
-  enum Topic {TopicBegin, SignalHeightTracker = TopicBegin, SignalHeightTRD,
-              ClusterShapeTracker, ClusterShapeTRD, TimeOverThreshold, Tracking, Occupancy,
-              ResidualsTracker, ResidualsTRD, MomentumReconstruction, EfficiencyTOF,
-              ResolutionTOF, CalibrationTOF, MiscellaneousTracker, MiscellaneousTRD,
-              MiscellaneousTOF, SlowControl, MonteCarloTracker, MonteCarloTRD, MonteCarloTOF,
-              MonteCarlo, Testbeam, TopicEnd};
-public:
-  AnalysisPlot(Topic);
+  AnalysisPlot(Enums::AnalysisTopic);
   virtual ~AnalysisPlot();
-  Topic topic() const;
-protected:
-  QMutex m_mutex;
+  virtual void finalize() {}
+  virtual void update() {}
+  virtual bool isPlotCollection();
+  Enums::AnalysisTopic topic() const;
 private:
-  Topic m_topic;
+  Enums::AnalysisTopic m_topic;
 };
 
 #endif

@@ -3,8 +3,8 @@
 #include "SimpleEvent.hh"
 #include "ParticleProperties.hh"
 
-MCRigidityResolutionPlot::MCRigidityResolutionPlot(const Particle::Type& type) :
-  RigidityResolutionPlot(AnalysisPlot::MonteCarloTracker, type)
+MCRigidityResolutionPlot::MCRigidityResolutionPlot(const Enums::Particle& type) :
+  RigidityResolutionPlot(Enums::MonteCarloTracker, type)
 {
 }
 
@@ -12,7 +12,7 @@ MCRigidityResolutionPlot::~MCRigidityResolutionPlot()
 {
 }
 
-void MCRigidityResolutionPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void MCRigidityResolutionPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
 {
   //only accept mc events:
   if (event->contentType() != SimpleEvent::MonteCarlo)
@@ -25,7 +25,7 @@ void MCRigidityResolutionPlot::processEvent(const QVector<Hit*>& hits, Particle*
   RigidityResolutionPlot::processEvent(hits, particle, event);
 }
 
-double MCRigidityResolutionPlot::referenceRigidity(SimpleEvent* event) const
+double MCRigidityResolutionPlot::referenceRigidity(const SimpleEvent* const event) const
 {
   //get mc rigidity
   double genMom = 0;

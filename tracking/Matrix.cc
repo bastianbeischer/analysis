@@ -11,120 +11,106 @@
 Matrix::Matrix() :
   m_nRow(0),
   m_nCol(0),
-  m_solution(TVectorD(0))
+  m_chi2(0),
+  m_ndf(0),
+  m_solution(0)
 {
 }
 
 Matrix::~Matrix()
 {
+  delete [] m_solution;
+}
+
+void Matrix::reset()
+{
+  m_chi2 = 0.;
+  m_ndf = 0;
+  for (unsigned int i = 0; i < m_nCol; i++) {
+    m_solution[i] = 0.;
+  }
 }
 
 int Matrix::fit(const QVector<Hit*>& hits)
 {
   QVector<Hit*> filteredHits;
-  foreach(Hit* hit, hits)
+  const QVector<Hit*>::const_iterator hitsEnd = hits.end();
+  for (QVector<Hit*>::const_iterator it = hits.begin(); it != hitsEnd; ++it) {
+    Hit* hit = *it;
     if (hit->type() != Hit::tof)
       filteredHits.append(hit);
-
-  unsigned int nHits = filteredHits.size();
+  }
 
   // basic dimensions of matrices
-  m_nRow = nHits;
+  m_nRow = filteredHits.size();
 
   if (!checkInvertability(filteredHits)) {
     return 0;
   }
 
   // declare matrices for the calculation
-  TMatrixD A(m_nRow, m_nCol);
-  TVectorD solution(m_nCol);
-  TVectorD b(m_nRow);
-  TMatrixD Uinv(m_nRow,m_nRow);
-  TMatrixD CombineXandY(1,2);
+  double A[m_nRow][m_nCol];
+  double b[m_nRow];
+  double weights[m_nRow];
+  double c[m_nCol];
 
   for (unsigned int i = 0; i < m_nRow; i++) {
     Hit* hit = filteredHits.at(i);
 
-    TVector3 pos = hit->position();
+    const TVector3& pos = hit->position();
+    const double& k = pos.z();
+    const double& angle = -hit->angle();
+    const double& sigmaU = hit->resolution();
 
-    // get information from detector...
-    double angle = hit->angle();
-    angle += M_PI/2.;
-
-    // fill matrix
-    // this parameter is arbitrary. z0 = 0 should minimize correlations...
-    float z0 = 0.0;
-    float k = pos.z() - z0;
-    bool useTangens = fabs(angle) < M_PI/4. ? true : false;
-    float xi = useTangens ? sin(angle)/cos(angle) : cos(angle)/sin(angle);
-
-    if (useTangens) {
-      CombineXandY(0,0) = -xi;
-      CombineXandY(0,1) = 1.;
-      b(i)              = -xi*pos.x() + pos.y();
-    }
-    else {
-      CombineXandY(0,0) = 1.;
-      CombineXandY(0,1) = -xi;
-      b(i)              = pos.x() - xi*pos.y();
-    }
+    double c = cos(angle);
+    double s = sin(angle);
+    
+    b[i] = c*pos.x() - s*pos.y();
 
     for (unsigned int j = 0; j < m_nCol; j++)
-      A(i,j) = 0.;
-    fillMatrixFromHit(A, i, useTangens, k, xi);
+      A[i][j] = 0.;
+    fillMatrixFromHit(A[i], k, c, s);
 
-    // calculate covariance matrix
-
-    // Rot is the matrix that maps u,v, to x,y (i.e. the backward rotation)
-    TMatrixD Rot(2,2); 
-    Rot(0,0) = cos(angle);
-    Rot(0,1) = sin(angle);
-    Rot(1,0) = -sin(angle);
-    Rot(1,1) = cos(angle);
-    TMatrixD RotTrans(2,2);
-    RotTrans.Transpose(Rot);
-
-    double sigmaV = hit->resolution();
-    TMatrixD V1(2,2);
-    V1(0,0) = 0.;
-    V1(0,1) = 0.;
-    V1(1,0) = 0.;
-    V1(1,1) = sigmaV*sigmaV;
-
-    TMatrixD V2(2,2);
-    V2 = Rot * V1 * RotTrans;
-
-    TMatrixD CombineXandYTrans(2,1);
-    CombineXandYTrans.Transpose(CombineXandY);
-
-    TMatrixD V3 = TMatrixD(1,1);
-    V3 = CombineXandY * V2 * CombineXandYTrans;
-
-    Uinv(i,i) = 1./V3(0,0); // this is the sigma for the i'th measurement
-
+    weights[i] = 1./(sigmaU*sigmaU); // this is the inverse of the sigma for the i'th measurement
   } // loop over hits
   
   // calculate solution
-  TMatrixD ATranspose(m_nCol,m_nRow);
-  ATranspose.Transpose(A);
-  TMatrixD M = ATranspose * Uinv * A;
-  TVectorD c = ATranspose * Uinv * b;
-
-  TMatrixD Minv = M;
+  TMatrixD Minv(m_nCol, m_nCol);
+  for (unsigned int i = 0; i < m_nCol; i++) {
+    for (unsigned int j = 0; j < m_nCol; j++) {
+      double entry = 0.;
+      for (unsigned int k = 0; k < m_nRow; k++) {
+        entry += A[k][i]*weights[k]*A[k][j]; // M = A^T * U^(-1) * A
+      }
+      Minv(i,j) = entry;
+    }
+  }
   Minv.InvertFast();
 
-  solution = Minv * c;
+  // right hand side
+  for (unsigned int i = 0; i < m_nCol; i++) {
+    c[i] = 0.;
+    for (unsigned int k = 0; k < m_nRow; k++)
+      c[i] += A[k][i]*weights[k]*b[k]; // c = A^T * U^(-1) * b
+  }
+
+  // solution
+  for (unsigned int i = 0; i < m_nCol; i++) {
+    m_solution[i] = 0.;
+    for (unsigned int j = 0; j < m_nCol; j++)
+      m_solution[i] += Minv(i,j) * c[j]; // x = M^(-1) * c
+  }
 
   // calculate chi2 and track positions from fit parameters
-  TMatrixD residuum(m_nRow,1);
-  for (unsigned int i = 0; i < m_nRow; i++)
-    residuum(i,0) = (A*solution - b)(i);
-  TMatrixD residuumTrans(1,m_nRow);
-  residuumTrans.Transpose(residuum);
+  m_chi2 = 0;
+  for (unsigned int i = 0; i < m_nRow; i++) {
+    double prediction = 0;
+    for (unsigned int j = 0; j < m_nCol; j++)
+      prediction += A[i][j]*m_solution[j];
+    m_chi2 += (prediction - b[i])*(prediction - b[i]) * weights[i];
+  }
 
-  m_chi2 = (residuumTrans * Uinv * residuum)(0,0);
   m_ndf = m_nRow - m_nCol;
-  m_solution = solution;
 
   return 1;
 }

@@ -9,13 +9,28 @@
 #include "Settings.hh"
 #include "SettingsManager.hh"
 
-#include <math.h>
+#include <cmath>
 
-Cut::Cut(Type type) :
-  m_type(type)
+#include <QDebug>
+#include <QStringList>
+
+Cut::Cut(Enums::Cut type)
+  : m_type(type)
+  , m_minIsSet(false)
+  , m_maxIsSet(false)
 {
-  m_minIsSet = false;
-  m_maxIsSet = false;
+}
+
+Cut::Cut(const QString& string)
+  : m_minIsSet(false)
+  , m_maxIsSet(false)
+{
+  QStringList stringList = string.split(" | ");
+  m_type = Enums::cut(stringList[0]);
+  if (!stringList[1].isEmpty())
+    setMin(stringList[1].toDouble());
+  if (!stringList[2].isEmpty())
+    setMax(stringList[2].toDouble());
 }
 
 Cut::~Cut() 
@@ -34,24 +49,35 @@ void Cut::setMax(double max)
   m_max = max;
 }
 
-bool Cut::passesCuts(double value) 
+bool Cut::passesCuts(double value) const
 {
-  if (m_minIsSet && m_maxIsSet) {
-    if (m_min <= value && value <= m_max)
-      return true;
-  } else if (m_minIsSet) {
-    if (m_min <= value)
-      return true;
-  } else if (m_maxIsSet) {
-    if (value <= m_max)
-      return true;
-  }
-  return false;
+  if (m_minIsSet && m_maxIsSet)
+    return (m_min <= value && value <= m_max);
+  else if (m_minIsSet)
+    return (m_min <= value);
+  else if (m_maxIsSet)
+    return (value <= m_max);
+  else
+    return true;
 }
 
-bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent* event)
+bool Cut::passes(const SimpleEvent* event) const
 {
-  if (m_type == rigidity) {
+  if (m_type == Enums::CherenkovCut) {
+    //get settings if present
+    const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+    if (!settings || settings->situation() != Settings::Testbeam11)
+      return true;
+    double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
+    double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
+    return (passesCuts(c1Signal) && passesCuts(c2Signal));
+  }
+  return true;
+}
+
+bool Cut::passes(const QVector<Hit*>& clusters, const Particle* particle) const
+{
+  if (m_type == Enums::RigidityCut) {
     const Track* track = particle->track();
     if (!track || !track->fitGood())
       return false;
@@ -60,7 +86,7 @@ bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*
       return false;
     return passesCuts(track->rigidity());
   }
-  if (m_type == beta) {
+  if (m_type == Enums::BetaCut) {
     const Track* track = particle->track();
     if (!track || !track->fitGood())
       return false;
@@ -69,7 +95,7 @@ bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*
       return false;
     return passesCuts(particle->beta());
   }
-  if (m_type == tofTimeOverThreshold) {
+  if (m_type == Enums::TimeOverThresholdCut) {
     const Track* track = particle->track();
     if (!track || !track->fitGood())
       return false;
@@ -86,7 +112,7 @@ bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*
         double z = tofCluster->position().z();
         if (qAbs(track->x(z) - tofCluster->position().x()) > 0.95 * Constants::tofBarWidth / 2.)
           continue;
-        std::vector<Hit*>& subHits = tofCluster->hits();
+        const std::vector<Hit*>& subHits = tofCluster->hits();
         std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
         for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
           TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(*it);
@@ -102,7 +128,7 @@ bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*
       return false;
     }
   }
-  if (m_type == trdDeposition) {
+  if (m_type == Enums::TrdSignalCut) {
     const Track* track = particle->track();
     if (!track || !track->fitGood())
       return false;
@@ -111,20 +137,10 @@ bool Cut::passes(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*
       return false;
     return passesCuts(sumOfSignalHeights(Hit::trd, track, clusters));
   }
-  if (m_type == cherenkov) {
-    //get settings if present
-    const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
-    if (!settings || settings->situation() != Settings::Testbeam11)
-      return true;
-    double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
-    double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
-    return (passesCuts(c1Signal) && passesCuts(c2Signal));
-  }
-  qFatal("m_type does not match any CutType::type!");
-  return false;
+  return true;
 }
 
-double Cut::sumOfSignalHeights(const Hit::ModuleType type, const Track* track, const QVector<Hit*>& /*clusters*/)
+double Cut::sumOfSignalHeights(const Hit::ModuleType type, const Track* track, const QVector<Hit*>& /*clusters*/) const
 {
   double sumSignal = 0;
   const QVector<Hit*>::const_iterator endIt = track->hits().constEnd();
@@ -135,4 +151,15 @@ double Cut::sumOfSignalHeights(const Hit::ModuleType type, const Track* track, c
     }
   }
   return sumSignal;
+}
+
+QString Cut::toString() const
+{
+  QString string = Enums::label(m_type) + " | ";
+  if (m_minIsSet)
+    string+= QString::number(m_min);
+  string+= " | ";
+  if (m_maxIsSet)
+    string+= QString::number(m_max);
+  return string;
 }

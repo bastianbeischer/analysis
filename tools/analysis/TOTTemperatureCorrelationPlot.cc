@@ -21,7 +21,7 @@
 #include <cmath>
 
 TOTTemperatureCorrelationPlot::TOTTemperatureCorrelationPlot(unsigned int id)
-  : AnalysisPlot(TimeOverThreshold)
+  : AnalysisPlot(Enums::TimeOverThreshold)
   , H2DProjectionPlot()
   , m_id(id)
 {
@@ -42,7 +42,7 @@ TOTTemperatureCorrelationPlot::~TOTTemperatureCorrelationPlot()
 {
 }
 
-void TOTTemperatureCorrelationPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
+void TOTTemperatureCorrelationPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
 {
   const Track* track = particle->track();
   if (!track || !track->fitGood())
@@ -56,7 +56,7 @@ void TOTTemperatureCorrelationPlot::processEvent(const QVector<Hit*>&, Particle*
       TOFCluster* cluster = static_cast<TOFCluster*> (hit);
       if (qAbs(track->x(cluster->position().z()) - cluster->position().x()) > 0.95 * Constants::tofBarWidth / 2.)
         continue;
-      std::vector<Hit*>& subHits = cluster->hits();
+      const std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         Hit* tofHit = *it;

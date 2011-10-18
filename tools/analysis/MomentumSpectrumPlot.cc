@@ -8,49 +8,45 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "SimpleEvent.hh"
+#include "Helpers.hh"
 
 #include <iostream>
 #include <cmath>
 
-MomentumSpectrumPlot::MomentumSpectrumPlot(Type type) :
-  AnalysisPlot(AnalysisPlot::MomentumReconstruction),
-  H1DPlot(),
-  m_type(type)
+MomentumSpectrumPlot::MomentumSpectrumPlot(Enums::ChargeSigns type, bool inverted)
+  : AnalysisPlot(Enums::MomentumReconstruction)
+  , H1DPlot()
+  , m_type(type)
+  , m_inverted(inverted)
 {
-  setTitle("Momentum Spectrum");
-  int nBins = 100;
-  TH1D* histogram = 0;
-  if (m_type == All) {
-    double lowerBound = -20.;
-    double upperBound = 20.;
-    setTitle(title() + " - All");
-    histogram = new TH1D(qPrintable(title()), "", nBins, lowerBound, upperBound);
-    setAxisTitle("R / GV", "particles / GV");
-  } else if (m_type == Negative || m_type == Positive) {
-    if (m_type == Negative) setTitle(title() + " - Negative");
-    if (m_type == Positive) setTitle(title() + " - Positive");
-    double lowerBound = 1e-1;
-    double upperBound = 20.;
-    double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
-    double p[nBins+1];
-    for (int i = 0; i < nBins+1; i++) {
-      p[i] = pow(lowerBound, delta*i+1);
-    }
-    histogram = new TH1D(qPrintable(title()), "", nBins, p);
-    setAxisTitle("R / GV", "particles / GV");
-  } else if (m_type == Inverted) {
-    setTitle(title() + " - Inverted");
-    nBins = 300;
-    double lowerBound = -10;
-    double upperBound = 10;
-    histogram = new TH1D(qPrintable(title()), "", nBins, lowerBound, upperBound);
+  QString title = "momentum spectrum";
+  
+  if (inverted) {
+    title+= " - Inverted";
     setAxisTitle("1/R / 1/GV", "particles / bin");
+  } else {
+    setAxisTitle("R / GV", "particles / GV");
+  }
+  setTitle(title);
+
+  int nBins = inverted ? 1200 : 100;
+  TH1D* histogram = 0;
+  if (m_type == (Enums::Positive | Enums::Negative)) {
+    title+= " - All";
+    histogram = new TH1D(qPrintable(title), "", nBins, -20., 20.);
+  } else {
+    if (m_type == Enums::Negative)
+      title+= " - Negative";
+    if (m_type == Enums::Positive)
+      title+= " - Positive";
+    const QVector<double>& axis = Helpers::logBinning(nBins, 0.1, 20.);
+    histogram = new TH1D(qPrintable(title), "", nBins, axis.constData());
   }
   
   histogram->SetLineColor(kBlack);
   addHistogram(histogram);
   addLatex(RootPlot::newLatex(.15, .85));
-  if (m_type == Inverted) {
+  if (inverted) {
     addLatex(RootPlot::newLatex(.15, .75));
     addLatex(RootPlot::newLatex(.15, .65));
   }
@@ -60,7 +56,7 @@ MomentumSpectrumPlot::~MomentumSpectrumPlot()
 {
 }
 
-void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 
@@ -68,27 +64,27 @@ void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle
     return;
 
   ParticleInformation::Flags flags = particle->information()->flags();
-  if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
+  if (!(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
     return;
 
   double rigidity = track->rigidity();
-  if (m_type == Negative && rigidity >= 0)
+  if (m_type == Enums::Negative && rigidity >= 0)
     return;
-  if (m_type == Positive && rigidity <= 0)
+  if (m_type == Enums::Positive && rigidity <= 0)
     return;
 
   double value = rigidity;
-  if (m_type == Negative) {
+  if (m_type == Enums::Negative) {
     value = -rigidity;
   }
-  else if (m_type == Inverted) {
+  else if (m_inverted) {
     value = 1./rigidity;
   }
 
   int iBin = histogram()->FindBin(value);
   double width = histogram()->GetBinWidth(iBin);
   double weight = 1./width;
-  if (m_type == Inverted) {
+  if (m_inverted) {
     weight = 1.;
   }
 
@@ -98,7 +94,7 @@ void MomentumSpectrumPlot::processEvent(const QVector<Hit*>&, Particle* particle
 void MomentumSpectrumPlot::update()
 {
   latex(0)->SetTitle(qPrintable(QString("entries = %1").arg(histogram()->GetEntries())));
-  if (m_type == Inverted) {
+  if (m_inverted) {
     double mean = histogram()->GetMean();
     double rms = histogram()->GetRMS();
     latex(1)->SetTitle(qPrintable(QString("#mu_R = %1 GV").arg(1./mean, 0, 'f', 2)));

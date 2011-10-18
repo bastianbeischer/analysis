@@ -2,3 +2,5 @@
 /setup.conf
 /TRDCorrections.conf
 /TOFCorrections.conf
+/EfficiencyCorrections.conf
+/TRDLikelihood.conf

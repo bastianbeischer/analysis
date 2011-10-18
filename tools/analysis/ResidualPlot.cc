@@ -22,7 +22,7 @@
 #include <cmath>
 #include <iostream>
 
-ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer)
+ResidualPlot::ResidualPlot(Enums::AnalysisTopic topic, Layer* layer)
   : AnalysisPlot(topic)
   , H2DProjectionPlot()
   , m_layer(layer)
@@ -33,9 +33,9 @@ ResidualPlot::ResidualPlot(AnalysisPlot::Topic topic, Layer* layer)
   setTitle(QString("Residuals layer at %1").arg(layer->z()));
 
   double max = 0.;
-  if (topic == AnalysisPlot::ResidualsTracker || topic == AnalysisPlot::MonteCarloTracker)
+  if (topic == Enums::ResidualsTracker || topic == Enums::MonteCarloTracker)
     max = 3.;
-  if (topic == AnalysisPlot::ResidualsTRD || topic == AnalysisPlot::MonteCarloTRD)
+  if (topic == Enums::ResidualsTRD || topic == Enums::MonteCarloTRD)
     max = 10.;
 
   unsigned short nElements = layer->nElements();
@@ -50,7 +50,7 @@ ResidualPlot::~ResidualPlot()
 {
 }
 
-void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void ResidualPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
 {
   const Track* track = particle->track();
 
@@ -60,13 +60,6 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, S
   ParticleInformation::Flags flags = particle->information()->flags();
   if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
-
-  // if (!(flags & ParticleInformation::Chi2Good))
-  //   return;
-
-  // only select tracks which didn't pass through the magnet
-  //if ((flags & ParticleInformation::MagnetCollision))
-  //  return;
 
   // remove hits in this layer from hits for track fit
   QVector<Hit*> hitsInThisLayer;
@@ -100,24 +93,11 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, S
 
       double res = hitU - trackU;
 
-      unsigned short detId = hit->detId() - hit->channel();
+      unsigned short detId = hit->elementId();
       unsigned short index = m_layer->detIds().indexOf(detId);
       DetectorElement* element = Setup::instance()->element(detId);
       unsigned short nChannels = element->nChannels();
-      unsigned short channel = hit->channel();
-      if (strcmp(hit->ClassName(), "Cluster") == 0) {
-        int max = 0;
-        int imax = 0;
-        Cluster* cluster = static_cast<Cluster*>(hit);
-        std::vector<Hit*> subHits = cluster->hits();
-        for (unsigned int i = 0 ; i < subHits.size(); i++) {
-          if (subHits.at(i)->signalHeight() > max) {
-            max = subHits.at(i)->signalHeight();
-            imax = i;
-          }
-        }
-        channel = element->sortedChannel(subHits.at(imax)->channel());
-      }
+      unsigned short channel = element->sortedChannel(hit->channel());
 
       histogram()->Fill(index*nChannels + channel, res);
     }
@@ -125,7 +105,7 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, S
   }
 }
 
-Track* ResidualPlot::referenceTrack(const QVector<Hit*>&, Particle* particle, SimpleEvent* /*event*/)
+Track* ResidualPlot::referenceTrack(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const /*event*/)
 {
   const Track* track = particle->track();
 
@@ -141,13 +121,13 @@ Track* ResidualPlot::referenceTrack(const QVector<Hit*>&, Particle* particle, Si
   }
 
   Track* mytrack = 0;
-  if (track->type() == Track::StraightLine)
+  if (track->type() == Enums::StraightLine)
     mytrack = new StraightLine;
-  else if (track->type() == Track::BrokenLine)
+  else if (track->type() == Enums::BrokenLine)
     mytrack = new BrokenLine;
-  else if (track->type() == Track::CenteredBrokenLine)
+  else if (track->type() == Enums::CenteredBrokenLine)
     mytrack = new CenteredBrokenLine;
-  else if (track->type() == Track::CenteredBrokenLine2D)
+  else if (track->type() == Enums::CenteredBrokenLine2D)
     mytrack = new CenteredBrokenLine2D;
   else mytrack = 0;
 

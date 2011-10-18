@@ -18,7 +18,7 @@
 #include <QDebug>
 
 TOFTimeDifferencePlot::TOFTimeDifferencePlot(unsigned short id)
-  : AnalysisPlot(AnalysisPlot::CalibrationTOF)
+  : AnalysisPlot(Enums::CalibrationTOF)
   , H2DPlot()
   , m_id(id)
   , m_updateCounter(0)
@@ -38,7 +38,7 @@ TOFTimeDifferencePlot::~TOFTimeDifferencePlot()
   delete m_normalizationHistogram;
 }
 
-void TOFTimeDifferencePlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void TOFTimeDifferencePlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
   if (!track || !track->fitGood() || track->chi2() / track->ndf() > 3.)
@@ -53,7 +53,7 @@ void TOFTimeDifferencePlot::processEvent(const QVector<Hit*>&, Particle* particl
   const QVector<Hit*>::const_iterator endIt = clusters.end();
   for (QVector<Hit*>::const_iterator it = clusters.begin(); it != endIt; ++it) {
     Hit* cluster = *it;
-    if (cluster->type() == Hit::tof && cluster->detId() - cluster->channel() == m_id) {
+    if (cluster->type() == Hit::tof && cluster->elementId() == m_id) {
       TOFCluster* tofCluster= static_cast<TOFCluster*>(cluster);
       double t[4];
       for (int i = 0; i < 4; ++i)

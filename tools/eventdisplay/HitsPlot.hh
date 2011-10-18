@@ -8,6 +8,7 @@
 
 class Hit;
 class Particle;
+class TEllipse;
 class TLine;
 class TMarker;
 class TLatex;
@@ -23,7 +24,7 @@ public:
   ~HitsPlot();
   
 public:
-  void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
   void setDrawAllClusters(bool);
 private:
   void drawHits();
@@ -31,6 +32,7 @@ private:
 
 private:
   QVector<TBox*>      m_hits;
+  QVector<TEllipse*>  m_hitsTRD;
   QVector<TLine*>     m_lines;
   QVector<TMarker*>   m_markers;
   TLatex*             m_fitInfo;

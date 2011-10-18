@@ -13,7 +13,7 @@ public:
   MCTotalEnergyDepositionTRDvsTrackerPlot();
   ~MCTotalEnergyDepositionTRDvsTrackerPlot();
 
-  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  virtual void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);
 
 private:
 

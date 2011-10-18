@@ -14,7 +14,7 @@
 #include <QDebug>
 
 ZSquareTRDPlot::ZSquareTRDPlot()
-  : AnalysisPlot(AnalysisPlot::SignalHeightTRD)
+  : AnalysisPlot(Enums::SignalHeightTRD)
   , H2DPlot()
 {
   setTitle(QString("z square TRD"));
@@ -27,7 +27,7 @@ ZSquareTRDPlot::~ZSquareTRDPlot()
 {
 }
 
-void ZSquareTRDPlot::processEvent(const QVector<Hit*>& clusters, Particle*, SimpleEvent*)
+void ZSquareTRDPlot::processEvent(const QVector<Hit*>& clusters, const Particle* const, const SimpleEvent* const)
 {
   QVector<Hit*>::const_iterator endIt = clusters.end();
   int nUpperTrd = 0;

@@ -15,7 +15,7 @@ public:
   ~ParticleDB();
   
   const ParticleProperties* lookupPdgId(const int&);
-  const ParticleProperties* lookupType(const Particle::Type&);
+  const ParticleProperties* lookupType(const Enums::Particle&);
   QList<const ParticleProperties*> allParticles() const {return m_db.values();}
 
 private:
@@ -24,7 +24,7 @@ private:
   
 private:
   static ParticleDB* m_instance;
-  QMap<Particle::Type, int> m_pdgIdMap;
+  QMap<Enums::Particle, int> m_pdgIdMap;
   QMap<int, const ParticleProperties*> m_db;
   
 };

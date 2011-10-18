@@ -9,18 +9,19 @@
 
 #include "Settings.hh"
 #include "SimpleEvent.hh"
+#include "Helpers.hh"
 
 SettingsManager* SettingsManager::s_instance = 0;
+
+bool settingsCompare(const Settings* s1, const Settings* s2)
+{
+  return s1->lastRun() < s2->firstRun();
+}
 
 SettingsManager::SettingsManager() :
   m_configFile(0)
 {
-  const char* env = getenv("PERDAIXANA_PATH");
-  if (env == 0) {
-    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
-  }
-  QString path(env);
-  path += "/conf/";
+  QString path = Helpers::analysisPath() + "/conf/";
   QDir dir(path);
   if (!dir.exists("settings.conf")) {
     qFatal("ERROR: settings.conf not found!");
@@ -42,21 +43,21 @@ SettingsManager* SettingsManager::instance()
   return s_instance;
 }
 
-const Settings* SettingsManager::settingsForEvent(SimpleEvent* event) const
+const Settings* SettingsManager::settingsForEvent(const SimpleEvent* const event) const
 {
   int run = event->runStartTime();
   return settingsForRun(run);
 }
 
+
 const Settings* SettingsManager::settingsForRun(int run) const
 {
-  foreach(const Settings* settings, m_settings) {
-    int firstRun = settings->firstRun();
-    int lastRun = settings->lastRun();
-    if (run >= firstRun && run <= lastRun) {
-      return settings;
-    }
-  }
+  Settings temp;
+  temp.setFirstRun(run);
+  temp.setLastRun(run);
+  const QVector<const Settings*>::const_iterator it = qBinaryFind(m_settings.begin(), m_settings.end(), &temp, &settingsCompare);
+  if (it != m_settings.constEnd())
+    return *it;
   return 0;
 }
 
@@ -81,6 +82,8 @@ void SettingsManager::readSettings()
     else if (situationString == "kirunaflight") situation = Settings::KirunaFlight;
     else if (situationString == "testbeam11") situation = Settings::Testbeam11;
 
+    Q_ASSERT(firstRun <= lastRun);
+
     Settings* settings = new Settings;
     settings->setIdentifier(identifier);
     settings->setName(name);
@@ -95,4 +98,5 @@ void SettingsManager::readSettings()
     m_settings.append(settings);
     m_configFile->endGroup();
   }
+  qSort(m_settings.begin(), m_settings.end(), &settingsCompare);
 }

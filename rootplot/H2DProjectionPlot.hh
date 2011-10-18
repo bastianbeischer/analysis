@@ -8,6 +8,7 @@
 class ProjectionControlWidget;
 class RootQtWidget;
 class TH1D;
+class TLine;
 
 class H2DProjectionPlot : public QObject, public H2DPlot {
 Q_OBJECT
@@ -17,7 +18,7 @@ public:
 public:
   H2DProjectionPlot();
   ~H2DProjectionPlot();
-  
+
 public:
   void positionChanged(double, double);
 
@@ -27,15 +28,17 @@ protected:
 
 public slots:
   void setProjectionType(ProjectionType type);
+  void setLogX(int);
+  void setLogY(int);
+  void setLogZ(int);
 
 private:
   TH1D* m_projectionHistX;
   TH1D* m_projectionHistY;
-
   ProjectionControlWidget* m_controlWidget;
   RootQtWidget* m_projectionWidget;
-  
   ProjectionType m_type;
+  TLine* m_line;
 };
 
 #endif /* H2DProjectionPlot_hh */

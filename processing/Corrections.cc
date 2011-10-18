@@ -11,6 +11,7 @@
 #include "Constants.hh"
 #include "SensorTypes.hh"
 #include "SimpleEvent.hh"
+#include "Helpers.hh"
 
 #include <TSpline.h>
 
@@ -23,19 +24,14 @@
 #include <cstring>
 #include <cmath>
 
-Corrections::Corrections(Flags flags)
+Corrections::Corrections(Enums::Corrections flags)
   : m_tofTotScalingPrefix("TimeOverThresholdScaling/")
   , m_trdSettings(0)
   , m_tofSettings(0)
   , m_flags(flags)
   , m_TRDSplineTime(0)
 {
-  const char* env = getenv("PERDAIXANA_PATH");
-  if (env == 0) {
-    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
-  }
-  QString path(env);
-  path += "/conf/";
+  QString path = Helpers::analysisPath() + "/conf/";
   QDir dir(path);
   if (!dir.exists("TRDCorrections.conf")) {
     qFatal("ERROR: TRDCorrections.conf not found. Maybe you need to switch to a configuration, for example: switch_to_config.sh kiruna");
@@ -63,28 +59,30 @@ void Corrections::preFitCorrections(SimpleEvent* event)
   const std::vector<Hit*>::const_iterator hitsEnd = event->hits().end();
   for (std::vector<Hit*>::const_iterator it = event->hits().begin(); it != hitsEnd; ++it) {
     Hit* hit = *it;
-    if (m_flags & Alignment) alignment(hit);
-    if (m_flags & TimeShifts) timeShift(hit);
-    if (m_flags & TrdMopv) trdMopv(hit);
-    if (m_flags & TrdTime) trdTime(hit, event);
-    if (m_flags & TrdPressure) trdPressure(hit, event);
-    if (m_flags & TrdTemperature) trdTemperature(hit, event);
-    if (m_flags & TofTimeOverThreshold) tofTot(hit, event);
+    if (m_flags & Enums::Alignment) alignment(hit);
+    if (m_flags & Enums::TimeShifts) timeShift(hit);
+    if (m_flags & Enums::TrdMopv) trdMopv(hit);
+    if (m_flags & Enums::TrdTime) trdTime(hit, event);
+    //if (m_flags & Enums::TrdPressure) trdPressure(hit, event);
+    //if (m_flags & Enums::TrdTemperature) trdTemperature(hit, event);
+    if (m_flags & Enums::TofTimeOverThreshold) tofTot(hit, event);
   }
 }
 
 void Corrections::postFitCorrections(Particle* particle)
 {
-  for (int i = 0; i < 5; i++) {
-    if (m_flags & PhotonTravelTime) photonTravelTime(particle); // multiple scattering needs "beta"
-    if (m_flags & MultipleScattering) multipleScattering(particle); // should be done first
-  }
+  if (m_flags & Enums::PhotonTravelTime) photonTravelTime(particle); // multiple scattering needs "beta"
+}
+
+void Corrections::postTOFCorrections(Particle* particle)
+{
+  if (m_flags & Enums::MultipleScattering) multipleScattering(particle);
 }
 
 void Corrections::alignment(Hit* hit)
 {
   Setup* setup = Setup::instance();
-  DetectorElement* element = setup->element(hit->detId() - hit->channel());
+  DetectorElement* element = setup->element(hit->elementId());
   if (element->alignmentShift() != 0.)
     hit->setPosition(element->positionForHit(hit));
 }
@@ -94,7 +92,7 @@ void Corrections::timeShift(Hit* hit)
   Setup* setup = Setup::instance();
   if (strcmp(hit->ClassName(), "TOFSipmHit") == 0) {
     TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(hit);
-    DetectorElement* element = setup->element(hit->detId() - hit->channel());
+    DetectorElement* element = setup->element(hit->elementId());
     double timeShift = static_cast<TOFBar*>(element)->timeShift(hit->channel());
     tofHit->applyTimeShift(timeShift);
   }
@@ -103,7 +101,7 @@ void Corrections::timeShift(Hit* hit)
     std::vector<Hit*> subHits = cluster->hits();
     for (std::vector<Hit*>::iterator it = subHits.begin(); it != subHits.end(); it++) {
       TOFSipmHit* tofHit = static_cast<TOFSipmHit*>(*it);
-      DetectorElement* element = setup->element(cluster->detId() - cluster->channel());
+      DetectorElement* element = setup->element(cluster->elementId());
       double timeShift = static_cast<TOFBar*>(element)->timeShift((*it)->channel());
       tofHit->applyTimeShift(timeShift);
     }
@@ -124,7 +122,7 @@ void Corrections::trdMopv(Hit* hit)
   else if (strcmp(hit->ClassName(), "Cluster") == 0) {
     Cluster* cluster = static_cast<Cluster*>(hit);
     double clusterAmplitude = 0;
-    for (std::vector<Hit*>::iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
+    for (std::vector<Hit*>::const_iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
       Hit* trdHit = *it;
       double trdScalingFactor = this->trdScalingFactor(trdHit->detId());
       double newHitAmplitude = trdHit->signalHeight() * trdScalingFactor;
@@ -150,7 +148,7 @@ void Corrections::trdTime(Hit* hit, SimpleEvent* event)
   else if (strcmp(hit->ClassName(), "Cluster") == 0) {
     Cluster* cluster = static_cast<Cluster*>(hit);
     double clusterAmplitude = 0;
-    for (std::vector<Hit*>::iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
+    for (std::vector<Hit*>::const_iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
       Hit* trdHit = *it;
       double newHitAmplitude = trdHit->signalHeight() * trdTimeFactor;
       trdHit->setSignalHeight(newHitAmplitude);
@@ -175,7 +173,7 @@ void Corrections::trdPressure(Hit* hit, SimpleEvent* event)
   else if (strcmp(hit->ClassName(), "Cluster") == 0) {
     Cluster* cluster = static_cast<Cluster*>(hit);
     double clusterAmplitude = 0;
-    for (std::vector<Hit*>::iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
+    for (std::vector<Hit*>::const_iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
       Hit* trdHit = *it;
       double newHitAmplitude = trdHit->signalHeight() * trdScalingFactor;
       trdHit->setSignalHeight(newHitAmplitude);
@@ -207,7 +205,7 @@ void Corrections::trdTemperature(Hit* hit, SimpleEvent* event)
   else if (strcmp(hit->ClassName(), "Cluster") == 0) {
     Cluster* cluster = static_cast<Cluster*>(hit);
     double clusterAmplitude = 0;
-    for (std::vector<Hit*>::iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
+    for (std::vector<Hit*>::const_iterator it = cluster->hits().begin(); it != cluster->hits().end(); it++) {
       Hit* trdHit = *it;
       double newHitAmplitude = trdHit->signalHeight() * trdScalingFactor;
       trdHit->setSignalHeight(newHitAmplitude);
@@ -259,7 +257,7 @@ void Corrections::setTrdPressureDependendFactor(QPair<double,double> P0, double 
   m_trdSettings->sync();
 }
 
-void Corrections::getTrdPressureDependendFactor(QPair<double,double>& P0, double& dM_dP)
+void Corrections::trdPressureDependendFactor(QPair<double,double>& P0, double& dM_dP)
 {
   P0.first = m_trdSettings->value("PressureDependency/P0", 1100).toDouble();
   P0.second = m_trdSettings->value("PressureDependency/M0", 1).toDouble();
@@ -282,7 +280,7 @@ void Corrections::setTrdTemperatureDependendFactor(QPair<double,double> T0, doub
   m_trdSettings->sync();
 }
 
-void Corrections::getTrdTemperatureDependendFactor(QPair<double,double>& T0, double& dM_dT)
+void Corrections::trdTemperatureDependendFactor(QPair<double,double>& T0, double& dM_dT)
 {
   T0.first = m_trdSettings->value("TemperatureDependency/T0", 30).toDouble();
   T0.second = m_trdSettings->value("TemperatureDependency/M0", 1).toDouble();
@@ -380,7 +378,7 @@ void Corrections::readTRDTimeDependendCorrections()
   }
 }
 
-TSpline3* Corrections::getTrdTimeSpline() const
+TSpline3* Corrections::trdTimeSpline() const
 {
   if (!m_TRDSplineTime)
     return 0;
@@ -414,30 +412,36 @@ double Corrections::photonTravelTimeDifference(double bending, double nonBending
 void Corrections::multipleScattering(Particle* particle)
 {
   Track* track = particle->track();
+  if (!track || !track->fitGood())
+    return;
 
-  const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
-  for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
-    Hit* hit = *it;
-    if (hit->type() == Hit::tracker) {
-      double p = track->rigidity();
-      double sipmRes = hit->resolutionEstimate();
-      double beta = particle->beta();
-      // double m = particle->mass();
-      // double beta = p / sqrt(p*p + m*m);
-      double z = hit->position().z();
-      z = round(z);
-      double parameter = 0;
-      if (qAbs(z) == 236) parameter = 11e-3;
-      else if (qAbs(z) == 218) parameter = 7.4e-3;
-      else if (qAbs(z) == 69) parameter = 35e-3;
-      else if (qAbs(z) == 51) parameter = 31e-3;
+  for (int i = 0; i < 5; i++) {
+    const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();
+    for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
+      Hit* hit = *it;
+      if (hit->type() == Hit::tracker) {
+        double p = track->rigidity();
+        double beta = particle->beta();
+        if (beta == 0 || p == 0)
+          return;
+        // double m = particle->mass();
+        // double beta = p / sqrt(p*p + m*m);
+        double z = hit->position().z();
+        z = round(z);
+        double parameter = 0;
+        if (qAbs(z) == 236) parameter = 11e-3;
+        else if (qAbs(z) == 218) parameter = 7.4e-3;
+        else if (qAbs(z) == 69) parameter = 35e-3;
+        else if (qAbs(z) == 51) parameter = 31e-3;
 
-      double mscPart = 1/(p*beta) * parameter;
-      double newRes = sqrt(sipmRes*sipmRes + mscPart*mscPart);
-      hit->setResolution(newRes);
+        double sipmRes = hit->resolutionEstimate();
+        double mscPart = 1/(p*beta) * parameter;
+        double newRes = sqrt(sipmRes*sipmRes + mscPart*mscPart);
+        hit->setResolution(newRes);
+      }
     }
+    track->fit(track->hits());
   }
-  track->fit(track->hits());
 }
 
 void Corrections::photonTravelTime(Particle* particle)

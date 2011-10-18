@@ -5,9 +5,10 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "ParticleInformation.hh"
+#include "Enums.hh"
 
 AlbedosVsMomentumPlot::AlbedosVsMomentumPlot() :
-  AnalysisPlot(AnalysisPlot::MomentumReconstruction),
+  AnalysisPlot(Enums::MomentumReconstruction),
   H1DPlot(),
   m_albedoHisto(0),
   m_totalHisto(0)
@@ -47,7 +48,7 @@ AlbedosVsMomentumPlot::~AlbedosVsMomentumPlot()
   delete m_totalHisto;
 }
 
-void AlbedosVsMomentumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void AlbedosVsMomentumPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 
@@ -55,7 +56,8 @@ void AlbedosVsMomentumPlot::processEvent(const QVector<Hit*>&, Particle* particl
     return;
 
   ParticleInformation::Flags flags = particle->information()->flags();
-  if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) )
+  ParticleInformation::Flags required = ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet | ParticleInformation::BetaGood;
+  if ((flags & required) != required)
     return;
 
   double rigidity = track->rigidity();

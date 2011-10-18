@@ -21,7 +21,7 @@
 #include <math.h>
 
 TOTTimeCorrelationPlot::TOTTimeCorrelationPlot(unsigned int id, QDateTime first, QDateTime last)
-  : AnalysisPlot(TimeOverThreshold)
+  : AnalysisPlot(Enums::TimeOverThreshold)
   , H2DProjectionPlot()
   , m_id(id)
 {
@@ -46,7 +46,7 @@ TOTTimeCorrelationPlot::~TOTTimeCorrelationPlot()
 {
 }
 
-void TOTTimeCorrelationPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* event)
+void TOTTimeCorrelationPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
 {
   const Track* track = particle->track();
   if (!track || !track->fitGood())
@@ -58,7 +58,7 @@ void TOTTimeCorrelationPlot::processEvent(const QVector<Hit*>&, Particle* partic
     Hit* hit = *it;
     if (hit->type() == Hit::tof) {
       TOFCluster* cluster = static_cast<TOFCluster*> (hit);
-      std::vector<Hit*>& subHits = cluster->hits();
+      const std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         Hit* tofHit = *it;

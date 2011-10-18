@@ -7,17 +7,17 @@
 #include "ParticleInformation.hh"
 #include "Hit.hh"
 
-SignalHeightPlot::SignalHeightPlot(AnalysisPlot::Topic topic, unsigned short id) :
+SignalHeightPlot::SignalHeightPlot(Enums::AnalysisTopic topic, unsigned short id) :
   AnalysisPlot(topic),
   H1DPlot(),
   m_id(id)
 {
   int maximum = 0, bins = 0;
-  if (topic == AnalysisPlot::SignalHeightTracker) {
+  if (topic == Enums::SignalHeightTracker) {
     maximum = 4096;
     bins = 100;
   }
-  else if (topic == AnalysisPlot::SignalHeightTRD) {
+  else if (topic == Enums::SignalHeightTRD) {
     maximum = 1500;
     bins = 1500;
   }
@@ -32,7 +32,7 @@ SignalHeightPlot::~SignalHeightPlot()
 {
 }
 
-void SignalHeightPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
+void SignalHeightPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 
@@ -46,7 +46,7 @@ void SignalHeightPlot::processEvent(const QVector<Hit*>& hits, Particle* particl
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Hit* hit = *it;
-    if (hit->detId() - hit->channel() == m_id)
+    if (hit->elementId() == m_id)
       histogram()->Fill(hit->signalHeight());
   }
 }

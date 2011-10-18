@@ -36,7 +36,7 @@ MainWindow::~MainWindow()
 void MainWindow::setupAnalysis()
 {
   PostAnalysisCanvas* canvas = 0;
-  TFile file(qPrintable(m_analysisFile));
+  TFile file(qPrintable(m_analysisFiles.at(0)));
   gROOT->cd();
 
   QVector<PostAnalysisCanvas*> canvases[8];
@@ -105,7 +105,6 @@ void MainWindow::saveToConfigFile(bool withBarShift)
   QFileDialog dialog(this, "save time shifts...", ".", "CONF files (*.conf)");
   dialog.setDefaultSuffix("conf");
   dialog.setAcceptMode(QFileDialog::AcceptSave);
-  QStringList fileNames;
   if (dialog.exec())
     TimeShiftContainer::instance()->saveToConfigfile(dialog.selectedFiles()[0], withBarShift);
 }

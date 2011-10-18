@@ -44,7 +44,7 @@ void ClusterGenerator::process(SimpleEvent* sourceEvent)
 
   // distribute raw hits
   foreach(Hit* rawhit, rawhits) {
-    unsigned short id = rawhit->detId() - rawhit->channel();
+    unsigned short id = rawhit->elementId();
     DetectorElement* element = setup->element(id);
     QVector<Hit*>& hits = m_hitStorage[element];
     hits[element->sortedChannel(rawhit->channel())] = rawhit;

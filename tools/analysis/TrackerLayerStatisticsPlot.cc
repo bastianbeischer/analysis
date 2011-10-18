@@ -9,7 +9,7 @@
 #include "ParticleInformation.hh"
 
 TrackerLayerStatisticsPlot::TrackerLayerStatisticsPlot() :
-  AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
+  AnalysisPlot(Enums::MiscellaneousTracker),
   H1DPlot()
 {
   setTitle("tracker layer statistics");
@@ -40,7 +40,7 @@ TrackerLayerStatisticsPlot::~TrackerLayerStatisticsPlot()
 {
 }
 
-void TrackerLayerStatisticsPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent*)
+void TrackerLayerStatisticsPlot::processEvent(const QVector<Hit*>& /*hits*/, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 
@@ -48,6 +48,12 @@ void TrackerLayerStatisticsPlot::processEvent(const QVector<Hit*>& /*hits*/, Par
     return;
 
   const ParticleInformation* info = particle->information();
+
+  // only tracks inside magnet are relevant: these really pass all 8 layers.
+  ParticleInformation::Flags flags = particle->information()->flags();
+  if (!(flags & ParticleInformation::InsideMagnet))
+    return;
+
   const QMap<double,int>& hitsInLayers = info->hitsInLayers();
   unsigned short nLayers = info->numberOfTrackerLayers();
 

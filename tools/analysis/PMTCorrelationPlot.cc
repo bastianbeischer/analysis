@@ -12,7 +12,7 @@
 
 
 PMTCorrelationPlot::PMTCorrelationPlot() :
-  AnalysisPlot(AnalysisPlot::Testbeam),
+  AnalysisPlot(Enums::Testbeam),
   H2DProjectionPlot(),
   m_c1Threshold(200),
   m_c2Threshold(200)
@@ -75,7 +75,7 @@ void PMTCorrelationPlot::draw(TCanvas* canvas)
   m_line2->Draw();
 }
 
-void PMTCorrelationPlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
+void PMTCorrelationPlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
 {
   histogram()->Fill(event->sensorData(SensorTypes::BEAM_CHERENKOV1), event->sensorData(SensorTypes::BEAM_CHERENKOV2));
 }

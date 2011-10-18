@@ -21,8 +21,9 @@ MoPVScalingTime::MoPVScalingTime(PostAnalysisCanvas* canvas)
   layout->addWidget(m_pushButton);
   layout->addStretch();
   m_spinBox = new QDoubleSpinBox();
+  m_spinBox->setDecimals(3);
   m_spinBox->setRange(0.1, 3);
-  m_spinBox->setSingleStep(0.01);
+  m_spinBox->setSingleStep(0.001);
   m_spinBox->setValue(1);
   layout->addWidget(m_spinBox);
   layout->addStretch();

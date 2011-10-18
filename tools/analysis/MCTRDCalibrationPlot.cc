@@ -10,7 +10,7 @@
 #include "Cluster.hh"
 
 MCTRDCalibrationPlot::MCTRDCalibrationPlot()
-  : AnalysisPlot(AnalysisPlot::MonteCarloTRD)
+  : AnalysisPlot(Enums::MonteCarloTRD)
   , H2DPlot()
 {
   setTitle("MC TRD Calibration");
@@ -19,7 +19,7 @@ MCTRDCalibrationPlot::MCTRDCalibrationPlot()
   addHistogram(histogram);
 }
 
-void MCTRDCalibrationPlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
+void MCTRDCalibrationPlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
 {
   //qDebug("new event");
   if (event->contentType() != SimpleEvent::MonteCarlo)
@@ -42,7 +42,7 @@ void MCTRDCalibrationPlot::processEvent(const QVector<Hit*>&, Particle*, SimpleE
     if (hit->type() != Hit::trd)
       continue;
     Cluster* cluster = static_cast<Cluster*>(hit);
-    std::vector<Hit*>& subHits = cluster->hits();
+    const std::vector<Hit*>& subHits = cluster->hits();
     const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       trdHits << *it;
@@ -58,28 +58,6 @@ void MCTRDCalibrationPlot::processEvent(const QVector<Hit*>&, Particle*, SimpleE
       continue;
     double enDep = (*itDigi)->signalSum();
     unsigned short channelID = (*itDigi)->detID();
-
-    /* bugfix for atm wrong digiIds:
-    //qDebug("channelID 0x%x", channelID);
-    unsigned short bitMaskWrong = 3 << 5; // 0b01100000
-    unsigned short moduleIDShifted = (channelID & bitMaskWrong);
-    //qDebug("wrong module 0x%x", moduleIDShifted);
-    moduleIDShifted =  moduleIDShifted >> 1;
-    //qDebug("module 0x%x", moduleIDShifted);
-    channelID = channelID & ~bitMaskWrong;
-    //qDebug("deleted module 0x%x", channelID);
-    channelID = channelID | moduleIDShifted;
-    //correct for wrong channel:
-    unsigned int channel = channelID & 0xF;
-    if (channel == 7)
-      continue;
-    if (channel > 7)
-      channelID += 1;
-    */ //end bugfix
-
-
-    //TVector3 pos = (*itDigi)->Signals().at(0)->hitPosition;
-    //qDebug("trd digi id = 0x%x at pos (%f %f %f)", channelID, pos.x(), pos.y(), pos.z());
 
     //find corresponding hit
     double signal = 0.;

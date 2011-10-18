@@ -13,7 +13,7 @@
 #include <cmath>
 
 BendingAnglePositionPlot::BendingAnglePositionPlot(double cut)
-  : AnalysisPlot(AnalysisPlot::Tracking)
+  : AnalysisPlot(Enums::Tracking)
   , H2DPlot()
   , m_cut(cut)
   , m_normHisto(0)
@@ -31,7 +31,7 @@ BendingAnglePositionPlot::~BendingAnglePositionPlot()
   delete m_normHisto;
 }
 
-void BendingAnglePositionPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void BendingAnglePositionPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 

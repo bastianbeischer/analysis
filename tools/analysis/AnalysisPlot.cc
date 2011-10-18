@@ -2,7 +2,7 @@
 
 #include <QWidget>
 
-AnalysisPlot::AnalysisPlot(Topic topic)
+AnalysisPlot::AnalysisPlot(Enums::AnalysisTopic topic)
   : m_topic(topic)
 {
   setNeedsLocking(true);
@@ -12,7 +12,12 @@ AnalysisPlot::~AnalysisPlot()
 {
 }
 
-AnalysisPlot::Topic AnalysisPlot::topic() const
+Enums::AnalysisTopic AnalysisPlot::topic() const
 {
   return m_topic;
+}
+
+bool AnalysisPlot::isPlotCollection()
+{
+  return false;
 }

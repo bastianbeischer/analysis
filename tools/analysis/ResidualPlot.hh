@@ -13,14 +13,14 @@ class Track;
 class ResidualPlot : public AnalysisPlot, public H2DProjectionPlot {
   
 public:
-  ResidualPlot(AnalysisPlot::Topic topic, Layer* layer);
+  ResidualPlot(Enums::AnalysisTopic topic, Layer* layer);
   ~ResidualPlot();
   
 public:
-  void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);
 
 private:
-  virtual Track* referenceTrack(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
+  virtual Track* referenceTrack(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
 
 private:
   const Layer* m_layer;

@@ -8,15 +8,15 @@
 #include <TLine.h>
 
 TRDTimeCorrectionPlot::TRDTimeCorrectionPlot(QDateTime first, QDateTime last)
-  : AnalysisPlot(AnalysisPlot::MiscellaneousTRD)
+  : AnalysisPlot(Enums::MiscellaneousTRD)
   , H1DPlot()
   , m_t1(first.toTime_t())
   , m_t2(last.toTime_t())
   , m_line1(new TLine)
   , m_line2(new TLine)
   , m_corr(new Corrections)
-  , m_TrdTimeFactors(m_corr->getTrdTimeFactors())
-  , m_TrdTimeSpline(m_corr->getTrdTimeSpline())
+  , m_TrdTimeFactors(m_corr->trdTimeFactors())
+  , m_TrdTimeSpline(m_corr->trdTimeSpline())
 {
 
   m_line1->SetLineColor(kGreen);
@@ -46,7 +46,7 @@ TRDTimeCorrectionPlot::~TRDTimeCorrectionPlot()
   delete m_TrdTimeSpline;
 }
 
-void TRDTimeCorrectionPlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
+void TRDTimeCorrectionPlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
 {
   double time = event->time();
   double corrFactor = m_corr->trdTimeDependendFactor(time);

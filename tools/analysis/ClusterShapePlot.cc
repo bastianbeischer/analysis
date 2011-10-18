@@ -1,7 +1,6 @@
 #include "ClusterShapePlot.hh"
 
 #include <TH1D.h>
-#include <TH1I.h>
 #include <TLatex.h>
 #include <TGaxis.h>
 #include <TStyle.h>
@@ -9,14 +8,15 @@
 
 #include "Hit.hh"
 #include "Cluster.hh"
+#include "Setup.hh"
+#include "DetectorElement.hh"
 
-#include <QMap>
 #include <QVector>
 
 #include <cmath>
 
 ClusterShapePlot::ClusterShapePlot(unsigned short id) :
-  AnalysisPlot(AnalysisPlot::ClusterShapeTracker),
+  AnalysisPlot(Enums::ClusterShapeTracker),
   H1DPlot(),
   m_id(id),
   m_eventCounter(0)
@@ -54,38 +54,28 @@ ClusterShapePlot::~ClusterShapePlot()
   delete m_eventCountAxis;
 }
 
-void ClusterShapePlot::processEvent(const QVector<Hit*>& hits, Particle*, SimpleEvent*)
+void ClusterShapePlot::processEvent(const QVector<Hit*>& hits, const Particle* const, const SimpleEvent* const)
 {
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
-    Cluster* cluster = static_cast<Cluster*>(*it);
-    unsigned short element = cluster->detId() - cluster->channel();
-    if (element == m_id) {
-      std::vector<Hit*>& subHits = cluster->hits();
+    unsigned short elementId = (*it)->elementId();
+    if (elementId == m_id) {
+      Cluster* cluster = static_cast<Cluster*>(*it);
+      const std::vector<Hit*>& subHits = cluster->hits();
 
-      // TODO: remove sorting after reprocessing with preAnalysis.
-      QMap<double, Hit*> sortMap;
-      for(unsigned short i = 0; i < subHits.size(); ++i) {
-        sortMap[subHits.at(i)->position().x()] = subHits.at(i);
-      }      
-      QVector<Hit*> hits = sortMap.values().toVector();
+      Setup* setup = Setup::instance();
+      DetectorElement* element = setup->element(elementId);
+      int iMax = element->sortedChannel(cluster->channel());
 
-      // find max strip
-      unsigned short iMax = 0;
-      double max = 0.;
-      for(unsigned short i = 0; i < hits.size(); ++i) {
-        double amplitude = hits.at(i)->signalHeight();
-        if (amplitude > max) {
-          max = amplitude;
-          iMax = i;
-        }
-      }
-
-      // plot all hits, but shift by max
-      for (unsigned short i = 0; i < hits.size(); ++i) {
-        histogram(0)->Fill(i - iMax, hits.at(i)->signalHeight());
+      const std::vector<Hit*>::const_iterator subEndIt = subHits.end();
+      for (std::vector<Hit*>::const_iterator subIt = subHits.begin(); subIt != subEndIt; ++subIt) {
+        // plot all hits, but shift by max
+        Hit* subHit = *subIt;
+        int i = element->sortedChannel(subHit->channel());
+        histogram(0)->Fill(i - iMax, subHit->signalHeight());
         histogram(1)->Fill(i - iMax);
       }
+
       m_eventCounter++;
     }
   }

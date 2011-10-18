@@ -9,7 +9,7 @@
 #include <TH1.h>
 
 BendingPositionPlot::BendingPositionPlot()
-  : AnalysisPlot(AnalysisPlot::Tracking)
+  : AnalysisPlot(Enums::Tracking)
   , H1DPlot()
 {
   setTitle("bending position");
@@ -21,14 +21,14 @@ BendingPositionPlot::BendingPositionPlot()
 BendingPositionPlot::~BendingPositionPlot()
 {}
 
-void BendingPositionPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void BendingPositionPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 
   if(!track || !track->fitGood())
     return;
 
-  if (track->type() == Track::BrokenLine) {
+  if (track->type() == Enums::BrokenLine) {
     const BrokenLine* line = static_cast<const BrokenLine*>(track);
 
     ParticleInformation::Flags flags = particle->information()->flags();

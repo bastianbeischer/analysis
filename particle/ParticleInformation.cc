@@ -34,6 +34,7 @@ void ParticleInformation::process()
   checkHighTransverseRigidity();
   checkMagnetCollision();
   checkAlbedo();
+  checkBetaGood();
 }
 
 void ParticleInformation::reset()
@@ -137,4 +138,12 @@ void ParticleInformation::checkAlbedo()
     return;
   if (m_particle->beta() < 0)
     m_flags |= Albedo;
+}
+
+void ParticleInformation::checkBetaGood()
+{
+  if (!m_particle->timeOfFlight())
+    return;
+  if (m_particle->timeOfFlight()->good())
+    m_flags |= BetaGood;
 }

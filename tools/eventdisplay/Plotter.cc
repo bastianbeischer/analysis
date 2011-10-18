@@ -9,7 +9,6 @@
 #include "Layer.hh"
 #include "TrackFinding.hh"
 #include "Setup.hh"
-#include "Corrections.hh"
 #include "DataDescription.hh"
 #include "HitsPlot.hh"
 #include "AnalysisProcessor.hh"
@@ -36,12 +35,13 @@ Plotter::Plotter(QWidget* parent)
   : TQtWidget(parent)
   , m_chain(new DataChain)
   , m_trackFinding(new TrackFinding)
-  , m_corrections(new Corrections)
   , m_track(0)
   , m_processor(new AnalysisProcessor)
   , m_hitsPlot(new HitsPlot)
   , m_positionLabel(0)
 {
+  m_processor->setCorrectionFlags(~Enums::Corrections(0));
+  m_processor->setParticleFilter(~Enums::Particles(0));
   m_processor->addDestination(m_hitsPlot);
   m_hitsPlot->draw(GetCanvas());
   gPad->Update();
@@ -54,7 +54,6 @@ Plotter::~Plotter()
     delete m_track;
   delete m_chain;
   delete m_trackFinding;
-  delete m_corrections;
   delete m_hitsPlot;
 }
 
@@ -96,7 +95,7 @@ void Plotter::mouseMoveEvent(QMouseEvent* event)
   }
 }
 
-void Plotter::drawEvent(unsigned int i, Track::Type type, bool allClusters, QPlainTextEdit& infoTextEdit)
+void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters, QPlainTextEdit& infoTextEdit, TQtWidget& trackFindingWidget)
 {
   TCanvas* canvas = GetCanvas();
   canvas->cd();
@@ -113,6 +112,13 @@ void Plotter::drawEvent(unsigned int i, Track::Type type, bool allClusters, QPla
 
   canvas->Modified();
   canvas->Update();
+
+  TCanvas* tfCan = trackFindingWidget.GetCanvas();
+  tfCan->cd();
+  tfCan->Clear();
+  m_processor->trackFinding()->trackFindingHist()->Draw("colz");
+  tfCan->Modified();
+  tfCan->Update();
 
   //show info for event
   const DataDescription* currentDesc = m_chain->currentDescription();

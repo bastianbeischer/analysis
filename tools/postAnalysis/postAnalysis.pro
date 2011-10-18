@@ -12,4 +12,9 @@ SUBDIRS  = \
   timeResolution \
   mcComparison \
   slowControl \
-  trdMoPV
+  trdMoPV \
+  fileCompare \
+  efficiencyCorrection \
+  angularDistribution \
+  fluxAnalysisTool \
+  browser

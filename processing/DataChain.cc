@@ -9,6 +9,7 @@
 #include "SimpleEvent.hh"
 #include "DataDescription.hh"
 #include "Constants.hh"
+#include "Helpers.hh"
 
 #include <cstdlib>
 #include <fstream>
@@ -22,7 +23,7 @@ DataChain::DataChain()
   , m_event(0)
   , m_currentEntry(-1)
 {
-  init();
+  clear();
 }
 
 DataChain::DataChain(const char* listName)
@@ -41,7 +42,7 @@ DataChain::~DataChain()
   }
 }
 
-void DataChain::init()
+void DataChain::clear()
 {
   if (m_event)
     delete m_event;
@@ -57,7 +58,7 @@ void DataChain::init()
 
 void DataChain::setFileList(const char* listName)
 {
-  init();
+  clear();
   addFileList(listName);
 }
 
@@ -77,11 +78,7 @@ void DataChain::addFileList(const char* listName)
     if (fullname.endsWith(".txt"))
       addFileList(qPrintable(fullname));
     else if (fullname.endsWith(".root")) {
-      const char* env = getenv("PERDAIXDATA_PATH");
-      if (env == 0) {
-        qFatal("ERROR: You need to set PERDAIXDATA_PATH environment variable to the toplevel location of the data!");
-      }
-      fullname.prepend(QString(env) + "/");
+      fullname.prepend(Helpers::dataPath() + "/");
       addRootFile(qPrintable(fullname));
     }
   }

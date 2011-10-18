@@ -3,15 +3,17 @@
 #include "Matrix.hh"
 #include "Hit.hh"
 
-#include "FieldManager.hh"
+#include "Setup.hh"
 #include "MagneticField.hh"
+#include "Constants.hh"
+#include "Helpers.hh"
 
 #include <cmath>
 #include <cfloat>
 #include <iostream>
 
 Track::Track() :
-  m_type(None),
+  m_type(Enums::NoTrack),
   m_matrix(0),
   m_verbose(0),
   m_fitGood(0),
@@ -23,6 +25,16 @@ Track::Track() :
 
 Track::~Track()
 {
+}
+
+void Track::reset()
+{
+  m_hits.clear();
+  m_fitGood = 0;
+  m_chi2 = 0;
+  m_ndf = 0;
+  m_transverseRigidity = 0;
+  m_matrix->reset();
 }
 
 int Track::fit(const QVector<Hit*>& hits)
@@ -42,7 +54,7 @@ void Track::calculateTransverseRigidity()
   if (alpha == 0.)
     m_transverseRigidity = DBL_MAX;
   else {
-    const MagneticField* field = FieldManager::instance()->field();
+    const MagneticField* field = Setup::instance()->field();
     double B_estimate = field->fieldEstimate(); // tesla
     B_estimate *= 0.93;
 
@@ -58,7 +70,7 @@ void Track::calculateTransverseRigidity()
 
 TVector3 Track::meanFieldAlongTrack()
 {
-  const MagneticField* field = FieldManager::instance()->field();
+  const MagneticField* field = Setup::instance()->field();
   double z0 = field->z0();
   double z1 = field->z1();
   int nSteps = 1e2;
@@ -82,5 +94,37 @@ double Track::rigidity() const
   double theta = fabs(atan(slopeY(0.)));
   double rigidity = m_transverseRigidity/cos(theta);
   return rigidity;
+}
+
+double Track::zenithAngle() const
+{
+  double tof = Constants::upperTofPosition;
+  return atan(Helpers::addQuad(slopeX(tof), slopeY(tof)));
+}
+
+double Track::azimuthAngle() const
+{
+  //with respect to the x-axis
+  double tof = Constants::upperTofPosition;
+  double my = slopeY(tof);
+  double mx = slopeX(tof);
+
+  if (mx > 0) {
+    return atan(my / mx);
+  } else if (mx < 0) {
+    if (my >= 0) {
+      return atan(my / mx) + M_PI;
+    } else {
+      return atan(my / mx) - M_PI;
+    }
+  } else {
+    if (my > 0) {
+      return M_PI / 2.;
+    } else if (my < 0) {
+      return -M_PI / 2.;
+    } else {
+      return NAN;
+    }
+  }
 }
 

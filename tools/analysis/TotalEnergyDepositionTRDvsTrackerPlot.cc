@@ -10,10 +10,10 @@
 #include "Cluster.hh"
 #include "Hit.hh"
 
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 
 TotalEnergyDepositionTRDvsTrackerPlot::TotalEnergyDepositionTRDvsTrackerPlot() :
-    AnalysisPlot(AnalysisPlot::MiscellaneousTRD),
+    AnalysisPlot(Enums::MiscellaneousTRD),
   H2DPlot()
 {
 
@@ -27,7 +27,7 @@ TotalEnergyDepositionTRDvsTrackerPlot::~TotalEnergyDepositionTRDvsTrackerPlot()
 {
 }
 
-void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
+void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 
@@ -68,11 +68,11 @@ void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hi
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Cluster* cluster = static_cast<Cluster*>(*it);
     if (cluster->type() == Hit::trd){
-      std::vector<Hit*>& subHits = cluster->hits();
+      const std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         Hit* trdHit = *it;
-        double distance = TRDCalculations::distanceOnTrackThroughTRDTube(trdHit, track);
+        double distance = TRDReconstruction::distanceOnTrackThroughTRDTube(trdHit, track);
         if (distance > 0) {
           distanceSumTRD += distance;
           signalSumTRD += cluster->signalHeight();

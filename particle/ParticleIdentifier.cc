@@ -21,7 +21,7 @@ ParticleIdentifier::~ParticleIdentifier()
 void ParticleIdentifier::identify(Particle* particle)
 {
   // if we can't figure it out conclusively: use unknown
-  particle->setType(Particle::Unknown);
+  particle->setType(Enums::NoParticle);
 
   // keep a list of candidates
   m_candidates = ParticleDB::instance()->allParticles();
@@ -39,14 +39,14 @@ void ParticleIdentifier::identify(Particle* particle)
 
   // remove candidates according to charge sign and set particle type to most likely value
   if (chargeSign > 0) {
-    particle->setType(Particle::Proton);
+    particle->setType(Enums::Proton);
     foreach(const ParticleProperties* candidate, m_candidates) {
       if (candidate->charge() <= 0)
         m_candidates.removeAll(candidate);
     }
   }
   else {
-    particle->setType(Particle::Muon);
+    particle->setType(Enums::Muon);
     foreach(const ParticleProperties* candidate, m_candidates) {
       if (candidate->charge() >= 0)
         m_candidates.removeAll(candidate);
@@ -62,7 +62,7 @@ void ParticleIdentifier::identify(Particle* particle)
     Hit* hit = *it;
     if (hit->type() == Hit::tof) {
       TOFCluster* tofCluster = static_cast<TOFCluster*>(hit);
-      std::vector<Hit*>& subHits = tofCluster->hits();
+      const std::vector<Hit*>& subHits = tofCluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(*it);
@@ -77,7 +77,7 @@ void ParticleIdentifier::identify(Particle* particle)
     Hit* hit = *clusterIt;
     if (hit->type() == Hit::trd) {
       Cluster* cluster = static_cast<Cluster*>(hit);
-      std::vector<Hit*>& subHits = cluster->hits();
+      const std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         sumTRD += (*it)->signalHeight();
@@ -89,10 +89,10 @@ void ParticleIdentifier::identify(Particle* particle)
   if (nTofHits > 0) {
     timeOverThreshold = timeOverThreshold/nTofHits;
     if (timeOverThreshold > 37 && sumTRD > 250 && chargeSign > 0)
-      particle->setType(Particle::Helium);
+      particle->setType(Enums::Helium);
     else {
       foreach(const ParticleProperties* candidate, m_candidates) {
-        if (candidate->type() == Particle::Helium)
+        if (candidate->type() == Enums::Helium)
           m_candidates.removeAll(candidate);
       }
     }

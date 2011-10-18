@@ -13,7 +13,7 @@
 #include "ParticleInformation.hh"
 
 Chi2VsMomentumPlot::Chi2VsMomentumPlot() :
-  AnalysisPlot(AnalysisPlot::Tracking),
+  AnalysisPlot(Enums::Tracking),
   H2DPlot()
 {
   setTitle("Chi2 vs Momentum");
@@ -37,7 +37,7 @@ Chi2VsMomentumPlot::~Chi2VsMomentumPlot()
   delete m_normHisto;
 }
 
-void Chi2VsMomentumPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void Chi2VsMomentumPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 

@@ -11,9 +11,9 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "ParticleInformation.hh"
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 
-TRDEnergyDepositionOverMomentumPlot::TRDEnergyDepositionOverMomentumPlot(AnalysisPlot::Topic topic) :
+TRDEnergyDepositionOverMomentumPlot::TRDEnergyDepositionOverMomentumPlot(Enums::AnalysisTopic topic) :
   AnalysisPlot(topic),
   H2DPlot()
 {
@@ -28,7 +28,7 @@ TRDEnergyDepositionOverMomentumPlot::~TRDEnergyDepositionOverMomentumPlot()
 {
 }
 
-void TRDEnergyDepositionOverMomentumPlot::processEvent(const QVector<Hit*>& /*hits*/,Particle* particle, SimpleEvent* /*event*/)
+void TRDEnergyDepositionOverMomentumPlot::processEvent(const QVector<Hit*>& /*hits*/, const Particle* const particle, const SimpleEvent* const /*event*/)
 {
   const Track* track = particle->track();
 
@@ -75,11 +75,11 @@ void TRDEnergyDepositionOverMomentumPlot::processEvent(const QVector<Hit*>& /*hi
     if (cluster->type() != Hit::trd) 
       continue;
     
-    std::vector<Hit*>& subHits = cluster->hits();
+    const std::vector<Hit*>& subHits = cluster->hits();
     const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       Hit* subHit = *it;
-      double distanceInTube = TRDCalculations::distanceOnTrackThroughTRDTube(subHit, track);
+      double distanceInTube = TRDReconstruction::distanceOnTrackThroughTRDTube(subHit, track);
       if(distanceInTube > 0)
         energyDepPerTubePerDistance << (subHit->signalHeight() / distanceInTube);
     }

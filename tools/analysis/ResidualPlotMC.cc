@@ -7,13 +7,13 @@
 
 #include <TVector3.h>
 
-ResidualPlotMC::ResidualPlotMC(AnalysisPlot::Topic topic, Layer* layer)
+ResidualPlotMC::ResidualPlotMC(Enums::AnalysisTopic topic, Layer* layer)
   : ResidualPlot(topic, layer)
 {
   setTitle("MC " + title());
 }
 
-Track* ResidualPlotMC::referenceTrack(const QVector<Hit*>&, Particle*, SimpleEvent* event)
+Track* ResidualPlotMC::referenceTrack(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
 {
   if (event->contentType() != SimpleEvent::MonteCarlo)
     return 0;

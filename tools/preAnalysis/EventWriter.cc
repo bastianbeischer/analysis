@@ -91,9 +91,9 @@ void EventWriter::run()
   m_file->Close();
 }
 
-void EventWriter::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
+void EventWriter::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
 {
-  m_queue->enqueue(event);
+  m_queue->enqueue(const_cast<SimpleEvent*>(event));
 }
 
 void EventWriter::writeEvent(SimpleEvent* event)

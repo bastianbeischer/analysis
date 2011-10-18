@@ -5,11 +5,12 @@
 #include "RootQtWidget.hh"
 
 #include <QLayout>
+#include <QDebug>
 
-PlotCollection::PlotCollection(AnalysisPlot::Topic topic) :
-  QObject(),
-  AnalysisPlot(topic),
-  m_selectedPlot(0)
+PlotCollection::PlotCollection(Enums::AnalysisTopic topic)
+  : QObject()
+  , AnalysisPlot(topic)
+  , m_selectedPlot(0)
 {
   QWidget* widget = new QWidget;
   QVBoxLayout* layout = new QVBoxLayout;
@@ -23,7 +24,7 @@ PlotCollection::~PlotCollection()
   qDeleteAll(m_plots);
 }
 
-void PlotCollection::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void PlotCollection::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
 {
   foreach(AnalysisPlot* plot, m_plots)
     plot->processEvent(hits, particle, event);
@@ -78,19 +79,23 @@ void PlotCollection::draw(TCanvas* can)
   Plotter::rootWidget()->updateCanvas();
 }
 
-void PlotCollection::saveForPostAnalysis(TCanvas* can)
+void PlotCollection::saveForPostAnalysis(TCanvas* canvas)
 {
-  int prevSelectedPlot = m_selectedPlot;
-  for (m_selectedPlot = 0; m_selectedPlot < m_plots.size(); m_selectedPlot++) {
-    draw(can);
-    can->SetName(qPrintable(m_plots.at(m_selectedPlot)->title() + " canvas"));
-    can->Write();
+  canvas->cd();
+  for (int i = 0; i < m_plots.size(); ++i) {
+    m_plots[i]->draw(canvas);
+    canvas->SetName(qPrintable(m_plots[i]->title() + " canvas"));
+    canvas->Write();
   }
-  selectPlot(prevSelectedPlot);
 }
 
 void PlotCollection::selectPlot(int plot)
 {
   m_selectedPlot = plot;
   draw(Plotter::rootWidget()->GetCanvas());
+}
+
+bool PlotCollection::isPlotCollection()
+{
+  return true;
 }

@@ -14,6 +14,7 @@ class Hit;
 class Layer;
 class DetectorElement;
 class QSettings;
+class MagneticField;
 
 typedef QMap<double,Layer*>::const_iterator LayerIterator ;
 typedef QMap<unsigned short,DetectorElement*>::const_iterator ElementIterator;
@@ -29,6 +30,8 @@ public:
 public:
   Layer* layer(double z);
   DetectorElement* element(unsigned short id);
+
+  const MagneticField* field() const {return m_field;}
 
   LayerIterator firstLayer() const {return m_layers.begin();}
   LayerIterator lastLayer() const {return m_layers.end();}
@@ -64,6 +67,8 @@ private:
 
   QMap<double, Layer*> m_layers;
   QMap<unsigned short, DetectorElement*> m_elements;
+
+  MagneticField* m_field;
 };
 
 #endif /* Setup_hh */

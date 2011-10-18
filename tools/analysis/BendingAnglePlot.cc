@@ -11,7 +11,7 @@
 #include <cmath>
 
 BendingAnglePlot::BendingAnglePlot()
-  : AnalysisPlot(AnalysisPlot::Tracking)
+  : AnalysisPlot(Enums::Tracking)
   , H1DPlot()
 {
   setTitle("bending angle");
@@ -30,7 +30,7 @@ BendingAnglePlot::BendingAnglePlot()
 BendingAnglePlot::~BendingAnglePlot()
 {}
 
-void BendingAnglePlot::processEvent(const QVector<Hit*>& /*clusters*/, Particle* particle, SimpleEvent*)
+void BendingAnglePlot::processEvent(const QVector<Hit*>& /*clusters*/, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 

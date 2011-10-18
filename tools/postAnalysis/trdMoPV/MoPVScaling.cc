@@ -33,7 +33,7 @@ MoPVScaling::MoPVScaling(PostAnalysisCanvas* canvas)
     graph->Fit(m_dependencyFit);
     QString title = QString(canvas->name()).replace("canvas", "graph");
     setTitle(title);
-    addGraph(graph, "p");
+    addGraph(graph, P);
     setAxisTitle(histogram->GetXaxis()->GetTitle(), "trd mopv");
     m_spline = new TSpline3("spline", graph, "b1e1", 0., 0.);
   }
@@ -59,10 +59,8 @@ MoPVScaling::MoPVScaling(QList<PostAnalysisCanvas*> canvasList)
       continue;
     graph->SetLineColor(RootStyle::rootColor(m_colorCounter++));
     graph->SetLineWidth(1);
-    graph->SetDrawOption("LX");
-    addGraph(graph, "LX");
+    addGraph(graph, LX);
   }
-  drawOption(ALX);
 }
 
 MoPVScaling::~MoPVScaling()

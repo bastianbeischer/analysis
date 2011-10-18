@@ -19,7 +19,7 @@ LIBS += \
   -ltracking \
   -lrootplot \
   -lsetup \
-	-lglobal \
+  -lglobal \
   -lpostAnalysis
 
 CLASSES = \

@@ -4,15 +4,15 @@
 #include "SimpleEvent.hh"
 
 #include <TAxis.h>
-#include <THStack.h>
 #include <TPad.h>
+#include <TH1.h>
 
 #include <cmath>
 
 #include <QDebug>
 
 SettingTimePlot::SettingTimePlot(SettingType type, QDateTime first, QDateTime last)
-  : AnalysisPlot(AnalysisPlot::Testbeam)
+  : AnalysisPlot(Enums::Testbeam)
   , H1DPlot()
   , m_type(type)
 {
@@ -50,7 +50,7 @@ SettingTimePlot::~SettingTimePlot()
   delete m_normalizationHistogram;
 }
 
-void SettingTimePlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
+void SettingTimePlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
 {
   //get settings if present
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);

@@ -9,7 +9,7 @@
 #include "Track.hh"
 
 Chi2PerNdfPlot::Chi2PerNdfPlot() :
-  AnalysisPlot(AnalysisPlot::Tracking),
+  AnalysisPlot(Enums::Tracking),
   H1DPlot()
 {
   setTitle("chi2 / ndf");
@@ -29,7 +29,7 @@ Chi2PerNdfPlot::~Chi2PerNdfPlot()
 {
 }
 
-void Chi2PerNdfPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent* /*event*/)
+void Chi2PerNdfPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const /*event*/)
 {
   const Track* track = particle->track();
 

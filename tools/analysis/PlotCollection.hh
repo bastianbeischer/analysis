@@ -2,24 +2,26 @@
 #define PlotCollection_hh
 
 #include "AnalysisPlot.hh"
+
 #include <QObject>
 
-class PlotCollection :
-  public QObject,
-  public AnalysisPlot
+class TCanvas;
+
+class PlotCollection : public QObject, public AnalysisPlot
 {
   Q_OBJECT
-
 public:
-  PlotCollection(AnalysisPlot::Topic);
-  ~PlotCollection();
+  PlotCollection(Enums::AnalysisTopic);
+  virtual ~PlotCollection();
   
   void addPlot(AnalysisPlot* plot) {m_plots.append(plot);}
-  void processEvent(const QVector<Hit*>&, Particle*, SimpleEvent*);
-  void finalize();
-  void update();
+  virtual void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);
+  virtual void finalize();
+  virtual void update();
+  virtual void draw(TCanvas*);
+  virtual bool isPlotCollection();
+
   void unzoom();
-  void draw(TCanvas*);
   void saveForPostAnalysis(TCanvas*);
   void positionChanged(double, double);
 

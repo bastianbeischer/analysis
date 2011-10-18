@@ -8,7 +8,7 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "ParticleInformation.hh"
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 
 #include <TCanvas.h>
 #include <TList.h>
@@ -21,7 +21,7 @@
 #include <math.h>
 
 TRDEfficiencyPlot::TRDEfficiencyPlot()
-  : AnalysisPlot(AnalysisPlot::MiscellaneousTRD)
+  : AnalysisPlot(Enums::MiscellaneousTRD)
   , H2DPlot()
 {
   setTitle("TRD efficiency (hits / was on track)");
@@ -60,7 +60,7 @@ TRDEfficiencyPlot::~TRDEfficiencyPlot()
   m_ellipses.clear();
 }
 
-void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent*)
+void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
   const ParticleInformation::Flags pFlags = particle->information()->flags();
@@ -94,7 +94,7 @@ void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* pa
     i.next();
     QVector2D pos2D = i.value();
     //get distance
-    double distance = TRDCalculations::distanceTrackToWire(pos2D, track);
+    double distance = TRDReconstruction::distanceTrackToWire(pos2D, track);
     //check if tube has been punched by track:
     if (fabs(distance) < 1) {
       //was on track +1
@@ -105,7 +105,7 @@ void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* pa
         if (cluster->type() != Hit::trd)
           continue;
 
-        std::vector<Hit*>& subHits = cluster->hits();
+        const std::vector<Hit*>& subHits = cluster->hits();
         const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
         for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
           Hit* subHit = *it;
@@ -163,9 +163,7 @@ void TRDEfficiencyPlot::updateEllipses()
 
     double value = m_hits.value(i.key()) / static_cast<double>(i.value());
     TEllipse* ell = m_ellipses.value(i.key());
-    m_mutex.lock();
     ell->SetFillColor(palette->GetValueColor(value));
-    m_mutex.unlock();
   }
 }
 

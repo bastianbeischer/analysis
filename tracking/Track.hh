@@ -2,6 +2,7 @@
 #define Track_hh
 
 #include "Matrix.hh"
+#include "Enums.hh"
 
 #include <TVector3.h>
 
@@ -16,12 +17,10 @@ public:
   virtual ~Track();
 
 public:
-  enum Type {None=-1, StraightLine, BrokenLine, CenteredBrokenLine, CenteredBrokenLine2D};
-
   void setVerbose(unsigned short verb) {m_verbose = verb;}
 
 public:
-  Type type() const {return m_type;}
+  Enums::TrackType type() const {return m_type;}
   unsigned short verbose() const {return m_verbose;}
   int fitGood() const {return m_fitGood;}
   unsigned short nParameters() const {return m_matrix->nCol();}
@@ -36,12 +35,17 @@ public:
   virtual double slopeY(double z) const = 0;
   virtual double bendingAngle() const = 0;
   virtual double trackLength() const = 0;
+  
+  double azimuthAngle() const;
+  double zenithAngle() const;
+  
   TVector3 position(double z) const {return TVector3(x(z), y(z), z);}
 
   TVector3 meanFieldAlongTrack();
   double rigidity() const;
 
 public:
+  void reset();
   int fit(const QVector<Hit*>& hits);
 
 private:
@@ -49,7 +53,7 @@ private:
   void calculateTransverseRigidity();
 
 protected:
-  Type m_type;
+  Enums::TrackType m_type;
 
   Matrix* m_matrix;
 

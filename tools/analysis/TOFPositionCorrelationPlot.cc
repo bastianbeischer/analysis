@@ -16,7 +16,7 @@
 #include <QDebug>
 
 TOFPositionCorrelationPlot::TOFPositionCorrelationPlot(unsigned short id)
-  : AnalysisPlot(AnalysisPlot::MiscellaneousTOF)
+  : AnalysisPlot(Enums::MiscellaneousTOF)
   , H2DPlot()
   , m_id(id)
   , m_correlationGraph(new TGraphErrors)
@@ -38,7 +38,7 @@ TOFPositionCorrelationPlot::~TOFPositionCorrelationPlot()
   delete m_correlationGraph;
 }
 
-void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
+void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 
@@ -52,7 +52,7 @@ void TOFPositionCorrelationPlot::processEvent(const QVector<Hit*>& clusters, Par
   const QVector<Hit*>::const_iterator endIt = clusters.end();
   for (QVector<Hit*>::const_iterator it = clusters.begin(); it != endIt; ++it) {
     Hit* hit = *it;
-    if (hit->type() == Hit::tof && (hit->detId()-hit->channel()) == m_id)
+    if (hit->type() == Hit::tof && (hit->elementId()) == m_id)
       histogram()->Fill(track->y(hit->position().z()), static_cast<TOFCluster*>(hit)->yEstimate(false));
   }
 }

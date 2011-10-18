@@ -25,17 +25,21 @@ double betaMomentumCorrelationFunction(double x[], double p[])
 }
 
 BetaMomentumCorrelationPlot::BetaMomentumCorrelationPlot()
-  : AnalysisPlot(AnalysisPlot::MomentumReconstruction)
+  : AnalysisPlot(Enums::MomentumReconstruction)
   , H2DPlot()
 {
   setTitle(QString("beta vs momentum"));
-  int nBinsX = 120;
+  int nBinsX = 121;
   double xMin = -6;
   double xMax = 6;
-  int nBinsY = 200;
+  int nBinsY = 201;
+  double binWidthX = (xMax - xMin) / nBinsX;
   double yMin = -10;
   double yMax = 10;
-  TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, xMin, xMax, nBinsY, yMin, yMax);
+  double binWidthY = (yMax - yMin) / nBinsY;
+  TH2D* histogram = new TH2D(qPrintable(title()), "",
+    nBinsX, xMin - binWidthX / 2., xMax + binWidthX / 2.,
+    nBinsY, yMin - binWidthY / 2., yMax + binWidthY / 2.);
   addHistogram(histogram);
   setAxisTitle("R / GV", "1 / #beta", "");
 
@@ -95,21 +99,15 @@ BetaMomentumCorrelationPlot::~BetaMomentumCorrelationPlot()
 {
 }
 
-void BetaMomentumCorrelationPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void BetaMomentumCorrelationPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
-
   if (!track || !track->fitGood())
     return;
   ParticleInformation::Flags flags = particle->information()->flags();
-  if (!(flags & (ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet)))
+  ParticleInformation::Flags required = ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet | ParticleInformation::BetaGood;
+  if ((flags & required) != required)
     return;
-  
-  if (!(flags & ParticleInformation::Chi2Good))
-    return;
-
-  // if (particle->type() != Particle::Helium)
-  //   return;
-
+  //&& (flags & ParticleInformation::InsideMagnet) && (flags & ParticleInformation::BetaGood)))
   histogram()->Fill(track->rigidity(), 1./particle->beta());
 }

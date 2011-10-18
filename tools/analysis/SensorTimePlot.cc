@@ -4,13 +4,13 @@
 #include "SimpleEvent.hh"
 
 #include <TAxis.h>
-#include <THStack.h>
 #include <TPad.h>
+#include <TH1.h>
 
 #include <cmath>
 
 SensorTimePlot::SensorTimePlot(SensorTypes::Type type, QDateTime first, QDateTime last)
-  : AnalysisPlot(AnalysisPlot::SlowControl)
+  : AnalysisPlot(Enums::SlowControl)
   , H1DPlot()
   , m_type(type)
 {
@@ -36,7 +36,7 @@ SensorTimePlot::~SensorTimePlot()
   delete m_normalizationHistogram;
 }
 
-void SensorTimePlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
+void SensorTimePlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
 {
   double value = event->sensorData(m_type);
   if (!std::isnan(value)) {

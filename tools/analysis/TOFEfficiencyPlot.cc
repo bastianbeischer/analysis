@@ -18,7 +18,7 @@
 #include <QDebug>
 
 TOFEfficiencyPlot::TOFEfficiencyPlot(unsigned short id)
-  : AnalysisPlot(AnalysisPlot::EfficiencyTOF)
+  : AnalysisPlot(Enums::EfficiencyTOF)
   , H2DPlot()
   , m_id(id)
   , m_updateCounter(0)
@@ -38,7 +38,7 @@ TOFEfficiencyPlot::~TOFEfficiencyPlot()
   delete m_normalizationHistogram;
 }
 
-void TOFEfficiencyPlot::processEvent(const QVector<Hit*>& clusters, Particle* particle, SimpleEvent*)
+void TOFEfficiencyPlot::processEvent(const QVector<Hit*>& clusters, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 

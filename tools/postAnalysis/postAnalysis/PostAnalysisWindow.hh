@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QListWidgetItem>
+#include <QFileDialog>
+#include <QStringList>
 
 class TFile;
 class PostAnalysisPlot;
@@ -14,26 +16,32 @@ Q_OBJECT
 public:
   PostAnalysisWindow(QWidget* parent = 0);
   ~PostAnalysisWindow();
-  void setAnalysisFile(const QString&);
+  void addAnalysisFiles(const QStringList&);
 protected:
   void addWidget(QWidget*);
   virtual void setupAnalysis() = 0;
   PostAnalysisCanvas* addCanvas(TFile*, const QString& name);
   void addPlot(PostAnalysisPlot*);
-  QString m_analysisFile;
+  void clearPlots();
+  QStringList m_analysisFiles;
   QVector<PostAnalysisCanvas*> m_canvases;
   QVector<PostAnalysisPlot*> m_plots;
+  QFileDialog::Options m_dialogOptions;
 private slots:
+  void filterChanged(const QString&);
   void saveButtonClicked();
   void saveAllButtonClicked();
   void selectCanvas(QListWidgetItem*);
   void selectCanvas(QListWidgetItem*, QListWidgetItem*);
   void selectPlot(QListWidgetItem*);
   void selectPlot(QListWidgetItem*, QListWidgetItem*);
+  void canvasPositionChanged(double, double);
   void plotOptionComboBoxCurrentIndexChanged(const QString& option);
-  void setLogY(int);
+  void aspectRatioChanged(int);
+  void unzoom();
 protected:
   Ui_postAnalysisWindow* m_ui;
+  int m_selectedPlot;
 };
 
 #endif

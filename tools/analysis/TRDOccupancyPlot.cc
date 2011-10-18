@@ -8,7 +8,7 @@
 #include "Hit.hh"
 #include "Cluster.hh"
 #include "SimpleEvent.hh"
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 #include "TRDSpectrumPlot.hh"
 
 #include <TCanvas.h>
@@ -18,7 +18,7 @@
 #include <TPaletteAxis.h>
 
 TRDOccupancyPlot::TRDOccupancyPlot(TrdOccupancyType occupancyType, bool onlyOnTrack)
-  : AnalysisPlot(AnalysisPlot::MiscellaneousTRD)
+  : AnalysisPlot(Enums::MiscellaneousTRD)
   , H2DPlot()
   , m_occupancyType(occupancyType)
   , m_onlyOnTrack(onlyOnTrack)
@@ -57,7 +57,7 @@ TRDOccupancyPlot::~TRDOccupancyPlot()
   m_ellipses.clear();
 }
 
-void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
+void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const)
 {
 
   const Track* track = particle->track();
@@ -83,15 +83,15 @@ void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, Particle* particl
     Cluster* cluster = static_cast<Cluster*>(clusterHit);
 
     //loop over all subhits of the cluster, in most cases just one
-    std::vector<Hit*>& subHits = cluster->hits();
+    const std::vector<Hit*>& subHits = cluster->hits();
     const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       Hit* hit = *it;
       //analyse the hit:
       double distanceInTube = 1.;
 
-      if(TRDSpectrumPlot::calculateLengthInTube)
-          TRDCalculations::distanceOnTrackThroughTRDTube(hit, track);
+      if(TRDReconstruction::s_calculateLengthInTube)
+          TRDReconstruction::distanceOnTrackThroughTRDTube(hit, track);
 
       if(!(distanceInTube > 0 && trackHits.contains(clusterHit)) && m_onlyOnTrack)
         continue;
@@ -119,9 +119,7 @@ void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, Particle* particl
       histogram()->SetBinContent(binToFill,value);
       // TPaletteAxis* palette = (TPaletteAxis*) histogram()->GetListOfFunctions()->FindObject("palette");
       // if(palette) {
-      //   m_mutex.lock();
       //   ell->SetFillColor( palette->GetValueColor(value));
-      //   m_mutex.unlock();
       // }
     }
   }
@@ -178,9 +176,7 @@ void TRDOccupancyPlot::updateEllipses()
       break;
     }
     TEllipse* ell = m_ellipses.value(i.key());
-    m_mutex.lock();
     ell->SetFillColor(palette->GetValueColor(value));
-    m_mutex.unlock();
     //ell->Draw("same");
   }
 }

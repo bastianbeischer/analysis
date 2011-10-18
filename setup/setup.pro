@@ -15,16 +15,17 @@ CLASSES += \
   TOFBar \
   Settings \
   SettingsManager \
-  FieldManager \
   InhomField \
   MagneticField \
   UniformField
 
 INCLUDEPATH += \
+  $$TOPLEVEL/global \
   $$TOPLEVEL/event
 
 LIBS += \
   -L$$TOPLEVEL/lib \
+  -lglobal \
   -lSimpleEvent
 
 include($$TOPLEVEL/root.pri)

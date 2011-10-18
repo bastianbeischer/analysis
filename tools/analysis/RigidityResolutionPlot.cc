@@ -23,7 +23,7 @@
 
 #include "TF1.h"
 
-RigidityResolutionPlot::RigidityResolutionPlot(AnalysisPlot::Topic topic, const Particle::Type& type)
+RigidityResolutionPlot::RigidityResolutionPlot(Enums::AnalysisTopic topic, const Enums::Particle& type)
   : AnalysisPlot(topic)
   , H1DPlot()
   , m_particle(ParticleDB::instance()->lookupType(type))
@@ -55,19 +55,19 @@ RigidityResolutionPlot::RigidityResolutionPlot(AnalysisPlot::Topic topic, const 
 
   switch (m_particle->type())
   {
-  case Particle::Proton: //case Particle::AntiProton:
+  case Enums::Proton: //case Enums::AntiProton:
     expectedRes->SetParameter(2, 0.077);
     expectedRes->SetParameter(3, 0.3175);
     break;
-  case Particle::Electron: case Particle::Positron:
+  case Enums::Electron: case Enums::Positron:
     expectedRes->SetParameter(2, 0.07627);
     expectedRes->SetParameter(3, 0.2349);
     break;
-  case Particle::Helium:
+  case Enums::Helium:
     expectedRes->SetParameter(2, 0.04195);
     expectedRes->SetParameter(3, 0.3024);
     break;
-  case Particle::PiPlus: case Particle::PiMinus:
+  case Enums::PiPlus: case Enums::PiMinus:
     expectedRes->SetParameter(2, 0.0759);
     expectedRes->SetParameter(3, 0.2356);
     break;
@@ -151,7 +151,7 @@ void RigidityResolutionPlot::loadRigHisto(int bin)
   }
 }
 
-void RigidityResolutionPlot::processEvent(const QVector<Hit*>& /*hits*/, Particle* particle, SimpleEvent* event)
+void RigidityResolutionPlot::processEvent(const QVector<Hit*>& /*hits*/, const Particle* const particle, const SimpleEvent* const event)
 {
   //get track
   Track* track = particle->track();

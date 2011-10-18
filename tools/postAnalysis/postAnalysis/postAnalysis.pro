@@ -5,9 +5,6 @@ CONFIG += debug
 
 TOPLEVEL = ../../..
 
-FORMS+= \
-  PostAnalysisWindow.ui
-
 INCLUDEPATH += \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/global
@@ -17,10 +14,7 @@ LIBS += \
   -lrootplot \
   -lglobal
 
-CLASSES = \
-  PostAnalysisWindow \
-  PostAnalysisPlot \
-  PostAnalysisCanvas
+SOURCEDIRS = .
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

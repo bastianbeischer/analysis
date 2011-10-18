@@ -4,12 +4,12 @@
 #include "ParticleDB.hh"
 #include "ParticleProperties.hh"
 
-MCFilter::MCFilter(Types types) :
-  m_types(types)
+MCFilter::MCFilter(Enums::Particles types)
+  : m_types(types)
 {
 }
 
-bool MCFilter::passes(const QVector<Hit*>&, Particle*, SimpleEvent* event) const
+bool MCFilter::passes(SimpleEvent* event) const
 {
   if (event->contentType() != SimpleEvent::MonteCarlo)
     return true;

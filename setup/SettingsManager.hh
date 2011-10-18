@@ -1,8 +1,7 @@
 #ifndef SettingsManager_hh
 #define SettingsManager_hh
 
-#include <QMap>
-#include <QPair>
+#include <QVector>
 
 class QSettings;
 class Settings;
@@ -15,7 +14,7 @@ public:
   ~SettingsManager();
   
   static SettingsManager* instance();
-  const Settings* settingsForEvent(SimpleEvent*) const;
+  const Settings* settingsForEvent(const SimpleEvent* const) const;
   const Settings* settingsForRun(int) const;
 
 private:
@@ -25,7 +24,7 @@ private:
 private:
   static SettingsManager* s_instance;
   QSettings* m_configFile;
-  QList<const Settings*> m_settings;
+  QVector<const Settings*> m_settings;
 
 };
 

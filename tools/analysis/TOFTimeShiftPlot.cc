@@ -17,7 +17,7 @@
 #include <QDebug>
 
 TOFTimeShiftPlot::TOFTimeShiftPlot(unsigned short topBarId, unsigned short bottomBarId, unsigned short referenceChannel)
-  : AnalysisPlot(AnalysisPlot::CalibrationTOF)
+  : AnalysisPlot(Enums::CalibrationTOF)
   , H2DProjectionPlot()
   , m_topBarId(topBarId)
   , m_bottomBarId(bottomBarId)
@@ -41,7 +41,7 @@ TOFTimeShiftPlot::TOFTimeShiftPlot(unsigned short topBarId, unsigned short botto
 TOFTimeShiftPlot::~TOFTimeShiftPlot()
 {}
 
-void TOFTimeShiftPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void TOFTimeShiftPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 

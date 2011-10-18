@@ -7,6 +7,7 @@
 #include "MoPVScalingPressure.hh"
 #include "MoPVScalingTemperature.hh"
 #include "MoPVConstant.hh"
+#include "LHFit.hh"
 
 #include "Setup.hh"
 
@@ -31,8 +32,18 @@ MainWindow::~MainWindow()
 void MainWindow::setupAnalysis()
 {
   PostAnalysisCanvas* canvas = 0;
-  TFile file(qPrintable(m_analysisFile));
+  TFile file(qPrintable(m_analysisFiles.at(0)));
   gROOT->cd();
+
+  //add TRDSpectra and LHFit plots
+  PostAnalysisCanvas* completeTRDSpectrumCanvas = addCanvas(&file, "complete TRD spectrum canvas");
+  addPlot(new LHFit(completeTRDSpectrumCanvas));
+  //add TRDSpectra for each layer
+  for (int i = 0; i < 8; ++i) {
+    PostAnalysisCanvas* trdLayerSpectrum = addCanvas(&file, "TRD layer spectrum " + QString::number(i) + " canvas");
+    addPlot(new LHFit(trdLayerSpectrum, i));
+  }
+
 
   //add info plots
   addCanvas(&file, "TRD_GAS_COLD_TEMP canvas");

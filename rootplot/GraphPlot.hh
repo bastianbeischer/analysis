@@ -6,9 +6,9 @@
 #include <QString>
 #include <QVector>
 
-class TMultiGraph;
 class TCanvas;
 class TGraph;
+class TAxis;
 
 class GraphPlot : virtual public RootPlot {
 public:
@@ -19,16 +19,21 @@ public:
   virtual void unzoom();
   virtual void clear();
   virtual void clear(int);
-  void addGraph(TGraph*, const char* = "");
   int numberOfGraphs() const;
-  void setAxisTitle(const QString&, const QString&);
   TGraph* graph(int i = 0);
-protected:
-  TMultiGraph* m_multiGraph;
+  void setAxisTitle(const QString&, const QString&);
+  void addGraph(TGraph*, DrawOption = P);
+  void removeGraph(int i = 0);
+  TAxis* xAxis();
+  TAxis* yAxis();
 private:
+  QVector<TGraph*> m_graphs;
+  TAxis* m_xAxis;
+  TAxis* m_yAxis;
   QString m_xAxisTitle;
   QString m_yAxisTitle;
+  QVector<DrawOption> m_drawOptions;
   static const QVector<DrawOption> s_drawOptions;
 };
 
-#endif // GRAPHPLOT_HH
+#endif

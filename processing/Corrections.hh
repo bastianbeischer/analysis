@@ -2,6 +2,7 @@
 #define Corrections_hh
 
 #include "Constants.hh"
+#include "Enums.hh"
 
 #include <QFlags>
 #include <QVector>
@@ -19,27 +20,20 @@ class Hit;
 class Particle;
 class SimpleEvent;
 
-
 class Corrections
 {
-  
 public:
-  enum Flag {None = 0x0, Alignment = 0x1<<0, TimeShifts = 0x1<<1, TrdMopv = 0x1<<2, TrdTime = 0x1<<3
-             , TrdPressure = 0x1<<4, TrdTemperature = 0x1<<5
-             , TofTimeOverThreshold = 0x1<<6, MultipleScattering = 0x1<<7, PhotonTravelTime = 0x1<<8};
-  Q_DECLARE_FLAGS(Flags, Flag);
-
-public:
-  Corrections(Flags = ~Flags(0));
+  Corrections(Enums::Corrections = Enums::NoCorrection);
   ~Corrections();
   
 public:
-  void setFlags(const Flags& flags) {m_flags = flags;}
-  Flags flags() const {return m_flags;}
+  void setFlags(const Enums::Corrections& flags) {m_flags = flags;}
+  Enums::Corrections flags() const {return m_flags;}
 
 public:
   void preFitCorrections(SimpleEvent*);
   void postFitCorrections(Particle*);
+  void postTOFCorrections(Particle*);
 
   static const int nPhotonTravelTimeParameters = 3;
   static const int nPhotonTravelTimeDifferenceParameters = 6;
@@ -63,10 +57,10 @@ public:
   void setTrdScalingFactor(unsigned int, double);
   double trdPressureDependendFactor(double P);
   void setTrdPressureDependendFactor(QPair<double,double> P0, double dM_dP);
-  void getTrdPressureDependendFactor(QPair<double,double>& P0, double& dM_dP);
+  void trdPressureDependendFactor(QPair<double,double>& P0, double& dM_dP);
   double trdTemperatureDependendFactor(double T);
   void setTrdTemperatureDependendFactor(QPair<double,double> T0, double dM_dT);
-  void getTrdTemperatureDependendFactor(QPair<double,double>& T0, double& dM_dT);
+  void trdTemperatureDependendFactor(QPair<double,double>& T0, double& dM_dT);
   void addTrdTimeDependendFactor(double time, double factor);
   void removeTrdTimeDependendFactors(double startTime, double endTime);
   double trdTimeDependendFactor(double time);
@@ -82,17 +76,15 @@ private:
   void writeTRDTimeDependendCorrections();
 
 public:
-  TSpline3* getTrdTimeSpline() const;
-  QMap<double, double> getTrdTimeFactors() const {return m_TRDMapTime;}
+  TSpline3* trdTimeSpline() const;
+  QMap<double, double> trdTimeFactors() const {return m_TRDMapTime;}
   
 private:
   QSettings* m_trdSettings;
   QSettings* m_tofSettings;
-  Flags      m_flags;
-  TSpline3*   m_TRDSplineTime;
+  Enums::Corrections m_flags;
+  TSpline3* m_TRDSplineTime;
   QMap<double, double> m_TRDMapTime;
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(Corrections::Flags);
 
 #endif /* Corrections_hh */

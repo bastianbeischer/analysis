@@ -8,11 +8,11 @@ class TestbeamRigidityResolutionPlot :
 {
   
 public:
-  TestbeamRigidityResolutionPlot(const Particle::Type& = Particle::Electron);
+  TestbeamRigidityResolutionPlot(const Enums::Particle& = Enums::Electron);
   ~TestbeamRigidityResolutionPlot();
   
-  void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
-  double referenceRigidity(SimpleEvent*) const;
+  void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);
+  double referenceRigidity(const SimpleEvent* const) const;
   
 };
 

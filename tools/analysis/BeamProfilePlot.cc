@@ -20,7 +20,7 @@
 
 BeamProfilePlot::BeamProfilePlot(Type type) :
   H2DProjectionPlot(),
-  AnalysisPlot(AnalysisPlot::Testbeam),
+  AnalysisPlot(Enums::Testbeam),
   m_type(type),
   m_fileNameLineEdit(new QLineEdit("beamprofile.root"))
 {
@@ -67,16 +67,12 @@ BeamProfilePlot::~BeamProfilePlot()
 {
 }
 
-void BeamProfilePlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void BeamProfilePlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 
   if(!track || !track->fitGood())
     return;
-
-//  ParticleInformation::Flags flags = particle->information()->flags();
-//  if (!(flags & ParticleInformation::AllTrackerLayers))
-//    return;
 
   if (m_type == Horizontal)
     histogram()->Fill(track->y(0), track->slopeY(0));

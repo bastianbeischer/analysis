@@ -9,7 +9,7 @@
 #include "Hit.hh"
 #include "Cluster.hh"
 
-ClusterLengthPlot::ClusterLengthPlot(AnalysisPlot::Topic topic, unsigned short id) :
+ClusterLengthPlot::ClusterLengthPlot(Enums::AnalysisTopic topic, unsigned short id) :
   AnalysisPlot(topic),
   H1DPlot(),
   m_id(id)
@@ -28,7 +28,7 @@ ClusterLengthPlot::~ClusterLengthPlot()
 {
 }
 
-void ClusterLengthPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
+void ClusterLengthPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 
@@ -42,7 +42,7 @@ void ClusterLengthPlot::processEvent(const QVector<Hit*>& hits, Particle* partic
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Cluster* cluster = static_cast<Cluster*>(*it);
-    if (cluster->detId() - cluster->channel() == m_id)
+    if (cluster->elementId() == m_id)
       histogram()->Fill(cluster->hits().size());
   }
 }

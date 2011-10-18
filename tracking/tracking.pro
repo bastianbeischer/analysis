@@ -16,7 +16,8 @@ CLASSES += \
   StraightLine \
   StraightLineMatrix \
   Track \
-  TrackFinding
+  TrackFinding \
+  TrdTrackFinding
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \
@@ -25,7 +26,11 @@ INCLUDEPATH += \
 
 DEPENDPATH += $$INCLUDEPATH
 
-LIBS += -L$$TOPLEVEL/lib -lSimpleEvent -lsetup
+LIBS += \
+  -L$$TOPLEVEL/lib \
+  -lSimpleEvent \
+  -lsetup \
+  -lglobal
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

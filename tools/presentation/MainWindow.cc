@@ -1,4 +1,5 @@
 #include "MainWindow.hh"
+#include "Helpers.hh"
 
 #include <QProcess>
 #include <QDebug>
@@ -8,12 +9,7 @@ MainWindow::MainWindow(QWidget* parent)
   : QDialog(parent)
 {
   m_ui.setupUi(this);
-
-  const char* env = getenv("PERDAIXANA_PATH");
-  if (env == 0) {
-    qFatal("ERROR: You need to set PERDAIXANA_PATH environment variable to the toplevel location!");
-  }
-  QString topLevelPath(env);
+  QString topLevelPath = Helpers::analysisPath();
   QFile file(topLevelPath + "/tools/presentation/" + "template.tex");
   if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
     qFatal("Couldn't open template file!");

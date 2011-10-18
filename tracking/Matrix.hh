@@ -13,8 +13,9 @@ public:
   Matrix();
   virtual ~Matrix();
   
+  void reset();
   int fit(const QVector<Hit*>& hits);
-  TVectorD solution() const {return m_solution;}
+  double* solution() const {return m_solution;}
   unsigned int nRow() const {return m_nRow;}
   unsigned int nCol() const {return m_nCol;}
   double chi2() const {return m_chi2;}
@@ -22,7 +23,7 @@ public:
   
 protected:
   virtual bool checkInvertability(const QVector<Hit*>& hits) const;
-  virtual void fillMatrixFromHit(TMatrixD& A, unsigned int i, bool useTangens, float k, float xi) const = 0;
+  virtual void fillMatrixFromHit(double* A, double k, double c, double s) const = 0;
 
 protected:
   unsigned int m_nRow;
@@ -31,7 +32,7 @@ protected:
   double m_chi2;
   double m_ndf;
 
-  TVectorD m_solution;
+  double* m_solution;
 
 };
 

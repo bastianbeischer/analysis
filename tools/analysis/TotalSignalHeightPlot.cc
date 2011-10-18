@@ -9,7 +9,7 @@
 #include "Cluster.hh"
 
 TotalSignalHeightPlot::TotalSignalHeightPlot() :
-  AnalysisPlot(AnalysisPlot::MiscellaneousTracker),
+  AnalysisPlot(Enums::MiscellaneousTracker),
   H1DPlot()
 {
   double maximum = 5e4;
@@ -24,7 +24,7 @@ TotalSignalHeightPlot::~TotalSignalHeightPlot()
 {
 }
 
-void TotalSignalHeightPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent*)
+void TotalSignalHeightPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 

@@ -4,12 +4,11 @@
 #include <TH1.h>
 #include <TAxis.h>
 #include <TPad.h>
-#include <THStack.h>
 
 #include <QDebug>
 
 TriggerRateTimePlot::TriggerRateTimePlot(QDateTime first, QDateTime last)
-  : AnalysisPlot(AnalysisPlot::SlowControl)
+  : AnalysisPlot(Enums::SlowControl)
   , H1DPlot()
 {
   setTitle("trigger rate");
@@ -28,9 +27,9 @@ TriggerRateTimePlot::TriggerRateTimePlot(QDateTime first, QDateTime last)
 TriggerRateTimePlot::~TriggerRateTimePlot()
 {}
 
-void TriggerRateTimePlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
+void TriggerRateTimePlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
 {
-  if (event->time() < xAxis()->GetXmin() || event->time() >= xAxis()->GetXmax())
+  if ((event->time() < xAxis()->GetXmin() || event->time() >= xAxis()->GetXmax()) && event->contentType() != SimpleEvent::MonteCarlo)
     qDebug() << event->time();
   else
     histogram()->Fill(event->time());

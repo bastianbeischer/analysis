@@ -1,11 +1,22 @@
 DEPENDPATH += $$INCLUDEPATH
 
+for(dir, SOURCEDIRS) {
+  dir = $$OUT_PWD/$$dir
+  !exists($${dir}) {
+    error(Directory $${dir} does not exist!)
+  }
+  SOURCES += $$system(ls -1 $${dir}/*.cc)
+  HEADERS += $$system(ls -1 $${dir}/*.hh)
+  FORMS   += $$system(ls -1 $${dir}/*.ui 2>/dev/null)
+  INCLUDEPATH += $$dir
+}
+
 for(class, CLASSES) {
   HEADERS += $${class}.hh
   SOURCES += $${class}.cc
 }
 
-QMAKE_LFLAGS -= -Wl,--as-needed
+QMAKE_LFLAGS += -Wl,--no-as-needed
 
 # Seperate source & build dirs
 

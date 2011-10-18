@@ -20,7 +20,7 @@
 #include <QDebug>
 
 TOTPlot::TOTPlot()
-  : AnalysisPlot(TimeOverThreshold)
+  : AnalysisPlot(Enums::TimeOverThreshold)
   , H2DProjectionPlot()
 {
   controlWidget()->spinBox()->setMaximum(64);
@@ -36,7 +36,7 @@ TOTPlot::TOTPlot()
 TOTPlot::~TOTPlot()
 {}
 
-void TOTPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void TOTPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
   if (!track || !track->fitGood())
@@ -47,7 +47,7 @@ void TOTPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent
     Hit* hit = *it;
     if (hit->type() == Hit::tof) {
       TOFCluster* cluster = static_cast<TOFCluster*> (hit);
-      std::vector<Hit*>& subHits = cluster->hits();
+      const std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         Hit* tofHit = *it;

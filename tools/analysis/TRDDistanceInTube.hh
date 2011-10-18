@@ -8,11 +8,10 @@ class TRDDistanceInTube : public AnalysisPlot, public H1DPlot
 {
 
 public:
-  TRDDistanceInTube(AnalysisPlot::Topic);
+  TRDDistanceInTube(Enums::AnalysisTopic);
   ~TRDDistanceInTube();
 
-  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
-  virtual void finalize();
+  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
 
 };
 

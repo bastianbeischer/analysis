@@ -19,7 +19,7 @@
 #include <QDebug>
 
 BetaPlot::BetaPlot()
-  : AnalysisPlot(AnalysisPlot::MiscellaneousTOF)
+  : AnalysisPlot(Enums::MiscellaneousTOF)
   , H1DPlot()
   , m_cut(0)
   , m_line(new TLine)
@@ -42,14 +42,15 @@ BetaPlot::~BetaPlot()
   delete m_line;
 }
 
-void BetaPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void BetaPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
 
   if (!track || !track->fitGood())
     return;
   ParticleInformation::Flags flags = particle->information()->flags();
-  if (!(flags & ParticleInformation::AllTrackerLayers))
+  ParticleInformation::Flags required = ParticleInformation::Chi2Good | ParticleInformation::BetaGood;
+  if ((flags & required) != required)
     return;
   histogram()->Fill(1./particle->beta());
 }

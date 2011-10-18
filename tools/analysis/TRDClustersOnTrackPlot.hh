@@ -8,11 +8,11 @@ class TRDClustersOnTrackPlot : public AnalysisPlot, public H1DPlot
 {
   
 public:
-  TRDClustersOnTrackPlot(AnalysisPlot::Topic);
+  TRDClustersOnTrackPlot(Enums::AnalysisTopic);
   ~TRDClustersOnTrackPlot();
 
-  virtual void processEvent(const QVector<Hit*>&, Particle* = 0, SimpleEvent* = 0);
-  virtual void finalize();
+  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  virtual void update();
 
 };
 

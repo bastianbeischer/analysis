@@ -8,7 +8,7 @@
 #include <QLayout>
 
 TRDSpectrumVsPressurePlotCollection::TRDSpectrumVsPressurePlotCollection() :
-  PlotCollection(AnalysisPlot::SignalHeightTRD)
+  PlotCollection(Enums::SignalHeightTRD)
 {
   QStringList moduleIDs;
 

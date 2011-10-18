@@ -4,20 +4,45 @@
 #include "PostAnalysisPlot.hh"
 #include "H1DPlot.hh"
 
-class TF1;
-class TH2D;
 class PostAnalysisCanvas;
+class TH2D;
 
 class TimeOfFlightHistogram : public PostAnalysisPlot, public H1DPlot {
 public:
   TimeOfFlightHistogram(PostAnalysisCanvas*, int bin);
-  double y();
-  double sigma();
   virtual ~TimeOfFlightHistogram();
-  static TH2D* histgram(TCanvas*);
+  int upperId() const;
+  int lowerId() const;
+  int i() const;
+  int j() const;
+  int k() const;
+  int l() const;
+  double upperY() const;
+  double lowerY() const;
+  double mean() const;
+  double meanError() const;
+  double sigma() const;
+  double sigmaError() const;
+  double v() const;
+  double vError() const;
+  bool fitGood() const;
 private:
-  double m_y;
+  void extractIndizes(const QString& canvasName, const TH2D* const histogram, int bin);
+  void extractParameters();
+
+  int m_upperId;
+  int m_lowerId;
+  int m_i, m_j, m_k, m_l;
+  double m_upperY;
+  double m_lowerY;
+  double m_mean;
+  double m_meanError;
   double m_sigma;
+  double m_sigmaError;
+  double m_v;
+  double m_vError;
+  bool m_fitted;
+  bool m_fitGood;
 };
 
 #endif

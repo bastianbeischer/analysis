@@ -13,7 +13,6 @@
 
 EventReader::EventReader(QObject* parent)
   : QThread(parent)
-  , m_mutex()
   , m_abort(true)
   , m_firstEvent(0)
   , m_lastEvent(0)
@@ -21,7 +20,7 @@ EventReader::EventReader(QObject* parent)
   , m_readEvents(0)
   , m_chain(new DataChain())
   , m_nThreads(0)
-  , m_bufferSize(1000)
+  , m_bufferSize(10000)
   , m_threads()
 {
 }
@@ -29,6 +28,11 @@ EventReader::EventReader(QObject* parent)
 EventReader::~EventReader()
 {
   delete m_chain;
+}
+
+int EventReader::numberOfEvents() const
+{
+  return m_chain->nEntries();
 }
 
 int EventReader::queuedEvents() const
@@ -57,6 +61,12 @@ int EventReader::bufferSize() const
 void EventReader::setBufferSize(int size)
 {
   m_bufferSize = size;
+}
+
+void EventReader::clearFileList()
+{
+  m_chain->clear();
+  emit(numberOfEventsChanged(m_chain->nEntries()));
 }
 
 void EventReader::setFileList(const QString& fileName)
@@ -112,23 +122,21 @@ void EventReader::run()
   Q_ASSERT(m_firstEvent <= m_lastEvent && m_lastEvent < m_chain->nEntries());
   unsigned int nEvents = m_lastEvent - m_firstEvent + 1;
 
+  const QVector<ProcessingThread*>::const_iterator endIt = m_threads.constEnd();
+  const QVector<ProcessingThread*>::const_iterator beginIt = m_threads.constBegin();
+  QVector<ProcessingThread*>::const_iterator it;
   for (m_readEvents = 0; m_readEvents < nEvents;) {
-    foreach(ProcessingThread* thread, m_threads) {
+    for(it = beginIt; it != endIt; it++) {
+      ProcessingThread* thread = *it;
       if (thread->queue()->freeSpace() > 0 && m_readEvents < nEvents) {
         SimpleEvent* event = m_chain->event(m_firstEvent + m_readEvents);
         thread->queue()->enqueue(event);
-        m_mutex.lock();
         ++m_readEvents;
-        m_mutex.unlock();
       }
     }
 
-    m_mutex.lock();
-    if (m_abort) {
-      m_mutex.unlock();
+    if (m_abort)
       break;
-    }
-    m_mutex.unlock();
   }
   
   do {

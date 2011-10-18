@@ -13,7 +13,6 @@ class TrackerTemperaturePlot : public PostAnalysisPlot, public GraphPlot {
 public:
   TrackerTemperaturePlot(const QVector<PostAnalysisCanvas*>);
   virtual ~TrackerTemperaturePlot();
-  virtual void draw(TCanvas*);
 private:
   int layer(double z);
 };

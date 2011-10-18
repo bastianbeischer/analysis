@@ -13,13 +13,12 @@
 
 #include <TH2.h>
 #include <TVector3.h>
-#include <THStack.h>
 
 #include <iostream>
 #include <QDebug>
 
 TOFTimeShiftTriggerPlot::TOFTimeShiftTriggerPlot()
-  : AnalysisPlot(AnalysisPlot::CalibrationTOF)
+  : AnalysisPlot(Enums::CalibrationTOF)
   , H2DProjectionPlot()
 {
   setTitle("time shift tigger");
@@ -35,7 +34,7 @@ TOFTimeShiftTriggerPlot::TOFTimeShiftTriggerPlot()
 TOFTimeShiftTriggerPlot::~TOFTimeShiftTriggerPlot()
 {}
 
-void TOFTimeShiftTriggerPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void TOFTimeShiftTriggerPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
   if (!track || !track->fitGood())

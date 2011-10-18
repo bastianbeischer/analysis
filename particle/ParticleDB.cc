@@ -24,11 +24,10 @@ ParticleDB* ParticleDB::instance()
 
 void ParticleDB::initializeDatabase()
 {
-  for (int type = Particle::START; type <= Particle::END; type = type<<1) {
-    Particle::Type particleType = static_cast<Particle::Type>(type);
-    const ParticleProperties* props = new ParticleProperties(particleType);
+  for (QMap<Enums::Particle, QString>::ConstIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
+    const ParticleProperties* props = new ParticleProperties(it.key());
     int pdgId = props->pdgId();
-    m_pdgIdMap[particleType] = pdgId;
+    m_pdgIdMap[it.key()] = pdgId;
     m_db[pdgId] = props;
   }
 }
@@ -40,7 +39,7 @@ const ParticleProperties* ParticleDB::lookupPdgId(const int& pdgId)
   return props;
 }
 
-const ParticleProperties* ParticleDB::lookupType(const Particle::Type& type)
+const ParticleProperties* ParticleDB::lookupType(const Enums::Particle& type)
 {
   int pdgId = m_pdgIdMap[type];
   return lookupPdgId(pdgId);

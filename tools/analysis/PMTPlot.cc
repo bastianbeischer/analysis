@@ -10,7 +10,7 @@
 const int PMTPlot::s_threshold = 200.;
 
 PMTPlot::PMTPlot(SensorTypes::Type type) :
-  AnalysisPlot(AnalysisPlot::Testbeam),
+  AnalysisPlot(Enums::Testbeam),
   H1DPlot(),
   m_type(type)
 {
@@ -38,7 +38,7 @@ void PMTPlot::draw(TCanvas* canvas)
   m_line->Draw();
 }
 
-void PMTPlot::processEvent(const QVector<Hit*>&, Particle*, SimpleEvent* event)
+void PMTPlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
 {
   histogram()->Fill(event->sensorData(m_type));
 }

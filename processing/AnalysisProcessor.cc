@@ -11,24 +11,26 @@
 #include "MCFilter.hh"
 #include "ParticleIdentifier.hh"
 #include "TimeOfFlight.hh"
+#include "TRDReconstruction.hh"
 #include "ParticleInformation.hh"
 
 AnalysisProcessor::AnalysisProcessor()
   : EventProcessor()
   , m_particle(new Particle)
-  , m_filter(new ParticleFilter)
+  , m_particleFilter(new ParticleFilter)
+  , m_cutFilter(new CutFilter)
   , m_mcFilter(new MCFilter)
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections)
   , m_identifier(new ParticleIdentifier)
-  , m_cuts(new CutFilter)
 {
 }
 
-AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, Track::Type track, Corrections::Flags flags)
+AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, Enums::TrackType track, Enums::Corrections flags)
   : EventProcessor(destinations)
   , m_particle(new Particle)
-  , m_filter(new ParticleFilter)
+  , m_particleFilter(new ParticleFilter)
+  , m_cutFilter(new CutFilter)
   , m_mcFilter(new MCFilter)
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections(flags))
@@ -41,77 +43,84 @@ AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, Tr
 AnalysisProcessor::~AnalysisProcessor()
 {
   delete m_particle;
-  delete m_filter;
+  delete m_particleFilter;
   delete m_mcFilter;
+  delete m_cutFilter;
   delete m_trackFinding;
   delete m_corrections;
   delete m_identifier;
 }
 
-void AnalysisProcessor::setTrackType(Track::Type trackType)
+void AnalysisProcessor::setTrackType(const Enums::TrackType& trackType)
 {
   m_particle->setTrackType(trackType);
 }
 
-void AnalysisProcessor::setCorrectionFlags(Corrections::Flags flags)
+void AnalysisProcessor::setCorrectionFlags(const Enums::Corrections& flags)
 {
   m_corrections->setFlags(flags);
 }
 
-void AnalysisProcessor::setParticleFilter(ParticleFilter::Types types)
+void AnalysisProcessor::setParticleFilter(const Enums::Particles& types)
 {
-  m_filter->setTypes(types);
+  m_particleFilter->setTypes(types);
 }
 
-void AnalysisProcessor::setMCFilter(MCFilter::Types types)
+void AnalysisProcessor::setMCFilter(const Enums::Particles& types)
 {
   m_mcFilter->setTypes(types);
 }
 
-void AnalysisProcessor::setCutFilter(CutFilter cuts)
+void AnalysisProcessor::setCutFilter(const CutFilter& cuts)
 {
-  m_cuts->setCuts(cuts);
+  m_cutFilter->setCuts(cuts);
 }
 
 void AnalysisProcessor::process(SimpleEvent* event)
 {
+  m_particle->reset();
   m_corrections->preFitCorrections(event);
 
   QVector<Hit*> clusters = QVector<Hit*>::fromStdVector(event->hits());
+
+  //check filters which need no reconstruction
+  if (!m_mcFilter->passes(event) || !m_cutFilter->passes(event))
+    return;
+
   QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
 
   Track* track = m_particle->track();
   TimeOfFlight* tof = m_particle->timeOfFlight();
+  TRDReconstruction* trd = m_particle->trdReconstruction();
   ParticleInformation* info = m_particle->information();
 
   if (track) {
-    info->reset();
     track->fit(trackClusters);
     m_corrections->postFitCorrections(m_particle);
     tof->calculateTimes(track);
+    m_corrections->postTOFCorrections(m_particle);
+    trd->reconstructTRD(event, track);
     info->process();
   }
 
   // identify particle species
   m_identifier->identify(m_particle);
 
-  if (m_filter->passes(m_particle)) {
-    if (m_mcFilter->passes(clusters, m_particle, event)) {
-      if (m_cuts->passes(clusters, m_particle, event)) {
-        QVector<int> postponed;
-        for (int i = 0; i < m_destinations.size(); i++) {
-          EventDestination* destination = m_destinations.at(i);
-          bool success = tryProcessingDestination(destination, clusters, m_particle, event);
-          if (!success) // postpone this destination for now.
-            postponed.append(i);
-        }
-        while(postponed.size() > 0) {
-          bool success = tryProcessingDestination(m_destinations.at(postponed.front()), clusters, m_particle, event);
-          if (success) {
-            postponed.remove(0);
-          }
-        }
-      }
+  if (m_particleFilter->passes(m_particle) && m_cutFilter->passes(clusters, m_particle)) {
+    QVector<EventDestination*> postponed;
+    foreach(EventDestination* destination, m_destinations) {
+      bool success = tryProcessingDestination(destination, clusters, m_particle, event);
+      if (!success)
+        postponed.append(destination); // postpone this destination for now.
+    }
+    EventDestination** postponedData = postponed.data();
+    unsigned int nPostponed = postponed.size();
+    unsigned int i = 0;
+    while (i < nPostponed) {
+      if (tryProcessingDestination(postponedData[i], clusters, m_particle, event))
+        i++;
+      else
+        usleep(1000); // do not hammer the mutex locker with tryLock calls, better to sleep a ms
     }
   }
 }

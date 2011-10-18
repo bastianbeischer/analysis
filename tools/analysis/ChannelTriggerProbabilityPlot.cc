@@ -15,12 +15,11 @@
 #include <TVector3.h>
 #include <TLatex.h>
 #include <TF1.h>
-#include <THStack.h>
 
 #include <QDebug>
 
 ChannelTriggerProbabilityPlot::ChannelTriggerProbabilityPlot()
-  : AnalysisPlot(AnalysisPlot::CalibrationTOF)
+  : AnalysisPlot(Enums::CalibrationTOF)
   , H1DPlot()
   , m_normalizationHistogram(new TH1D("ChannelTriggerProbabilityPlotNormalizationHistogram", "", Constants::nTofChannels, 0, Constants::nTofChannels))
 {
@@ -34,7 +33,7 @@ ChannelTriggerProbabilityPlot::~ChannelTriggerProbabilityPlot()
   delete m_normalizationHistogram;
 }
 
-void ChannelTriggerProbabilityPlot::processEvent(const QVector<Hit*>&, Particle* particle, SimpleEvent*)
+void ChannelTriggerProbabilityPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
 {
   const Track* track = particle->track();
   if (!track || !track->fitGood())

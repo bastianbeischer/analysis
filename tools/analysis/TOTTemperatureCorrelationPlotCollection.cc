@@ -8,7 +8,7 @@
 #include <QLayout>
 
 TOTTemperatureCorrelationPlotCollection::TOTTemperatureCorrelationPlotCollection() :
-  PlotCollection(AnalysisPlot::TimeOverThreshold)
+  PlotCollection(Enums::TimeOverThreshold)
 {
   QStringList moduleIDs;
 

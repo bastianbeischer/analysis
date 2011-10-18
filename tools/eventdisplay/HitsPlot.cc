@@ -21,6 +21,7 @@
 #include <TLatex.h>
 #include <TH2D.h>
 #include <TBox.h>
+#include <TEllipse.h>
 #include <THistPainter.h>
 #include <TPaletteAxis.h>
 #include <TGaxis.h>
@@ -28,6 +29,7 @@
 #include <TStyle.h>
 
 #include <iostream>
+#include <algorithm>
 
 HitsPlot::HitsPlot()
   : PerdaixDisplay()
@@ -49,6 +51,8 @@ void HitsPlot::clearHits()
 {
   qDeleteAll(m_hits);
   m_hits.clear();
+  qDeleteAll(m_hitsTRD);
+  m_hitsTRD.clear();
   qDeleteAll(m_lines);
   m_lines.clear();
   qDeleteAll(m_markers);
@@ -57,7 +61,7 @@ void HitsPlot::clearHits()
   m_fitInfo = 0;
 }
 
-void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void HitsPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
 {
   const Track* track = particle->track();
 
@@ -70,7 +74,7 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, Simpl
     double z_max = histogram()->GetYaxis()->GetXmax();
 
     double y0 = 0., slopeY = 0.;
-    if (track->type() == Track::StraightLine) {
+    if (track->type() == Enums::StraightLine) {
       const StraightLine* straightLine = static_cast<const StraightLine*>(track);
       double x0 = straightLine->x0();
       double slopeX = straightLine->slopeX();
@@ -87,12 +91,12 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, Simpl
       y0 = straightLine->y0();
       slopeY = straightLine->slopeY();
     }
-    else if (track->type() == Track::BrokenLine || track->type() == Track::CenteredBrokenLine ) {
+    else if (track->type() == Enums::BrokenLine || track->type() == Enums::CenteredBrokenLine ) {
       double x0, slopeX, zIntersection, x_min, x_max;
       TLine* x_line;
 
       // lower line
-      if (track->type() == Track::BrokenLine) {
+      if (track->type() == Enums::BrokenLine) {
         const BrokenLine* brokenLine = static_cast<const BrokenLine*>(track);
         zIntersection = brokenLine->zIntersection();
         x0 = brokenLine->lowerX0();
@@ -100,7 +104,7 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, Simpl
         y0 = brokenLine->y0();
         slopeY = brokenLine->slopeY();
       }
-      else if (track->type() == Track::CenteredBrokenLine) {
+      else if (track->type() == Enums::CenteredBrokenLine) {
         const CenteredBrokenLine* centeredBrokenLine = static_cast<const CenteredBrokenLine*>(track);
         zIntersection = centeredBrokenLine->zIntersection();
         x0 = centeredBrokenLine->x0();
@@ -117,13 +121,13 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, Simpl
       m_lines.push_back(x_line);
 
       // upper line
-      if (track->type() == Track::BrokenLine) {
+      if (track->type() == Enums::BrokenLine) {
         const BrokenLine* brokenLine = static_cast<const BrokenLine*>(track);
         zIntersection = brokenLine->zIntersection();
         x0 = brokenLine->upperX0();
         slopeX = brokenLine->upperSlopeX();
       }
-      else if (track->type() == Track::CenteredBrokenLine) {
+      else if (track->type() == Enums::CenteredBrokenLine) {
         const CenteredBrokenLine* centeredBrokenLine = static_cast<const CenteredBrokenLine*>(track);
         zIntersection = centeredBrokenLine->zIntersection();
         x0 = centeredBrokenLine->x0();
@@ -155,6 +159,7 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, Simpl
   }
 
   QVector<Hit*> hitsToPlot;
+  QVector<Hit*> hitsToPlotOnTrack;
 
   foreach(Hit* hit, track && !m_drawAllClusters ? track->hits() : hits) {
     // draw TOF yEstimates
@@ -169,11 +174,16 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, Simpl
     // draw the raw the the rest
     if ( (strcmp(hit->ClassName(), "Hit") == 0) || (strcmp(hit->ClassName(), "TOFSipmHit") == 0) ) {
       hitsToPlot.push_back(hit);
+      if (!(track && track->fitGood()) || track->hits().contains(hit))
+        hitsToPlotOnTrack.push_back(hit);
     }
     else if ( (strcmp(hit->ClassName(), "Cluster") == 0) || (strcmp(hit->ClassName(), "TOFCluster") == 0) ) {
       Cluster* cluster = static_cast<Cluster*>(hit);
-      foreach(Hit* subHit, cluster->hits())
+      foreach(Hit* subHit, cluster->hits()) {
         hitsToPlot.push_back(subHit);
+        if (!(track && track->fitGood()) || track->hits().contains(hit))
+          hitsToPlotOnTrack.push_back(subHit);
+      }
     }
   }
 
@@ -205,31 +215,37 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, Simpl
     double width = 0.;
     double height = 0.;
     double heightModule = 20.0;
+    unsigned int fillstyle = hitsToPlotOnTrack.contains(hit) ? 1001 : 3001;
     if (type == Hit::tracker) {
       width = 1.0;
       height = heightModule;
-    }
-    else if (type == Hit::trd) {
-      width = 6.0;
-      height = 0.5*heightModule;
     }
     else if (type == Hit::tof) {
       width = 5.;
       height = 6.;
       unsigned short channel = hit->channel();
-      DetectorElement* element = Setup::instance()->element(hit->detId() - channel);
+      DetectorElement* element = Setup::instance()->element(hit->elementId());
       x = element->position().x() + (2*(channel-2)+0.5) * width;
       color = palette->GetValueColor(amplitude*5);
     }
 
-    TBox* box = new TBox(x-0.5*width, z-0.5*height, x+0.5*width, z+0.5*height);
-    box->SetFillStyle(1001);
-    box->SetFillColor(color);
-    box->Draw("SAME");
-    m_hits.push_back(box);
+    if (type != Hit::trd) {
+      TBox* box = new TBox(x-0.5*width, z-0.5*height, x+0.5*width, z+0.5*height);
+      box->SetFillStyle(fillstyle);
+      box->SetFillColor(color);
+      box->Draw("SAME");
+      m_hits.push_back(box);
+    } else {
+      TEllipse* circle = new TEllipse(x, z, 3.);
+      circle->SetFillColor(color);
+      circle->SetLineColor(color);
+      circle->SetFillStyle(fillstyle);
+      circle->Draw("SAME");
+      m_hitsTRD.push_back(circle);
+    }
   }
 
-  if( event->contentType() == SimpleEvent::MonteCarlo){
+  if (event->contentType() == SimpleEvent::MonteCarlo) {
 
     qDeleteAll(m_trajectoriesXZ);
     m_trajectoriesXZ.clear();
@@ -279,6 +295,19 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, Simpl
       traj->SetLineStyle(5);
       traj->Draw("same L");
       m_trajectoriesYZ.push_back(traj);
+    }
+
+    //draw mc signals
+    foreach (const MCSimpleEventDigi* mcDigi, mcInfo->mcDigis()) {
+      if (mcDigi->type() == Hit::trd) {
+        foreach (const MCDigiSignal* mcSignal, mcDigi->digiSignals()) {
+          TMarker* marker = new TMarker(mcSignal->hitPosition.x(),mcSignal->hitPosition.z(), 5);
+          //marker->SetMarkerSize(.5);
+          marker->SetMarkerColor(kRed);
+          marker->Draw("SAME");
+          m_markers << marker;
+        }
+      }
     }
 
   }

@@ -14,11 +14,11 @@
 #include "Hit.hh"
 #include "Particle.hh"
 
-#include "TRDCalculations.hh"
+#include "TRDReconstruction.hh"
 #include "RootStyle.hh"
 
 MCTotalEnergyDepositionTRDvsTrackerPlot::MCTotalEnergyDepositionTRDvsTrackerPlot()
-  : AnalysisPlot(AnalysisPlot::MonteCarlo)
+  : AnalysisPlot(Enums::MonteCarlo)
   , GraphPlot()
   , m_colorCounter(0)
 {
@@ -36,7 +36,7 @@ MCTotalEnergyDepositionTRDvsTrackerPlot::~MCTotalEnergyDepositionTRDvsTrackerPlo
 {
 }
 
-void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hits, Particle* particle, SimpleEvent* event)
+void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
 {
   const Track* track = particle->track();
 
@@ -78,11 +78,11 @@ void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& 
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Cluster* cluster = static_cast<Cluster*>(*it);
     if (cluster->type() == Hit::trd) {
-      std::vector<Hit*>& subHits = cluster->hits();
+      const std::vector<Hit*>& subHits = cluster->hits();
       std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         Hit* trdHit = *it;
-        double distance = TRDCalculations::distanceOnTrackThroughTRDTube(trdHit, track);
+        double distance = TRDReconstruction::distanceOnTrackThroughTRDTube(trdHit, track);
         if (distance > 0) {
           distanceSumTRD += distance;
           signalSumTRD += cluster->signalHeight();
@@ -113,7 +113,6 @@ void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& 
 
   TGraph* graph = 0;
 
-  QMutexLocker locker(&m_mutex);
   if (m_graphMap.contains(pdgID))
     graph = m_graphMap.value(pdgID);
   else {
@@ -121,7 +120,7 @@ void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& 
     graph->SetMarkerColor(RootStyle::rootColor(m_colorCounter++));
     graph->SetMarkerSize(0.3);
     m_graphMap.insert(pdgID, graph);
-    addGraph(graph, "P");
+    addGraph(graph, P);
     const ParticleProperties* properties = ParticleDB::instance()->lookupPdgId(pdgID);
     QString particleName = properties->name();
     legend()->AddEntry(graph, qPrintable(particleName), "p");
