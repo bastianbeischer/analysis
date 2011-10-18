@@ -19,5 +19,5 @@ CLASSES+=\
 SOURCES = \
   main.cc
 
-include($$TOPLEVEL/macx.pri)
 include($$TOPLEVEL/common.pri)
+include($$TOPLEVEL/macx.pri)

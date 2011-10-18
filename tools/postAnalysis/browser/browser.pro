@@ -12,6 +12,7 @@ INCLUDEPATH += \
 
 LIBS += \
   -L$$TOPLEVEL/lib \
+  -lglobal \
   -lrootplot \
   -lpostAnalysis
 
@@ -23,5 +24,5 @@ SOURCES = \
   MainWindow.cc
 
 include($$TOPLEVEL/root.pri)
-include($$TOPLEVEL/macx.pri)
 include($$TOPLEVEL/common.pri)
+include($$TOPLEVEL/macx.pri)

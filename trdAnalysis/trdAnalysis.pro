@@ -23,8 +23,6 @@ LIBS += \
   -lparticle \
   -ltracking
 
-include($$TOPLEVEL/common.pri)
 include($$TOPLEVEL/root.pri)
+include($$TOPLEVEL/common.pri)
 include($$TOPLEVEL/macx.pri)
-
-QMAKE_LFLAGS -= -Wl,--as-needed
