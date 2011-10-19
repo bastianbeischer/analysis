@@ -13,6 +13,7 @@ public:
   ~LikelihoodPDF();
   Enums::Particle particle() const;
   double momentum() const;
+  double integral();
 private:
   double rootFunctionPointer(double*, double*) const;
 

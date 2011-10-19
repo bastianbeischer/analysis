@@ -24,7 +24,8 @@ INCLUDEPATH += \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/particle \
   $$TOPLEVEL/tracking \
-  $$TOPLEVEL/global
+  $$TOPLEVEL/global \
+  $$TOPLEVEL/likelihood
 
 LIBS += \
   -L$$TOPLEVEL/lib \
@@ -32,7 +33,8 @@ LIBS += \
   -lSimpleEvent \
   -lsetup \
   -lparticle \
-  -ltracking
+  -ltracking \
+  -llikelihood
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

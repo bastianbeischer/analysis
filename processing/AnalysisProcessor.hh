@@ -13,7 +13,7 @@
 class Particle;
 class TrackFinding;
 class ParticleIdentifier;
-
+class LikelihoodAnalysis;
 
 class AnalysisProcessor : public EventProcessor {
 public:
@@ -36,6 +36,7 @@ public:
   const TrackFinding* trackFinding() const {return m_trackFinding;}
   const Corrections* corrections() const {return m_corrections;}
   const ParticleIdentifier* particleIdentifier() const {return m_identifier;}
+  const LikelihoodAnalysis* likelihood() const {return m_likelihood;}
 
 private:
   Particle* m_particle;
@@ -45,6 +46,7 @@ private:
   TrackFinding* m_trackFinding;
   Corrections* m_corrections;
   ParticleIdentifier* m_identifier;
+  LikelihoodAnalysis* m_likelihood;
 };
 
 #endif

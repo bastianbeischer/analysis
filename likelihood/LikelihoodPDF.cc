@@ -31,6 +31,10 @@ double LikelihoodPDF::momentum() const
   return m_momentum;
 }
 
+double LikelihoodPDF::integral()
+{
+  return Integral(m_likelihood->min(), m_likelihood->max());
+}
 
 double LikelihoodPDF::rootFunctionPointer(double* x, double*) const
 {

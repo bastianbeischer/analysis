@@ -9,7 +9,9 @@ CLASSES += \
   Likelihood \
   LikelihoodPDF \
   LikelihoodRatio \
-  TimeOfFlightLikelihood
+  TimeOfFlightLikelihood \
+  TrackerMomentumLikelihood \
+  LikelihoodAnalysis
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \

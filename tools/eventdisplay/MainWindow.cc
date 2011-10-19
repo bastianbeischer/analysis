@@ -124,7 +124,8 @@ void MainWindow::update()
   else if (index == 0) type = Enums::CenteredBrokenLine;
   else if (index == 1) type = Enums::StraightLine;
   else if (index == 2) type = Enums::BrokenLine;
-  m_ui.plotter->drawEvent(m_ui.eventSpinBox->value(), type, m_ui.allClustersCheckBox->isChecked(), *m_ui.textEdit, *m_ui.trackFindingWidget);
+  m_ui.plotter->drawEvent(m_ui.eventSpinBox->value(), type, m_ui.allClustersCheckBox->isChecked(),
+    *m_ui.textEdit, *m_ui.trackFindingWidget, *m_ui.likelihoodWidget);
 }
 
 void MainWindow::saveButtonClicked()

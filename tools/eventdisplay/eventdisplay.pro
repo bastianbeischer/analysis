@@ -15,7 +15,8 @@ INCLUDEPATH += \
   $$TOPLEVEL/particle \
   $$TOPLEVEL/tracking \
   $$TOPLEVEL/setup \
-  $$TOPLEVEL/global
+  $$TOPLEVEL/global \
+  $$TOPLEVEL/likelihood
 
 LIBS += \
   -L$$TOPLEVEL/lib \
@@ -25,7 +26,8 @@ LIBS += \
   -lparticle \
   -ltracking \
   -lsetup \
-  -lglobal
+  -lglobal \
+  -llikelihood
 
 CLASSES+= \
   Plotter \

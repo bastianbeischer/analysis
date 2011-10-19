@@ -60,12 +60,14 @@ public:
   static CutIterator cutBegin();
   static CutIterator cutEnd();
 
-  enum LikelihoodVariable {SignalHeightTrackerLikelihood, SignalHeightTRDLikelihood, TimeOverThresholdLikelihood, TimeOfFlightLikelihood};
+  enum LikelihoodVariable {SignalHeightTrackerLikelihood, SignalHeightTRDLikelihood, TimeOverThresholdLikelihood,
+    TimeOfFlightLikelihood, TrackerMomentumLikelihood};
   static const QString label(LikelihoodVariable);
   static LikelihoodVariable likelihoodVariable(const QString&);
   typedef QMap<LikelihoodVariable, QString>::ConstIterator LikelihoodVariableIterator;
   static LikelihoodVariableIterator likelihoodVariableBegin();
   static LikelihoodVariableIterator likelihoodVariableEnd();
+  Q_DECLARE_FLAGS(LikelihoodVariables, LikelihoodVariable);
 
 private:
   static const QMap<ChargeSign, QString> s_chargeSignMap;

@@ -26,13 +26,13 @@ LIBS += \
   -lrootplot \
   -lsetup \
   -ltrdAnalysis \
-  -lfluxAnalysis
+  -lfluxAnalysis \
+  -llikelihood
 
 SOURCEDIRS = .
 
 RESOURCES += \
   resources.qrc
-
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

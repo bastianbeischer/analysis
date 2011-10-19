@@ -83,7 +83,8 @@ const QMap<Enums::LikelihoodVariable, QString> Enums::s_likelihoodVariableMap = 
   << QPair<Enums::LikelihoodVariable, QString>(Enums::SignalHeightTrackerLikelihood, "signal height tracker likelihood")
   << QPair<Enums::LikelihoodVariable, QString>(Enums::SignalHeightTRDLikelihood, "signal height TRD likelihood")
   << QPair<Enums::LikelihoodVariable, QString>(Enums::TimeOverThresholdLikelihood, "time over threshold likelihood")
-  << QPair<Enums::LikelihoodVariable, QString>(Enums::TimeOfFlightLikelihood, "time of flight likelihood");
+  << QPair<Enums::LikelihoodVariable, QString>(Enums::TimeOfFlightLikelihood, "time of flight likelihood")
+  << QPair<Enums::LikelihoodVariable, QString>(Enums::TrackerMomentumLikelihood, "tracker momentum likelihood");
 
 // ChargeSign
 const QString Enums::label(Enums::ChargeSign key) {return s_chargeSignMap.value(key);}

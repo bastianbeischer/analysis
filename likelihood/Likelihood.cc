@@ -2,6 +2,8 @@
 #include "Helpers.hh"
 #include "LikelihoodPDF.hh"
 #include "LikelihoodRatio.hh"
+#include "TimeOfFlightLikelihood.hh"
+#include "TrackerMomentumLikelihood.hh"
 
 #include <QSettings>
 #include <QStringList>
@@ -49,7 +51,7 @@ Likelihood::MomentumMap::ConstIterator Likelihood::upperNode(Enums::Particle typ
   return ++lowerNode(type, p);
 }
 
-QVector<double> Likelihood::linearInterpolation(Enums::Particle particle, double p) const
+Likelihood::ParameterVector Likelihood::linearInterpolation(Enums::Particle particle, double p, bool* goodInterpolation) const
 {
   MomentumMap::ConstIterator endIt = end(particle);
   MomentumMap::ConstIterator l = lowerNode(particle, p);
@@ -57,13 +59,22 @@ QVector<double> Likelihood::linearInterpolation(Enums::Particle particle, double
     return l.value();
   MomentumMap::ConstIterator u = l;
   ++u;
-  if (l == endIt || u == endIt)
-    return QVector<double>();
-  QVector<double> vector(numberOfParameters());
-  double k = (p - l.key()) / (u.key() - l.key());
-  for (int i = 0; i < numberOfParameters(); ++i) {
-    vector[i] = l.value()[i] + k * (u.value()[i] - l.value()[i]);
+  if (l == endIt || u == endIt) {
+    if (goodInterpolation) {
+      *goodInterpolation = false;
+    } else {
+      qWarning()
+        << "No values for an interpolation of" << Enums::label(type())
+        << "for" << Enums::label(particle) << "at p =" << p << "GeV.";
+    }
+    return defaultParameters();
   }
+  if (goodInterpolation)
+    *goodInterpolation = true;
+  double k = (p - l.key()) / (u.key() - l.key());
+  ParameterVector vector(numberOfParameters());
+  for (int i = 0; i < numberOfParameters(); ++i)
+    vector[i] = l.value()[i] + k * (u.value()[i] - l.value()[i]);
   return vector;
 }
 
@@ -94,7 +105,7 @@ void Likelihood::loadNodes()
       Q_ASSERT(variantList.size() == numberOfParameters());
       MomentumMap::Iterator momentumIt = particleIt.value().find(p);
       if (momentumIt == particleIt.value().end())
-        momentumIt = particleIt.value().insert(p, QVector<double>(variantList.size()));
+        momentumIt = particleIt.value().insert(p, ParameterVector(variantList.size()));
       for (int i = 0; i < variantList.size(); ++i)
         momentumIt.value()[i] = variantList[i].toDouble();
     }
@@ -105,16 +116,16 @@ void Likelihood::loadNodes()
 
 double Likelihood::ratio(double p, Enums::Particle particle, double realMomentum) const
 {
-  double conditionalProbability = eval(p, particle, realMomentum);
-  if (qIsNull(conditionalProbability))
+  double signalHypothesis = eval(p, particle, realMomentum);
+  if (qIsNull(signalHypothesis))
     return 0;
-  double totalProbability = 0;
+  double backgroundHypothesis = 0;
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it)
-    if (it.key() & particles())
-      totalProbability+= eval(p, it.key(), realMomentum);
-  if (qIsNull(totalProbability))
+    if ((it.key() & particles()) && (it.key() != particle))
+      backgroundHypothesis+= eval(p, it.key(), realMomentum);
+  if (qIsNull(backgroundHypothesis))
     return 0;
-  return eval(p, particle, realMomentum) / totalProbability;
+  return signalHypothesis / backgroundHypothesis;
 }
 
 LikelihoodPDF* Likelihood::pdf(Enums::Particle particle, double momentum) const
@@ -125,4 +136,16 @@ LikelihoodPDF* Likelihood::pdf(Enums::Particle particle, double momentum) const
 LikelihoodRatio* Likelihood::ratio(Enums::Particle particle, double momentum) const
 {
   return new LikelihoodRatio(this, particle, momentum);
+}
+
+Likelihood* Likelihood::newLikelihood(Enums::LikelihoodVariable type)
+{
+  switch (type) {
+    case Enums::SignalHeightTrackerLikelihood: return 0;
+    case Enums::SignalHeightTRDLikelihood: return 0;
+    case Enums::TimeOverThresholdLikelihood: return 0;
+    case Enums::TimeOfFlightLikelihood: return new TimeOfFlightLikelihood;
+    case Enums::TrackerMomentumLikelihood: return new TrackerMomentumLikelihood;
+  }
+  return 0;
 }

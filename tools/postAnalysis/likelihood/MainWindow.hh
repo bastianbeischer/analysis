@@ -3,6 +3,7 @@
 
 #include "PostAnalysisWindow.hh"
 
+class TrackerMomentumLikelihood;
 class TimeOfFlightLikelihood;
 
 class MainWindow : public PostAnalysisWindow {
@@ -13,6 +14,7 @@ public:
 protected:
   virtual void setupAnalysis();
 private:
+  TrackerMomentumLikelihood* m_trackerLikelihood;
   TimeOfFlightLikelihood* m_tofLikelihood;
 };
 

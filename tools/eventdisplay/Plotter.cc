@@ -14,6 +14,7 @@
 #include "AnalysisProcessor.hh"
 #include "ParticleProperties.hh"
 #include "ParticleDB.hh"
+#include "LikelihoodAnalysis.hh"
 
 #include <TCanvas.h>
 #include <TH2I.h>
@@ -21,6 +22,7 @@
 #include <TFile.h>
 #include <TList.h>
 #include <TPad.h>
+#include <TMultiGraph.h>
 
 #include <QPlainTextEdit>
 #include <QLabel>
@@ -95,7 +97,8 @@ void Plotter::mouseMoveEvent(QMouseEvent* event)
   }
 }
 
-void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters, QPlainTextEdit& infoTextEdit, TQtWidget& trackFindingWidget)
+void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
+  QPlainTextEdit& infoTextEdit, TQtWidget& trackFindingWidget, TQtWidget& likelihoodWidget)
 {
   TCanvas* canvas = GetCanvas();
   canvas->cd();
@@ -119,6 +122,12 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
   m_processor->trackFinding()->trackFindingHist()->Draw("colz");
   tfCan->Modified();
   tfCan->Update();
+  TCanvas* lhCanvas = likelihoodWidget.GetCanvas();
+  lhCanvas->cd();
+  lhCanvas->Clear();
+  m_processor->likelihood()->graph()->Draw("ALP");
+  lhCanvas->Modified();
+  lhCanvas->Update();
 
   //show info for event
   const DataDescription* currentDesc = m_chain->currentDescription();

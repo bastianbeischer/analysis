@@ -21,10 +21,13 @@ public:
   void setType(Enums::LikelihoodVariable);
   Enums::LikelihoodVariable type() const;
 
+  static Likelihood* newLikelihood(Enums::LikelihoodVariable);
+
   virtual double min() const = 0;
   virtual double max() const = 0;
   virtual int numberOfParameters() const = 0;
-  virtual double eval(double p, Enums::Particle, double realMomentum) const = 0;
+  virtual double eval(double p, Enums::Particle, double realMomentum, bool* goodInterpolation = 0) const = 0;
+  virtual ParameterVector defaultParameters() const = 0;
   
   virtual LikelihoodPDF* pdf(Enums::Particle, double realMomentum) const;
   virtual LikelihoodRatio* ratio(Enums::Particle, double realMomentum) const;
@@ -36,7 +39,7 @@ public:
   MomentumMap::ConstIterator lowerNode(Enums::Particle, double realMomentum) const;
   MomentumMap::ConstIterator upperNode(Enums::Particle, double realMomentum) const;
 
-  QVector<double> linearInterpolation(Enums::Particle, double realMomentum) const;
+  ParameterVector linearInterpolation(Enums::Particle, double realMomentum, bool* goodInterpolation = 0) const;
 private:
   virtual void loadNodes();
 

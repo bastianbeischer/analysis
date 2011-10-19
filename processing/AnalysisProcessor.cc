@@ -13,6 +13,7 @@
 #include "TimeOfFlight.hh"
 #include "TRDReconstruction.hh"
 #include "ParticleInformation.hh"
+#include "LikelihoodAnalysis.hh"
 
 AnalysisProcessor::AnalysisProcessor()
   : EventProcessor()
@@ -23,6 +24,7 @@ AnalysisProcessor::AnalysisProcessor()
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections)
   , m_identifier(new ParticleIdentifier)
+  , m_likelihood(new LikelihoodAnalysis(Enums::TrackerMomentumLikelihood))
 {
 }
 
@@ -35,6 +37,7 @@ AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, En
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections(flags))
   , m_identifier(new ParticleIdentifier)
+  , m_likelihood(new LikelihoodAnalysis(Enums::TrackerMomentumLikelihood))
 {
   setTrackType(track);
   setCorrectionFlags(flags);
@@ -49,6 +52,7 @@ AnalysisProcessor::~AnalysisProcessor()
   delete m_trackFinding;
   delete m_corrections;
   delete m_identifier;
+  delete m_likelihood;
 }
 
 void AnalysisProcessor::setTrackType(const Enums::TrackType& trackType)
@@ -105,6 +109,7 @@ void AnalysisProcessor::process(SimpleEvent* event)
 
   // identify particle species
   m_identifier->identify(m_particle);
+  m_likelihood->identify(m_particle);
 
   if (m_particleFilter->passes(m_particle) && m_cutFilter->passes(clusters, m_particle)) {
     QVector<EventDestination*> postponed;

@@ -32,7 +32,14 @@ int TimeOfFlightLikelihood::numberOfParameters() const
   return 1;
 }
 
-double TimeOfFlightLikelihood::eval(double p, Enums::Particle particle, double realMomentum) const
+Likelihood::ParameterVector TimeOfFlightLikelihood::defaultParameters() const
+{
+  ParameterVector vector(numberOfParameters());
+  vector[0] = 1.;
+  return vector;
+}
+
+double TimeOfFlightLikelihood::eval(double p, Enums::Particle particle, double realMomentum, bool* goodInterbolation) const
 {
   if (p < min() || p > max())
     return 0;
@@ -42,8 +49,6 @@ double TimeOfFlightLikelihood::eval(double p, Enums::Particle particle, double r
   double invBetaResolution = Constants::speedOfLight * timeResolution / length;
 
   double realInvBeta = Helpers::addQuad(mass, realMomentum) / realMomentum;
-  QVector<double> parameters = linearInterpolation(particle, realMomentum);
-  Q_ASSERT(parameters.size());
-  double area = linearInterpolation(particle, realMomentum).at(0);
+  double area = linearInterpolation(particle, realMomentum, goodInterbolation).at(0);
   return TMath::Gaus(Helpers::addQuad(mass, p) / p, realInvBeta, invBetaResolution, true) / area;
 }

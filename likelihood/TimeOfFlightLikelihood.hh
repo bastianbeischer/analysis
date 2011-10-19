@@ -12,7 +12,8 @@ public:
   virtual double min() const;
   virtual double max() const;
   virtual int numberOfParameters() const;
-  virtual double eval(double measuredBeta, Enums::Particle, double realMomentum) const;
+  virtual double eval(double measuredBeta, Enums::Particle, double realMomentum, bool* goodInterbolation = 0) const;
+  virtual ParameterVector defaultParameters() const;
 };
 
 #endif
