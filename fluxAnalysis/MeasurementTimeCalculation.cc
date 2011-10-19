@@ -8,70 +8,83 @@
 #include <TH1.h>
 
 MeasurementTimeCalculation::MeasurementTimeCalculation()
-  : m_histogram(0)
 {
 }
 
-MeasurementTimeCalculation::MeasurementTimeCalculation(const QDateTime& first, const QDateTime& last)
-  : m_histogram(0)
+MeasurementTimeCalculation::MeasurementTimeCalculation(int numberOfThreads)
+: m_active(numberOfThreads == 1)
+, m_lastEventTime(-1)
+, m_positionInsideBin()
+, m_positionInsideBinCounter()
+, m_timeDifference(0)
+, m_measurementTimeDistribution(0)
+, m_deleteMeasurementTimeDistribution(true)
 {
-  int t1 = first.toTime_t();
-  t1-= (t1 % 60) + 60;
-  int t2 = last.toTime_t();
-  t2+= 120 - (t2 % 60);
-  const int maxDuration = t2 - t1;
-  double binWidth = 0;
-  if (maxDuration < 10000.)
-    binWidth = 2.1;
-  else
-    binWidth = 30;
-  int nBins = int(maxDuration / binWidth) + 1;
-  m_histogram = new TH1D("measurement time", "", nBins, t1, t1 + nBins * binWidth);
-  m_histogram->GetXaxis()->SetTitle("time");
-  m_histogram->GetYaxis()->SetTitle("events");
-
+  const int nBins = 60000;
+  const double min = 0.;
+  const double max = 600.;
+  m_positionInsideBin.resize(nBins);
+  m_positionInsideBinCounter.resize(nBins);
+  QString title = "measurement time distribution";
+  m_timeDifference = new TH1D(qPrintable("dt " + title), "", nBins, min, max);
+  m_measurementTimeDistribution = new TH1D(qPrintable(title), "", nBins, min, max);
+  m_measurementTimeDistribution->GetXaxis()->SetTitle("t_{cut} / s");
+  m_measurementTimeDistribution->GetYaxis()->SetTitle("measurement time / s");
+  if (!m_active)
+    qDebug("Warning: The measurement time calculation has to be done by only on thread.");
 }
 
 MeasurementTimeCalculation::MeasurementTimeCalculation(TH1D* histogram)
-  : m_histogram(histogram)
+: m_measurementTimeDistribution(histogram)
+, m_deleteMeasurementTimeDistribution(true)
+, m_active(true)
 {
 }
 
 MeasurementTimeCalculation::~MeasurementTimeCalculation()
 {
+  delete m_timeDifference;
+  if (m_deleteMeasurementTimeDistribution)
+    delete m_measurementTimeDistribution;
 }
 
 void MeasurementTimeCalculation::update(const SimpleEvent* const event)
 {
-  if (!event->contentType() == SimpleEvent::MonteCarlo && (event->time() < m_histogram->GetXaxis()->GetXmin() || event->time() > m_histogram->GetXaxis()->GetXmax()))
-    qDebug() << "Eventtime is not between first and last" << event->time();
-  else
-    m_histogram->Fill(event->time());
+  if (!m_active)
+    return;
+  double eventTime = event->time();
+  if (m_lastEventTime > -1) {
+    double deltaT = eventTime - m_lastEventTime;
+    if (deltaT < 0)
+      qDebug("time between events is smaller than 0, check run list order!");
+    m_timeDifference->Fill(deltaT);
+    int bin = m_timeDifference->FindBin(deltaT);
+    m_positionInsideBin[bin-1]+= deltaT;
+    ++m_positionInsideBinCounter[bin-1];
+  }
+  m_lastEventTime = eventTime;
 }
 
-TH1D* MeasurementTimeCalculation::histogram() const
+double MeasurementTimeCalculation::measurementTime()
 {
-  return m_histogram;
-}
-
-double MeasurementTimeCalculation::measurementTime() const
-{
-  const double minEvents = 1;
-  double measurementTime = 0;
-
-  double binWidth = m_histogram->GetBinWidth(1);
-
-  for (int bin = 1; bin <= m_histogram->GetNbinsX(); ++bin) {
-    double content = histogram()->GetBinContent(bin);
-    if (content >= minEvents) {
-      measurementTime += binWidth;
+  if (!m_active)
+    return 4800.5;
+  if (m_timeDifference) {
+    double sum = 0;
+    for (int cutBin = 1; cutBin <= m_measurementTimeDistribution->GetNbinsX(); ++cutBin) {
+      double binContent = m_timeDifference->GetBinContent(cutBin);
+      if (binContent > 0)
+        sum+= m_timeDifference->GetBinContent(cutBin) * m_positionInsideBin[cutBin-1] / m_positionInsideBinCounter[cutBin-1];
+      m_measurementTimeDistribution->SetBinContent(cutBin, sum);
     }
   }
-  return measurementTime;
+  const double tCut = 10.;
+  int cutBin = m_measurementTimeDistribution->FindBin(tCut);
+  return m_measurementTimeDistribution->GetBinContent(cutBin);
 }
 
-double MeasurementTimeCalculation::measurementTimeError() const
+TH1D* MeasurementTimeCalculation::measurementTimeDistribution()
 {
-  double binWidth = m_histogram->GetBinWidth(1);
-  return binWidth / sqrt(12.);
+  m_deleteMeasurementTimeDistribution = false;
+  return m_measurementTimeDistribution;
 }

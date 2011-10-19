@@ -6,6 +6,7 @@
 #include <QString>
 
 #include <TH1.h>
+#include <TGraphAsymmErrors.h>
 
 namespace Helpers
 {
@@ -72,5 +73,40 @@ namespace Helpers
     if (!env)
       qFatal("ERROR: You need to set PERDAIXDATA_PATH environment variable to the toplevel location of the data!");
     return env;
+  }
+  
+  void scaleToBinWidth(TH1D* histogram)
+  {
+    if (!histogram->GetSumw2())
+      histogram->Sumw2();
+    histogram->Scale(1., "width");
+  }
+  
+  TGraphAsymmErrors* createBeltWithSystematicUncertainty(const TH1D* histogram,const TH1D* lowerHistogram,const TH1D* upperHistogram)
+  {
+    QList<double> x;
+    QList<double> exl;
+    QList<double> exu;
+    QList<double> y;
+    QList<double> eyl;
+    QList<double> eyu;
+    for(int i = 1; i <= histogram->GetNbinsX(); i++) {
+      x.push_back(histogram->GetBinCenter(i));
+      exl.push_back(histogram->GetBinCenter(i) - histogram->GetBinLowEdge(i));
+      exu.push_back( (histogram->GetBinLowEdge(i) + histogram->GetBinWidth(i) ) - histogram->GetBinCenter (i));
+      QVector<double> point;
+      point << lowerHistogram->GetBinContent(i) << histogram->GetBinContent(i) <<upperHistogram->GetBinContent(i);
+      qSort(point);
+      const double min = point[0];
+      const double middle = point[1];
+      const double max = point[2];
+      y.push_back(middle);
+      eyl.push_back(middle - min);
+      eyu.push_back(max - middle);
+    }
+    TGraphAsymmErrors* graph = new TGraphAsymmErrors(x.size(), &(x.toVector().toStdVector()[0]), &(y.toVector().toStdVector()[0]), &(exl.toVector().toStdVector()[0]), &(exu.toVector().toStdVector()[0]), &(eyl.toVector().toStdVector()[0]), &(eyu.toVector().toStdVector()[0]));
+    QString name = QString(histogram->GetName()) + "_graph";
+    graph->SetName(name.toStdString().c_str());
+    return graph;
   }
 }

@@ -3,7 +3,6 @@
 
 #include "AnalysisPlot.hh"
 #include "H1DPlot.hh"
-#include "MeasurementTimeCalculation.hh"
 
 #include <QDateTime>
 
@@ -14,8 +13,6 @@ public:
   void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
   void update();
   void draw(TCanvas* canvas);
-private:
-  MeasurementTimeCalculation m_calculation;
 };
 
 #endif

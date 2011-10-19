@@ -30,7 +30,7 @@ SmearedRigidityComparissonPlot::SmearedRigidityComparissonPlot(Enums::ChargeSign
     if (m_unfoldedSpectrum)
       m_unfoldedSpectrum = new TH1D(*unfoldedSpectrum);
   }
-  scaleToBinWidth(m_reconstructedSpectrum);
+  Helpers::scaleToBinWidth(m_reconstructedSpectrum);
   addHistogram(m_reconstructedSpectrum, H1DPlot::P);
   setAxisTitle(m_reconstructedSpectrum->GetXaxis()->GetTitle(), "entries / GeV");
   histogram()->GetXaxis()->SetMoreLogLabels(true);
@@ -47,12 +47,12 @@ SmearedRigidityComparissonPlot::SmearedRigidityComparissonPlot(Enums::ChargeSign
   else
     nBinsStart = nBinsNew + 2;
   histogram()->GetXaxis()->SetRange(nBinsStart, nBins);
-  scaleToBinWidth(m_generatedSpectrum);
+  Helpers::scaleToBinWidth(m_generatedSpectrum);
   addHistogram(m_generatedSpectrum, H1DPlot::HIST);
   if (m_unfoldedSpectrum) {
     m_unfoldedSpectrum->SetLineColor(kBlack);
     m_unfoldedSpectrum->SetMarkerColor(kBlack);
-    scaleToBinWidth(m_unfoldedSpectrum);
+    Helpers::scaleToBinWidth(m_unfoldedSpectrum);
     addHistogram(m_unfoldedSpectrum, H1DPlot::P);
   }
 }
@@ -61,9 +61,3 @@ SmearedRigidityComparissonPlot::~SmearedRigidityComparissonPlot()
 {
 }
 
-void SmearedRigidityComparissonPlot::scaleToBinWidth(TH1D* histogram)
-{
-  if (!histogram->GetSumw2())
-    histogram->Sumw2();
-  histogram->Scale(1., "width");
-}

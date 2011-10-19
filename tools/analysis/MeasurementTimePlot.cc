@@ -15,15 +15,29 @@
 MeasurementTimePlot::MeasurementTimePlot(const QDateTime& first, const QDateTime& last)
   : AnalysisPlot(Enums::MomentumReconstruction)
   , H1DPlot()
-  , m_calculation(first, last)
 {
   setTitle("measurement time");
-  TH1D* histogram = m_calculation.histogram();
+  int t1 = first.toTime_t();
+  t1-= (t1 % 60) + 60;
+  int t2 = last.toTime_t();
+  t2+= 120 - (t2 % 60);
+  const int maxDuration = t2 - t1;
+  double binWidth = 30.;
+  if (maxDuration < 10000.)
+    binWidth = 10.;
+  const int nBins = int(maxDuration / binWidth) + 1;
+  TH1D* histogram = new TH1D("measurement time", "", nBins, t1, t1 + nBins * binWidth);
+  histogram->GetXaxis()->SetTitle("time");
+  histogram->GetYaxis()->SetTitle("events");
+
   setAxisTitle(histogram->GetXaxis()->GetTitle(), histogram->GetYaxis()->GetTitle());
   histogram->SetMarkerSize(0.5);
   addHistogram(histogram, H1DPlot::P);
 
-  addLatex(RootPlot::newLatex(.3, .85));
+  addLatex(RootPlot::newLatex(.2, .85));
+  histogram->GetXaxis()->SetLabelOffset(0.01);
+  histogram->GetXaxis()->SetTitleOffset(1.2);
+  histogram->GetYaxis()->SetTitleOffset(1.2);
 }
 
 MeasurementTimePlot::~MeasurementTimePlot()
@@ -32,14 +46,15 @@ MeasurementTimePlot::~MeasurementTimePlot()
 
 void MeasurementTimePlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
 {
-  m_calculation.update(event);
+  if (!event->contentType() == SimpleEvent::MonteCarlo && (event->time() < histogram()->GetXaxis()->GetXmin() || event->time() > histogram()->GetXaxis()->GetXmax()))
+    qDebug() << "Eventtime is not between first and last" << event->time();
+  else
+    histogram()->Fill(event->time());
 }
 
 void MeasurementTimePlot::update()
 {
-  double measurementTime = m_calculation.measurementTime();
-  double timeError = m_calculation.measurementTimeError();
-  latex()->SetTitle(qPrintable(QString("measurement time  = (%1 #pm %2) s").arg(measurementTime).arg(timeError)));
+  latex()->SetTitle(qPrintable(QString("bin width = %1 s").arg(histogram()->GetBinWidth(1))));
 }
 
 void MeasurementTimePlot::draw(TCanvas* canvas)
@@ -49,9 +64,9 @@ void MeasurementTimePlot::draw(TCanvas* canvas)
   } else {
     H1DPlot::draw(canvas);
     //TODO check this, especially for older data !!!
-    xAxis()->SetTimeOffset(3600, "gmt"); //dont understand this, but works at testbeam
+    xAxis()->SetTimeOffset(0, "gmt");
     xAxis()->SetTimeDisplay(1);
-    xAxis()->SetTimeFormat("%d-%H:%M");
+    xAxis()->SetTimeFormat("%H:%M");
     gPad->Modified();
     gPad->Update();
   }

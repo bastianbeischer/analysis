@@ -11,7 +11,6 @@
 #include "Particle.hh"
 #include "Helpers.hh"
 
-
 #include <TH1D.h>
 #include <TLatex.h>
 #include <TLegend.h>
@@ -23,11 +22,12 @@
 
 #include <QVector>
 #include <QDebug>
+#include <QString>
 
 #include <cmath>
 #include <vector>
 
-RigidityFlux::RigidityFlux(Enums::ChargeSign type, const QDateTime& first, const QDateTime& last, TH1D* particleHistogram)
+RigidityFlux::RigidityFlux(Enums::ChargeSign type, int numberOfThreads, TH1D* particleHistogram, bool isAlbedo)
   : AnalysisPlot(Enums::MomentumReconstruction)
   , H1DPlot()
   , m_type(type)
@@ -39,7 +39,7 @@ RigidityFlux::RigidityFlux(Enums::ChargeSign type, const QDateTime& first, const
 {
   loadEfficiencies();
   QString title = "flux spectrum";
-  m_measurementTimeCalculation = new MeasurementTimeCalculation(first, last);
+  m_measurementTimeCalculation = new MeasurementTimeCalculation(numberOfThreads);
   if (m_type == Enums::Negative) {
     title += " - negative";
     m_particleHistogramMirrored = Helpers::createMirroredHistogram(m_particleHistogram);
@@ -84,14 +84,26 @@ RigidityFlux::RigidityFlux(Enums::ChargeSign type, const QDateTime& first, const
   legend->AddEntry(histogram, "Data", "p");
   addLegend(legend);
 
-  if (m_type == Enums::Positive) {
-    m_phiFit = new SolarModulationFit(histogram);
+  if (!isAlbedo) {
+    if (m_type == Enums::Negative) {
+      m_phiFit = new SolarModulationFit(histogram, Particle(Enums::Electron).pdgId());
+      m_phiFit->setGamma(2.7);
+    } else {
+      m_phiFit = new SolarModulationFit(histogram, Particle(Enums::Proton).pdgId());
+    }
     addFunction(m_phiFit->fit());
     TLatex* gammaLatex = RootPlot::newLatex(.4, .88);
     TLatex* phiLatex = RootPlot::newLatex(.4, .83);
     addLatex(gammaLatex);
     addLatex(phiLatex);
   }
+
+  const int low = histogram->GetXaxis()->FindBin(0.5);
+  const int up = histogram->GetXaxis()->FindBin(10);
+  histogram->GetXaxis()->SetRange(low, up);
+
+  histogram->GetXaxis()->SetTitleOffset(1.2);
+  histogram->GetYaxis()->SetTitleOffset(1.2);
 
   SimulationFluxWidget* secWidget = new SimulationFluxWidget;
   connect(secWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
@@ -101,7 +113,6 @@ RigidityFlux::RigidityFlux(Enums::ChargeSign type, const QDateTime& first, const
 RigidityFlux::~RigidityFlux()
 {
   if (m_measurementTimeCalculation) {
-    delete m_measurementTimeCalculation->histogram();
     delete m_measurementTimeCalculation;
     m_measurementTimeCalculation = 0;
   }
@@ -127,7 +138,7 @@ void RigidityFlux::update()
   m_fluxCalculation->update(m_measurementTimeCalculation->measurementTime());
   efficiencyCorrection();
   updateBinTitles();
-  if (m_type == Enums::Positive) {
+  if (m_phiFit) {
     m_phiFit->fit();
     latex(m_nBinsNew)->SetTitle(qPrintable(m_phiFit->gammaLabel()));
     latex(m_nBinsNew + 1)->SetTitle(qPrintable(m_phiFit->phiLabel()));
@@ -141,16 +152,18 @@ void RigidityFlux::updateBinTitles()
     double x = xAxis()->GetBinCenterLog(bin + 1);
     double y = histogram()->GetBinContent(bin + 1);
     double value = m_particleHistogram->GetBinContent(bin);
-    QString text = "#scale[0.6]{"+QString::number(value,'d',0)+"}";
+    QString text = QString::number(value,'d',0);
+    if (histogram(0)->GetXaxis()->GetFirst() > bin + 1 || bin + 1 >histogram(0)->GetXaxis()->GetLast())
+      text = " ";
     latex(i)->SetX(x);
-    latex(i)->SetY(y);
+    latex(i)->SetY(y*1.1);
     latex(i)->SetTitle(qPrintable(text));
   }
 }
 
 void RigidityFlux::loadEfficiencies()
 {
-  const EfficiencyCorrectionSettings::FoldingType type = EfficiencyCorrectionSettings::Raw;
+  const EfficiencyCorrectionSettings::FoldingType type = EfficiencyCorrectionSettings::Unfolded;
   if (m_type == Enums::Negative) {
     m_multiLayerEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(type));
     m_trackFindingEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(type));

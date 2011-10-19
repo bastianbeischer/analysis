@@ -402,7 +402,7 @@ void Analysis::setupPlots()
     addPlot(new MomentumSpectrumPlot(Enums::Positive | Enums::Negative, true));
     addPlot(new AlbedosVsMomentumPlot());
     addPlot(new MeasurementTimePlot(first, last));
-    addPlot(new FluxCollection(first, last));
+    addPlot(new FluxCollection(m_analysisSetting.numberOfThreads));
   }
   if (m_analysisSetting.analysisTopics & Enums::EfficiencyTOF) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {

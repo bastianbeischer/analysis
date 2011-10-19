@@ -8,14 +8,18 @@ class TH1D;
 
 class RigidityMcSpectrum : public PostAnalysisPlot {
 public:
-  RigidityMcSpectrum(PostAnalysisCanvas* generated, PostAnalysisCanvas* reconstructed);
+  RigidityMcSpectrum(PostAnalysisCanvas* generated, PostAnalysisCanvas* reconstructed, PostAnalysisCanvas* reconstructedLow, PostAnalysisCanvas* reconstructedUp);
   virtual ~RigidityMcSpectrum();
   TH1D* createGeneratedSpectrum();
   TH1D* createRecordedSpectrum();
+  TH1D* createRecordedSpectrumLow();
+  TH1D* createRecordedSpectrumUp();
+
 private:
-  void scaleToBinWidth(TH1D*);
   TH1D* m_generated;
   TH1D* m_reconstructed;
+  TH1D* m_reconstructedLow;
+  TH1D* m_reconstructedUp;
 };
 
 #endif

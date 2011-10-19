@@ -13,7 +13,6 @@
 #include <TH1D.h>
 
 #include <QString>
-#include <QDateTime>
 #include <QVector>
 #include <QMap>
 
@@ -25,7 +24,7 @@ class TF1;
 class RigidityFlux : public QObject, public AnalysisPlot, public H1DPlot {
 Q_OBJECT
 public:
-  RigidityFlux(Enums::ChargeSign, const QDateTime& first, const QDateTime& last, TH1D* particleHistogram);
+  RigidityFlux(Enums::ChargeSign, int numberOfThreads, TH1D* particleHistogram, bool isAlbedo = false);
   ~RigidityFlux();
 
   virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);

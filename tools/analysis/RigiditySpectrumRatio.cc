@@ -50,6 +50,9 @@ RigiditySpectrumRatio::RigiditySpectrumRatio()
   setAxisTitle(histogram->GetXaxis()->GetTitle(), histogram->GetYaxis()->GetTitle());
   addHistogram(histogram, H1DPlot::P);
 
+  histogram->GetXaxis()->SetTitleOffset(1.2);
+  histogram->GetYaxis()->SetTitleOffset(1.2);
+
   TLegend* leg = new TLegend(.80, .72, .98, .98);
   leg->SetFillColor(kWhite);
   addLegend(leg);

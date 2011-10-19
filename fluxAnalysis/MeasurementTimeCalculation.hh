@@ -1,29 +1,28 @@
 #ifndef MeasurementTimeCalculation_hh
 #define MeasurementTimeCalculation_hh
 
-#include <QDateTime>
+#include <QVector>
 
 class TH1D;
 class SimpleEvent;
 
-// Simple approach to determine dead times.
-// A more suffisticated approach has yet to
-// be developed.
-// measurementTimeError is certainly not
-// correct!
 class MeasurementTimeCalculation {
 public:
-  MeasurementTimeCalculation(const QDateTime& first, const QDateTime& last);
+ MeasurementTimeCalculation(int numberOfThreads);
   MeasurementTimeCalculation(TH1D* histogram);
-  ~MeasurementTimeCalculation();
+  virtual ~MeasurementTimeCalculation();
   void update(const SimpleEvent* const event);
-  TH1D* histogram() const;
-  double measurementTime() const;
-  double measurementTimeError() const;
+  double measurementTime();
+  TH1D* measurementTimeDistribution();
 private:
   MeasurementTimeCalculation();
-  TH1D* m_histogram;
-  double m_measurementTimeError;
+  bool m_active;
+  double m_lastEventTime;
+  QVector<double> m_positionInsideBin;
+  QVector<int> m_positionInsideBinCounter;
+  TH1D* m_timeDifference;
+  TH1D* m_measurementTimeDistribution;
+  bool m_deleteMeasurementTimeDistribution;
 };
 
 #endif
