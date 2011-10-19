@@ -12,9 +12,7 @@ public:
   virtual double min() const;
   virtual double max() const;
   virtual int numberOfParameters() const;
-  virtual double eval(double measuredBeta, Enums::Particle, double reconstructedMomentum) const;
-private:
-  static const double s_cutoffMomentum;
+  virtual double eval(double measuredBeta, Enums::Particle, double realMomentum) const;
 };
 
 #endif

@@ -4,13 +4,15 @@
 
 #include <TAxis.h>
 
-LikelihoodRatio::LikelihoodRatio(const Likelihood* likelihood, Enums::Particle particle, double momentum, double min, double max)
+LikelihoodRatio::LikelihoodRatio(const Likelihood* likelihood, Enums::Particle particle, double momentum)
   : TF1(qPrintable(Enums::label(likelihood->type())), this, &LikelihoodRatio::rootFunctionPointer,
-    min, max, 0, "LikelihoodRatio")
+    -1., 1., 0, "LikelihoodRatio")
   , m_likelihood(likelihood)
   , m_particle(particle)
   , m_momentum(momentum)
 {
+  double range = likelihood->max() - likelihood->min();
+  SetRange(likelihood->min() - 0.05 * range, likelihood->max() + 0.05 * range);
   SetNpx(1000);
   SetLineColor(Particle(particle).color());
   GetXaxis()->SetTitle("p / GeV");

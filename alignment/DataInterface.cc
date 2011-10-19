@@ -21,6 +21,8 @@ DataInterface::DataInterface() :
   m_chain(new DataChain),
   m_processor(new AnalysisProcessor)
 {
+  m_processor->setCorrectionFlags(~Enums::Corrections(0));
+  m_processor->setParticleFilter(~Enums::Particles(0));
   m_processor->setTrackType(Enums::CenteredBrokenLine);
 }
 

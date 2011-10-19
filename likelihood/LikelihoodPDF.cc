@@ -4,9 +4,9 @@
 
 #include <TAxis.h>
 
-LikelihoodPDF::LikelihoodPDF(const Likelihood* likelihood, Enums::Particle particle, double momentum, double min, double max)
+LikelihoodPDF::LikelihoodPDF(const Likelihood* likelihood, Enums::Particle particle, double momentum)
   : TF1(qPrintable(Enums::label(likelihood->type())), this, &LikelihoodPDF::rootFunctionPointer,
-    min, max, 0, "LikelihoodPDF")
+    likelihood->min(), likelihood->max(), 0, "LikelihoodPDF")
   , m_likelihood(likelihood)
   , m_particle(particle)
   , m_momentum(momentum)

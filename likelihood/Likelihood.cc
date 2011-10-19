@@ -49,18 +49,18 @@ Likelihood::MomentumMap::ConstIterator Likelihood::upperNode(Enums::Particle typ
   return ++lowerNode(type, p);
 }
 
-QVector<double> Likelihood::linearInterpolation(Enums::Particle particle, double momentum) const
+QVector<double> Likelihood::linearInterpolation(Enums::Particle particle, double p) const
 {
   MomentumMap::ConstIterator endIt = end(particle);
-  MomentumMap::ConstIterator l = lowerNode(particle, momentum);
-  if (qFuzzyCompare(l.key(), momentum))
+  MomentumMap::ConstIterator l = lowerNode(particle, p);
+  if (qFuzzyCompare(l.key(), p))
     return l.value();
   MomentumMap::ConstIterator u = l;
   ++u;
   if (l == endIt || u == endIt)
     return QVector<double>();
   QVector<double> vector(numberOfParameters());
-  double k = (momentum - l.key()) / (u.key() - l.key());
+  double k = (p - l.key()) / (u.key() - l.key());
   for (int i = 0; i < numberOfParameters(); ++i) {
     vector[i] = l.value()[i] + k * (u.value()[i] - l.value()[i]);
   }
@@ -103,26 +103,26 @@ void Likelihood::loadNodes()
   settings.endGroup();
 }
 
-double Likelihood::ratio(double p, Enums::Particle particle, double reconstructedMomentum) const
+double Likelihood::ratio(double p, Enums::Particle particle, double realMomentum) const
 {
-  double conditionalProbability = eval(p, particle, reconstructedMomentum);
+  double conditionalProbability = eval(p, particle, realMomentum);
   if (qIsNull(conditionalProbability))
     return 0;
   double totalProbability = 0;
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it)
     if (it.key() & particles())
-      totalProbability+= eval(p, it.key(), reconstructedMomentum);
+      totalProbability+= eval(p, it.key(), realMomentum);
   if (qIsNull(totalProbability))
     return 0;
-  return eval(p, particle, reconstructedMomentum) / totalProbability;
+  return eval(p, particle, realMomentum) / totalProbability;
 }
 
 LikelihoodPDF* Likelihood::pdf(Enums::Particle particle, double momentum) const
 {
-  return new LikelihoodPDF(this, particle, momentum, min(), max());
+  return new LikelihoodPDF(this, particle, momentum);
 }
 
 LikelihoodRatio* Likelihood::ratio(Enums::Particle particle, double momentum) const
 {
-  return new LikelihoodRatio(this, particle, momentum, min(), max());
+  return new LikelihoodRatio(this, particle, momentum);
 }
