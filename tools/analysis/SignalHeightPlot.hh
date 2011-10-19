@@ -10,7 +10,7 @@ class SignalHeightPlot :
 {
   
 public:
-  SignalHeightPlot(AnalysisPlot::Topic, unsigned short);
+  SignalHeightPlot(Enums::AnalysisTopic, unsigned short);
   ~SignalHeightPlot();
 
   void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);

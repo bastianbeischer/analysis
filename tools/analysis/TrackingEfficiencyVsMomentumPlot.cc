@@ -11,18 +11,18 @@
 
 #include <cmath>
 
-TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot(Type type)
-  : AnalysisPlot(AnalysisPlot::MiscellaneousTracker)
+TrackingEfficiencyVsMomentumPlot::TrackingEfficiencyVsMomentumPlot(Enums::ChargeSigns type)
+  : AnalysisPlot(Enums::MiscellaneousTracker)
   , H2DPlot()
   , m_type(type)
 {
   QString htitle = "Efficiency vs momentum";
 
-  if (m_type == Positive)
+  if (m_type == Enums::Positive)
     htitle += " positive";
-  if (m_type == Negative)
+  if (m_type == Enums::Negative)
     htitle += " negative";
-  if (m_type == All)
+  if (m_type == (Enums::Positive | Enums::Negative))
     htitle += " all";
   setTitle(htitle);
 
@@ -66,10 +66,10 @@ void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, const 
 
   double rigidity = track->rigidity();
 
-  if (m_type == Positive && rigidity < 0) {
+  if (m_type == Enums::Positive && rigidity < 0) {
     return;
   }
-  if (m_type == Negative && rigidity > 0) {
+  if (m_type == Enums::Negative && rigidity > 0) {
     return;
   }
 

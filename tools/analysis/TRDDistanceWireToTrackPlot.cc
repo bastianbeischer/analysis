@@ -12,7 +12,7 @@
 #include "ParticleInformation.hh"
 #include "TRDReconstruction.hh"
 
-TRDDistanceWireToTrackPlot::TRDDistanceWireToTrackPlot(AnalysisPlot::Topic topic) :
+TRDDistanceWireToTrackPlot::TRDDistanceWireToTrackPlot(Enums::AnalysisTopic topic) :
   AnalysisPlot(topic),
   H1DPlot()
 {

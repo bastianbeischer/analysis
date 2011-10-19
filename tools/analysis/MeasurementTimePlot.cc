@@ -13,7 +13,7 @@
 #include <QDebug>
 
 MeasurementTimePlot::MeasurementTimePlot(const QDateTime& first, const QDateTime& last)
-  : AnalysisPlot(AnalysisPlot::MomentumReconstruction)
+  : AnalysisPlot(Enums::MomentumReconstruction)
   , H1DPlot()
   , m_calculation(first, last)
 {

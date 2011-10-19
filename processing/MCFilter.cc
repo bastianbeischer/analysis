@@ -4,8 +4,8 @@
 #include "ParticleDB.hh"
 #include "ParticleProperties.hh"
 
-MCFilter::MCFilter(Types types) :
-  m_types(types)
+MCFilter::MCFilter(Enums::Particles types)
+  : m_types(types)
 {
 }
 

@@ -74,7 +74,7 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, const Particle* const par
     double z_max = histogram()->GetYaxis()->GetXmax();
 
     double y0 = 0., slopeY = 0.;
-    if (track->type() == Track::StraightLine) {
+    if (track->type() == Enums::StraightLine) {
       const StraightLine* straightLine = static_cast<const StraightLine*>(track);
       double x0 = straightLine->x0();
       double slopeX = straightLine->slopeX();
@@ -91,12 +91,12 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, const Particle* const par
       y0 = straightLine->y0();
       slopeY = straightLine->slopeY();
     }
-    else if (track->type() == Track::BrokenLine || track->type() == Track::CenteredBrokenLine ) {
+    else if (track->type() == Enums::BrokenLine || track->type() == Enums::CenteredBrokenLine ) {
       double x0, slopeX, zIntersection, x_min, x_max;
       TLine* x_line;
 
       // lower line
-      if (track->type() == Track::BrokenLine) {
+      if (track->type() == Enums::BrokenLine) {
         const BrokenLine* brokenLine = static_cast<const BrokenLine*>(track);
         zIntersection = brokenLine->zIntersection();
         x0 = brokenLine->lowerX0();
@@ -104,7 +104,7 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, const Particle* const par
         y0 = brokenLine->y0();
         slopeY = brokenLine->slopeY();
       }
-      else if (track->type() == Track::CenteredBrokenLine) {
+      else if (track->type() == Enums::CenteredBrokenLine) {
         const CenteredBrokenLine* centeredBrokenLine = static_cast<const CenteredBrokenLine*>(track);
         zIntersection = centeredBrokenLine->zIntersection();
         x0 = centeredBrokenLine->x0();
@@ -121,13 +121,13 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, const Particle* const par
       m_lines.push_back(x_line);
 
       // upper line
-      if (track->type() == Track::BrokenLine) {
+      if (track->type() == Enums::BrokenLine) {
         const BrokenLine* brokenLine = static_cast<const BrokenLine*>(track);
         zIntersection = brokenLine->zIntersection();
         x0 = brokenLine->upperX0();
         slopeX = brokenLine->upperSlopeX();
       }
-      else if (track->type() == Track::CenteredBrokenLine) {
+      else if (track->type() == Enums::CenteredBrokenLine) {
         const CenteredBrokenLine* centeredBrokenLine = static_cast<const CenteredBrokenLine*>(track);
         zIntersection = centeredBrokenLine->zIntersection();
         x0 = centeredBrokenLine->x0();

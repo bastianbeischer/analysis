@@ -24,6 +24,7 @@ MCEventInformation::~MCEventInformation()
 }
 
 MCEventInformation::MCEventInformation(const MCEventInformation& other)
+  : TObject()
 {
   const MCSimpleEventParticle* otherPrimary = other.primary();
   m_primary = new MCSimpleEventParticle( *otherPrimary );

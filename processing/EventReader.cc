@@ -30,6 +30,11 @@ EventReader::~EventReader()
   delete m_chain;
 }
 
+int EventReader::numberOfEvents() const
+{
+  return m_chain->nEntries();
+}
+
 int EventReader::queuedEvents() const
 {
   int queuedEvents = 0;
@@ -56,6 +61,12 @@ int EventReader::bufferSize() const
 void EventReader::setBufferSize(int size)
 {
   m_bufferSize = size;
+}
+
+void EventReader::clearFileList()
+{
+  m_chain->clear();
+  emit(numberOfEventsChanged(m_chain->nEntries()));
 }
 
 void EventReader::setFileList(const QString& fileName)
@@ -100,6 +111,7 @@ void EventReader::stop()
   m_mutex.lock();
   m_abort = true;
   m_mutex.unlock();
+  wait();
 }
 
 void EventReader::run()

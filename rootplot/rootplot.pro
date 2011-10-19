@@ -19,12 +19,13 @@ CLASSES += \
   DetectorSelectionWidget \
   TOFChannelSelectionWidget \
   GraphPlot \
-  PerdaixDisplay
+  PerdaixDisplay \
+  H3DPlot
 
 LIBS += \
   -L$$TOPLEVEL/lib \
   -lglobal
 
 include($$TOPLEVEL/root.pri)
-include($$TOPLEVEL/macx.pri)
 include($$TOPLEVEL/common.pri)
+include($$TOPLEVEL/macx.pri)

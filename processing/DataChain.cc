@@ -23,7 +23,7 @@ DataChain::DataChain()
   , m_event(0)
   , m_currentEntry(-1)
 {
-  init();
+  clear();
 }
 
 DataChain::DataChain(const char* listName)
@@ -42,7 +42,7 @@ DataChain::~DataChain()
   }
 }
 
-void DataChain::init()
+void DataChain::clear()
 {
   if (m_event)
     delete m_event;
@@ -58,7 +58,7 @@ void DataChain::init()
 
 void DataChain::setFileList(const char* listName)
 {
-  init();
+  clear();
   addFileList(listName);
 }
 

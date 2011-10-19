@@ -26,7 +26,7 @@ AnalysisProcessor::AnalysisProcessor()
 {
 }
 
-AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, Track::Type track, Corrections::Flags flags)
+AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, Enums::TrackType track, Enums::Corrections flags)
   : EventProcessor(destinations)
   , m_particle(new Particle)
   , m_particleFilter(new ParticleFilter)
@@ -51,22 +51,22 @@ AnalysisProcessor::~AnalysisProcessor()
   delete m_identifier;
 }
 
-void AnalysisProcessor::setTrackType(const Track::Type& trackType)
+void AnalysisProcessor::setTrackType(const Enums::TrackType& trackType)
 {
   m_particle->setTrackType(trackType);
 }
 
-void AnalysisProcessor::setCorrectionFlags(const Corrections::Flags& flags)
+void AnalysisProcessor::setCorrectionFlags(const Enums::Corrections& flags)
 {
   m_corrections->setFlags(flags);
 }
 
-void AnalysisProcessor::setParticleFilter(const ParticleFilter::Types& types)
+void AnalysisProcessor::setParticleFilter(const Enums::Particles& types)
 {
   m_particleFilter->setTypes(types);
 }
 
-void AnalysisProcessor::setMCFilter(const MCFilter::Types& types)
+void AnalysisProcessor::setMCFilter(const Enums::Particles& types)
 {
   m_mcFilter->setTypes(types);
 }

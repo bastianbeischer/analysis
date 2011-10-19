@@ -157,7 +157,7 @@ void SimulationFluxSelector::fillMenu(QPushButton* button)
   menu->addAction(action);
   menu->addSeparator();
   for (int isAlbedo = 0; isAlbedo < 2; ++isAlbedo) {
-    foreach (Particle::Type particleType, SimulationFluxReader::instance()->particles(m_location)) {
+    foreach (Enums::Particle particleType, SimulationFluxReader::instance()->particles(m_location)) {
       QString actionName = SimulationFluxKey::particleName(particleType);
       if (isAlbedo)
         actionName.prepend("albedo ");
@@ -187,8 +187,8 @@ void SimulationFluxSelector::checkParticles(QAction* action, bool positive)
   m_inhibitUpdate = true;
   foreach (QAction* action, static_cast<QMenu*>(action->parent())->actions()) {
     const QString& particleString = action->text();
-    Particle::Type particleType = SimulationFluxKey::particle(particleString);
-    if (particleType == Particle::Unknown)
+    Enums::Particle particleType = SimulationFluxKey::particle(particleString);
+    if (particleType == Enums::NoParticle)
       continue;
     bool isAlbedo = false;
     if (particleString.contains("albedo", Qt::CaseInsensitive))

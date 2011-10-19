@@ -20,7 +20,7 @@
 #include <math.h>
 
 MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumPlot::TRDSpectrumType spectrumType)
-  : AnalysisPlot(AnalysisPlot::MonteCarloTRD)
+  : AnalysisPlot(Enums::MonteCarloTRD)
   , H1DPlot()
   , m_colorCounter(0)
   , m_id(id)
@@ -40,8 +40,9 @@ MCTRDSpectrumPlot::MCTRDSpectrumPlot(unsigned short id, TRDSpectrumPlot::TRDSpec
   case TRDSpectrumPlot::layer:
     strType = "MC TRD layer";
     break;
-    break;
   }
+
+  setTitle(strType);
 
   setAxisTitle(TRDReconstruction::xAxisTitle(), "entries");
 

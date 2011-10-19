@@ -11,4 +11,6 @@ macx {
 
     CONFIG += x86_64
     QMAKE_CXXFLAGS += -march=core2 -mtune=core2 -O2 -pipe
+    QMAKE_LFLAGS -= -Wl,--no-as-needed
+    QMAKE_LFLAGS -= -Wl,--as-needed
 }

@@ -9,13 +9,28 @@
 #include "Settings.hh"
 #include "SettingsManager.hh"
 
-#include <math.h>
+#include <cmath>
 
-Cut::Cut(Type type)
+#include <QDebug>
+#include <QStringList>
+
+Cut::Cut(Enums::Cut type)
   : m_type(type)
   , m_minIsSet(false)
   , m_maxIsSet(false)
 {
+}
+
+Cut::Cut(const QString& string)
+  : m_minIsSet(false)
+  , m_maxIsSet(false)
+{
+  QStringList stringList = string.split(" | ");
+  m_type = Enums::cut(stringList[0]);
+  if (!stringList[1].isEmpty())
+    setMin(stringList[1].toDouble());
+  if (!stringList[2].isEmpty())
+    setMax(stringList[2].toDouble());
 }
 
 Cut::~Cut() 
@@ -48,7 +63,7 @@ bool Cut::passesCuts(double value) const
 
 bool Cut::passes(const SimpleEvent* event) const
 {
-  if (m_type == cherenkov) {
+  if (m_type == Enums::CherenkovCut) {
     //get settings if present
     const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
     if (!settings || settings->situation() != Settings::Testbeam11)
@@ -62,7 +77,7 @@ bool Cut::passes(const SimpleEvent* event) const
 
 bool Cut::passes(const QVector<Hit*>& clusters, const Particle* particle) const
 {
-  if (m_type == rigidity) {
+  if (m_type == Enums::RigidityCut) {
     const Track* track = particle->track();
     if (!track || !track->fitGood())
       return false;
@@ -71,7 +86,7 @@ bool Cut::passes(const QVector<Hit*>& clusters, const Particle* particle) const
       return false;
     return passesCuts(track->rigidity());
   }
-  if (m_type == beta) {
+  if (m_type == Enums::BetaCut) {
     const Track* track = particle->track();
     if (!track || !track->fitGood())
       return false;
@@ -80,7 +95,7 @@ bool Cut::passes(const QVector<Hit*>& clusters, const Particle* particle) const
       return false;
     return passesCuts(particle->beta());
   }
-  if (m_type == tofTimeOverThreshold) {
+  if (m_type == Enums::TimeOverThresholdCut) {
     const Track* track = particle->track();
     if (!track || !track->fitGood())
       return false;
@@ -113,7 +128,7 @@ bool Cut::passes(const QVector<Hit*>& clusters, const Particle* particle) const
       return false;
     }
   }
-  if (m_type == trdDeposition) {
+  if (m_type == Enums::TrdSignalCut) {
     const Track* track = particle->track();
     if (!track || !track->fitGood())
       return false;
@@ -136,4 +151,15 @@ double Cut::sumOfSignalHeights(const Hit::ModuleType type, const Track* track, c
     }
   }
   return sumSignal;
+}
+
+QString Cut::toString() const
+{
+  QString string = Enums::label(m_type) + " | ";
+  if (m_minIsSet)
+    string+= QString::number(m_min);
+  string+= " | ";
+  if (m_maxIsSet)
+    string+= QString::number(m_max);
+  return string;
 }

@@ -2,6 +2,7 @@
 
 #include <TH1.h>
 #include <TH2.h>
+#include <TH3.h>
 #include <TF1.h>
 #include <TCanvas.h>
 #include <TROOT.h>
@@ -57,6 +58,17 @@ QString PostAnalysisCanvas::name()
   return m_canvas->GetName();
 }
   
+QVector<TH1D*> PostAnalysisCanvas::histograms1D()
+{
+  QVector<TH1D*> ret;
+  for (int i = 0; i < m_canvas->GetListOfPrimitives()->GetSize(); ++i) {
+    if (!strcmp(m_canvas->GetListOfPrimitives()->At(i)->ClassName(), "TH1D")) {
+      ret.append(static_cast<TH1D*>(m_canvas->GetListOfPrimitives()->At(i)));
+    }
+  }
+  return ret;
+}
+
 QVector<TH2D*> PostAnalysisCanvas::histograms2D()
 {
   QVector<TH2D*> ret;
@@ -66,14 +78,12 @@ QVector<TH2D*> PostAnalysisCanvas::histograms2D()
   return ret;
 }
 
-QVector<TH1D*> PostAnalysisCanvas::histograms1D()
+QVector<TH3D*> PostAnalysisCanvas::histograms3D()
 {
-  QVector<TH1D*> ret;
-  for (int i = 0; i < m_canvas->GetListOfPrimitives()->GetSize(); ++i) {
-    if (!strcmp(m_canvas->GetListOfPrimitives()->At(i)->ClassName(), "TH1D")) {
-      ret.append(static_cast<TH1D*>(m_canvas->GetListOfPrimitives()->At(i)));
-    }
-  }
+  QVector<TH3D*> ret;
+  for (int i = 0; i < m_canvas->GetListOfPrimitives()->GetSize(); ++i)
+    if (!strcmp(m_canvas->GetListOfPrimitives()->At(i)->ClassName(), "TH3D"))
+      ret.append(static_cast<TH3D*>(m_canvas->GetListOfPrimitives()->At(i)));
   return ret;
 }
 

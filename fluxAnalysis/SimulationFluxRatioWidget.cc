@@ -39,7 +39,7 @@ void SimulationFluxRatioWidget::update()
         SimulationFluxKey::Location location = SimulationFluxKey::location(m_locationComboBox->currentText());
         SimulationFluxKey::Acceptance acceptance = SimulationFluxKey::acceptance(m_acceptanceComboBox->currentText());
         SimulationFluxKey::Source source = SimulationFluxKey::source(m_sourceComboBox->currentText());
-        Particle::Type particleType = SimulationFluxKey::particle(particleString);
+        Enums::Particle particleType = SimulationFluxKey::particle(particleString);
         double modulationParameter = SimulationFluxKey::modulationParameter(m_phiComboBox->currentText());
         bool isAlbedo = false;
         if (particleString.contains("albedo", Qt::CaseInsensitive))

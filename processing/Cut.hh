@@ -2,36 +2,34 @@
 #define Cut_hh
 
 #include <QVector>
+#include <QString>
 
 #include "Hit.hh"
+#include "Enums.hh"
 
 class Track;
 class Particle;
 class SimpleEvent;
 
-class Cut
-{
-
+class Cut {
 public:
-  enum Type {
-    rigidity,
-    beta,
-    tofTimeOverThreshold,
-    trdDeposition,
-    cherenkov
-  };
-  
-  Cut(Type type);
+  Cut(Enums::Cut);
+  Cut(const QString&);
   ~Cut();
   void setMin(double min);
   void setMax(double max);
+  double min() const {return m_min;}
+  double max() const {return m_max;}
   bool passes (const SimpleEvent* event) const;
   bool passes (const QVector<Hit*>& clusters, const Particle* particle) const;
-  Type type() const {return m_type;}
+  Enums::Cut type() const {return m_type;}
   bool valid() const {return (m_minIsSet || m_maxIsSet);}
+  bool minIsSet() const {return m_minIsSet;}
+  bool maxIsSet() const {return m_maxIsSet;}
+  QString toString() const;
 
 private:
-  Type m_type;
+  Enums::Cut m_type;
   bool m_minIsSet;
   double m_min;
   bool m_maxIsSet;

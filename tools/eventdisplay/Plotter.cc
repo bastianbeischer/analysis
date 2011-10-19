@@ -40,6 +40,8 @@ Plotter::Plotter(QWidget* parent)
   , m_hitsPlot(new HitsPlot)
   , m_positionLabel(0)
 {
+  m_processor->setCorrectionFlags(~Enums::Corrections(0));
+  m_processor->setParticleFilter(~Enums::Particles(0));
   m_processor->addDestination(m_hitsPlot);
   m_hitsPlot->draw(GetCanvas());
   gPad->Update();
@@ -93,7 +95,7 @@ void Plotter::mouseMoveEvent(QMouseEvent* event)
   }
 }
 
-void Plotter::drawEvent(unsigned int i, Track::Type type, bool allClusters, QPlainTextEdit& infoTextEdit, TQtWidget& trackFindingWidget)
+void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters, QPlainTextEdit& infoTextEdit, TQtWidget& trackFindingWidget)
 {
   TCanvas* canvas = GetCanvas();
   canvas->cd();

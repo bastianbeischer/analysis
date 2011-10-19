@@ -21,7 +21,7 @@
 #include <QDebug>
 #include <QMutex>
 
-RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpectrum, double measurementTime, Type type)
+RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpectrum, double measurementTime, Enums::ChargeSign type)
   : PostAnalysisPlot()
   , H1DPlot()
   , m_canvas(canvas->canvas())
@@ -29,8 +29,6 @@ RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpe
   , m_fluxCalculation(0)
   , m_type(type)
 {
-  m_typeNames.insert(Positive, "positive");
-  m_typeNames.insert(Negative, "negative");
 //  loadEfficiencies();
 
   QString name = canvas->name();
@@ -42,12 +40,12 @@ RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpe
     m_isAlbedo = true;
   }
 
-  if (m_type == Negative)
+  if (m_type == Enums::Negative)
     m_particleHistogram = Helpers::createMirroredHistogram(particleSpectrum);
   else
     m_particleHistogram = new TH1D(*particleSpectrum);
 
-  QString newTitle = QString(canvas->histograms1D().at(0)->GetName()) + m_typeNames[type];
+  QString newTitle = QString(canvas->histograms1D().at(0)->GetName()) + Enums::label(type);
   m_particleHistogram->SetTitle(qPrintable(newTitle));
 
   //corrections befor flux calculation
@@ -58,7 +56,7 @@ RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpe
   //....todo and particle counting from original histogram
   m_fluxCalculation = new FluxCalculation(m_particleHistogram, measurementTime);
 
-  QString title = QString("flux - ") + m_typeNames[m_type];
+  QString title = QString("flux - ") + Enums::label(m_type);
   if (m_isAlbedo)
     title.append(" albedo");
 

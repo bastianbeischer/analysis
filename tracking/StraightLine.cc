@@ -18,7 +18,7 @@ StraightLine::StraightLine() :
   m_y0(0),
   m_slopeY(0)
 {
-  m_type = Track::StraightLine;
+  m_type = Enums::StraightLine;
   m_matrix = new StraightLineMatrix;
 }
 

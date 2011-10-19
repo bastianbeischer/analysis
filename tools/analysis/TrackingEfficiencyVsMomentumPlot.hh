@@ -3,20 +3,20 @@
 
 #include "AnalysisPlot.hh"
 #include "H2DPlot.hh"
+#include "Enums.hh"
 
 class TCanvas;
 
 class TrackingEfficiencyVsMomentumPlot : public AnalysisPlot, public H2DPlot
 {
 public:
-  enum Type {Positive, Negative, All};
-  TrackingEfficiencyVsMomentumPlot(Type type);
+  TrackingEfficiencyVsMomentumPlot(Enums::ChargeSigns);
   ~TrackingEfficiencyVsMomentumPlot();
 
   void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
   void finalize();
 private:
-  Type m_type;
+  Enums::ChargeSigns m_type;
 };
 
 #endif /* TrackingEfficiencyVsMomentumPlot_hh */

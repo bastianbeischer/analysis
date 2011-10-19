@@ -7,7 +7,7 @@
 
 #include <TVector3.h>
 
-ResidualPlotMC::ResidualPlotMC(AnalysisPlot::Topic topic, Layer* layer)
+ResidualPlotMC::ResidualPlotMC(Enums::AnalysisTopic topic, Layer* layer)
   : ResidualPlot(topic, layer)
 {
   setTitle("MC " + title());

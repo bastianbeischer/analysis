@@ -13,7 +13,7 @@
 #include "TRDReconstruction.hh"
 
 TotalEnergyDepositionTRDvsTrackerPlot::TotalEnergyDepositionTRDvsTrackerPlot() :
-    AnalysisPlot(AnalysisPlot::MiscellaneousTRD),
+    AnalysisPlot(Enums::MiscellaneousTRD),
   H2DPlot()
 {
 

@@ -15,9 +15,10 @@ MCSimpleEventDigi::MCSimpleEventDigi(Hit::ModuleType type, unsigned short detID)
 {
 }
 
-MCSimpleEventDigi::MCSimpleEventDigi(const MCSimpleEventDigi& other) :
-  m_type(other.m_type),
-  m_detID(other.m_detID)
+MCSimpleEventDigi::MCSimpleEventDigi(const MCSimpleEventDigi& other)
+  : TObject()
+  , m_type(other.m_type)
+  , m_detID(other.m_detID)
 {
   m_signals.clear();
 

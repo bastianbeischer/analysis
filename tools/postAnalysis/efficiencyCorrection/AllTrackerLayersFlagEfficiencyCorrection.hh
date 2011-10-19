@@ -5,6 +5,7 @@
 #include "PostAnalysisCanvas.hh"
 #include "EfficiencyCorrectionSettings.hh"
 #include "H1DPlot.hh"
+#include "Enums.hh"
 
 #include <QObject>
 #include <QString>
@@ -13,14 +14,12 @@
 class AllTrackerLayersFlagEfficiencyCorrection : public QObject, public PostAnalysisPlot, public H1DPlot {
 Q_OBJECT
 public:
-  enum Type {Positive, Negative};
-  AllTrackerLayersFlagEfficiencyCorrection(Type, PostAnalysisCanvas*);
+  AllTrackerLayersFlagEfficiencyCorrection(Enums::ChargeSign, PostAnalysisCanvas*);
   virtual ~AllTrackerLayersFlagEfficiencyCorrection();
 private slots:
   void save();
 private:
-  Type m_type;
-  QMap<Type, QString> m_typeNames;
+  Enums::ChargeSign m_chargeSign;
   EfficiencyCorrectionSettings::FoldingType m_foldingType;
 };
 

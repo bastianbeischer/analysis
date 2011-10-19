@@ -17,8 +17,8 @@
 #include <iostream>
 #include <cmath>
 
-AzimuthPositionCorrelation::AzimuthPositionCorrelation(Direction direction, Type type)
-  : AnalysisPlot(AnalysisPlot::Tracking)
+AzimuthPositionCorrelation::AzimuthPositionCorrelation(Direction direction, Enums::ChargeSigns type)
+  : AnalysisPlot(Enums::Tracking)
   , H2DProjectionPlot()
   , m_direction(direction)
   , m_type(type)
@@ -30,11 +30,11 @@ AzimuthPositionCorrelation::AzimuthPositionCorrelation(Direction direction, Type
     htitle = "Azimuth correlation with y direction";
   }
 
-  if (m_type == Positive)
+  if (m_type == Enums::Positive)
     htitle += " positive";
-  if (m_type == Negative)
+  if (m_type == Enums::Negative)
     htitle += " negative";
-  if (m_type == All)
+  if (m_type == (Enums::Positive | Enums::Negative))
     htitle += " all";
   setTitle(htitle);
 
@@ -71,13 +71,14 @@ void AzimuthPositionCorrelation::processEvent(const QVector<Hit*>&, const Partic
     return;
 
   ParticleInformation::Flags flags = particle->information()->flags();
-  if ( !(flags & ParticleInformation::Chi2Good) || !(flags & ParticleInformation::InsideMagnet) || !(flags & ParticleInformation::BetaGood) || (flags & ParticleInformation::Albedo) )
+  if ( !(flags & ParticleInformation::Chi2Good) || !(flags & ParticleInformation::InsideMagnet)
+    || !(flags & ParticleInformation::BetaGood) || (flags & ParticleInformation::Albedo) )
     return;
 
   double rigidity = track->rigidity();
-  if (m_type == Positive && rigidity < 0)
+  if (m_type == Enums::Positive && rigidity < 0)
     return;
-  if (m_type == Negative && rigidity > 0)
+  if (m_type == Enums::Negative && rigidity > 0)
     return;
 
   double azimuth = track->azimuthAngle() * 180. / M_PI;

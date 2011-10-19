@@ -12,7 +12,7 @@
 #include "RootStyle.hh"
 #include "TLegend.h"
 
-TRDClustersOnTrackPlot::TRDClustersOnTrackPlot(AnalysisPlot::Topic topic) :
+TRDClustersOnTrackPlot::TRDClustersOnTrackPlot(Enums::AnalysisTopic topic) :
   AnalysisPlot(topic),
   H1DPlot()
 {

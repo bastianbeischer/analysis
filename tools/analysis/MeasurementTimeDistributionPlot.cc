@@ -11,7 +11,7 @@
 #include <cmath>
 
 MeasurementTimeDistributionPlot::MeasurementTimeDistributionPlot(int numberOfThreads)
-  : AnalysisPlot(AnalysisPlot::MiscellaneousTOF)
+  : AnalysisPlot(Enums::MiscellaneousTOF)
   , H1DPlot()
   , m_active(numberOfThreads == 1)
   , m_lastEventTime(-1)

@@ -23,3 +23,5 @@ foo
 out
 *.aux
 *.log
+*Dict.h
+*Dict.cxx

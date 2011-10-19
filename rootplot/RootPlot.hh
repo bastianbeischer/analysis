@@ -17,9 +17,10 @@ public:
     UndefinedDrawOption,
     BLANK, E1X0,
     COLZ, SCAT, CONT4Z, LEGO, LEGO2, SURF1, COLZTEXT,
-    AP, AC, ALP, ACP, ALX, P, L, C, HIST, LX, LP
+    AP, AC, ALP, ACP, ALX, P, L, C, HIST, LX, LP,
+    ISO
   };
-  enum Type {Undefined, H1DPlot, H2DPlot, GraphPlot};
+  enum Type {Undefined, H1DPlot, H2DPlot, GraphPlot, H3DPlot};
 
   RootPlot();
   virtual ~RootPlot();

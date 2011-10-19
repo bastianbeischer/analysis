@@ -10,7 +10,6 @@
 #include "TRDModule.hh"
 #include "TOFBar.hh"
 
-#include "FieldManager.hh"
 #include "InhomField.hh"
 #include "UniformField.hh"
 
@@ -29,7 +28,8 @@ QMutex Setup::s_mutex;
 
 Setup::Setup() :
   m_coordinates(0),
-  m_settings(0)
+  m_settings(0),
+  m_field(0)
 {
   QString path = Helpers::analysisPath() + "/conf/";
   QDir dir(path);
@@ -55,6 +55,8 @@ Setup::~Setup()
     delete layer;
   foreach(DetectorElement* element, m_elements)
     delete element;
+
+  delete m_field;
 }
 
 Setup* Setup::instance()
@@ -91,11 +93,11 @@ void Setup::construct()
         double Bx = values[0].toDouble();
         double By = values[1].toDouble();
         double Bz = values[2].toDouble();
-        FieldManager::instance()->setField(new UniformField(TVector3(Bx, By, Bz)));
+        m_field = new UniformField(TVector3(Bx, By, Bz));
       }
       else if (type == "inhom") {
         QString fieldMap = m_settings->value(key).toString();
-        FieldManager::instance()->setField(new InhomField(qPrintable(fieldMap)));
+        m_field = new InhomField(qPrintable(fieldMap));
       }
       else {
         // shouldn't happen

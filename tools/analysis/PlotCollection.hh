@@ -2,16 +2,16 @@
 #define PlotCollection_hh
 
 #include "AnalysisPlot.hh"
+
 #include <QObject>
 
-class PlotCollection :
-  public QObject,
-  public AnalysisPlot
+class TCanvas;
+
+class PlotCollection : public QObject, public AnalysisPlot
 {
   Q_OBJECT
-
 public:
-  PlotCollection(AnalysisPlot::Topic);
+  PlotCollection(Enums::AnalysisTopic);
   virtual ~PlotCollection();
   
   void addPlot(AnalysisPlot* plot) {m_plots.append(plot);}
@@ -19,8 +19,10 @@ public:
   virtual void finalize();
   virtual void update();
   virtual void draw(TCanvas*);
+  virtual bool isPlotCollection();
+
   void unzoom();
-  void saveForPostAnalysis();
+  void saveForPostAnalysis(TCanvas*);
   void positionChanged(double, double);
 
 protected slots:

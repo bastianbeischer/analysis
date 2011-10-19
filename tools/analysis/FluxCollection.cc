@@ -22,7 +22,7 @@
 #include <QDebug>
 
 FluxCollection::FluxCollection(const QDateTime& first, const QDateTime& last) 
-  : PlotCollection(AnalysisPlot::MomentumReconstruction)
+  : PlotCollection(Enums::MomentumReconstruction)
   , m_particleHistogram(0)
   , m_particleHistogramAlbedo(0)
 {
@@ -52,9 +52,9 @@ FluxCollection::FluxCollection(const QDateTime& first, const QDateTime& last)
 
   addPlot(new RigidityParticleSpectrum(RigidityParticleSpectrum::NonAlbedo, m_particleHistogram));
   comboBox->addItem("RigidityParticleSpectrum");
-  addPlot(new RigidityFlux(RigidityFlux::Positive, first, last, m_particleHistogram));
+  addPlot(new RigidityFlux(Enums::Positive, first, last, m_particleHistogram));
   comboBox->addItem("RigidityFlux Positive");
-  addPlot(new RigidityFlux(RigidityFlux::Negative, first, last, m_particleHistogram));
+  addPlot(new RigidityFlux(Enums::Negative, first, last, m_particleHistogram));
   comboBox->addItem("RigidityFlux Negative");
 
   m_particleHistogramAlbedo = new TH1D("particle spectrum - albedo", "", axisData.size()-1, axisData.constData());
@@ -64,9 +64,9 @@ FluxCollection::FluxCollection(const QDateTime& first, const QDateTime& last)
 
   addPlot(new RigidityParticleSpectrum(RigidityParticleSpectrum::Albedo, m_particleHistogramAlbedo));
   comboBox->addItem("RigidityParticleSpectrum Albedo");
-  addPlot(new RigidityFlux(RigidityFlux::Positive, first, last, m_particleHistogramAlbedo));
+  addPlot(new RigidityFlux(Enums::Positive, first, last, m_particleHistogramAlbedo));
   comboBox->addItem("RigidityFlux Positive Albedo");
-  addPlot(new RigidityFlux(RigidityFlux::Negative, first, last, m_particleHistogramAlbedo));
+  addPlot(new RigidityFlux(Enums::Negative, first, last, m_particleHistogramAlbedo));
   comboBox->addItem("RigidityFlux Negative Albedo");
   addPlot(new RigiditySpectrumRatio());
   comboBox->addItem("RigiditySpectrumRatio");

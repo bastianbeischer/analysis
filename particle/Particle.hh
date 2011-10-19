@@ -2,6 +2,7 @@
 #define Particle_hh
 
 #include "Track.hh"
+#include "Enums.hh"
 
 #include <TColor.h>
 
@@ -14,21 +15,15 @@ class TRDReconstruction;
 
 class Particle
 {
-
-public:
-  enum Type {START=1<<0, Unknown=START, Proton=1<<1, AntiProton=1<<2, Helium=1<<3, Electron=1<<4, Positron=1<<5,
-             Muon=1<<6, AntiMuon=1<<7, PiPlus=1<<8, PiMinus=1<<9, Photon=1<<10, Pi0=1<<11, Higgs=1<<12, END=Higgs};
-  Q_DECLARE_FLAGS(Types, Type);
-
 public:
   Particle();
-  Particle(const Type&);
+  Particle(const Enums::Particle&);
   Particle(const int&);
   ~Particle();
 
-  void setType(const Type&);
+  void setType(const Enums::Particle&);
   void setPdgId(const int&);
-  void setTrackType(const Track::Type&);
+  void setTrackType(const Enums::TrackType&);
 
   const ParticleProperties* properties() const {return m_properties;}
   Track* track() const {return m_track;}
@@ -41,7 +36,7 @@ public:
   double beta() const;
 
   // loopthrough functions to properties
-  Type type() const;
+  Enums::Particle type() const;
   int pdgId() const;
   QString name() const;
   double mass() const;
@@ -59,9 +54,6 @@ private:
   TimeOfFlight* m_tof;
   TRDReconstruction* m_trd;
   ParticleInformation* m_information;
-
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(Particle::Types);
 
 #endif /* Particle_hh */

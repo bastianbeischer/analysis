@@ -25,7 +25,7 @@ public:
   void setFileList(const QString& listName);
   void addFileList(const QString& listName);
   void addRootFile(const QString&);
-  void drawEvent(unsigned int i, Track::Type type, bool allClusters, QPlainTextEdit& infoTextBox, TQtWidget& trackFindingWidget);
+  void drawEvent(unsigned int i, Enums::TrackType type, bool allClusters, QPlainTextEdit& infoTextBox, TQtWidget& trackFindingWidget);
   void saveCanvas(const QString& fileName);
   void setPositionLabel(QLabel* label);
 public slots:
