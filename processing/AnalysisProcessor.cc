@@ -24,7 +24,7 @@ AnalysisProcessor::AnalysisProcessor()
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections)
   , m_identifier(new ParticleIdentifier)
-  , m_likelihood(new LikelihoodAnalysis(Enums::TrackerMomentumLikelihood))
+  , m_likelihood(new LikelihoodAnalysis(Enums::TrackerMomentumLikelihood | Enums::TimeOfFlightLikelihood))
 {
 }
 

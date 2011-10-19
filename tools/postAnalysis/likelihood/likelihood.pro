@@ -9,6 +9,7 @@ INCLUDEPATH += \
   $$TOPLEVEL/likelihood \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/global \
+  $$TOPLEVEL/particle \
   $$TOPLEVEL/tools/postAnalysis/postAnalysis
 
 LIBS += \
@@ -16,12 +17,12 @@ LIBS += \
   -llikelihood \
   -lrootplot \
   -lglobal \
+  -lparticle \
   -lpostAnalysis
 
 CLASSES = \
   MainWindow \
-  LikelihoodPDFPlot \
-  LikelihoodRatioPlot
+  LikelihoodPDFPlot
 
 SOURCES = \
   main.cc

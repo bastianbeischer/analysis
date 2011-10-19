@@ -12,8 +12,6 @@
 #include <cfloat>
 #include <iostream>
 
-#include <QDebug>
-
 Track::Track() :
   m_type(Enums::NoTrack),
   m_matrix(0),
@@ -52,7 +50,6 @@ int Track::fit(const QVector<Hit*>& hits)
 
 void Track::calculateTransverseRigidity()
 {
-  qDebug() << "calculateTransverseRigidity()";
   double alpha = bendingAngle();
   if (alpha == 0.)
     m_transverseRigidity = DBL_MAX;

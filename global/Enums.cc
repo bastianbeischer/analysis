@@ -64,8 +64,8 @@ const QMap<Enums::Particle, QString> Enums::s_particleMap = InitializableMap<Enu
    << QPair<Enums::Particle, QString>(Enums::Helium, "alpha")
    << QPair<Enums::Particle, QString>(Enums::Electron, "e-")
    << QPair<Enums::Particle, QString>(Enums::Positron, "e+")
-   << QPair<Enums::Particle, QString>(Enums::Muon, "mu+")
-   << QPair<Enums::Particle, QString>(Enums::AntiMuon, "mu-")
+   << QPair<Enums::Particle, QString>(Enums::Muon, "mu-")
+   << QPair<Enums::Particle, QString>(Enums::AntiMuon, "mu+")
    << QPair<Enums::Particle, QString>(Enums::PiPlus, "pi+")
    << QPair<Enums::Particle, QString>(Enums::PiMinus, "pi-")
    << QPair<Enums::Particle, QString>(Enums::Photon, "gamma")
@@ -85,6 +85,15 @@ const QMap<Enums::LikelihoodVariable, QString> Enums::s_likelihoodVariableMap = 
   << QPair<Enums::LikelihoodVariable, QString>(Enums::TimeOverThresholdLikelihood, "time over threshold likelihood")
   << QPair<Enums::LikelihoodVariable, QString>(Enums::TimeOfFlightLikelihood, "time of flight likelihood")
   << QPair<Enums::LikelihoodVariable, QString>(Enums::TrackerMomentumLikelihood, "tracker momentum likelihood");
+
+const QMap<Enums::KineticVariable, QString> Enums::s_kineticVariableMap = InitializableMap<Enums::KineticVariable, QString>()
+  << QPair<Enums::KineticVariable, QString>(Enums::TotalEnergy, "E / GeV")
+  << QPair<Enums::KineticVariable, QString>(Enums::KineticEnergy, "T / GeV")
+  << QPair<Enums::KineticVariable, QString>(Enums::Momentum, "p / GeV")
+  << QPair<Enums::KineticVariable, QString>(Enums::Rigidity, "R / GV")
+  << QPair<Enums::KineticVariable, QString>(Enums::Curvature, "#kappa / GV^{-1}")
+  << QPair<Enums::KineticVariable, QString>(Enums::Beta, "#beta")
+  << QPair<Enums::KineticVariable, QString>(Enums::InverseBeta, "#beta^{-1}");
 
 // ChargeSign
 const QString Enums::label(Enums::ChargeSign key) {return s_chargeSignMap.value(key);}
@@ -182,3 +191,9 @@ const QString Enums::label(Enums::LikelihoodVariable key) {return s_likelihoodVa
 Enums::LikelihoodVariable Enums::likelihoodVariable(const QString& value) {return s_likelihoodVariableMap.key(value);}
 Enums::LikelihoodVariableIterator Enums::likelihoodVariableBegin() {return s_likelihoodVariableMap.constBegin();}
 Enums::LikelihoodVariableIterator Enums::likelihoodVariableEnd() {return s_likelihoodVariableMap.constEnd();}
+
+// KineticVariable
+const QString Enums::label(Enums::KineticVariable key) {return s_kineticVariableMap.value(key);}
+Enums::KineticVariable Enums::kineticVariable(const QString& value) {return s_kineticVariableMap.key(value);}
+Enums::KineticVariableIterator Enums::kineticVariableBegin() {return s_kineticVariableMap.constBegin();}
+Enums::KineticVariableIterator Enums::kineticVariableEnd() {return s_kineticVariableMap.constEnd();}

@@ -10,7 +10,9 @@
 TimeOfFlightLikelihood::TimeOfFlightLikelihood()
   : Likelihood()
 {
-  setType(Enums::TimeOfFlightLikelihood);
+  m_likelihoodVariableType = Enums::TimeOfFlightLikelihood;
+  m_measuredValueType = Enums::InverseBeta;
+  m_particles = Enums::Proton | Enums::Electron;
 }
 
 TimeOfFlightLikelihood::~TimeOfFlightLikelihood()
@@ -24,31 +26,27 @@ double TimeOfFlightLikelihood::min() const
 
 double TimeOfFlightLikelihood::max() const
 {
-  return 100.;
+  return 5.;
 }
 
 int TimeOfFlightLikelihood::numberOfParameters() const
 {
-  return 1;
+  return 0;
 }
 
-Likelihood::ParameterVector TimeOfFlightLikelihood::defaultParameters() const
+double TimeOfFlightLikelihood::eval(Particle* particle, const KineticVariable& hypothesis, bool* goodInterpolation) const
 {
-  ParameterVector vector(numberOfParameters());
-  vector[0] = 1.;
-  return vector;
+  return eval(qIsNull(particle->beta()) ? 0. : 1./particle->beta(), hypothesis, goodInterpolation);
 }
 
-double TimeOfFlightLikelihood::eval(double p, Enums::Particle particle, double realMomentum, bool* goodInterbolation) const
+double TimeOfFlightLikelihood::eval(double inverseBeta, const KineticVariable& hypothesis, bool* goodInterpolation) const
 {
-  if (p < min() || p > max())
-    return 0;
-  double mass = Particle(particle).mass();
+  if (goodInterpolation)
+    *goodInterpolation = true;
+  if (inverseBeta < min() || inverseBeta > max())
+      return 0;
   double timeResolution = 0.4;
   double length = Constants::upperTofPosition - Constants::lowerTofPosition;
   double invBetaResolution = Constants::speedOfLight * timeResolution / length;
-
-  double realInvBeta = Helpers::addQuad(mass, realMomentum) / realMomentum;
-  double area = linearInterpolation(particle, realMomentum, goodInterbolation).at(0);
-  return TMath::Gaus(Helpers::addQuad(mass, p) / p, realInvBeta, invBetaResolution, true) / area;
+  return TMath::Gaus(inverseBeta, hypothesis.inverseBeta(), invBetaResolution, true);
 }

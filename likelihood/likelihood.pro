@@ -8,7 +8,6 @@ TOPLEVEL = ..
 CLASSES += \
   Likelihood \
   LikelihoodPDF \
-  LikelihoodRatio \
   TimeOfFlightLikelihood \
   TrackerMomentumLikelihood \
   LikelihoodAnalysis

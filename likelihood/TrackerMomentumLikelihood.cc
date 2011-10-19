@@ -10,7 +10,10 @@
 TrackerMomentumLikelihood::TrackerMomentumLikelihood()
   : Likelihood()
 {
-  setType(Enums::TrackerMomentumLikelihood);
+  m_likelihoodVariableType = Enums::TrackerMomentumLikelihood;
+  m_measuredValueType = Enums::Curvature;
+  m_particles = Enums::Proton | Enums::AntiProton | Enums::PiPlus | Enums::PiMinus
+    | Enums::Electron | Enums::Positron | Enums::Muon | Enums::AntiMuon;
 }
 
 TrackerMomentumLikelihood::~TrackerMomentumLikelihood()
@@ -19,41 +22,31 @@ TrackerMomentumLikelihood::~TrackerMomentumLikelihood()
 
 double TrackerMomentumLikelihood::min() const
 {
-  return -100.;
+  return -50.;
 }
 
 double TrackerMomentumLikelihood::max() const
 {
-  return +100.;
+  return +50.;
 }
 
 int TrackerMomentumLikelihood::numberOfParameters() const
 {
-  return 1;
+  return 0;
 }
 
-Likelihood::ParameterVector TrackerMomentumLikelihood::defaultParameters() const
+double TrackerMomentumLikelihood::eval(Particle* particle, const KineticVariable& hypothesis, bool* goodInterpolation) const
 {
-  ParameterVector vector(numberOfParameters());
-  vector[0] = 1.;
-  return vector;
+  double curvature = 1. / particle->track()->rigidity(); // measured by tracker only
+  return eval(curvature, hypothesis, goodInterpolation);
 }
 
-double TrackerMomentumLikelihood::eval(double p, Enums::Particle particle, double realMomentum, bool* goodInterpolation) const
+double TrackerMomentumLikelihood::eval(double curvature, const KineticVariable& hypothesis, bool* goodInterpolation) const
 {
-  if (p < min() || p > max())
+  if (goodInterpolation)
+    *goodInterpolation = true;
+  if (curvature < min() || curvature > max())
     return 0;
-  double realMass = Particle(particle).mass();
-  double realCharge = Particle(particle).charge();
-  double realBeta = realMomentum / Helpers::addQuad(realMass, realMomentum);
-  double realRigidity = realMomentum / realCharge;
-  double realCurvature = 1. / realRigidity;
-
-  double relativeSigma = Helpers::addQuad(0.08 * realRigidity, 0.25 / realBeta);
-  
-  double rigidity = p / qAbs(realCharge);
-  double curvature = 1. / rigidity;
-  double area = linearInterpolation(particle, realMomentum, goodInterpolation).at(0);
-  //return TMath::Gaus(rigidity, realCharge*realCurvature, relativeSigma, true) / area;
-  return TMath::Gaus(curvature, realCurvature, relativeSigma, true) / area;
+  double relativeSigma = Helpers::addQuad(0.08 * hypothesis.rigidity(), 0.25 * hypothesis.inverseBeta());
+  return TMath::Gaus(curvature, hypothesis.curvature(), relativeSigma, true);
 }

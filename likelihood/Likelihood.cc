@@ -1,7 +1,6 @@
 #include "Likelihood.hh"
 #include "Helpers.hh"
 #include "LikelihoodPDF.hh"
-#include "LikelihoodRatio.hh"
 #include "TimeOfFlightLikelihood.hh"
 #include "TrackerMomentumLikelihood.hh"
 
@@ -11,8 +10,9 @@
 #include <QDebug>
 
 Likelihood::Likelihood()
-  : m_type()
-  , m_particles(Enums::NoParticle)
+  : m_particles(Enums::NoParticle)
+  , m_measuredValueType(Enums::UndefinedKineticVariable)
+  , m_likelihoodVariableType()
   , m_nodes()
 {
 }
@@ -21,15 +21,14 @@ Likelihood::~Likelihood()
 {
 }
 
-void Likelihood::setType(Enums::LikelihoodVariable type)
+Enums::KineticVariable Likelihood::measuredValueType() const
 {
-  m_type = type;
-  loadNodes();
+  return m_measuredValueType;
 }
 
-Enums::LikelihoodVariable Likelihood::type() const
+Enums::LikelihoodVariable Likelihood::likelihoodVariableType() const
 {
-  return m_type;
+  return m_likelihoodVariableType;
 }
 
 Likelihood::MomentumMap::ConstIterator Likelihood::end(Enums::Particle type) const
@@ -37,25 +36,25 @@ Likelihood::MomentumMap::ConstIterator Likelihood::end(Enums::Particle type) con
   return m_nodes[type].end();
 }
 
-Likelihood::MomentumMap::ConstIterator Likelihood::lowerNode(Enums::Particle type, double p) const
+Likelihood::MomentumMap::ConstIterator Likelihood::lowerNode(const KineticVariable& variable) const
 {
-  ParticleMap::ConstIterator particleIt = m_nodes.find(type);
-  MomentumMap::ConstIterator momentumIt = particleIt.value().lowerBound(p);
-  if (qFuzzyCompare(momentumIt.key(), p))
+  ParticleMap::ConstIterator particleIt = m_nodes.find(variable.particle());
+  MomentumMap::ConstIterator momentumIt = particleIt.value().lowerBound(variable.rigidity());
+  if (qFuzzyCompare(momentumIt.key(), variable.rigidity()))
     return momentumIt;
   return --momentumIt;
 }
 
-Likelihood::MomentumMap::ConstIterator Likelihood::upperNode(Enums::Particle type, double p) const
+Likelihood::MomentumMap::ConstIterator Likelihood::upperNode(const KineticVariable& variable) const
 {
-  return ++lowerNode(type, p);
+  return ++lowerNode(variable);
 }
 
-Likelihood::ParameterVector Likelihood::linearInterpolation(Enums::Particle particle, double p, bool* goodInterpolation) const
+Likelihood::ParameterVector Likelihood::linearInterpolation(const KineticVariable& variable, bool* goodInterpolation) const
 {
-  MomentumMap::ConstIterator endIt = end(particle);
-  MomentumMap::ConstIterator l = lowerNode(particle, p);
-  if (qFuzzyCompare(l.key(), p))
+  MomentumMap::ConstIterator endIt = end(variable.particle());
+  MomentumMap::ConstIterator l = lowerNode(variable);
+  if (qFuzzyCompare(l.key(), variable.rigidity()))
     return l.value();
   MomentumMap::ConstIterator u = l;
   ++u;
@@ -64,14 +63,14 @@ Likelihood::ParameterVector Likelihood::linearInterpolation(Enums::Particle part
       *goodInterpolation = false;
     } else {
       qWarning()
-        << "No values for an interpolation of" << Enums::label(type())
-        << "for" << Enums::label(particle) << "at p =" << p << "GeV.";
+        << "No values for an interpolation of" << Enums::label(m_likelihoodVariableType)
+        << "for" << Enums::label(variable.particle()) << "at R =" << variable.rigidity() << "GV.";
     }
     return defaultParameters();
   }
   if (goodInterpolation)
     *goodInterpolation = true;
-  double k = (p - l.key()) / (u.key() - l.key());
+  double k = (variable.rigidity() - l.key()) / (u.key() - l.key());
   ParameterVector vector(numberOfParameters());
   for (int i = 0; i < numberOfParameters(); ++i)
     vector[i] = l.value()[i] + k * (u.value()[i] - l.value()[i]);
@@ -88,9 +87,10 @@ void Likelihood::loadNodes()
   QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
   Q_ASSERT(QFile::exists(fileName));
   QSettings settings(fileName, QSettings::IniFormat);
-  settings.beginGroup(Enums::label(m_type));
+  settings.beginGroup(Enums::label(m_likelihoodVariableType));
   
   foreach (QString particleKey, settings.childGroups()) {
+    qDebug() << particleKey;
     settings.beginGroup(particleKey);
     Enums::Particle particle = Enums::particle(particleKey);
     m_particles|= particle;
@@ -114,38 +114,25 @@ void Likelihood::loadNodes()
   settings.endGroup();
 }
 
-double Likelihood::ratio(double p, Enums::Particle particle, double realMomentum) const
+LikelihoodPDF* Likelihood::pdf(const KineticVariable& variable) const
 {
-  double signalHypothesis = eval(p, particle, realMomentum);
-  if (qIsNull(signalHypothesis))
-    return 0;
-  double backgroundHypothesis = 0;
-  for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it)
-    if ((it.key() & particles()) && (it.key() != particle))
-      backgroundHypothesis+= eval(p, it.key(), realMomentum);
-  if (qIsNull(backgroundHypothesis))
-    return 0;
-  return signalHypothesis / backgroundHypothesis;
-}
-
-LikelihoodPDF* Likelihood::pdf(Enums::Particle particle, double momentum) const
-{
-  return new LikelihoodPDF(this, particle, momentum);
-}
-
-LikelihoodRatio* Likelihood::ratio(Enums::Particle particle, double momentum) const
-{
-  return new LikelihoodRatio(this, particle, momentum);
+  return new LikelihoodPDF(this, variable);
 }
 
 Likelihood* Likelihood::newLikelihood(Enums::LikelihoodVariable type)
 {
   switch (type) {
+    case Enums::UndefinedLikelihood: return 0;
     case Enums::SignalHeightTrackerLikelihood: return 0;
     case Enums::SignalHeightTRDLikelihood: return 0;
     case Enums::TimeOverThresholdLikelihood: return 0;
-    case Enums::TimeOfFlightLikelihood: return new TimeOfFlightLikelihood;
-    case Enums::TrackerMomentumLikelihood: return new TrackerMomentumLikelihood;
+    case Enums::TimeOfFlightLikelihood: return new TimeOfFlightLikelihood();
+    case Enums::TrackerMomentumLikelihood: return new TrackerMomentumLikelihood();
   }
   return 0;
+}
+
+Likelihood::ParameterVector Likelihood::defaultParameters() const
+{
+  return ParameterVector(numberOfParameters());
 }

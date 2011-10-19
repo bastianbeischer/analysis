@@ -60,14 +60,21 @@ public:
   static CutIterator cutBegin();
   static CutIterator cutEnd();
 
-  enum LikelihoodVariable {SignalHeightTrackerLikelihood, SignalHeightTRDLikelihood, TimeOverThresholdLikelihood,
-    TimeOfFlightLikelihood, TrackerMomentumLikelihood};
+  enum LikelihoodVariable {UndefinedLikelihood = 0, SignalHeightTrackerLikelihood = 1<<0, SignalHeightTRDLikelihood = 1<<1,
+    TimeOverThresholdLikelihood = 1<<2, TimeOfFlightLikelihood = 1<<3, TrackerMomentumLikelihood = 1 <<4};
   static const QString label(LikelihoodVariable);
   static LikelihoodVariable likelihoodVariable(const QString&);
   typedef QMap<LikelihoodVariable, QString>::ConstIterator LikelihoodVariableIterator;
   static LikelihoodVariableIterator likelihoodVariableBegin();
   static LikelihoodVariableIterator likelihoodVariableEnd();
   Q_DECLARE_FLAGS(LikelihoodVariables, LikelihoodVariable);
+
+  enum KineticVariable {UndefinedKineticVariable, TotalEnergy, KineticEnergy, Momentum, Rigidity, Curvature, Beta, InverseBeta};
+  static const QString label(KineticVariable);
+  static KineticVariable kineticVariable(const QString&);
+  typedef QMap<KineticVariable, QString>::ConstIterator KineticVariableIterator;
+  static KineticVariableIterator kineticVariableBegin();
+  static KineticVariableIterator kineticVariableEnd();
 
 private:
   static const QMap<ChargeSign, QString> s_chargeSignMap;
@@ -77,11 +84,13 @@ private:
   static const QMap<Particle, QString> s_particleMap;
   static const QMap<Cut, QString> s_cutMap;
   static const QMap<LikelihoodVariable, QString> s_likelihoodVariableMap;
+  static const QMap<KineticVariable, QString> s_kineticVariableMap;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::AnalysisTopics);
 Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::ChargeSigns);
 Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::Corrections);
 Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::Particles);
+Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::LikelihoodVariables);
 
 #endif

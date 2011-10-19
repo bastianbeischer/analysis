@@ -7,10 +7,10 @@
 
 class KineticVariable {
 public:
-  enum Type {TotalEnergy, KineticEnergy, Momentum, Rigidity, Curvature, Beta};
+  KineticVariable(Enums::Particle);
+  KineticVariable(Enums::Particle, Enums::KineticVariable, double value);
 
-  KineticVariable(Enums::Particle particle, double kineticEnergy = 0);
-
+  Enums::Particle particle() const;
   int charge() const;
   double mass() const;
   double totalEnergy() const;
@@ -19,16 +19,19 @@ public:
   double rigidity() const;
   double curvature() const;
   double beta() const;
+  double inverseBeta() const;
 
-  void set(Type type, double value);
-  void setTotalEnergy(double value);
-  void setKineticEnergy(double value);
-  void setMomentum(double value);
-  void setRigidity(double value);
-  void setCurvature(double value);
-  void setBeta(double value);
+  void set(Enums::KineticVariable, double value);
+  void setTotalEnergy(double);
+  void setKineticEnergy(double);
+  void setMomentum(double);
+  void setRigidity(double);
+  void setCurvature(double);
+  void setBeta(double);
+  void setInverseBeta(double);
   
 private:
+  Enums::Particle m_particle;
   int m_charge;
   double m_mass;
   double m_kineticEnergy;

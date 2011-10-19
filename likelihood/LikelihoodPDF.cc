@@ -4,16 +4,15 @@
 
 #include <TAxis.h>
 
-LikelihoodPDF::LikelihoodPDF(const Likelihood* likelihood, Enums::Particle particle, double momentum)
-  : TF1(qPrintable(Enums::label(likelihood->type())), this, &LikelihoodPDF::rootFunctionPointer,
+LikelihoodPDF::LikelihoodPDF(const Likelihood* likelihood, const KineticVariable& variable)
+  : TF1(qPrintable(Enums::label(likelihood->likelihoodVariableType())), this, &LikelihoodPDF::rootFunctionPointer,
     likelihood->min(), likelihood->max(), 0, "LikelihoodPDF")
+  , m_variable(variable)
   , m_likelihood(likelihood)
-  , m_particle(particle)
-  , m_momentum(momentum)
 {
   SetNpx(1000);
-  SetLineColor(Particle(particle).color());
-  GetXaxis()->SetTitle("p / GeV");
+  SetLineColor(Particle(variable.particle()).color());
+  GetXaxis()->SetTitle(qPrintable(Enums::label(likelihood->measuredValueType())));
   GetYaxis()->SetTitle("probability");
 }
 
@@ -21,14 +20,9 @@ LikelihoodPDF::~LikelihoodPDF()
 {
 }
 
-Enums::Particle LikelihoodPDF::particle() const
+const KineticVariable& LikelihoodPDF::variable() const
 {
-  return m_particle;
-}
-
-double LikelihoodPDF::momentum() const
-{
-  return m_momentum;
+  return m_variable;
 }
 
 double LikelihoodPDF::integral()
@@ -38,5 +32,5 @@ double LikelihoodPDF::integral()
 
 double LikelihoodPDF::rootFunctionPointer(double* x, double*) const
 {
-  return m_likelihood->eval(x[0], m_particle, m_momentum);
+  return m_likelihood->eval(x[0], m_variable);
 }

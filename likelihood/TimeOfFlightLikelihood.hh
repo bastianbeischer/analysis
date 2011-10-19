@@ -8,12 +8,11 @@ class TimeOfFlightLikelihood : public Likelihood {
 public:
   TimeOfFlightLikelihood();
   ~TimeOfFlightLikelihood();
-
   virtual double min() const;
   virtual double max() const;
   virtual int numberOfParameters() const;
-  virtual double eval(double measuredBeta, Enums::Particle, double realMomentum, bool* goodInterbolation = 0) const;
-  virtual ParameterVector defaultParameters() const;
+  virtual double eval(Particle*, const KineticVariable& hypothesis, bool* goodInterpolation = 0) const;
+  virtual double eval(double inverseBeta, const KineticVariable& hypothesis, bool* goodInterpolation = 0) const;
 };
 
 #endif

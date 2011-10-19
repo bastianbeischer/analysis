@@ -2,6 +2,8 @@
 #define LikelihoodAnalysis_hh
 
 #include "Enums.hh"
+#include "KineticVariable.hh"
+
 #include <QVector>
 
 class Particle;
@@ -17,7 +19,7 @@ public:
   void identify(Particle*);
   TMultiGraph* graph() const;
 private:
-  double test(Enums::Particle, double momentum) const;
+  double test(const KineticVariable&) const;
   QVector<Likelihood*> m_likelihoods;
   Particle* m_particle;
   TMultiGraph* m_mg;

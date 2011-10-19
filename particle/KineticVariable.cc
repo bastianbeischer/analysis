@@ -3,14 +3,32 @@
 
 #include <cmath>
 
-KineticVariable::KineticVariable(Enums::Particle particleType, double kineticEnergy)
-  : m_charge(0)
+KineticVariable::KineticVariable(Enums::Particle particleType)
+  : m_particle(particleType)
+  , m_charge(0)
   , m_mass(0)
-  , m_kineticEnergy(kineticEnergy)
+  , m_kineticEnergy(0)
 {
   Particle particle(particleType);
   m_mass = particle.mass();
   m_charge = particle.charge();
+}
+
+KineticVariable::KineticVariable(Enums::Particle particleType, Enums::KineticVariable type, double value)
+  : m_particle(particleType)
+  , m_charge(0)
+  , m_mass(0)
+  , m_kineticEnergy(0)
+{
+  Particle particle(particleType);
+  m_mass = particle.mass();
+  m_charge = particle.charge();
+  set(type, value);
+}
+
+Enums::Particle KineticVariable::particle() const
+{
+  return m_particle;
 }
 
 int KineticVariable::charge() const
@@ -53,14 +71,21 @@ double KineticVariable::beta() const
   return momentum() / totalEnergy();
 }
 
-void KineticVariable::set(Type type, double value) {
+double KineticVariable::inverseBeta() const
+{
+  return totalEnergy() / momentum();
+}
+
+void KineticVariable::set(Enums::KineticVariable type, double value) {
   switch (type) {
-    case TotalEnergy: setTotalEnergy(value); break;
-    case KineticEnergy: setKineticEnergy(value); break;
-    case Momentum: setMomentum(value); break;
-    case Rigidity: setRigidity(value); break;
-    case Curvature: setCurvature(value); break;
-    case Beta: setBeta(value); break;
+    case Enums::UndefinedKineticVariable: qFatal("Bad KineticVariable type passed!"); break;
+    case Enums::TotalEnergy: setTotalEnergy(value); break;
+    case Enums::KineticEnergy: setKineticEnergy(value); break;
+    case Enums::Momentum: setMomentum(value); break;
+    case Enums::Rigidity: setRigidity(value); break;
+    case Enums::Curvature: setCurvature(value); break;
+    case Enums::Beta: setBeta(value); break;
+    case Enums::InverseBeta: setInverseBeta(value); break;
   }
 }
 
@@ -81,7 +106,9 @@ void KineticVariable::setMomentum(double value)
 
 void KineticVariable::setRigidity(double value)
 {
-  setMomentum(m_charge * value);
+  double p = m_charge * value;
+  Q_ASSERT(p < 0); // incompatible charge sign
+  setMomentum(p);
 }
 
 void KineticVariable::setCurvature(double value)
@@ -92,4 +119,9 @@ void KineticVariable::setCurvature(double value)
 void KineticVariable::setBeta(double value)
 {
   setTotalEnergy(m_mass / sqrt(1. - value * value));
+}
+
+void KineticVariable::setInverseBeta(double value)
+{
+  setTotalEnergy(sqrt(1. - value * value) / m_mass);
 }
