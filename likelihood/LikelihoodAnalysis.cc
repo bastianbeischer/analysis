@@ -50,9 +50,9 @@ double LikelihoodAnalysis::test(Enums::Particle type, double momentum) const
 {
   double p = 1;
   for (QVector<Likelihood*>::ConstIterator it = m_likelihoods.begin(); it != m_likelihoods.end(); ++it) {
-    p*= 
+    p*= 0;
   }
-  return ;
+  return p;
 }
   
 TMultiGraph* LikelihoodAnalysis::graph() const

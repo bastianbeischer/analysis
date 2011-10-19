@@ -12,10 +12,10 @@ SUBDIRS = \
   setup \
   tracking \
   particle \
+  likelihood \
   processing \
   trdAnalysis \
   alignment \
   rootplot \
   fluxAnalysis \
-  likelihood \
   tools

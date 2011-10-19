@@ -21,8 +21,8 @@ namespace Constants
   const double sigmaSipm = 0.6;                     // ns
   const double tofClusterSignalCut = 600;           // ns
   const double minimalTotPerSipm = 17.;             // ns
-  const double triggerMatchingMinimum = -100000095.;        // ns
-  const double triggerMatchingMaximum = +14000000.;       // ns
+  const double triggerMatchingMinimum = 95.;        // ns
+  const double triggerMatchingMaximum = 140.;       // ns
   const double idealTot = 30.;                      // ns
   const int nTofChannels = 64;
   const int nTofBars = 16;

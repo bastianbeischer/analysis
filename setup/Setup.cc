@@ -17,7 +17,6 @@
 #include <QSettings>
 #include <QMutex>
 #include <QDir>
-#include <QDebug>
 
 #include <TVector3.h>
 
@@ -70,7 +69,6 @@ Setup* Setup::instance()
 
 void Setup::construct()
 {
-  qFatal("Halloele.");
   Q_ASSERT(m_settings);
   foreach(QString key, m_settings->allKeys()) {
     QStringList list = key.split("/");
