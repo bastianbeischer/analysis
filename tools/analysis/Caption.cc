@@ -27,7 +27,7 @@ Caption::Caption(const QString& caption, QWidget* parent)
   layout->addWidget(rightLine);
   setLayout(layout);
 
-  setMaximumHeight(27);
+  setMaximumHeight(37);
 }
 
 Caption::~Caption()

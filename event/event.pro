@@ -36,5 +36,5 @@ CREATE_ROOT_DICT_FOR_CLASSES += \
 
 
 include($$TOPLEVEL/root.pri)
-include($$TOPLEVEL/macx.pri)
 include($$TOPLEVEL/common.pri)
+include($$TOPLEVEL/macx.pri)

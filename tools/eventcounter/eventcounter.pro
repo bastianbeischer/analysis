@@ -26,5 +26,5 @@ macx {
 }
 
 include(perdaix.pri)
-include($$TOPLEVEL/macx.pri)
 include($$TOPLEVEL/common.pri)
+include($$TOPLEVEL/macx.pri)
