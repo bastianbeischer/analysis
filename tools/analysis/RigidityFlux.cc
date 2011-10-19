@@ -92,10 +92,16 @@ RigidityFlux::RigidityFlux(Enums::ChargeSign type, int numberOfThreads, TH1D* pa
       m_phiFit = new SolarModulationFit(histogram, Particle(Enums::Proton).pdgId());
     }
     addFunction(m_phiFit->fit());
-    TLatex* gammaLatex = RootPlot::newLatex(.4, .88);
-    TLatex* phiLatex = RootPlot::newLatex(.4, .83);
+    TLatex* J0Latex = RootPlot::newLatex(.4, .90);
+    TLatex* gammaLatex = RootPlot::newLatex(.4, .85);
+    TLatex* phiLatex = RootPlot::newLatex(.4, .80);
+    TLatex* gammaClatex = RootPlot::newLatex(.4, .75);
+    TLatex* rClatex = RootPlot::newLatex(.4, .70);
+    addLatex(J0Latex);
     addLatex(gammaLatex);
     addLatex(phiLatex);
+    addLatex(gammaClatex);
+    addLatex(rClatex);
   }
 
   const int low = histogram->GetXaxis()->FindBin(0.5);
@@ -140,8 +146,11 @@ void RigidityFlux::update()
   updateBinTitles();
   if (m_phiFit) {
     m_phiFit->fit();
-    latex(m_nBinsNew)->SetTitle(qPrintable(m_phiFit->gammaLabel()));
-    latex(m_nBinsNew + 1)->SetTitle(qPrintable(m_phiFit->phiLabel()));
+    latex(m_nBinsNew + 0)->SetTitle(qPrintable(m_phiFit->J0Label()));
+    latex(m_nBinsNew + 1)->SetTitle(qPrintable(m_phiFit->gammaLabel()));
+    latex(m_nBinsNew + 2)->SetTitle(qPrintable(m_phiFit->phiLabel()));
+    latex(m_nBinsNew + 3)->SetTitle(qPrintable(m_phiFit->gammaClabel()));
+    latex(m_nBinsNew + 4)->SetTitle(qPrintable(m_phiFit->rClabel()));
   }
 }
 

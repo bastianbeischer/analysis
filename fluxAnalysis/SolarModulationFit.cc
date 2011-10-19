@@ -89,7 +89,7 @@ TF1* SolarModulationFit::fit()
 
 QString SolarModulationFit::J0Label() const
 {
-  QString label = QString("#J_{0} / m^{−2} s^{−1} sr^{−1} GeV^{#gamma-1} = %1 ").arg(J0());
+  QString label = QString("J_{0} / m^{-2} s^{-1} sr^{-1} GeV^{#gamma-1} = %1 ").arg(J0());
   if (J0Error() == 0)
     label.append("(fixed)");
   else
