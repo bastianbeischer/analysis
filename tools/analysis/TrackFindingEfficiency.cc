@@ -7,7 +7,6 @@
 #include "ParticleInformation.hh"
 #include "Constants.hh"
 #include "Settings.hh"
-#include "SettingsManager.hh"
 #include "Cluster.hh"
 #include "TOFSipmHit.hh"
 #include "TOFCluster.hh"
@@ -70,7 +69,7 @@ void TrackFindingEfficiency::processEvent(const AnalyzedEvent* event)
   bool fillHistogram = false;
   double rigidity = 0;
 
-  const Settings* settings = SettingsManager::instance()->settingsForEvent(event->simpleEvent());
+  const Settings* settings = event->settings();
   if (settings && settings->situation() == Settings::Testbeam11) {
     rigidity = settings->momentum();
     fillHistogram = true;

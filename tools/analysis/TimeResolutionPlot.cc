@@ -12,7 +12,6 @@
 #include "TimeOfFlight.hh"
 #include "ProjectionControlWidget.hh"
 #include "Settings.hh"
-#include "SettingsManager.hh"
 #include "SimpleEvent.hh"
 
 #include <TH2.h>
@@ -72,7 +71,7 @@ void TimeResolutionPlot::processEvent(const AnalyzedEvent* event)
   const TimeOfFlight* tof = event->particle()->timeOfFlight();
   const QVector<Hit*>& hits = track->hits();
 
-  const Settings* settings = SettingsManager::instance()->settingsForEvent(event->simpleEvent());
+  const Settings* settings = event->settings();
 
   ParticleInformation::Flags flags = event->particle()->information()->flags();
   if (!(flags & ParticleInformation::Chi2Good))

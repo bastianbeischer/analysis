@@ -3,8 +3,8 @@
 #include "SimpleEvent.hh"
 #include "ParticleProperties.hh"
 
-MCRigidityResolutionPlot::MCRigidityResolutionPlot(const Enums::Particle& type) :
-  RigidityResolutionPlot(Enums::MonteCarloTracker, type)
+MCRigidityResolutionPlot::MCRigidityResolutionPlot(const Enums::Particle& type)
+  : RigidityResolutionPlot(Enums::MonteCarloTracker, type)
 {
 }
 
@@ -25,12 +25,12 @@ void MCRigidityResolutionPlot::processEvent(const AnalyzedEvent* event)
   RigidityResolutionPlot::processEvent(event);
 }
 
-double MCRigidityResolutionPlot::referenceRigidity(const SimpleEvent* const event) const
+double MCRigidityResolutionPlot::referenceRigidity(const AnalyzedEvent* event) const
 {
   //get mc rigidity
   double genMom = 0;
   double genRigidity = 0;
-  genMom = event->MCInformation()->primary()->initialMomentum.Mag();
+  genMom = event->simpleEvent()->MCInformation()->primary()->initialMomentum.Mag();
   genRigidity = genMom / m_particle->charge();
   return genRigidity;
 }

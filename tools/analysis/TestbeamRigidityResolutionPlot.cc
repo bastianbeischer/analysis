@@ -2,7 +2,6 @@
 
 #include "SimpleEvent.hh"
 #include "ParticleProperties.hh"
-#include "SettingsManager.hh"
 #include "Settings.hh"
 
 TestbeamRigidityResolutionPlot::TestbeamRigidityResolutionPlot(const Enums::Particle& type) :
@@ -17,7 +16,7 @@ TestbeamRigidityResolutionPlot::~TestbeamRigidityResolutionPlot()
 void TestbeamRigidityResolutionPlot::processEvent(const AnalyzedEvent* event)
 {
   //get settings if present
-  const Settings* settings = SettingsManager::instance()->settingsForEvent(event->simpleEvent());
+  const Settings* settings = event->settings();
   if (!settings || settings->situation() != Settings::Testbeam11)
     return;
 
@@ -41,9 +40,8 @@ void TestbeamRigidityResolutionPlot::processEvent(const AnalyzedEvent* event)
   RigidityResolutionPlot::processEvent(event);
 }
 
-double TestbeamRigidityResolutionPlot::referenceRigidity(const SimpleEvent* const event) const
+double TestbeamRigidityResolutionPlot::referenceRigidity(const AnalyzedEvent* event) const
 {
-  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
-  double genMom = settings->momentum() * settings->polarity();
+  double genMom = event->settings()->momentum() * event->settings()->polarity();
   return genMom / 1.; // electrons currently, but charge = 1 for all testbeam cases.
 }

@@ -3,7 +3,6 @@
 #include "Constants.hh"
 #include "Settings.hh"
 #include "SensorTypes.hh"
-#include "SettingsManager.hh"
 #include "Particle.hh"
 #include "SimpleEvent.hh"
 #include "Track.hh"
@@ -68,7 +67,7 @@ void TOFProbabilityDensityFunction::processEvent(const AnalyzedEvent* event)
   if ((flags & required) != required)
     return;
 
-  const Settings* settings = SettingsManager::instance()->settingsForEvent(event->simpleEvent());
+  const Settings* settings = event->settings();
   if (settings && settings->situation() != Settings::Testbeam11)
     return;
 

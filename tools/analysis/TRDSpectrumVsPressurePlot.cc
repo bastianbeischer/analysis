@@ -8,7 +8,6 @@
 #include "SimpleEvent.hh"
 #include "TRDReconstruction.hh"
 #include "Settings.hh"
-#include "SettingsManager.hh"
 #include "Helpers.hh"
 
 #include <TH2D.h>

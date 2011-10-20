@@ -176,7 +176,7 @@ void RigidityResolutionPlot::processEvent(const AnalyzedEvent* event)
   double rigidity = track->rigidity(); //GeV
 
   // and the reference
-  double refRigidity = referenceRigidity(event->simpleEvent());
+  double refRigidity = referenceRigidity(event);
 
   //get bin and fill
   int bin = histogram()->FindBin(qAbs(refRigidity));

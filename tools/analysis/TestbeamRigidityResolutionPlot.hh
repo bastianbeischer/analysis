@@ -3,17 +3,14 @@
 
 #include "RigidityResolutionPlot.hh"
 
-class TestbeamRigidityResolutionPlot :
-  public RigidityResolutionPlot
-{
-  
+class Settings;
+
+class TestbeamRigidityResolutionPlot : public RigidityResolutionPlot {
 public:
   TestbeamRigidityResolutionPlot(const Enums::Particle& = Enums::Electron);
   ~TestbeamRigidityResolutionPlot();
-  
   void processEvent(const AnalyzedEvent*);
-  double referenceRigidity(const SimpleEvent* const) const;
-  
+  double referenceRigidity(const AnalyzedEvent*) const;
 };
 
 #endif /* TestbeamRigidityResolutionPlot_hh */

@@ -17,7 +17,7 @@ public:
     virtual void finalize();
     virtual void draw(TCanvas* canvas);
 private:
-    bool truthMcIsElectron(const SimpleEvent* const event, bool& ok);
+    bool truthMcIsElectron(const AnalyzedEvent*, bool& ok);
     int binEfficiency(double effWanted, const TH1D* hist, double& eff, double& effErr);
     double efficiency(const TH1D* hist, int upToBin, double& effErr);
     double rejection(const TH1D* hist, int upToBin, double& rejErr);

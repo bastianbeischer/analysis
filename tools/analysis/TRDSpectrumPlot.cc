@@ -10,7 +10,6 @@
 #include "Hit.hh"
 #include "SimpleEvent.hh"
 #include "Settings.hh"
-#include "SettingsManager.hh"
 #include "TRDReconstruction.hh"
 #include "Corrections.hh"
 #include "Helpers.hh"

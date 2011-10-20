@@ -1,7 +1,6 @@
 #include "MeasurementTimePlot.hh"
 #include "SimpleEvent.hh"
 #include "Settings.hh"
-#include "SettingsManager.hh"
 
 #include <TH1.h>
 #include <TAxis.h>

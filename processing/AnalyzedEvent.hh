@@ -8,11 +8,14 @@
 class Hit;
 class SimpleEvent;
 class Particle;
+class Settings;
 
 class AnalyzedEvent {
 public:
   AnalyzedEvent();
   ~AnalyzedEvent();
+
+  const Settings* settings() const;
 
   bool flagsMatch(ParticleInformation::Flags);
   bool flagsSet(ParticleInformation::Flags);

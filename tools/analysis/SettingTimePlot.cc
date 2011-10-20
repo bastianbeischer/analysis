@@ -1,6 +1,5 @@
 #include "SettingTimePlot.hh"
 #include "Settings.hh"
-#include "SettingsManager.hh"
 #include "SimpleEvent.hh"
 
 #include <TAxis.h>
@@ -53,7 +52,7 @@ SettingTimePlot::~SettingTimePlot()
 void SettingTimePlot::processEvent(const AnalyzedEvent* event)
 {
   //get settings if present
-  const Settings* settings = SettingsManager::instance()->settingsForEvent(event->simpleEvent());
+  const Settings* settings = event->settings();
   if (!settings || settings->situation() != Settings::Testbeam11)
     return;
 

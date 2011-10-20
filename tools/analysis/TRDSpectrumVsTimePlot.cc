@@ -8,7 +8,6 @@
 #include "Hit.hh"
 #include "SimpleEvent.hh"
 #include "Settings.hh"
-#include "SettingsManager.hh"
 #include "Helpers.hh"
 
 #include "TRDReconstruction.hh"

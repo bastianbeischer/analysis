@@ -11,7 +11,6 @@
 #include "Track.hh"
 #include "TimeOfFlight.hh"
 #include "Settings.hh"
-#include "SettingsManager.hh"
 #include "SimpleEvent.hh"
 
 #include <TH1.h>
@@ -61,7 +60,7 @@ void TOFBarShiftPlot::processEvent(const AnalyzedEvent* event)
   const TimeOfFlight* tof = event->particle()->timeOfFlight();
   const QVector<Hit*>& hits = track->hits();
 
-  const Settings* settings = SettingsManager::instance()->settingsForEvent(event->simpleEvent());
+  const Settings* settings = event->settings();
 
   ParticleInformation::Flags flags = event->particle()->information()->flags();
   if (!(flags & ParticleInformation::Chi2Good))

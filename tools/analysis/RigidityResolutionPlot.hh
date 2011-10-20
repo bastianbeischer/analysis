@@ -24,7 +24,7 @@ public:
   void positionChanged(double, double);
 
 private:
-  virtual double referenceRigidity(const SimpleEvent* const) const = 0;
+  virtual double referenceRigidity(const AnalyzedEvent*) const = 0;
   void loadRigHisto(double rig);
   void loadRigHisto(int bin);
   void saveHistos();

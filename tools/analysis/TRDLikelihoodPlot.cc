@@ -10,7 +10,6 @@
 #include "SimpleEvent.hh"
 #include "Constants.hh"
 #include "Settings.hh"
-#include "SettingsManager.hh"
 #include "RootQtWidget.hh"
 
 TRDLikelihoodPlot::TRDLikelihoodPlot(Enums::AnalysisTopic topic)
@@ -56,7 +55,7 @@ TRDLikelihoodPlot::TRDLikelihoodPlot(Enums::AnalysisTopic topic)
 void TRDLikelihoodPlot::processEvent(const AnalyzedEvent* event)
 {
   bool ok = false;
-  bool isTRParticle = truthMcIsElectron(event->simpleEvent(), ok);
+  bool isTRParticle = truthMcIsElectron(event, ok);
   if (!ok)
     return;
 
@@ -139,8 +138,9 @@ void TRDLikelihoodPlot::finalize()
   update();
 }
 
-bool TRDLikelihoodPlot::truthMcIsElectron(const SimpleEvent* const event, bool& ok)
+bool TRDLikelihoodPlot::truthMcIsElectron(const AnalyzedEvent* analyzedEvent, bool& ok)
 {
+  const SimpleEvent* event = analyzedEvent->simpleEvent();
   if (event->contentType() == SimpleEvent::MonteCarlo) {
     ok = true;
     return qAbs(event->MCInformation()->primary()->pdgID) == 11;
@@ -149,7 +149,7 @@ bool TRDLikelihoodPlot::truthMcIsElectron(const SimpleEvent* const event, bool& 
   double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
   double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
 
-  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+  const Settings* settings = analyzedEvent->settings();
   bool eAboveCherenkov = settings->isAboveThreshold(Constants::electronMass);
 
   if (eAboveCherenkov && c1Signal > 200 && c2Signal > 200) {

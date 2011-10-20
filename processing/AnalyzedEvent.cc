@@ -3,6 +3,8 @@
 #include "Hit.hh"
 #include "SimpleEvent.hh"
 #include "Particle.hh"
+#include "Settings.hh"
+#include "SettingsManager.hh"
 
 AnalyzedEvent::AnalyzedEvent()
   : m_clusters()
@@ -19,6 +21,11 @@ AnalyzedEvent::~AnalyzedEvent()
     delete m_particle;
   if (m_simpleEvent)
     delete m_simpleEvent;
+}
+
+const Settings* AnalyzedEvent::settings() const
+{
+  return SettingsManager::instance()->settingsForEvent(m_simpleEvent);
 }
 
 bool AnalyzedEvent::flagsMatch(ParticleInformation::Flags flags)
