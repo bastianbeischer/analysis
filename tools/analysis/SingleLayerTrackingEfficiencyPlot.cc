@@ -65,22 +65,22 @@ SingleLayerTrackingEfficiencyPlot::~SingleLayerTrackingEfficiencyPlot()
   delete[] m_layerZ;
 }
 
-void SingleLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const)
+void SingleLayerTrackingEfficiencyPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   if (!track || !track->fitGood())
     return;
 
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   if ( !(flags & ParticleInformation::InsideMagnet) )
     return;
 
   for (int i = 0; i < m_nLayers; i++) {
     // determine if the layer has a hit matching the track
     bool beenHit = false;
-    const QVector<Hit*>::const_iterator endIt = hits.end();
-    for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+    const QVector<Hit*>::const_iterator endIt = event->clusters().end();
+    for (QVector<Hit*>::const_iterator it = event->clusters().begin(); it != endIt; ++it) {
       Hit* hit = *it;
       if (floor(hit->position().z()) == m_layerZ[i]) {
         if (TrackFinding::isInCorridor(track, hit, 10.)) {

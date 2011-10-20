@@ -28,19 +28,19 @@ ClusterLengthPlot::~ClusterLengthPlot()
 {
 }
 
-void ClusterLengthPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const)
+void ClusterLengthPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   if (!track)
     return;
 
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
-  const QVector<Hit*>::const_iterator endIt = hits.end();
-  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+  const QVector<Hit*>::const_iterator endIt = event->clusters().end();
+  for (QVector<Hit*>::const_iterator it = event->clusters().begin(); it != endIt; ++it) {
     Cluster* cluster = static_cast<Cluster*>(*it);
     if (cluster->elementId() == m_id)
       histogram()->Fill(cluster->hits().size());

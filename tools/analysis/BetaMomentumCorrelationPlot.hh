@@ -11,7 +11,7 @@ class BetaMomentumCorrelationPlot : public AnalysisPlot, public H2DPlot {
 public:
   explicit BetaMomentumCorrelationPlot();
   virtual ~BetaMomentumCorrelationPlot();
-  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  virtual void processEvent(const AnalyzedEvent*);
 };
 
 #endif

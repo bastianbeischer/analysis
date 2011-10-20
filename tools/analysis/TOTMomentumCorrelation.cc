@@ -41,13 +41,13 @@ TOTMomentumCorrelation* TOTMomentumCorrelation::create(TOTLayer::Layer layer) co
   return new TOTMomentumCorrelation(layer); 
 }
 
-void TOTMomentumCorrelation::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void TOTMomentumCorrelation::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
   if (!track || !track->fitGood())
     return;
   const QVector<Hit*>& clusters = track->hits();
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   ParticleInformation::Flags required = ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet;
   if ((flags & required) != required)
     return;

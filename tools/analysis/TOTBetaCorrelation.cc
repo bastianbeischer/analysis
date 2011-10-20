@@ -39,13 +39,13 @@ TOTBetaCorrelation* TOTBetaCorrelation::create(TOTLayer::Layer layer) const
   return new TOTBetaCorrelation(layer); 
 }
 
-void TOTBetaCorrelation::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void TOTBetaCorrelation::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
   if (!track || !track->fitGood())
     return;
   const QVector<Hit*>& clusters = track->hits();
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   ParticleInformation::Flags required = ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet;
   if ((flags & required) != required)
     return;
@@ -71,7 +71,7 @@ void TOTBetaCorrelation::processEvent(const QVector<Hit*>&, const Particle* cons
     }
   }
   if (nTofHits > 0)
-    histogram()->Fill(particle->beta(), totSum / nTofHits);
+    histogram()->Fill(event->particle()->beta(), totSum / nTofHits);
 }
   
 void TOTBetaCorrelation::finalize()

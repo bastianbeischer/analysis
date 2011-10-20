@@ -15,7 +15,7 @@ public:
   ~AlignmentMatrix();
 
 public:
-  void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  void processEvent(const AnalyzedEvent*);
   void resetArrays();
   void init();
 

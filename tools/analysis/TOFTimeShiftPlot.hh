@@ -8,7 +8,7 @@ class TOFTimeShiftPlot : public AnalysisPlot, public H2DProjectionPlot {
 public:
   TOFTimeShiftPlot(unsigned short topBarId, unsigned short bottomBarId, unsigned short referenceChannel);
   virtual ~TOFTimeShiftPlot();
-  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  virtual void processEvent(const AnalyzedEvent*);
 private:
   unsigned int m_topBarId;
   unsigned int m_bottomBarId;

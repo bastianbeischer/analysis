@@ -13,14 +13,14 @@ ResidualPlotMC::ResidualPlotMC(Enums::AnalysisTopic topic, Layer* layer)
   setTitle("MC " + title());
 }
 
-Track* ResidualPlotMC::referenceTrack(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
+Track* ResidualPlotMC::referenceTrack(const AnalyzedEvent* event)
 {
-  if (event->contentType() != SimpleEvent::MonteCarlo)
+  if (event->simpleEvent()->contentType() != SimpleEvent::MonteCarlo)
     return 0;
 
   StraightLine* mcTrack = new StraightLine();
-  TVector3 dir = event->MCInformation()->primary()->initialMomentum.Unit();
-  TVector3 pos = event->MCInformation()->primary()->initialPosition;
+  TVector3 dir = event->simpleEvent()->MCInformation()->primary()->initialMomentum.Unit();
+  TVector3 pos = event->simpleEvent()->MCInformation()->primary()->initialPosition;
   double factorTo0 = (-1.)* pos.z()/dir.z();
   TVector3 pos0 = pos + factorTo0*dir;
   mcTrack->setX0(pos0.x());

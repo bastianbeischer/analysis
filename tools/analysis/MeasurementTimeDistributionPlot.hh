@@ -10,7 +10,7 @@ class MeasurementTimeDistributionPlot : public AnalysisPlot, public H1DPlot {
 public:
   MeasurementTimeDistributionPlot(int numberOfThreads);
   virtual ~MeasurementTimeDistributionPlot();
-  void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  void processEvent(const AnalyzedEvent*);
   virtual void update();
 private:
   bool m_active;

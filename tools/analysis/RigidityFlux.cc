@@ -115,9 +115,9 @@ RigidityFlux::~RigidityFlux()
   }
 }
 
-void RigidityFlux::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
+void RigidityFlux::processEvent(const AnalyzedEvent* event)
 {
-  m_measurementTimeCalculation->update(event);
+  m_measurementTimeCalculation->update(event->simpleEvent());
 }
 
 void RigidityFlux::update()

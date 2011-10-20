@@ -42,11 +42,11 @@ MeasurementTimeDistributionPlot::~MeasurementTimeDistributionPlot()
 {
 }
 
-void MeasurementTimeDistributionPlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
+void MeasurementTimeDistributionPlot::processEvent(const AnalyzedEvent* event)
 {
   if (!m_active)
     return;
-  double eventTime = event->time();
+  double eventTime = event->simpleEvent()->time();
   if (m_lastEventTime > -1) {
     double deltaT = eventTime - m_lastEventTime;
     if (deltaT < 0)

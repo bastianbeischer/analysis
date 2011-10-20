@@ -12,7 +12,7 @@ class SingleLayerTrackingEfficiencyPlot : public AnalysisPlot, public H2DPlot
 public:
   SingleLayerTrackingEfficiencyPlot(Enums::ChargeSigns);
   ~SingleLayerTrackingEfficiencyPlot();
-  void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  void processEvent(const AnalyzedEvent*);
   void finalize();
 
 private:

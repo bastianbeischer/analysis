@@ -25,9 +25,9 @@ TRDDistanceInTube::~TRDDistanceInTube()
 {
 }
 
-void TRDDistanceInTube::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent*)
+void TRDDistanceInTube::processEvent(const AnalyzedEvent* event)
 {
-  const TRDReconstruction* trdReconst = particle->trdReconstruction();
+  const TRDReconstruction* trdReconst = event->particle()->trdReconstruction();
   if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
     return;
 

@@ -12,7 +12,7 @@ class RigidityMigrationHistogram : public AnalysisPlot, public H2DPlot
 public:
   RigidityMigrationHistogram();
   ~RigidityMigrationHistogram();
-  void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  void processEvent(const AnalyzedEvent*);
 };
 
 #endif /* RigidityMigrationHistogram_hh */

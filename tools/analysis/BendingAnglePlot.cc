@@ -30,14 +30,14 @@ BendingAnglePlot::BendingAnglePlot()
 BendingAnglePlot::~BendingAnglePlot()
 {}
 
-void BendingAnglePlot::processEvent(const QVector<Hit*>& /*clusters*/, const Particle* const particle, const SimpleEvent* const)
+void BendingAnglePlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   if (!track || !track->fitGood())
     return;
 
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 

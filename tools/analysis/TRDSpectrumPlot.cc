@@ -68,9 +68,9 @@ TRDSpectrumPlot::~TRDSpectrumPlot()
 {
 }
 
-void TRDSpectrumPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void TRDSpectrumPlot::processEvent(const AnalyzedEvent* event)
 {
-  const TRDReconstruction* trdReconst = particle->trdReconstruction();
+  const TRDReconstruction* trdReconst = event->particle()->trdReconstruction();
   if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
     return;
 

@@ -17,10 +17,10 @@ public:
   ~ResidualPlot();
   
 public:
-  void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);
+  void processEvent(const AnalyzedEvent*);
 
 private:
-  virtual Track* referenceTrack(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  virtual Track* referenceTrack(const AnalyzedEvent*);
 
 private:
   const Layer* m_layer;

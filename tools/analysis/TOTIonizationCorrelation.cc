@@ -67,13 +67,13 @@ TOTIonizationCorrelation* TOTIonizationCorrelation::create(TOTLayer::Layer layer
   return new TOTIonizationCorrelation(layer, m_type); 
 }
 
-void TOTIonizationCorrelation::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void TOTIonizationCorrelation::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
   if (!track || !track->fitGood())
     return;
   const QVector<Hit*>& clusters = track->hits();
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   ParticleInformation::Flags required = ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet;
   if ((flags & required) != required)
     return;
@@ -99,12 +99,12 @@ void TOTIonizationCorrelation::processEvent(const QVector<Hit*>&, const Particle
     }
   }
   if (nTofHits > 0) {
-    double nonTofSignal = sumOfNonTOFSignalHeights(track, clusters);
+    double nonTofSignal = sumOfNonTOFSignalHeights(event->clusters());
     histogram()->Fill(nonTofSignal, totSum / nTofHits);
   }
 }
 
-double TOTIonizationCorrelation::sumOfNonTOFSignalHeights(const Track*, const QVector<Hit*>& clusters) {
+double TOTIonizationCorrelation::sumOfNonTOFSignalHeights(const QVector<Hit*>& clusters) {
   double sumSignal = 0;
   const QVector<Hit*>::const_iterator endIt = clusters.end();
   for (QVector<Hit*>::const_iterator clusterIt = clusters.begin(); clusterIt != endIt; ++clusterIt) {

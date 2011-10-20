@@ -70,6 +70,11 @@ void ClusterGenerator::process(SimpleEvent* sourceEvent)
     destinationEvent->setSensorData((SensorTypes::Type)i, sourceEvent->sensorData((SensorTypes::Type)i) );
   }
 
-  foreach(EventDestination* destination, m_destinations)
-    destination->processEvent(rawhits, 0, destinationEvent);
+  foreach(EventDestination* destination, m_destinations) {
+    AnalyzedEvent* analyzedEvent = new AnalyzedEvent;
+    analyzedEvent->setClusters(rawhits);
+    analyzedEvent->setParticle(0);
+    analyzedEvent->setSimpleEvent(destinationEvent);
+    destination->processEvent(analyzedEvent);
+  }
 }

@@ -27,12 +27,12 @@ TriggerRateTimePlot::TriggerRateTimePlot(QDateTime first, QDateTime last)
 TriggerRateTimePlot::~TriggerRateTimePlot()
 {}
 
-void TriggerRateTimePlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
+void TriggerRateTimePlot::processEvent(const AnalyzedEvent* event)
 {
-  if ((event->time() < xAxis()->GetXmin() || event->time() >= xAxis()->GetXmax()) && event->contentType() != SimpleEvent::MonteCarlo)
-    qDebug() << event->time();
+  if ((event->simpleEvent()->time() < xAxis()->GetXmin() || event->simpleEvent()->time() >= xAxis()->GetXmax()) && event->simpleEvent()->contentType() != SimpleEvent::MonteCarlo)
+    qDebug() << event->simpleEvent()->time();
   else
-    histogram()->Fill(event->time());
+    histogram()->Fill(event->simpleEvent()->time());
 }
 
 void TriggerRateTimePlot::finalize()

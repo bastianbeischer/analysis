@@ -36,6 +36,6 @@ RigidityParticleSpectrum::~RigidityParticleSpectrum()
 {
 }
 
-void RigidityParticleSpectrum::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const)
+void RigidityParticleSpectrum::processEvent(const AnalyzedEvent*)
 {
 }

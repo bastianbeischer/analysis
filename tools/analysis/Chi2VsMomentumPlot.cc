@@ -37,14 +37,14 @@ Chi2VsMomentumPlot::~Chi2VsMomentumPlot()
   delete m_normHisto;
 }
 
-void Chi2VsMomentumPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void Chi2VsMomentumPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   if(!track || !track->fitGood())
     return;
 
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 

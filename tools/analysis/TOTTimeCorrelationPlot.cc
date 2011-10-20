@@ -46,9 +46,9 @@ TOTTimeCorrelationPlot::~TOTTimeCorrelationPlot()
 {
 }
 
-void TOTTimeCorrelationPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
+void TOTTimeCorrelationPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
   if (!track || !track->fitGood())
     return;
   const QVector<Hit*>& hits = track->hits(); 
@@ -63,7 +63,7 @@ void TOTTimeCorrelationPlot::processEvent(const QVector<Hit*>&, const Particle* 
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         Hit* tofHit = *it;
         if (tofHit->detId() == m_id) {
-          unsigned int eventTime = event->time();
+          unsigned int eventTime = event->simpleEvent()->time();
           TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
           histogram()->Fill(eventTime, tofSipmHit->timeOverThreshold());
         }

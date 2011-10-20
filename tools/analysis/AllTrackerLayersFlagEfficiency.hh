@@ -13,7 +13,7 @@ class AllTrackerLayersFlagEfficiency : public AnalysisPlot, public H1DPlot
 public:
   AllTrackerLayersFlagEfficiency(EfficiencyCorrectionSettings::FoldingType);
   ~AllTrackerLayersFlagEfficiency();
-  void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  void processEvent(const AnalyzedEvent*);
   void update();
 private:
   TH1D* m_afterCutHisto;

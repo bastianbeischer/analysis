@@ -13,7 +13,7 @@ public:
   CutStatisticsPlot();
   ~CutStatisticsPlot();
   
-  void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  void processEvent(const AnalyzedEvent*);
   void update();
   void finalize();
 

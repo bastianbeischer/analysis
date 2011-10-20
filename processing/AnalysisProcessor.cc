@@ -80,18 +80,21 @@ void AnalysisProcessor::setCutFilter(const CutFilter& cuts)
   m_cutFilter->setCuts(cuts);
 }
 
-void AnalysisProcessor::process(SimpleEvent* event)
+void AnalysisProcessor::process(SimpleEvent* simpleEvent)
 {
   m_particle->reset();
-  m_corrections->preFitCorrections(event);
+  m_corrections->preFitCorrections(simpleEvent);
 
-  QVector<Hit*> clusters = QVector<Hit*>::fromStdVector(event->hits());
+  AnalyzedEvent* analyzedEvent = new AnalyzedEvent;
+  analyzedEvent->setClusters(QVector<Hit*>::fromStdVector(simpleEvent->hits()));
+  analyzedEvent->setParticle(m_particle);
+  analyzedEvent->setSimpleEvent(simpleEvent);
 
   //check filters which need no reconstruction
-  if (!m_mcFilter->passes(event) || !m_cutFilter->passes(event))
+  if (!m_mcFilter->passes(simpleEvent) || !m_cutFilter->passes(simpleEvent))
     return;
 
-  QVector<Hit*> trackClusters = m_trackFinding->findTrack(clusters);
+  QVector<Hit*> trackClusters = m_trackFinding->findTrack(analyzedEvent->clusters());
 
   Track* track = m_particle->track();
   TimeOfFlight* tof = m_particle->timeOfFlight();
@@ -103,7 +106,7 @@ void AnalysisProcessor::process(SimpleEvent* event)
     m_corrections->postFitCorrections(m_particle);
     tof->calculateTimes(track);
     m_corrections->postTOFCorrections(m_particle);
-    trd->reconstructTRD(event, track);
+    trd->reconstructTRD(simpleEvent, track);
     info->process();
   }
 
@@ -111,10 +114,10 @@ void AnalysisProcessor::process(SimpleEvent* event)
   m_identifier->identify(m_particle);
   m_likelihood->identify(m_particle);
 
-  if (m_particleFilter->passes(m_particle) && m_cutFilter->passes(clusters, m_particle)) {
+  if (m_particleFilter->passes(m_particle) && m_cutFilter->passes(analyzedEvent->clusters(), m_particle)) {
     QVector<EventDestination*> postponed;
     foreach(EventDestination* destination, m_destinations) {
-      bool success = tryProcessingDestination(destination, clusters, m_particle, event);
+      bool success = tryProcessingDestination(destination, analyzedEvent);
       if (!success)
         postponed.append(destination); // postpone this destination for now.
     }
@@ -122,7 +125,7 @@ void AnalysisProcessor::process(SimpleEvent* event)
     unsigned int nPostponed = postponed.size();
     unsigned int i = 0;
     while (i < nPostponed) {
-      if (tryProcessingDestination(postponedData[i], clusters, m_particle, event))
+      if (tryProcessingDestination(postponedData[i], analyzedEvent))
         i++;
       else
         usleep(1000); // do not hammer the mutex locker with tryLock calls, better to sleep a ms

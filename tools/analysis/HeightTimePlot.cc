@@ -13,11 +13,11 @@ HeightTimePlot::HeightTimePlot(QDateTime first, QDateTime last)
   setAxisTitle("time", "height / km");
 }
 
-void HeightTimePlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
+void HeightTimePlot::processEvent(const AnalyzedEvent* event)
 {
-  double value = event->sensorData(m_type);
+  double value = event->simpleEvent()->sensorData(m_type);
   if (!std::isnan(value)) {
-    double t = event->time();
+    double t = event->simpleEvent()->time();
     histogram()->Fill(t, value / 1000.);
     m_normalizationHistogram->Fill(t);
   }

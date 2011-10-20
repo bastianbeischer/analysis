@@ -54,10 +54,10 @@ ClusterShapePlot::~ClusterShapePlot()
   delete m_eventCountAxis;
 }
 
-void ClusterShapePlot::processEvent(const QVector<Hit*>& hits, const Particle* const, const SimpleEvent* const)
+void ClusterShapePlot::processEvent(const AnalyzedEvent* event)
 {
-  const QVector<Hit*>::const_iterator endIt = hits.end();
-  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+  const QVector<Hit*>::const_iterator endIt = event->clusters().end();
+  for (QVector<Hit*>::const_iterator it = event->clusters().begin(); it != endIt; ++it) {
     unsigned short elementId = (*it)->elementId();
     if (elementId == m_id) {
       Cluster* cluster = static_cast<Cluster*>(*it);

@@ -63,14 +63,14 @@ AzimuthPositionCorrelation::~AzimuthPositionCorrelation()
 {
 }
 
-void AzimuthPositionCorrelation::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void AzimuthPositionCorrelation::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   if (!track || !track->fitGood())
     return;
 
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   if ( !(flags & ParticleInformation::Chi2Good) || !(flags & ParticleInformation::InsideMagnet)
     || !(flags & ParticleInformation::BetaGood) || (flags & ParticleInformation::Albedo) )
     return;

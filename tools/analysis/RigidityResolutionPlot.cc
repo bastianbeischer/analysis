@@ -151,32 +151,32 @@ void RigidityResolutionPlot::loadRigHisto(int bin)
   }
 }
 
-void RigidityResolutionPlot::processEvent(const QVector<Hit*>& /*hits*/, const Particle* const particle, const SimpleEvent* const event)
+void RigidityResolutionPlot::processEvent(const AnalyzedEvent* event)
 {
   //get track
-  Track* track = particle->track();
+  Track* track = event->particle()->track();
 
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;
 
   //check if track fits chi2 is ok
-  if (!(particle->information()->flags() & ParticleInformation::Chi2Good))
+  if (!(event->particle()->information()->flags() & ParticleInformation::Chi2Good))
     return;
 
   //check if track was inside of magnet
-  if (!(particle->information()->flags() & ParticleInformation::InsideMagnet))
+  if (!(event->particle()->information()->flags() & ParticleInformation::InsideMagnet))
     return;
 
   //check if track collided with the magnet material
-  if (particle->information()->flags() & ParticleInformation::MagnetCollision)
+  if (event->particle()->information()->flags() & ParticleInformation::MagnetCollision)
     return;
 
   // get the reconstructed momentum
   double rigidity = track->rigidity(); //GeV
 
   // and the reference
-  double refRigidity = referenceRigidity(event);
+  double refRigidity = referenceRigidity(event->simpleEvent());
 
   //get bin and fill
   int bin = histogram()->FindBin(qAbs(refRigidity));

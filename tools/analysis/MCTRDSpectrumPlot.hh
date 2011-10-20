@@ -17,7 +17,7 @@ public:
   MCTRDSpectrumPlot(unsigned short = 0, TRDSpectrumPlot::TRDSpectrumType = TRDSpectrumPlot::completeTRD);
   ~MCTRDSpectrumPlot();
 
-  virtual void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);
+  virtual void processEvent(const AnalyzedEvent*);
   virtual void finalize();
   virtual void draw(TCanvas* canvas);
 

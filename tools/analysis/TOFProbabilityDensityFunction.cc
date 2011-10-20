@@ -57,31 +57,31 @@ TOFProbabilityDensityFunction::~TOFProbabilityDensityFunction()
 {
 }
 
-void TOFProbabilityDensityFunction::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
+void TOFProbabilityDensityFunction::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   if (!track || !track->fitGood())
     return;
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   ParticleInformation::Flags required = ParticleInformation::Chi2Good | ParticleInformation::BetaGood;
   if ((flags & required) != required)
     return;
 
-  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+  const Settings* settings = SettingsManager::instance()->settingsForEvent(event->simpleEvent());
   if (settings && settings->situation() != Settings::Testbeam11)
     return;
 
   addFunctions(settings->momentum());
   
-  double signal1 = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
-  double signal2 = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
+  double signal1 = event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV1);
+  double signal2 = event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV2);
 
   double threshold = 200.;
   if (signal1 < threshold && signal2 < threshold)
-    m_belowThresholdHistogram->Fill(1./particle->beta());
+    m_belowThresholdHistogram->Fill(1./event->particle()->beta());
   if (signal1 > threshold && signal2 > threshold)
-    m_aboveThresholdHistogram->Fill(1./particle->beta());
+    m_aboveThresholdHistogram->Fill(1./event->particle()->beta());
 }
 
 double gauss(double* x, double* p)

@@ -72,13 +72,13 @@ TRDSpectrumVsTimePlot::~TRDSpectrumVsTimePlot()
 {
 }
 
-void TRDSpectrumVsTimePlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
+void TRDSpectrumVsTimePlot::processEvent(const AnalyzedEvent* event)
 {
-  const TRDReconstruction* trdReconst = particle->trdReconstruction();
+  const TRDReconstruction* trdReconst = event->particle()->trdReconstruction();
   if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
     return;
 
-  double time = event->time();
+  double time = event->simpleEvent()->time();
 
   QVector<double> valuesToFill;
   switch (m_spectrumType) {

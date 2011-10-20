@@ -36,9 +36,9 @@ TOTPlot::TOTPlot()
 TOTPlot::~TOTPlot()
 {}
 
-void TOTPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void TOTPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
   if (!track || !track->fitGood())
     return;
   const QVector<Hit*>& hits = track->hits(); 

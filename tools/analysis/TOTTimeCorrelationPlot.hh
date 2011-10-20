@@ -17,7 +17,7 @@ class TOTTimeCorrelationPlot : public AnalysisPlot, public H2DProjectionPlot {
 public:
   TOTTimeCorrelationPlot(unsigned int tofChannel, QDateTime first, QDateTime last);
   ~TOTTimeCorrelationPlot();
-  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  virtual void processEvent(const AnalyzedEvent*);
 private:
   unsigned short m_id;
 };

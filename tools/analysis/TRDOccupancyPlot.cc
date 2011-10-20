@@ -57,12 +57,12 @@ TRDOccupancyPlot::~TRDOccupancyPlot()
   m_ellipses.clear();
 }
 
-void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const)
+void TRDOccupancyPlot::processEvent(const AnalyzedEvent* event)
 {
 
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
   const QVector<Hit*> trackHits = track->hits();
-  const ParticleInformation::Flags pFlags = particle->information()->flags();
+  const ParticleInformation::Flags pFlags = event->particle()->information()->flags();
 
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
@@ -72,8 +72,8 @@ void TRDOccupancyPlot::processEvent(const QVector<Hit*>& hits, const Particle* c
     return;
 
   //loop over all hits of the event
-  const QVector<Hit*>::const_iterator endIt = hits.end();
-  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+  const QVector<Hit*>::const_iterator endIt = event->clusters().end();
+  for (QVector<Hit*>::const_iterator it = event->clusters().begin(); it != endIt; ++it) {
     Hit* clusterHit = *it;
 
     //only trd:

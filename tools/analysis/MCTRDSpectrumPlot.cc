@@ -58,12 +58,12 @@ MCTRDSpectrumPlot::~MCTRDSpectrumPlot()
 {
 }
 
-void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
+void MCTRDSpectrumPlot::processEvent(const AnalyzedEvent* event)
 {
-  if (event->contentType() != SimpleEvent::MonteCarlo)
+  if (event->simpleEvent()->contentType() != SimpleEvent::MonteCarlo)
     return;
 
-  const TRDReconstruction* trdReconst = particle->trdReconstruction();
+  const TRDReconstruction* trdReconst = event->particle()->trdReconstruction();
   if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
     return;
 
@@ -118,7 +118,7 @@ void MCTRDSpectrumPlot::processEvent(const QVector<Hit*>&, const Particle* const
   }
 
   //get histo:
-  int pdgID = event->MCInformation()->primary()->pdgID;
+  int pdgID = event->simpleEvent()->MCInformation()->primary()->pdgID;
 
   TH1D* spectrumHisto = 0;
 

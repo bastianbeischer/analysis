@@ -78,13 +78,13 @@ FluxCollection::~FluxCollection()
 {
 }
 
-void FluxCollection::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
+void FluxCollection::processEvent(const AnalyzedEvent* event)
 {
-  PlotCollection::processEvent(hits, particle, event);
-  const Track* track = particle->track();
+  PlotCollection::processEvent(event);
+  const Track* track = event->particle()->track();
   if (!track || !track->fitGood())
     return;
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   if (!(flags & ParticleInformation::Chi2Good))
     return;
   if (!(flags & ParticleInformation::BetaGood))

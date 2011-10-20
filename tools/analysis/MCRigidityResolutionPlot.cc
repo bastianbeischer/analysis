@@ -12,17 +12,17 @@ MCRigidityResolutionPlot::~MCRigidityResolutionPlot()
 {
 }
 
-void MCRigidityResolutionPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
+void MCRigidityResolutionPlot::processEvent(const AnalyzedEvent* event)
 {
   //only accept mc events:
-  if (event->contentType() != SimpleEvent::MonteCarlo)
+  if (event->simpleEvent()->contentType() != SimpleEvent::MonteCarlo)
     return;
 
   //only use selected pdgID for MCEvents:
-  if (event->MCInformation()->primary()->pdgID != (m_particle->pdgId()))
+  if (event->simpleEvent()->MCInformation()->primary()->pdgID != (m_particle->pdgId()))
     return;
 
-  RigidityResolutionPlot::processEvent(hits, particle, event);
+  RigidityResolutionPlot::processEvent(event);
 }
 
 double MCRigidityResolutionPlot::referenceRigidity(const SimpleEvent* const event) const

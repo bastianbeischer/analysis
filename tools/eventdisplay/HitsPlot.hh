@@ -14,23 +14,16 @@ class TMarker;
 class TLatex;
 class TGraph;
 
-class HitsPlot :
-  public PerdaixDisplay,
-  public EventDestination
-{
-  
+class HitsPlot : public PerdaixDisplay, public EventDestination {
 public:
   HitsPlot();
   ~HitsPlot();
-  
-public:
-  void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  void processEvent(const AnalyzedEvent*);
   void setDrawAllClusters(bool);
 private:
   void drawHits();
   void clearHits();
 
-private:
   QVector<TBox*>      m_hits;
   QVector<TEllipse*>  m_hitsTRD;
   QVector<TLine*>     m_lines;

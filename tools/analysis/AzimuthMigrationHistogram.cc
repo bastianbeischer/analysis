@@ -35,27 +35,27 @@ AzimuthMigrationHistogram::~AzimuthMigrationHistogram()
 {
 }
 
-void AzimuthMigrationHistogram::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
+void AzimuthMigrationHistogram::processEvent(const AnalyzedEvent* event)
 {
-  if (event->contentType() != SimpleEvent::MonteCarlo)
+  if (event->simpleEvent()->contentType() != SimpleEvent::MonteCarlo)
     return;
 
-  if (event->MCInformation()->primary()->initialMomentum.Z() > 0)
+  if (event->simpleEvent()->MCInformation()->primary()->initialMomentum.Z() > 0)
     return;
 
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   if (!track || !track->fitGood())
     return;
 
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   if ( !(flags & ParticleInformation::Chi2Good) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
     return;
 
-  if (!event->MCInformation()->primary()->isInsideMagnet())
+  if (!event->simpleEvent()->MCInformation()->primary()->isInsideMagnet())
     return;
 
-  double azimuthGenerated = event->MCInformation()->primary()->azimuthAngle() * 180. / M_PI;
+  double azimuthGenerated = event->simpleEvent()->MCInformation()->primary()->azimuthAngle() * 180. / M_PI;
   double azimuthReconstructed = (track->azimuthAngle()) * 180. / M_PI;
 
   if (azimuthGenerated == 180.)

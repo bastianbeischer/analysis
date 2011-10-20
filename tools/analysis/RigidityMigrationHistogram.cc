@@ -50,26 +50,26 @@ RigidityMigrationHistogram::~RigidityMigrationHistogram()
 {
 }
 
-void RigidityMigrationHistogram::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
+void RigidityMigrationHistogram::processEvent(const AnalyzedEvent* event)
 {
-  if (event->contentType() != SimpleEvent::MonteCarlo)
+  if (event->simpleEvent()->contentType() != SimpleEvent::MonteCarlo)
     return;
-  if (event->MCInformation()->primary()->initialMomentum.Z() > 0)
+  if (event->simpleEvent()->MCInformation()->primary()->initialMomentum.Z() > 0)
     return;
-  if (!event->MCInformation()->primary()->isInsideMagnet())
+  if (!event->simpleEvent()->MCInformation()->primary()->isInsideMagnet())
     return;
-  int mcPdgId = event->MCInformation()->primary()->pdgID;
+  int mcPdgId = event->simpleEvent()->MCInformation()->primary()->pdgID;
   Particle mcParticle(mcPdgId);
   const double charge = mcParticle.charge();
   if (charge == 0)
     return;
-  double rigidityGenerated = event->MCInformation()->primary()->initialMomentum.Mag() / charge;
+  double rigidityGenerated = event->simpleEvent()->MCInformation()->primary()->initialMomentum.Mag() / charge;
   if (rigidityGenerated < histogram()->GetYaxis()->GetBinLowEdge(1) || histogram()->GetYaxis()->GetBinLowEdge(histogram()->GetNbinsY()+1) <= rigidityGenerated)
     return;
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
   if (!track || !track->fitGood())
      return;
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   if (!(flags & (ParticleInformation::Chi2Good)))
     return;
   if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )

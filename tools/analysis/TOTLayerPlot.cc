@@ -40,13 +40,13 @@ TOTLayerPlot* TOTLayerPlot::create(TOTLayer::Layer layer) const
   return new TOTLayerPlot(layer); 
 }
 
-void TOTLayerPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void TOTLayerPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
   if (!track || !track->fitGood())
     return;
   const QVector<Hit*>& clusters = track->hits();
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   ParticleInformation::Flags required = ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet;
   if ((flags & required) != required)
     return;

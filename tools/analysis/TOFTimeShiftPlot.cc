@@ -41,16 +41,16 @@ TOFTimeShiftPlot::TOFTimeShiftPlot(unsigned short topBarId, unsigned short botto
 TOFTimeShiftPlot::~TOFTimeShiftPlot()
 {}
 
-void TOFTimeShiftPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void TOFTimeShiftPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   if (!track || !track->fitGood())
     return;
   
   const QVector<Hit*>& hits = track->hits();
 
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   if (!(flags & ParticleInformation::Chi2Good))
     return;
   double t[8];

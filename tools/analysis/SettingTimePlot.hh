@@ -14,7 +14,7 @@ public:
   enum SettingType{MagnetInstalled, Momentum, Polarity, AbsMomentum};
   SettingTimePlot(SettingType, QDateTime first, QDateTime last);
   virtual ~SettingTimePlot();
-  virtual void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);
+  virtual void processEvent(const AnalyzedEvent*);
   virtual void finalize();
   virtual void draw(TCanvas* canvas);
 protected:

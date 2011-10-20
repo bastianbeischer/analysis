@@ -7,7 +7,7 @@
 class MCTRDCalibrationPlot : public AnalysisPlot, public H2DPlot {
 public:
     MCTRDCalibrationPlot();
-    virtual void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);
+    virtual void processEvent(const AnalyzedEvent*);
     //virtual void finalize();
 };
 

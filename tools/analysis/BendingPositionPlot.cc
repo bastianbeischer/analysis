@@ -21,9 +21,9 @@ BendingPositionPlot::BendingPositionPlot()
 BendingPositionPlot::~BendingPositionPlot()
 {}
 
-void BendingPositionPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void BendingPositionPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   if(!track || !track->fitGood())
     return;
@@ -31,7 +31,7 @@ void BendingPositionPlot::processEvent(const QVector<Hit*>&, const Particle* con
   if (track->type() == Enums::BrokenLine) {
     const BrokenLine* line = static_cast<const BrokenLine*>(track);
 
-    ParticleInformation::Flags flags = particle->information()->flags();
+    ParticleInformation::Flags flags = event->particle()->information()->flags();
     if (!(flags & ParticleInformation::AllTrackerLayers))
       return;
 

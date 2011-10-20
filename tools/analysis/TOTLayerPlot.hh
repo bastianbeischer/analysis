@@ -18,7 +18,7 @@ public:
   TOTLayerPlot(TOTLayer::Layer layer);
   ~TOTLayerPlot();
   TOTLayerPlot* create(TOTLayer::Layer layer) const;
-  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  virtual void processEvent(const AnalyzedEvent*);
 private:
 
   

@@ -99,15 +99,15 @@ BetaMomentumCorrelationPlot::~BetaMomentumCorrelationPlot()
 {
 }
 
-void BetaMomentumCorrelationPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void BetaMomentumCorrelationPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
   if (!track || !track->fitGood())
     return;
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   ParticleInformation::Flags required = ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet | ParticleInformation::BetaGood;
   if ((flags & required) != required)
     return;
   //&& (flags & ParticleInformation::InsideMagnet) && (flags & ParticleInformation::BetaGood)))
-  histogram()->Fill(track->rigidity(), 1./particle->beta());
+  histogram()->Fill(track->rigidity(), 1./event->particle()->beta());
 }

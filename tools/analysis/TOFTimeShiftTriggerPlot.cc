@@ -34,14 +34,14 @@ TOFTimeShiftTriggerPlot::TOFTimeShiftTriggerPlot()
 TOFTimeShiftTriggerPlot::~TOFTimeShiftTriggerPlot()
 {}
 
-void TOFTimeShiftTriggerPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void TOFTimeShiftTriggerPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
   if (!track || !track->fitGood())
     return;
-  const TimeOfFlight* tof = particle->timeOfFlight();
+  const TimeOfFlight* tof = event->particle()->timeOfFlight();
   const QVector<Hit*>& clusters = track->hits();
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   if (!(flags & ParticleInformation::Chi2Good))
     return;
 

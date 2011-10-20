@@ -18,7 +18,7 @@ public:
   ~PMTCorrelationPlot();
   
   void draw(TCanvas*);
-  void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);
+  void processEvent(const AnalyzedEvent*);
   void update();
 
   const double m_c1Threshold;

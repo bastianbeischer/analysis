@@ -11,7 +11,7 @@ public:
   enum Direction {X, Y};
   AzimuthPositionCorrelation(Direction, Enums::ChargeSigns);
   ~AzimuthPositionCorrelation();
-  void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  void processEvent(const AnalyzedEvent*);
 private:
   Direction m_direction;
   Enums::ChargeSigns m_type;

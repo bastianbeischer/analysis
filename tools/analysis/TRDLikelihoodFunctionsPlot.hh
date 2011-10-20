@@ -16,7 +16,7 @@ class TRDLikelihoodFunctionsPlot: public AnalysisPlot, public H1DPlot
 public:
     TRDLikelihoodFunctionsPlot();
     ~TRDLikelihoodFunctionsPlot();
-    virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+    virtual void processEvent(const AnalyzedEvent*);
 };
 
 #endif // TRDLIKELIHOODFUNCTIONSPLOT_HH

@@ -21,6 +21,7 @@ CLASSES+= \
   SimpleEvent \
   TOFCluster \
   TOFSipmHit
+
 CREATE_ROOT_DICT_FOR_CLASSES += \
   Cluster.hh \
   DataDescription.hh \
@@ -33,7 +34,6 @@ CREATE_ROOT_DICT_FOR_CLASSES += \
   SimpleEvent.hh \
   TOFCluster.hh \
   TOFSipmHit.hh
-
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/common.pri)

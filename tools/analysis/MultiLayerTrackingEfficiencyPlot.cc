@@ -71,14 +71,14 @@ MultiLayerTrackingEfficiencyPlot::~MultiLayerTrackingEfficiencyPlot()
   delete [] m_layerZ;
 }
 
-void MultiLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const)
+void MultiLayerTrackingEfficiencyPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   if (!track || !track->fitGood())
     return;
 
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   if ( !(flags & ParticleInformation::Chi2Good) )
     return;
   
@@ -88,8 +88,8 @@ void MultiLayerTrackingEfficiencyPlot::processEvent(const QVector<Hit*>& hits, c
   int nbOfLayers = 0;
   for (int i = 0; i < m_nLayers; i++) {
     // determine if the layer has a hit matching the track
-    const QVector<Hit*>::const_iterator endIt = hits.end();
-    for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+    const QVector<Hit*>::const_iterator endIt = event->clusters().end();
+    for (QVector<Hit*>::const_iterator it = event->clusters().begin(); it != endIt; ++it) {
       Hit* hit = *it;
       if (floor(hit->position().z()) == m_layerZ[i]) {
         if (TrackFinding::isInCorridor(track, hit, 10.)) {

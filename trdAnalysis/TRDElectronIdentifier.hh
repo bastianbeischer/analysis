@@ -6,11 +6,12 @@
 class SimpleEvent;
 class Hit;
 class Particle;
+class AnalyzedEvent;
 
 class TRDElectronIdentifier
 {
 public:
-  virtual bool isElectronish(const QVector<Hit*>& hits, const Particle* particle, const SimpleEvent* event, bool &ok) = 0;
+  virtual bool isElectronish(const AnalyzedEvent*, bool &ok) = 0;
 };
 
 #endif // TRDELECTRONIDENTIFIER_HH

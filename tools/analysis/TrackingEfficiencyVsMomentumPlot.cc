@@ -41,14 +41,14 @@ TrackingEfficiencyVsMomentumPlot::~TrackingEfficiencyVsMomentumPlot()
 {
 }
 
-void TrackingEfficiencyVsMomentumPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void TrackingEfficiencyVsMomentumPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   if (!track || !track->fitGood())
     return;
 
-  const ParticleInformation* info = particle->information();
+  const ParticleInformation* info = event->particle()->information();
 
   ParticleInformation::Flags flags = info->flags();
   if ( !(flags & ParticleInformation::InsideMagnet) || !(flags & ParticleInformation::Chi2Good) )

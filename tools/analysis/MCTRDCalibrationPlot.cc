@@ -19,20 +19,20 @@ MCTRDCalibrationPlot::MCTRDCalibrationPlot()
   addHistogram(histogram);
 }
 
-void MCTRDCalibrationPlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
+void MCTRDCalibrationPlot::processEvent(const AnalyzedEvent* event)
 {
   //qDebug("new event");
-  if (event->contentType() != SimpleEvent::MonteCarlo)
+  if (event->simpleEvent()->contentType() != SimpleEvent::MonteCarlo)
     return;
 
-  const MCEventInformation* mcInfo = event->MCInformation();
+  const MCEventInformation* mcInfo = event->simpleEvent()->MCInformation();
 
   if(!mcInfo)
     return;
 
 
   const std::vector<const MCSimpleEventDigi*> mcDigis = mcInfo->mcDigis();
-  const std::vector<Hit*> hits = event->hits();
+  const std::vector<Hit*> hits = event->simpleEvent()->hits();
   QVector<Hit*> trdHits;
 
   //get all trd channel hits:

@@ -50,10 +50,10 @@ SettingTimePlot::~SettingTimePlot()
   delete m_normalizationHistogram;
 }
 
-void SettingTimePlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
+void SettingTimePlot::processEvent(const AnalyzedEvent* event)
 {
   //get settings if present
-  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+  const Settings* settings = SettingsManager::instance()->settingsForEvent(event->simpleEvent());
   if (!settings || settings->situation() != Settings::Testbeam11)
     return;
 
@@ -71,7 +71,7 @@ void SettingTimePlot::processEvent(const QVector<Hit*>&, const Particle* const, 
       value = 0; break;
   }
 
-  double t = event->time();
+  double t = event->simpleEvent()->time();
   histogram()->Fill(t, value);
   m_normalizationHistogram->Fill(t);
 }

@@ -20,7 +20,7 @@ public:
   BeamProfilePlot(Type);
   ~BeamProfilePlot();
   
-  void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);
+  void processEvent(const AnalyzedEvent*);
 
 private slots:
   void saveHistograms();

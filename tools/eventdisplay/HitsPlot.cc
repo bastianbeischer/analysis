@@ -61,9 +61,9 @@ void HitsPlot::clearHits()
   m_fitInfo = 0;
 }
 
-void HitsPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
+void HitsPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   clearHits();
 
@@ -161,7 +161,7 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, const Particle* const par
   QVector<Hit*> hitsToPlot;
   QVector<Hit*> hitsToPlotOnTrack;
 
-  foreach(Hit* hit, track && !m_drawAllClusters ? track->hits() : hits) {
+  foreach(Hit* hit, (track && !m_drawAllClusters) ? track->hits() : event->clusters()) {
     // draw TOF yEstimates
     if (strcmp(hit->ClassName(), "TOFCluster") == 0) {
       TOFCluster* tofCluster = static_cast<TOFCluster*>(hit);
@@ -245,7 +245,7 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, const Particle* const par
     }
   }
 
-  if (event->contentType() == SimpleEvent::MonteCarlo) {
+  if (event->simpleEvent()->contentType() == SimpleEvent::MonteCarlo) {
 
     qDeleteAll(m_trajectoriesXZ);
     m_trajectoriesXZ.clear();
@@ -255,7 +255,7 @@ void HitsPlot::processEvent(const QVector<Hit*>& hits, const Particle* const par
 
 
     //read all particles:
-    const MCEventInformation* mcInfo = event->MCInformation();
+    const MCEventInformation* mcInfo = event->simpleEvent()->MCInformation();
 
     QList<const MCSimpleEventParticle*> allMCParticles;
     //qDebug("draw traj: add primary");

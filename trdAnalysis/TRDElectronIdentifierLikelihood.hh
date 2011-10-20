@@ -4,13 +4,14 @@
 #include "TRDElectronIdentifier.hh"
 
 class TF1;
+class AnalyzedEvent;
 
 class TRDElectronIdentifierLikelihood : public TRDElectronIdentifier
 {
 public:
   TRDElectronIdentifierLikelihood();
-  bool isElectronish(const QVector<Hit*>& hits, const Particle* particle, const SimpleEvent* event, bool &ok);
-  bool isElectronish(const QVector<Hit*>& hits, const Particle* particle, const SimpleEvent* event, bool &ok, double &logLH);
+  bool isElectronish(const AnalyzedEvent*, bool &ok);
+  bool isElectronish(const AnalyzedEvent*, bool &ok, double &logLH);
 private:
   const TF1* m_LHFunctionTR;
   QVector<const TF1*> m_LHFunctionNonTR;

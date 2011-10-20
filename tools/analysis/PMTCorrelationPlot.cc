@@ -75,9 +75,9 @@ void PMTCorrelationPlot::draw(TCanvas* canvas)
   m_line2->Draw();
 }
 
-void PMTCorrelationPlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
+void PMTCorrelationPlot::processEvent(const AnalyzedEvent* event)
 {
-  histogram()->Fill(event->sensorData(SensorTypes::BEAM_CHERENKOV1), event->sensorData(SensorTypes::BEAM_CHERENKOV2));
+  histogram()->Fill(event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV1), event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV2));
 }
 
 void PMTCorrelationPlot::update()

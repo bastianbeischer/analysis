@@ -17,7 +17,8 @@ CLASSES += \
   ProcessingThread \
   Cut \
   CutFilter \
-  MCFilter
+  MCFilter \
+  AnalyzedEvent
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \

@@ -60,10 +60,10 @@ TRDEfficiencyPlot::~TRDEfficiencyPlot()
   m_ellipses.clear();
 }
 
-void TRDEfficiencyPlot::processEvent(const QVector<Hit*>& /*hits*/, const Particle* const particle, const SimpleEvent* const)
+void TRDEfficiencyPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
-  const ParticleInformation::Flags pFlags = particle->information()->flags();
+  const Track* track = event->particle()->track();
+  const ParticleInformation::Flags pFlags = event->particle()->information()->flags();
 
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())

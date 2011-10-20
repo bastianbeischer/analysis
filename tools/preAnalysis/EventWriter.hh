@@ -26,7 +26,7 @@ public:
   ~EventWriter();
   
   void init(QString filename);
-  void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  void processEvent(const AnalyzedEvent*);
   void start();
 
   void addInputFileToDescription(QString filename);

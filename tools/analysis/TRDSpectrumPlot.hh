@@ -17,7 +17,7 @@ public:
   TRDSpectrumPlot(unsigned short = 0, TRDSpectrumType = completeTRD);
   ~TRDSpectrumPlot();
 
-  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  virtual void processEvent(const AnalyzedEvent*);
   virtual void update();
 
 private:

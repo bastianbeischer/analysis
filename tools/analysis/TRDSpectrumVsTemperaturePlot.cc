@@ -66,9 +66,9 @@ TRDSpectrumVsTemperaturePlot::~TRDSpectrumVsTemperaturePlot()
 {
 }
 
-void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
+void TRDSpectrumVsTemperaturePlot::processEvent(const AnalyzedEvent* event)
 {
-  const TRDReconstruction* trdReconst = particle->trdReconstruction();
+  const TRDReconstruction* trdReconst = event->particle()->trdReconstruction();
   if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
     return;
 
@@ -76,7 +76,7 @@ void TRDSpectrumVsTemperaturePlot::processEvent(const QVector<Hit*>&, const Part
   double meanTemperature = 0.;
   int count = 0;
   for (unsigned int i = SensorTypes::TRD_TUBE_TOP_HOT_TEMP; i <= SensorTypes::TRD_TUBE_BOTTOM_COLD_TEMP; i++) {
-    meanTemperature += event->sensorData((SensorTypes::Type)i);
+    meanTemperature += event->simpleEvent()->sensorData((SensorTypes::Type)i);
     count++;
   }
   meanTemperature /= count;

@@ -28,12 +28,12 @@ TRDDistanceWireToTrackPlot::~TRDDistanceWireToTrackPlot()
 {
 }
 
-void TRDDistanceWireToTrackPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent*)
+void TRDDistanceWireToTrackPlot::processEvent(const AnalyzedEvent* event)
 {
-  const TRDReconstruction* trdReconst = particle->trdReconstruction();
+  const TRDReconstruction* trdReconst = event->particle()->trdReconstruction();
   if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
     return;
 
   for (QVector<const Hit*>::const_iterator it = trdReconst->allHitsOnTrack().constBegin(); it != trdReconst->allHitsOnTrack().constEnd(); ++it)
-    histogram()->Fill(TRDReconstruction::distanceTrackToWire(*it, particle->track()));
+    histogram()->Fill(TRDReconstruction::distanceTrackToWire(*it, event->particle()->track()));
 }

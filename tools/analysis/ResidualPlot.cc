@@ -50,14 +50,14 @@ ResidualPlot::~ResidualPlot()
 {
 }
 
-void ResidualPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
+void ResidualPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   if (!track || !track->fitGood())
     return;
 
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 
@@ -72,7 +72,7 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, const Particle* const
       hitsInThisLayer.push_back(hit);
   }
 
-  Track* mytrack = referenceTrack(hits, particle, event);
+  Track* mytrack = referenceTrack(event);
 
   // fit and fill histograms
   if (mytrack) {
@@ -105,9 +105,9 @@ void ResidualPlot::processEvent(const QVector<Hit*>& hits, const Particle* const
   }
 }
 
-Track* ResidualPlot::referenceTrack(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const /*event*/)
+Track* ResidualPlot::referenceTrack(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   // remove hits in this layer from hits for track fit
   QVector<Hit*> hitsForFit;

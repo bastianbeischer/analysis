@@ -1,6 +1,8 @@
 #ifndef EventDestination_hh
 #define EventDestination_hh
 
+#include "AnalyzedEvent.hh"
+
 #include <QVector>
 #include <QMutex>
 
@@ -12,7 +14,7 @@ class EventDestination {
 public:
   EventDestination();
   virtual ~EventDestination();
-  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0) = 0;
+  virtual void processEvent(const AnalyzedEvent*) = 0;
   bool needsLocking() const {return m_needsLocking;}
   void setNeedsLocking(bool value) {m_needsLocking = value;}
   bool tryLock();

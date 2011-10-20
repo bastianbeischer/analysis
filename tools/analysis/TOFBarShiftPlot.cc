@@ -53,17 +53,17 @@ TOFBarShiftPlot::TOFBarShiftPlot(unsigned short idTop1, unsigned short idTop2, u
 TOFBarShiftPlot::~TOFBarShiftPlot()
 {}
 
-void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
+void TOFBarShiftPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
   if (!track || !track->fitGood())
     return;
-  const TimeOfFlight* tof = particle->timeOfFlight();
+  const TimeOfFlight* tof = event->particle()->timeOfFlight();
   const QVector<Hit*>& hits = track->hits();
 
-  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+  const Settings* settings = SettingsManager::instance()->settingsForEvent(event->simpleEvent());
 
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   if (!(flags & ParticleInformation::Chi2Good))
     return;
   if (!settings && !(flags & ParticleInformation::InsideMagnet))
@@ -90,13 +90,13 @@ void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, const Particle* const p
     if (settings && settings->situation() == Settings::Testbeam11) {
       rigidity = settings->momentum();
       if (settings->polarity() < 0) {
-        if (event->sensorData(SensorTypes::BEAM_CHERENKOV1) > 200 || event->sensorData(SensorTypes::BEAM_CHERENKOV2) > 200) {
+        if (event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV1) > 200 || event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV2) > 200) {
           m = Constants::electronMass;
         } else {
           m = Constants::pionMass;
         }
       } else {
-        if (event->sensorData(SensorTypes::BEAM_CHERENKOV1) > 200 || event->sensorData(SensorTypes::BEAM_CHERENKOV2) > 200) {
+        if (event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV1) > 200 || event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV2) > 200) {
           m = Constants::electronMass;
         } else {
           m = Constants::protonMass; //could also be a pion, doesn't matter
@@ -104,7 +104,7 @@ void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, const Particle* const p
       }
     } else {
       rigidity = track->rigidity();
-      m = particle->mass();
+      m = event->particle()->mass();
     }
     if (rigidity < 1)
       return;

@@ -65,24 +65,24 @@ TrackFindingEfficiency::~TrackFindingEfficiency()
   delete m_total;
 }
 
-void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
+void TrackFindingEfficiency::processEvent(const AnalyzedEvent* event)
 {
   bool fillHistogram = false;
   double rigidity = 0;
 
-  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+  const Settings* settings = SettingsManager::instance()->settingsForEvent(event->simpleEvent());
   if (settings && settings->situation() == Settings::Testbeam11) {
     rigidity = settings->momentum();
     fillHistogram = true;
-  } else if (event->contentType() == SimpleEvent::MonteCarlo) {
-    if (!event->MCInformation()->primary()->isInsideMagnet())
+  } else if (event->simpleEvent()->contentType() == SimpleEvent::MonteCarlo) {
+    if (!event->simpleEvent()->MCInformation()->primary()->isInsideMagnet())
       return;
     //Todo: albedo handling
-    int mcPdgId = event->MCInformation()->primary()->pdgID;
+    int mcPdgId = event->simpleEvent()->MCInformation()->primary()->pdgID;
     Particle mcParticle(mcPdgId);
-    rigidity = event->MCInformation()->primary()->initialMomentum.Mag() / mcParticle.charge();
+    rigidity = event->simpleEvent()->MCInformation()->primary()->initialMomentum.Mag() / mcParticle.charge();
 
-    if (!isTriggerEvent(QVector<Hit*>::fromStdVector(event->hits())))
+    if (!isTriggerEvent(QVector<Hit*>::fromStdVector(event->simpleEvent()->hits())))
       return;
     fillHistogram = true;
   }
@@ -91,10 +91,10 @@ void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, const Particle* 
   if (fillHistogram)
     m_total->Fill(rigidity);
 
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
   if (!track || !track->fitGood())
     return;
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   if (!(flags & (ParticleInformation::Chi2Good)))
     return;
 

@@ -5,17 +5,12 @@
 
 #include "Particle.hh"
 
-class MCRigidityResolutionPlot :
-  public RigidityResolutionPlot
-{
-  
+class MCRigidityResolutionPlot : public RigidityResolutionPlot {
 public:
   MCRigidityResolutionPlot(const Enums::Particle& = Enums::Electron);
   ~MCRigidityResolutionPlot();
-  
-  void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);
+  void processEvent(const AnalyzedEvent*);
   double referenceRigidity(const SimpleEvent* const) const;
-  
 };
 
 #endif /* MCRigidityResolutionPlot_hh */

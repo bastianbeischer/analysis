@@ -28,16 +28,16 @@ TRDEnergyDepositionOverMomentumPlot::~TRDEnergyDepositionOverMomentumPlot()
 {
 }
 
-void TRDEnergyDepositionOverMomentumPlot::processEvent(const QVector<Hit*>& /*hits*/, const Particle* const particle, const SimpleEvent* const /*event*/)
+void TRDEnergyDepositionOverMomentumPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;
 
   //check if all tracker layers have a hit
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 

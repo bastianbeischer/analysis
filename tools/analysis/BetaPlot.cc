@@ -42,17 +42,17 @@ BetaPlot::~BetaPlot()
   delete m_line;
 }
 
-void BetaPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void BetaPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   if (!track || !track->fitGood())
     return;
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   ParticleInformation::Flags required = ParticleInformation::Chi2Good | ParticleInformation::BetaGood;
   if ((flags & required) != required)
     return;
-  histogram()->Fill(1./particle->beta());
+  histogram()->Fill(1./event->particle()->beta());
 }
 
 void BetaPlot::update()

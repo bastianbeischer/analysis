@@ -14,14 +14,16 @@ INCLUDEPATH += \
   $$TOPLEVEL/event \
   $$TOPLEVEL/particle \
   $$TOPLEVEL/tracking \
-  $$TOPLEVEL/global
+  $$TOPLEVEL/global \
+  $$TOPLEVEL/processing
 
 LIBS += \
   -L$$TOPLEVEL/lib \
   -lglobal \
   -lSimpleEvent \
   -lparticle \
-  -ltracking
+  -ltracking \
+  -lprocessing
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/common.pri)

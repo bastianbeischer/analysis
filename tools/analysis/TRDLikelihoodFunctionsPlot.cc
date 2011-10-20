@@ -33,6 +33,6 @@ TRDLikelihoodFunctionsPlot::~TRDLikelihoodFunctionsPlot()
 {
 }
 
-void TRDLikelihoodFunctionsPlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const)
+void TRDLikelihoodFunctionsPlot::processEvent(const AnalyzedEvent*)
 {
 }

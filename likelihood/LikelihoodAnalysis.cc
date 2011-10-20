@@ -13,7 +13,6 @@ LikelihoodAnalysis::LikelihoodAnalysis(Enums::LikelihoodVariables likelihoods)
 {
   for (Enums::LikelihoodVariableIterator it = Enums::likelihoodVariableBegin(); it != Enums::likelihoodVariableEnd(); ++it)
     if ((it.key() & likelihoods) == it.key()) {
-      qDebug() << Enums::label(it.key());
       m_likelihoods.append(Likelihood::newLikelihood(it.key()));
     }
 }
@@ -26,6 +25,7 @@ LikelihoodAnalysis::~LikelihoodAnalysis()
 
 void LikelihoodAnalysis::identify(Particle* particle)
 {
+  return;
   m_particle = particle;
   if (m_mg)
     delete m_mg;
@@ -51,7 +51,6 @@ void LikelihoodAnalysis::identify(Particle* particle)
     }
     m_mg->Add(g);
   }
-  qDebug() << particle->track()->rigidity();
 }
 
 double LikelihoodAnalysis::test(const KineticVariable& variable) const

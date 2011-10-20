@@ -27,22 +27,22 @@ TotalEnergyDepositionTRDvsTrackerPlot::~TotalEnergyDepositionTRDvsTrackerPlot()
 {
 }
 
-void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const)
+void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   //check if everything worked and a track has been fit
   if (!track || !track->fitGood())
     return;
 
-  if (particle->information()->numberOfTrackerLayers() < 7)
+  if (event->particle()->information()->numberOfTrackerLayers() < 7)
     return;
 
   if (track->chi2() / track->ndf() > 5)
     return;
 
   //check if track was inside of magnet
-  if (!(particle->information()->flags() & ParticleInformation::InsideMagnet))
+  if (!(event->particle()->information()->flags() & ParticleInformation::InsideMagnet))
     return;
 
 
@@ -53,7 +53,7 @@ void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hi
   if( p < m_lowerMomentum || p > m_upperMomentum)
     return;
 
-  if (particle->beta() < 1.5 || particle->beta() < 0)
+  if (event->particle()->beta() < 1.5 || event->particle()->beta() < 0)
     return;
   */
 
@@ -64,8 +64,8 @@ void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const QVector<Hit*>& hi
   int trdCluster = 0;
   int trackerCluster = 0;
 
-  const QVector<Hit*>::const_iterator endIt = hits.end();
-  for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
+  const QVector<Hit*>::const_iterator endIt = event->clusters().end();
+  for (QVector<Hit*>::const_iterator it = event->clusters().begin(); it != endIt; ++it) {
     Cluster* cluster = static_cast<Cluster*>(*it);
     if (cluster->type() == Hit::trd){
       const std::vector<Hit*>& subHits = cluster->hits();

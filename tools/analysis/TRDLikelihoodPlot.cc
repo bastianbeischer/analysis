@@ -53,17 +53,17 @@ TRDLikelihoodPlot::TRDLikelihoodPlot(Enums::AnalysisTopic topic)
   setSecondaryWidget(m_NonTRRejVsTREffWidget);
 }
 
-void TRDLikelihoodPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
+void TRDLikelihoodPlot::processEvent(const AnalyzedEvent* event)
 {
   bool ok = false;
-  bool isTRParticle = truthMcIsElectron(event, ok);
+  bool isTRParticle = truthMcIsElectron(event->simpleEvent(), ok);
   if (!ok)
     return;
 
   double lhTR = 0.;
   bool validEvent = false;
   //bool identifiedAsTRParticle =
-  m_EIdentifierLH->isElectronish(hits, particle, event, validEvent, lhTR);
+  m_EIdentifierLH->isElectronish(event, validEvent, lhTR);
 
   if (!validEvent)
     return;

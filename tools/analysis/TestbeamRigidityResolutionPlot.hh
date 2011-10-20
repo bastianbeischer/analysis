@@ -11,7 +11,7 @@ public:
   TestbeamRigidityResolutionPlot(const Enums::Particle& = Enums::Electron);
   ~TestbeamRigidityResolutionPlot();
   
-  void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);
+  void processEvent(const AnalyzedEvent*);
   double referenceRigidity(const SimpleEvent* const) const;
   
 };

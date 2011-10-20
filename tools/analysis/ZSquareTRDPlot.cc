@@ -27,14 +27,14 @@ ZSquareTRDPlot::~ZSquareTRDPlot()
 {
 }
 
-void ZSquareTRDPlot::processEvent(const QVector<Hit*>& clusters, const Particle* const, const SimpleEvent* const)
+void ZSquareTRDPlot::processEvent(const AnalyzedEvent* event)
 {
-  QVector<Hit*>::const_iterator endIt = clusters.end();
+  QVector<Hit*>::const_iterator endIt = event->clusters().end();
   int nUpperTrd = 0;
   int nLowerTrd = 0;
   double upperSum = 0.;
   double lowerSum = 0.;
-  for (QVector<Hit*>::const_iterator it = clusters.begin(); it != endIt; ++it) {
+  for (QVector<Hit*>::const_iterator it = event->clusters().begin(); it != endIt; ++it) {
     Hit* hit = *it;
     if (hit->type() == Hit::trd) {
       if (hit->position().z() > -411.6) {

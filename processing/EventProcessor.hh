@@ -7,6 +7,7 @@ class Particle;
 class Hit;
 class SimpleEvent;
 class EventDestination;
+class AnalyzedEvent;
 
 class EventProcessor
 {
@@ -20,7 +21,7 @@ public:
   void clearDestinations();
 
   virtual void process(SimpleEvent*) = 0;
-  bool tryProcessingDestination(EventDestination*, QVector<Hit*>&, Particle*, SimpleEvent*) const;
+  bool tryProcessingDestination(EventDestination*, AnalyzedEvent*) const;
 
 protected:
   QVector<EventDestination*> m_destinations;

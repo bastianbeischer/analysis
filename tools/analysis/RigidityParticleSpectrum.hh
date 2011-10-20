@@ -17,7 +17,7 @@ public:
   enum Type {NonAlbedo, Albedo};
   RigidityParticleSpectrum(Type, TH1D*);
   ~RigidityParticleSpectrum();
-  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  virtual void processEvent(const AnalyzedEvent*);
 private:
   Type m_type;
 };

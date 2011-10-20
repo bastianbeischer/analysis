@@ -67,9 +67,9 @@ BeamProfilePlot::~BeamProfilePlot()
 {
 }
 
-void BeamProfilePlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void BeamProfilePlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   if(!track || !track->fitGood())
     return;

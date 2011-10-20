@@ -26,9 +26,9 @@ TotalEnergyDepositionPlot::~TotalEnergyDepositionPlot()
 {
 }
 
-void TotalEnergyDepositionPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent*)
+void TotalEnergyDepositionPlot::processEvent(const AnalyzedEvent* event)
 {
-  const TRDReconstruction* trdReconst = particle->trdReconstruction();
+  const TRDReconstruction* trdReconst = event->particle()->trdReconstruction();
   if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
     return;
 

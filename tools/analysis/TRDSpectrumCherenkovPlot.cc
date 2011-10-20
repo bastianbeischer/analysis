@@ -31,10 +31,10 @@ TRDSpectrumCherenkovPlot::~TRDSpectrumCherenkovPlot()
 {
 }
 
-void TRDSpectrumCherenkovPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
+void TRDSpectrumCherenkovPlot::processEvent(const AnalyzedEvent* event)
 {
-  double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
-  double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
+  double c1Signal = event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV1);
+  double c2Signal = event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV2);
 
   switch (m_cherenkovCut) {
   case None:
@@ -57,5 +57,5 @@ void TRDSpectrumCherenkovPlot::processEvent(const QVector<Hit*>& hits, const Par
     break;
   }
 
-  TRDSpectrumPlot::processEvent(hits, particle, event);
+  TRDSpectrumPlot::processEvent(event);
 }

@@ -45,9 +45,9 @@ AzimuthCutStatistics::~AzimuthCutStatistics()
 {
 }
 
-void AzimuthCutStatistics::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void AzimuthCutStatistics::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
   double azimuth = track->azimuthAngle() * 180. / M_PI;
 
   histogram()->Fill(0., azimuth);
@@ -56,7 +56,7 @@ void AzimuthCutStatistics::processEvent(const QVector<Hit*>&, const Particle* co
     return;
   histogram()->Fill(1., azimuth);
 
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   if ( !(flags & ParticleInformation::Chi2Good))
     return;
   histogram()->Fill(2., azimuth);

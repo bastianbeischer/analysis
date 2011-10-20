@@ -9,6 +9,7 @@
 #include "Hit.hh"
 #include "Cluster.hh"
 #include "Particle.hh"
+#include "AnalyzedEvent.hh"
 
 #include <TF1.h>
 
@@ -17,15 +18,15 @@ TRDElectronIdentifierLikelihood::TRDElectronIdentifierLikelihood()
 {
 }
 
-bool TRDElectronIdentifierLikelihood::isElectronish(const QVector<Hit*>& hits, const Particle* particle, const SimpleEvent* event, bool &ok)
+bool TRDElectronIdentifierLikelihood::isElectronish(const AnalyzedEvent* event, bool &ok)
 {
   double logLH = 0;
-  return isElectronish(hits, particle, event, ok, logLH);
+  return isElectronish(event, ok, logLH);
 }
 
-bool TRDElectronIdentifierLikelihood::isElectronish(const QVector<Hit*>&, const Particle* particle, const SimpleEvent*, bool &ok, double &logLH)
+bool TRDElectronIdentifierLikelihood::isElectronish(const AnalyzedEvent* event, bool &ok, double &logLH)
 {
-  const TRDReconstruction* trdReconst = particle->trdReconstruction();
+  const TRDReconstruction* trdReconst = event->particle()->trdReconstruction();
   if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent)) {
     ok = false;
     return false;

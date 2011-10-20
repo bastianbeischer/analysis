@@ -11,7 +11,7 @@ class FluxCollection : public PlotCollection {
 public:
   FluxCollection(const QDateTime& first, const QDateTime& last);
   ~FluxCollection();
-  void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  void processEvent(const AnalyzedEvent*);
 private:
   TH1D* m_particleHistogram;
   TH1D* m_particleHistogramAlbedo;

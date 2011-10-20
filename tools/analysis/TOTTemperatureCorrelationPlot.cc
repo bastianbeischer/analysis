@@ -42,9 +42,9 @@ TOTTemperatureCorrelationPlot::~TOTTemperatureCorrelationPlot()
 {
 }
 
-void TOTTemperatureCorrelationPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
+void TOTTemperatureCorrelationPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
   if (!track || !track->fitGood())
     return;
   const QVector<Hit*>& hits = track->hits(); 
@@ -61,7 +61,7 @@ void TOTTemperatureCorrelationPlot::processEvent(const QVector<Hit*>&, const Par
       for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
         Hit* tofHit = *it;
         if (tofHit->detId() == m_id) {
-          double temperature = event->sensorData(Setup::instance()->sensorForId(m_id));
+          double temperature = event->simpleEvent()->sensorData(Setup::instance()->sensorForId(m_id));
           TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(tofHit);
           if (!std::isnan(temperature))
             histogram()->Fill(temperature, tofSipmHit->timeOverThreshold());

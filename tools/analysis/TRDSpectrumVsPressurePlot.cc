@@ -68,14 +68,14 @@ TRDSpectrumVsPressurePlot::~TRDSpectrumVsPressurePlot()
 {
 }
 
-void TRDSpectrumVsPressurePlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
+void TRDSpectrumVsPressurePlot::processEvent(const AnalyzedEvent* event)
 {
-  const TRDReconstruction* trdReconst = particle->trdReconstruction();
+  const TRDReconstruction* trdReconst = event->particle()->trdReconstruction();
   if (!(trdReconst->flags() & TRDReconstruction::GoodTRDEvent))
     return;
 
   // TODO: temp sensormap
-  double pressure = event->sensorData(SensorTypes::TRD_PRESSURE_SMOOTHED);
+  double pressure = event->simpleEvent()->sensorData(SensorTypes::TRD_PRESSURE_SMOOTHED);
 
   QVector<double> valuesToFill;
   switch (m_spectrumType) {

@@ -16,7 +16,7 @@ public:
   TRDSpectrumVsPressurePlot(unsigned short = 0, TRDSpectrumPlot:: TRDSpectrumType = TRDSpectrumPlot::completeTRD, double lowerMomentum = -100, double upperMomentum = 100 );
   ~TRDSpectrumVsPressurePlot();
 
-  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  virtual void processEvent(const AnalyzedEvent*);
 
 private:
   unsigned short m_id;

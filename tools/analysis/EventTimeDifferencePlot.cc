@@ -46,11 +46,11 @@ EventTimeDifferencePlot::~EventTimeDifferencePlot()
 {
 }
 
-void EventTimeDifferencePlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
+void EventTimeDifferencePlot::processEvent(const AnalyzedEvent* event)
 {
   if (!m_active)
     return;
-  double eventTime = event->time() * 1000;
+  double eventTime = event->simpleEvent()->time() * 1000;
   if (m_lastEventTime > -1)
     histogram()->Fill(eventTime - m_lastEventTime);
   m_lastEventTime = eventTime;

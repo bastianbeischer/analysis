@@ -14,10 +14,10 @@ TestbeamRigidityResolutionPlot::~TestbeamRigidityResolutionPlot()
 {
 }
 
-void TestbeamRigidityResolutionPlot::processEvent(const QVector<Hit*>& hits, const Particle* const particle, const SimpleEvent* const event)
+void TestbeamRigidityResolutionPlot::processEvent(const AnalyzedEvent* event)
 {
   //get settings if present
-  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+  const Settings* settings = SettingsManager::instance()->settingsForEvent(event->simpleEvent());
   if (!settings || settings->situation() != Settings::Testbeam11)
     return;
 
@@ -25,8 +25,8 @@ void TestbeamRigidityResolutionPlot::processEvent(const QVector<Hit*>& hits, con
   if (m_particle->charge() != settings->polarity())
     return;
 
-  double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
-  double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
+  double c1Signal = event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV1);
+  double c2Signal = event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV2);
 
   double threshold = 200;
   if ( (c1Signal < threshold && c2Signal > threshold) || (c1Signal > threshold && c2Signal < threshold) ) // throw away all events where cherenkov info is inconsistent
@@ -38,7 +38,7 @@ void TestbeamRigidityResolutionPlot::processEvent(const QVector<Hit*>& hits, con
   else if (!aboveThreshold && c1Signal > threshold && c2Signal > threshold)  // throw away all particles which DO produce cherenkov light
     return;
 
-  RigidityResolutionPlot::processEvent(hits, particle, event);
+  RigidityResolutionPlot::processEvent(event);
 }
 
 double TestbeamRigidityResolutionPlot::referenceRigidity(const SimpleEvent* const event) const

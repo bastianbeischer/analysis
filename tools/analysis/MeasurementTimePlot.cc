@@ -30,9 +30,9 @@ MeasurementTimePlot::~MeasurementTimePlot()
 {
 }
 
-void MeasurementTimePlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
+void MeasurementTimePlot::processEvent(const AnalyzedEvent* event)
 {
-  m_calculation.update(event);
+  m_calculation.update(event->simpleEvent());
 }
 
 void MeasurementTimePlot::update()

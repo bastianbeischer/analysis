@@ -52,14 +52,14 @@ SignalHeight2DPlot::~SignalHeight2DPlot()
   delete m_normHisto;
 }
 
-void SignalHeight2DPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const)
+void SignalHeight2DPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   if(!track)
     return;
 
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
 

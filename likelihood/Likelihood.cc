@@ -90,7 +90,6 @@ void Likelihood::loadNodes()
   settings.beginGroup(Enums::label(m_likelihoodVariableType));
   
   foreach (QString particleKey, settings.childGroups()) {
-    qDebug() << particleKey;
     settings.beginGroup(particleKey);
     Enums::Particle particle = Enums::particle(particleKey);
     m_particles|= particle;

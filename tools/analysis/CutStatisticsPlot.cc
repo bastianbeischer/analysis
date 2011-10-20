@@ -34,15 +34,15 @@ CutStatisticsPlot::~CutStatisticsPlot()
 {
 }
 
-void CutStatisticsPlot::processEvent(const QVector<Hit*>& /*hits*/, const Particle* const particle, const SimpleEvent* const)
+void CutStatisticsPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = particle->track();
+  const Track* track = event->particle()->track();
 
   histogram()->Fill(0);
   if (!track || !track->fitGood())
     return;
   histogram()->Fill(1);
-  ParticleInformation::Flags flags = particle->information()->flags();
+  ParticleInformation::Flags flags = event->particle()->information()->flags();
   if (!(flags & ParticleInformation::InsideMagnet))
     return;
   histogram()->Fill(2);

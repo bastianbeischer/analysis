@@ -10,7 +10,7 @@ class TOFProbabilityDensityFunction : public AnalysisPlot, public H1DPlot {
 public:
   TOFProbabilityDensityFunction();
   virtual ~TOFProbabilityDensityFunction();
-  virtual void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
+  virtual void processEvent(const AnalyzedEvent*);
   virtual void update();
   virtual void finalize();
 private:

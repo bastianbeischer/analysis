@@ -17,7 +17,7 @@ public:
   PMTPlot(SensorTypes::Type);
   ~PMTPlot();
   void draw(TCanvas*);
-  void processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const);
+  void processEvent(const AnalyzedEvent*);
   void update();
 private:
   SensorTypes::Type m_type;

@@ -46,9 +46,9 @@ TRDTimeCorrectionPlot::~TRDTimeCorrectionPlot()
   delete m_TrdTimeSpline;
 }
 
-void TRDTimeCorrectionPlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
+void TRDTimeCorrectionPlot::processEvent(const AnalyzedEvent* event)
 {
-  double time = event->time();
+  double time = event->simpleEvent()->time();
   double corrFactor = m_corr->trdTimeDependendFactor(time);
   histogram()->Fill(time, corrFactor);
   m_normalizationHistogram->Fill(time);
