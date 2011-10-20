@@ -59,12 +59,8 @@
 #include "TOFTimeDifferencePlotCollection.hh"
 #include "TotalSignalHeightPlot.hh"
 #include "TOFEfficiencyPlot.hh"
-#include "TOTMomentumCorrelation.hh"
-#include "TOTBetaCorrelation.hh"
 #include "TOTPlot.hh"
-#include "TOTLayerPlot.hh"
 #include "TOTLayerCollection.hh"
-#include "TOTIonizationCorrelation.hh"
 #include "TOTTemperatureCorrelationPlotCollection.hh"
 #include "TOTTimeCorrelationPlotCollection.hh"
 #include "TOTTemperatureCorrelationPlot.hh"
@@ -335,11 +331,11 @@ void Analysis::setupPlots()
   }
   if (m_analysisSetting.analysisTopics & Enums::TimeOverThreshold) {
     addPlot(new TOTPlot);
-    addPlot(new TOTLayerCollection(new TOTLayerPlot()));
-    addPlot(new TOTLayerCollection(new TOTIonizationCorrelation(Hit::trd)));
-    addPlot(new TOTLayerCollection(new TOTIonizationCorrelation(Hit::tracker)));
-    addPlot(new TOTLayerCollection(new TOTMomentumCorrelation()));
-    addPlot(new TOTLayerCollection(new TOTBetaCorrelation()));
+    addPlot(new TOTLayerCollection(TOTLayerCollection::Projection));
+    addPlot(new TOTLayerCollection(TOTLayerCollection::TrdSignalCorrelation));
+    addPlot(new TOTLayerCollection(TOTLayerCollection::TrackerSigalCorrelation));
+    addPlot(new TOTLayerCollection(TOTLayerCollection::MomentumCorrelation));
+    addPlot(new TOTLayerCollection(TOTLayerCollection::BetaCorrelation));
     addPlot(new TOTTemperatureCorrelationPlotCollection);
     addPlot(new TOTTimeCorrelationPlotCollection(first, last));
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {

@@ -1,45 +1,67 @@
 #include "TOTLayerCollection.hh"
-
-#include "TOTLayer.hh"
+#include "StringSpinBox.hh"
+#include "TOTProjectionPlot.hh"
+#include "TOTSignalCorrelation.hh"
+#include "TOTMomentumCorrelation.hh"
+#include "TOTBetaCorrelation.hh"
 
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QComboBox>
-
-#include "StringSpinBox.hh"
 #include <QString>
 
-TOTLayerCollection::TOTLayerCollection(TOTLayer* plot) :
-  PlotCollection(Enums::TimeOverThreshold)
-{  
+TOTLayerCollection::TOTLayerCollection(Type type)
+  : PlotCollection(Enums::TimeOverThreshold)
+{
   QComboBox* comboBox = new QComboBox();
-  
-  QString plotName = plot->getPlotName();
-  
   comboBox->addItem("All Layers");
-  addPlot(plot->create(TOTLayer::All));
   comboBox->addItem("Upper Layers");
-  addPlot(plot->create(TOTLayer::Upper));
   comboBox->addItem("Lower Layers");
-  addPlot(plot->create(TOTLayer::Lower));
-  
-  delete plot;
-
   QWidget* selectionWidget = new QWidget();
-  
   QHBoxLayout* layout = new QHBoxLayout(selectionWidget);
   layout->addStretch();
   layout->addWidget(new QLabel("TOF Section:"));
   layout->addWidget(comboBox);
   layout->addStretch();
-  
   secondaryWidget()->layout()->addWidget(selectionWidget);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPlot(int)));
   
-  setTitle(plotName);
+  QString title = "time-over-threshold ";
+  switch (type) {
+    case Projection:
+      title+= "projection";
+      addPlot(new TOTProjectionPlot(title, TOTLayerPlot::All));
+      addPlot(new TOTProjectionPlot(title, TOTLayerPlot::Upper));
+      addPlot(new TOTProjectionPlot(title, TOTLayerPlot::Lower));
+      break;
+    case TrdSignalCorrelation:
+      title+= "trd signal correlation";
+      addPlot(new TOTSignalCorrelation(title, Hit::trd, TOTLayerPlot::All));
+      addPlot(new TOTSignalCorrelation(title, Hit::trd, TOTLayerPlot::Upper));
+      addPlot(new TOTSignalCorrelation(title, Hit::trd, TOTLayerPlot::Lower));
+      break;
+    case TrackerSigalCorrelation:
+      title+= "tracker signal correlation";
+      addPlot(new TOTSignalCorrelation(title, Hit::tracker, TOTLayerPlot::All));
+      addPlot(new TOTSignalCorrelation(title, Hit::tracker, TOTLayerPlot::Upper));
+      addPlot(new TOTSignalCorrelation(title, Hit::tracker, TOTLayerPlot::Lower));
+      break;
+    case MomentumCorrelation:
+      title+= "momentum correlation";
+      addPlot(new TOTMomentumCorrelation(title, TOTLayerPlot::All));
+      addPlot(new TOTMomentumCorrelation(title, TOTLayerPlot::Upper));
+      addPlot(new TOTMomentumCorrelation(title, TOTLayerPlot::Lower));
+      break;
+    case BetaCorrelation:
+      title+= "beta correlation";
+      addPlot(new TOTBetaCorrelation(title, TOTLayerPlot::All));
+      addPlot(new TOTBetaCorrelation(title, TOTLayerPlot::Upper));
+      addPlot(new TOTBetaCorrelation(title, TOTLayerPlot::Lower));
+      break;
+  }
+  setTitle(title);
 }
 
 TOTLayerCollection::~TOTLayerCollection()
 {
 }
-

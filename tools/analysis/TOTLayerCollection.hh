@@ -3,17 +3,12 @@
 
 #include "PlotCollection.hh"
 
-class TOTLayer;
-
-class TOTLayerCollection : 
-  public PlotCollection
-{
+class TOTLayerCollection : public PlotCollection {
 public:
-  TOTLayerCollection(TOTLayer* plot);
+  enum Type {Projection, TrdSignalCorrelation, TrackerSigalCorrelation, MomentumCorrelation, BetaCorrelation};
+
+  TOTLayerCollection(Type);
   ~TOTLayerCollection();
-private:
-  
-  
 };
 
 #endif /* TOTLayerCollection_hh */

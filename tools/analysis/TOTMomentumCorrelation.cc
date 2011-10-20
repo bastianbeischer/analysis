@@ -15,31 +15,19 @@
 
 #include <QDebug>
 
-TOTMomentumCorrelation::TOTMomentumCorrelation()
-  : H2DPlot() 
-  , TOTLayer(TOTLayer::All)
-{
-  m_plotName = "time over threshold momentum correlation";
-}
-
-TOTMomentumCorrelation::TOTMomentumCorrelation(TOTLayer::Layer layer)
+TOTMomentumCorrelation::TOTMomentumCorrelation(const QString& title, TOTLayerPlot::Layer layer)
   : H2DPlot()
-  , TOTLayer(layer)
+  , TOTLayerPlot(layer)
 {
-  QString htitle = m_plotName + " " + layerName(layer) + " tof";
-  setTitle(htitle);
-  TH2D* histogram = new TH2D(qPrintable(htitle), "", 100, 0, 10, 150, 0, 100);
+  QString fullTitle = title + " " + layerName();
+  setTitle(fullTitle);
+  TH2D* histogram = new TH2D(qPrintable(fullTitle), "", 100, 0, 10, 150, 0, 100);
   setAxisTitle("rigidity / GV", "mean time over threshold / ns", "");
   addHistogram(histogram);
 }
 
 TOTMomentumCorrelation::~TOTMomentumCorrelation()
 {}
-
-TOTMomentumCorrelation* TOTMomentumCorrelation::create(TOTLayer::Layer layer) const
-{ 
-  return new TOTMomentumCorrelation(layer); 
-}
 
 void TOTMomentumCorrelation::processEvent(const AnalyzedEvent* event)
 {

@@ -1,4 +1,4 @@
-#include "TOTBetaCorrelation.hh"
+#include "TOTProjectionPlot.hh"
 
 #include "SimpleEvent.hh"
 #include "Hit.hh"
@@ -7,29 +7,31 @@
 #include "TOFCluster.hh"
 #include "Particle.hh"
 #include "Track.hh"
-#include "ParticleInformation.hh"
 #include "Constants.hh"
+#include "ParticleInformation.hh"
 
-#include <TH2D.h>
-#include <TLatex.h>
+#include <TH1D.h>
+#include <TAxis.h>
 
+#include <QString>
 #include <QDebug>
 
-TOTBetaCorrelation::TOTBetaCorrelation(const QString& title, TOTLayerPlot::Layer layer)
-  : H2DPlot()
+TOTProjectionPlot::TOTProjectionPlot(const QString& title, TOTLayerPlot::Layer layer)
+  : H1DPlot()
   , TOTLayerPlot(layer)
 {
   QString fullTitle = title + " " + layerName();
   setTitle(fullTitle);
-  TH2D* histogram = new TH2D(qPrintable(fullTitle), "", 100, 0, 1.6, 150, 0, 100);
-  setAxisTitle("beta", "sum time over threshold / ns", "");
+  TH1D* histogram = new TH1D(qPrintable(fullTitle), "", 150, 0, 100);
+  setAxisTitle("mean time over threshold / ns", "");
   addHistogram(histogram);
 }
 
-TOTBetaCorrelation::~TOTBetaCorrelation()
-{}
+TOTProjectionPlot::~TOTProjectionPlot()
+{
+}
 
-void TOTBetaCorrelation::processEvent(const AnalyzedEvent* event)
+void TOTProjectionPlot::processEvent(const AnalyzedEvent* event)
 {
   const Track* track = event->particle()->track();
   if (!track || !track->fitGood())
@@ -60,11 +62,8 @@ void TOTBetaCorrelation::processEvent(const AnalyzedEvent* event)
       }
     }
   }
-  if (nTofHits > 0)
-    histogram()->Fill(event->particle()->beta(), totSum / nTofHits);
-}
-  
-void TOTBetaCorrelation::finalize()
-{
-  setDrawOption(CONT4Z);
-}
+  if (nTofHits > 0) {
+    histogram()->Fill(totSum / nTofHits);
+  }
+} 
+

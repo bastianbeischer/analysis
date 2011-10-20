@@ -2,26 +2,18 @@
 #define TOTLayerPlot_hh
 
 #include "AnalysisPlot.hh"
-#include "H1DPlot.hh"
-#include "TOTLayer.hh"
 
-#include <QVector>
-//#include <QString>
-
-class Hit;
-class Particle;
-class SimpleEvent;
-
-class TOTLayerPlot : public H1DPlot, public TOTLayer {
+class TOTLayerPlot : public AnalysisPlot {
 public:
-  TOTLayerPlot();
-  TOTLayerPlot(TOTLayer::Layer layer);
-  ~TOTLayerPlot();
-  TOTLayerPlot* create(TOTLayer::Layer layer) const;
-  virtual void processEvent(const AnalyzedEvent*);
-private:
+  enum Layer {Lower, Upper, All};
 
-  
+  TOTLayerPlot(Layer layer);
+  virtual ~TOTLayerPlot();
+protected:
+  QString layerName();
+  bool checkLayer(double z);
+
+  Layer m_layer;
 };
 
 #endif /* TOTLayerPlot_hh */

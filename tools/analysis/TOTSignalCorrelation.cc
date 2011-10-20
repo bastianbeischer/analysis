@@ -1,4 +1,4 @@
-#include "TOTIonizationCorrelation.hh"
+#include "TOTSignalCorrelation.hh"
 
 #include "SimpleEvent.hh"
 #include "Hit.hh"
@@ -16,58 +16,38 @@
 #include <QString>
 #include <QDebug>
 
-TOTIonizationCorrelation::TOTIonizationCorrelation(Hit::ModuleType type) 
-: H2DPlot() 
-, TOTLayer(TOTLayer::All)
-, m_type(type)
-{
-  QString typeName;
-  if (m_type == Hit::trd) {
-    typeName = "trd";
-  }
-  if (m_type == Hit::tracker) {
-    typeName = "tracker";
-  }
-  m_plotName = QString("time over threshold %1 signal height correlation").arg(typeName);
-}
-
-TOTIonizationCorrelation::TOTIonizationCorrelation(TOTLayer::Layer layer, Hit::ModuleType type)
+TOTSignalCorrelation::TOTSignalCorrelation(const QString& title, Hit::ModuleType type, TOTLayerPlot::Layer layer)
   : H2DPlot()
-  , TOTLayer(layer)
+  , TOTLayerPlot(layer)
   , m_type(type)
 {
+  QString fullTitle = title;
   unsigned int nBinsX = 150;
   double xMin = 0;
   double xMax = 1e5;
-  QString typeName;
   if (m_type == Hit::trd) {
-    typeName = "trd";
+    fullTitle+= " trd";
     nBinsX = 150;
     xMin = 0;
     xMax = 7e2;
   }
   if (m_type == Hit::tracker) {
-    typeName = "tracker";
+    fullTitle+= " tracker";
     nBinsX = 150;
     xMin = 0;
     xMax = 7e4;
   }
-  QString title = m_plotName + " " + layerName(layer);
-  setTitle(title);
-  TH2D* histogram = new TH2D(qPrintable(title), "", nBinsX, xMin, xMax, 100, 0, 100);
+  fullTitle+= layerName();
+  setTitle(fullTitle);
+  TH2D* histogram = new TH2D(qPrintable(fullTitle), "", nBinsX, xMin, xMax, 100, 0, 100);
   setAxisTitle("signal height / ADC counts", "mean time over threshold / ns", "");
   addHistogram(histogram);
 }
 
-TOTIonizationCorrelation::~TOTIonizationCorrelation()
+TOTSignalCorrelation::~TOTSignalCorrelation()
 {}
 
-TOTIonizationCorrelation* TOTIonizationCorrelation::create(TOTLayer::Layer layer) const
-{ 
-  return new TOTIonizationCorrelation(layer, m_type); 
-}
-
-void TOTIonizationCorrelation::processEvent(const AnalyzedEvent* event)
+void TOTSignalCorrelation::processEvent(const AnalyzedEvent* event)
 {
   const Track* track = event->particle()->track();
   if (!track || !track->fitGood())
@@ -104,7 +84,7 @@ void TOTIonizationCorrelation::processEvent(const AnalyzedEvent* event)
   }
 }
 
-double TOTIonizationCorrelation::sumOfNonTOFSignalHeights(const QVector<Hit*>& clusters) {
+double TOTSignalCorrelation::sumOfNonTOFSignalHeights(const QVector<Hit*>& clusters) {
   double sumSignal = 0;
   const QVector<Hit*>::const_iterator endIt = clusters.end();
   for (QVector<Hit*>::const_iterator clusterIt = clusters.begin(); clusterIt != endIt; ++clusterIt) {
@@ -121,7 +101,7 @@ double TOTIonizationCorrelation::sumOfNonTOFSignalHeights(const QVector<Hit*>& c
   return sumSignal;
 }
 
-void TOTIonizationCorrelation::finalize()
+void TOTSignalCorrelation::finalize()
 {
   setDrawOption(CONT4Z);
 }

@@ -2,7 +2,7 @@
 #define TOTMomentumCorrelation_hh
 
 #include "H2DPlot.hh"
-#include "TOTLayer.hh"
+#include "TOTLayerPlot.hh"
 
 #include <QString>
 
@@ -10,16 +10,12 @@ class Hit;
 class Particle;
 class SimpleEvent;
 
-class TOTMomentumCorrelation : public H2DPlot, public TOTLayer {
+class TOTMomentumCorrelation : public H2DPlot, public TOTLayerPlot {
 public:
-  TOTMomentumCorrelation();
-  TOTMomentumCorrelation(TOTLayer::Layer layer);
+  TOTMomentumCorrelation(const QString& title, TOTLayerPlot::Layer layer);
   ~TOTMomentumCorrelation();
-  TOTMomentumCorrelation* create(TOTLayer::Layer layer) const;
   virtual void processEvent(const AnalyzedEvent*);
   virtual void finalize();
-private:
-
 };
 
 #endif
