@@ -55,12 +55,9 @@ SignalHeight2DPlot::~SignalHeight2DPlot()
 void SignalHeight2DPlot::processEvent(const AnalyzedEvent* event)
 {
   const Track* track = event->particle()->track();
-
-  if(!track)
+  if (!track)
     return;
-
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & ParticleInformation::AllTrackerLayers))
+  if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
     return;
 
   const QVector<Hit*>::const_iterator endIt = track->hits().end();

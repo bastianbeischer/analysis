@@ -73,18 +73,18 @@ MultiLayerTrackingEfficiencyPlot::~MultiLayerTrackingEfficiencyPlot()
 
 void MultiLayerTrackingEfficiencyPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
-
   ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if ( !(flags & ParticleInformation::Chi2Good) )
+  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet))
+    return;
+  double rigidity = track->rigidity();
+  if (m_type == Positive && rigidity < 0)
+    return;
+  if (m_type == Negative && rigidity > 0)
     return;
   
-  if ( !(flags & ParticleInformation::InsideMagnet) )
-    return;
-
   int nbOfLayers = 0;
   for (int i = 0; i < m_nLayers; i++) {
     // determine if the layer has a hit matching the track
@@ -99,21 +99,8 @@ void MultiLayerTrackingEfficiencyPlot::processEvent(const AnalyzedEvent* event)
       }
     }
   }
-  
-  double rigidity = track->rigidity();
-  
-  if (m_type == Positive && rigidity < 0) {
-    return;
-  }
-  if (m_type == Negative && rigidity > 0) {
-    return;
-  }
-  
-  double absRigidity = rigidity;
-  if (absRigidity < 0) {
-    absRigidity *= -1;
-  }
-  
+ 
+  double absRigidity = qAbs(rigidity);
   histogram()->Fill(absRigidity, nbOfLayers);
   m_normHisto->Fill(absRigidity);
 }

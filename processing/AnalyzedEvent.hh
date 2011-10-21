@@ -9,16 +9,20 @@ class Hit;
 class SimpleEvent;
 class Particle;
 class Settings;
+class Track;
 
 class AnalyzedEvent {
 public:
   AnalyzedEvent();
   ~AnalyzedEvent();
 
+  bool hasTrack() const;
+  bool hasGoodTrack() const;
+  Track* goodTrack() const;
   const Settings* settings() const;
 
-  bool flagsMatch(ParticleInformation::Flags);
-  bool flagsSet(ParticleInformation::Flags);
+  bool flagsMatch(ParticleInformation::Flags) const;
+  bool flagsSet(ParticleInformation::Flags) const;
 
   const QVector<Hit*>& clusters() const {return m_clusters;}
   void setClusters(const QVector<Hit*>& clusters) {m_clusters = clusters;}

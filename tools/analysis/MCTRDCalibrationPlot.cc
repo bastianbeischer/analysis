@@ -27,9 +27,8 @@ void MCTRDCalibrationPlot::processEvent(const AnalyzedEvent* event)
 
   const MCEventInformation* mcInfo = event->simpleEvent()->MCInformation();
 
-  if(!mcInfo)
+  if (!mcInfo)
     return;
-
 
   const std::vector<const MCSimpleEventDigi*> mcDigis = mcInfo->mcDigis();
   const std::vector<Hit*> hits = event->simpleEvent()->hits();

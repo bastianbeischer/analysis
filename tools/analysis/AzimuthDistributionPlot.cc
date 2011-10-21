@@ -36,13 +36,12 @@ AzimuthDistributionPlot::~AzimuthDistributionPlot()
 
 void AzimuthDistributionPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
-
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if ( !(flags & ParticleInformation::Chi2Good) || !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
+  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet))
+    return;
+  if (event->flagsSet(ParticleInformation::Albedo))
     return;
 
   double xU = track->x(Constants::upperTofPosition);

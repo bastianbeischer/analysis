@@ -59,24 +59,16 @@ TRDOccupancyPlot::~TRDOccupancyPlot()
 
 void TRDOccupancyPlot::processEvent(const AnalyzedEvent* event)
 {
+  const Track* track = event->goodTrack();
+  if (!track)
+    return;
+  if (!event->flagsSet(ParticleInformation::Chi2Good))
+    return;
 
-  const Track* track = event->particle()->track();
   const QVector<Hit*> trackHits = track->hits();
-  const ParticleInformation::Flags pFlags = event->particle()->information()->flags();
-
-  //check if everything worked and a track has been fit
-  if (!track || !track->fitGood())
-    return;
-
-  if (pFlags & ParticleInformation::Chi2Good)
-    return;
-
-  //loop over all hits of the event
   const QVector<Hit*>::const_iterator endIt = event->clusters().end();
   for (QVector<Hit*>::const_iterator it = event->clusters().begin(); it != endIt; ++it) {
     Hit* clusterHit = *it;
-
-    //only trd:
     if(clusterHit->type() != Hit::trd)
       continue;
 

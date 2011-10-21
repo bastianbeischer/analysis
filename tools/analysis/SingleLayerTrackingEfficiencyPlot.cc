@@ -67,13 +67,16 @@ SingleLayerTrackingEfficiencyPlot::~SingleLayerTrackingEfficiencyPlot()
 
 void SingleLayerTrackingEfficiencyPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
+    return;
+  if (!event->flagsSet(ParticleInformation::InsideMagnet))
     return;
 
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if ( !(flags & ParticleInformation::InsideMagnet) )
+  double rigidity = track->rigidity();
+  if (m_type == Enums::Positive && rigidity < 0)
+    return;
+  if (m_type == Enums::Negative && rigidity > 0)
     return;
 
   for (int i = 0; i < m_nLayers; i++) {
@@ -90,14 +93,6 @@ void SingleLayerTrackingEfficiencyPlot::processEvent(const AnalyzedEvent* event)
       }
     }
 
-    double rigidity = track->rigidity();
-
-    if (m_type == Enums::Positive && rigidity < 0)
-      return;
-    if (m_type == Enums::Negative && rigidity > 0)
-      return;
-
-    // fill histograms
     if (beenHit)
       histogram()->Fill(qAbs(rigidity), i+1);
     m_normHisto->Fill(qAbs(rigidity), i+1);

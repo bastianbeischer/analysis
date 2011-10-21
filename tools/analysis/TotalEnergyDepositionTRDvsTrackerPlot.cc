@@ -16,7 +16,6 @@ TotalEnergyDepositionTRDvsTrackerPlot::TotalEnergyDepositionTRDvsTrackerPlot() :
     AnalysisPlot(Enums::MiscellaneousTRD),
   H2DPlot()
 {
-
   setTitle("Mean dE_dx TRD vs. tracker");
 
   TH2D* histogram = new TH2D(qPrintable(title()), qPrintable(title() + ";tracker mean amplitude tracker;TRD mean dE/dx"), 50, 0, 8000, 50, 0, 30);
@@ -29,22 +28,13 @@ TotalEnergyDepositionTRDvsTrackerPlot::~TotalEnergyDepositionTRDvsTrackerPlot()
 
 void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-
-  //check if everything worked and a track has been fit
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
-
+  if (!event->flagsSet(ParticleInformation::InsideMagnet | ParticleInformation::Chi2Good))
+    return;
   if (event->particle()->information()->numberOfTrackerLayers() < 7)
     return;
-
-  if (track->chi2() / track->ndf() > 5)
-    return;
-
-  //check if track was inside of magnet
-  if (!(event->particle()->information()->flags() & ParticleInformation::InsideMagnet))
-    return;
-
 
   /*
   //get the reconstructed momentum

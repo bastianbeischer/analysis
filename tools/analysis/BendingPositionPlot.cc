@@ -23,18 +23,14 @@ BendingPositionPlot::~BendingPositionPlot()
 
 void BendingPositionPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-
-  if(!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
 
   if (track->type() == Enums::BrokenLine) {
     const BrokenLine* line = static_cast<const BrokenLine*>(track);
-
-    ParticleInformation::Flags flags = event->particle()->information()->flags();
-    if (!(flags & ParticleInformation::AllTrackerLayers))
+    if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
       return;
-
     histogram()->Fill(line->zIntersection());
   }
 }

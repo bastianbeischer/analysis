@@ -76,15 +76,9 @@ void RigiditySpectrumRatio::processEvent(const AnalyzedEvent* event)
   if (!track || !track->fitGood())
     return;
   ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & ParticleInformation::Chi2Good))
+  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::BetaGood | ParticleInformation::InsideMagnet | ParticleInformation::AllTrackerLayers))
     return;
-  if (!(flags & ParticleInformation::BetaGood))
-    return;
-  if (!(flags & ParticleInformation::InsideMagnet))
-    return;
-  if (!(flags & ParticleInformation::AllTrackerLayers))
-    return;
-  if ((flags & ParticleInformation::Albedo))
+  if (event->flagsSet(ParticleInformation::Albedo))
     return;
 
   double rigidity = track->rigidity();

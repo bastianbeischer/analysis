@@ -90,11 +90,10 @@ void TrackFindingEfficiency::processEvent(const AnalyzedEvent* event)
   if (fillHistogram)
     m_total->Fill(rigidity);
 
-  const Track* track = event->particle()->track();
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & (ParticleInformation::Chi2Good)))
+  if (!event->flagsSet(ParticleInformation::Chi2Good))
     return;
 
   ++m_nReconstructed;

@@ -7,21 +7,12 @@
 class TH1D;
 class TCanvas;
 
-class MultiLayerTrackingEfficiencyPlot :
-  public AnalysisPlot,
-  public H2DProjectionPlot
-{
-  
+class MultiLayerTrackingEfficiencyPlot : public AnalysisPlot, public H2DProjectionPlot {
 public:
-  enum Type {
-    Positive,
-    Negative,
-    All
-  };
+  enum Type {Positive, Negative, All};
   
   MultiLayerTrackingEfficiencyPlot(Type type);
   ~MultiLayerTrackingEfficiencyPlot();
-  
   void processEvent(const AnalyzedEvent*);
   void finalize();
 
@@ -30,7 +21,6 @@ private:
   TH1D* m_normHisto;
   int m_nLayers;
   double* m_layerZ;
-  
 };
 
 #endif /* MultiLayerTrackingEfficiencyPlot_hh */

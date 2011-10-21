@@ -81,23 +81,15 @@ FluxCollection::~FluxCollection()
 void FluxCollection::processEvent(const AnalyzedEvent* event)
 {
   PlotCollection::processEvent(event);
-  const Track* track = event->particle()->track();
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & ParticleInformation::Chi2Good))
+  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::BetaGood | ParticleInformation::InsideMagnet | ParticleInformation::AllTrackerLayers))
     return;
-  if (!(flags & ParticleInformation::BetaGood))
-    return;
-  if (!(flags & ParticleInformation::InsideMagnet))
-    return;
-  if (!(flags & ParticleInformation::AllTrackerLayers))
-    return;
-  double rigidity = track->rigidity();
-  if (flags & ParticleInformation::Albedo)
-    rigidity *= -1;
-  if (!(flags & ParticleInformation::Albedo))
-    m_particleHistogram->Fill(rigidity);
-  if ((flags & ParticleInformation::Albedo))
-    m_particleHistogramAlbedo->Fill(rigidity);
+
+  if (event->flagsSet(ParticleInformation::Albedo)) {
+    m_particleHistogramAlbedo->Fill(-track->rigidity());
+  } else {
+    m_particleHistogram->Fill(track->rigidity());
+  }
 }

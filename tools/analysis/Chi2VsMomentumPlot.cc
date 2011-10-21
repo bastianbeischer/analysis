@@ -39,15 +39,11 @@ Chi2VsMomentumPlot::~Chi2VsMomentumPlot()
 
 void Chi2VsMomentumPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-
-  if(!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
-
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & ParticleInformation::AllTrackerLayers))
+  if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
     return;
-
   histogram()->Fill(track->rigidity(), track->chi2() / track->ndf());
   m_normHisto->Fill(track->rigidity());
 }

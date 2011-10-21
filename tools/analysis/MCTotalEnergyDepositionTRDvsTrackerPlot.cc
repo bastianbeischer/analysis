@@ -38,21 +38,21 @@ MCTotalEnergyDepositionTRDvsTrackerPlot::~MCTotalEnergyDepositionTRDvsTrackerPlo
 
 void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
+  const Track* track = event->goodTrack();
 
   //only accept mc events:
   if (event->simpleEvent()->contentType() != SimpleEvent::MonteCarlo)
     return;
 
   //check if everything worked and a track has been fit
-  if (!track || !track->fitGood())
+  if (!track)
     return;
 
   if (track->chi2() / track->ndf() > 10)
     return;
 
   //check if track was inside of magnet
-  if (!(event->particle()->information()->flags() & ParticleInformation::InsideMagnet))
+  if (!event->flagsSet(ParticleInformation::InsideMagnet))
     return;
 
 
@@ -89,7 +89,7 @@ void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const AnalyzedEvent* 
           trdCluster++;
         }
       }
-    }else if ( cluster->type() == Hit::tracker ) {
+    } else if ( cluster->type() == Hit::tracker ) {
       // find max strip
       double max = 0.;
       for(unsigned short i = 0; i < cluster->hits().size(); ++i) {

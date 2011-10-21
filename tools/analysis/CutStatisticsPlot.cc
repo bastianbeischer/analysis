@@ -37,19 +37,22 @@ CutStatisticsPlot::~CutStatisticsPlot()
 void CutStatisticsPlot::processEvent(const AnalyzedEvent* event)
 {
   const Track* track = event->particle()->track();
-
+  Q_ASSERT(track);
   histogram()->Fill(0);
+  
   if (!track || !track->fitGood())
     return;
   histogram()->Fill(1);
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & ParticleInformation::InsideMagnet))
+
+  if (!event->flagsSet(ParticleInformation::InsideMagnet))
     return;
   histogram()->Fill(2);
-  if (!(flags & ParticleInformation::AllTrackerLayers))
+
+  if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
     return;
   histogram()->Fill(3);
-  if ((flags & ParticleInformation::Albedo))
+
+  if (event->flagsSet(ParticleInformation::Albedo))
     return;
   histogram()->Fill(4);
 }

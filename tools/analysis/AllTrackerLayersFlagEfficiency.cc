@@ -57,25 +57,17 @@ AllTrackerLayersFlagEfficiency::~AllTrackerLayersFlagEfficiency()
 
 void AllTrackerLayersFlagEfficiency::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
+    return;
+  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet))
     return;
 
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & ParticleInformation::Chi2Good))
-    return;
-
-  if (!(flags & ParticleInformation::InsideMagnet))
-    return;
   //TODO: right albedo handling
   double rigidity = track->rigidity();
-
   m_normHisto->Fill(rigidity);
-
-  if (!(flags & ParticleInformation::AllTrackerLayers))
+  if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
     return;
-
   m_afterCutHisto->Fill(rigidity);
 }
 

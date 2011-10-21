@@ -65,21 +65,20 @@ TimeResolutionPlot::~TimeResolutionPlot()
 
 void TimeResolutionPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
+  const Settings* settings = event->settings();
+  if (!event->flagsSet(ParticleInformation::Chi2Good))
+    return;
+  if (!settings && !event->flagsSet(ParticleInformation::InsideMagnet))
+    return;
+  if (settings && settings->situation() != Settings::Testbeam11 && !event->flagsSet(ParticleInformation::InsideMagnet))
+    return;
+
   const TimeOfFlight* tof = event->particle()->timeOfFlight();
   const QVector<Hit*>& hits = track->hits();
 
-  const Settings* settings = event->settings();
-
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & ParticleInformation::Chi2Good))
-    return;
-  if (!settings && !(flags & ParticleInformation::InsideMagnet))
-    return;
-  if (settings && settings->situation() != Settings::Testbeam11 && !(flags & ParticleInformation::InsideMagnet))
-    return;
   bool idTop1 = false, idTop2 = false, idBottom1 = false, idBottom2 = false;
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {

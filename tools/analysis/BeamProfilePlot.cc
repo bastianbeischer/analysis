@@ -69,11 +69,9 @@ BeamProfilePlot::~BeamProfilePlot()
 
 void BeamProfilePlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-
-  if(!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
-
   if (m_type == Horizontal)
     histogram()->Fill(track->y(0), track->slopeY(0));
   else if (m_type == Vertical)

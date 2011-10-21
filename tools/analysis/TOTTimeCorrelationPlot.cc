@@ -48,11 +48,11 @@ TOTTimeCorrelationPlot::~TOTTimeCorrelationPlot()
 
 void TOTTimeCorrelationPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
-  const QVector<Hit*>& hits = track->hits(); 
 
+  const QVector<Hit*>& hits = track->hits();
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Hit* hit = *it;

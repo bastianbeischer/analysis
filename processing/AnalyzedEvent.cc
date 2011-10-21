@@ -1,5 +1,6 @@
 #include "AnalyzedEvent.hh"
 
+#include "Track.hh"
 #include "Hit.hh"
 #include "SimpleEvent.hh"
 #include "Particle.hh"
@@ -23,19 +24,37 @@ AnalyzedEvent::~AnalyzedEvent()
     delete m_simpleEvent;
 }
 
+bool AnalyzedEvent::hasTrack() const
+{
+  Q_ASSERT(m_particle);
+  return m_particle->track();
+}
+
+bool AnalyzedEvent::hasGoodTrack() const
+{
+  Q_ASSERT(m_particle);
+  Track* track = m_particle->track();
+  return track && track->fitGood();
+}
+
+Track* AnalyzedEvent::goodTrack() const
+{
+  return hasGoodTrack() ? m_particle->track() : 0;
+}
+
 const Settings* AnalyzedEvent::settings() const
 {
   return SettingsManager::instance()->settingsForEvent(m_simpleEvent);
 }
 
-bool AnalyzedEvent::flagsMatch(ParticleInformation::Flags flags)
+bool AnalyzedEvent::flagsMatch(ParticleInformation::Flags flags) const
 {
   Q_ASSERT(m_particle);
   Q_ASSERT(m_particle->information());
   return m_particle->information()->flags() == flags;
 }
 
-bool AnalyzedEvent::flagsSet(ParticleInformation::Flags flags)
+bool AnalyzedEvent::flagsSet(ParticleInformation::Flags flags) const
 {
   Q_ASSERT(m_particle);
   Q_ASSERT(m_particle->information());

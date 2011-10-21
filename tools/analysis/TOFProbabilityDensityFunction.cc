@@ -58,13 +58,10 @@ TOFProbabilityDensityFunction::~TOFProbabilityDensityFunction()
 
 void TOFProbabilityDensityFunction::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  ParticleInformation::Flags required = ParticleInformation::Chi2Good | ParticleInformation::BetaGood;
-  if ((flags & required) != required)
+  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::BetaGood))
     return;
 
   const Settings* settings = event->settings();

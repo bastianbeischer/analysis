@@ -39,19 +39,13 @@ void AzimuthMigrationHistogram::processEvent(const AnalyzedEvent* event)
 {
   if (event->simpleEvent()->contentType() != SimpleEvent::MonteCarlo)
     return;
-
   if (event->simpleEvent()->MCInformation()->primary()->initialMomentum.Z() > 0)
     return;
-
-  const Track* track = event->particle()->track();
-
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
-
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if ( !(flags & ParticleInformation::Chi2Good) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
+  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet | ParticleInformation::Albedo))
     return;
-
   if (!event->simpleEvent()->MCInformation()->primary()->isInsideMagnet())
     return;
 

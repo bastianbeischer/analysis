@@ -12,7 +12,7 @@ Chi2PerNdfPlot::Chi2PerNdfPlot() :
   AnalysisPlot(Enums::Tracking),
   H1DPlot()
 {
-  setTitle("chi2 / ndf");
+  setTitle("chi2 per ndf");
   int nBins = 100;
   double x0 = 0.;
   double x1 = 10.;
@@ -31,15 +31,11 @@ Chi2PerNdfPlot::~Chi2PerNdfPlot()
 
 void Chi2PerNdfPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-
-  if(!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if(!track)
     return;
-
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & ParticleInformation::AllTrackerLayers))
+  if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
     return;
-
   histogram()->Fill(track->chi2() / track->ndf());
 }
 

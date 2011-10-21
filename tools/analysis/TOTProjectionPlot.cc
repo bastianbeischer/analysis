@@ -33,14 +33,12 @@ TOTProjectionPlot::~TOTProjectionPlot()
 
 void TOTProjectionPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
+    return;
+  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet))
     return;
   const QVector<Hit*>& clusters = track->hits();
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  ParticleInformation::Flags required = ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet;
-  if ((flags & required) != required)
-    return;
   double totSum = 0.;
   int nTofHits = 0;
   const QVector<Hit*>::const_iterator endIt = clusters.end();

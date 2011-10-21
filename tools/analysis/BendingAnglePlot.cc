@@ -32,21 +32,18 @@ BendingAnglePlot::~BendingAnglePlot()
 
 void BendingAnglePlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
-
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & ParticleInformation::AllTrackerLayers))
+  if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
     return;
 
   double alpha = track->bendingAngle();
 
   histogram(0)->Fill(alpha);
-  if(flags & ParticleInformation::InsideMagnet)
+  if(event->flagsSet(ParticleInformation::InsideMagnet))
     histogram(1)->Fill(alpha);
-  if(flags & ParticleInformation::OutsideMagnet)
+  if(event->flagsSet(ParticleInformation::OutsideMagnet))
     histogram(2)->Fill(alpha);
 }
 

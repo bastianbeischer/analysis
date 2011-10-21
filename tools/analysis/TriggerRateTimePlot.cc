@@ -29,7 +29,8 @@ TriggerRateTimePlot::~TriggerRateTimePlot()
 
 void TriggerRateTimePlot::processEvent(const AnalyzedEvent* event)
 {
-  if ((event->simpleEvent()->time() < xAxis()->GetXmin() || event->simpleEvent()->time() >= xAxis()->GetXmax()) && event->simpleEvent()->contentType() != SimpleEvent::MonteCarlo)
+  if ((event->simpleEvent()->time() < xAxis()->GetXmin() || event->simpleEvent()->time() >= xAxis()->GetXmax())
+    && event->simpleEvent()->contentType() != SimpleEvent::MonteCarlo)
     qDebug() << event->simpleEvent()->time();
   else
     histogram()->Fill(event->simpleEvent()->time());

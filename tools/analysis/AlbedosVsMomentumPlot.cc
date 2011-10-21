@@ -50,20 +50,14 @@ AlbedosVsMomentumPlot::~AlbedosVsMomentumPlot()
 
 void AlbedosVsMomentumPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
-
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  ParticleInformation::Flags required = ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet | ParticleInformation::BetaGood;
-  if ((flags & required) != required)
+  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet | ParticleInformation::BetaGood))
     return;
-
   double rigidity = track->rigidity();
   m_totalHisto->Fill(rigidity);
-
-  if (flags & ParticleInformation::Albedo)
+  if (event->flagsSet(ParticleInformation::Albedo))
     m_albedoHisto->Fill(rigidity);
 }
 

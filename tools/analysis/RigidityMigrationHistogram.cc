@@ -66,13 +66,10 @@ void RigidityMigrationHistogram::processEvent(const AnalyzedEvent* event)
   double rigidityGenerated = event->simpleEvent()->MCInformation()->primary()->initialMomentum.Mag() / charge;
   if (rigidityGenerated < histogram()->GetYaxis()->GetBinLowEdge(1) || histogram()->GetYaxis()->GetBinLowEdge(histogram()->GetNbinsY()+1) <= rigidityGenerated)
     return;
-  const Track* track = event->particle()->track();
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
      return;
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & (ParticleInformation::Chi2Good)))
-    return;
-  if ( !(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
+  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet | ParticleInformation::Albedo))
     return;
   double rigidityData = track->rigidity();
   histogram()->Fill(rigidityData, rigidityGenerated);

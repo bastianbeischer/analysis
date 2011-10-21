@@ -40,16 +40,13 @@ TOFTimeDifferencePlot::~TOFTimeDifferencePlot()
 
 void TOFTimeDifferencePlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-  if (!track || !track->fitGood() || track->chi2() / track->ndf() > 3.)
+  const Track* track = event->goodTrack();
+  if (!track || track->chi2() / track->ndf() > 3.)
     return;
-
+  if (!event->flagsSet(ParticleInformation::Chi2Good))
+    return;
+  
   const QVector<Hit*>& clusters = track->hits();
-
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & ParticleInformation::Chi2Good))
-    return;
-
   const QVector<Hit*>::const_iterator endIt = clusters.end();
   for (QVector<Hit*>::const_iterator it = clusters.begin(); it != endIt; ++it) {
     Hit* cluster = *it;

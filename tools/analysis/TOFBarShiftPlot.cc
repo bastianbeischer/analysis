@@ -54,22 +54,20 @@ TOFBarShiftPlot::~TOFBarShiftPlot()
 
 void TOFBarShiftPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
+  const Settings* settings = event->settings();
+  if (!event->flagsSet(ParticleInformation::Chi2Good))
+    return;
+  if (!settings && !event->flagsSet(ParticleInformation::InsideMagnet))
+    return;
+  if (settings && settings->situation() != Settings::Testbeam11 && !event->flagsSet(ParticleInformation::InsideMagnet))
+    return;
+ 
   const TimeOfFlight* tof = event->particle()->timeOfFlight();
   const QVector<Hit*>& hits = track->hits();
 
-  const Settings* settings = event->settings();
-
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & ParticleInformation::Chi2Good))
-    return;
-  if (!settings && !(flags & ParticleInformation::InsideMagnet))
-    return;
-  if (settings && settings->situation() != Settings::Testbeam11 && !(flags & ParticleInformation::InsideMagnet))
-    return;
- 
   bool idTop1 = false, idTop2 = false, idBottom1 = false, idBottom2 = false;
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
@@ -132,7 +130,7 @@ void TOFBarShiftPlot::update()
 void TOFBarShiftPlot::finalize()
 {
   function(0)->SetParameters(histogram(0)->GetMaximum(), histogram(0)->GetMean(), histogram(0)->GetRMS());
-  histogram(0)->Fit(function(0), "RQN0");
+  histogram(0)->Fit(function(0), "ERQN0");
   latex(3)->SetTitle(qPrintable(QString("t    = %1 ns").arg(function(0)->GetParameter(1), 0, 'f', 2, ' ')));
   latex(4)->SetTitle(qPrintable(QString("#sigma    = %1 ns").arg(function(0)->GetParameter(2), 0, 'f', 2, ' ')));
 }

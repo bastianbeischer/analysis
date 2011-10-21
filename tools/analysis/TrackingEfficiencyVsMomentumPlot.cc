@@ -43,17 +43,18 @@ TrackingEfficiencyVsMomentumPlot::~TrackingEfficiencyVsMomentumPlot()
 
 void TrackingEfficiencyVsMomentumPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
+    return;
+  if (!event->flagsSet(ParticleInformation::InsideMagnet | ParticleInformation::Chi2Good))
+    return;
+  double rigidity = track->rigidity();
+  if (m_type == Enums::Positive && rigidity < 0)
+    return;
+  if (m_type == Enums::Negative && rigidity > 0)
     return;
 
   const ParticleInformation* info = event->particle()->information();
-
-  ParticleInformation::Flags flags = info->flags();
-  if ( !(flags & ParticleInformation::InsideMagnet) || !(flags & ParticleInformation::Chi2Good) )
-    return;
-
   const QMap<double,int>& hitsInLayers = info->hitsInLayers();
   unsigned short nLayers = info->numberOfTrackerLayers();
 
@@ -63,16 +64,6 @@ void TrackingEfficiencyVsMomentumPlot::processEvent(const AnalyzedEvent* event)
     if (count != 1)
       return;
   }
-
-  double rigidity = track->rigidity();
-
-  if (m_type == Enums::Positive && rigidity < 0) {
-    return;
-  }
-  if (m_type == Enums::Negative && rigidity > 0) {
-    return;
-  }
-
   histogram()->Fill(qAbs(rigidity), nLayers);
 }
 

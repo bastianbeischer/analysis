@@ -24,7 +24,7 @@ TRDEfficiencyPlot::TRDEfficiencyPlot()
   : AnalysisPlot(Enums::MiscellaneousTRD)
   , H2DPlot()
 {
-  setTitle("TRD efficiency (hits / was on track)");
+  setTitle("TRD efficiency (hits per number of transversed straws)");
 
   TH2D* histogram = new TH2D(qPrintable(title()), qPrintable(title() + ";x / mm;z /mm"),200,-120,120,200,-550, -250);
   addHistogram(histogram);
@@ -62,14 +62,10 @@ TRDEfficiencyPlot::~TRDEfficiencyPlot()
 
 void TRDEfficiencyPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-  const ParticleInformation::Flags pFlags = event->particle()->information()->flags();
-
-  //check if everything worked and a track has been fit
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
-
-  if (pFlags & ParticleInformation::Chi2Good)
+  if (!event->flagsSet(ParticleInformation::Chi2Good))
     return;
 
   //TODO: check for off track hits, atm this is Bastians criteria for on track

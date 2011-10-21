@@ -58,13 +58,12 @@ MomentumSpectrumPlot::~MomentumSpectrumPlot()
 
 void MomentumSpectrumPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
-
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & ParticleInformation::AllTrackerLayers) || !(flags & ParticleInformation::InsideMagnet) || (flags & ParticleInformation::Albedo) )
+  if (!event->flagsSet(ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet))
+    return;
+  if (event->flagsSet(ParticleInformation::Albedo))
     return;
 
   double rigidity = track->rigidity();

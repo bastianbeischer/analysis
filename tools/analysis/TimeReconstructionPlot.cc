@@ -45,13 +45,13 @@ TimeReconstructionPlot::~TimeReconstructionPlot()
 
 void TimeReconstructionPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
+  if (!event->flagsSet(ParticleInformation::Chi2Good))
+    return;
+
   const QVector<Hit*>& clusters = track->hits();
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & ParticleInformation::Chi2Good))
-    return;
 
   QVector<double> startTimes;
   QVector<int> startTimeIds;

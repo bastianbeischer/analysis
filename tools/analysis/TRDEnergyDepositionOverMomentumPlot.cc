@@ -30,26 +30,13 @@ TRDEnergyDepositionOverMomentumPlot::~TRDEnergyDepositionOverMomentumPlot()
 
 void TRDEnergyDepositionOverMomentumPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-
-  //check if everything worked and a track has been fit
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
-
-  //check if all tracker layers have a hit
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & ParticleInformation::AllTrackerLayers))
+  if (!event->flagsSet(ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet))
     return;
-
-  //check if track was inside of magnet
-  if (!(flags & ParticleInformation::InsideMagnet))
-    return;
-
-  //get the reconstructed momentum
-  double rigidity = track->rigidity(); //GeV
-
-  //only use following momenta
-  if(rigidity < -10 || rigidity > 10)
+  double rigidity = track->rigidity();
+  if (qAbs(rigidity) < 10.)
     return;
 
   //loop over all hits and count tracker hits

@@ -48,8 +48,8 @@ AzimuthCutStatistics::~AzimuthCutStatistics()
 void AzimuthCutStatistics::processEvent(const AnalyzedEvent* event)
 {
   const Track* track = event->particle()->track();
+  Q_ASSERT(track);
   double azimuth = track->azimuthAngle() * 180. / M_PI;
-
   histogram()->Fill(0., azimuth);
 
   if (!track || !track->fitGood())
@@ -57,19 +57,19 @@ void AzimuthCutStatistics::processEvent(const AnalyzedEvent* event)
   histogram()->Fill(1., azimuth);
 
   ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if ( !(flags & ParticleInformation::Chi2Good))
+  if (!event->flagsSet(ParticleInformation::Chi2Good))
     return;
   histogram()->Fill(2., azimuth);
 
-  if ( !(flags & ParticleInformation::InsideMagnet))
+  if (!event->flagsSet(ParticleInformation::InsideMagnet))
     return;
   histogram()->Fill(3., azimuth);
 
-  if ( !(flags & ParticleInformation::BetaGood))
+  if (!event->flagsSet(ParticleInformation::BetaGood))
     return;
   histogram()->Fill(4., azimuth);
 
-  if ( (flags & ParticleInformation::Albedo))
+  if (event->flagsSet(ParticleInformation::Albedo))
     return;
   histogram()->Fill(5., azimuth);
 }

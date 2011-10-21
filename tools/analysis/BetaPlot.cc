@@ -44,13 +44,10 @@ BetaPlot::~BetaPlot()
 
 void BetaPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
     return;
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  ParticleInformation::Flags required = ParticleInformation::Chi2Good | ParticleInformation::BetaGood;
-  if ((flags & required) != required)
+  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::BetaGood))
     return;
   histogram()->Fill(1./event->particle()->beta());
 }

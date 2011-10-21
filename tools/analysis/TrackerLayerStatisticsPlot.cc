@@ -42,18 +42,14 @@ TrackerLayerStatisticsPlot::~TrackerLayerStatisticsPlot()
 
 void TrackerLayerStatisticsPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-
-  if (!track || !track->fitGood())
+  const Track* track = event->goodTrack();
+  if (!track)
+    return;
+  // only tracks inside magnet are relevant: these really pass all 8 layers.
+  if (!event->flagsSet(ParticleInformation::InsideMagnet))
     return;
 
   const ParticleInformation* info = event->particle()->information();
-
-  // only tracks inside magnet are relevant: these really pass all 8 layers.
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & ParticleInformation::InsideMagnet))
-    return;
-
   const QMap<double,int>& hitsInLayers = info->hitsInLayers();
   unsigned short nLayers = info->numberOfTrackerLayers();
 
