@@ -6,7 +6,7 @@
 #include "Track.hh"
 
 MainWindow::MainWindow(QWidget* parent)
-  : QDialog(parent)
+  : QMainWindow(parent)
 {
   m_ui.setupUi(this);
   connect(m_ui.editEventListButton, SIGNAL(clicked()), this, SLOT(editEventListButtonClicked()));

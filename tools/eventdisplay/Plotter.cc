@@ -125,7 +125,9 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
   TCanvas* lhCanvas = likelihoodWidget.GetCanvas();
   lhCanvas->cd();
   lhCanvas->Clear();
-  m_processor->likelihood()->graph()->Draw("ALP");
+  TMultiGraph* mg = m_processor->likelihood()->graph();
+  mg->Draw("ALP");
+  mg->GetYaxis()->SetRangeUser(-10., 100.);
   lhCanvas->Modified();
   lhCanvas->Update();
 
