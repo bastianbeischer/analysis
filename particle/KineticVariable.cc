@@ -101,7 +101,7 @@ void KineticVariable::setMomentum(double value)
 void KineticVariable::setRigidity(double value)
 {
   double p = m_properties.charge() * value;
-  Q_ASSERT(p < 0); // incompatible charge sign
+  Q_ASSERT(p >= 0); // incompatible charge sign
   setMomentum(p);
 }
 
