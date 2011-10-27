@@ -2,14 +2,14 @@
 #define KineticVariable_hh
 
 #include "Enums.hh"
-
-#include <cmath>
+#include "ParticleProperties.hh"
 
 class KineticVariable {
 public:
   KineticVariable(Enums::Particle);
   KineticVariable(Enums::Particle, Enums::KineticVariable, double value);
 
+  const ParticleProperties& properties() const;
   Enums::Particle particle() const;
   int charge() const;
   double mass() const;
@@ -31,9 +31,7 @@ public:
   void setInverseBeta(double);
   
 private:
-  Enums::Particle m_particle;
-  int m_charge;
-  double m_mass;
+  ParticleProperties m_properties;
   double m_kineticEnergy;
 };
 

@@ -10,6 +10,7 @@ INCLUDEPATH += \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/global \
   $$TOPLEVEL/particle \
+  $$TOPLEVEL/tracking \
   $$TOPLEVEL/tools/postAnalysis/postAnalysis
 
 LIBS += \

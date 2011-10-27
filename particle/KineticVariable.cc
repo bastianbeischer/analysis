@@ -1,49 +1,43 @@
 #include "KineticVariable.hh"
-#include "Particle.hh"
 
 #include <cmath>
 
 KineticVariable::KineticVariable(Enums::Particle particleType)
-  : m_particle(particleType)
-  , m_charge(0)
-  , m_mass(0)
+  : m_properties(particleType)
   , m_kineticEnergy(0)
 {
-  Particle particle(particleType);
-  m_mass = particle.mass();
-  m_charge = particle.charge();
 }
 
-KineticVariable::KineticVariable(Enums::Particle particleType, Enums::KineticVariable type, double value)
-  : m_particle(particleType)
-  , m_charge(0)
-  , m_mass(0)
+KineticVariable::KineticVariable(Enums::Particle particleType, Enums::KineticVariable variableType, double value)
+  : m_properties(particleType)
   , m_kineticEnergy(0)
 {
-  Particle particle(particleType);
-  m_mass = particle.mass();
-  m_charge = particle.charge();
-  set(type, value);
+  set(variableType, value);
+}
+
+const ParticleProperties& KineticVariable::properties() const
+{
+  return m_properties;
 }
 
 Enums::Particle KineticVariable::particle() const
 {
-  return m_particle;
+  return m_properties.type();
 }
 
 int KineticVariable::charge() const
 {
-  return m_charge;
+  return m_properties.charge();
 }
 
 double KineticVariable::mass() const
 {
-  return m_mass;
+  return m_properties.mass();
 }
 
 double KineticVariable::totalEnergy() const
 {
-  return m_kineticEnergy + m_mass;
+  return m_kineticEnergy + m_properties.mass();
 }
 
 double KineticVariable::kineticEnergy() const
@@ -53,12 +47,12 @@ double KineticVariable::kineticEnergy() const
 
 double KineticVariable::momentum() const
 {
-  return sqrt(totalEnergy() * totalEnergy() - m_mass * m_mass);
+  return sqrt(totalEnergy() * totalEnergy() - m_properties.mass() * m_properties.mass());
 }
 
 double KineticVariable::rigidity() const
 {
-  return momentum() / m_charge;
+  return momentum() / m_properties.charge();
 }
 
 double KineticVariable::curvature() const
@@ -91,7 +85,7 @@ void KineticVariable::set(Enums::KineticVariable type, double value) {
 
 void KineticVariable::setTotalEnergy(double value)
 {
-  m_kineticEnergy = value - m_mass;
+  m_kineticEnergy = value - m_properties.mass();
 }
 
 void KineticVariable::setKineticEnergy(double value)
@@ -101,12 +95,12 @@ void KineticVariable::setKineticEnergy(double value)
 
 void KineticVariable::setMomentum(double value)
 {
-  setTotalEnergy(sqrt(value * value + m_mass * m_mass));
+  setTotalEnergy(sqrt(value * value + m_properties.mass() * m_properties.mass()));
 }
 
 void KineticVariable::setRigidity(double value)
 {
-  double p = m_charge * value;
+  double p = m_properties.charge() * value;
   Q_ASSERT(p < 0); // incompatible charge sign
   setMomentum(p);
 }
@@ -118,10 +112,10 @@ void KineticVariable::setCurvature(double value)
 
 void KineticVariable::setBeta(double value)
 {
-  setTotalEnergy(m_mass / sqrt(1. - value * value));
+  setTotalEnergy(m_properties.mass() / sqrt(1. - value * value));
 }
 
 void KineticVariable::setInverseBeta(double value)
 {
-  setTotalEnergy(sqrt(1. - value * value) / m_mass);
+  setTotalEnergy(sqrt(1. - value * value) / m_properties.mass());
 }

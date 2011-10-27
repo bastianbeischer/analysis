@@ -11,6 +11,7 @@
 #include <TAxis.h>
 
 #include <cfloat>
+#include <cmath>
 
 class LogLikelihoodFunction : public ROOT::Math::IGenFunction {
 public:
