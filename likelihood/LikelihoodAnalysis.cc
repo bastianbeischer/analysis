@@ -60,8 +60,6 @@ LikelihoodAnalysis::LikelihoodAnalysis(Enums::LikelihoodVariables likelihoods, E
   , m_mg(0)
 {
   m_minimizer->SetFunction(*m_function, 0, 20);
-  //m_minimizer->SetDefaultNSearch(4);
-
 
   //m_measuredValueType = Enums::Momentum;
   //m_min = 0;
@@ -87,7 +85,6 @@ LikelihoodAnalysis::~LikelihoodAnalysis()
 
 void LikelihoodAnalysis::identify(Particle* particle)
 {
-  //qDebug();
   m_particle = particle;
   bool goodInterpolation = true;
   m_minimum.setX(DBL_MAX);
@@ -98,21 +95,20 @@ void LikelihoodAnalysis::identify(Particle* particle)
   QVector<QPointF>::Iterator pointIt = m_minima.begin();
   while (particleIt != particleEnd) {
     m_function->setParameters(particle, *particleIt, &goodInterpolation);
-    if (m_minimizer->Minimize(100)) {//0, 0.001, 0.001)) {
+    if (m_minimizer->Minimize(100)) {
       if (m_minimizer->FValMinimum() < m_minimum.y()) {
         m_minimum.setX(m_minimizer->XMinimum());
         m_minimum.setY(m_minimizer->FValMinimum());
       }
       pointIt->setX(m_minimizer->XMinimum());
       pointIt->setY(m_minimizer->FValMinimum());
-      //qDebug() << m_minimizer->XMinimum() << m_minimizer->Iterations();
     } else {
-      qDebug() << "Not converged.";
+      pointIt->setX(0);
+      pointIt->setY(0);
     }
     ++particleIt;
     ++pointIt;
   }
-  //qDebug() << m_minimum;
 }
 
 double LikelihoodAnalysis::eval(const Particle* particle, const KineticVariable& hypothesis, bool* goodInterpolation) const
@@ -152,11 +148,19 @@ TMultiGraph* LikelihoodAnalysis::graph() const
     m_mg->Add(g, "L");
   }
 
-  TGraph* minimaGraph = new TGraph(m_minima.count());
+  TGraph* minimaGraph = new TGraph;
   minimaGraph->SetMarkerStyle(20);
   for (int i = 0; i < m_minima.count(); ++i)
-    minimaGraph->SetPoint(i, m_minima[i].x(), m_minima[i].y());
-  m_mg->Add(minimaGraph, "P");
+    if (!qFuzzyCompare(m_minima[i].x(), m_minimum.x()) && !qFuzzyCompare(m_minima[i].y(), m_minimum.y()))
+      minimaGraph->SetPoint(minimaGraph->GetN(), m_minima[i].x(), m_minima[i].y());
+  if (minimaGraph->GetN())
+    m_mg->Add(minimaGraph, "P");
+
+  TGraph* minimumGraph = new TGraph(1);
+  minimumGraph->SetMarkerStyle(20);
+  minimumGraph->SetMarkerColor(kRed);
+  minimumGraph->SetPoint(0, m_minimum.x(), m_minimum.y());
+  m_mg->Add(minimumGraph, "P");
 
   return m_mg;
 }
