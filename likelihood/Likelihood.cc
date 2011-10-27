@@ -10,9 +10,11 @@
 #include <QDebug>
 
 Likelihood::Likelihood()
-  : m_particles(Enums::NoParticle)
-  , m_measuredValueType(Enums::UndefinedKineticVariable)
+  : m_measuredValueType(Enums::UndefinedKineticVariable)
   , m_likelihoodVariableType()
+  , m_min(0)
+  , m_max(0)
+  , m_numberOfParameters(0)
   , m_nodes()
 {
 }
@@ -77,11 +79,6 @@ Likelihood::ParameterVector Likelihood::linearInterpolation(const KineticVariabl
   return vector;
 }
 
-Enums::Particles Likelihood::particles() const
-{
-  return m_particles;
-}
-
 void Likelihood::loadNodes()
 {
   QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
@@ -92,7 +89,6 @@ void Likelihood::loadNodes()
   foreach (QString particleKey, settings.childGroups()) {
     settings.beginGroup(particleKey);
     Enums::Particle particle = Enums::particle(particleKey);
-    m_particles|= particle;
     ParticleMap::Iterator particleIt = m_nodes.find(particle);
     if (particleIt == m_nodes.end())
       particleIt = m_nodes.insert(particle, MomentumMap());
@@ -116,6 +112,21 @@ void Likelihood::loadNodes()
 LikelihoodPDF* Likelihood::pdf(const KineticVariable& variable) const
 {
   return new LikelihoodPDF(this, variable);
+}
+
+double Likelihood::min() const
+{
+  return m_min;
+}
+
+double Likelihood::max() const
+{
+  return m_max;
+}
+
+int Likelihood::numberOfParameters() const
+{
+  return m_numberOfParameters;
 }
 
 Likelihood* Likelihood::newLikelihood(Enums::LikelihoodVariable type)

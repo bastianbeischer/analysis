@@ -9,10 +9,7 @@ public:
   TrackerMomentumLikelihood();
   ~TrackerMomentumLikelihood();
 
-  virtual double min() const;
-  virtual double max() const;
-  virtual int numberOfParameters() const;
-  virtual double eval(Particle*, const KineticVariable&, bool* goodInterpolation = 0) const;
+  virtual double eval(const Particle*, const KineticVariable&, bool* goodInterpolation = 0) const;
   virtual double eval(double curvature, const KineticVariable&, bool* goodInterpolation = 0) const;
 };
 

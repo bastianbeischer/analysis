@@ -5,24 +5,33 @@
 #include "KineticVariable.hh"
 
 #include <QVector>
+#include <QPointF>
 
 class Particle;
 class Likelihood;
 class TMultiGraph;
+class LogLikelihoodFunction;
+namespace ROOT {namespace Math {class BrentMinimizer1D;}}
 
-class LikelihoodAnalysis
-{
+class LikelihoodAnalysis {
 public:
-  LikelihoodAnalysis(Enums::LikelihoodVariables);
+  LikelihoodAnalysis(Enums::LikelihoodVariables, Enums::Particles);
   ~LikelihoodAnalysis();
 
   void identify(Particle*);
   TMultiGraph* graph() const;
 private:
-  double test(const KineticVariable&) const;
+  double eval(const Particle*, const KineticVariable& hypothesis, bool* goodInterpolation = 0) const;
+  double rootFunctorPointer(const double* momentum);
+
   QVector<Likelihood*> m_likelihoods;
+  QVector<Enums::Particle> m_particles;
+  ROOT::Math::BrentMinimizer1D* m_minimizer;
+  LogLikelihoodFunction* m_function;
+  QVector<QPointF> m_minima;
+  QPointF m_minimum;
   Particle* m_particle;
-  TMultiGraph* m_mg;
+  mutable TMultiGraph* m_mg;
 };
 
 #endif

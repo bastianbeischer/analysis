@@ -14,14 +14,14 @@ public:
   ~Settings();
 
   void setSituation(const Situation& situation) {m_situation = situation;}
-  void setIdentifier(const int& identifier) {m_identifier = identifier;}
+  void setIdentifier(int identifier) {m_identifier = identifier;}
   void setName(const QString& name) {m_name = name;}
-  void setFirstRun(const int& firstRun) {m_firstRun = firstRun;}
-  void setLastRun(const int& lastRun) {m_lastRun = lastRun;}
-  void setMomentum(const double& momentum) {m_momentum = momentum;}
-  void setPolarity(const int& polarity) {m_polarity = polarity;}
-  void setPressure(const double& pressure) {m_pressure = pressure;}
-  void setMagnet(const bool& magnet) {m_magnet = magnet;}
+  void setFirstRun(int firstRun) {m_firstRun = firstRun;}
+  void setLastRun(int lastRun) {m_lastRun = lastRun;}
+  void setMomentum(double momentum) {m_momentum = momentum;}
+  void setPolarity(int polarity) {m_polarity = polarity;}
+  void setPressure(double pressure) {m_pressure = pressure;}
+  void setMagnet(bool magnet) {m_magnet = magnet;}
 
   Situation situation() const {return m_situation;}
   int identifier() const {return m_identifier;}
@@ -33,7 +33,7 @@ public:
   double pressure() const {return m_pressure;}
   bool magnet() const {return m_magnet;}
 
-  bool isAboveThreshold(const double&) const;
+  bool isAboveThreshold(double) const;
 
 private:
   Situation m_situation;

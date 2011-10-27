@@ -19,7 +19,7 @@ Settings::~Settings()
 {
 }
 
-bool Settings::isAboveThreshold(const double& mass) const
+bool Settings::isAboveThreshold(double mass) const
 {
   double dndp = 4.51819e-4;
   double energy = sqrt(m_momentum*m_momentum + mass*mass);

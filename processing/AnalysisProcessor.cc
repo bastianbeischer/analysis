@@ -24,7 +24,10 @@ AnalysisProcessor::AnalysisProcessor()
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections)
   , m_identifier(new ParticleIdentifier)
-  , m_likelihood(new LikelihoodAnalysis(Enums::TrackerMomentumLikelihood | Enums::TimeOfFlightLikelihood))
+  , m_likelihood(new LikelihoodAnalysis(
+      Enums::TrackerMomentumLikelihood | Enums::TimeOfFlightLikelihood,
+      Enums::Helium | Enums::Proton | Enums::AntiProton | Enums::PiMinus | Enums::PiPlus |
+      Enums::Muon | Enums::AntiMuon | Enums::Positron | Enums::Electron))
 {
 }
 
@@ -37,7 +40,10 @@ AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, En
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections(flags))
   , m_identifier(new ParticleIdentifier)
-  , m_likelihood(new LikelihoodAnalysis(Enums::TrackerMomentumLikelihood))
+  , m_likelihood(new LikelihoodAnalysis(
+      Enums::TrackerMomentumLikelihood | Enums::TimeOfFlightLikelihood,
+      Enums::Helium | Enums::Proton | Enums::AntiProton | Enums::PiMinus | Enums::PiPlus |
+      Enums::Muon | Enums::AntiMuon | Enums::Positron | Enums::Electron))
 {
   setTrackType(track);
   setCorrectionFlags(flags);

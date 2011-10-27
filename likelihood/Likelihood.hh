@@ -15,16 +15,15 @@ class Likelihood {
 public:
   Likelihood();
   ~Likelihood();
-  Enums::Particles particles() const;
   Enums::KineticVariable measuredValueType() const;
   Enums::LikelihoodVariable likelihoodVariableType() const;
   static Likelihood* newLikelihood(Enums::LikelihoodVariable);
   virtual LikelihoodPDF* pdf(const KineticVariable&) const;
+  virtual double min() const;
+  virtual double max() const;
+  virtual int numberOfParameters() const;
 
-  virtual double min() const = 0;
-  virtual double max() const = 0;
-  virtual int numberOfParameters() const = 0;
-  virtual double eval(Particle*, const KineticVariable& hypothesis, bool* goodInterpolation = 0) const = 0;
+  virtual double eval(const Particle*, const KineticVariable& hypothesis, bool* goodInterpolation = 0) const = 0;
   virtual double eval(double measuredValue, const KineticVariable& hypothesis, bool* goodInterpolation = 0) const = 0;
 protected:
   typedef QVector<double> ParameterVector;
@@ -38,9 +37,11 @@ protected:
   virtual void loadNodes();
   virtual ParameterVector linearInterpolation(const KineticVariable&, bool* goodInterpolation = 0) const;
 
-  Enums::Particles m_particles;
   Enums::KineticVariable m_measuredValueType;
   Enums::LikelihoodVariable m_likelihoodVariableType;
+  double m_min;
+  double m_max;
+  int m_numberOfParameters;
 private:
   ParticleMap m_nodes;
 };
