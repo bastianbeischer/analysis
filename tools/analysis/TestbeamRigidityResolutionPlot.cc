@@ -21,7 +21,7 @@ void TestbeamRigidityResolutionPlot::processEvent(const AnalyzedEvent* event)
     return;
 
   //only electrons for testbeam atm (tagged via cherenkov)
-  if (m_particle->charge() != settings->polarity())
+  if (m_particleProperties.charge() != settings->polarity())
     return;
 
   double c1Signal = event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV1);
@@ -31,7 +31,7 @@ void TestbeamRigidityResolutionPlot::processEvent(const AnalyzedEvent* event)
   if ( (c1Signal < threshold && c2Signal > threshold) || (c1Signal > threshold && c2Signal < threshold) ) // throw away all events where cherenkov info is inconsistent
     return;
 
-  bool aboveThreshold = settings->isAboveThreshold(m_particle->mass());
+  bool aboveThreshold = settings->isAboveThreshold(m_particleProperties.mass());
   if (aboveThreshold && c1Signal < threshold && c2Signal < threshold) // throw away all particles which DO NOT produce cherenkov light
     return;
   else if (!aboveThreshold && c1Signal > threshold && c2Signal > threshold)  // throw away all particles which DO produce cherenkov light
@@ -42,6 +42,7 @@ void TestbeamRigidityResolutionPlot::processEvent(const AnalyzedEvent* event)
 
 double TestbeamRigidityResolutionPlot::referenceRigidity(const AnalyzedEvent* event) const
 {
-  double genMom = event->settings()->momentum() * event->settings()->polarity();
-  return genMom / 1.; // electrons currently, but charge = 1 for all testbeam cases.
+  double p = event->settings()->momentum();
+  int z = event->settings()->polarity(); // times charge for Helium missing so far
+  return p / z;
 }

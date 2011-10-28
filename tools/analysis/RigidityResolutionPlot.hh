@@ -3,8 +3,8 @@
 
 #include "AnalysisPlot.hh"
 #include "H1DPlot.hh"
-
-#include "Particle.hh"
+#include "KineticVariable.hh"
+#include "Enums.hh"
 
 #include <QMap>
 #include <QPair>
@@ -12,33 +12,36 @@
 class ParticleProperties;
 class RootQtWidget;
 
-class RigidityResolutionPlot : public AnalysisPlot, public H1DPlot
-{
+class RigidityResolutionPlot : public AnalysisPlot, public H1DPlot {
 public:
-  RigidityResolutionPlot(Enums::AnalysisTopic, const Enums::Particle& = Enums::Electron);
+  RigidityResolutionPlot(Enums::AnalysisTopic, Enums::Particle);
   ~RigidityResolutionPlot();
-
   virtual void processEvent(const AnalyzedEvent*);
-  void update();
-  void finalize();
-  void positionChanged(double, double);
-
-private:
+  virtual void update();
+  virtual void finalize();
+protected:
   virtual double referenceRigidity(const AnalyzedEvent*) const = 0;
+  const ParticleProperties m_particleProperties;
+private:
+  void positionChanged(double, double);
+  TF1* newTrackerResolutionFunction(const QString&) const;
+  TF1* newTofResolutionFunction(const QString&) const;
+  TF1* newWeightedMeanResolutionFunction(const QString&) const;
+  double trackerResolution(double*, double*) const;
+  double tofResolution(double*, double*) const;
+  double weightedMeanResolution(double*, double*) const;
   void loadRigHisto(double rig);
   void loadRigHisto(int bin);
   void saveHistos();
 
-protected:
-  const ParticleProperties* m_particle;
-  const double m_rigidityRangeLower;
-  const double m_rigidityRangeUppper;
-  const int m_numberOfBins;
-
   RootQtWidget* m_rigDistributionWidget;
-
-  QMap<int, TH1D*> m_resolutionHistos;
-
+  const int m_numberOfBins;
+  const double m_min;
+  const double m_max;
+  QVector<TH1D*> m_trackerResolutionHistograms;
+  QVector<TH1D*> m_tofResolutionHistograms;
+  QVector<TH1D*> m_weightedMeanResolutionHistograms;
+  QVector<TH1D*> m_likelihoodResolutionHistograms;
 };
 
 #endif // RigidityResolutionPlot_hh

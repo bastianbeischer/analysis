@@ -91,6 +91,7 @@ const QMap<Enums::KineticVariable, QString> Enums::s_kineticVariableMap = Initia
   << QPair<Enums::KineticVariable, QString>(Enums::KineticEnergy, "T / GeV")
   << QPair<Enums::KineticVariable, QString>(Enums::Momentum, "p / GeV")
   << QPair<Enums::KineticVariable, QString>(Enums::Rigidity, "R / GV")
+  << QPair<Enums::KineticVariable, QString>(Enums::AbsoluteRigidity, "R / GV")
   << QPair<Enums::KineticVariable, QString>(Enums::Curvature, "#kappa / GV^{-1}")
   << QPair<Enums::KineticVariable, QString>(Enums::Beta, "#beta")
   << QPair<Enums::KineticVariable, QString>(Enums::InverseBeta, "#beta^{-1}");

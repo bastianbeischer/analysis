@@ -1,7 +1,8 @@
 #ifndef ParticleProperties_hh
 #define ParticleProperties_hh
 
-#include "Particle.hh"
+#include "Enums.hh"
+
 #include <QString>
 #include <TColor.h>
 

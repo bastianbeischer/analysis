@@ -55,6 +55,11 @@ double KineticVariable::rigidity() const
   return momentum() / m_properties.charge();
 }
 
+double KineticVariable::absoluteRigidity() const
+{
+  return qAbs(rigidity());
+}
+
 double KineticVariable::curvature() const
 {
   return 1. / rigidity();
@@ -77,6 +82,7 @@ void KineticVariable::set(Enums::KineticVariable type, double value) {
     case Enums::KineticEnergy: setKineticEnergy(value); break;
     case Enums::Momentum: setMomentum(value); break;
     case Enums::Rigidity: setRigidity(value); break;
+    case Enums::AbsoluteRigidity: setAbsoluteRigidity(value); break;
     case Enums::Curvature: setCurvature(value); break;
     case Enums::Beta: setBeta(value); break;
     case Enums::InverseBeta: setInverseBeta(value); break;
@@ -103,6 +109,12 @@ void KineticVariable::setRigidity(double value)
   double p = m_properties.charge() * value;
   Q_ASSERT(p >= 0); // incompatible charge sign
   setMomentum(p);
+}
+
+void KineticVariable::setAbsoluteRigidity(double value)
+{
+  Q_ASSERT(value >= 0);
+  setRigidity(m_properties.charge() < 0 ? -value : value);
 }
 
 void KineticVariable::setCurvature(double value)

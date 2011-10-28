@@ -10,6 +10,7 @@ public:
   MCRigidityResolutionPlot(const Enums::Particle& = Enums::Electron);
   ~MCRigidityResolutionPlot();
   void processEvent(const AnalyzedEvent*);
+protected:
   double referenceRigidity(const AnalyzedEvent*) const;
 };
 

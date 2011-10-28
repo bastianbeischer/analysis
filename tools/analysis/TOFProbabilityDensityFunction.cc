@@ -14,8 +14,6 @@
 #include <TLegend.h>
 #include <TLegendEntry.h>
 
-#include <QDebug>
-
 TOFProbabilityDensityFunction::TOFProbabilityDensityFunction()
   : AnalysisPlot(Enums::Testbeam)
   , H1DPlot()
@@ -102,7 +100,6 @@ void TOFProbabilityDensityFunction::addFunctions(double momentum)
     f->SetLineColor(particle.color());
     f->SetNpx(1000);
     addFunction(f);
-    qDebug() << particle.name() << momentum << (1./variable.beta()) << (0.4 * Constants::speedOfLight / (Constants::upperTofPosition-Constants::lowerTofPosition));
   }
   TLegendEntry* entry = legend()->AddEntry(static_cast<TObject*>(0), qPrintable(QString("%1 GeV").arg(momentum, 0, 'f', 2, ' ')), "L");
   entry->SetLineStyle(m_momenta.size());

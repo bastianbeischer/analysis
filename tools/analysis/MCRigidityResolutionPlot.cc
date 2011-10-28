@@ -19,7 +19,7 @@ void MCRigidityResolutionPlot::processEvent(const AnalyzedEvent* event)
     return;
 
   //only use selected pdgID for MCEvents:
-  if (event->simpleEvent()->MCInformation()->primary()->pdgID != (m_particle->pdgId()))
+  if (event->simpleEvent()->MCInformation()->primary()->pdgID != (m_particleProperties.pdgId()))
     return;
 
   RigidityResolutionPlot::processEvent(event);
@@ -28,9 +28,7 @@ void MCRigidityResolutionPlot::processEvent(const AnalyzedEvent* event)
 double MCRigidityResolutionPlot::referenceRigidity(const AnalyzedEvent* event) const
 {
   //get mc rigidity
-  double genMom = 0;
-  double genRigidity = 0;
-  genMom = event->simpleEvent()->MCInformation()->primary()->initialMomentum.Mag();
-  genRigidity = genMom / m_particle->charge();
-  return genRigidity;
+  double p = event->simpleEvent()->MCInformation()->primary()->initialMomentum.Mag();
+  int z = m_particleProperties.charge();
+  return p / z;
 }

@@ -1,8 +1,11 @@
 #ifndef ParticleIdentifier_hh
 #define ParticleIdentifier_hh
 
-#include <QList>
 #include "ParticleProperties.hh"
+
+#include <QList>
+
+class Particle;
 
 class ParticleIdentifier
 {

@@ -10,6 +10,7 @@ public:
   TestbeamRigidityResolutionPlot(const Enums::Particle& = Enums::Electron);
   ~TestbeamRigidityResolutionPlot();
   void processEvent(const AnalyzedEvent*);
+protected:
   double referenceRigidity(const AnalyzedEvent*) const;
 };
 

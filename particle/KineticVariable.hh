@@ -17,6 +17,7 @@ public:
   double kineticEnergy() const;
   double momentum() const;
   double rigidity() const;
+  double absoluteRigidity() const;
   double curvature() const;
   double beta() const;
   double inverseBeta() const;
@@ -26,6 +27,7 @@ public:
   void setKineticEnergy(double);
   void setMomentum(double);
   void setRigidity(double);
+  void setAbsoluteRigidity(double);
   void setCurvature(double);
   void setBeta(double);
   void setInverseBeta(double);

@@ -14,17 +14,35 @@
 #include "TrackFinding.hh"
 
 Particle::Particle()
+  : m_properties(0)
+  , m_track(0)
+  , m_tof(0)
+  , m_trd(0)
+  , m_information(0)
+  , m_variable(Enums::NoParticle)
 {
   init();
 }
 
 Particle::Particle(const Enums::Particle& type)
+  : m_properties(0)
+  , m_track(0)
+  , m_tof(0)
+  , m_trd(0)
+  , m_information(0)
+  , m_variable(Enums::NoParticle)
 {
   init();
   setType(type);
 }
 
 Particle::Particle(const int& pdgId)
+  : m_properties(0)
+  , m_track(0)
+  , m_tof(0)
+  , m_trd(0)
+  , m_information(0)
+  , m_variable(Enums::NoParticle)
 {
   init();
   setPdgId(pdgId);
@@ -45,6 +63,7 @@ void Particle::init()
   m_tof = new TimeOfFlight;
   m_trd = new TRDReconstruction;
   m_information = new ParticleInformation(this);
+  m_variable = KineticVariable(Enums::NoParticle);
 }
 
 void Particle::reset()
@@ -55,6 +74,7 @@ void Particle::reset()
   m_tof->reset();
   m_trd->reset();
   m_information->reset();
+  m_variable = KineticVariable(Enums::NoParticle);
 }
 
 void Particle::setType(const Enums::Particle& type)
@@ -82,6 +102,11 @@ void Particle::setTrackType(const Enums::TrackType& trackType)
     m_track = new BrokenLine;
   else if (trackType == Enums::StraightLine)
     m_track = new StraightLine;
+}
+
+const KineticVariable& Particle::variable() const
+{
+  return m_variable;
 }
 
 double Particle::transverseMomentum() const
