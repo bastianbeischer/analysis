@@ -16,6 +16,7 @@
 #include <QStringList>
 #include <QSettings>
 #include <QMutex>
+#include <QDebug>
 #include <QDir>
 
 #include <TVector3.h>
@@ -216,9 +217,15 @@ void Setup::writeSettings()
 
 SensorTypes::Type Setup::sensorForId(unsigned short id)
 {
+  if ((0x3000 <= id && id < 0x3200) ||
+      (0x3300 <= id && id < 0x3400) ||
+      (0x3700 <= id && id < 0x3800) ||
+      (0x6000 <= id && id < 0x8000) ){
+    return trackerSensorForId(id);
+  }
   if (0x8000 <= id && id <= 0x803f)
     return tofSensorForId(id);
-  //TODO: Tracker, TRD
+  //TODO: TRD
   Q_ASSERT(false);
   return SensorTypes::N_SENSOR_TYPES;
 }
@@ -231,21 +238,57 @@ SensorTypes::Type Setup::tofSensorForId(unsigned short id)
     SensorTypes::TOF_2_TEMP, SensorTypes::TOF_2_TEMP, SensorTypes::TOF_4_TEMP, SensorTypes::TOF_4_TEMP,
     SensorTypes::TOF_1_TEMP, SensorTypes::TOF_1_TEMP, SensorTypes::TOF_3_TEMP, SensorTypes::TOF_3_TEMP,
     SensorTypes::TOF_1_TEMP, SensorTypes::TOF_1_TEMP, SensorTypes::TOF_3_TEMP, SensorTypes::TOF_3_TEMP,
-    
+
     SensorTypes::TOF_2_TEMP, SensorTypes::TOF_2_TEMP, SensorTypes::TOF_4_TEMP, SensorTypes::TOF_4_TEMP,
     SensorTypes::TOF_2_TEMP, SensorTypes::TOF_2_TEMP, SensorTypes::TOF_4_TEMP, SensorTypes::TOF_4_TEMP,
     SensorTypes::TOF_1_TEMP, SensorTypes::TOF_1_TEMP, SensorTypes::TOF_3_TEMP, SensorTypes::TOF_3_TEMP,
     SensorTypes::TOF_1_TEMP, SensorTypes::TOF_1_TEMP, SensorTypes::TOF_3_TEMP, SensorTypes::TOF_3_TEMP,
-    
+
     SensorTypes::TOF_6_TEMP, SensorTypes::TOF_6_TEMP, SensorTypes::TOF_8_TEMP, SensorTypes::TOF_8_TEMP,
     SensorTypes::TOF_6_TEMP, SensorTypes::TOF_6_TEMP, SensorTypes::TOF_8_TEMP, SensorTypes::TOF_8_TEMP,
     SensorTypes::TOF_5_TEMP, SensorTypes::TOF_5_TEMP, SensorTypes::TOF_7_TEMP, SensorTypes::TOF_7_TEMP,
     SensorTypes::TOF_5_TEMP, SensorTypes::TOF_5_TEMP, SensorTypes::TOF_7_TEMP, SensorTypes::TOF_7_TEMP,
-    
+
     SensorTypes::TOF_6_TEMP, SensorTypes::TOF_6_TEMP, SensorTypes::TOF_8_TEMP, SensorTypes::TOF_8_TEMP,
     SensorTypes::TOF_6_TEMP, SensorTypes::TOF_6_TEMP, SensorTypes::TOF_8_TEMP, SensorTypes::TOF_8_TEMP,
     SensorTypes::TOF_5_TEMP, SensorTypes::TOF_5_TEMP, SensorTypes::TOF_7_TEMP, SensorTypes::TOF_7_TEMP,
     SensorTypes::TOF_5_TEMP, SensorTypes::TOF_5_TEMP, SensorTypes::TOF_7_TEMP, SensorTypes::TOF_7_TEMP
   };
   return map[channel];
+}
+
+SensorTypes::Type Setup::trackerSensorForId(unsigned short id)
+{
+#define TRACKERSENSOR(hpeId, id) if(hpeId ## 00 <= id && id < hpeId ## 00 + 256) {\
+                                   if(id - hpeId ## 00 < 128) {\
+                                     return SensorTypes::HPE_ ## hpeId ## 00_TEMP;\
+                                   } else {\
+                                     return SensorTypes::HPE_ ## hpeId ## 00_TEMP;\
+                                   }\
+                                 }
+
+  TRACKERSENSOR(0x30, id)
+  TRACKERSENSOR(0x31, id)
+  TRACKERSENSOR(0x33, id)
+  TRACKERSENSOR(0x37, id)
+  TRACKERSENSOR(0x60, id)
+  TRACKERSENSOR(0x61, id)
+  TRACKERSENSOR(0x62, id)
+  TRACKERSENSOR(0x63, id)
+  TRACKERSENSOR(0x64, id)
+  TRACKERSENSOR(0x65, id)
+  TRACKERSENSOR(0x66, id)
+  TRACKERSENSOR(0x67, id)
+  TRACKERSENSOR(0x78, id)
+  TRACKERSENSOR(0x79, id)
+  TRACKERSENSOR(0x7a, id)
+  TRACKERSENSOR(0x7b, id)
+  TRACKERSENSOR(0x7c, id)
+  TRACKERSENSOR(0x7d, id)
+  TRACKERSENSOR(0x7e, id)
+  TRACKERSENSOR(0x7f, id)
+
+#undef TRACKERSENSOR
+  Q_ASSERT(false);
+  return SensorTypes::N_SENSOR_TYPES;
 }

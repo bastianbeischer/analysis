@@ -57,6 +57,7 @@ private:
   DetectorElement* constructElement(unsigned short id);
 
   SensorTypes::Type tofSensorForId(unsigned short id);
+  SensorTypes::Type trackerSensorForId(unsigned short id);
 
 private:
   static Setup* s_instance;
