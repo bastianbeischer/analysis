@@ -83,8 +83,6 @@ void SignalHeight2DPlot::update()
     for (int yBin = 1; yBin <= hist->GetNbinsY(); yBin++) {
       double bc = hist->GetBinContent(xBin, yBin);
       histogram()->SetBinContent(xBin, yBin, bc);
-//      double norm = m_normHisto->GetBinContent(xBin);
-//      bc > 10 ? histogram()->SetBinContent(xBin, yBin, bc/norm) : histogram()->SetBinContent(xBin, yBin, 0.);
     }
   }
 }

@@ -16,7 +16,7 @@ public:
   ~SignalHeight2DPlot();
   void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
   void update();
-private:
+protected:
   QMap<unsigned short, int> m_indexMap;
   TH2D* m_histo;
   TH1D* m_normHisto;

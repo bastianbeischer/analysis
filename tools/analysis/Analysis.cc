@@ -29,6 +29,7 @@
 #include "TOFPositionCorrelationPlot.hh"
 #include "MomentumSpectrumPlot.hh"
 #include "SignalHeight2DPlot.hh"
+#include "SignalHeight2DNormalizedPlot.hh"
 #include "SignalHeightPlot.hh"
 #include "ClusterLengthPlot.hh"
 #include "ClusterShapePlot.hh"
@@ -291,6 +292,7 @@ void Analysis::setupPlots()
 
   if (m_analysisSetting.analysisTopics & Enums::SignalHeightTracker) {
     addPlot(new SignalHeight2DPlot);
+    addPlot(new SignalHeight2DNormalizedPlot);
     addPlot(new SignalHeightTimeCorrelationPlotCollection(first, last));
     addPlot(new SignalHeightTemperatureCorrelationPlotCollection());
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
