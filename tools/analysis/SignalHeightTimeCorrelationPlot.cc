@@ -72,11 +72,12 @@ void SignalHeightTimeCorrelationPlot::update()
   for (int xBin = 1; xBin <= hist->GetNbinsX(); xBin++) {
     for (int yBin = 1; yBin <= hist->GetNbinsY(); yBin++) {
       const double bc = hist->GetBinContent(xBin, yBin);
-      const double norm = m_normHisto->GetBinContent(xBin);
-      if (norm > 0)
-        histogram()->SetBinContent(xBin, yBin, bc/norm);
-      else
-        histogram()->SetBinContent(xBin, yBin, 0);
+      histogram()->SetBinContent(xBin, yBin, bc);
+//      const double norm = m_normHisto->GetBinContent(xBin);
+//      if (norm > 0)
+//        histogram()->SetBinContent(xBin, yBin, bc/norm);
+//      else
+//        histogram()->SetBinContent(xBin, yBin, 0);
     }
   }
 }

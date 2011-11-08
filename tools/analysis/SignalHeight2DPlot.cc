@@ -34,7 +34,10 @@ SignalHeight2DPlot::SignalHeight2DPlot()
     }
   }
   setTitle("signal height 2d");
-  TH2D* histo = new TH2D(qPrintable(title()), "", counter, -0.5, counter - 0.5, 100, 0, 4096);
+  const unsigned int nSignalHeightBins = 100;
+  const double minSignalHeight = 0;
+  const double maxSignalHeight = 7000;
+  TH2D* histo = new TH2D(qPrintable(title()), "", counter, -0.5, counter - 0.5, nSignalHeightBins, minSignalHeight, maxSignalHeight);
   m_histo = new TH2D(*histo);
   addHistogram(histo);
   for (QMap<unsigned short, int>::iterator it = m_indexMap.begin(); it != m_indexMap.end(); it++) {
@@ -79,8 +82,9 @@ void SignalHeight2DPlot::update()
   for (int xBin = 1; xBin <= hist->GetNbinsX(); xBin++) {
     for (int yBin = 1; yBin <= hist->GetNbinsY(); yBin++) {
       double bc = hist->GetBinContent(xBin, yBin);
-      double norm = m_normHisto->GetBinContent(xBin);
-      bc > 10 ? histogram()->SetBinContent(xBin, yBin, bc/norm) : histogram()->SetBinContent(xBin, yBin, 0.);
+      histogram()->SetBinContent(xBin, yBin, bc);
+//      double norm = m_normHisto->GetBinContent(xBin);
+//      bc > 10 ? histogram()->SetBinContent(xBin, yBin, bc/norm) : histogram()->SetBinContent(xBin, yBin, 0.);
     }
   }
 }
