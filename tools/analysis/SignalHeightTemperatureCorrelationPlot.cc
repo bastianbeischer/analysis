@@ -23,12 +23,12 @@ SignalHeightTemperatureCorrelationPlot::SignalHeightTemperatureCorrelationPlot(u
 , m_normHisto(0)
 {
   setTitle(QString("signal height temperature correlcation 0x%1").arg(m_sipmId, 0, 16));
-  const unsigned int nTemperatureBins = 20;
+  const unsigned int nTemperatureBins = 10;
   const double minTemperature = -5;
   const double maxTemperature = 15;
-  const unsigned int nSignalHeightBins = 30;
+  const unsigned int nSignalHeightBins = 70;
   const double minSignalHeight = 0;
-  const double maxSignalHeight = 6000;
+  const double maxSignalHeight = 7000;
   TH2D* histo = new TH2D(qPrintable(title()), "", nTemperatureBins, minTemperature, maxTemperature, nSignalHeightBins, minSignalHeight, maxSignalHeight);
   setAxisTitle("temperature /  #circC", "signal height / adc counts", "");
   m_histo = new TH2D(*histo);

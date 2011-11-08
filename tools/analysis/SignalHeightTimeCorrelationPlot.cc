@@ -25,9 +25,9 @@ SignalHeightTimeCorrelationPlot::SignalHeightTimeCorrelationPlot(unsigned short 
   int t2 = last.toTime_t();
   t2+= 120 - (t2 % 60);
   const unsigned int nTimeBins = 10;
-  const unsigned int nSignalHeightBins = 30;
+  const unsigned int nSignalHeightBins = 70;
   const double minSignalHeight = 0;
-  const double maxSignalHeight = 6000;
+  const double maxSignalHeight = 7000;
   TH2D* histo = new TH2D(qPrintable(title()), "", nTimeBins, t1, t2, nSignalHeightBins, minSignalHeight, maxSignalHeight);
   histo->GetXaxis()->SetTimeDisplay(1);
   histo->GetXaxis()->SetTimeFormat("%d-%H:%M");
