@@ -45,6 +45,9 @@ public:
 
   void writeSettings();
 
+  bool isTrackerId(unsigned short id);
+  bool isTofId(unsigned short id);
+  bool isTrdId(unsigned short id);
   SensorTypes::Type sensorForId(unsigned short id);
 
 private:

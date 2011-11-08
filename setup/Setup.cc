@@ -215,13 +215,29 @@ void Setup::writeSettings()
   m_settings->sync();
 }
 
+bool Setup::isTrackerId(unsigned short id)
+{
+  return ((0x3000 <= id && id < 0x3200) || (0x3300 <= id && id < 0x3400) || (0x3700 <= id && id < 0x3800) || (0x6000 <= id && id < 0x8000));
+}
+
+bool Setup::isTofId(unsigned short id)
+{
+  return (0x8000 <= id && id <= 0x803f);
+}
+
+bool Setup::isTrdId(unsigned short id)
+{
+  return ((0x3200 <= id && id < 0x3300) || (0x3400 <= id && id < 0x3700));
+}
+
 SensorTypes::Type Setup::sensorForId(unsigned short id)
 {
-  if ((0x3000 <= id && id < 0x3200) || (0x3300 <= id && id < 0x3400) || (0x3700 <= id && id < 0x3800) || (0x6000 <= id && id < 0x8000))
+  if (isTrackerId(id))
     return trackerSensorForId(id);
-  if (0x8000 <= id && id <= 0x803f)
+  if (isTofId(id))
     return tofSensorForId(id);
-  //TODO: TRD
+  if (isTrdId(id))
+    Q_ASSERT(false); //TODO: TRD
   Q_ASSERT(false);
   return SensorTypes::N_SENSOR_TYPES;
 }
