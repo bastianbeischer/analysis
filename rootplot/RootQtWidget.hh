@@ -5,12 +5,8 @@
 
 class QMouseEvent;
 
-class RootQtWidget :
-  public TQtWidget
-{
-  
+class RootQtWidget : public TQtWidget {
 Q_OBJECT
-
 public:
   RootQtWidget(QWidget* = 0);
   ~RootQtWidget();

@@ -5,17 +5,10 @@
 
 #include <QDateTime>
 
-class SignalHeightTimeCorrelationPlotCollection :
-  public PlotCollection
-{
-  
+class SignalHeightTimeCorrelationPlotCollection : public PlotCollection {
 public:
   SignalHeightTimeCorrelationPlotCollection(const QDateTime&, const QDateTime&);
   ~SignalHeightTimeCorrelationPlotCollection();
-  
-private:
-  
-  
 };
 
 #endif /* SignalHeightTimeCorrelationPlotCollection_hh */

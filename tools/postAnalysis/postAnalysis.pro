@@ -7,7 +7,6 @@ SUBDIRS  = \
   timeShift \
   photonTravelTime \
   tofEfficiency \
-  timeOverThreshold \
   timeOverThresholdScaling \
   timeResolution \
   mcComparison \

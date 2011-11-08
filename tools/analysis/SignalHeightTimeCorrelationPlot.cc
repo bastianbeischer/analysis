@@ -12,12 +12,12 @@
 #include <TH2D.h>
 #include <TH1D.h>
 
-SignalHeightTimeCorrelationPlot::SignalHeightTimeCorrelationPlot(unsigned short sipmId, QDateTime first, QDateTime last)
-: AnalysisPlot(Enums::SignalHeightTracker)
-, H2DProjectionPlot()
-, m_sipmId(sipmId)
-, m_histo(0)
-, m_normHisto(0)
+SignalHeightTimeCorrelationPlot::SignalHeightTimeCorrelationPlot(unsigned short sipmId, const QDateTime& first, const QDateTime& last)
+  : AnalysisPlot(Enums::SignalHeightTracker)
+  , H2DProjectionPlot()
+  , m_sipmId(sipmId)
+  , m_histo(0)
+  , m_normHisto(0)
 {
   setTitle(QString("signal height time correlcation 0x%1").arg(m_sipmId, 0, 16));
   int t1 = first.toTime_t();
@@ -46,7 +46,7 @@ SignalHeightTimeCorrelationPlot::~SignalHeightTimeCorrelationPlot()
 void SignalHeightTimeCorrelationPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
 {
   const Track* track = particle->track();
-  if(!track)
+  if (!track)
     return;
   ParticleInformation::Flags flags = particle->information()->flags();
   if (!(flags & ParticleInformation::Chi2Good))
@@ -69,15 +69,7 @@ void SignalHeightTimeCorrelationPlot::processEvent(const QVector<Hit*>&, const P
 void SignalHeightTimeCorrelationPlot::update()
 {
   TH2D* hist = m_histo;
-  for (int xBin = 1; xBin <= hist->GetNbinsX(); xBin++) {
-    for (int yBin = 1; yBin <= hist->GetNbinsY(); yBin++) {
-      const double bc = hist->GetBinContent(xBin, yBin);
-      histogram()->SetBinContent(xBin, yBin, bc);
-//      const double norm = m_normHisto->GetBinContent(xBin);
-//      if (norm > 0)
-//        histogram()->SetBinContent(xBin, yBin, bc/norm);
-//      else
-//        histogram()->SetBinContent(xBin, yBin, 0);
-    }
-  }
+  for (int xBin = 1; xBin <= hist->GetNbinsX(); xBin++)
+    for (int yBin = 1; yBin <= hist->GetNbinsY(); yBin++)
+      histogram()->SetBinContent(xBin, yBin, hist->GetBinContent(xBin, yBin));
 }

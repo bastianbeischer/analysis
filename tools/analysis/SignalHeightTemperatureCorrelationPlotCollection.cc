@@ -7,8 +7,8 @@
 
 #include <QLayout>
 
-SignalHeightTemperatureCorrelationPlotCollection::SignalHeightTemperatureCorrelationPlotCollection() :
-  PlotCollection(Enums::SignalHeightTracker)
+SignalHeightTemperatureCorrelationPlotCollection::SignalHeightTemperatureCorrelationPlotCollection()
+  : PlotCollection(Enums::SignalHeightTracker)
 {
   QStringList moduleIDs;
   Setup* setup = Setup::instance();

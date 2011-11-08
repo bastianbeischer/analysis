@@ -10,15 +10,11 @@ class Particle;
 class SimpleEvent;
 class TH1D;
 
-class SignalHeightTimeCorrelationPlot :
-  public AnalysisPlot,
-  public H2DProjectionPlot
-{
-  
+class SignalHeightTimeCorrelationPlot : public AnalysisPlot, public H2DProjectionPlot {
 public:
-  SignalHeightTimeCorrelationPlot(unsigned short sipmId, QDateTime first, QDateTime last);
+  SignalHeightTimeCorrelationPlot(unsigned short sipmId, const QDateTime& first, const QDateTime& last);
   ~SignalHeightTimeCorrelationPlot();
-  
+
   void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
   void update();
 

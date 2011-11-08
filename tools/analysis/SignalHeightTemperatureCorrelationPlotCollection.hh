@@ -3,17 +3,10 @@
 
 #include "PlotCollection.hh"
 
-class SignalHeightTemperatureCorrelationPlotCollection :
-  public PlotCollection
-{
-  
+class SignalHeightTemperatureCorrelationPlotCollection : public PlotCollection {
 public:
   SignalHeightTemperatureCorrelationPlotCollection();
   ~SignalHeightTemperatureCorrelationPlotCollection();
-  
-private:
-  
-  
 };
 
 #endif /* SignalHeightTemperatureCorrelationPlotCollection_hh */

@@ -69,16 +69,7 @@ void SignalHeightTemperatureCorrelationPlot::processEvent(const QVector<Hit*>&, 
 
 void SignalHeightTemperatureCorrelationPlot::update()
 {
-  TH2D* hist = m_histo;
-  for (int xBin = 1; xBin <= hist->GetNbinsX(); xBin++) {
-    for (int yBin = 1; yBin <= hist->GetNbinsY(); yBin++) {
-      const double bc = hist->GetBinContent(xBin, yBin);
-      histogram()->SetBinContent(xBin, yBin, bc);
-//      const double norm = m_normHisto->GetBinContent(xBin);
-//      if (norm > 0)
-//        histogram()->SetBinContent(xBin, yBin, bc/norm);
-//      else
-//        histogram()->SetBinContent(xBin, yBin, 0);
-    }
-  }
+  for (int xBin = 1; xBin <= m_histo->GetNbinsX(); xBin++)
+    for (int yBin = 1; yBin <= m_histo->GetNbinsY(); yBin++)
+      histogram()->SetBinContent(xBin, yBin, m_histo->GetBinContent(xBin, yBin));
 }

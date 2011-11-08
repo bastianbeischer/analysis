@@ -3,19 +3,13 @@
 
 #include <QWidget>
 
-class TOFChannelSelectionWidget :
-  public QWidget
-{
-  
-  Q_OBJECT
-
+class TOFChannelSelectionWidget : public QWidget {
+Q_OBJECT
 public:
   TOFChannelSelectionWidget(const QStringList&, QWidget* = 0);
   ~TOFChannelSelectionWidget();
-  
 signals:
   void channelChanged(int);
-
 };
 
 #endif /* TOFChannelSelectionWidget_hh */

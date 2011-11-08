@@ -10,8 +10,7 @@ class Particle;
 class SimpleEvent;
 class TH1D;
 
-class SignalHeight2DPlot : public AnalysisPlot, public H2DProjectionPlot
-{
+class SignalHeight2DPlot : public AnalysisPlot, public H2DProjectionPlot {
 public:
   SignalHeight2DPlot();
   ~SignalHeight2DPlot();

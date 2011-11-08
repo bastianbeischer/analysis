@@ -16,17 +16,15 @@ class DetectorElement;
 class QSettings;
 class MagneticField;
 
-typedef QMap<double,Layer*>::const_iterator LayerIterator ;
-typedef QMap<unsigned short,DetectorElement*>::const_iterator ElementIterator;
+typedef QMap<double, Layer*>::const_iterator LayerIterator;
+typedef QMap<unsigned short, DetectorElement*>::const_iterator ElementIterator;
 
-class Setup
-{
- 
+class Setup {
 public:
   ~Setup();
 
   static Setup* instance();
- 
+
 public:
   Layer* layer(double z);
   DetectorElement* element(unsigned short id);
