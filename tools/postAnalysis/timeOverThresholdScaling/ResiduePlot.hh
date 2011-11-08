@@ -8,7 +8,7 @@ class PostAnalysisCanvas;
 
 class ResiduePlot : public PostAnalysisPlot, public H1DPlot {
 public:
-  ResiduePlot(PostAnalysisCanvas* canvas);
+  ResiduePlot(PostAnalysisCanvas*, const QString& title);
   virtual ~ResiduePlot();
 private:
   const static double s_reference;
