@@ -1,5 +1,5 @@
-#ifndef SignalHeightTimeCor_hh
-#define SignalHeightTimeCor_hh
+#ifndef SignalHeightTimeCorrelation_hh
+#define SignalHeightTimeCorrelation_hh
 
 #include "PostAnalysisCanvas.hh"
 #include "PostAnalysisPlot.hh"
@@ -11,11 +11,11 @@
 #include <TGraphErrors.h>
 #include <TH2D.h>
 
-class SignalHeightTimeCor : public QObject, public PostAnalysisPlot, public GraphPlot {
+class SignalHeightTimeCorrelation : public QObject, public PostAnalysisPlot, public GraphPlot {
   Q_OBJECT
 public:
-  SignalHeightTimeCor(PostAnalysisCanvas*, unsigned short sipmId);
-  virtual ~SignalHeightTimeCor();
+  SignalHeightTimeCorrelation(PostAnalysisCanvas*, unsigned short sipmId);
+  virtual ~SignalHeightTimeCorrelation();
 private:
   TGraphErrors* meanGraph(unsigned short sipmId, TH2D*);
   void save(unsigned short sipmId);

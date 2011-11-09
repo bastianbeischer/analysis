@@ -7,9 +7,8 @@
 
 class TCanvas;
 
-class PostAnalysisPlotCollection : public QObject, public PostAnalysisPlot
-{
-  Q_OBJECT
+class PostAnalysisPlotCollection : public QObject, public PostAnalysisPlot {
+Q_OBJECT
 public:
   PostAnalysisPlotCollection();
   virtual ~PostAnalysisPlotCollection();

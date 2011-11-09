@@ -1,7 +1,7 @@
 #include "SignalHeight2DNormalizedPlot.hh"
 
 #include <TH2D.h>
-#include <Taxis.h>
+#include <TAxis.h>
 #include <TArrayD.h>
 
 SignalHeight2DNormalizedPlot::SignalHeight2DNormalizedPlot()

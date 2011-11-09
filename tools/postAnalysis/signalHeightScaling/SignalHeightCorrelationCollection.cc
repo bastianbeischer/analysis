@@ -2,9 +2,9 @@
 
 #include "Setup.hh"
 #include "DetectorElement.hh"
-#include "SignalHeightTempCor.hh"
-#include "SignalHeightTimeCor.hh"
-#include "SignalHeightTimeCor2D.hh"
+#include "SignalHeightTempCorrelation.hh"
+#include "SignalHeightTimeCorrelation.hh"
+#include "SignalHeightTimeCorrelation2D.hh"
 #include "TrackerSipmSelectionWidget.hh"
 #include "PostAnalysisCanvas.hh"
 
@@ -27,17 +27,17 @@ SignalHeightCorrelationCollection::SignalHeightCorrelationCollection(Type type, 
       if (type == Time) {
         setTitle("signal height time dependent");
         const QString& plotName = QString("signal height time correlation 0x%1 canvas").arg(id, 0, 16);
-        plot = new SignalHeightTimeCor(PostAnalysisCanvas::fromFile(file, plotName), id);
+        plot = new SignalHeightTimeCorrelation(PostAnalysisCanvas::fromFile(file, plotName), id);
       }
       if (type == Time2D) {
         setTitle("signal height 2d time dependent");
         const QString& plotName = QString("signal height time correlation 0x%1 canvas").arg(id, 0, 16);
-        plot = new SignalHeightTimeCor2D(PostAnalysisCanvas::fromFile(file, plotName), id);
+        plot = new SignalHeightTimeCorrelation2D(PostAnalysisCanvas::fromFile(file, plotName), id);
       }
       if (type == Temperature) {
         setTitle("signal height temp. dependent");
         const QString& plotName = QString("signal height temperature correlation 0x%1 canvas").arg(id, 0, 16);
-        plot = new SignalHeightTempCor(PostAnalysisCanvas::fromFile(file, plotName), id);
+        plot = new SignalHeightTempCorrelation(PostAnalysisCanvas::fromFile(file, plotName), id);
       }
       addPlot(plot);
     }

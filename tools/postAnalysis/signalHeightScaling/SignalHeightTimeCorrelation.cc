@@ -1,4 +1,4 @@
-#include "SignalHeightTimeCor.hh"
+#include "SignalHeightTimeCorrelation.hh"
 
 #include "Corrections.hh"
 
@@ -21,10 +21,10 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 
-SignalHeightTimeCor::SignalHeightTimeCor(PostAnalysisCanvas* canvas, unsigned short sipmId)
-: PostAnalysisPlot()
-, GraphPlot()
-, m_sipmId(sipmId)
+SignalHeightTimeCorrelation::SignalHeightTimeCorrelation(PostAnalysisCanvas* canvas, unsigned short sipmId)
+  : PostAnalysisPlot()
+  , GraphPlot()
+  , m_sipmId(sipmId)
 {
   TH2D* histogram = canvas->histograms2D().at(0);
   QString title = QString(canvas->name()).replace("canvas", "graph");
@@ -50,11 +50,11 @@ SignalHeightTimeCor::SignalHeightTimeCor(PostAnalysisCanvas* canvas, unsigned sh
   connect(saveAllButton, SIGNAL(clicked()), this, SLOT(saveAll()));
 }
 
-SignalHeightTimeCor::~SignalHeightTimeCor()
+SignalHeightTimeCorrelation::~SignalHeightTimeCorrelation()
 {
 }
 
-TGraphErrors* SignalHeightTimeCor::meanGraph(unsigned short, TH2D* histogram) 
+TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short, TH2D* histogram) 
 {
   const double minAdc = 0;
   const int minEntries = 100;
@@ -80,18 +80,18 @@ TGraphErrors* SignalHeightTimeCor::meanGraph(unsigned short, TH2D* histogram)
   return graph;
 }
 
-void SignalHeightTimeCor::save(unsigned short) 
+void SignalHeightTimeCorrelation::save(unsigned short) 
 {
   Q_ASSERT(false);
   //todo save for tracker corrections
 }
 
-void SignalHeightTimeCor::save()
+void SignalHeightTimeCorrelation::save()
 {
   save(m_sipmId);
 }
 
-void SignalHeightTimeCor::saveAll()
+void SignalHeightTimeCorrelation::saveAll()
 {
   Q_ASSERT(false);
   //todo save for tracker corrections

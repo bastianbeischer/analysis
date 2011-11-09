@@ -1,4 +1,4 @@
-#include "SignalHeightTimeCor2D.hh"
+#include "SignalHeightTimeCorrelation2D.hh"
 
 #include "Corrections.hh"
 
@@ -19,10 +19,10 @@
 #include <QDebug>
 #include <QStringList>
 
-SignalHeightTimeCor2D::SignalHeightTimeCor2D(PostAnalysisCanvas* canvas, unsigned short sipmId)
-: PostAnalysisPlot()
-, H2DProjectionPlot()
-, m_sipmId(sipmId)
+SignalHeightTimeCorrelation2D::SignalHeightTimeCorrelation2D(PostAnalysisCanvas* canvas, unsigned short sipmId)
+  : PostAnalysisPlot()
+  , H2DProjectionPlot()
+  , m_sipmId(sipmId)
 {
   TH2D* histogram = canvas->histograms2D().at(0);
   QString title = QString(canvas->name()).replace("canvas", "histogram");
@@ -30,6 +30,6 @@ SignalHeightTimeCor2D::SignalHeightTimeCor2D(PostAnalysisCanvas* canvas, unsigne
   addHistogram(new TH2D(*histogram));
 }
 
-SignalHeightTimeCor2D::~SignalHeightTimeCor2D()
+SignalHeightTimeCorrelation2D::~SignalHeightTimeCorrelation2D()
 {
 }

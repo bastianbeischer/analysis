@@ -16,9 +16,9 @@
 #include <QStringList>
 
 SignalHeightProjection::SignalHeightProjection(PostAnalysisCanvas* canvas, unsigned short id)
-: PostAnalysisPlot()
-, H1DPlot()
-, m_id(id)
+  : PostAnalysisPlot()
+  , H1DPlot()
+  , m_id(id)
 {
   QString channelString = QString("0x%1").arg(m_id, 0, 16);
   TH2D* histogram2D = canvas->histograms2D().at(0);

@@ -6,8 +6,8 @@
 #include <QDebug>
 
 PostAnalysisPlotCollection::PostAnalysisPlotCollection()
-: QObject()
-, m_selectedPlot(0)
+  : QObject()
+  , m_selectedPlot(0)
 {
   QWidget* widget = new QWidget;
   QVBoxLayout* layout = new QVBoxLayout;
@@ -21,7 +21,8 @@ PostAnalysisPlotCollection::~PostAnalysisPlotCollection()
   qDeleteAll(m_plots);
 }
 
-void PostAnalysisPlotCollection::addPlot(PostAnalysisPlot* plot) {
+void PostAnalysisPlotCollection::addPlot(PostAnalysisPlot* plot)
+{
   m_plots.append(plot);
 }
 

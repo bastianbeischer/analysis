@@ -8,7 +8,8 @@
 
 class SignalHeightCorrelationPlotCollection : public PlotCollection {
 public:
-  SignalHeightCorrelationPlotCollection(SignalHeightCorrelationPlot::SensorType, const QDateTime& = QDateTime(), const QDateTime& = QDateTime());
+  SignalHeightCorrelationPlotCollection(SignalHeightCorrelationPlot::SensorType);
+  SignalHeightCorrelationPlotCollection(SignalHeightCorrelationPlot::SensorType, const QDateTime& first, const QDateTime& last);
   ~SignalHeightCorrelationPlotCollection();
 };
 

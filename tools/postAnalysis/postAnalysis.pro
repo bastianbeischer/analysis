@@ -16,4 +16,5 @@ SUBDIRS  = \
   efficiencyCorrection \
   angularDistribution \
   fluxAnalysisTool \
+  signalHeightScaling \
   browser

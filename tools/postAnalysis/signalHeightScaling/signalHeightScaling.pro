@@ -31,9 +31,9 @@ CLASSES = \
   SignalHeightProjection \
   SignalHeightProjectionCollection \
   SignalHeightCorrelationCollection \
-  SignalHeightTempCor \
-  SignalHeightTimeCor \
-  SignalHeightTimeCor2D
+  SignalHeightTempCorrelation \
+  SignalHeightTimeCorrelation \
+  SignalHeightTimeCorrelation2D
 
 SOURCES = \
   main.cc

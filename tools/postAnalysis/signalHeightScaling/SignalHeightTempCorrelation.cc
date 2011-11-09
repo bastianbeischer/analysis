@@ -1,4 +1,4 @@
-#include "SignalHeightTempCor.hh"
+#include "SignalHeightTempCorrelation.hh"
 
 #include "Corrections.hh"
 
@@ -18,10 +18,10 @@
 #include <QDebug>
 #include <QStringList>
 
-SignalHeightTempCor::SignalHeightTempCor(PostAnalysisCanvas* canvas, unsigned short sipmId)
-: PostAnalysisPlot()
-, GraphPlot()
-, m_sipmId(sipmId)
+SignalHeightTempCorrelation::SignalHeightTempCorrelation(PostAnalysisCanvas* canvas, unsigned short sipmId)
+  : PostAnalysisPlot()
+  , GraphPlot()
+  , m_sipmId(sipmId)
 {
   TH2D* histogram = canvas->histograms2D().at(0);
   QString title = QString(canvas->name()).replace("canvas", "graph");
@@ -35,11 +35,11 @@ SignalHeightTempCor::SignalHeightTempCor(PostAnalysisCanvas* canvas, unsigned sh
   addLatex(latex);
 }
 
-SignalHeightTempCor::~SignalHeightTempCor()
+SignalHeightTempCorrelation::~SignalHeightTempCorrelation()
 {
 }
 
-TGraphErrors* SignalHeightTempCor::meanGraph(TH2D* histogram) 
+TGraphErrors* SignalHeightTempCorrelation::meanGraph(TH2D* histogram) 
 {
   const double minAdc = 0;
   const int minEntries = 10;
