@@ -102,8 +102,7 @@
 #include "FluxCollection.hh"
 #include "EventTimeDifferencePlot.hh"
 #include "MeasurementTimeDistributionPlot.hh"
-#include "SignalHeightTimeCorrelationPlotCollection.hh"
-#include "SignalHeightTemperatureCorrelationPlotCollection.hh"
+#include "SignalHeightCorrelationPlotCollection.hh"
 
 #include <TPad.h>
 #include <TCanvas.h>
@@ -293,8 +292,8 @@ void Analysis::setupPlots()
   if (m_analysisSetting.analysisTopics & Enums::SignalHeightTracker) {
     addPlot(new SignalHeight2DPlot);
     addPlot(new SignalHeight2DNormalizedPlot);
-    addPlot(new SignalHeightTimeCorrelationPlotCollection(first, last));
-    addPlot(new SignalHeightTemperatureCorrelationPlotCollection());
+    addPlot(new SignalHeightCorrelationPlotCollection(SignalHeightCorrelationPlot::Temperature));
+    addPlot(new SignalHeightCorrelationPlotCollection(SignalHeightCorrelationPlot::Time, first, last));
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tracker)
