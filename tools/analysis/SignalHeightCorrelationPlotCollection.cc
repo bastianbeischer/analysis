@@ -24,7 +24,7 @@ SignalHeightCorrelationPlotCollection::SignalHeightCorrelationPlotCollection(Sig
       TH2D* histogram = 0;
       if (type == SignalHeightCorrelationPlot::Time) {
         setTitle("time correlation - all channels");
-        const QString& title = QString("signal height time correlcation 0x%1").arg(id, 0, 16);
+        const QString& title = QString("signal height time correlation 0x%1").arg(id, 0, 16);
         int t1 = first.toTime_t();
         t1-= (t1 % 60) + 60;
         int t2 = last.toTime_t();
@@ -33,21 +33,21 @@ SignalHeightCorrelationPlotCollection::SignalHeightCorrelationPlotCollection(Sig
         const unsigned int nSignalHeightBins = 70;
         const double minSignalHeight = 0;
         const double maxSignalHeight = 7000;
-        histogram = new TH2D(qPrintable(title), "", nTimeBins, t1, t2, nSignalHeightBins, minSignalHeight, maxSignalHeight);
+        histogram = new TH2D(qPrintable(title), qPrintable(title), nTimeBins, t1, t2, nSignalHeightBins, minSignalHeight, maxSignalHeight);
         histogram->GetXaxis()->SetTimeDisplay(1);
         histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");
         histogram->GetXaxis()->SetTitle("time");
         histogram->GetYaxis()->SetTitle("signal height / adc counts");
       } else if (type == SignalHeightCorrelationPlot::Temperature) {
         setTitle("temperature correlation - all channels");
-        const QString& title = QString("signal height temperature correlcation 0x%1").arg(id, 0, 16);
+        const QString& title = QString("signal height temperature correlation 0x%1").arg(id, 0, 16);
         const unsigned int nTemperatureBins = 10;
         const double minTemperature = -5;
         const double maxTemperature = 15;
         const unsigned int nSignalHeightBins = 70;
         const double minSignalHeight = 0;
         const double maxSignalHeight = 7000;
-        histogram = new TH2D(qPrintable(title), "", nTemperatureBins, minTemperature, maxTemperature, nSignalHeightBins, minSignalHeight, maxSignalHeight);
+        histogram = new TH2D(qPrintable(title), qPrintable(title), nTemperatureBins, minTemperature, maxTemperature, nSignalHeightBins, minSignalHeight, maxSignalHeight);
         histogram->GetXaxis()->SetTitle("temperature /  #circC");
         histogram->GetYaxis()->SetTitle("signal height / adc counts");
       } else {

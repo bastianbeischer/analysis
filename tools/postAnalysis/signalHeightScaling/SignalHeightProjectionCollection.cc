@@ -4,6 +4,7 @@
 #include "DetectorElement.hh"
 #include "SignalHeightProjection.hh"
 #include "TrackerSipmSelectionWidget.hh"
+#include "PostAnalysisCanvas.hh"
 
 #include <QLayout>
 
@@ -17,7 +18,7 @@ SignalHeightProjectionCollection::SignalHeightProjectionCollection(PostAnalysisC
     DetectorElement* element = *elementIt;
     if (element->type() == DetectorElement::tracker) {
       moduleIDs.append(qPrintable(QString("0x%1").arg(element->id(), 0, 16)));
-      addPlot(new SignalHeightProjection(canvas, element->id()), canvas);
+      addPlot(new SignalHeightProjection(canvas, element->id()));
     }
   }
   TrackerSipmSelectionWidget* widget = new TrackerSipmSelectionWidget(moduleIDs);

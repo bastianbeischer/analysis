@@ -3,6 +3,8 @@
 
 #include "PostAnalysisPlotCollection.hh"
 
+class PostAnalysisCanvas;
+
 class SignalHeightProjectionCollection : public PostAnalysisPlotCollection {
 public:
   SignalHeightProjectionCollection(PostAnalysisCanvas*);

@@ -6,7 +6,6 @@
 #include <QObject>
 
 class TCanvas;
-class PostAnalysisCanvas;
 
 class PostAnalysisPlotCollection : public QObject, public PostAnalysisPlot
 {
@@ -15,12 +14,11 @@ public:
   PostAnalysisPlotCollection();
   virtual ~PostAnalysisPlotCollection();
   
-  void addPlot(PostAnalysisPlot*, PostAnalysisCanvas*);
+  void addPlot(PostAnalysisPlot*);
   virtual void draw(TCanvas*);
   virtual bool isPostAnalysisPlotCollection();
 
   void unzoom();
-  void saveForPostAnalysis(TCanvas*);
   void positionChanged(double, double);
 
 protected slots:
@@ -29,7 +27,6 @@ protected slots:
 private:
   int m_selectedPlot;
   QVector<PostAnalysisPlot*> m_plots;
-  QVector<PostAnalysisCanvas*> m_canvas;
 };
 
 #endif /* PostAnalysisPlotCollection_hh */

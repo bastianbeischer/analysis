@@ -24,6 +24,7 @@ SignalHeightCorrelationPlot::SignalHeightCorrelationPlot(unsigned short id, Sens
 , m_histo(histogram)
 , m_normHisto(0)
 {
+  setTitle(histogram->GetName());
   setAxisTitle(histogram->GetXaxis()->GetTitle(), histogram->GetYaxis()->GetTitle(), "");
   addHistogram(new TH2D(*histogram));
   m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", histogram->GetNbinsX(), histogram->GetXaxis()->GetXbins()->GetArray());

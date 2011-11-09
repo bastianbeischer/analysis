@@ -1,7 +1,6 @@
 #include "PostAnalysisPlotCollection.hh"
 
 #include "RootQtWidget.hh"
-#include "PostAnalysisCanvas.hh"
 
 #include <QLayout>
 #include <QDebug>
@@ -22,9 +21,8 @@ PostAnalysisPlotCollection::~PostAnalysisPlotCollection()
   qDeleteAll(m_plots);
 }
 
-void PostAnalysisPlotCollection::addPlot(PostAnalysisPlot* plot, PostAnalysisCanvas* canvas) {
+void PostAnalysisPlotCollection::addPlot(PostAnalysisPlot* plot) {
   m_plots.append(plot);
-  m_canvas.append(canvas);
 }
 
 void PostAnalysisPlotCollection::unzoom()
@@ -64,20 +62,10 @@ void PostAnalysisPlotCollection::draw(TCanvas* can)
   gPad->Update();
 }
 
-void PostAnalysisPlotCollection::saveForPostAnalysis(TCanvas* canvas)
-{
-  canvas->cd();
-  for (int i = 0; i < m_plots.size(); ++i) {
-    m_plots[i]->draw(canvas);
-    canvas->SetName(qPrintable(m_plots[i]->title() + " canvas"));
-    canvas->Write();
-  }
-}
-
 void PostAnalysisPlotCollection::selectPlot(int plot)
 {
   m_selectedPlot = plot;
-  draw(m_canvas.at(plot)->canvas());
+  draw(gPad->GetCanvas());
 }
 
 bool PostAnalysisPlotCollection::isPostAnalysisPlotCollection()

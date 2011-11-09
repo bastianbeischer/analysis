@@ -3,9 +3,7 @@
 #include "PostAnalysisPlot.hh"
 #include "PostAnalysisCanvas.hh"
 #include "SignalHeightProjectionCollection.hh"
-#include "SignalHeightTempCorCollection.hh"
-#include "SignalHeightTimeCorCollection.hh"
-#include "SignalHeightTimeCor2DCollection.hh"
+#include "SignalHeightCorrelationCollection.hh"
 
 #include <TCanvas.h>
 #include <TFile.h>
@@ -30,8 +28,8 @@ void MainWindow::setupAnalysis()
   gROOT->cd();
   canvas = addCanvas(&file, "signal height 2d canvas");
   addPlot(new SignalHeightProjectionCollection(canvas));
-  addPlot(new SignalHeightTempCorCollection(&file));
-  addPlot(new SignalHeightTimeCor2DCollection(&file));
-  addPlot(new SignalHeightTimeCorCollection(&file));
+  addPlot(new SignalHeightCorrelationCollection(SignalHeightCorrelationCollection::Time2D, &file));
+  addPlot(new SignalHeightCorrelationCollection(SignalHeightCorrelationCollection::Time, &file));
+  addPlot(new SignalHeightCorrelationCollection(SignalHeightCorrelationCollection::Temperature, &file));
   file.Close();
 }

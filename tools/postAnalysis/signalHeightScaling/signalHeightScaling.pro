@@ -30,12 +30,10 @@ CLASSES = \
   MainWindow \
   SignalHeightProjection \
   SignalHeightProjectionCollection \
+  SignalHeightCorrelationCollection \
   SignalHeightTempCor \
-  SignalHeightTempCorCollection \
   SignalHeightTimeCor \
-  SignalHeightTimeCorCollection \
-  SignalHeightTimeCor2D \
-  SignalHeightTimeCor2DCollection
+  SignalHeightTimeCor2D
 
 SOURCES = \
   main.cc
