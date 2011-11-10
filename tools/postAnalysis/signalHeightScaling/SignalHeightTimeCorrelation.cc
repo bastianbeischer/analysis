@@ -63,13 +63,16 @@ TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short, TH2D* histo
   for (int bin = 0; bin < histogram->GetNbinsX(); ++bin) {
     TH1* projectionHistogram = histogram->ProjectionY("_py", bin + 1, bin + 1);
     int nEntries = projectionHistogram->GetEntries();
-    double mean = projectionHistogram->GetMean();
+    TF1* function = new TF1(qPrintable(QString(histogram->GetTitle()) + "Function"), "landau", histogram->GetXaxis()->GetXmin(), histogram->GetXaxis()->GetXmax());
+    projectionHistogram->Fit(function, "EQN0");
+    double mpv = function->GetParameter(1);
     double sigma = projectionHistogram->GetRMS();
+    delete function;
 
-    double adc = mean;
+    double adc = mpv;
     double adcError = sigma / sqrt(nEntries);
     double temperature = histogram->GetBinCenter(bin+1);
-    double temperatureError = histogram->GetBinWidth(bin+1)/sqrt(12);
+    double temperatureError = histogram->GetBinWidth(bin+1) / sqrt(12);
 
     if (adc > minAdc && nEntries > minEntries) {
       int nPoints = graph->GetN();
