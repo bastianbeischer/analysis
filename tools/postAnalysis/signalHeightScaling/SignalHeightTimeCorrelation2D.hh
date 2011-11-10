@@ -13,10 +13,12 @@
 #include <TF1.h>
 #include <TH2D.h>
 
-class SignalHeightTimeCorrelation2D : public PostAnalysisPlot, public H2DProjectionPlot {
+class SignalHeightTimeCorrelation2D : public H2DProjectionPlot, public PostAnalysisPlot {
+Q_OBJECT
 public:
   SignalHeightTimeCorrelation2D(PostAnalysisCanvas*, unsigned short sipmId);
   virtual ~SignalHeightTimeCorrelation2D();
+  virtual void updateProjection();
 private:
   unsigned short m_sipmId;
 };
