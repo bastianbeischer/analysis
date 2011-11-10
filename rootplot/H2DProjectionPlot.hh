@@ -9,6 +9,9 @@ class ProjectionControlWidget;
 class RootQtWidget;
 class TH1D;
 class TLine;
+class TF1;
+class TLegend;
+class TLatex;
 
 class H2DProjectionPlot : public QObject, public H2DPlot {
 Q_OBJECT
@@ -20,11 +23,19 @@ public:
   ~H2DProjectionPlot();
 
 public:
-  void positionChanged(double, double);
+  virtual void positionChanged(double, double);
+  void addProjectionLatex(TLatex*);
+  TLatex* projectionLatex(int i = 0);
+  void addProjectionLegend(TLegend*);
+  TLegend* projectionLegend(int i = 0);
+  void addProjectionFunction(TF1*);
+  TF1* projectionFunction(int i = 0);
 
 protected:
   ProjectionControlWidget* controlWidget() const {return m_controlWidget;}
   RootQtWidget* projectionWidget() const {return m_projectionWidget;}
+  TH1D* projection();
+  virtual void updateProjection();
 
 public slots:
   void setProjectionType(ProjectionType type);
@@ -39,6 +50,10 @@ private:
   RootQtWidget* m_projectionWidget;
   ProjectionType m_type;
   TLine* m_line;
+  int m_bin;
+  QVector<TLatex*> m_projectionLatex;
+  QVector<TLegend*> m_projectionLegend;
+  QVector<TF1*> m_projectionFunction;
 };
 
 #endif /* H2DProjectionPlot_hh */

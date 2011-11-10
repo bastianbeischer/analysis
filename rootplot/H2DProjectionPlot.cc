@@ -5,10 +5,14 @@
 
 #include <QVBoxLayout>
 #include <QSpinBox>
+#include <QDebug>
 
 #include <TPad.h>
 #include <TH2D.h>
 #include <TLine.h>
+#include <TLegend.h>
+#include <TLatex.h>
+#include <TF1.h>
 
 H2DProjectionPlot::H2DProjectionPlot()
   : QObject()
@@ -19,6 +23,10 @@ H2DProjectionPlot::H2DProjectionPlot()
   , m_projectionWidget(new RootQtWidget)
   , m_type(NoProjection)
   , m_line(0)
+  , m_bin(-1)
+  , m_projectionLatex()
+  , m_projectionLegend()
+  , m_projectionFunction()
 {
   m_projectionWidget->hide();
 
@@ -53,16 +61,35 @@ void H2DProjectionPlot::setProjectionType(ProjectionType type)
   }
 }
 
+TH1D* H2DProjectionPlot::projection()
+{
+  switch(m_type) {
+    case ProjectionOnX:
+      return m_projectionHistX;
+    case ProjectionOnY:
+      return m_projectionHistY;
+    default:
+      Q_ASSERT(false);
+      return 0;
+  }
+}
+
+void H2DProjectionPlot::updateProjection()
+{
+}
+
 void H2DProjectionPlot::positionChanged(double posX, double posY)
 {
-  int numberOfBins = m_controlWidget->spinBox()->value();
   RootQtWidget* widget = projectionWidget();
   if (widget->isVisible()) {
     if (!m_line) {
       m_line = new TLine;
       m_line->Draw();
     }
+    bool projectionChanged = false;
     int bin = histogram()->FindBin(posX,posY);
+    if (m_bin != bin)
+      projectionChanged = true;
     int binx, biny, binz;
     histogram()->GetBinXYZ(bin, binx, biny, binz);
     TH1D* proj = 0;
@@ -70,7 +97,8 @@ void H2DProjectionPlot::positionChanged(double posX, double posY)
     double y = qBound(gPad->GetUymin(), posY, gPad->GetUymax());
     switch(m_type) {
     case ProjectionOnX:
-      m_projectionHistX = histogram()->ProjectionX(qPrintable(title() + "_px"), biny - numberOfBins/2, biny + numberOfBins/2);
+      if (projectionChanged == true)
+        m_projectionHistX = histogram()->ProjectionX(qPrintable(title() + "_px"), biny, biny);
       proj = m_projectionHistX;
       m_line->SetX1(gPad->GetUxmin());
       m_line->SetX2(gPad->GetUxmax());
@@ -78,7 +106,8 @@ void H2DProjectionPlot::positionChanged(double posX, double posY)
       m_line->SetY2(y);
       break;
     case ProjectionOnY:
-      m_projectionHistY = histogram()->ProjectionY(qPrintable(title() + "_py"), binx - numberOfBins/2, binx + numberOfBins/2);
+      if (projectionChanged == true)
+        m_projectionHistY = histogram()->ProjectionY(qPrintable(title() + "_py"), binx, binx);
       proj = m_projectionHistY;
       m_line->SetX1(x);
       m_line->SetX2(x);
@@ -89,16 +118,25 @@ void H2DProjectionPlot::positionChanged(double posX, double posY)
       Q_ASSERT(false);
       break;
     }
+    if (projectionChanged == true)
+      updateProjection();
     TVirtualPad* prevPad = gPad;
     TCanvas* can = widget->GetCanvas();
     can->cd();
     can->Clear();
     proj->Draw();
+    foreach(TLatex* latex, m_projectionLatex)
+    latex->Draw("SAME");
+    foreach(TLegend* legend, m_projectionLegend)
+    legend->Draw("SAME");
+    foreach(TF1* function, m_projectionFunction)
+    function->Draw("SAME");
     can->Modified();
     can->Update();
     prevPad->cd();
     gPad->Modified();
     gPad->Update();
+    m_bin = bin;
   }
 }
 
@@ -134,3 +172,41 @@ void H2DProjectionPlot::setLogZ(int b)
   can->Update();
   prevPad->cd();
 }
+
+void H2DProjectionPlot::addProjectionLatex(TLatex* latex)
+{
+  Q_ASSERT(latex);
+  m_projectionLatex.append(latex);
+}
+
+TLatex* H2DProjectionPlot::projectionLatex(int i)
+{
+  Q_ASSERT(0 <= i && i < m_projectionLatex.size());
+  return m_projectionLatex[i];
+}
+
+void H2DProjectionPlot::addProjectionLegend(TLegend* legend)
+{
+  Q_ASSERT(legend);
+  legend->SetFillColor(10);
+  m_projectionLegend.append(legend);
+}
+
+TLegend* H2DProjectionPlot::projectionLegend(int i)
+{
+  Q_ASSERT(0 <= i && i < m_projectionLegend.size());
+  return m_projectionLegend[i];
+}
+
+void H2DProjectionPlot::addProjectionFunction(TF1* function)
+{
+  Q_ASSERT(function);
+  m_projectionFunction.append(function);
+}
+
+TF1* H2DProjectionPlot::projectionFunction(int i)
+{
+  Q_ASSERT(0 <= i && i < m_projectionFunction.size());
+  return m_projectionFunction[i];
+}
+
