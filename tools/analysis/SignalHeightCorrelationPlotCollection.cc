@@ -62,7 +62,7 @@ SignalHeightCorrelationPlotCollection::SignalHeightCorrelationPlotCollection(Sig
       int t2 = last.toTime_t();
       t2+= 120 - (t2 % 60);
       const unsigned int nTimeBins = 10;
-      const unsigned int nSignalHeightBins = 70;
+      const unsigned int nSignalHeightBins = 35;
       const double minSignalHeight = 0;
       const double maxSignalHeight = 7000;
       TH2D* histogram = new TH2D(qPrintable(title), qPrintable(title), nTimeBins, t1, t2, nSignalHeightBins, minSignalHeight, maxSignalHeight);
