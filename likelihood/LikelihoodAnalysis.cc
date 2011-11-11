@@ -55,7 +55,7 @@ LikelihoodAnalysis::LikelihoodAnalysis(Enums::LikelihoodVariables likelihoods, E
   , m_minimizer(new ROOT::Math::BrentMinimizer1D)
   , m_function(new LogLikelihoodFunction(this, &LikelihoodAnalysis::eval))
   , m_minima()
-  , m_minimum()
+  , m_indexOfGlobalMinimum(-1)
   , m_particle(0)
   , m_mg(0)
 {
@@ -83,32 +83,44 @@ LikelihoodAnalysis::~LikelihoodAnalysis()
   qDeleteAll(m_likelihoods);
 }
 
+int LikelihoodAnalysis::indexOfGlobalMinimum() const
+{
+  return m_indexOfGlobalMinimum;
+}
+
+const QVector<QPointF>& LikelihoodAnalysis::minima() const
+{
+  return m_minima;
+}
+
+const QVector<Enums::Particle>& LikelihoodAnalysis::particles() const
+{
+  return m_particles;
+}
+
 void LikelihoodAnalysis::identify(Particle* particle)
 {
   m_particle = particle;
   bool goodInterpolation = true;
-  m_minimum.setX(DBL_MAX);
-  m_minimum.setY(DBL_MAX);
+  m_indexOfGlobalMinimum = 0;
 
   QVector<Enums::Particle>::ConstIterator particleIt = m_particles.begin();
   QVector<Enums::Particle>::ConstIterator particleEnd = m_particles.end();
   QVector<QPointF>::Iterator pointIt = m_minima.begin();
-  while (particleIt != particleEnd) {
+  for (int it = 0; particleIt != particleEnd; ++it, ++particleIt, ++pointIt) {
     m_function->setParameters(particle, *particleIt, &goodInterpolation);
     if (m_minimizer->Minimize(100)) {
-      if (m_minimizer->FValMinimum() < m_minimum.y()) {
-        m_minimum.setX(m_minimizer->XMinimum());
-        m_minimum.setY(m_minimizer->FValMinimum());
-      }
       pointIt->setX(m_minimizer->XMinimum());
       pointIt->setY(m_minimizer->FValMinimum());
+      if (it > 0 && m_minimizer->FValMinimum() < m_minima[m_indexOfGlobalMinimum].y())
+        m_indexOfGlobalMinimum = it;
     } else {
       pointIt->setX(0);
       pointIt->setY(0);
     }
-    ++particleIt;
-    ++pointIt;
   }
+  particle->setVariable(KineticVariable(m_particles[m_indexOfGlobalMinimum],
+    Enums::AbsoluteRigidity, m_minima[m_indexOfGlobalMinimum].x()));
 }
 
 double LikelihoodAnalysis::eval(const Particle* particle, const KineticVariable& hypothesis, bool* goodInterpolation) const
@@ -151,7 +163,7 @@ TMultiGraph* LikelihoodAnalysis::graph() const
   TGraph* minimaGraph = new TGraph;
   minimaGraph->SetMarkerStyle(20);
   for (int i = 0; i < m_minima.count(); ++i)
-    if (!qFuzzyCompare(m_minima[i].x(), m_minimum.x()) && !qFuzzyCompare(m_minima[i].y(), m_minimum.y()))
+    if (i != m_indexOfGlobalMinimum)
       minimaGraph->SetPoint(minimaGraph->GetN(), m_minima[i].x(), m_minima[i].y());
   if (minimaGraph->GetN())
     m_mg->Add(minimaGraph, "P");
@@ -159,7 +171,7 @@ TMultiGraph* LikelihoodAnalysis::graph() const
   TGraph* minimumGraph = new TGraph(1);
   minimumGraph->SetMarkerStyle(20);
   minimumGraph->SetMarkerColor(kRed);
-  minimumGraph->SetPoint(0, m_minimum.x(), m_minimum.y());
+  minimumGraph->SetPoint(0, m_minima[m_indexOfGlobalMinimum].x(), m_minima[m_indexOfGlobalMinimum].y());
   m_mg->Add(minimumGraph, "P");
 
   return m_mg;

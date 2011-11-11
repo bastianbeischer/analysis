@@ -125,7 +125,8 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
   TCanvas* lhCanvas = likelihoodWidget.GetCanvas();
   lhCanvas->cd();
   lhCanvas->Clear();
-  TMultiGraph* mg = m_processor->likelihood()->graph();
+  const LikelihoodAnalysis* lh = m_processor->likelihood();
+  TMultiGraph* mg = lh->graph();
   mg->Draw("ALP");
   mg->GetYaxis()->SetRangeUser(-10., 100.);
   lhCanvas->Modified();
@@ -142,14 +143,14 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
   QDateTime timeOfEvent = timeOfRun.addMSecs(event->eventTime());
 
   infoTextEdit.clear();
-  infoTextEdit.appendPlainText("time of event:\n" + timeOfEvent.toString("dd.MM.yyyy hh:mm:ss.zzz"));
-  infoTextEdit.appendPlainText("\n root file:\n " +  rootFileName);
-  infoTextEdit.appendPlainText("\n event in root file:\n " +  QString::number(eventNumberInRootFile));
-  infoTextEdit.appendPlainText("\n  runfile:\n  " +  QString::number(runFileNo));
-  infoTextEdit.appendPlainText("\n  run start:\n  " +  timeOfRun.toString("dd.MM.yyyy hh:mm:ss.zzz"));
-  infoTextEdit.appendPlainText("\n  runfilename:\n  " +  runfileName);
-  infoTextEdit.appendPlainText("\n  event in runfile:\n  " +  QString::number(eventInRunFile));
-  if(event->contentType() == SimpleEvent::MonteCarlo){
+  infoTextEdit.appendPlainText(QString("time of event: %1").arg(timeOfEvent.toString("dd.MM.yyyy hh:mm:ss.zzz")));
+  infoTextEdit.appendPlainText(QString("\nroot file: %1").arg(rootFileName));
+  infoTextEdit.appendPlainText(QString("event in root file: %1").arg(eventNumberInRootFile));
+  infoTextEdit.appendPlainText(QString("\nrunfile: %1").arg(runFileNo));
+  infoTextEdit.appendPlainText(QString("run start: %1").arg(timeOfRun.toString("dd.MM.yyyy hh:mm:ss.zzz")));
+  infoTextEdit.appendPlainText(QString("runfilename: %1").arg(runfileName));
+  infoTextEdit.appendPlainText(QString("event in runfile: %1").arg(eventInRunFile));
+  if (event->contentType() == SimpleEvent::MonteCarlo) {
     const MCEventInformation* mcInfo = event->MCInformation();
     const MCSimpleEventParticle* mcPrimary = mcInfo->primary();
     infoTextEdit.appendPlainText("\nMonte-Carlo Information:");
@@ -157,7 +158,21 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
     infoTextEdit.appendPlainText("Particle Name =\t" + ParticleDB::instance()->lookupPdgId(mcPrimary->pdgID)->name());
     infoTextEdit.appendPlainText("momentum =\t" + QString::number(mcPrimary->initialMomentum.Mag(),'f',3) + "GeV");
   }
-
+  infoTextEdit.appendPlainText("\nLikelihood:");
+  QVector<Enums::Particle>::ConstIterator particleIt = lh->particles().begin();
+  QVector<Enums::Particle>::ConstIterator particleEnd = lh->particles().end();
+  QVector<QPointF>::ConstIterator minimumIt = lh->minima().begin();
+  for (int it = 0; particleIt != particleEnd; ++it, ++particleIt, ++minimumIt) {
+    QString text = QString("%1.) (%2GV, %3) %4").arg(it + 1).arg(minimumIt->x(), 0, 'g', 3)
+      .arg(minimumIt->y(), 0, 'g', 3).arg(Enums::label(*particleIt));
+    if (it == lh->indexOfGlobalMinimum()) {
+      text.prepend("<span style=\" color:#ff0000;\">");
+      text.append("</span>");
+      infoTextEdit.appendHtml(text);
+    } else {
+      infoTextEdit.appendPlainText(text);
+    }
+  }
   delete event;
 }
 
@@ -168,7 +183,6 @@ void Plotter::saveCanvas(const QString& fileName)
 
 void Plotter::unzoom()
 {
-  qDebug() << "Plotter::unzoom()";
 }
 
 void Plotter::updateTrackFindingParameters(int slopeBins, int offsetBins, double trackerPull, double trdPull)

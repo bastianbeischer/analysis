@@ -104,6 +104,11 @@ void Particle::setTrackType(const Enums::TrackType& trackType)
     m_track = new StraightLine;
 }
 
+void Particle::setVariable(const KineticVariable& variable)
+{
+  m_variable = variable;
+}
+
 const KineticVariable& Particle::variable() const
 {
   return m_variable;

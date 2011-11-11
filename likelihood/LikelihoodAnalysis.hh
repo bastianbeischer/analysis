@@ -17,6 +17,9 @@ class LikelihoodAnalysis {
 public:
   LikelihoodAnalysis(Enums::LikelihoodVariables, Enums::Particles);
   ~LikelihoodAnalysis();
+  int indexOfGlobalMinimum() const;
+  const QVector<QPointF>& minima() const;
+  const QVector<Enums::Particle>& particles() const;
 
   void identify(Particle*);
   TMultiGraph* graph() const;
@@ -29,7 +32,7 @@ private:
   ROOT::Math::BrentMinimizer1D* m_minimizer;
   LogLikelihoodFunction* m_function;
   QVector<QPointF> m_minima;
-  QPointF m_minimum;
+  int m_indexOfGlobalMinimum;
   Particle* m_particle;
   mutable TMultiGraph* m_mg;
 };

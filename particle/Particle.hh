@@ -14,8 +14,7 @@ class ParticleInformation;
 class TimeOfFlight;
 class TRDReconstruction;
 
-class Particle
-{
+class Particle {
 public:
   Particle();
   Particle(const Enums::Particle&);
@@ -32,10 +31,12 @@ public:
   TRDReconstruction* trdReconstruction() const {return m_trd;}
   ParticleInformation* information() const {return m_information;}
 
+  void setVariable(const KineticVariable&);
   const KineticVariable& variable() const;
-  double transverseMomentum() const;
-  double momentum() const;
-  double beta() const;
+
+  double transverseMomentum() const; // To be removed: KineticVariable that
+  double momentum() const;           // contains Likelihood analyzed data
+  double beta() const;               // should be used!
 
   // loopthrough functions to properties
   Enums::Particle type() const;

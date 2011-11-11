@@ -27,17 +27,23 @@ private:
   TF1* newTrackerResolutionFunction(const QString&) const;
   TF1* newTofResolutionFunction(const QString&) const;
   TF1* newWeightedMeanResolutionFunction(const QString&) const;
+  double trackerGauss(double*, double*) const;
+  double tofGauss(double*, double*) const;
   double trackerResolution(double*, double*) const;
   double tofResolution(double*, double*) const;
   double weightedMeanResolution(double*, double*) const;
-  void loadRigHisto(double rig);
-  void loadRigHisto(int bin);
+  bool fitTracker(TH1D*, double curvature);
+  bool fitTof(TH1D*, double inverseBeta);
   void saveHistos();
 
   RootQtWidget* m_rigDistributionWidget;
   const int m_numberOfBins;
   const double m_min;
   const double m_max;
+  TF1* m_trackerFunction;
+  TF1* m_tofFunction;
+  TF1* m_trackerResolutionGauss;
+  TF1* m_tofResolutionGauss;
   QVector<TH1D*> m_trackerResolutionHistograms;
   QVector<TH1D*> m_tofResolutionHistograms;
   QVector<TH1D*> m_weightedMeanResolutionHistograms;
