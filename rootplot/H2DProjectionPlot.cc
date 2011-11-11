@@ -24,6 +24,7 @@ H2DProjectionPlot::H2DProjectionPlot()
   , m_type(NoProjection)
   , m_line(0)
   , m_bin(-1)
+  , m_projectionBin(-1)
   , m_projectionLatex()
   , m_projectionLegend()
   , m_projectionFunction()
@@ -97,9 +98,10 @@ void H2DProjectionPlot::positionChanged(double posX, double posY)
     double y = qBound(gPad->GetUymin(), posY, gPad->GetUymax());
     switch(m_type) {
     case ProjectionOnX:
-      if (projectionChanged == true)
+        if (projectionChanged == true)
         m_projectionHistX = histogram()->ProjectionX(qPrintable(title() + "_px"), biny, biny);
       proj = m_projectionHistX;
+      m_projectionBin = biny;
       m_line->SetX1(gPad->GetUxmin());
       m_line->SetX2(gPad->GetUxmax());
       m_line->SetY1(y);
@@ -109,6 +111,7 @@ void H2DProjectionPlot::positionChanged(double posX, double posY)
       if (projectionChanged == true)
         m_projectionHistY = histogram()->ProjectionY(qPrintable(title() + "_py"), binx, binx);
       proj = m_projectionHistY;
+      m_projectionBin = binx;
       m_line->SetX1(x);
       m_line->SetX2(x);
       m_line->SetY1(gPad->GetUymin());

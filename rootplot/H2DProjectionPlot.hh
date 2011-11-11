@@ -30,12 +30,15 @@ public:
   TLegend* projectionLegend(int i = 0);
   void addProjectionFunction(TF1*);
   TF1* projectionFunction(int i = 0);
+  int projectionBin() const {return m_projectionBin;}
 
 protected:
   ProjectionControlWidget* controlWidget() const {return m_controlWidget;}
   RootQtWidget* projectionWidget() const {return m_projectionWidget;}
   TH1D* projection();
   virtual void updateProjection();
+  ProjectionType projectionType() const {return m_type;}
+  ProjectionControlWidget* projectionControlWidget() {return m_controlWidget;}
 
 public slots:
   void setProjectionType(ProjectionType type);
@@ -51,6 +54,7 @@ private:
   ProjectionType m_type;
   TLine* m_line;
   int m_bin;
+  int m_projectionBin;
   QVector<TLatex*> m_projectionLatex;
   QVector<TLegend*> m_projectionLegend;
   QVector<TF1*> m_projectionFunction;
