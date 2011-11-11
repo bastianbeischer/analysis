@@ -57,7 +57,7 @@ SignalHeightTimeCorrelation::~SignalHeightTimeCorrelation()
 TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short, TH2D* histogram) 
 {
   const double minAdc = 0;
-  const int minEntries = 100;
+  const int minEntries = 30;
   TGraphErrors* graph = new TGraphErrors();
 
   for (int bin = 0; bin < histogram->GetNbinsX(); ++bin) {
