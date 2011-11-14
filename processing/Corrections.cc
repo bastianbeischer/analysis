@@ -249,8 +249,14 @@ void Corrections::tofTot(Hit* hit, SimpleEvent* event)
 void Corrections::trackerSignalHeight(Hit* hit, SimpleEvent* event)
 {
   if (hit->type() == Hit::tracker) {
-    double scalingFactor = trackerSignalScalingFactor(hit->elementId(), event->time());
-    hit->setSignalHeight(hit->signalHeight() * scalingFactor);
+    Cluster* cluster = static_cast<Cluster*>(hit);
+    const std::vector<Hit*>& subHits = cluster->hits();
+    std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
+    for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
+      Hit* subHit = *it;
+      double scalingFactor = trackerSignalScalingFactor(subHit->elementId(), event->time());
+      subHit->setSignalHeight(subHit->signalHeight() * scalingFactor);
+    }
   }
 }
 
