@@ -257,6 +257,7 @@ void Corrections::trackerSignalHeight(Hit* hit, SimpleEvent* event)
       double scalingFactor = trackerSignalScalingFactor(subHit->elementId(), event->time());
       subHit->setSignalHeight(subHit->signalHeight() * scalingFactor);
     }
+    cluster->processHits();
   }
 }
 
