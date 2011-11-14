@@ -55,7 +55,8 @@ const QMap<Enums::Correction, QString> Enums::s_correctionMap = InitializableMap
    //<< QPair<Enums::Correction, QString>(Enums::TrdTemperature, "TRD temperature")
    << QPair<Enums::Correction, QString>(Enums::TofTimeOverThreshold, "time over threshold")
    << QPair<Enums::Correction, QString>(Enums::MultipleScattering, "multiple scattering")
-   << QPair<Enums::Correction, QString>(Enums::PhotonTravelTime, "photon travel time");
+   << QPair<Enums::Correction, QString>(Enums::PhotonTravelTime, "photon travel time")
+   << QPair<Enums::Correction, QString>(Enums::TrackerSignalHeight, "tracker signal height");
 
 const QMap<Enums::Particle, QString> Enums::s_particleMap = InitializableMap<Enums::Particle, QString>()
    << QPair<Enums::Particle, QString>(Enums::NoParticle, "no particle")

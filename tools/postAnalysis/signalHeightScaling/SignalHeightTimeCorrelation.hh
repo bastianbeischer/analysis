@@ -7,9 +7,11 @@
 
 #include <QObject>
 #include <QString>
+#include <QMap>
 
 #include <TGraphErrors.h>
 #include <TH2D.h>
+#include <TH1D.h>
 
 class SignalHeightTimeCorrelation : public QObject, public PostAnalysisPlot, public GraphPlot {
   Q_OBJECT
@@ -19,7 +21,8 @@ public:
 private:
   TGraphErrors* meanGraph(unsigned short sipmId, TH2D*);
   void save(unsigned short sipmId);
-  unsigned int m_sipmId;
+  unsigned short m_sipmId;
+  static QMap<unsigned short, TGraph*> s_graphs;
 private slots:
   void save();
   void saveAll();

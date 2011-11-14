@@ -14,6 +14,7 @@
 #include "Helpers.hh"
 
 #include <TSpline.h>
+#include <TGraph.h>
 
 #include <QStringList>
 #include <QSettings>
@@ -26,10 +27,14 @@
 
 Corrections::Corrections(Enums::Corrections flags)
   : m_tofTotScalingPrefix("TimeOverThresholdScaling/")
+  , m_trackerSignalScalingPrefix("TrackerSignalScaling/")
   , m_trdSettings(0)
+  , m_trackerSettings(0)
   , m_tofSettings(0)
   , m_flags(flags)
   , m_TRDSplineTime(0)
+  , m_timeKey("/time")
+  , m_factorKey("/factor")
 {
   QString path = Helpers::analysisPath() + "/conf/";
   QDir dir(path);
@@ -39,16 +44,22 @@ Corrections::Corrections(Enums::Corrections flags)
   if (!dir.exists("TOFCorrections.conf")) {
     qFatal("ERROR: TOFCorrections.conf not found. Maybe you need to switch to a configuration, for example: switch_to_config.sh kiruna");
   }
+  if (!dir.exists("TrackerCorrections.conf")) {
+    qFatal("ERROR: TrackerCorrections.conf not found. Maybe you need to switch to a configuration, for example: switch_to_config.sh kiruna");
+  }
   m_trdSettings = new QSettings(path + "TRDCorrections.conf", QSettings::IniFormat);
   m_tofSettings = new QSettings(path + "TOFCorrections.conf", QSettings::IniFormat);
-  
+  m_trackerSettings = new QSettings(path + "TrackerCorrections.conf", QSettings::IniFormat);
   loadTotScaling();
+  loadTrackerSignalScaling();
   readTRDTimeDependendCorrections();
 }
 
 Corrections::~Corrections()
 {
   writeTRDTimeDependendCorrections();
+  foreach (TSpline3* spline, m_trackerSignalSplines)
+    delete spline;
   delete m_TRDSplineTime;
   delete m_trdSettings;
   delete m_tofSettings;
@@ -69,9 +80,14 @@ void Corrections::preFitCorrections(SimpleEvent* event)
   }
 }
 
-void Corrections::postFitCorrections(Particle* particle)
+void Corrections::postFitCorrections(Particle* particle, SimpleEvent* event)
 {
   if (m_flags & Enums::PhotonTravelTime) photonTravelTime(particle); // multiple scattering needs "beta"
+  const std::vector<Hit*>::const_iterator hitsEnd = event->hits().end();
+  for (std::vector<Hit*>::const_iterator it = event->hits().begin(); it != hitsEnd; ++it) {
+    Hit* hit = *it;
+    if (m_flags & Enums::TrackerSignalHeight) trackerSignalHeight(hit, event);
+  }
 }
 
 void Corrections::postTOFCorrections(Particle* particle)
@@ -227,6 +243,14 @@ void Corrections::tofTot(Hit* hit, SimpleEvent* event)
       TOFSipmHit* tofSipmHit = static_cast<TOFSipmHit*>(*it);
       tofSipmHit->setTimeOverThreshold(tofSipmHit->timeOverThreshold() * scalingFactor);
     }
+  }
+}
+
+void Corrections::trackerSignalHeight(Hit* hit, SimpleEvent* event)
+{
+  if (hit->type() == Hit::tracker) {
+    double scalingFactor = trackerSignalScalingFactor(hit->elementId(), event->time());
+    hit->setSignalHeight(hit->signalHeight() * scalingFactor);
   }
 }
 
@@ -489,6 +513,73 @@ void Corrections::setTotScaling(const unsigned int tofId, const QList<QVariant> 
 {
   m_tofSettings->setValue(m_tofTotScalingPrefix + QString::number(tofId, 16), parameter);
   m_tofSettings->sync();
+}
+
+void Corrections::writeTrackerSignalScaling(const unsigned short sipmId, const QVector<double>& times, const QVector<double>& factors)
+{
+  write(m_trackerSignalScalingPrefix + QString::number(sipmId, 16), m_trackerSettings, times, factors);
+}
+
+void Corrections::write(const QString& key, QSettings* settings, const QVector<double>& times, const QVector<double>& factors)
+{
+  QList<QVariant> timesVariant;
+  QList<QVariant> factorsVariant;
+  for (int i = 0; i < times.size(); ++i) {
+    timesVariant.push_back(times[i]);
+    factorsVariant.push_back(factors[i]);
+  }
+  settings->setValue(key + m_timeKey, timesVariant);
+  settings->setValue(key + m_factorKey, factorsVariant);
+  settings->sync();
+}
+
+TSpline3* Corrections::read(const QString& key, QSettings* settings)
+{
+  const QList<QVariant>& timesVariant = settings->value(key + m_timeKey).toList();
+  const QList<QVariant>& factorsVariant = settings->value(key + m_factorKey).toList();
+  QVector<double> times;
+  QVector<double> factors;
+  for (int i = 0; i < timesVariant.size(); ++i) {
+    times.push_back(timesVariant[i].toDouble());
+    factors.push_back(factorsVariant[i].toDouble());
+  }
+  return new TSpline3(qPrintable(key + "_spline"), &(*times.begin()), &(*factors.begin()), times.size());
+}
+
+void Corrections::loadTrackerSignalScaling()
+{
+  QString prefix = m_trackerSignalScalingPrefix;
+  prefix.remove("/");
+  if (!m_trackerSettings->childGroups().contains(prefix)) {
+    const QString& fileName =  m_trackerSettings->fileName();
+    qDebug() << QString("ERROR: %1 does not contain any %2").arg(fileName, prefix);
+    Q_ASSERT(false);
+  }
+  Setup* setup = Setup::instance();
+  const ElementIterator elementStartIt = setup->firstElement();
+  const ElementIterator elementEndIt = setup->lastElement();
+  for (ElementIterator elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
+    DetectorElement* element = *elementIt;
+    if (element->type() == DetectorElement::tracker) {
+      unsigned short sipmId = element->id();
+      const QString& key = QString(m_trackerSignalScalingPrefix + "%1").arg(sipmId, 0, 16);
+      TSpline3* spline = read(key, m_trackerSettings);
+      m_trackerSignalSplines.insert(sipmId, spline);
+    }
+  }
+}
+
+double Corrections::trackerSignalScalingFactor(const unsigned short sipmId, const double time)
+{
+  Q_ASSERT(m_trackerSignalSplines[sipmId]);
+  TSpline3* spline = m_trackerSignalSplines[sipmId];
+  if (!spline) 
+    Q_ASSERT(false);  
+  if (spline->GetXmin() <= time && time <= spline->GetXmax()) {
+    return spline->Eval(time);
+  }
+  else
+    return 1;
 }
 
 void Corrections::loadTotScaling()
