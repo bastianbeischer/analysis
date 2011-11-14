@@ -16,10 +16,24 @@
 #include <TH2D.h>
 #include <TH1D.h>
 
-SignalHeightCorrelationPlot::SignalHeightCorrelationPlot(unsigned short id, SensorType type, TH2D* histogram)
+SignalHeightCorrelationPlot::SignalHeightCorrelationPlot(unsigned short id, CorrelationType type, TH2D* histogram)
 : AnalysisPlot(Enums::SignalHeightTracker)
 , H2DProjectionPlot()
 , m_id(id)
+, m_type(type)
+, m_histo(histogram)
+, m_normHisto(0)
+{
+  setTitle(histogram->GetName());
+  setAxisTitle(histogram->GetXaxis()->GetTitle(), histogram->GetYaxis()->GetTitle(), "");
+  addHistogram(new TH2D(*histogram));
+  m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", histogram->GetNbinsX(), histogram->GetXaxis()->GetXbins()->GetArray());
+}
+
+SignalHeightCorrelationPlot::SignalHeightCorrelationPlot(CorrelationType type, TH2D* histogram)
+: AnalysisPlot(Enums::SignalHeightTracker)
+, H2DProjectionPlot()
+, m_id(0)
 , m_type(type)
 , m_histo(histogram)
 , m_normHisto(0)
@@ -48,23 +62,36 @@ void SignalHeightCorrelationPlot::processEvent(const QVector<Hit*>&, const Parti
     return;
 //  if (flags & ParticleInformation::MagnetCollision)
 //    return;
+  if (m_type == Rigidity && !(flags & ParticleInformation::InsideMagnet))
+    return;
+  int nHitsOnTrack = 0;
+  double sumSignalHeightOnTrack = 0;
   const QVector<Hit*>::const_iterator endIt = track->hits().end();
   for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != endIt; ++it) {
     Hit* hit = *it;
-    if (hit->type() == Hit::tracker && hit->elementId() == m_id) {
-      double value = 0.;
-      if (m_type == Temperature)
-        value = event->sensorData(Setup::instance()->sensorForId(hit->elementId()));
-      else if (m_type == Time)
-        value = event->time();
-      else if (m_type == Undefined)
-        Q_ASSERT(false);
-      if (std::isnan(value))
-        return;
-      m_histo->Fill(value, hit->signalHeight());
-      m_normHisto->Fill(value);
+    if (m_type == Rigidity) {
+      if (hit->type() == Hit::tracker) {
+        sumSignalHeightOnTrack += hit->signalHeight();
+        ++nHitsOnTrack;
+      }
+    } else {
+      if (hit->type() == Hit::tracker && hit->elementId() == m_id) {
+        double value = 0.;
+        if (m_type == Temperature)
+          value = event->sensorData(Setup::instance()->sensorForId(hit->elementId()));
+        else if (m_type == Time)
+          value = event->time();
+        else if (m_type == Undefined)
+          Q_ASSERT(false);
+        if (std::isnan(value))
+          return;
+        m_histo->Fill(value, hit->signalHeight());
+        m_normHisto->Fill(value);
+      }
     }
   }
+  if (m_type == Rigidity)
+    m_histo->Fill(track->rigidity(), sumSignalHeightOnTrack / nHitsOnTrack);
 }
 
 void SignalHeightCorrelationPlot::update()

@@ -294,6 +294,7 @@ void Analysis::setupPlots()
     addPlot(new SignalHeight2DNormalizedPlot);
     addPlot(new SignalHeightCorrelationPlotCollection(SignalHeightCorrelationPlot::Temperature));
     addPlot(new SignalHeightCorrelationPlotCollection(SignalHeightCorrelationPlot::Time, first, last));
+    addPlot(new SignalHeightCorrelationPlotCollection(SignalHeightCorrelationPlot::Rigidity));
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tracker)
