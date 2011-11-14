@@ -48,7 +48,7 @@ SignalHeightCorrelationPlotCollection::SignalHeightCorrelationPlotCollection(Sig
     const double maxRigidity = 10;
     const unsigned int nSignalHeightBins = 70;
     const double minSignalHeight = 0;
-    const double maxSignalHeight = 7000;
+    const double maxSignalHeight = 9000;
     TH2D* histogram = new TH2D(qPrintable(title), qPrintable(title), nRigidityBins, minRigidity, maxRigidity, nSignalHeightBins, minSignalHeight, maxSignalHeight);
     histogram->GetXaxis()->SetTitle("rigidity / GV");
     histogram->GetYaxis()->SetTitle("signal height / adc counts");
