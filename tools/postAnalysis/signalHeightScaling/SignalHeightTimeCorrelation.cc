@@ -2,6 +2,7 @@
 
 #include "Corrections.hh"
 #include "Constants.hh"
+#include "RootQtWidget.hh"
 
 #include <TH1.h>
 #include <TH2.h>
@@ -12,6 +13,7 @@
 #include <TLatex.h>
 #include <TMultiGraph.h>
 #include <TGraphErrors.h>
+#include <TSpline.h>
 
 #include <iostream>
 #include <iomanip>
@@ -42,17 +44,34 @@ SignalHeightTimeCorrelation::SignalHeightTimeCorrelation(PostAnalysisCanvas* can
   latex->SetTitle(qPrintable(QString("sipm id = 0x%1").arg(QString::number(sipmId, 16))));
   addLatex(latex);
 
+  RootQtWidget* secondaryWidget(new RootQtWidget);
   QWidget* widget = new QWidget;
-  QHBoxLayout* layout = new QHBoxLayout(widget);
+  QVBoxLayout* layout = new QVBoxLayout(widget);
   layout->setContentsMargins(0, 0, 0, 0);
   QPushButton* saveButton = new QPushButton("save channel");
   layout->addWidget(saveButton);
   QPushButton* saveAllButton = new QPushButton("save all channels");
   layout->addWidget(saveAllButton);
-  layout->addStretch();
+  layout->addWidget(secondaryWidget);
   setSecondaryWidget(widget);
   connect(saveButton, SIGNAL(clicked()), this, SLOT(save()));
   connect(saveAllButton, SIGNAL(clicked()), this, SLOT(saveAll()));
+
+  TVirtualPad* prevPad = gPad;
+  TCanvas* can = secondaryWidget->GetCanvas();
+  can->cd();
+  can->Clear();
+  TGraph* graph = s_graphs[m_sipmId];
+  graph->Draw("ALP");
+  TSpline3* spline = new TSpline3(qPrintable(QString("spline 0x%1").arg(QString::number(sipmId, 16))), graph);
+  spline->SetLineColor(kRed);
+  spline->SetLineWidth(2);
+  spline->Draw("LSAME");
+  can->Modified();
+  can->Update();
+  prevPad->cd();
+  gPad->Modified();
+  gPad->Update();
 }
 
 SignalHeightTimeCorrelation::~SignalHeightTimeCorrelation()
@@ -61,7 +80,7 @@ SignalHeightTimeCorrelation::~SignalHeightTimeCorrelation()
 
 TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short sipmId, TH2D* histogram) 
 {
-  const double minAdc = 0;
+  const double minAdc = 300;
   const int minEntries = 30;
   TGraphErrors* graph = new TGraphErrors();
   TGraphErrors* factorGraph = new TGraphErrors();
@@ -98,10 +117,10 @@ TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short sipmId, TH2D
       graph->SetPoint(nPoints, time, adc);
       graph->SetPointError(nPoints, timeError, adcError);
       factorGraph->SetPoint(nPoints, time, Constants::idealTrackerSignalHeight / adc);
-      factorGraph->SetPointError(nPoints, timeError, adcError);
+//      factorGraph->SetPointError(nPoints, timeError, adcError);
     } else {
       factorGraph->SetPoint(nFactorPoints, time, 1);
-      factorGraph->SetPointError(nFactorPoints, 0, 0);
+//      factorGraph->SetPointError(nFactorPoints, 0, 0);
     }
   }
   return graph;
