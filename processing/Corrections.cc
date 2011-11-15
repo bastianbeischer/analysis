@@ -580,8 +580,8 @@ double Corrections::trackerSignalScalingFactor(const unsigned short sipmId, cons
 {
   Q_ASSERT(m_trackerSignalSplines[sipmId]);
   TSpline3* spline = m_trackerSignalSplines[sipmId];
-  if (!spline) 
-    Q_ASSERT(false);  
+  if (!spline)
+    Q_ASSERT(false);
   if (spline->GetXmin() <= time && time <= spline->GetXmax()) {
     return spline->Eval(time);
   }
