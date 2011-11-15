@@ -16,10 +16,10 @@
 #include <iostream>
 
 SignalHeight2DPlot::SignalHeight2DPlot()
-  :  AnalysisPlot(Enums::SignalHeightTracker)
-  ,  H2DProjectionPlot()
-  ,  m_histo(0)
-  ,  m_normHisto(0)
+  : AnalysisPlot(Enums::SignalHeightTracker)
+  , H2DProjectionPlot()
+  , m_histo(0)
+  , m_normHisto(0)
 {
   controlWidget()->spinBox()->setMaximum(200);
   Setup* setup = Setup::instance();

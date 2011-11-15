@@ -17,14 +17,12 @@
 H2DProjectionPlot::H2DProjectionPlot()
   : QObject()
   , H2DPlot()
-  , m_projectionHistX(0)
-  , m_projectionHistY(0)
+  , m_projection(0)
   , m_controlWidget(new ProjectionControlWidget(this))
   , m_projectionWidget(new RootQtWidget)
   , m_type(NoProjection)
   , m_line(0)
   , m_bin(-1)
-  , m_projectionBin(-1)
   , m_projectionLatex()
   , m_projectionLegend()
   , m_projectionFunction()
@@ -42,10 +40,8 @@ H2DProjectionPlot::H2DProjectionPlot()
 
 H2DProjectionPlot::~H2DProjectionPlot()
 {
-  if (m_projectionHistX)
-    delete m_projectionHistX;
-  if (m_projectionHistY)
-    delete m_projectionHistY;
+  if (m_projection)
+    delete m_projection;
   if (m_line)
     delete m_line;
 }
@@ -53,26 +49,19 @@ H2DProjectionPlot::~H2DProjectionPlot()
 void H2DProjectionPlot::setProjectionType(ProjectionType type)
 {
   m_projectionWidget->setVisible(type != NoProjection);
-  m_type = type;
   if (m_line) {
     delete m_line;
     m_line = 0;
-    gPad->Modified();
-    gPad->Update();
   }
+  m_type = type;
+  m_bin = -1;
+  gPad->Modified();
+  gPad->Update();
 }
 
 TH1D* H2DProjectionPlot::projection()
 {
-  switch(m_type) {
-    case ProjectionOnX:
-      return m_projectionHistX;
-    case ProjectionOnY:
-      return m_projectionHistY;
-    default:
-      Q_ASSERT(false);
-      return 0;
-  }
+  return m_projection;
 }
 
 void H2DProjectionPlot::updateProjection()
@@ -82,65 +71,70 @@ void H2DProjectionPlot::updateProjection()
 void H2DProjectionPlot::positionChanged(double posX, double posY)
 {
   RootQtWidget* widget = projectionWidget();
-  if (widget->isVisible()) {
-    if (!m_line) {
-      m_line = new TLine;
-      m_line->Draw();
-    }
-    bool projectionChanged = false;
-    int bin = histogram()->FindBin(posX,posY);
-    if (m_bin != bin)
-      projectionChanged = true;
-    int binx, biny, binz;
-    histogram()->GetBinXYZ(bin, binx, biny, binz);
-    TH1D* proj = 0;
-    double x = qBound(gPad->GetUxmin(), posX, gPad->GetUxmax());
-    double y = qBound(gPad->GetUymin(), posY, gPad->GetUymax());
-    switch(m_type) {
-      case ProjectionOnX:
-        if (projectionChanged == true)
-          m_projectionHistX = histogram()->ProjectionX(qPrintable(title() + "_px"), biny, biny);
-        proj = m_projectionHistX;
-        m_projectionBin = biny;
-        m_line->SetX1(gPad->GetUxmin());
-        m_line->SetX2(gPad->GetUxmax());
-        m_line->SetY1(y);
-        m_line->SetY2(y);
-        break;
-      case ProjectionOnY:
-        if (projectionChanged == true)
-          m_projectionHistY = histogram()->ProjectionY(qPrintable(title() + "_py"), binx, binx);
-        proj = m_projectionHistY;
-        m_projectionBin = binx;
-        m_line->SetX1(x);
-        m_line->SetX2(x);
-        m_line->SetY1(gPad->GetUymin());
-        m_line->SetY2(gPad->GetUymax());
-        break;
-      default:
-        Q_ASSERT(false);
-        break;
-    }
-    if (projectionChanged == true)
-      updateProjection();
-    TVirtualPad* prevPad = gPad;
-    TCanvas* can = widget->GetCanvas();
-    can->cd();
-    can->Clear();
-    proj->Draw();
-    foreach(TLatex* latex, m_projectionLatex)
-    latex->Draw("SAME");
-    foreach(TLegend* legend, m_projectionLegend)
-    legend->Draw("SAME");
-    foreach(TF1* function, m_projectionFunction)
-    function->Draw("SAME");
-    can->Modified();
-    can->Update();
-    prevPad->cd();
-    gPad->Modified();
-    gPad->Update();
-    m_bin = bin;
+  if (!widget->isVisible())
+    return;
+  if (!m_line) {
+    m_line = new TLine;
+    m_line->Draw();
   }
+
+  int bin = -1;
+  switch (m_type) {
+    case ProjectionOnX:
+      bin = histogram()->GetYaxis()->FindBin(posY);
+      break;
+    case ProjectionOnY:
+      bin = histogram()->GetXaxis()->FindBin(posX);
+      break;
+    default:
+      Q_ASSERT(false);
+      break;
+  }
+  if (m_bin == bin)
+    return;
+  m_bin = bin;
+
+  if (m_projection)
+    delete m_projection;
+  double xy = 0;
+  switch (m_type) {
+    case ProjectionOnX:
+      m_projection = histogram()->ProjectionX(qPrintable(title() + "_px"), bin, bin);
+      m_line->SetX1(gPad->GetUxmin());
+      m_line->SetX2(gPad->GetUxmax());
+      xy = qBound(gPad->GetUymin(), histogram()->GetYaxis()->GetBinCenter(bin), gPad->GetUymax());
+      m_line->SetY1(xy);
+      m_line->SetY2(xy);
+      break;
+    case ProjectionOnY:
+      m_projection = histogram()->ProjectionY(qPrintable(title() + "_py"), bin, bin);
+      xy = qBound(gPad->GetUxmin(), histogram()->GetXaxis()->GetBinCenter(bin), gPad->GetUxmax());
+      m_line->SetX1(xy);
+      m_line->SetX2(xy);
+      m_line->SetY1(gPad->GetUymin());
+      m_line->SetY2(gPad->GetUymax());
+      break;
+    default:
+      Q_ASSERT(false);
+      break;
+  }
+  updateProjection();
+  TVirtualPad* prevPad = gPad;
+  TCanvas* can = widget->GetCanvas();
+  can->cd();
+  can->Clear();
+  m_projection->Draw();
+  foreach(TLatex* latex, m_projectionLatex)
+    latex->Draw("SAME");
+  foreach(TLegend* legend, m_projectionLegend)
+    legend->Draw("SAME");
+  foreach(TF1* function, m_projectionFunction)
+    function->Draw("SAME");
+  can->Modified();
+  can->Update();
+  prevPad->cd();
+  gPad->Modified();
+  gPad->Update();
 }
 
 void H2DProjectionPlot::setLogX(int b)

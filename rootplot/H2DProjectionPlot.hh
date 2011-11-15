@@ -30,7 +30,7 @@ public:
   TLegend* projectionLegend(int i = 0);
   void addProjectionFunction(TF1*);
   TF1* projectionFunction(int i = 0);
-  int projectionBin() const {return m_projectionBin;}
+  int projectionBin() const {return m_bin;}
 
 protected:
   ProjectionControlWidget* controlWidget() const {return m_controlWidget;}
@@ -47,14 +47,12 @@ public slots:
   void setLogZ(int);
 
 private:
-  TH1D* m_projectionHistX;
-  TH1D* m_projectionHistY;
+  TH1D* m_projection;
   ProjectionControlWidget* m_controlWidget;
   RootQtWidget* m_projectionWidget;
   ProjectionType m_type;
   TLine* m_line;
   int m_bin;
-  int m_projectionBin;
   QVector<TLatex*> m_projectionLatex;
   QVector<TLegend*> m_projectionLegend;
   QVector<TF1*> m_projectionFunction;
