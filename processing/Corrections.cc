@@ -77,17 +77,13 @@ void Corrections::preFitCorrections(SimpleEvent* event)
     //if (m_flags & Enums::TrdPressure) trdPressure(hit, event);
     //if (m_flags & Enums::TrdTemperature) trdTemperature(hit, event);
     if (m_flags & Enums::TofTimeOverThreshold) tofTot(hit, event);
+    if (m_flags & Enums::TrackerSignalHeight) trackerSignalHeight(hit, event);
   }
 }
 
-void Corrections::postFitCorrections(Particle* particle, SimpleEvent* event)
+void Corrections::postFitCorrections(Particle* particle)
 {
   if (m_flags & Enums::PhotonTravelTime) photonTravelTime(particle); // multiple scattering needs "beta"
-  const std::vector<Hit*>::const_iterator hitsEnd = event->hits().end();
-  for (std::vector<Hit*>::const_iterator it = event->hits().begin(); it != hitsEnd; ++it) {
-    Hit* hit = *it;
-    if (m_flags & Enums::TrackerSignalHeight) trackerSignalHeight(hit, event);
-  }
 }
 
 void Corrections::postTOFCorrections(Particle* particle)
