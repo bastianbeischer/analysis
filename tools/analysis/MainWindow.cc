@@ -623,8 +623,11 @@ void MainWindow::toggleControlWidgetsStatus()
   } else {
     m_ui.analyzeButton->setText("&start");
     update();
-    if (m_batch)
+    if (m_batch) {
       m_analysis->save("batch.root", Plotter::rootWidget()->GetCanvas());
+      qApp->quit();
+//      QTimer::singleShot(1000, qApp, SLOT(quit()));
+    }
   }
   m_ui.plotter->toggleUpdateTimer();
 }

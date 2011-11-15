@@ -9,12 +9,11 @@
 #include <QString>
 #include <QMap>
 
-#include <TGraphErrors.h>
-#include <TH2D.h>
-#include <TH1D.h>
+class TGraphErrors;
+class TH2D;
 
 class SignalHeightTimeCorrelation : public QObject, public PostAnalysisPlot, public GraphPlot {
-  Q_OBJECT
+Q_OBJECT
 public:
   SignalHeightTimeCorrelation(PostAnalysisCanvas*, unsigned short sipmId);
   virtual ~SignalHeightTimeCorrelation();

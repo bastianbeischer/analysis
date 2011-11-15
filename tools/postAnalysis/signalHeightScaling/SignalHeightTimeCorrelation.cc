@@ -11,6 +11,7 @@
 #include <TList.h>
 #include <TLatex.h>
 #include <TMultiGraph.h>
+#include <TGraphErrors.h>
 
 #include <iostream>
 #include <iomanip>

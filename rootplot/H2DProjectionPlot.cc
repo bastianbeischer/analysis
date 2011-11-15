@@ -97,29 +97,29 @@ void H2DProjectionPlot::positionChanged(double posX, double posY)
     double x = qBound(gPad->GetUxmin(), posX, gPad->GetUxmax());
     double y = qBound(gPad->GetUymin(), posY, gPad->GetUymax());
     switch(m_type) {
-    case ProjectionOnX:
+      case ProjectionOnX:
         if (projectionChanged == true)
-        m_projectionHistX = histogram()->ProjectionX(qPrintable(title() + "_px"), biny, biny);
-      proj = m_projectionHistX;
-      m_projectionBin = biny;
-      m_line->SetX1(gPad->GetUxmin());
-      m_line->SetX2(gPad->GetUxmax());
-      m_line->SetY1(y);
-      m_line->SetY2(y);
-      break;
-    case ProjectionOnY:
-      if (projectionChanged == true)
-        m_projectionHistY = histogram()->ProjectionY(qPrintable(title() + "_py"), binx, binx);
-      proj = m_projectionHistY;
-      m_projectionBin = binx;
-      m_line->SetX1(x);
-      m_line->SetX2(x);
-      m_line->SetY1(gPad->GetUymin());
-      m_line->SetY2(gPad->GetUymax());
-      break;
-    default:
-      Q_ASSERT(false);
-      break;
+          m_projectionHistX = histogram()->ProjectionX(qPrintable(title() + "_px"), biny, biny);
+        proj = m_projectionHistX;
+        m_projectionBin = biny;
+        m_line->SetX1(gPad->GetUxmin());
+        m_line->SetX2(gPad->GetUxmax());
+        m_line->SetY1(y);
+        m_line->SetY2(y);
+        break;
+      case ProjectionOnY:
+        if (projectionChanged == true)
+          m_projectionHistY = histogram()->ProjectionY(qPrintable(title() + "_py"), binx, binx);
+        proj = m_projectionHistY;
+        m_projectionBin = binx;
+        m_line->SetX1(x);
+        m_line->SetX2(x);
+        m_line->SetY1(gPad->GetUymin());
+        m_line->SetY2(gPad->GetUymax());
+        break;
+      default:
+        Q_ASSERT(false);
+        break;
     }
     if (projectionChanged == true)
       updateProjection();

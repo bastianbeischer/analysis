@@ -96,4 +96,3 @@ SignalHeightCorrelationPlotCollection::SignalHeightCorrelationPlotCollection(Sig
 SignalHeightCorrelationPlotCollection::~SignalHeightCorrelationPlotCollection()
 {
 }
-

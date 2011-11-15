@@ -17,12 +17,12 @@
 #include <TH1D.h>
 
 SignalHeightCorrelationPlot::SignalHeightCorrelationPlot(unsigned short id, CorrelationType type, TH2D* histogram)
-: AnalysisPlot(Enums::SignalHeightTracker)
-, H2DProjectionPlot()
-, m_id(id)
-, m_type(type)
-, m_histo(histogram)
-, m_normHisto(0)
+  : AnalysisPlot(Enums::SignalHeightTracker)
+  , H2DProjectionPlot()
+  , m_id(id)
+  , m_type(type)
+  , m_histo(histogram)
+  , m_normHisto(0)
 {
   setTitle(histogram->GetName());
   setAxisTitle(histogram->GetXaxis()->GetTitle(), histogram->GetYaxis()->GetTitle(), "");
@@ -31,12 +31,12 @@ SignalHeightCorrelationPlot::SignalHeightCorrelationPlot(unsigned short id, Corr
 }
 
 SignalHeightCorrelationPlot::SignalHeightCorrelationPlot(CorrelationType type, TH2D* histogram)
-: AnalysisPlot(Enums::SignalHeightTracker)
-, H2DProjectionPlot()
-, m_id(0)
-, m_type(type)
-, m_histo(histogram)
-, m_normHisto(0)
+  : AnalysisPlot(Enums::SignalHeightTracker)
+  , H2DProjectionPlot()
+  , m_id(0)
+  , m_type(type)
+  , m_histo(histogram)
+  , m_normHisto(0)
 {
   setTitle(histogram->GetName());
   setAxisTitle(histogram->GetXaxis()->GetTitle(), histogram->GetYaxis()->GetTitle(), "");
@@ -53,15 +53,13 @@ SignalHeightCorrelationPlot::~SignalHeightCorrelationPlot()
 void SignalHeightCorrelationPlot::processEvent(const QVector<Hit*>&, const Particle* const particle, const SimpleEvent* const event)
 {
   const Track* track = particle->track();
-  if(!track)
+  if (!track)
     return;
   ParticleInformation::Flags flags = particle->information()->flags();
   if (!(flags & ParticleInformation::Chi2Good))
     return;
   if (!(flags & ParticleInformation::AllTrackerLayers))
     return;
-//  if (flags & ParticleInformation::MagnetCollision)
-//    return;
   if (m_type == Rigidity && !(flags & ParticleInformation::InsideMagnet))
     return;
   int nHitsOnTrack = 0;
