@@ -12,8 +12,6 @@ public:
   enum Type {Time, Temperature};
   SignalHeightResiduePlot(Type type, TFile* file);
   virtual ~SignalHeightResiduePlot();
-private:
-  const static double s_reference;
 };
 
 #endif

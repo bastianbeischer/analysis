@@ -3,6 +3,7 @@
 #include "PostAnalysisCanvas.hh"
 #include "Setup.hh"
 #include "DetectorElement.hh"
+#include "Constants.hh"
 
 #include <TH1.h>
 #include <TH2.h>
@@ -12,8 +13,6 @@
 
 #include <QDebug>
 #include <QStringList>
-
-const double SignalHeightResiduePlot::s_reference = 2000.; // adc counts
 
 SignalHeightResiduePlot::SignalHeightResiduePlot(Type type, TFile* file)
   : PostAnalysisPlot()
@@ -47,7 +46,7 @@ SignalHeightResiduePlot::SignalHeightResiduePlot(Type type, TFile* file)
           TF1 function(qPrintable(QString(projectionHistogram->GetTitle()) + "Function"), "landau", projectionHistogram->GetXaxis()->GetXmin(), projectionHistogram->GetXaxis()->GetXmax());
           projectionHistogram->Fit(&function, "EQN0");
           double value = function.GetParameter(1);
-          double residue = value - s_reference;
+          double residue = value - Constants::idealTrackerSignalHeight;
           histogram->Fill(residue);
         }
       }
