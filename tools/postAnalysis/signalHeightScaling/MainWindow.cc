@@ -33,5 +33,6 @@ void MainWindow::setupAnalysis()
   addPlot(new SignalHeightCorrelationCollection(SignalHeightCorrelationCollection::Time, &file));
   addPlot(new SignalHeightCorrelationCollection(SignalHeightCorrelationCollection::Temperature, &file));
   addPlot(new SignalHeightResiduePlot(SignalHeightResiduePlot::Time, &file));
+  addPlot(new SignalHeightResiduePlot(SignalHeightResiduePlot::Temperature, &file));
   file.Close();
 }

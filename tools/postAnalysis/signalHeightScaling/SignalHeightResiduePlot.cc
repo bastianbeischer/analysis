@@ -57,7 +57,7 @@ SignalHeightResiduePlot::SignalHeightResiduePlot(Type type, TFile* file)
   }
   addHistogram(histogram);
 
-  TLatex* latex = 0;  
+  TLatex* latex = 0;
   latex = RootPlot::newLatex(.65, .85);
   latex->SetTitle(qPrintable(QString("n  = %1").arg(histogram->GetEntries())));
   addLatex(latex);
