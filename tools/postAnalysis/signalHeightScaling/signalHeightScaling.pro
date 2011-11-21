@@ -33,7 +33,8 @@ CLASSES = \
   SignalHeightCorrelationCollection \
   SignalHeightTempCorrelation \
   SignalHeightTimeCorrelation \
-  SignalHeightTimeCorrelation2D
+  SignalHeightTimeCorrelation2D \
+  SignalHeightResiduePlot
 
 SOURCES = \
   main.cc

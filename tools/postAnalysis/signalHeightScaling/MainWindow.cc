@@ -4,6 +4,7 @@
 #include "PostAnalysisCanvas.hh"
 #include "SignalHeightProjectionCollection.hh"
 #include "SignalHeightCorrelationCollection.hh"
+#include "SignalHeightResiduePlot.hh"
 
 #include <TCanvas.h>
 #include <TFile.h>
@@ -31,5 +32,6 @@ void MainWindow::setupAnalysis()
   addPlot(new SignalHeightCorrelationCollection(SignalHeightCorrelationCollection::Time2D, &file));
   addPlot(new SignalHeightCorrelationCollection(SignalHeightCorrelationCollection::Time, &file));
   addPlot(new SignalHeightCorrelationCollection(SignalHeightCorrelationCollection::Temperature, &file));
+  addPlot(new SignalHeightResiduePlot(SignalHeightResiduePlot::Time, &file));
   file.Close();
 }
