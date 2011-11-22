@@ -7,6 +7,7 @@
 #include "MeasurementTimeCalculation.hh"
 #include "EfficiencyCorrectionSettings.hh"
 #include "SolarModulationFit.hh"
+#include "Settings.hh"
 #include "Plotter.hh"
 #include "Enums.hh"
 
@@ -46,6 +47,7 @@ private:
   int m_nBinsNew;
   TH1D* m_multiLayerEff;
   TH1D* m_trackFindingEff;
+  Settings::Situation m_situation;
 };
 
 #endif

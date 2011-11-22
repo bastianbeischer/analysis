@@ -7,6 +7,7 @@
 #include "ParticleInformation.hh"
 #include "EfficiencyCorrectionSettings.hh"
 #include "SimulationFluxWidget.hh"
+#include "SettingsManager.hh"
 #include "SimpleEvent.hh"
 #include "Particle.hh"
 #include "Helpers.hh"
@@ -36,6 +37,7 @@ RigidityFlux::RigidityFlux(Enums::ChargeSign type, int numberOfThreads, TH1D* pa
   , m_particleHistogram(particleHistogram)
   , m_particleHistogramMirrored(0)
   , m_phiFit(0)
+  , m_situation(Settings::Unknown)
 {
   loadEfficiencies();
   QString title = "flux spectrum";
@@ -134,6 +136,9 @@ RigidityFlux::~RigidityFlux()
 
 void RigidityFlux::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
 {
+  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+  Q_ASSERT(settings);
+  m_situation = settings->situation();
   m_measurementTimeCalculation->update(event);
 }
 
@@ -144,7 +149,7 @@ void RigidityFlux::update()
   m_fluxCalculation->update(m_measurementTimeCalculation->measurementTime());
   efficiencyCorrection();
   updateBinTitles();
-  if (m_phiFit) {
+  if (m_phiFit && m_situation == Settings::KirunaFlight) {
     m_phiFit->fit();
     latex(m_nBinsNew + 0)->SetTitle(qPrintable(m_phiFit->J0Label()));
     latex(m_nBinsNew + 1)->SetTitle(qPrintable(m_phiFit->gammaLabel()));
