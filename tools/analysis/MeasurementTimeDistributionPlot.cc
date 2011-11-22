@@ -10,22 +10,22 @@
 #include <cmath>
 
 MeasurementTimeDistributionPlot::MeasurementTimeDistributionPlot(int numberOfThreads)
-  : AnalysisPlot(Enums::MomentumReconstruction)
+  : AnalysisPlot(Enums::MiscellaneousTOF)
   , H1DPlot()
-  , m_active(numberOfThreads == 1)
-  , m_calculation(0)
+  , m_calculation(new MeasurementTimeCalculation(numberOfThreads))
 {
   setTitle("measurement time distribution plot");
   TH1D* histogram = m_calculation->measurementTimeDistribution();
   addHistogram(histogram);
   setAxisTitle(histogram->GetXaxis()->GetTitle(), histogram->GetYaxis()->GetTitle());
-  if (!m_active) {
+  if (!m_calculation->isActive()) {
     const int prevNumberOfLatexs = numberOfLatexs();
     addLatex(RootPlot::newLatex(.2, .55));
     latex(prevNumberOfLatexs)->SetTextColor(kRed);
     latex(prevNumberOfLatexs)->SetTitle("This plot has to be filled by only one thread.");
   }
   histogram->GetYaxis()->SetTitleOffset(1.4);
+  addLatex(RootPlot::newLatex(.2, .55));
 }
 
 MeasurementTimeDistributionPlot::~MeasurementTimeDistributionPlot()
@@ -39,5 +39,6 @@ void MeasurementTimeDistributionPlot::processEvent(const QVector<Hit*>&, const P
 
 void MeasurementTimeDistributionPlot::update()
 {
-  m_calculation->measurementTime();
+  if (m_calculation->isActive())
+    latex()->SetTitle(qPrintable(QString("effective measurement time = %1 s").arg(m_calculation->measurementTime())));
 }

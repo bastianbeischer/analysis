@@ -14,6 +14,7 @@ public:
   void update(const SimpleEvent* const event);
   double measurementTime();
   TH1D* measurementTimeDistribution();
+  bool isActive() const {return m_active;}
 private:
   MeasurementTimeCalculation();
   bool m_active;

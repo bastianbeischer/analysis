@@ -12,13 +12,13 @@ MeasurementTimeCalculation::MeasurementTimeCalculation()
 }
 
 MeasurementTimeCalculation::MeasurementTimeCalculation(int numberOfThreads)
-: m_active(numberOfThreads == 1)
-, m_lastEventTime(-1)
-, m_positionInsideBin()
-, m_positionInsideBinCounter()
-, m_timeDifference(0)
-, m_measurementTimeDistribution(0)
-, m_deleteMeasurementTimeDistribution(true)
+  : m_active(numberOfThreads == 1)
+  , m_lastEventTime(-1)
+  , m_positionInsideBin()
+  , m_positionInsideBinCounter()
+  , m_timeDifference(0)
+  , m_measurementTimeDistribution(0)
+  , m_deleteMeasurementTimeDistribution(true)
 {
   const int nBins = 60000;
   const double min = 0.;
@@ -35,9 +35,9 @@ MeasurementTimeCalculation::MeasurementTimeCalculation(int numberOfThreads)
 }
 
 MeasurementTimeCalculation::MeasurementTimeCalculation(TH1D* histogram)
-: m_measurementTimeDistribution(histogram)
-, m_deleteMeasurementTimeDistribution(true)
-, m_active(true)
+  : m_active(true)
+  , m_measurementTimeDistribution(histogram)
+  , m_deleteMeasurementTimeDistribution(true)
 {
 }
 
@@ -59,16 +59,21 @@ void MeasurementTimeCalculation::update(const SimpleEvent* const event)
       qDebug("time between events is smaller than 0, check run list order!");
     m_timeDifference->Fill(deltaT);
     int bin = m_timeDifference->FindBin(deltaT);
-    m_positionInsideBin[bin-1]+= deltaT;
-    ++m_positionInsideBinCounter[bin-1];
+    if (m_positionInsideBin.size() > bin - 1) {
+      m_positionInsideBin[bin-1]+= deltaT;
+      ++m_positionInsideBinCounter[bin-1];
+    }
   }
   m_lastEventTime = eventTime;
 }
 
 double MeasurementTimeCalculation::measurementTime()
 {
-  if (!m_active)
+  if (!m_active) {
+    qDebug()<<"Running with more than one thread. A fixed measurement time for the float measurement of 4800.5s will be used for flux calculation.";
     return 4800.5;
+    //lists/david.txt lists/egon.txt lists/frank.txt
+  }
   if (m_timeDifference) {
     double sum = 0;
     for (int cutBin = 1; cutBin <= m_measurementTimeDistribution->GetNbinsX(); ++cutBin) {
@@ -78,7 +83,7 @@ double MeasurementTimeCalculation::measurementTime()
       m_measurementTimeDistribution->SetBinContent(cutBin, sum);
     }
   }
-  const double tCut = 10.;
+  const double tCut = 16.;
   int cutBin = m_measurementTimeDistribution->FindBin(tCut);
   return m_measurementTimeDistribution->GetBinContent(cutBin);
 }
