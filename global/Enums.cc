@@ -84,17 +84,31 @@ const QMap<Enums::LikelihoodVariable, QString> Enums::s_likelihoodVariableMap = 
   << QPair<Enums::LikelihoodVariable, QString>(Enums::SignalHeightTRDLikelihood, "signal height TRD likelihood")
   << QPair<Enums::LikelihoodVariable, QString>(Enums::TimeOverThresholdLikelihood, "time over threshold likelihood")
   << QPair<Enums::LikelihoodVariable, QString>(Enums::TimeOfFlightLikelihood, "time of flight likelihood")
-  << QPair<Enums::LikelihoodVariable, QString>(Enums::TrackerMomentumLikelihood, "tracker momentum likelihood");
+  << QPair<Enums::LikelihoodVariable, QString>(Enums::TrackerMomentumLikelihood, "tracker momentum likelihood")
+  << QPair<Enums::LikelihoodVariable, QString>(Enums::CherenkovLikelihood, "cherenkov likelihood");
 
 const QMap<Enums::KineticVariable, QString> Enums::s_kineticVariableMap = InitializableMap<Enums::KineticVariable, QString>()
   << QPair<Enums::KineticVariable, QString>(Enums::TotalEnergy, "E / GeV")
   << QPair<Enums::KineticVariable, QString>(Enums::KineticEnergy, "T / GeV")
   << QPair<Enums::KineticVariable, QString>(Enums::Momentum, "p / GeV")
   << QPair<Enums::KineticVariable, QString>(Enums::Rigidity, "R / GV")
-  << QPair<Enums::KineticVariable, QString>(Enums::AbsoluteRigidity, "R / GV")
+  << QPair<Enums::KineticVariable, QString>(Enums::AbsoluteRigidity, "|R| / GV")
   << QPair<Enums::KineticVariable, QString>(Enums::Curvature, "#kappa / GV^{-1}")
   << QPair<Enums::KineticVariable, QString>(Enums::Beta, "#beta")
-  << QPair<Enums::KineticVariable, QString>(Enums::InverseBeta, "#beta^{-1}");
+  << QPair<Enums::KineticVariable, QString>(Enums::InverseBeta, "#beta^{-1}")
+  << QPair<Enums::KineticVariable, QString>(Enums::SquaredCurvature, "#kappa^{2} / GV^{-2}");
+
+const QMap<Enums::ReconstructionMethod, QString> Enums::s_reconstructionMethodMap = InitializableMap<Enums::ReconstructionMethod, QString>()
+  << QPair<Enums::ReconstructionMethod, QString>(Enums::Spectrometer, "spectrometer")
+  << QPair<Enums::ReconstructionMethod, QString>(Enums::TOF, "TOF")
+  << QPair<Enums::ReconstructionMethod, QString>(Enums::WeightedMean, "weighted mean")
+  << QPair<Enums::ReconstructionMethod, QString>(Enums::Chi2, "chi2")
+  << QPair<Enums::ReconstructionMethod, QString>(Enums::Likelihood, "likelihood")
+  << QPair<Enums::ReconstructionMethod, QString>(Enums::SpectrometerExternalInformation, "spectrometer with external information")
+  << QPair<Enums::ReconstructionMethod, QString>(Enums::TOFExternalInformation, "TOF with external information")
+  << QPair<Enums::ReconstructionMethod, QString>(Enums::WeightedMeanExternalInformation, "weighted mean with external information")
+  << QPair<Enums::ReconstructionMethod, QString>(Enums::Chi2ExternalInformation, "chi2 with external information")
+  << QPair<Enums::ReconstructionMethod, QString>(Enums::LikelihoodExternalInformation, "likelihood with external information");
 
 // ChargeSign
 const QString Enums::label(Enums::ChargeSign key) {return s_chargeSignMap.value(key);}
@@ -198,3 +212,9 @@ const QString Enums::label(Enums::KineticVariable key) {return s_kineticVariable
 Enums::KineticVariable Enums::kineticVariable(const QString& value) {return s_kineticVariableMap.key(value);}
 Enums::KineticVariableIterator Enums::kineticVariableBegin() {return s_kineticVariableMap.constBegin();}
 Enums::KineticVariableIterator Enums::kineticVariableEnd() {return s_kineticVariableMap.constEnd();}
+
+// ReconstructionMethod
+const QString Enums::label(Enums::ReconstructionMethod key) {return s_reconstructionMethodMap.value(key);}
+Enums::ReconstructionMethod Enums::reconstructionMethod(const QString& value) {return s_reconstructionMethodMap.key(value);}
+Enums::ReconstructionMethodIterator Enums::reconstructionMethodBegin() {return s_reconstructionMethodMap.constBegin();}
+Enums::ReconstructionMethodIterator Enums::reconstructionMethodEnd() {return s_reconstructionMethodMap.constEnd();}

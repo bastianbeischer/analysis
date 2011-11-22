@@ -15,6 +15,10 @@
 #include "ParticleProperties.hh"
 #include "ParticleDB.hh"
 #include "LikelihoodAnalysis.hh"
+#include "TimeOfFlight.hh"
+#include "Settings.hh"
+#include "SettingsManager.hh"
+
 
 #include <TCanvas.h>
 #include <TH2I.h>
@@ -37,7 +41,6 @@ Plotter::Plotter(QWidget* parent)
   : TQtWidget(parent)
   , m_chain(new DataChain)
   , m_trackFinding(new TrackFinding)
-  , m_track(0)
   , m_processor(new AnalysisProcessor)
   , m_hitsPlot(new HitsPlot)
   , m_positionLabel(0)
@@ -52,8 +55,6 @@ Plotter::Plotter(QWidget* parent)
 
 Plotter::~Plotter()
 {
-  if (m_track)
-    delete m_track;
   delete m_chain;
   delete m_trackFinding;
   delete m_hitsPlot;
@@ -98,15 +99,11 @@ void Plotter::mouseMoveEvent(QMouseEvent* event)
 }
 
 void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
-  QPlainTextEdit& infoTextEdit, TQtWidget& trackFindingWidget, TQtWidget& likelihoodWidget)
+  QPlainTextEdit& infoTextEdit, TQtWidget& trackFindingWidget, TQtWidget& chi2Widget, TQtWidget& likelihoodWidget)
 {
   TCanvas* canvas = GetCanvas();
   canvas->cd();
 
-  if (m_track) {
-    delete m_track;
-    m_track = 0;
-  }
   Q_ASSERT(i < numberOfEvents());
   m_hitsPlot->setDrawAllClusters(allClusters);
   SimpleEvent* event = m_chain->event(i);
@@ -122,15 +119,28 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
   m_processor->trackFinding()->trackFindingHist()->Draw("colz");
   tfCan->Modified();
   tfCan->Update();
+
+  TMultiGraph* mg = 0;
+  
   TCanvas* lhCanvas = likelihoodWidget.GetCanvas();
   lhCanvas->cd();
   lhCanvas->Clear();
-  const LikelihoodAnalysis* lh = m_processor->likelihood();
-  TMultiGraph* mg = lh->graph();
+  const LikelihoodAnalysis* lh = m_processor->likelihood(Enums::Likelihood);
+  mg = lh->likelihoodGraph();
   mg->Draw("ALP");
   mg->GetYaxis()->SetRangeUser(-10., 100.);
   lhCanvas->Modified();
   lhCanvas->Update();
+
+  TCanvas* chi2Canvas = chi2Widget.GetCanvas();
+  chi2Canvas->cd();
+  chi2Canvas->Clear();
+  const LikelihoodAnalysis* chi2 = m_processor->likelihood(Enums::Chi2);
+  mg = chi2->chi2Graph();
+  mg->Draw("ALP");
+  mg->GetYaxis()->SetRangeUser(-10., 100.);
+  chi2Canvas->Modified();
+  chi2Canvas->Update();
 
   //show info for event
   const DataDescription* currentDesc = m_chain->currentDescription();
@@ -158,14 +168,26 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
     infoTextEdit.appendPlainText("Particle Name =\t" + ParticleDB::instance()->lookupPdgId(mcPrimary->pdgID)->name());
     infoTextEdit.appendPlainText("momentum =\t" + QString::number(mcPrimary->initialMomentum.Mag(),'f',3) + "GeV");
   }
+
+  const Particle* particle = m_processor->particle();
+  if (particle->track()) {
+    infoTextEdit.appendPlainText(QString("\nSpectrometer: R = %1 GV").arg(particle->track()->rigidity(), 0, 'g', 3));
+    infoTextEdit.appendPlainText(QString("TOF: beta = %1").arg(particle->beta()));
+  }
+
+  if (SettingsManager::instance()->settingsForEvent(event)->situation() == Settings::Testbeam11) {
+    infoTextEdit.appendPlainText(QString("\nCherenkovs: %1, %2 ADC counts")
+      .arg(event->sensorData(SensorTypes::BEAM_CHERENKOV1)).arg(event->sensorData(SensorTypes::BEAM_CHERENKOV2)));
+  }
+
   infoTextEdit.appendPlainText("\nLikelihood:");
   QVector<Enums::Particle>::ConstIterator particleIt = lh->particles().begin();
   QVector<Enums::Particle>::ConstIterator particleEnd = lh->particles().end();
-  QVector<QPointF>::ConstIterator minimumIt = lh->minima().begin();
+  QVector<QPointF>::ConstIterator minimumIt = lh->likelihoodMinima().begin();
   for (int it = 0; particleIt != particleEnd; ++it, ++particleIt, ++minimumIt) {
-    QString text = QString("%1.) (%2GV, %3) %4").arg(it + 1).arg(minimumIt->x(), 0, 'g', 3)
+    QString text = QString("%1.) (%2GV, %3) %4").arg(it + 1).arg(1./minimumIt->x(), 0, 'g', 3)
       .arg(minimumIt->y(), 0, 'g', 3).arg(Enums::label(*particleIt));
-    if (it == lh->indexOfGlobalMinimum()) {
+    if (it == lh->indexOfGlobalLikelihoodMinimum()) {
       text.prepend("<span style=\" color:#ff0000;\">");
       text.append("</span>");
       infoTextEdit.appendHtml(text);

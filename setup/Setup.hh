@@ -2,6 +2,7 @@
 #define Setup_hh
 
 #include "SensorTypes.hh"
+#include "Enums.hh"
 
 #include <QMap>
 #include <QVector>
@@ -44,6 +45,8 @@ public:
   TVector3 configFilePosition(QString group, unsigned short detId) const;
   double configFileAlignmentShift(QString group, unsigned short detId) const;
   double configFileTimeShift(unsigned short detId) const;
+
+  Enums::Particles proposedParticles() const;
 
   void writeSettings();
 

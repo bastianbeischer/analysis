@@ -60,8 +60,8 @@ public:
   static CutIterator cutBegin();
   static CutIterator cutEnd();
 
-  enum LikelihoodVariable {UndefinedLikelihood = 0, SignalHeightTrackerLikelihood = 1<<0, SignalHeightTRDLikelihood = 1<<1,
-    TimeOverThresholdLikelihood = 1<<2, TimeOfFlightLikelihood = 1<<3, TrackerMomentumLikelihood = 1 <<4};
+  enum LikelihoodVariable {UndefinedLikelihood = 0, SignalHeightTrackerLikelihood = 1<<0, SignalHeightTRDLikelihood = 1<<1, TimeOverThresholdLikelihood = 1<<2,
+    TimeOfFlightLikelihood = 1<<3, TrackerMomentumLikelihood = 1<<4, CherenkovLikelihood = 1<<5};
   static const QString label(LikelihoodVariable);
   static LikelihoodVariable likelihoodVariable(const QString&);
   typedef QMap<LikelihoodVariable, QString>::ConstIterator LikelihoodVariableIterator;
@@ -69,12 +69,21 @@ public:
   static LikelihoodVariableIterator likelihoodVariableEnd();
   Q_DECLARE_FLAGS(LikelihoodVariables, LikelihoodVariable);
 
-  enum KineticVariable {UndefinedKineticVariable, TotalEnergy, KineticEnergy, Momentum, Rigidity, AbsoluteRigidity, Curvature, Beta, InverseBeta};
+  enum KineticVariable {UndefinedKineticVariable, TotalEnergy, KineticEnergy, Momentum, Rigidity, AbsoluteRigidity, Curvature,
+    Beta, InverseBeta, SquaredCurvature};
   static const QString label(KineticVariable);
   static KineticVariable kineticVariable(const QString&);
   typedef QMap<KineticVariable, QString>::ConstIterator KineticVariableIterator;
   static KineticVariableIterator kineticVariableBegin();
   static KineticVariableIterator kineticVariableEnd();
+
+  enum ReconstructionMethod {UndefinedReconstructionMethod, Spectrometer, TOF, WeightedMean, Chi2, Likelihood, SpectrometerExternalInformation,
+    TOFExternalInformation, WeightedMeanExternalInformation, Chi2ExternalInformation, LikelihoodExternalInformation};
+  static const QString label(ReconstructionMethod);
+  static ReconstructionMethod reconstructionMethod(const QString&);
+  typedef QMap<ReconstructionMethod, QString>::ConstIterator ReconstructionMethodIterator;
+  static ReconstructionMethodIterator reconstructionMethodBegin();
+  static ReconstructionMethodIterator reconstructionMethodEnd();
 
 private:
   static const QMap<ChargeSign, QString> s_chargeSignMap;
@@ -85,6 +94,7 @@ private:
   static const QMap<Cut, QString> s_cutMap;
   static const QMap<LikelihoodVariable, QString> s_likelihoodVariableMap;
   static const QMap<KineticVariable, QString> s_kineticVariableMap;
+  static const QMap<ReconstructionMethod, QString> s_reconstructionMethodMap;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::AnalysisTopics);

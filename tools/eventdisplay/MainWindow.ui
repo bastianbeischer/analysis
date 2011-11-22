@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>929</width>
-    <height>600</height>
+    <width>1312</width>
+    <height>852</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -393,6 +393,9 @@
         </property>
         <item>
          <widget class="TQtWidget" name="trackFindingWidget" native="true"/>
+        </item>
+        <item>
+         <widget class="TQtWidget" name="chi2Widget" native="true"/>
         </item>
         <item>
          <widget class="TQtWidget" name="likelihoodWidget" native="true"/>

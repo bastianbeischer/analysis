@@ -10,20 +10,25 @@ CLASSES += \
   LikelihoodPDF \
   TimeOfFlightLikelihood \
   TrackerMomentumLikelihood \
-  LikelihoodAnalysis
+  CherenkovLikelihood \
+  LikelihoodAnalysis \
+  Hypothesis
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \
   $$TOPLEVEL/particle \
   $$TOPLEVEL/tracking \
-  $$TOPLEVEL/global
+  $$TOPLEVEL/global \
+  $$TOPLEVEL/setup \
+  $$TOPLEVEL/processing
 
 LIBS += \
   -L$$TOPLEVEL/lib \
   -lglobal \
   -lSimpleEvent \
   -lparticle \
-  -ltracking
+  -ltracking \
+  -lsetup
 
 include($$TOPLEVEL/common.pri)
 include($$TOPLEVEL/root.pri)

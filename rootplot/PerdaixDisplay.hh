@@ -8,30 +8,23 @@ class TCanvas;
 class TBox;
 class TGaxis;
 
-class PerdaixDisplay : public H2DPlot
-{
-  
+class PerdaixDisplay : public H2DPlot {
 public:
   PerdaixDisplay();
   ~PerdaixDisplay();
-
   double yStretchFactor() const {return m_yStretchFactor;}
-
-  virtual void draw(TCanvas* can);
-
+  virtual void draw(TCanvas*);
+protected:
+  double m_yStretchFactor;
+  TGaxis* m_yAxis;
+  QVector<TBox*> m_boxes;
 private:
   void constructTof();
   void constructTrd();
   void constructTracker();
+  void constructMagnet();
   void setupHistogram();
   void setupAxis();
-
-protected:
-  double m_yStretchFactor;
-  
-  TGaxis*         m_yAxis;
-  QVector<TBox*>  m_boxes;
-  
 };
 
 #endif /* PerdaixDisplay_hh */

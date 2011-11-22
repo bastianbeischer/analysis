@@ -17,6 +17,7 @@
 #include "H1DPlot.hh"
 #include "H2DPlot.hh"
 #include "GraphPlot.hh"
+#include "ParticleProperties.hh"
 
 #include "RootQtWidget.hh"
 #include "TopicSelector.hh"
@@ -46,7 +47,8 @@ MainWindow::MainWindow(Analysis* analysis, bool batch, QWidget* parent)
 
   setupTopicSelectors();
   setupCorrectionsCheckBoxes();
-  setupFilterCheckBoxes();
+  setupParticleCheckBoxes();
+  setupParticleFilterCheckBoxes();
   setupCutSelectors();
   setupViewActions();
 
@@ -54,9 +56,14 @@ MainWindow::MainWindow(Analysis* analysis, bool batch, QWidget* parent)
     m_ui.trackComboBox->addItem(it.value());
   m_ui.trackComboBox->setCurrentIndex(m_ui.trackComboBox->findText(Enums::label(Enums::CenteredBrokenLine)));
 
+  for (Enums::ReconstructionMethodIterator it = Enums::reconstructionMethodBegin(); it != Enums::reconstructionMethodEnd(); ++it)
+    m_ui.reconstructionMethodComboBox->addItem(it.value());
+  m_ui.reconstructionMethodComboBox->setCurrentIndex(m_ui.reconstructionMethodComboBox->findText(Enums::label(Enums::Likelihood)));
+
   m_controlWidgets
     << m_ui.selectAllButton << m_ui.selectTrackerButton << m_ui.selectTrdButton << m_ui.selectTofButton
-    << m_ui.trackComboBox << m_ui.firstEventSpinBox << m_ui.lastEventSpinBox << m_ui.numberOfThreadsSpinBox;
+    << m_ui.trackComboBox << m_ui.reconstructionMethodComboBox << m_ui.firstEventSpinBox
+    << m_ui.lastEventSpinBox << m_ui.numberOfThreadsSpinBox;
 
   connect(m_analysis, SIGNAL(started()), this, SLOT(toggleControlWidgetsStatus()));
   connect(m_analysis, SIGNAL(started()), &m_updateTimer, SLOT(start()));
@@ -174,15 +181,32 @@ void MainWindow::setupCorrectionsCheckBoxes()
   m_ui.correctionsTab->setLayout(layout);
 }
 
-void MainWindow::setupFilterCheckBoxes()
+void MainWindow::setupParticleCheckBoxes()
+{
+  QVBoxLayout* layout = new QVBoxLayout;
+  layout->addWidget(new QLabel("possible particles:"));
+  for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
+    if (it.key() != Enums::NoParticle && ParticleProperties(it.key()).charge() != 0) {
+      QCheckBox* checkBox = new QCheckBox(it.value());
+      checkBox->setCheckState((Setup::instance()->proposedParticles() & it.key()) ? Qt::Checked : Qt::Unchecked);
+      layout->addWidget(checkBox);
+      m_controlWidgets.append(checkBox);
+      m_particleCheckBoxes.append(checkBox);
+    }
+  }
+  m_ui.particlesTab->setLayout(layout);
+}
+
+
+void MainWindow::setupParticleFilterCheckBoxes()
 {
   Enums::Particles particles = Enums::NoParticle;
   int row;
   
   QGridLayout* layout = new QGridLayout;
-  particles = Enums::Proton | Enums::Helium | Enums::Electron | Enums::Positron | Enums::Muon | Enums::AntiMuon;
   layout->addWidget(new QLabel("data:"), 0, 0);
   row = 1;
+  particles = Enums::Proton | Enums::Helium | Enums::Electron | Enums::Positron | Enums::Muon | Enums::AntiMuon;
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
     if (it.key() != Enums::NoParticle && (it.key() & particles) == it.key()) {
       QCheckBox* checkBox = new QCheckBox(it.value());
@@ -193,20 +217,22 @@ void MainWindow::setupFilterCheckBoxes()
       ++row;
     }
   }
-  particles = Enums::Proton | Enums::AntiProton | Enums::Helium | Enums::Electron | Enums::Positron | Enums::Muon
-    | Enums::AntiMuon | Enums::PiPlus | Enums::PiMinus | Enums::Photon;
+  
   layout->addWidget(new QLabel("mc:"), 0, 1);
   row = 1;
+  particles = Enums::Proton | Enums::AntiProton | Enums::Helium | Enums::Electron | Enums::Positron | Enums::Muon
+    | Enums::AntiMuon | Enums::PiPlus | Enums::PiMinus | Enums::Photon;
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
     if (it.key() != Enums::NoParticle && (it.key() & particles) == it.key()) {
       QCheckBox* checkBox = new QCheckBox(it.value());
       checkBox->setCheckState(Qt::Checked);
       layout->addWidget(checkBox, row, 1);
       m_controlWidgets.append(checkBox);
-      m_mcFilterCheckBoxes.append(checkBox);
+      m_mcParticleFilterCheckBoxes.append(checkBox);
       ++row;
     }
   }
+
   m_ui.filterTab->setLayout(layout);
 }
 
@@ -347,10 +373,17 @@ void MainWindow::guiToAnalysisSetting()
 
   m_analysisSetting.trackType = Enums::trackType(m_ui.trackComboBox->currentText());
 
+  m_analysisSetting.reconstructionMethod = Enums::reconstructionMethod(m_ui.reconstructionMethodComboBox->currentText());
+
   m_analysisSetting.corrections = Enums::NoCorrection;
   foreach (QCheckBox* checkBox, m_correctionCheckBoxes)
     if (checkBox->isChecked())
       m_analysisSetting.corrections|= Enums::correction(checkBox->text());
+
+  m_analysisSetting.particles = Enums::NoParticle;
+  foreach (QCheckBox* checkBox, m_particleCheckBoxes)
+    if (checkBox->isChecked())
+      m_analysisSetting.particles|= Enums::particle(checkBox->text());
 
   m_analysisSetting.particleFilter = Enums::NoParticle;
   foreach (QCheckBox* checkBox, m_particleFilterCheckBoxes)
@@ -358,7 +391,7 @@ void MainWindow::guiToAnalysisSetting()
       m_analysisSetting.particleFilter|= Enums::particle(checkBox->text());
 
   m_analysisSetting.mcParticleFilter = Enums::NoParticle;
-  foreach (QCheckBox* checkBox, m_mcFilterCheckBoxes)
+  foreach (QCheckBox* checkBox, m_mcParticleFilterCheckBoxes)
     if (checkBox->isChecked())
       m_analysisSetting.mcParticleFilter|= Enums::particle(checkBox->text());
   
@@ -380,8 +413,17 @@ void MainWindow::analysisSettingToGui()
 
   m_ui.trackComboBox->setCurrentIndex(m_ui.trackComboBox->findText(Enums::label(m_analysisSetting.trackType)));
 
+  m_ui.reconstructionMethodComboBox->setCurrentIndex(m_ui.reconstructionMethodComboBox->findText(Enums::label(m_analysisSetting.reconstructionMethod)));
+
   foreach (QCheckBox* checkBox, m_correctionCheckBoxes)
     if (m_analysisSetting.corrections & Enums::correction(checkBox->text())) {
+      checkBox->setCheckState(Qt::Checked);
+    } else {
+      checkBox->setCheckState(Qt::Unchecked);
+    }
+
+  foreach (QCheckBox* checkBox, m_particleCheckBoxes)
+    if (m_analysisSetting.particles & Enums::particle(checkBox->text())) {
       checkBox->setCheckState(Qt::Checked);
     } else {
       checkBox->setCheckState(Qt::Unchecked);
@@ -394,7 +436,7 @@ void MainWindow::analysisSettingToGui()
       checkBox->setCheckState(Qt::Unchecked);
     }
 
-  foreach (QCheckBox* checkBox, m_mcFilterCheckBoxes)
+  foreach (QCheckBox* checkBox, m_mcParticleFilterCheckBoxes)
     if (m_analysisSetting.mcParticleFilter & Enums::particle(checkBox->text())) {
       checkBox->setCheckState(Qt::Checked);
     } else {

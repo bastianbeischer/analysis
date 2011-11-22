@@ -1,4 +1,6 @@
 #include "Helpers.hh"
+#include "ParticleProperties.hh"
+#include "Constants.hh"
 
 #include <cmath>
 
@@ -72,5 +74,27 @@ namespace Helpers
     if (!env)
       qFatal("ERROR: You need to set PERDAIXDATA_PATH environment variable to the toplevel location of the data!");
     return env;
+  }
+
+  double trackerResolution(double curvature, Enums::Particle particle)
+  {
+    ParticleProperties properties(particle);
+    Q_ASSERT(properties.charge() != 0 && properties.mass() > 0);
+    double a = 0, b = 0;
+    switch (particle) {
+      case Enums::Proton: case Enums::AntiProton: a = 0.077; b = 0.3175; break;
+      case Enums::Electron: case Enums::Positron: a = 0.07627; b = 0.2349; break;
+      case Enums::Helium: a = 0.04195; b = 0.3024; break;
+      case Enums::PiPlus: case Enums::PiMinus: a = 0.0759; b = 0.2356; break;
+      default: a = 0.077; b = 0.3175; break;
+    }
+    double inverseBeta = addQuad(1, properties.mass() * curvature);
+    return addQuad(a / curvature, b * inverseBeta);
+  }
+
+  double tofResolution()
+  {
+    double l = Constants::upperTofPosition - Constants::lowerTofPosition;
+    return Constants::tofResolution * Constants::speedOfLight / l;
   }
 }

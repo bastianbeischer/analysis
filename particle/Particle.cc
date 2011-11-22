@@ -12,6 +12,9 @@
 #include "BrokenLine.hh"
 #include "StraightLine.hh"
 #include "TrackFinding.hh"
+#include "Hypothesis.hh"
+
+#include "QDebug"
 
 Particle::Particle()
   : m_properties(0)
@@ -19,7 +22,8 @@ Particle::Particle()
   , m_tof(0)
   , m_trd(0)
   , m_information(0)
-  , m_variable(Enums::NoParticle)
+  , m_method(Enums::UndefinedReconstructionMethod)
+  , m_hypotheses()
 {
   init();
 }
@@ -30,7 +34,8 @@ Particle::Particle(const Enums::Particle& type)
   , m_tof(0)
   , m_trd(0)
   , m_information(0)
-  , m_variable(Enums::NoParticle)
+  , m_method(Enums::UndefinedReconstructionMethod)
+  , m_hypotheses()
 {
   init();
   setType(type);
@@ -42,7 +47,8 @@ Particle::Particle(const int& pdgId)
   , m_tof(0)
   , m_trd(0)
   , m_information(0)
-  , m_variable(Enums::NoParticle)
+  , m_method(Enums::UndefinedReconstructionMethod)
+  , m_hypotheses()
 {
   init();
   setPdgId(pdgId);
@@ -63,7 +69,8 @@ void Particle::init()
   m_tof = new TimeOfFlight;
   m_trd = new TRDReconstruction;
   m_information = new ParticleInformation(this);
-  m_variable = KineticVariable(Enums::NoParticle);
+  m_method = Enums::UndefinedReconstructionMethod;
+  Q_ASSERT(m_hypotheses.size() == 0);
 }
 
 void Particle::reset()
@@ -74,7 +81,10 @@ void Particle::reset()
   m_tof->reset();
   m_trd->reset();
   m_information->reset();
-  m_variable = KineticVariable(Enums::NoParticle);
+  QMap<Enums::ReconstructionMethod, Hypothesis*>::Iterator end = m_hypotheses.end();
+  for (QMap<Enums::ReconstructionMethod, Hypothesis*>::Iterator it = m_hypotheses.begin(); it != end; ++it)
+    delete it.value();
+  m_hypotheses.clear();
 }
 
 void Particle::setType(const Enums::Particle& type)
@@ -104,14 +114,40 @@ void Particle::setTrackType(const Enums::TrackType& trackType)
     m_track = new StraightLine;
 }
 
-void Particle::setVariable(const KineticVariable& variable)
+void Particle::setReconstructionMethod(Enums::ReconstructionMethod method)
 {
-  m_variable = variable;
+  m_method = method;
 }
 
-const KineticVariable& Particle::variable() const
+Enums::ReconstructionMethod Particle::reconstructionMethod() const
 {
-  return m_variable;
+  return m_method;
+}
+
+void Particle::addHypothesis(Enums::ReconstructionMethod method, Hypothesis* h)
+{
+  Q_ASSERT(hypothesis(h->particle(), method) == 0);
+  m_hypotheses.insertMulti(method, h);
+}
+
+const QMap<Enums::ReconstructionMethod, Hypothesis*>& Particle::hypotheses() const
+{
+  return m_hypotheses;
+}
+
+const Hypothesis* Particle::hypothesis(Enums::Particle particle) const
+{
+  return hypothesis(particle, m_method);
+}
+
+const Hypothesis* Particle::hypothesis(Enums::Particle particle, Enums::ReconstructionMethod method) const
+{
+  QMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator upperBound = m_hypotheses.upperBound(method);
+  for (QMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator it = m_hypotheses.lowerBound(method); it != upperBound; ++it) {
+    if (it.value()->particle() == particle)
+      return it.value(); 
+  }
+  return 0;
 }
 
 double Particle::transverseMomentum() const

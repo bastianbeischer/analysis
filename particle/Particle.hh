@@ -3,7 +3,6 @@
 
 #include "Track.hh"
 #include "Enums.hh"
-#include "KineticVariable.hh"
 
 #include <TColor.h>
 
@@ -13,6 +12,7 @@ class ParticleProperties;
 class ParticleInformation;
 class TimeOfFlight;
 class TRDReconstruction;
+class Hypothesis;
 
 class Particle {
 public:
@@ -31,8 +31,14 @@ public:
   TRDReconstruction* trdReconstruction() const {return m_trd;}
   ParticleInformation* information() const {return m_information;}
 
-  void setVariable(const KineticVariable&);
-  const KineticVariable& variable() const;
+  void setReconstructionMethod(Enums::ReconstructionMethod);
+  Enums::ReconstructionMethod reconstructionMethod() const;
+
+  void addHypothesis(Enums::ReconstructionMethod, Hypothesis*);
+  const QMap<Enums::ReconstructionMethod, Hypothesis*>& hypotheses() const;
+  const Hypothesis* hypothesis();
+  const Hypothesis* hypothesis(Enums::Particle) const;
+  const Hypothesis* hypothesis(Enums::Particle, Enums::ReconstructionMethod) const;
 
   double transverseMomentum() const; // To be removed: KineticVariable that
   double momentum() const;           // contains Likelihood analyzed data
@@ -57,7 +63,8 @@ private:
   TimeOfFlight* m_tof;
   TRDReconstruction* m_trd;
   ParticleInformation* m_information;
-  KineticVariable m_variable;
+  Enums::ReconstructionMethod m_method;
+  QMap<Enums::ReconstructionMethod, Hypothesis*> m_hypotheses;
 };
 
 #endif /* Particle_hh */

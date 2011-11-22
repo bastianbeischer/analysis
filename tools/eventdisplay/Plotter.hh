@@ -25,8 +25,8 @@ public:
   void setFileList(const QString& listName);
   void addFileList(const QString& listName);
   void addRootFile(const QString&);
-  void drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
-    QPlainTextEdit& infoTextBox, TQtWidget& trackFindingWidget, TQtWidget& likelihoodWidget);
+  void drawEvent(unsigned int i, Enums::TrackType type, bool allClusters, QPlainTextEdit& infoTextBox,
+    TQtWidget& trackFindingWidget, TQtWidget& chi2Widget, TQtWidget& likelihoodWidget);
   void saveCanvas(const QString& fileName);
   void setPositionLabel(QLabel* label);
 public slots:
@@ -38,7 +38,6 @@ private:
   TCanvas* m_canvas;
   DataChain* m_chain;
   TrackFinding* m_trackFinding;
-  Track* m_track;
   AnalysisProcessor* m_processor;
   HitsPlot* m_hitsPlot;
   QLabel* m_positionLabel;

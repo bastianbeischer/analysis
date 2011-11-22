@@ -1,11 +1,13 @@
 #ifndef Settings_hh
 #define Settings_hh
 
+#include "Enums.hh"
+
 #include <QString>
+#include <QVector>
 
 class Settings
 {
-  
 public:
   enum Situation {Unknown=-1, KirunaMuons, KirunaFlight, Testbeam11};
 
@@ -33,6 +35,7 @@ public:
   double pressure() const {return m_pressure;}
   bool magnet() const {return m_magnet;}
 
+  Enums::Particles aboveThreshold(int* n = 0) const;
   bool isAboveThreshold(double) const;
 
 private:

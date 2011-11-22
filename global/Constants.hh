@@ -34,6 +34,14 @@ namespace Constants
 
   const double geometricAcceptance = 0.00318198;    // m^2sr
   const double geometricAcceptanceTof = 0.00848509; // m^2sr
+
+  const double cherenkovThreshold = 200.;           // ADC counts
+
+  const double magnetInnerRadius = 75.9;            // mm
+  const double magnetOuterRadius = 104.6;           // mm
+  const double magnetHeight = 81;                   // mm
+
+  const double tofResolution = 0.4;                 // ns
 }
 
 #endif

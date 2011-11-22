@@ -147,11 +147,11 @@ void Analysis::start(const AnalysisSetting& analysisSetting)
   qDeleteAll(m_processors);
   m_processors.clear();
   for (int i = 0; i < m_analysisSetting.numberOfThreads; ++i) {
-    AnalysisProcessor* processor = new AnalysisProcessor;
+    QVector<EventDestination*> destinations;
     foreach(AnalysisPlot* plot, m_plots)
-      processor->addDestination(plot);
-    processor->setTrackType(m_analysisSetting.trackType);
-    processor->setCorrectionFlags(m_analysisSetting.corrections);
+      destinations.append(plot);
+    AnalysisProcessor* processor = new AnalysisProcessor(destinations, m_analysisSetting.trackType, m_analysisSetting.corrections, m_analysisSetting.particles);
+    processor->setReconstructionMethod(m_analysisSetting.reconstructionMethod);
     processor->setParticleFilter(m_analysisSetting.particleFilter);
     processor->setMCFilter(m_analysisSetting.mcParticleFilter);
     processor->setCutFilter(m_analysisSetting.cutFilter);

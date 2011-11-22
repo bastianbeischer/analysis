@@ -5,8 +5,7 @@
 
 #include <QFlags>
 
-class ParticleFilter
-{
+class ParticleFilter {
 public:
   ParticleFilter(Enums::Particles = Enums::NoParticle);
   ~ParticleFilter();

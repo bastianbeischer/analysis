@@ -19,6 +19,7 @@ LIBS += \
   -lrootplot \
   -lglobal \
   -lparticle \
+  -lprocessing \
   -lpostAnalysis
 
 CLASSES = \

@@ -27,6 +27,7 @@ public:
   const QVector<Hit*>& clusters() const {return m_clusters;}
   void setClusters(const QVector<Hit*>& clusters) {m_clusters = clusters;}
 
+  Particle* particle() {return m_particle;}
   const Particle* particle() const {return m_particle;}
   void setParticle(Particle* particle) {m_particle = particle;}
   

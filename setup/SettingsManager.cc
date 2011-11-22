@@ -49,7 +49,6 @@ const Settings* SettingsManager::settingsForEvent(const SimpleEvent* const event
   return settingsForRun(run);
 }
 
-
 const Settings* SettingsManager::settingsForRun(int run) const
 {
   Settings temp;

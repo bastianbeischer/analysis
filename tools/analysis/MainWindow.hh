@@ -60,7 +60,8 @@ private slots:
 private:
   void setupTopicSelectors();
   void setupCorrectionsCheckBoxes();
-  void setupFilterCheckBoxes();
+  void setupParticleCheckBoxes();
+  void setupParticleFilterCheckBoxes();
   void setupCutSelectors();
   void setupViewActions();
   void guiToAnalysisSetting();
@@ -85,8 +86,9 @@ private:
   
   QVector<QWidget*> m_controlWidgets;
   QVector<QCheckBox*> m_correctionCheckBoxes;
+  QVector<QCheckBox*> m_particleCheckBoxes;
   QVector<QCheckBox*> m_particleFilterCheckBoxes;
-  QVector<QCheckBox*> m_mcFilterCheckBoxes;
+  QVector<QCheckBox*> m_mcParticleFilterCheckBoxes;
   QVector<CutSelector*> m_cutSelectors;
   QVector<RootPlot::DrawOption> m_drawOptions;
   bool m_inhibitDraw;

@@ -12,6 +12,7 @@
 #include "TOFCluster.hh"
 #include "DetectorElement.hh"
 #include "Setup.hh"
+#include "Constants.hh"
 
 #include <TCanvas.h>
 #include <TList.h>
@@ -153,9 +154,38 @@ void HitsPlot::processEvent(const AnalyzedEvent* event)
 
     char text[128];
     sprintf(text, "#chi^{2} / ndf = %.1f / %d", track->chi2(), track->ndf());
-    m_fitInfo = new TLatex(90, z_min + 0.64*(z_max-z_min), text);
+    m_fitInfo = new TLatex(90, 100, qPrintable(QString("#chi^{2} / ndf = %1 / %2")
+      .arg(track->chi2(), 0, 'g', 2).arg(track->ndf())));
+    if (event->flagsSet(ParticleInformation::Chi2Good)) {
+      m_fitInfo->SetTextColor(kBlack);
+    } else {
+      m_fitInfo->SetTextColor(kRed);
+    }
     m_fitInfo->SetTextSize(0.03);
     m_fitInfo->Draw("SAME");
+
+    {
+      TBox* box1 = new TBox(-Constants::magnetOuterRadius, Constants::magnetHeight / 2.,
+        -Constants::magnetInnerRadius, -Constants::magnetHeight / 2.);
+      TBox* box2 = new TBox(Constants::magnetInnerRadius, Constants::magnetHeight / 2.,
+        Constants::magnetOuterRadius, -Constants::magnetHeight / 2.);
+      box1->SetFillStyle(3003);
+      box2->SetFillStyle(3003);
+      if (event->flagsSet(ParticleInformation::InsideMagnet)) {
+        box1->SetFillColor(kGreen);
+        box2->SetFillColor(kGreen);
+      } else if (event->flagsSet(ParticleInformation::MagnetCollision)) {
+        box1->SetFillColor(kRed);
+        box2->SetFillColor(kRed);
+      } else {
+        box1->SetFillColor(kBlue);
+        box2->SetFillColor(kBlue);
+      }
+      box1->Draw("SAME");
+      box2->Draw("SAME");
+      m_hits.append(box1);
+      m_hits.append(box2);
+    }
   }
 
   QVector<Hit*> hitsToPlot;
@@ -228,6 +258,7 @@ void HitsPlot::processEvent(const AnalyzedEvent* event)
       x = element->position().x() + (2*(channel-2)+0.5) * width;
       color = palette->GetValueColor(amplitude*5);
     }
+
 
     if (type != Hit::trd) {
       TBox* box = new TBox(x-0.5*width, z-0.5*height, x+0.5*width, z+0.5*height);
@@ -313,7 +344,7 @@ void HitsPlot::processEvent(const AnalyzedEvent* event)
   }
 
 }
-  
+
 void HitsPlot::setDrawAllClusters(bool value)
 {
   m_drawAllClusters = value;

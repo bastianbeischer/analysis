@@ -22,7 +22,9 @@ public:
 
   Enums::AnalysisTopics analysisTopics;
   Enums::TrackType trackType;
+  Enums::ReconstructionMethod reconstructionMethod;
   Enums::Corrections corrections;
+  Enums::Particles particles;
   Enums::Particles particleFilter;
   Enums::Particles mcParticleFilter;
   CutFilter cutFilter;

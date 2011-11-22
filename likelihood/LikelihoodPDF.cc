@@ -1,6 +1,7 @@
 #include "LikelihoodPDF.hh"
 #include "Likelihood.hh"
 #include "Particle.hh"
+#include "Hypothesis.hh"
 
 #include <TAxis.h>
 
@@ -32,5 +33,5 @@ double LikelihoodPDF::integral()
 
 double LikelihoodPDF::rootFunctionPointer(double* x, double*) const
 {
-  return m_likelihood->eval(x[0], m_variable);
+  return m_likelihood->eval(x[0], Hypothesis(m_variable.particle(), m_variable.curvature()));
 }

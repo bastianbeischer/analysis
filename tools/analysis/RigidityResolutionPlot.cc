@@ -274,12 +274,11 @@ void RigidityResolutionPlot::processEvent(const AnalyzedEvent* event)
     if (beta < 1)
       m_weightedMeanResolutionHistograms[bin-1]->Fill(enumerator / denominator);
 
-
-    if (event->particle()->variable().particle() == m_particleProperties.type()) {
+/*    if (event->particle()->variable().particle() == m_particleProperties.type()) {
       if (m_particleProperties.type() == Enums::Proton && event->particle()->variable().curvature() < 0.2)
         qDebug() << event->simpleEvent()->eventId();
       m_likelihoodResolutionHistograms[bin-1]->Fill(event->particle()->variable().curvature());
-    }
+    }*/
   }
 }
 

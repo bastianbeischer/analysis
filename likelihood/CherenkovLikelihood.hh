@@ -1,16 +1,17 @@
-#ifndef TimeOfFlightLikelihood_hh
-#define TimeOfFlightLikelihood_hh
+#ifndef CherenkovLikelihood_hh
+#define CherenkovLikelihood_hh
 
 #include "Likelihood.hh"
 #include "Enums.hh"
 
-class TimeOfFlightLikelihood : public Likelihood {
+class CherenkovLikelihood : public Likelihood {
 public:
-  TimeOfFlightLikelihood(Enums::Particles = Enums::NoParticle);
-  ~TimeOfFlightLikelihood();
-
+  CherenkovLikelihood(Enums::Particles);
+  ~CherenkovLikelihood();
   virtual double eval(const AnalyzedEvent*, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const;
   virtual double eval(double inverseBeta, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const;
+private:
+  int m_numberOfParticles;
 };
 
 #endif

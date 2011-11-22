@@ -1,14 +1,15 @@
 #include "TimeOfFlightLikelihood.hh"
 #include "Helpers.hh"
 #include "Constants.hh"
+#include "AnalyzedEvent.hh"
 #include "Particle.hh"
 
 #include <TMath.h>
 
 #include <QDebug>
 
-TimeOfFlightLikelihood::TimeOfFlightLikelihood()
-  : Likelihood()
+TimeOfFlightLikelihood::TimeOfFlightLikelihood(Enums::Particles particles)
+  : Likelihood(particles)
 {
   m_likelihoodVariableType = Enums::TimeOfFlightLikelihood;
   m_measuredValueType = Enums::InverseBeta;
@@ -21,12 +22,14 @@ TimeOfFlightLikelihood::~TimeOfFlightLikelihood()
 {
 }
 
-double TimeOfFlightLikelihood::eval(const Particle* particle, const KineticVariable& hypothesis, bool* goodInterpolation) const
+double TimeOfFlightLikelihood::eval(const AnalyzedEvent* event, const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
-  return eval(qIsNull(particle->beta()) ? 0. : 1./particle->beta(), hypothesis, goodInterpolation);
+  if (qIsNull(event->particle()->beta()))
+    return 0;
+  return eval(1./event->particle()->beta(), hypothesis, goodInterpolation);
 }
 
-double TimeOfFlightLikelihood::eval(double inverseBeta, const KineticVariable& hypothesis, bool* goodInterpolation) const
+double TimeOfFlightLikelihood::eval(double inverseBeta, const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
   if (goodInterpolation)
     *goodInterpolation = true;

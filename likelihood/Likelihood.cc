@@ -3,14 +3,16 @@
 #include "LikelihoodPDF.hh"
 #include "TimeOfFlightLikelihood.hh"
 #include "TrackerMomentumLikelihood.hh"
+#include "CherenkovLikelihood.hh"
 
 #include <QSettings>
 #include <QStringList>
 #include <QFile>
 #include <QDebug>
 
-Likelihood::Likelihood()
-  : m_measuredValueType(Enums::UndefinedKineticVariable)
+Likelihood::Likelihood(Enums::Particles particles)
+  : m_particles(particles)
+  , m_measuredValueType(Enums::UndefinedKineticVariable)
   , m_likelihoodVariableType()
   , m_min(0)
   , m_max(0)
@@ -38,25 +40,25 @@ Likelihood::MomentumMap::ConstIterator Likelihood::end(Enums::Particle type) con
   return m_nodes[type].end();
 }
 
-Likelihood::MomentumMap::ConstIterator Likelihood::lowerNode(const KineticVariable& variable) const
+Likelihood::MomentumMap::ConstIterator Likelihood::lowerNode(const Hypothesis& hypothesis) const
 {
-  ParticleMap::ConstIterator particleIt = m_nodes.find(variable.particle());
-  MomentumMap::ConstIterator momentumIt = particleIt.value().lowerBound(variable.rigidity());
-  if (qFuzzyCompare(momentumIt.key(), variable.rigidity()))
+  ParticleMap::ConstIterator particleIt = m_nodes.find(hypothesis.particle());
+  MomentumMap::ConstIterator momentumIt = particleIt.value().lowerBound(hypothesis.curvature());
+  if (qFuzzyCompare(momentumIt.key(), hypothesis.curvature()))
     return momentumIt;
   return --momentumIt;
 }
 
-Likelihood::MomentumMap::ConstIterator Likelihood::upperNode(const KineticVariable& variable) const
+Likelihood::MomentumMap::ConstIterator Likelihood::upperNode(const Hypothesis& hypothesis) const
 {
-  return ++lowerNode(variable);
+  return ++lowerNode(hypothesis);
 }
 
-Likelihood::ParameterVector Likelihood::linearInterpolation(const KineticVariable& variable, bool* goodInterpolation) const
+Likelihood::ParameterVector Likelihood::linearInterpolation(const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
-  MomentumMap::ConstIterator endIt = end(variable.particle());
-  MomentumMap::ConstIterator l = lowerNode(variable);
-  if (qFuzzyCompare(l.key(), variable.rigidity()))
+  MomentumMap::ConstIterator endIt = end(hypothesis.particle());
+  MomentumMap::ConstIterator l = lowerNode(hypothesis);
+  if (qFuzzyCompare(l.key(), hypothesis.curvature()))
     return l.value();
   MomentumMap::ConstIterator u = l;
   ++u;
@@ -66,13 +68,13 @@ Likelihood::ParameterVector Likelihood::linearInterpolation(const KineticVariabl
     } else {
       qWarning()
         << "No values for an interpolation of" << Enums::label(m_likelihoodVariableType)
-        << "for" << Enums::label(variable.particle()) << "at R =" << variable.rigidity() << "GV.";
+        << "for" << Enums::label(hypothesis.particle()) << "at K =" << hypothesis.curvature() << "1/GV.";
     }
     return defaultParameters();
   }
   if (goodInterpolation)
     *goodInterpolation = true;
-  double k = (variable.rigidity() - l.key()) / (u.key() - l.key());
+  double k = (hypothesis.curvature() - l.key()) / (u.key() - l.key());
   ParameterVector vector(numberOfParameters());
   for (int i = 0; i < numberOfParameters(); ++i)
     vector[i] = l.value()[i] + k * (u.value()[i] - l.value()[i]);
@@ -129,15 +131,16 @@ int Likelihood::numberOfParameters() const
   return m_numberOfParameters;
 }
 
-Likelihood* Likelihood::newLikelihood(Enums::LikelihoodVariable type)
+Likelihood* Likelihood::newLikelihood(Enums::LikelihoodVariable type, Enums::Particles particles)
 {
   switch (type) {
     case Enums::UndefinedLikelihood: return 0;
     case Enums::SignalHeightTrackerLikelihood: return 0;
     case Enums::SignalHeightTRDLikelihood: return 0;
     case Enums::TimeOverThresholdLikelihood: return 0;
-    case Enums::TimeOfFlightLikelihood: return new TimeOfFlightLikelihood();
-    case Enums::TrackerMomentumLikelihood: return new TrackerMomentumLikelihood();
+    case Enums::TimeOfFlightLikelihood: return new TimeOfFlightLikelihood(particles);
+    case Enums::TrackerMomentumLikelihood: return new TrackerMomentumLikelihood(particles);
+    case Enums::CherenkovLikelihood: return new CherenkovLikelihood(particles);
   }
   return 0;
 }

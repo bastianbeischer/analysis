@@ -8,7 +8,9 @@ TOPLEVEL = ..
 CLASSES += \
   RootStyle \
   Helpers \
-  Enums
+  Enums \
+  ParticleProperties \
+  KineticVariable
 
 HEADERS += \
   Constants.hh

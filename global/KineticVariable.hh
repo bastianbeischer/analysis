@@ -21,6 +21,7 @@ public:
   double curvature() const;
   double beta() const;
   double inverseBeta() const;
+  double squaredCurvature() const;
 
   void set(Enums::KineticVariable, double value);
   void setTotalEnergy(double);
@@ -31,6 +32,7 @@ public:
   void setCurvature(double);
   void setBeta(double);
   void setInverseBeta(double);
+  void setSquaredCurvature(double);
   
 private:
   ParticleProperties m_properties;

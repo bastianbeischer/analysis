@@ -6,6 +6,7 @@ CONFIG += debug
 TOPLEVEL = ../..
 
 INCLUDEPATH += \
+  $$TOPLEVEL/global \
   $$TOPLEVEL/event \
   $$TOPLEVEL/particle \
   $$TOPLEVEL/setup \

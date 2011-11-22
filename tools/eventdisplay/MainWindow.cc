@@ -1,4 +1,5 @@
 #include "MainWindow.hh"
+#include "Setup.hh"
 
 #include <QDebug>
 #include <QFileDialog>
@@ -125,7 +126,7 @@ void MainWindow::update()
   else if (index == 1) type = Enums::StraightLine;
   else if (index == 2) type = Enums::BrokenLine;
   m_ui.plotter->drawEvent(m_ui.eventSpinBox->value(), type, m_ui.allClustersCheckBox->isChecked(),
-    *m_ui.textEdit, *m_ui.trackFindingWidget, *m_ui.likelihoodWidget);
+    *m_ui.textEdit, *m_ui.trackFindingWidget, *m_ui.chi2Widget, *m_ui.likelihoodWidget);
 }
 
 void MainWindow::saveButtonClicked()

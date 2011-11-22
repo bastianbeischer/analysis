@@ -75,6 +75,12 @@ double KineticVariable::inverseBeta() const
   return totalEnergy() / momentum();
 }
 
+double KineticVariable::squaredCurvature() const
+{
+  double c = curvature();
+  return c*c;
+}
+
 void KineticVariable::set(Enums::KineticVariable type, double value) {
   switch (type) {
     case Enums::UndefinedKineticVariable: qFatal("Bad KineticVariable type passed!"); break;
@@ -86,6 +92,7 @@ void KineticVariable::set(Enums::KineticVariable type, double value) {
     case Enums::Curvature: setCurvature(value); break;
     case Enums::Beta: setBeta(value); break;
     case Enums::InverseBeta: setInverseBeta(value); break;
+    case Enums::SquaredCurvature: setCurvature(value); break;
   }
 }
 
@@ -130,4 +137,10 @@ void KineticVariable::setBeta(double value)
 void KineticVariable::setInverseBeta(double value)
 {
   setTotalEnergy(sqrt(1. - value * value) / m_properties.mass());
+}
+
+void KineticVariable::setSquaredCurvature(double value)
+{
+  Q_ASSERT(value >= 0);
+  setCurvature(sqrt(value));
 }

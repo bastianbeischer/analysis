@@ -9,6 +9,7 @@
 #include "SipmArray.hh"
 #include "TRDModule.hh"
 #include "TOFBar.hh"
+#include "Enums.hh"
 
 #include "InhomField.hh"
 #include "UniformField.hh"
@@ -22,6 +23,7 @@
 
 #include <iostream>
 #include <cmath>
+#include <QDebug>
 
 Setup* Setup::s_instance = 0;
 QMutex Setup::s_mutex;
@@ -40,8 +42,8 @@ Setup::Setup() :
     qFatal("ERROR: setup.conf not found. Maybe you need to switch to a configuration, for example: switch_to_config.sh kiruna");
   }
 
-  m_coordinates = new QSettings(path+"coordinates.conf", QSettings::IniFormat);
-  m_settings = new QSettings(path+"setup.conf", QSettings::IniFormat);
+  m_coordinates = new QSettings(path + "coordinates.conf", QSettings::IniFormat);
+  m_settings = new QSettings(path + "setup.conf", QSettings::IniFormat);
 
   construct();
 }
@@ -248,4 +250,9 @@ SensorTypes::Type Setup::tofSensorForId(unsigned short id)
     SensorTypes::TOF_5_TEMP, SensorTypes::TOF_5_TEMP, SensorTypes::TOF_7_TEMP, SensorTypes::TOF_7_TEMP
   };
   return map[channel];
+}
+
+Enums::Particles Setup::proposedParticles() const
+{
+  return Enums::particles(m_settings->value("proposedParticles").toString());
 }

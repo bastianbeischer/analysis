@@ -11,25 +11,24 @@ CLASSES += \
   ParticleFilter \
   ParticleIdentifier \
   ParticleInformation \
-  ParticleProperties \
   TimeOfFlight \
-  TRDReconstruction \
-  KineticVariable
+  TRDReconstruction
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \
   $$TOPLEVEL/global \
+  $$TOPLEVEL/likelihood \
   $$TOPLEVEL/tracking \
   $$TOPLEVEL/setup
 
-
 DEPENDPATH += $$INCLUDEPATH
 
-LIBS += -L$$TOPLEVEL/lib \
-        -lglobal \
-        -lSimpleEvent \
-        -ltracking \
-        -lsetup
+LIBS += \
+  -L$$TOPLEVEL/lib \
+  -lglobal \
+  -lSimpleEvent \
+  -ltracking \
+  -lsetup
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/common.pri)

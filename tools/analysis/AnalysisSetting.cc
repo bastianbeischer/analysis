@@ -14,7 +14,9 @@ void AnalysisSetting::clear()
   numberOfThreads = -1;
   analysisTopics = Enums::NoTopic;
   trackType = Enums::NoTrack;
+  reconstructionMethod = Enums::UndefinedReconstructionMethod;
   corrections = Enums::NoCorrection;
+  particles = Enums::NoParticle;
   particleFilter = Enums::NoParticle;
   mcParticleFilter = Enums::NoParticle;
   cutFilter.clear();
@@ -29,7 +31,9 @@ void AnalysisSetting::save(const QString& file) const
   settings.setValue("numberOfThreads", numberOfThreads);
   settings.setValue("analysisTopics", Enums::label(analysisTopics));
   settings.setValue("trackType", Enums::label(trackType));
+  settings.setValue("reconstructionMethod", Enums::label(reconstructionMethod));
   settings.setValue("corrections", Enums::label(corrections));
+  settings.setValue("particles", Enums::label(particles));
   settings.setValue("particleFilter", Enums::label(particleFilter));
   settings.setValue("mcParticleFilter", Enums::label(mcParticleFilter));
   settings.setValue("cuts", cutFilter.toString());
@@ -46,7 +50,9 @@ void AnalysisSetting::load(const QString& file)
   numberOfThreads = settings.value("numberOfThreads").toInt();
   analysisTopics = Enums::analysisTopics(settings.value("analysisTopics").toString());
   trackType = Enums::trackType(settings.value("trackType").toString());
+  reconstructionMethod = Enums::reconstructionMethod(settings.value("reconstructionMethod").toString());
   corrections = Enums::corrections(settings.value("corrections").toString());
+  particles = Enums::particles(settings.value("particles").toString());
   particleFilter = Enums::particles(settings.value("particleFilter").toString());
   mcParticleFilter = Enums::particles(settings.value("mcParticleFilter").toString());
   cutFilter = CutFilter(settings.value("cuts").toString());

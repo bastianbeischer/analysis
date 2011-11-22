@@ -15,38 +15,38 @@
 #include "ParticleInformation.hh"
 #include "LikelihoodAnalysis.hh"
 
+#include <QDebug>
+
 AnalysisProcessor::AnalysisProcessor()
   : EventProcessor()
   , m_particle(new Particle)
+  , m_particles(Setup::instance()->proposedParticles())
   , m_particleFilter(new ParticleFilter)
   , m_cutFilter(new CutFilter)
   , m_mcFilter(new MCFilter)
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections)
   , m_identifier(new ParticleIdentifier)
-  , m_likelihood(new LikelihoodAnalysis(
-      Enums::TrackerMomentumLikelihood | Enums::TimeOfFlightLikelihood,
-      Enums::Helium | Enums::Proton | Enums::AntiProton | Enums::PiMinus | Enums::PiPlus |
-      Enums::Muon | Enums::AntiMuon | Enums::Positron | Enums::Electron))
+  , m_likelihoods()
 {
+  initLikelihoods();
 }
 
-AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, Enums::TrackType track, Enums::Corrections flags)
+AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, Enums::TrackType track, Enums::Corrections flags, Enums::Particles particles)
   : EventProcessor(destinations)
   , m_particle(new Particle)
+  , m_particles(particles)
   , m_particleFilter(new ParticleFilter)
   , m_cutFilter(new CutFilter)
   , m_mcFilter(new MCFilter)
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections(flags))
   , m_identifier(new ParticleIdentifier)
-  , m_likelihood(new LikelihoodAnalysis(
-      Enums::TrackerMomentumLikelihood | Enums::TimeOfFlightLikelihood,
-      Enums::Helium | Enums::Proton | Enums::AntiProton | Enums::PiMinus | Enums::PiPlus |
-      Enums::Muon | Enums::AntiMuon | Enums::Positron | Enums::Electron))
+  , m_likelihoods()
 {
   setTrackType(track);
   setCorrectionFlags(flags);
+  initLikelihoods();
 }
 
 AnalysisProcessor::~AnalysisProcessor()
@@ -58,25 +58,49 @@ AnalysisProcessor::~AnalysisProcessor()
   delete m_trackFinding;
   delete m_corrections;
   delete m_identifier;
-  delete m_likelihood;
+  qDeleteAll(m_likelihoods);
 }
 
-void AnalysisProcessor::setTrackType(const Enums::TrackType& trackType)
+void AnalysisProcessor::initLikelihoods()
+{
+  Q_ASSERT(m_likelihoods.count() == 0); // should only be called once!
+
+  Enums::LikelihoodVariables internal = Enums::TrackerMomentumLikelihood | Enums::TimeOfFlightLikelihood;
+  QVector<Enums::ReconstructionMethod> internalReconstruction = QVector<Enums::ReconstructionMethod>()
+    << Enums::Spectrometer << Enums::TOF << Enums::WeightedMean << Enums::Chi2 << Enums::Likelihood;
+  foreach (Enums::ReconstructionMethod method, internalReconstruction)
+    m_likelihoods.insert(method, new LikelihoodAnalysis(method, internal, m_particles));
+
+  // include e.g. Cherenkov counters
+  Enums::LikelihoodVariables external = Enums::CherenkovLikelihood;
+  QVector<Enums::ReconstructionMethod> externalReconstruction = QVector<Enums::ReconstructionMethod>()
+    << Enums::SpectrometerExternalInformation << Enums::TOFExternalInformation << Enums::WeightedMeanExternalInformation
+    << Enums::Chi2ExternalInformation << Enums::LikelihoodExternalInformation;
+  foreach (Enums::ReconstructionMethod method, externalReconstruction)
+    m_likelihoods.insert(method, new LikelihoodAnalysis(method, internal | external, m_particles));
+}
+
+void AnalysisProcessor::setTrackType(Enums::TrackType trackType)
 {
   m_particle->setTrackType(trackType);
 }
 
-void AnalysisProcessor::setCorrectionFlags(const Enums::Corrections& flags)
+void AnalysisProcessor::setReconstructionMethod(Enums::ReconstructionMethod method)
+{
+  m_particle->setReconstructionMethod(method);
+}
+
+void AnalysisProcessor::setCorrectionFlags(Enums::Corrections flags)
 {
   m_corrections->setFlags(flags);
 }
 
-void AnalysisProcessor::setParticleFilter(const Enums::Particles& types)
+void AnalysisProcessor::setParticleFilter(Enums::Particles types)
 {
   m_particleFilter->setTypes(types);
 }
 
-void AnalysisProcessor::setMCFilter(const Enums::Particles& types)
+void AnalysisProcessor::setMCFilter(Enums::Particles types)
 {
   m_mcFilter->setTypes(types);
 }
@@ -118,7 +142,9 @@ void AnalysisProcessor::process(SimpleEvent* simpleEvent)
 
   // identify particle species
   m_identifier->identify(m_particle);
-  m_likelihood->identify(m_particle);
+  QMap<Enums::ReconstructionMethod, LikelihoodAnalysis*>::Iterator end = m_likelihoods.end();
+  for (QMap<Enums::ReconstructionMethod, LikelihoodAnalysis*>::Iterator it = m_likelihoods.begin(); it != end; ++it)
+    (*it)->identify(analyzedEvent);
 
   if (m_particleFilter->passes(m_particle) && m_cutFilter->passes(analyzedEvent->clusters(), m_particle)) {
     QVector<EventDestination*> postponed;
@@ -137,4 +163,9 @@ void AnalysisProcessor::process(SimpleEvent* simpleEvent)
         usleep(1000); // do not hammer the mutex locker with tryLock calls, better to sleep a ms
     }
   }
+}
+
+const LikelihoodAnalysis* AnalysisProcessor::likelihood(Enums::ReconstructionMethod method) const
+{
+  return m_likelihoods[method];
 }

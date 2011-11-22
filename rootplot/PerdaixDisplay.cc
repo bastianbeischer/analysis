@@ -1,4 +1,5 @@
 #include "PerdaixDisplay.hh"
+#include "Constants.hh"
 
 #include <TCanvas.h>
 #include <TH2D.h>
@@ -17,6 +18,7 @@ PerdaixDisplay::PerdaixDisplay() :
   constructTracker();
   constructTrd();
   constructTof();
+  constructMagnet();
   setupHistogram();
   setupAxis();
 }
@@ -94,6 +96,14 @@ void PerdaixDisplay::constructTof()
   m_boxes.push_back(new TBox(-1.0*tofWidth, zTof[3] - 0.5*tofHeight, -0.0*tofWidth, zTof[3] + 0.5*tofHeight));
   m_boxes.push_back(new TBox( 0.0*tofWidth, zTof[3] - 0.5*tofHeight,  1.0*tofWidth, zTof[3] + 0.5*tofHeight));
   m_boxes.push_back(new TBox( 1.0*tofWidth, zTof[3] - 0.5*tofHeight,  2.0*tofWidth, zTof[3] + 0.5*tofHeight));
+}
+
+void PerdaixDisplay::constructMagnet()
+{
+  m_boxes.push_back(new TBox(-Constants::magnetOuterRadius, Constants::magnetHeight / 2.,
+      -Constants::magnetInnerRadius, -Constants::magnetHeight / 2.));
+  m_boxes.push_back(new TBox(Constants::magnetInnerRadius, Constants::magnetHeight / 2.,
+      Constants::magnetOuterRadius, -Constants::magnetHeight / 2.));
 }
 
 void PerdaixDisplay::setupHistogram()

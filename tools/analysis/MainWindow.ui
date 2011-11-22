@@ -103,7 +103,7 @@
             <x>0</x>
             <y>0</y>
             <width>231</width>
-            <height>665</height>
+            <height>663</height>
            </rect>
           </property>
          </widget>
@@ -139,7 +139,7 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0" colspan="2">
+         <item row="2" column="0">
           <widget class="QComboBox" name="trackComboBox">
            <property name="font">
             <font>
@@ -161,6 +161,9 @@
             <number>10000000</number>
            </property>
           </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="reconstructionMethodComboBox"/>
          </item>
         </layout>
        </item>
@@ -518,6 +521,11 @@
             <string>Corrections</string>
            </attribute>
           </widget>
+          <widget class="QWidget" name="particlesTab">
+           <attribute name="title">
+            <string>Particles</string>
+           </attribute>
+          </widget>
           <widget class="QWidget" name="filterTab">
            <attribute name="title">
             <string>Filter</string>
@@ -621,7 +629,7 @@
      <x>0</x>
      <y>0</y>
      <width>1204</width>
-     <height>25</height>
+     <height>26</height>
     </rect>
    </property>
    <property name="font">

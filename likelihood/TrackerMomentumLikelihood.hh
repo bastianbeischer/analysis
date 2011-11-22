@@ -6,11 +6,11 @@
 
 class TrackerMomentumLikelihood : public Likelihood {
 public:
-  TrackerMomentumLikelihood();
+  TrackerMomentumLikelihood(Enums::Particles = Enums::NoParticle);
   ~TrackerMomentumLikelihood();
 
-  virtual double eval(const Particle*, const KineticVariable&, bool* goodInterpolation = 0) const;
-  virtual double eval(double curvature, const KineticVariable&, bool* goodInterpolation = 0) const;
+  virtual double eval(const AnalyzedEvent*, const Hypothesis&, bool* goodInterpolation = 0) const;
+  virtual double eval(double curvature, const Hypothesis&, bool* goodInterpolation = 0) const;
 };
 
 #endif
