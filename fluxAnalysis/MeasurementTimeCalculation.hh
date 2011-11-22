@@ -1,6 +1,8 @@
 #ifndef MeasurementTimeCalculation_hh
 #define MeasurementTimeCalculation_hh
 
+#include "Settings.hh"
+
 #include <QVector>
 
 class TH1D;
@@ -24,6 +26,7 @@ private:
   TH1D* m_timeDifference;
   TH1D* m_measurementTimeDistribution;
   bool m_deleteMeasurementTimeDistribution;
+  Settings::Situation m_situation;
 };
 
 #endif

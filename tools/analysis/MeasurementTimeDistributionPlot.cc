@@ -30,6 +30,7 @@ MeasurementTimeDistributionPlot::MeasurementTimeDistributionPlot(int numberOfThr
 
 MeasurementTimeDistributionPlot::~MeasurementTimeDistributionPlot()
 {
+  delete m_calculation;
 }
 
 void MeasurementTimeDistributionPlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
