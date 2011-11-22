@@ -29,7 +29,7 @@ SimulationFluxSelector::SimulationFluxSelector(int numberOfSelectors, QWidget* p
 {
   m_layout = new QHBoxLayout(this);
   m_layout->setContentsMargins(0, 0, 0, 0);
-  m_activateButton = new QPushButton("activate");
+  m_activateButton = new QPushButton("activate simulation");
   m_layout->addWidget(m_activateButton);
   m_layout->addStretch();
   connect(m_activateButton, SIGNAL(clicked()), this, SLOT(activate()));

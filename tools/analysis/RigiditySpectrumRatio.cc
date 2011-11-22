@@ -1,6 +1,8 @@
 #include "RigiditySpectrumRatio.hh"
 
+#include "EfficiencyCorrectionSettings.hh"
 #include "SimulationFluxRatioWidget.hh"
+#include "BessFluxRatioWidget.hh"
 #include "ParticleInformation.hh"
 #include "RootQtWidget.hh"
 #include "SimpleEvent.hh"
@@ -18,6 +20,8 @@
 
 #include <QVector>
 #include <QDebug>
+#include <QWidget>
+#include <QVBoxLayout>
 
 #include <cmath>
 #include <vector>
@@ -25,11 +29,13 @@
 RigiditySpectrumRatio::RigiditySpectrumRatio()
   : AnalysisPlot(Enums::MomentumReconstruction)
   , H1DPlot()
+  , m_simulationWidget(new SimulationFluxRatioWidget)
+  , m_bessWidget(new BessFluxRatioWidget)
 {
   QString title = "rigidity spectrum ratio";
   setTitle(title);
 
-  const int nBins = 21;
+  const int nBins = EfficiencyCorrectionSettings::numberOfBins(EfficiencyCorrectionSettings::Unfolded);
   const double min = 0.1;
   const double max = 20;
   const QVector<double>& axis = Helpers::logBinning(nBins, min, max);
@@ -59,8 +65,13 @@ RigiditySpectrumRatio::RigiditySpectrumRatio()
 
   legend()->AddEntry(histogram, "Perdaix Data", "p");
 
-  SimulationFluxRatioWidget* secWidget = new SimulationFluxRatioWidget;
-  connect(secWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
+  QWidget* secWidget = new QWidget();
+  QVBoxLayout* layout = new QVBoxLayout(secWidget);
+  layout->setContentsMargins(0, 0, 0, 0);
+  layout->addWidget(m_simulationWidget);
+  connect(m_simulationWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
+  layout->addWidget(m_bessWidget);
+  connect(m_bessWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
   setSecondaryWidget(secWidget);
 }
 
@@ -114,12 +125,21 @@ void RigiditySpectrumRatio::selectionChanged()
   while(numberOfHistograms() > 1) {
     removeHistogram(1);
   }
-  foreach(TH1D* histogram, static_cast<SimulationFluxRatioWidget*>(secondaryWidget())->selectedHistograms()) {
+  foreach(TH1D* histogram, m_simulationWidget->selectedHistograms()) {
     TH1D* newHisto = new TH1D(*histogram);
     if (!newHisto->GetSumw2())
       newHisto->Sumw2();
+    newHisto->SetTitle("MC (smoothed)");
+    newHisto->Smooth(1);
     addHistogram(newHisto, H1DPlot::HIST);
     legend()->AddEntry(newHisto, newHisto->GetTitle(), "l");
+  }
+  foreach(TH1D* histogram, m_bessWidget->selectedHistograms()) {
+    TH1D* newHisto = new TH1D(*histogram);
+    if (!newHisto->GetSumw2())
+      newHisto->Sumw2();
+    addHistogram(newHisto, H1DPlot::P);
+    legend()->AddEntry(newHisto, newHisto->GetTitle(), "p");
   }
   draw(Plotter::rootWidget()->GetCanvas());
   gPad->Modified();

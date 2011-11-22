@@ -7,6 +7,7 @@
 #include "ParticleInformation.hh"
 #include "EfficiencyCorrectionSettings.hh"
 #include "SimulationFluxWidget.hh"
+#include "BessFluxWidget.hh"
 #include "SettingsManager.hh"
 #include "SimpleEvent.hh"
 #include "Particle.hh"
@@ -24,6 +25,8 @@
 #include <QVector>
 #include <QDebug>
 #include <QString>
+#include <QWidget>
+#include <QVBoxLayout>
 
 #include <cmath>
 #include <vector>
@@ -36,8 +39,11 @@ RigidityFlux::RigidityFlux(Enums::ChargeSign type, int numberOfThreads, TH1D* pa
   , m_fluxCalculation(0)
   , m_particleHistogram(particleHistogram)
   , m_particleHistogramMirrored(0)
+  , m_isAlbedo(isAlbedo)
   , m_phiFit(0)
   , m_situation(Settings::Unknown)
+  , m_simulationWidget(new SimulationFluxWidget)
+  , m_bessWidget(new BessFluxWidget)
 {
   loadEfficiencies();
   QString title = "flux spectrum";
@@ -86,26 +92,6 @@ RigidityFlux::RigidityFlux(Enums::ChargeSign type, int numberOfThreads, TH1D* pa
   legend->AddEntry(histogram, "Data", "p");
   addLegend(legend);
 
-  if (!isAlbedo) {
-    if (m_type == Enums::Negative) {
-      m_phiFit = new SolarModulationFit(histogram, Particle(Enums::Electron).pdgId());
-      m_phiFit->setGamma(2.7);
-    } else {
-      m_phiFit = new SolarModulationFit(histogram, Particle(Enums::Proton).pdgId());
-    }
-    addFunction(m_phiFit->fit());
-    TLatex* J0Latex = RootPlot::newLatex(.4, .90);
-    TLatex* gammaLatex = RootPlot::newLatex(.4, .85);
-    TLatex* phiLatex = RootPlot::newLatex(.4, .80);
-    TLatex* gammaClatex = RootPlot::newLatex(.4, .75);
-    TLatex* rClatex = RootPlot::newLatex(.4, .70);
-    addLatex(J0Latex);
-    addLatex(gammaLatex);
-    addLatex(phiLatex);
-    addLatex(gammaClatex);
-    addLatex(rClatex);
-  }
-
   const int low = histogram->GetXaxis()->FindBin(0.5);
   const int up = histogram->GetXaxis()->FindBin(10);
   histogram->GetXaxis()->SetRange(low, up);
@@ -113,8 +99,13 @@ RigidityFlux::RigidityFlux(Enums::ChargeSign type, int numberOfThreads, TH1D* pa
   histogram->GetXaxis()->SetTitleOffset(1.2);
   histogram->GetYaxis()->SetTitleOffset(1.2);
 
-  SimulationFluxWidget* secWidget = new SimulationFluxWidget;
-  connect(secWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
+  QWidget* secWidget = new QWidget();
+  QVBoxLayout* layout = new QVBoxLayout(secWidget);
+  layout->setContentsMargins(0, 0, 0, 0);
+  layout->addWidget(m_simulationWidget);
+  connect(m_simulationWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
+  layout->addWidget(m_bessWidget);
+  connect(m_bessWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
   setSecondaryWidget(secWidget);
 }
 
@@ -144,12 +135,31 @@ void RigidityFlux::processEvent(const QVector<Hit*>&, const Particle* const, con
 
 void RigidityFlux::update()
 {
+  if (!m_phiFit && !m_isAlbedo && m_situation == Settings::KirunaFlight) {
+    if (m_type == Enums::Negative) {
+      m_phiFit = new SolarModulationFit(m_fluxCalculation->fluxHistogram(), Particle(Enums::Electron).pdgId());
+      m_phiFit->setGamma(2.7);
+    } else {
+      m_phiFit = new SolarModulationFit(m_fluxCalculation->fluxHistogram(), Particle(Enums::Proton).pdgId());
+    }
+    addFunction(m_phiFit->fit());
+    TLatex* J0Latex = RootPlot::newLatex(.4, .90);
+    TLatex* gammaLatex = RootPlot::newLatex(.4, .85);
+    TLatex* phiLatex = RootPlot::newLatex(.4, .80);
+    TLatex* gammaClatex = RootPlot::newLatex(.4, .75);
+    TLatex* rClatex = RootPlot::newLatex(.4, .70);
+    addLatex(J0Latex);
+    addLatex(gammaLatex);
+    addLatex(phiLatex);
+    addLatex(gammaClatex);
+    addLatex(rClatex);
+  }
   if (m_particleHistogramMirrored)
     Helpers::updateMirroredHistogram(m_particleHistogramMirrored, m_particleHistogram);
   m_fluxCalculation->update(m_measurementTimeCalculation->measurementTime());
   efficiencyCorrection();
   updateBinTitles();
-  if (m_phiFit && m_situation == Settings::KirunaFlight) {
+  if (m_phiFit) {
     m_phiFit->fit();
     latex(m_nBinsNew + 0)->SetTitle(qPrintable(m_phiFit->J0Label()));
     latex(m_nBinsNew + 1)->SetTitle(qPrintable(m_phiFit->gammaLabel()));
@@ -205,12 +215,19 @@ void RigidityFlux::selectionChanged()
   while(numberOfHistograms() > 1) {
     removeHistogram(1);
   }
-  foreach(TH1D* histogram, static_cast<SimulationFluxWidget*>(secondaryWidget())->selectedHistograms()) {
+  foreach(TH1D* histogram, m_simulationWidget->selectedHistograms()) {
     TH1D* newHisto = new TH1D(*histogram);
     if (!newHisto->GetSumw2())
       newHisto->Sumw2();
     addHistogram(newHisto, H1DPlot::HIST);
     legend()->AddEntry(newHisto, newHisto->GetTitle(), "l");
+  }
+  foreach(TH1D* histogram, m_bessWidget->selectedHistograms()) {
+    TH1D* newHisto = new TH1D(*histogram);
+    if (!newHisto->GetSumw2())
+      newHisto->Sumw2();
+    addHistogram(newHisto, H1DPlot::P);
+    legend()->AddEntry(newHisto, newHisto->GetTitle(), "p");
   }
   draw(Plotter::rootWidget()->GetCanvas());
   gPad->Modified();
