@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = timeOverThreshold
+TARGET = signalHeightScaling
 
 CONFIG += debug
 
@@ -9,23 +9,32 @@ INCLUDEPATH += \
   $$TOPLEVEL/event \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/setup \
+  $$TOPLEVEL/particle \
   $$TOPLEVEL/tracking \
   $$TOPLEVEL/global \
+  $$TOPLEVEL/processing \
   $$TOPLEVEL/tools/postAnalysis/postAnalysis
 
 LIBS += \
   -L$$TOPLEVEL/lib \
   -lSimpleEvent \
+  -lparticle \
   -ltracking \
   -lrootplot \
   -lsetup \
+  -lprocessing \
   -lglobal \
   -lpostAnalysis
 
 CLASSES = \
   MainWindow \
-  TimeOverThresholdProjection \
-  ResiduePlot
+  SignalHeightProjection \
+  SignalHeightProjectionCollection \
+  SignalHeightCorrelationCollection \
+  SignalHeightTempCorrelation \
+  SignalHeightTimeCorrelation \
+  SignalHeightTimeCorrelation2D \
+  SignalHeightResiduePlot
 
 SOURCES = \
   main.cc

@@ -6,6 +6,7 @@
 #include "TOFCluster.hh"
 
 #include <cmath>
+#include <cassert>
 
 ClassImp(Cluster);
 
@@ -93,6 +94,7 @@ void Cluster::processHits()
       detId = hit->detId();
     }
   }
+  assert(detId);
 
   x = weightedMeanX / sumOfWeights;
   xc = weightedMeanXC / sumOfWeights;

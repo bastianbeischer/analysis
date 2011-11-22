@@ -5,8 +5,8 @@
 #include <QLabel>
 #include <QHBoxLayout>
 
-TOFChannelSelectionWidget::TOFChannelSelectionWidget(const QStringList& moduleIDs, QWidget* parent) :
-  QWidget(parent)
+TOFChannelSelectionWidget::TOFChannelSelectionWidget(const QStringList& moduleIDs, QWidget* parent)
+  : QWidget(parent)
 {
   QHBoxLayout* layout = new QHBoxLayout(this);
   StringSpinBox* spinBox = new StringSpinBox(moduleIDs);

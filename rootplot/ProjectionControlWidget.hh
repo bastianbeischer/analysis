@@ -17,6 +17,7 @@ public:
   ProjectionControlWidget(H2DProjectionPlot*, QWidget* = 0);
   ~ProjectionControlWidget();
   QSpinBox* spinBox();
+  QComboBox* comboBox();
   void setProjectionType(H2DProjectionPlot::ProjectionType);
   
 private:
