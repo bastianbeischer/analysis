@@ -10,7 +10,7 @@
 class TH1D;
 
 class TrackFindingEfficiencyAzimuthCorrelation : public AnalysisPlot, public H2DPlot {
-  
+
 public:
   TrackFindingEfficiencyAzimuthCorrelation(EfficiencyCorrectionSettings::FoldingType);
   ~TrackFindingEfficiencyAzimuthCorrelation();

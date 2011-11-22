@@ -74,14 +74,14 @@ namespace Helpers
       qFatal("ERROR: You need to set PERDAIXDATA_PATH environment variable to the toplevel location of the data!");
     return env;
   }
-  
+
   void scaleToBinWidth(TH1D* histogram)
   {
     if (!histogram->GetSumw2())
       histogram->Sumw2();
     histogram->Scale(1., "width");
   }
-  
+
   TGraphAsymmErrors* createBeltWithSystematicUncertainty(const TH1D* histogram,const TH1D* lowerHistogram,const TH1D* upperHistogram)
   {
     QList<double> x;

@@ -37,13 +37,13 @@ RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpe
 {
   QString name = canvas->name();
   name.remove(" canvas");
-  
+
   if (name.contains("non")) {
     m_isAlbedo = false;
   } else {
     m_isAlbedo = true;
   }
-  
+
   if (m_type == Enums::Negative)
     m_particleHistogram = Helpers::createMirroredHistogram(particleSpectrum);
   else
@@ -52,28 +52,28 @@ RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpe
   QString newTitle = QString(canvas->histograms1D().at(0)->GetName()) + Enums::label(type);
   m_particleHistogram->SetTitle(qPrintable(newTitle));
   m_fluxCalculation = new FluxCalculation(m_particleHistogram, measurementTime);
-  
+
   QString title = QString("flux - ") + Enums::label(type);
   if (m_isAlbedo)
     title.append(" albedo");
-  
+
   setTitle(title);
   addHistogram(m_fluxCalculation->fluxHistogram());
   histogram()->GetXaxis()->SetMoreLogLabels(true);
   setAxisTitle(m_fluxCalculation->fluxHistogram()->GetXaxis()->GetTitle(), m_fluxCalculation->fluxHistogram()->GetYaxis()->GetTitle());
-  
+
   const int nBins = histogram()->GetNbinsX();
   if (nBins%2 == 0)
     m_nBinsNew = nBins / 2;
   else
     m_nBinsNew = (nBins - 1) / 2;
-  
+
   if (nBins%2 == 0)
     m_nBinsStart = m_nBinsNew + 1;
   else
     m_nBinsStart = m_nBinsNew + 2;
   histogram()->GetXaxis()->SetRange(m_nBinsStart, nBins);
-  
+
   for(int i = 0; i < m_nBinsNew; i++) {
     TLatex* latex = new TLatex;
     latex->SetTextFont(42);
@@ -83,14 +83,14 @@ RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpe
     latex->SetTextColor(kBlack);
     addLatex(latex);
   }
-  
-//  updateBinTitles();
-  
+
+//  updateBinTitles(); todo: correct this calculation
+
   TLegend* legend = new TLegend(.80, .72, .98, .98);
   legend->SetFillColor(kWhite);
   legend->AddEntry(histogram(), "Data", "p");
   addLegend(legend);
-  
+
   if (m_type == Enums::Negative)
     m_phiFit = new SolarModulationFit(histogram(), Particle(Enums::Electron).pdgId());
   else
@@ -100,11 +100,11 @@ RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpe
   TLatex* phiLatex = RootPlot::newLatex(.4, .83);
   addLatex(gammaLatex);
   addLatex(phiLatex);
-  
+
   m_phiFit->fit();
   latex(m_nBinsNew)->SetTitle(qPrintable(m_phiFit->gammaLabel()));
   latex(m_nBinsNew+1)->SetTitle(qPrintable(m_phiFit->phiLabel()));
-  
+
   SimulationFluxWidget* secWidget = new SimulationFluxWidget;
   connect(secWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
   setSecondaryWidget(secWidget);
@@ -121,13 +121,13 @@ RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpe
     FluxCalculation* rec = new FluxCalculation(m_particleHistogram, measurementTime);
     FluxCalculation* recLow = new FluxCalculation(m_particleHistogramLow, measurementTime);
     FluxCalculation* recUp = new FluxCalculation(m_particleHistogramUp, measurementTime);
-    
+
     m_sysbelt = Helpers::createBeltWithSystematicUncertainty(rec->fluxHistogram(),recLow->fluxHistogram(),recUp->fluxHistogram());
     m_sysbelt->SetTitle("rec. #pm 25% #sigma_{p}");
     m_sysbelt->SetLineColor(kBlue);
     m_sysbelt->SetFillColor(kBlue);
     m_sysbelt->SetFillStyle(3002);
-    
+
     legend->AddEntry(m_sysbelt, "rec. #pm 25% #sigma_{p}", "F");
     int low = histogram()->GetXaxis()->FindBin(0.5);
     int up = histogram()->GetXaxis()->FindBin(10);

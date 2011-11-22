@@ -10,7 +10,7 @@
 class TH1D;
 
 class TrackFindingEfficiencyZenithCorrelation : public AnalysisPlot, public H2DPlot {
-  
+
 public:
   TrackFindingEfficiencyZenithCorrelation(EfficiencyCorrectionSettings::FoldingType);
   ~TrackFindingEfficiencyZenithCorrelation();

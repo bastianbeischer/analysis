@@ -21,7 +21,7 @@
 #include <QVector>
 #include <QDebug>
 
-FluxCollection::FluxCollection(int numberOfThreads) 
+FluxCollection::FluxCollection(int numberOfThreads)
   : PlotCollection(Enums::MomentumReconstruction)
   , m_particleHistogram(0)
   , m_particleHistogramAlbedo(0)

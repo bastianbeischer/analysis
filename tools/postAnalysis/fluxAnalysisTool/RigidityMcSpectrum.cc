@@ -15,10 +15,10 @@ RigidityMcSpectrum::RigidityMcSpectrum(PostAnalysisCanvas* generated, PostAnalys
   m_generated->SetTitle(qPrintable(QString(generated->name()).remove(" canvas")));
   m_reconstructed = new TH1D(*reconstructed->histograms1D().at(0));
   m_reconstructed->SetTitle(qPrintable(QString(reconstructed->name()).remove(" canvas")));
-  
+
   m_reconstructedLow = new TH1D(*reconstructedLow->histograms1D().at(0));
   m_reconstructedLow->SetTitle(qPrintable(QString(reconstructedLow->name()).remove(" canvas")));
-  
+
   m_reconstructedUp = new TH1D(*reconstructedUp->histograms1D().at(0));
   m_reconstructedUp->SetTitle(qPrintable(QString(reconstructedUp->name()).remove(" canvas")));
 }

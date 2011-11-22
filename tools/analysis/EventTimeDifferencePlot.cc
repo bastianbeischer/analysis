@@ -74,7 +74,7 @@ void EventTimeDifferencePlot::processEvent(const QVector<Hit*>&, const Particle*
       addLatex(RootPlot::newLatex(.4, .81));
       addLatex(RootPlot::newLatex(.4, .74));
       addLatex(RootPlot::newLatex(.4, .67));
-    } else { 
+    } else {
       const int prevNumberOfLatexs = numberOfLatexs();
       addLatex(RootPlot::newLatex(.2, .55));
       latex(prevNumberOfLatexs)->SetTextColor(kRed);
