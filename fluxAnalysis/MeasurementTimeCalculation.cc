@@ -41,8 +41,10 @@ MeasurementTimeCalculation::MeasurementTimeCalculation(int numberOfThreads)
 
 MeasurementTimeCalculation::MeasurementTimeCalculation(TH1D* histogram)
   : m_active(true)
+  , m_timeDifference(0)
   , m_measurementTimeDistribution(histogram)
   , m_deleteMeasurementTimeDistribution(true)
+  , m_situation(Settings::Unknown)
 {
 }
 
@@ -61,8 +63,10 @@ void MeasurementTimeCalculation::update(const SimpleEvent* const event)
   if (!m_active && m_situation != Settings::Unknown && m_situation != situation)
     qDebug("Warning: running over files with different settings. For the measurement time a preset value for the float or muon lists is used if more than one thread is active. This leads to a wrong measurement time for the flux calculation");
   m_situation = situation;
-  if (!m_active)
+  if (!m_active) {
+    setFixTime(measurementTime());
     return;
+  }
   double eventTime = event->time();
   if (m_lastEventTime > -1) {
     double deltaT = eventTime - m_lastEventTime;
@@ -99,6 +103,9 @@ double MeasurementTimeCalculation::measurementTime()
       m_measurementTimeDistribution->SetBinContent(cutBin, sum);
     }
   }
+  if (m_measurementTimeDistribution->GetBinContent(0) > 0) {
+    return m_measurementTimeDistribution->GetBinContent(0);
+  }
   const double tCut = 16.;
   int cutBin = m_measurementTimeDistribution->FindBin(tCut);
   return m_measurementTimeDistribution->GetBinContent(cutBin);
@@ -108,4 +115,9 @@ TH1D* MeasurementTimeCalculation::measurementTimeDistribution()
 {
   m_deleteMeasurementTimeDistribution = false;
   return m_measurementTimeDistribution;
+}
+
+void MeasurementTimeCalculation::setFixTime(double time)
+{
+  m_measurementTimeDistribution->SetBinContent(0, time);
 }

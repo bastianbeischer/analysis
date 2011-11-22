@@ -18,14 +18,14 @@ MeasurementTimeDistributionPlot::MeasurementTimeDistributionPlot(int numberOfThr
   TH1D* histogram = m_calculation->measurementTimeDistribution();
   addHistogram(histogram);
   setAxisTitle(histogram->GetXaxis()->GetTitle(), histogram->GetYaxis()->GetTitle());
+  addLatex(RootPlot::newLatex(.2, .55));
   if (!m_calculation->isActive()) {
     const int prevNumberOfLatexs = numberOfLatexs();
-    addLatex(RootPlot::newLatex(.2, .55));
+    addLatex(RootPlot::newLatex(.2, .45));
     latex(prevNumberOfLatexs)->SetTextColor(kRed);
     latex(prevNumberOfLatexs)->SetTitle("This plot has to be filled by only one thread.");
   }
   histogram->GetYaxis()->SetTitleOffset(1.4);
-  addLatex(RootPlot::newLatex(.2, .55));
 }
 
 MeasurementTimeDistributionPlot::~MeasurementTimeDistributionPlot()

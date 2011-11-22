@@ -27,6 +27,7 @@ private:
   TH1D* m_measurementTimeDistribution;
   bool m_deleteMeasurementTimeDistribution;
   Settings::Situation m_situation;
+  void setFixTime(double);
 };
 
 #endif

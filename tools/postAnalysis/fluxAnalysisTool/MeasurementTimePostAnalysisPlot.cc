@@ -12,6 +12,7 @@
 MeasurementTimePostAnalysisPlot::MeasurementTimePostAnalysisPlot(PostAnalysisCanvas* canvas)
   : PostAnalysisPlot()
   , H1DPlot()
+  , m_timeCalculation(0)
 {
   TH1D* measurementTimeHistogram = new TH1D(*canvas->histograms1D().at(0));
 
