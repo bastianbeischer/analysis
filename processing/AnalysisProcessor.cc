@@ -13,7 +13,7 @@
 #include "TimeOfFlight.hh"
 #include "TRDReconstruction.hh"
 #include "ParticleInformation.hh"
-#include "LikelihoodAnalysis.hh"
+#include "Reconstruction.hh"
 
 #include <QDebug>
 
@@ -27,9 +27,9 @@ AnalysisProcessor::AnalysisProcessor()
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections)
   , m_identifier(new ParticleIdentifier)
-  , m_likelihoods()
+  , m_reconstructions()
 {
-  initLikelihoods();
+  initReconstructions();
 }
 
 AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, Enums::TrackType track, Enums::Corrections flags, Enums::Particles particles)
@@ -42,11 +42,11 @@ AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, En
   , m_trackFinding(new TrackFinding)
   , m_corrections(new Corrections(flags))
   , m_identifier(new ParticleIdentifier)
-  , m_likelihoods()
+  , m_reconstructions()
 {
   setTrackType(track);
   setCorrectionFlags(flags);
-  initLikelihoods();
+  initReconstructions();
 }
 
 AnalysisProcessor::~AnalysisProcessor()
@@ -58,18 +58,18 @@ AnalysisProcessor::~AnalysisProcessor()
   delete m_trackFinding;
   delete m_corrections;
   delete m_identifier;
-  qDeleteAll(m_likelihoods);
+  qDeleteAll(m_reconstructions);
 }
 
-void AnalysisProcessor::initLikelihoods()
+void AnalysisProcessor::initReconstructions()
 {
-  Q_ASSERT(m_likelihoods.count() == 0); // should only be called once!
+  Q_ASSERT(m_reconstructions.count() == 0); // should only be called once!
 
   Enums::LikelihoodVariables internal = Enums::TrackerMomentumLikelihood | Enums::TimeOfFlightLikelihood;
   QVector<Enums::ReconstructionMethod> internalReconstruction = QVector<Enums::ReconstructionMethod>()
     << Enums::Spectrometer << Enums::TOF << Enums::WeightedMean << Enums::Chi2 << Enums::Likelihood;
   foreach (Enums::ReconstructionMethod method, internalReconstruction)
-    m_likelihoods.insert(method, new LikelihoodAnalysis(method, internal, m_particles));
+    m_reconstructions.insert(method, Reconstruction::newReconstruction(method, internal, m_particles));
 
   // include e.g. Cherenkov counters
   Enums::LikelihoodVariables external = Enums::CherenkovLikelihood;
@@ -77,7 +77,7 @@ void AnalysisProcessor::initLikelihoods()
     << Enums::SpectrometerExternalInformation << Enums::TOFExternalInformation << Enums::WeightedMeanExternalInformation
     << Enums::Chi2ExternalInformation << Enums::LikelihoodExternalInformation;
   foreach (Enums::ReconstructionMethod method, externalReconstruction)
-    m_likelihoods.insert(method, new LikelihoodAnalysis(method, internal | external, m_particles));
+    m_reconstructions.insert(method, Reconstruction::newReconstruction(method, internal | external, m_particles));
 }
 
 void AnalysisProcessor::setTrackType(Enums::TrackType trackType)
@@ -142,8 +142,8 @@ void AnalysisProcessor::process(SimpleEvent* simpleEvent)
 
   // identify particle species
   m_identifier->identify(m_particle);
-  QMap<Enums::ReconstructionMethod, LikelihoodAnalysis*>::Iterator end = m_likelihoods.end();
-  for (QMap<Enums::ReconstructionMethod, LikelihoodAnalysis*>::Iterator it = m_likelihoods.begin(); it != end; ++it)
+  QMap<Enums::ReconstructionMethod, Reconstruction*>::Iterator end = m_reconstructions.end();
+  for (QMap<Enums::ReconstructionMethod, Reconstruction*>::Iterator it = m_reconstructions.begin(); it != end; ++it)
     (*it)->identify(analyzedEvent);
 
   if (m_particleFilter->passes(m_particle) && m_cutFilter->passes(analyzedEvent->clusters(), m_particle)) {
@@ -165,7 +165,7 @@ void AnalysisProcessor::process(SimpleEvent* simpleEvent)
   }
 }
 
-const LikelihoodAnalysis* AnalysisProcessor::likelihood(Enums::ReconstructionMethod method) const
+const Reconstruction* AnalysisProcessor::reconstruction(Enums::ReconstructionMethod method) const
 {
-  return m_likelihoods[method];
+  return m_reconstructions[method];
 }

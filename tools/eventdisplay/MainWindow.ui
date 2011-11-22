@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1312</width>
-    <height>852</height>
+    <width>953</width>
+    <height>702</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QSplitter" name="splitter">
+     <widget class="QSplitter" name="splitter_2">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -392,13 +392,14 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="TQtWidget" name="trackFindingWidget" native="true"/>
-        </item>
-        <item>
-         <widget class="TQtWidget" name="chi2Widget" native="true"/>
-        </item>
-        <item>
-         <widget class="TQtWidget" name="likelihoodWidget" native="true"/>
+         <widget class="QSplitter" name="splitter">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <widget class="TQtWidget" name="trackFindingWidget" native="true"/>
+          <widget class="ReconstructionMethodGraph" name="reconstructionMethodWidget1" native="true"/>
+          <widget class="ReconstructionMethodGraph" name="reconstructionMethodWidget2" native="true"/>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -418,6 +419,12 @@
    <class>TQtWidget</class>
    <extends>QWidget</extends>
    <header>TQtWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ReconstructionMethodGraph</class>
+   <extends>QWidget</extends>
+   <header>ReconstructionMethodGraph.hh</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

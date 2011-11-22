@@ -1,5 +1,5 @@
-#ifndef LikelihoodAnalysis_hh
-#define LikelihoodAnalysis_hh
+#ifndef Chi2Analysis_hh
+#define Chi2Analysis_hh
 
 #include "Enums.hh"
 #include "Hypothesis.hh"
@@ -15,10 +15,10 @@ class Chi2Function;
 class LikelihoodPDF;
 namespace ROOT {namespace Math {class BrentMinimizer1D;}}
 
-class LikelihoodAnalysis {
+class Chi2Analysis {
 public:
-  LikelihoodAnalysis(Enums::ReconstructionMethod, Enums::LikelihoodVariables, Enums::Particles);
-  ~LikelihoodAnalysis();
+  Chi2Analysis(Enums::ReconstructionMethod, Enums::LikelihoodVariables, Enums::Particles);
+  ~Chi2Analysis();
   int indexOfGlobalChi2Minimum() const;
   int indexOfGlobalLikelihoodMinimum() const;
   const QVector<QPointF>& chi2Minima() const;
@@ -28,6 +28,7 @@ public:
   void identify(AnalyzedEvent*);
   TMultiGraph* likelihoodGraph() const;
   TMultiGraph* chi2Graph() const;
+  TMultiGraph* graph() const;
 private:
   double eval(const AnalyzedEvent*, const Hypothesis&, bool* goodInterpolation = 0) const;
   double rootFunctorPointer(const double* momentum);
@@ -46,6 +47,7 @@ private:
   AnalyzedEvent* m_event;
   mutable TMultiGraph* m_chi2MultiGraph;
   mutable TMultiGraph* m_lhMultiGraph;
+  mutable TMultiGraph* m_graph;
 };
 
 #endif

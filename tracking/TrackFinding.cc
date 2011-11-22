@@ -26,9 +26,7 @@ TrackFinding::TrackFinding() :
 {
   char title[128];
   sprintf(title, "trackFindingHist_%d", s_histCounter);
-  m_trackFindingHist = new TH2D(title, title, m_slopeBins, -m_maxSlope, m_maxSlope, m_offsetBins, -m_maxOffset, m_maxOffset);
-  m_trackFindingHist->GetXaxis()->SetTitle("slope");
-  m_trackFindingHist->GetYaxis()->SetTitle("offset / mm");
+  m_trackFindingHist = new TH2D(title, ";slope;offset / mm;", m_slopeBins, -m_maxSlope, m_maxSlope, m_offsetBins, -m_maxOffset, m_maxOffset);
   s_histCounter++;
 }
 

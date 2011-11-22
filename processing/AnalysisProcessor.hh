@@ -16,7 +16,7 @@
 class Particle;
 class TrackFinding;
 class ParticleIdentifier;
-class LikelihoodAnalysis;
+class Reconstruction;
 
 class AnalysisProcessor : public EventProcessor {
 public:
@@ -41,9 +41,9 @@ public:
   const TrackFinding* trackFinding() const {return m_trackFinding;}
   const Corrections* corrections() const {return m_corrections;}
   const ParticleIdentifier* particleIdentifier() const {return m_identifier;}
-  const LikelihoodAnalysis* likelihood(Enums::ReconstructionMethod) const;
+  const Reconstruction* reconstruction(Enums::ReconstructionMethod) const;
 private:
-  void initLikelihoods();
+  void initReconstructions();
 
   Particle* m_particle;
   Enums::Particles m_particles;
@@ -53,7 +53,7 @@ private:
   TrackFinding* m_trackFinding;
   Corrections* m_corrections;
   ParticleIdentifier* m_identifier;
-  QMap<Enums::ReconstructionMethod, LikelihoodAnalysis*> m_likelihoods;
+  QMap<Enums::ReconstructionMethod, Reconstruction*> m_reconstructions;
 };
 
 #endif

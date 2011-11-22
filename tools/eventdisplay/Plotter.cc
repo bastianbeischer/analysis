@@ -14,7 +14,7 @@
 #include "AnalysisProcessor.hh"
 #include "ParticleProperties.hh"
 #include "ParticleDB.hh"
-#include "LikelihoodAnalysis.hh"
+#include "Reconstruction.hh"
 #include "TimeOfFlight.hh"
 #include "Settings.hh"
 #include "SettingsManager.hh"
@@ -99,7 +99,7 @@ void Plotter::mouseMoveEvent(QMouseEvent* event)
 }
 
 void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
-  QPlainTextEdit& infoTextEdit, TQtWidget& trackFindingWidget, TQtWidget& chi2Widget, TQtWidget& likelihoodWidget)
+  QPlainTextEdit& infoTextEdit, TQtWidget& trackFindingWidget, ReconstructionMethodGraph& widget1, ReconstructionMethodGraph& widget2)
 {
   TCanvas* canvas = GetCanvas();
   canvas->cd();
@@ -120,27 +120,8 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
   tfCan->Modified();
   tfCan->Update();
 
-  TMultiGraph* mg = 0;
-  
-  TCanvas* lhCanvas = likelihoodWidget.GetCanvas();
-  lhCanvas->cd();
-  lhCanvas->Clear();
-  const LikelihoodAnalysis* lh = m_processor->likelihood(Enums::Likelihood);
-  mg = lh->likelihoodGraph();
-  mg->Draw("ALP");
-  mg->GetYaxis()->SetRangeUser(-10., 100.);
-  lhCanvas->Modified();
-  lhCanvas->Update();
-
-  TCanvas* chi2Canvas = chi2Widget.GetCanvas();
-  chi2Canvas->cd();
-  chi2Canvas->Clear();
-  const LikelihoodAnalysis* chi2 = m_processor->likelihood(Enums::Chi2);
-  mg = chi2->chi2Graph();
-  mg->Draw("ALP");
-  mg->GetYaxis()->SetRangeUser(-10., 100.);
-  chi2Canvas->Modified();
-  chi2Canvas->Update();
+  widget1.draw(m_processor->reconstruction(widget1.method())->graph());
+  widget2.draw(m_processor->reconstruction(widget2.method())->graph());
 
   //show info for event
   const DataDescription* currentDesc = m_chain->currentDescription();
@@ -180,6 +161,8 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
       .arg(event->sensorData(SensorTypes::BEAM_CHERENKOV1)).arg(event->sensorData(SensorTypes::BEAM_CHERENKOV2)));
   }
 
+  /*const LikelihoodAnalysis* lh = m_processor->likelihood(Enums::Likelihood);
+  const LikelihoodAnalysis* chi2 = m_processor->likelihood(Enums::Chi2);
   infoTextEdit.appendPlainText("\nLikelihood:");
   QVector<Enums::Particle>::ConstIterator particleIt = lh->particles().begin();
   QVector<Enums::Particle>::ConstIterator particleEnd = lh->particles().end();
@@ -194,7 +177,7 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
     } else {
       infoTextEdit.appendPlainText(text);
     }
-  }
+  }*/
   delete event;
 }
 

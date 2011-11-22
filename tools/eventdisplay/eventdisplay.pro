@@ -32,7 +32,8 @@ LIBS += \
 CLASSES+= \
   Plotter \
   HitsPlot \
-  MainWindow
+  MainWindow \
+  ReconstructionMethodGraph
 
 SOURCES += \
   main.cc

@@ -1,4 +1,4 @@
-#include "LikelihoodAnalysis.hh"
+#include "Chi2Analysis.hh"
 #include "Likelihood.hh"
 #include "KineticVariable.hh"
 #include "AnalyzedEvent.hh"
@@ -66,9 +66,9 @@ private:
 
 class LogLikelihoodFunction : public ROOT::Math::IGenFunction {
 public:
-  typedef double (LikelihoodAnalysis::*Function)(const AnalyzedEvent*, const Hypothesis&, bool*) const;
+  typedef double (Chi2Analysis::*Function)(const AnalyzedEvent*, const Hypothesis&, bool*) const;
 
-  LogLikelihoodFunction(const LikelihoodAnalysis* analysis, Function function)
+  LogLikelihoodFunction(const Chi2Analysis* analysis, Function function)
     : ROOT::Math::IGenFunction()
     , m_analysis(analysis)
     , m_function(function)
@@ -96,21 +96,21 @@ public:
   }
 
 private:
-  const LikelihoodAnalysis* m_analysis;
+  const Chi2Analysis* m_analysis;
   Function m_function;
   const AnalyzedEvent* m_event;
   Enums::Particle m_particleType;
   bool* m_goodInterpolation;
 };
 
-LikelihoodAnalysis::LikelihoodAnalysis(Enums::ReconstructionMethod method, Enums::LikelihoodVariables likelihoods, Enums::Particles particles)
+Chi2Analysis::Chi2Analysis(Enums::ReconstructionMethod method, Enums::LikelihoodVariables likelihoods, Enums::Particles particles)
   : m_method(method)
   , m_likelihoods()
   , m_particles()
   , m_chi2Minimizer(new ROOT::Math::BrentMinimizer1D)
   , m_lhMinimizer(new ROOT::Math::BrentMinimizer1D)
   , m_chi2Function(new Chi2Function())
-  , m_lhFunction(new LogLikelihoodFunction(this, &LikelihoodAnalysis::eval))
+  , m_lhFunction(new LogLikelihoodFunction(this, &Chi2Analysis::eval))
   , m_chi2Minima()
   , m_lhMinima()
   , m_indexOfGlobalChi2Minimum(-1)
@@ -118,6 +118,7 @@ LikelihoodAnalysis::LikelihoodAnalysis(Enums::ReconstructionMethod method, Enums
   , m_event(0)
   , m_chi2MultiGraph(0)
   , m_lhMultiGraph(0)
+  , m_graph(0)
 {
   m_chi2Minimizer->SetFunction(*m_chi2Function, -10, 10);
   m_lhMinimizer->SetFunction(*m_lhFunction, -10, 10);
@@ -133,41 +134,43 @@ LikelihoodAnalysis::LikelihoodAnalysis(Enums::ReconstructionMethod method, Enums
   m_lhMinima = QVector<QPointF>(m_particles.count());
 }
 
-LikelihoodAnalysis::~LikelihoodAnalysis()
+Chi2Analysis::~Chi2Analysis()
 {
   if (m_chi2MultiGraph)
     delete m_chi2MultiGraph;
   if (m_lhMultiGraph)
     delete m_lhMultiGraph;
+  if (m_graph)
+    delete m_graph;
   qDeleteAll(m_likelihoods);
 }
 
-int LikelihoodAnalysis::indexOfGlobalChi2Minimum() const
+int Chi2Analysis::indexOfGlobalChi2Minimum() const
 {
   return m_indexOfGlobalChi2Minimum;
 }
 
-int LikelihoodAnalysis::indexOfGlobalLikelihoodMinimum() const
+int Chi2Analysis::indexOfGlobalLikelihoodMinimum() const
 {
   return m_indexOfGlobalLhMinimum;
 }
 
-const QVector<QPointF>& LikelihoodAnalysis::chi2Minima() const
+const QVector<QPointF>& Chi2Analysis::chi2Minima() const
 {
   return m_chi2Minima;
 }
 
-const QVector<QPointF>& LikelihoodAnalysis::likelihoodMinima() const
+const QVector<QPointF>& Chi2Analysis::likelihoodMinima() const
 {
   return m_lhMinima;
 }
 
-const QVector<Enums::Particle>& LikelihoodAnalysis::particles() const
+const QVector<Enums::Particle>& Chi2Analysis::particles() const
 {
   return m_particles;
 }
 
-void LikelihoodAnalysis::identify(AnalyzedEvent* event)
+void Chi2Analysis::identify(AnalyzedEvent* event)
 {
   m_event = event;
   bool goodInterpolation = true;
@@ -252,7 +255,7 @@ void LikelihoodAnalysis::identify(AnalyzedEvent* event)
   }
 }
 
-double LikelihoodAnalysis::eval(const AnalyzedEvent* event, const Hypothesis& hypothesis, bool* goodInterpolation) const
+double Chi2Analysis::eval(const AnalyzedEvent* event, const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
   double lnL = 0;
   QVector<Likelihood*>::ConstIterator end = m_likelihoods.end();
@@ -265,10 +268,10 @@ double LikelihoodAnalysis::eval(const AnalyzedEvent* event, const Hypothesis& hy
   return lnL;
 }
 
-TMultiGraph* LikelihoodAnalysis::chi2Graph() const
+TMultiGraph* Chi2Analysis::chi2Graph() const
 {
   if (m_method != Enums::Chi2 && m_method != Enums::Chi2ExternalInformation) {
-    qDebug() << "LikelihoodAnalysis::chi2Graph() called, but method != Chi2";
+    qDebug() << "Chi2Analysis::chi2Graph() called, but method != Chi2";
     return 0;
   }
   if (m_chi2MultiGraph)
@@ -311,10 +314,10 @@ TMultiGraph* LikelihoodAnalysis::chi2Graph() const
   return m_chi2MultiGraph;
 }
 
-TMultiGraph* LikelihoodAnalysis::likelihoodGraph() const
+TMultiGraph* Chi2Analysis::likelihoodGraph() const
 {
   if (m_method != Enums::Likelihood && m_method != Enums::LikelihoodExternalInformation) {
-    qDebug() << "LikelihoodAnalysis::likelihoodGraph() called, but method != Likelihood";
+    qDebug() << "Chi2Analysis::likelihoodGraph() called, but method != Likelihood";
     return 0;
   }
   if (m_lhMultiGraph)
@@ -354,4 +357,19 @@ TMultiGraph* LikelihoodAnalysis::likelihoodGraph() const
   m_lhMultiGraph->Add(minimumGraph, "P");
 
   return m_lhMultiGraph;
+}
+
+TMultiGraph* Chi2Analysis::graph() const
+{
+  if (m_graph)
+    delete m_graph;
+  m_graph = new TMultiGraph;
+  TGraph* g = new TGraph(5);
+  g->SetPoint(0, -2, 0);
+  g->SetPoint(1, +2, 90);
+  g->SetPoint(2, +2, 0);
+  g->SetPoint(3, -2, 90);
+  g->SetPoint(4, -2, 0);
+  m_graph->Add(g);
+  return m_graph;
 }

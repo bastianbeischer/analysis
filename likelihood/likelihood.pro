@@ -11,8 +11,13 @@ CLASSES += \
   TimeOfFlightLikelihood \
   TrackerMomentumLikelihood \
   CherenkovLikelihood \
-  LikelihoodAnalysis \
-  Hypothesis
+  Hypothesis \
+  Reconstruction \
+  SpectrometerReconstruction \
+  TOFReconstruction \
+  WeightedMeanReconstruction \
+  Chi2Reconstruction \
+  LikelihoodReconstruction
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \

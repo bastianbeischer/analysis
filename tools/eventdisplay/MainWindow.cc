@@ -23,6 +23,8 @@ MainWindow::MainWindow(QWidget* parent)
   connect(m_ui.trackerPullSpinBox, SIGNAL(valueChanged(double)), this, SLOT(update()));
   connect(m_ui.trdPullSpinBox, SIGNAL(valueChanged(double)), this, SLOT(update()));
   connect(m_ui.fitMethodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
+  connect(m_ui.reconstructionMethodWidget1, SIGNAL(methodChanged(Enums::ReconstructionMethod)), this, SLOT(update()));
+  connect(m_ui.reconstructionMethodWidget2, SIGNAL(methodChanged(Enums::ReconstructionMethod)), this, SLOT(update()));
   m_ui.plotter->setPositionLabel(m_ui.positionLabel);
   connect(m_ui.unzoomButton, SIGNAL(clicked()), m_ui.plotter, SLOT(unzoom()));
 }
@@ -109,6 +111,7 @@ void MainWindow::updateEventSpinBox()
 
 void MainWindow::update()
 {
+  //qDebug() << "MainWindow::update()";
   int slopeBins = m_ui.slopeBinsSpinBox->value();
   int offsetBins = m_ui.offsetBinsSpinBox->value();
   double trackerPull = m_ui.trackerPullSpinBox->value();
@@ -126,7 +129,7 @@ void MainWindow::update()
   else if (index == 1) type = Enums::StraightLine;
   else if (index == 2) type = Enums::BrokenLine;
   m_ui.plotter->drawEvent(m_ui.eventSpinBox->value(), type, m_ui.allClustersCheckBox->isChecked(),
-    *m_ui.textEdit, *m_ui.trackFindingWidget, *m_ui.chi2Widget, *m_ui.likelihoodWidget);
+    *m_ui.textEdit, *m_ui.trackFindingWidget, *m_ui.reconstructionMethodWidget1, *m_ui.reconstructionMethodWidget2);
 }
 
 void MainWindow::saveButtonClicked()

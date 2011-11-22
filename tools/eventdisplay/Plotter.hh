@@ -4,6 +4,7 @@
 #include <TQtWidget.h>
 
 #include "Track.hh"
+#include "ReconstructionMethodGraph.hh"
 
 #include <QString>
 
@@ -26,7 +27,7 @@ public:
   void addFileList(const QString& listName);
   void addRootFile(const QString&);
   void drawEvent(unsigned int i, Enums::TrackType type, bool allClusters, QPlainTextEdit& infoTextBox,
-    TQtWidget& trackFindingWidget, TQtWidget& chi2Widget, TQtWidget& likelihoodWidget);
+    TQtWidget& trackFindingWidget, ReconstructionMethodGraph&, ReconstructionMethodGraph&);
   void saveCanvas(const QString& fileName);
   void setPositionLabel(QLabel* label);
 public slots:
