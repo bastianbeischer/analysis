@@ -49,15 +49,15 @@ TVector3 DetectorElement::positionForHit(const Hit* hit) const
   double counterPosX = hit->counterPosition().x();
   double counterPosY = hit->counterPosition().y();
 
-  double x = -alignmentShift();
-  double y = 0.;
+  double u = -alignmentShift();
+  double v = 0.;
   double angle = hit->angle();
   double c = cos(angle);
   double s = sin(angle);
-  double u = c*x - s*y;
-  double v = s*x + c*y;
+  double x = c*u - s*v;
+  double y = s*u + c*v;
 
-  return TVector3(0.5*(posX+counterPosX) + u, 0.5*(posY+counterPosY) + v, posZ);
+  return TVector3(0.5*(posX+counterPosX) + x, 0.5*(posY+counterPosY) + y, posZ);
 }
 
 unsigned short DetectorElement::sortedChannel(const unsigned short channel) const
