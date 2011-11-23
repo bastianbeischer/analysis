@@ -80,6 +80,12 @@ const QMap<Enums::Cut, QString> Enums::s_cutMap = InitializableMap<Enums::Cut, Q
   << QPair<Enums::Cut, QString>(Enums::TrdSignalCut, "TRD signal cut")
   << QPair<Enums::Cut, QString>(Enums::CherenkovCut, "cherenkov cut");
 
+const QMap<Enums::Situation, QString> Enums::s_situationMap = InitializableMap<Enums::Situation, QString>()
+<< QPair<Enums::Situation, QString>(Enums::NoSituation, "unknown")
+<< QPair<Enums::Situation, QString>(Enums::KirunaMuons, "kirunamuons")
+<< QPair<Enums::Situation, QString>(Enums::KirunaFlight, "kirunaflight")
+<< QPair<Enums::Situation, QString>(Enums::Testbeam11, "testbeam11");
+
 // ChargeSign
 const QString Enums::label(Enums::ChargeSign key) {return s_chargeSignMap.value(key);}
 Enums::ChargeSign Enums::chargeSign(const QString& value) {return s_chargeSignMap.key(value);}
@@ -170,4 +176,10 @@ const QString Enums::label(Enums::Cut key) {return s_cutMap.value(key);}
 Enums::Cut Enums::cut(const QString& value) {return s_cutMap.key(value);}
 QMap<Enums::Cut, QString>::ConstIterator Enums::cutBegin() {return s_cutMap.constBegin();}
 QMap<Enums::Cut, QString>::ConstIterator Enums::cutEnd() {return s_cutMap.constEnd();}
+
+// Situation
+const QString Enums::label(Enums::Situation key) {return s_situationMap.value(key);}
+Enums::Situation Enums::situation(const QString& value) {return s_situationMap.key(value);}
+QMap<Enums::Situation, QString>::ConstIterator Enums::situationBegin() {return s_situationMap.constBegin();}
+QMap<Enums::Situation, QString>::ConstIterator Enums::situationEnd() {return s_situationMap.constEnd();}
 

@@ -71,7 +71,7 @@ void TrackFindingEfficiency::processEvent(const QVector<Hit*>&, const Particle* 
   double rigidity = 0;
 
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
-  if (settings && settings->situation() == Settings::Testbeam11) {
+  if (settings && settings->situation() == Enums::Testbeam11) {
     rigidity = settings->momentum();
     fillHistogram = true;
   } else if (event->contentType() == SimpleEvent::MonteCarlo) {

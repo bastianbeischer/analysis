@@ -8,6 +8,7 @@
 #include "Constants.hh"
 #include "Settings.hh"
 #include "SettingsManager.hh"
+#include "Enums.hh"
 
 #include <cmath>
 
@@ -66,7 +67,7 @@ bool Cut::passes(const SimpleEvent* event) const
   if (m_type == Enums::CherenkovCut) {
     //get settings if present
     const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
-    if (!settings || settings->situation() != Settings::Testbeam11)
+    if (!settings || settings->situation() != Enums::Testbeam11)
       return true;
     double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
     double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);

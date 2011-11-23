@@ -54,7 +54,7 @@ void SettingTimePlot::processEvent(const QVector<Hit*>&, const Particle* const, 
 {
   //get settings if present
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
-  if (!settings || settings->situation() != Settings::Testbeam11)
+  if (!settings || settings->situation() != Enums::Testbeam11)
     return;
 
   double value = 0;

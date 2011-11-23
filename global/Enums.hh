@@ -55,6 +55,12 @@ public:
   static QMap<Cut, QString>::ConstIterator cutBegin();
   static QMap<Cut, QString>::ConstIterator cutEnd();
 
+  enum Situation {NoSituation=-1, KirunaMuons, KirunaFlight, Testbeam11};
+  static const QString label(Situation);
+  static Situation situation(const QString&);
+  static QMap<Situation, QString>::ConstIterator situationBegin();
+  static QMap<Situation, QString>::ConstIterator situationEnd();
+
 private:
   static const QMap<ChargeSign, QString> s_chargeSignMap;
   static const QMap<AnalysisTopic, QString> s_analysisTopicMap;
@@ -62,6 +68,7 @@ private:
   static const QMap<Correction, QString> s_correctionMap;
   static const QMap<Particle, QString> s_particleMap;
   static const QMap<Cut, QString> s_cutMap;
+  static const QMap<Situation, QString> s_situationMap;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::AnalysisTopics);

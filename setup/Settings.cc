@@ -3,7 +3,7 @@
 #include <cmath>
 
 Settings::Settings() :
-  m_situation(Unknown),
+  m_situation(Enums::NoSituation),
   m_identifier(0),
   m_name(""),
   m_firstRun(0),

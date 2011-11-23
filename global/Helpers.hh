@@ -1,6 +1,8 @@
 #ifndef Helpers_hh
 #define Helpers_hh
 
+#include <Enums.hh>
+
 #include <QVector>
 #include <QString>
 
@@ -14,6 +16,7 @@ namespace Helpers
   void updateMirroredHistogram(TH1D* histogramToUpdate, TH1D* dataHistogram);
   QString analysisPath();
   QString dataPath();
+  double idealTrackerSignalHeight(Enums::Situation);
 }
 
 #endif

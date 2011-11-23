@@ -68,7 +68,7 @@ void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, const Particle* const p
     return;
   if (!settings && !(flags & ParticleInformation::InsideMagnet))
     return;
-  if (settings && settings->situation() != Settings::Testbeam11 && !(flags & ParticleInformation::InsideMagnet))
+  if (settings && settings->situation() != Enums::Testbeam11 && !(flags & ParticleInformation::InsideMagnet))
     return;
  
   bool idTop1 = false, idTop2 = false, idBottom1 = false, idBottom2 = false;
@@ -87,7 +87,7 @@ void TOFBarShiftPlot::processEvent(const QVector<Hit*>&, const Particle* const p
     double lCorrection = (d - l) / Constants::speedOfLight;
     double rigidity = 0;
     double m = 0;
-    if (settings && settings->situation() == Settings::Testbeam11) {
+    if (settings && settings->situation() == Enums::Testbeam11) {
       rigidity = settings->momentum();
       if (settings->polarity() < 0) {
         if (event->sensorData(SensorTypes::BEAM_CHERENKOV1) > 200 || event->sensorData(SensorTypes::BEAM_CHERENKOV2) > 200) {

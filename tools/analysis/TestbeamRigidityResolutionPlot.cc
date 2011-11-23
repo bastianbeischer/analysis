@@ -18,7 +18,7 @@ void TestbeamRigidityResolutionPlot::processEvent(const QVector<Hit*>& hits, con
 {
   //get settings if present
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
-  if (!settings || settings->situation() != Settings::Testbeam11)
+  if (!settings || settings->situation() != Enums::Testbeam11)
     return;
 
   //only electrons for testbeam atm (tagged via cherenkov)
