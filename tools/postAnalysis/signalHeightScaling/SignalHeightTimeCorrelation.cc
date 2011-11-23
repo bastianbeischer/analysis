@@ -3,6 +3,7 @@
 #include "Corrections.hh"
 #include "Constants.hh"
 #include "RootQtWidget.hh"
+#include "Helpers.hh"
 
 #include <TH1.h>
 #include <TH2.h>
@@ -24,47 +25,72 @@
 #include <QWidget>
 #include <QHBoxLayout>
 #include <QPushButton>
+#include <QVBoxLayout>
 
 QMap<unsigned short, TGraph*> SignalHeightTimeCorrelation::s_graphs;
 
-SignalHeightTimeCorrelation::SignalHeightTimeCorrelation(PostAnalysisCanvas* canvas, unsigned short sipmId)
+SignalHeightTimeCorrelation::SignalHeightTimeCorrelation(PostAnalysisCanvas* canvas, unsigned short sipmId, Enums::Situation situation)
   : PostAnalysisPlot()
   , GraphPlot()
+  , m_histogram(0)
   , m_sipmId(sipmId)
+  , m_secondaryRootWidget(0)
+  , m_spline(0)
 {
-  TH2D* histogram = canvas->histograms2D().at(0);
+  m_histogram = canvas->histograms2D().at(0);
   QString title = QString(canvas->name()).replace("canvas", "graph");
   setTitle(title);
-  addGraph(meanGraph(sipmId, histogram), P);
+  TGraphErrors* graph = 0;
+  graph = meanGraph(sipmId, m_histogram, graph, Helpers::idealTrackerSignalHeight(situation));
+  addGraph(graph, P);
   setAxisTitle("time", "signal height / adc counts");
   TLatex* latex = 0;
   latex = RootPlot::newLatex(.47, .85);
   latex->SetTitle(qPrintable(QString("sipm id = 0x%1").arg(QString::number(sipmId, 16))));
   addLatex(latex);
 
-  RootQtWidget* secondaryWidget(new RootQtWidget);
+  m_secondaryRootWidget = new RootQtWidget;
   QWidget* widget = new QWidget;
   QVBoxLayout* layout = new QVBoxLayout(widget);
   layout->setContentsMargins(0, 0, 0, 0);
+  QWidget* saveWidget = new QWidget;
+  QHBoxLayout* saveLayout = new QHBoxLayout(saveWidget);
+  saveLayout->setContentsMargins(0, 0, 0, 0);
   QPushButton* saveButton = new QPushButton("save channel");
-  layout->addWidget(saveButton);
+  saveLayout->addWidget(saveButton);
   QPushButton* saveAllButton = new QPushButton("save all channels");
-  layout->addWidget(saveAllButton);
-  layout->addWidget(secondaryWidget);
+  saveLayout->addWidget(saveAllButton);
+  saveLayout->addStretch();
+  layout->addWidget(saveWidget);
+  layout->addWidget(m_secondaryRootWidget);
   setSecondaryWidget(widget);
   connect(saveButton, SIGNAL(clicked()), this, SLOT(save()));
   connect(saveAllButton, SIGNAL(clicked()), this, SLOT(saveAll()));
 
+  drawFactorGraph();
+}
+
+SignalHeightTimeCorrelation::~SignalHeightTimeCorrelation()
+{
+  delete m_spline;
+}
+
+void SignalHeightTimeCorrelation::drawFactorGraph()
+{
+  if (m_spline) {
+    delete m_spline;
+    m_spline = 0;
+  }
   TVirtualPad* prevPad = gPad;
-  TCanvas* can = secondaryWidget->GetCanvas();
+  TCanvas* can = m_secondaryRootWidget->GetCanvas();
   can->cd();
   can->Clear();
-  TGraph* graph = s_graphs[m_sipmId];
-  graph->Draw("ALP");
-  TSpline3* spline = new TSpline3(qPrintable(QString("spline 0x%1").arg(QString::number(sipmId, 16))), graph);
-  spline->SetLineColor(kRed);
-  spline->SetLineWidth(2);
-  spline->Draw("LSAME");
+  TGraph* factorGraph = s_graphs[m_sipmId];
+  factorGraph->Draw("ALP");
+  m_spline = new TSpline3(qPrintable(QString("spline 0x%1").arg(QString::number(m_sipmId, 16))), factorGraph);
+  m_spline->SetLineColor(kRed);
+  m_spline->SetLineWidth(2);
+  m_spline->Draw("LSAME");
   can->Modified();
   can->Update();
   prevPad->cd();
@@ -72,18 +98,23 @@ SignalHeightTimeCorrelation::SignalHeightTimeCorrelation(PostAnalysisCanvas* can
   gPad->Update();
 }
 
-SignalHeightTimeCorrelation::~SignalHeightTimeCorrelation()
-{
-}
-
-TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short sipmId, TH2D* histogram) 
+TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short sipmId, TH2D* histogram, TGraphErrors* graph, double referenceValue) 
 {
   const double minAdc = 300;
   const int minEntries = 30;
-  TGraphErrors* graph = new TGraphErrors();
-  TGraphErrors* factorGraph = new TGraphErrors();
-  if (!s_graphs.keys().contains(sipmId))
+  if (!graph) {
+    graph = new TGraphErrors();
+  } else {
+    graph->Set(0);
+  }
+  TGraph* factorGraph = 0;
+  if (!s_graphs.keys().contains(sipmId)) {
+    factorGraph = new TGraphErrors();
     s_graphs.insert(sipmId, factorGraph);
+  } else {
+    factorGraph = s_graphs[sipmId];
+    factorGraph->Set(0);
+  }
   double timeLow = histogram->GetXaxis()->GetBinLowEdge(1);
   double timeUp = histogram->GetXaxis()->GetBinLowEdge(histogram->GetXaxis()->GetNbins()+1);
   for (int bin = 0; bin < histogram->GetNbinsX(); ++bin) {
@@ -98,16 +129,17 @@ TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short sipmId, TH2D
     double timeError = histogram->GetXaxis()->GetBinWidth(bin+1) / sqrt(12);
     if (adc > minAdc && nEntries > minEntries) {
       if (factorGraph->GetN() == 0)
-        factorGraph->SetPoint(factorGraph->GetN(), timeLow, Constants::idealTrackerSignalHeight / adc);
+        factorGraph->SetPoint(factorGraph->GetN(), timeLow, referenceValue / adc);
       int nPoints = graph->GetN();
       graph->SetPoint(nPoints, time, adc);
       graph->SetPointError(nPoints, timeError, adcError);
-      factorGraph->SetPoint(factorGraph->GetN(), time, Constants::idealTrackerSignalHeight / adc);
+      factorGraph->SetPoint(factorGraph->GetN(), time, referenceValue / adc);
     } else {
       if (factorGraph->GetN() == 0)
         factorGraph->SetPoint(factorGraph->GetN(), timeLow, 1);
       factorGraph->SetPoint(factorGraph->GetN(), time, 1);
     }
+    delete projectionHistogram;
   }
   double x, y;
   factorGraph->GetPoint(factorGraph->GetN() - 1, x, y);
@@ -138,4 +170,14 @@ void SignalHeightTimeCorrelation::saveAll()
 {
   foreach (unsigned short sipmId, s_graphs.keys())
     save(sipmId);
+}
+
+void SignalHeightTimeCorrelation::updateLocation(Enums::Situation situation)
+{
+  if (!secondaryWidget()->isVisible())
+    return;
+  meanGraph(m_sipmId, m_histogram, static_cast<TGraphErrors*>(graph()), Helpers::idealTrackerSignalHeight(situation));
+  drawFactorGraph();
+  gPad->Modified();
+  gPad->Update();
 }

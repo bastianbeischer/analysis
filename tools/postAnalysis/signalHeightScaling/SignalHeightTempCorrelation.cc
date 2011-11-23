@@ -61,6 +61,7 @@ TGraphErrors* SignalHeightTempCorrelation::meanGraph(TH2D* histogram)
       graph->SetPoint(nPoints, temperature, adc);
       graph->SetPointError(nPoints, temperatureError, adcError);
     }
+    delete projectionHistogram;
   }
   return graph;
 }

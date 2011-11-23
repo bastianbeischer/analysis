@@ -7,13 +7,18 @@
 #include "SignalHeightTimeCorrelation2D.hh"
 #include "TrackerSipmSelectionWidget.hh"
 #include "PostAnalysisCanvas.hh"
+#include "LocationSelectonWidget.hh"
 
 #include <TFile.h>
 
 #include <QLayout>
+#include <QVBoxLayout>
 
 SignalHeightCorrelationCollection::SignalHeightCorrelationCollection(Type type, TFile* file)
 {
+  QWidget* widget = new QWidget;
+  QVBoxLayout* layout = new QVBoxLayout(widget);
+  LocationSelectonWidget* locationSelector = 0;
   QStringList moduleIDs;
   Setup* setup = Setup::instance();
   const ElementIterator elementStartIt = setup->firstElement();
@@ -25,9 +30,14 @@ SignalHeightCorrelationCollection::SignalHeightCorrelationCollection(Type type, 
       moduleIDs.append(qPrintable(QString("0x%1").arg(id, 0, 16)));
       PostAnalysisPlot* plot = 0;
       if (type == Time) {
+        if (!locationSelector) {
+          locationSelector = new LocationSelectonWidget;
+          layout->addWidget(locationSelector);
+        }
         setTitle("signal height time dependent");
         const QString& plotName = QString("signal height time correlation 0x%1 canvas").arg(id, 0, 16);
-        plot = new SignalHeightTimeCorrelation(PostAnalysisCanvas::fromFile(file, plotName), id);
+        plot = new SignalHeightTimeCorrelation(PostAnalysisCanvas::fromFile(file, plotName), id, locationSelector->situation());
+        connect(locationSelector, SIGNAL(selectionChanged(Enums::Situation)), static_cast<SignalHeightTimeCorrelation*>(plot), SLOT(updateLocation(Enums::Situation)));
       }
       if (type == Time2D) {
         setTitle("signal height 2d time dependent");
@@ -42,9 +52,10 @@ SignalHeightCorrelationCollection::SignalHeightCorrelationCollection(Type type, 
       addPlot(plot);
     }
   }
-  TrackerSipmSelectionWidget* widget = new TrackerSipmSelectionWidget(moduleIDs);
+  TrackerSipmSelectionWidget* sipmSelector = new TrackerSipmSelectionWidget(moduleIDs);
+  layout->addWidget(sipmSelector);
   secondaryWidget()->layout()->addWidget(widget);
-  connect(widget, SIGNAL(sipmChanged(int)), this, SLOT(selectPlot(int)));
+  connect(sipmSelector, SIGNAL(sipmChanged(int)), this, SLOT(selectPlot(int)));
 }
 
 SignalHeightCorrelationCollection::~SignalHeightCorrelationCollection()
