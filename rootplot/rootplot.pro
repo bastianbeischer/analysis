@@ -19,6 +19,7 @@ CLASSES += \
   DetectorSelectionWidget \
   TOFChannelSelectionWidget \
   TrackerSipmSelectionWidget \
+  LocationSelectonWidget \
   GraphPlot \
   PerdaixDisplay \
   H3DPlot
