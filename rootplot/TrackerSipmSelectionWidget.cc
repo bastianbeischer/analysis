@@ -9,6 +9,7 @@ TrackerSipmSelectionWidget::TrackerSipmSelectionWidget(const QStringList& module
   : QWidget(parent)
 {
   QHBoxLayout* layout = new QHBoxLayout(this);
+  layout->setContentsMargins(0, 0, 0, 0);
   StringSpinBox* spinBox = new StringSpinBox(moduleIDs);
   layout->addWidget(new QLabel("sipm: "));
   layout->addWidget(spinBox);
