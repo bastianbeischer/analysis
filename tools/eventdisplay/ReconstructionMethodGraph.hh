@@ -9,6 +9,7 @@
 class QComboBox;
 class TQtWidget;
 class TMultiGraph;
+class TLegend;
 
 class ReconstructionMethodGraph : public QWidget {
 Q_OBJECT
@@ -17,7 +18,7 @@ public:
   ~ReconstructionMethodGraph();
   Enums::ReconstructionMethod method() const;
   void setMethod(Enums::ReconstructionMethod);
-  void draw(TMultiGraph*);
+  void draw(TMultiGraph*, TLegend*);
 signals:
   void methodChanged(Enums::ReconstructionMethod);
 private slots:

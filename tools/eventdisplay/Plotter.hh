@@ -14,7 +14,7 @@ class DataChain;
 class TrackFinding;
 class HitsPlot;
 class QLabel;
-class QPlainTextEdit;
+class QTextEdit;
 
 class Plotter : public TQtWidget {
 Q_OBJECT
@@ -26,7 +26,7 @@ public:
   void setFileList(const QString& listName);
   void addFileList(const QString& listName);
   void addRootFile(const QString&);
-  void drawEvent(unsigned int i, Enums::TrackType type, bool allClusters, QPlainTextEdit& infoTextBox,
+  void drawEvent(unsigned int i, Enums::TrackType type, bool allClusters, QTextEdit& infoTextBox,
     TQtWidget& trackFindingWidget, ReconstructionMethodGraph&, ReconstructionMethodGraph&);
   void saveCanvas(const QString& fileName);
   void setPositionLabel(QLabel* label);

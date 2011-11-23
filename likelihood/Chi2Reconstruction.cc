@@ -69,6 +69,7 @@ Chi2Reconstruction::Chi2Reconstruction(Enums::LikelihoodVariables likelihoods, E
   , m_chi2Minimizer(new ROOT::Math::BrentMinimizer1D)
   , m_chi2Function(new Chi2Function)
 {
+  m_externalInformation = additionalInformation;
   m_method = additionalInformation ? Enums::Chi2 : Enums::Chi2ExternalInformation; 
   m_minima = QVector<QPointF>(m_particles.count());
   m_chi2Minimizer->SetFunction(*m_chi2Function, -10, 10);
@@ -105,6 +106,12 @@ void Chi2Reconstruction::identify(AnalyzedEvent* event)
       pointIt->setY(0);
     }
   }
+}
+
+TLegend* Chi2Reconstruction::legend() const
+{
+  setupDefaultLegend();
+  return m_legend;
 }
 
 TMultiGraph* Chi2Reconstruction::graph() const

@@ -7,6 +7,7 @@
 SpectrometerReconstruction::SpectrometerReconstruction(Enums::LikelihoodVariables variables, Enums::Particles particles, bool additionalInformation)
   : Reconstruction(variables, particles)
 {
+  m_externalInformation = additionalInformation;
   m_method = additionalInformation ? Enums::SpectrometerExternalInformation : Enums::Spectrometer;
 }
 

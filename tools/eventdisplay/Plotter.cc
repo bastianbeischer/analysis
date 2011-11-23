@@ -98,8 +98,8 @@ void Plotter::mouseMoveEvent(QMouseEvent* event)
   }
 }
 
-void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
-  QPlainTextEdit& infoTextEdit, TQtWidget& trackFindingWidget, ReconstructionMethodGraph& widget1, ReconstructionMethodGraph& widget2)
+void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters, QTextEdit& infoTextEdit,
+  TQtWidget& trackFindingWidget, ReconstructionMethodGraph& widget1, ReconstructionMethodGraph& widget2)
 {
   TCanvas* canvas = GetCanvas();
   canvas->cd();
@@ -120,8 +120,11 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
   tfCan->Modified();
   tfCan->Update();
 
-  widget1.draw(m_processor->reconstruction(widget1.method())->graph());
-  widget2.draw(m_processor->reconstruction(widget2.method())->graph());
+  const Reconstruction* reconstruction = 0;
+  reconstruction = m_processor->reconstruction(widget1.method());
+  widget1.draw(reconstruction->graph(), reconstruction->legend());
+  reconstruction = m_processor->reconstruction(widget2.method());
+  widget2.draw(reconstruction->graph(), reconstruction->legend());
 
   //show info for event
   const DataDescription* currentDesc = m_chain->currentDescription();
@@ -134,50 +137,73 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
   QDateTime timeOfEvent = timeOfRun.addMSecs(event->eventTime());
 
   infoTextEdit.clear();
-  infoTextEdit.appendPlainText(QString("time of event: %1").arg(timeOfEvent.toString("dd.MM.yyyy hh:mm:ss.zzz")));
-  infoTextEdit.appendPlainText(QString("\nroot file: %1").arg(rootFileName));
-  infoTextEdit.appendPlainText(QString("event in root file: %1").arg(eventNumberInRootFile));
-  infoTextEdit.appendPlainText(QString("\nrunfile: %1").arg(runFileNo));
-  infoTextEdit.appendPlainText(QString("run start: %1").arg(timeOfRun.toString("dd.MM.yyyy hh:mm:ss.zzz")));
-  infoTextEdit.appendPlainText(QString("runfilename: %1").arg(runfileName));
-  infoTextEdit.appendPlainText(QString("event in runfile: %1").arg(eventInRunFile));
+  infoTextEdit.append(QString("time of event: %1").arg(timeOfEvent.toString("dd.MM.yyyy hh:mm:ss.zzz")));
+  infoTextEdit.append(QString("\nroot file: %1").arg(rootFileName));
+  infoTextEdit.append(QString("event in root file: %1").arg(eventNumberInRootFile));
+  infoTextEdit.append(QString("\nrunfile: %1").arg(runFileNo));
+  infoTextEdit.append(QString("run start: %1").arg(timeOfRun.toString("dd.MM.yyyy hh:mm:ss.zzz")));
+  infoTextEdit.append(QString("runfilename: %1").arg(runfileName));
+  infoTextEdit.append(QString("event in runfile: %1").arg(eventInRunFile));
   if (event->contentType() == SimpleEvent::MonteCarlo) {
     const MCEventInformation* mcInfo = event->MCInformation();
     const MCSimpleEventParticle* mcPrimary = mcInfo->primary();
-    infoTextEdit.appendPlainText("\nMonte-Carlo Information:");
-    infoTextEdit.appendPlainText("PDG ID =\t" + QString::number(mcPrimary->pdgID));
-    infoTextEdit.appendPlainText("Particle Name =\t" + ParticleDB::instance()->lookupPdgId(mcPrimary->pdgID)->name());
-    infoTextEdit.appendPlainText("momentum =\t" + QString::number(mcPrimary->initialMomentum.Mag(),'f',3) + "GeV");
+    infoTextEdit.append("\nMonte-Carlo Information:");
+    infoTextEdit.append("PDG ID =\t" + QString::number(mcPrimary->pdgID));
+    infoTextEdit.append("Particle Name =\t" + ParticleDB::instance()->lookupPdgId(mcPrimary->pdgID)->name());
+    infoTextEdit.append("momentum =\t" + QString::number(mcPrimary->initialMomentum.Mag(),'f',3) + "GeV");
   }
 
   const Particle* particle = m_processor->particle();
   if (particle->track()) {
-    infoTextEdit.appendPlainText(QString("\nSpectrometer: R = %1 GV").arg(particle->track()->rigidity(), 0, 'g', 3));
-    infoTextEdit.appendPlainText(QString("TOF: beta = %1").arg(particle->beta()));
+    infoTextEdit.append(QString("\nSpectrometer: R = %1 GV").arg(particle->track()->rigidity(), 0, 'g', 3));
+    infoTextEdit.append(QString("TOF: beta = %1").arg(particle->beta()));
   }
 
-  if (SettingsManager::instance()->settingsForEvent(event)->situation() == Settings::Testbeam11) {
-    infoTextEdit.appendPlainText(QString("\nCherenkovs: %1, %2 ADC counts")
+  if (SettingsManager::instance()->settingsForEvent(event)->situation() == Settings::Testbeam11)
+    infoTextEdit.append(QString("Cherenkovs: %1, %2 ADC counts\n")
       .arg(event->sensorData(SensorTypes::BEAM_CHERENKOV1)).arg(event->sensorData(SensorTypes::BEAM_CHERENKOV2)));
+
+
+  QString itemBegin = "<td><p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">";
+  QString itemEnd = "</p></td>\n";
+
+  QString reconstructionTable;
+  reconstructionTable+= "<table border=\"1\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;\" cellspacing=\"2\" cellpadding=\"0\">\n<tr>\n";
+  reconstructionTable+= itemBegin + "R/GV" + itemEnd;
+  for (Enums::ParticleIterator particleIt = Enums::particleBegin(); particleIt != Enums::particleEnd(); ++particleIt)
+    if (particleIt.key() & m_processor->particles())
+      reconstructionTable+= itemBegin + particleIt.value() + itemEnd;
+  reconstructionTable+= "</tr>\n";
+  QString additionalReconstructionTable = reconstructionTable;
+
+  Enums::ReconstructionMethodIterator reconstructionEnd = Enums::reconstructionMethodEnd();
+  for (Enums::ReconstructionMethodIterator reconstructionIt = Enums::reconstructionMethodBegin(); reconstructionIt != reconstructionEnd; ++reconstructionIt) {
+    const Reconstruction* reconstruction = m_processor->reconstruction(reconstructionIt.key());
+    QString& table = reconstruction->externalInformation() ? additionalReconstructionTable : reconstructionTable; 
+    table+= "<tr>\n";
+    table+= itemBegin + reconstructionIt.value().left(4) + itemEnd;
+    QVector<Enums::Particle>::ConstIterator particleIt = reconstruction->particles().begin();
+    QVector<Enums::Particle>::ConstIterator particleEnd = reconstruction->particles().end();
+    QVector<QPointF>::ConstIterator minimumIt = reconstruction->minima().begin();
+    for (int it = 0; particleIt != particleEnd; ++minimumIt, ++particleIt, ++it) {
+      QString text = QString("%1").arg(1./minimumIt->x(), 0, 'g', 3);//.arg(minimumIt->y(), 0, 'g', 3);
+      if (it == reconstruction->indexOfGlobalMinimum()) {
+        text.prepend("<span style=\" color:#ff0000;\">");
+        text.append("</span>");
+      }
+      table+= itemBegin + text + itemEnd; 
+    }
+    table+= "</tr>\n";
   }
 
-  /*const LikelihoodAnalysis* lh = m_processor->likelihood(Enums::Likelihood);
-  const LikelihoodAnalysis* chi2 = m_processor->likelihood(Enums::Chi2);
-  infoTextEdit.appendPlainText("\nLikelihood:");
-  QVector<Enums::Particle>::ConstIterator particleIt = lh->particles().begin();
-  QVector<Enums::Particle>::ConstIterator particleEnd = lh->particles().end();
-  QVector<QPointF>::ConstIterator minimumIt = lh->likelihoodMinima().begin();
-  for (int it = 0; particleIt != particleEnd; ++it, ++particleIt, ++minimumIt) {
-    QString text = QString("%1.) (%2GV, %3) %4").arg(it + 1).arg(1./minimumIt->x(), 0, 'g', 3)
-      .arg(minimumIt->y(), 0, 'g', 3).arg(Enums::label(*particleIt));
-    if (it == lh->indexOfGlobalLikelihoodMinimum()) {
-      text.prepend("<span style=\" color:#ff0000;\">");
-      text.append("</span>");
-      infoTextEdit.appendHtml(text);
-    } else {
-      infoTextEdit.appendPlainText(text);
-    }
-  }*/
+  reconstructionTable+= "</table>";
+  infoTextEdit.append("PERDaix only:");
+  infoTextEdit.append(reconstructionTable);
+
+  additionalReconstructionTable+= "</table>";
+  infoTextEdit.append("\nexternal information:");
+  infoTextEdit.append(additionalReconstructionTable);
+
   delete event;
 }
 

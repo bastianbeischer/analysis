@@ -15,6 +15,7 @@ public:
   LikelihoodReconstruction(Enums::LikelihoodVariables, Enums::Particles, bool additionalInformation = false);
   virtual ~LikelihoodReconstruction();
   virtual void identify(AnalyzedEvent*);
+  virtual TLegend* legend() const;
   virtual TMultiGraph* graph() const;
 private:
   double eval(const AnalyzedEvent*, const Hypothesis&, bool* goodInterpolation = 0) const;

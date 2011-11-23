@@ -15,6 +15,8 @@
 #include <Math/IFunction.h>
 #include <Math/BrentMinimizer1D.h>
 #include <Math/Functor.h>
+#include <TLegend.h>
+#include <TLegendEntry.h>
 #include <TGraph.h>
 #include <TMultiGraph.h>
 #include <TAxis.h>
@@ -46,12 +48,14 @@ Reconstruction* Reconstruction::newReconstruction(Enums::ReconstructionMethod me
 }
 
 Reconstruction::Reconstruction(Enums::LikelihoodVariables likelihoods, Enums::Particles particles)
-  : m_method(Enums::UndefinedReconstructionMethod)
+  : m_externalInformation(false)
+  , m_method(Enums::UndefinedReconstructionMethod)
   , m_likelihoods()
   , m_particles()
   , m_minima()
   , m_indexOfGlobalMinimum(-1)
   , m_event(0)
+  , m_legend(0)
   , m_graph(0)
 {
   for (Enums::LikelihoodVariableIterator it = Enums::likelihoodVariableBegin(); it != Enums::likelihoodVariableEnd(); ++it)
@@ -65,9 +69,16 @@ Reconstruction::Reconstruction(Enums::LikelihoodVariables likelihoods, Enums::Pa
 
 Reconstruction::~Reconstruction()
 {
+  if (m_legend)
+    delete m_legend;
   if (m_graph)
     delete m_graph;
   qDeleteAll(m_likelihoods);
+}
+
+bool Reconstruction::externalInformation() const
+{
+  return m_externalInformation;
 }
 
 Enums::ReconstructionMethod Reconstruction::method() const
@@ -102,8 +113,28 @@ const QVector<Enums::Particle>& Reconstruction::particles() const
   return m_particles;
 }
 
+void Reconstruction::setupDefaultLegend() const
+{
+  if (m_legend)
+    delete m_legend;
+  m_legend = new TLegend(0.80, 0.55, 0.88, 0.88);
+  foreach (Enums::Particle particle, m_particles) {
+    TLegendEntry* entry = m_legend->AddEntry(static_cast<TObject*>(0), qPrintable(" " + Enums::label(particle)), "L");
+    ParticleProperties properties(particle);
+    entry->SetLineColor(properties.color());
+    entry->SetLineWidth(3);
+  }
+}
+
+TLegend* Reconstruction::legend() const
+{
+  return m_legend;
+}
+
 TMultiGraph* Reconstruction::graph() const
 {
+  if (m_legend)
+    delete m_legend;
   if (m_graph)
     delete m_graph;
   m_graph = new TMultiGraph;

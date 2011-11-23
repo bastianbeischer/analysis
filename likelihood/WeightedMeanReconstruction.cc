@@ -10,12 +10,12 @@
 WeightedMeanReconstruction::WeightedMeanReconstruction(Enums::LikelihoodVariables variables, Enums::Particles particles, bool additionalInformation)
   : Reconstruction(variables, particles)
 {
+  m_externalInformation = additionalInformation;
   m_method = additionalInformation ? Enums::WeightedMeanExternalInformation : Enums::WeightedMean;
 }
 
 WeightedMeanReconstruction::~WeightedMeanReconstruction()
 {
-
 }
 
 void WeightedMeanReconstruction::identify(AnalyzedEvent* event)

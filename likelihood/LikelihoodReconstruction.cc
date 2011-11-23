@@ -60,6 +60,7 @@ LikelihoodReconstruction::LikelihoodReconstruction(Enums::LikelihoodVariables li
   , m_lhMinimizer(new ROOT::Math::BrentMinimizer1D)
   , m_lhFunction(new LogLikelihoodFunction(this, &LikelihoodReconstruction::eval))
 {
+  m_externalInformation = additionalInformation;
   m_method = additionalInformation ? Enums::LikelihoodExternalInformation : Enums::Likelihood;
   m_lhMinimizer->SetFunction(*m_lhFunction, s_minimumCurvature, s_maximumCurvature);
   m_minima = QVector<QPointF>(m_particles.count());
@@ -109,6 +110,12 @@ double LikelihoodReconstruction::eval(const AnalyzedEvent* event, const Hypothes
     lnL+= -2*log(value);
   }
   return lnL;
+}
+
+TLegend* LikelihoodReconstruction::legend() const
+{
+  setupDefaultLegend();
+  return m_legend;
 }
 
 TMultiGraph* LikelihoodReconstruction::graph() const

@@ -38,7 +38,7 @@ void MainWindow::editEventListButtonClicked()
   if (m_ui.editEventListButton->text() == "edit event list") {
     m_ui.textEdit->clear();
     foreach(int id, m_eventList)
-      m_ui.textEdit->appendPlainText(QString::number(id));
+      m_ui.textEdit->append(QString::number(id));
     m_ui.textEdit->setReadOnly(false);
     m_ui.editEventListButton->setText("finish");
   } else {
