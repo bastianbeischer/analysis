@@ -37,8 +37,6 @@ SignalHeightTimeCorrelation::SignalHeightTimeCorrelation(PostAnalysisCanvas* can
   setTitle(title);
   addGraph(meanGraph(sipmId, histogram), P);
   setAxisTitle("time", "signal height / adc counts");
-  if (!s_graphs.keys().contains(sipmId))
-    s_graphs.insert(sipmId, graph());
   TLatex* latex = 0;
   latex = RootPlot::newLatex(.47, .85);
   latex->SetTitle(qPrintable(QString("sipm id = 0x%1").arg(QString::number(sipmId, 16))));
@@ -84,9 +82,10 @@ TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short sipmId, TH2D
   const int minEntries = 30;
   TGraphErrors* graph = new TGraphErrors();
   TGraphErrors* factorGraph = new TGraphErrors();
-  s_graphs.insert(sipmId, factorGraph);
-  bool isFirst = true;
-  bool isLast = false;
+  if (!s_graphs.keys().contains(sipmId))
+    s_graphs.insert(sipmId, factorGraph);
+  double timeLow = histogram->GetXaxis()->GetBinLowEdge(1);
+  double timeUp = histogram->GetXaxis()->GetBinLowEdge(histogram->GetXaxis()->GetNbins()+1);
   for (int bin = 0; bin < histogram->GetNbinsX(); ++bin) {
     TH1D* projectionHistogram = histogram->ProjectionY("_py", bin + 1, bin + 1);
     int nEntries = projectionHistogram->GetEntries();
@@ -97,32 +96,22 @@ TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short sipmId, TH2D
     delete function;
     double time = histogram->GetXaxis()->GetBinCenter(bin+1);
     double timeError = histogram->GetXaxis()->GetBinWidth(bin+1) / sqrt(12);
-    if (isFirst) {
-      time = histogram->GetXaxis()->GetBinLowEdge(bin+1);
-      timeError = 0;
-      bin--;
-      isFirst = false;
-    }
-    if (isLast) {
-      time = histogram->GetXaxis()->GetBinLowEdge(bin+2);
-      timeError = 0;
-    }
-    if (!isLast && bin == histogram->GetNbinsX() - 1) {
-      isLast = true;
-      bin--;
-    }
-    int nFactorPoints = factorGraph->GetN();
     if (adc > minAdc && nEntries > minEntries) {
+      if (factorGraph->GetN() == 0)
+        factorGraph->SetPoint(factorGraph->GetN(), timeLow, Constants::idealTrackerSignalHeight / adc);
       int nPoints = graph->GetN();
       graph->SetPoint(nPoints, time, adc);
       graph->SetPointError(nPoints, timeError, adcError);
-      factorGraph->SetPoint(nPoints, time, Constants::idealTrackerSignalHeight / adc);
-//      factorGraph->SetPointError(nPoints, timeError, adcError);
+      factorGraph->SetPoint(factorGraph->GetN(), time, Constants::idealTrackerSignalHeight / adc);
     } else {
-      factorGraph->SetPoint(nFactorPoints, time, 1);
-//      factorGraph->SetPointError(nFactorPoints, 0, 0);
+      if (factorGraph->GetN() == 0)
+        factorGraph->SetPoint(factorGraph->GetN(), timeLow, 1);
+      factorGraph->SetPoint(factorGraph->GetN(), time, 1);
     }
   }
+  double x, y;
+  factorGraph->GetPoint(factorGraph->GetN() - 1, x, y);
+  factorGraph->SetPoint(factorGraph->GetN(), timeUp, y);
   return graph;
 }
 
