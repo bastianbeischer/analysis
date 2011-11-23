@@ -70,6 +70,7 @@ void Corrections::preFitCorrections(SimpleEvent* event)
   const std::vector<Hit*>::const_iterator hitsEnd = event->hits().end();
   for (std::vector<Hit*>::const_iterator it = event->hits().begin(); it != hitsEnd; ++it) {
     Hit* hit = *it;
+    if (m_flags & Enums::TrackerSignalHeight) trackerSignalHeight(hit, event);
     if (m_flags & Enums::Alignment) alignment(hit);
     if (m_flags & Enums::TimeShifts) timeShift(hit);
     if (m_flags & Enums::TrdMopv) trdMopv(hit);
@@ -77,7 +78,6 @@ void Corrections::preFitCorrections(SimpleEvent* event)
     //if (m_flags & Enums::TrdPressure) trdPressure(hit, event);
     //if (m_flags & Enums::TrdTemperature) trdTemperature(hit, event);
     if (m_flags & Enums::TofTimeOverThreshold) tofTot(hit, event);
-    if (m_flags & Enums::TrackerSignalHeight) trackerSignalHeight(hit, event);
   }
 }
 
