@@ -43,8 +43,8 @@ Likelihood::MomentumMap::ConstIterator Likelihood::end(Enums::Particle type) con
 Likelihood::MomentumMap::ConstIterator Likelihood::lowerNode(const Hypothesis& hypothesis) const
 {
   ParticleMap::ConstIterator particleIt = m_nodes.find(hypothesis.particle());
-  MomentumMap::ConstIterator momentumIt = particleIt.value().lowerBound(hypothesis.curvature());
-  if (qFuzzyCompare(momentumIt.key(), hypothesis.curvature()))
+  MomentumMap::ConstIterator momentumIt = particleIt.value().lowerBound(hypothesis.rigidity());
+  if (qFuzzyCompare(momentumIt.key(), hypothesis.rigidity()))
     return momentumIt;
   return --momentumIt;
 }
@@ -58,7 +58,7 @@ Likelihood::ParameterVector Likelihood::linearInterpolation(const Hypothesis& hy
 {
   MomentumMap::ConstIterator endIt = end(hypothesis.particle());
   MomentumMap::ConstIterator l = lowerNode(hypothesis);
-  if (qFuzzyCompare(l.key(), hypothesis.curvature()))
+  if (qFuzzyCompare(l.key(), hypothesis.rigidity()))
     return l.value();
   MomentumMap::ConstIterator u = l;
   ++u;
@@ -68,13 +68,13 @@ Likelihood::ParameterVector Likelihood::linearInterpolation(const Hypothesis& hy
     } else {
       qWarning()
         << "No values for an interpolation of" << Enums::label(m_likelihoodVariableType)
-        << "for" << Enums::label(hypothesis.particle()) << "at K =" << hypothesis.curvature() << "1/GV.";
+        << "for" << Enums::label(hypothesis.particle()) << "at R =" << hypothesis.rigidity() << "GV.";
     }
     return defaultParameters();
   }
   if (goodInterpolation)
     *goodInterpolation = true;
-  double k = (hypothesis.curvature() - l.key()) / (u.key() - l.key());
+  double k = (hypothesis.rigidity() - l.key()) / (u.key() - l.key());
   ParameterVector vector(numberOfParameters());
   for (int i = 0; i < numberOfParameters(); ++i)
     vector[i] = l.value()[i] + k * (u.value()[i] - l.value()[i]);
