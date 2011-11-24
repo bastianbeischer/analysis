@@ -12,6 +12,7 @@ WeightedMeanReconstruction::WeightedMeanReconstruction(Enums::LikelihoodVariable
 {
   m_externalInformation = additionalInformation;
   m_method = additionalInformation ? Enums::WeightedMeanExternalInformation : Enums::WeightedMean;
+  m_minima = QVector<QPointF>(m_particles.count());
 }
 
 WeightedMeanReconstruction::~WeightedMeanReconstruction()
@@ -21,7 +22,7 @@ WeightedMeanReconstruction::~WeightedMeanReconstruction()
 void WeightedMeanReconstruction::identify(AnalyzedEvent* event)
 {
   m_event = event;
-  m_indexOfGlobalMinimum = 0;
+  m_indexOfGlobalMinimum = -1;
 
   QVector<Enums::Particle>::ConstIterator particleIt = m_particles.begin();
   QVector<Enums::Particle>::ConstIterator particleEnd = m_particles.end();
@@ -49,8 +50,11 @@ void WeightedMeanReconstruction::identify(AnalyzedEvent* event)
       enumeratur+= curvatureTof/sigmaCurvatureTof2;
       denumerator+= 1./sigmaCurvatureTof2;
     }
-    Hypothesis* h = new Hypothesis(*particleIt, qIsNull(denumerator) ? 0 : enumeratur / denumerator);
+    double mean = qIsNull(denumerator) ? 0 : enumeratur / denumerator;
+    Hypothesis* h = new Hypothesis(*particleIt, mean);
     h->setProbability(1); //TODO
     event->particle()->addHypothesis(m_method, h);
+    Q_ASSERT(pointIt != m_minima.end());
+    *pointIt = QPointF(mean, 0);
   }
 }

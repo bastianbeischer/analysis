@@ -91,6 +91,7 @@ void Chi2Reconstruction::identify(AnalyzedEvent* event)
   QVector<QPointF>::Iterator pointIt = m_minima.begin();
   for (int it = 0; particleIt != particleEnd; ++it, ++particleIt, ++pointIt) {
     Q_ASSERT(*particleIt != Enums::NoParticle);
+    Q_ASSERT(pointIt != m_minima.end());
     // minimize: (K - 1/p)^2 / (sigma_1/p)^2 + (sqrt((mK)^2 + 1) - 1/beta)^2 / (sigma_1/beta)^2 
     m_chi2Function->setParameters(event, *particleIt);
     if (m_chi2Minimizer->Minimize(100)) {
@@ -152,6 +153,6 @@ TMultiGraph* Chi2Reconstruction::graph() const
   minimumGraph->SetMarkerColor(kRed);
   minimumGraph->SetPoint(0, m_minima[m_indexOfGlobalMinimum].x(), m_minima[m_indexOfGlobalMinimum].y());
   m_graph->Add(minimumGraph, "P");
-
+  m_graph->SetTitle(qPrintable(QString(Enums::label(m_variables)).remove(" likelihood")));
   return m_graph;
 }

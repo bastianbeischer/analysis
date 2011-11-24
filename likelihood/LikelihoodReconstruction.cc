@@ -83,6 +83,7 @@ void LikelihoodReconstruction::identify(AnalyzedEvent* event)
   QVector<QPointF>::Iterator pointIt = m_minima.begin();
   for (int it = 0; particleIt != particleEnd; ++it, ++particleIt, ++pointIt) {
     Q_ASSERT(*particleIt != Enums::NoParticle);
+    Q_ASSERT(pointIt != m_minima.end());
     m_lhFunction->setParameters(event, *particleIt, &goodInterpolation);
     if (m_lhMinimizer->Minimize(100)) {
       pointIt->setX(m_lhMinimizer->XMinimum());
@@ -153,6 +154,6 @@ TMultiGraph* LikelihoodReconstruction::graph() const
   minimumGraph->SetMarkerColor(kRed);
   minimumGraph->SetPoint(0, m_minima[m_indexOfGlobalMinimum].x(), m_minima[m_indexOfGlobalMinimum].y());
   m_graph->Add(minimumGraph, "P");
-
+  m_graph->SetTitle(qPrintable(QString(Enums::label(m_variables)).remove(" likelihood")));
   return m_graph;
 }

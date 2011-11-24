@@ -185,7 +185,7 @@ const QString Enums::label(Enums::Particles keys)
       list+= it.value();
     }
   }
-  return list; 
+  return list;
 }
 Enums::Particles Enums::particles(const QString& value)
 {
@@ -206,6 +206,25 @@ const QString Enums::label(Enums::LikelihoodVariable key) {return s_likelihoodVa
 Enums::LikelihoodVariable Enums::likelihoodVariable(const QString& value) {return s_likelihoodVariableMap.key(value);}
 Enums::LikelihoodVariableIterator Enums::likelihoodVariableBegin() {return s_likelihoodVariableMap.constBegin();}
 Enums::LikelihoodVariableIterator Enums::likelihoodVariableEnd() {return s_likelihoodVariableMap.constEnd();}
+const QString Enums::label(Enums::LikelihoodVariables keys)
+{
+  QString list;
+  for (Enums::LikelihoodVariableIterator it = likelihoodVariableBegin(); it != likelihoodVariableEnd(); ++it) {
+    if (keys & it.key()) {
+      if (!list.isEmpty())
+        list+= " | ";
+      list+= it.value();
+    }
+  }
+  return list;
+}
+Enums::LikelihoodVariables Enums::likelihoodVariables(const QString& value)
+{
+  Enums::LikelihoodVariables variables;
+  foreach (QString string, value.split(" | "))
+    variables|= likelihoodVariable(string);
+  return variables;
+}
 
 // KineticVariable
 const QString Enums::label(Enums::KineticVariable key) {return s_kineticVariableMap.value(key);}

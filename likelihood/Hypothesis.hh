@@ -9,7 +9,7 @@ public:
   Hypothesis(Enums::Particle, double curvature);
   ~Hypothesis();
   
-  double propability() const;
+  double probability() const;
   void setProbability(double);
 
   Enums::Particle particle() const;

@@ -33,6 +33,7 @@ protected:
   static const double s_maximumCurvature;
   bool m_externalInformation;
   Enums::ReconstructionMethod m_method;
+  Enums::LikelihoodVariables m_variables;
   QVector<Likelihood*> m_likelihoods;
   QVector<Enums::Particle> m_particles;
   QVector<QPointF> m_minima;

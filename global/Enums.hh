@@ -68,6 +68,8 @@ public:
   static LikelihoodVariableIterator likelihoodVariableBegin();
   static LikelihoodVariableIterator likelihoodVariableEnd();
   Q_DECLARE_FLAGS(LikelihoodVariables, LikelihoodVariable);
+  static const QString label(LikelihoodVariables);
+  static LikelihoodVariables likelihoodVariables(const QString&);
 
   enum KineticVariable {UndefinedKineticVariable, TotalEnergy, KineticEnergy, Momentum, Rigidity, AbsoluteRigidity, Curvature,
     Beta, InverseBeta, SquaredCurvature};

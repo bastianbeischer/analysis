@@ -9,12 +9,13 @@ SpectrometerReconstruction::SpectrometerReconstruction(Enums::LikelihoodVariable
 {
   m_externalInformation = additionalInformation;
   m_method = additionalInformation ? Enums::SpectrometerExternalInformation : Enums::Spectrometer;
+  m_minima = QVector<QPointF>(m_particles.count());
 }
 
 void SpectrometerReconstruction::identify(AnalyzedEvent* event)
 {
   m_event = event;
-  m_indexOfGlobalMinimum = 0;
+  m_indexOfGlobalMinimum = -1;
 
   QVector<Enums::Particle>::ConstIterator particleIt = m_particles.begin();
   QVector<Enums::Particle>::ConstIterator particleEnd = m_particles.end();
@@ -25,5 +26,7 @@ void SpectrometerReconstruction::identify(AnalyzedEvent* event)
     Hypothesis* h = new Hypothesis(*particleIt, curvature);
     h->setProbability(1); //TODO
     event->particle()->addHypothesis(m_method, h);
+    Q_ASSERT(pointIt != m_minima.end());
+    *pointIt = QPointF(curvature, 0);
   }
 }

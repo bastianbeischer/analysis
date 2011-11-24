@@ -26,7 +26,6 @@ const int TRDReconstruction::s_minLayerCut = 4;
 const int TRDReconstruction::s_maxOffTrackCluster = 2;
 const int TRDReconstruction::s_spectrumDefaultBins = 100;
 
-
 TRDReconstruction::TRDReconstruction()
   : m_flags(None)
 {

@@ -18,7 +18,7 @@
 #include "TimeOfFlight.hh"
 #include "Settings.hh"
 #include "SettingsManager.hh"
-
+#include "Hypothesis.hh"
 
 #include <TCanvas.h>
 #include <TH2I.h>
@@ -122,8 +122,10 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
 
   const Reconstruction* reconstruction = 0;
   reconstruction = m_processor->reconstruction(widget1.method());
+  Q_ASSERT(reconstruction);
   widget1.draw(reconstruction->graph(), reconstruction->legend());
   reconstruction = m_processor->reconstruction(widget2.method());
+  Q_ASSERT(reconstruction);
   widget2.draw(reconstruction->graph(), reconstruction->legend());
 
   //show info for event
@@ -164,35 +166,44 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
       .arg(event->sensorData(SensorTypes::BEAM_CHERENKOV1)).arg(event->sensorData(SensorTypes::BEAM_CHERENKOV2)));
 
 
-  QString itemBegin = "<td><p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">";
-  QString itemEnd = "</p></td>\n";
+  QString itemBegin = "<td valign=\"middle\" align=\"center\">";
+  QString itemEnd = "</td>\n";
 
   QString reconstructionTable;
-  reconstructionTable+= "<table border=\"1\" style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px;\" cellspacing=\"2\" cellpadding=\"0\">\n<tr>\n";
-  reconstructionTable+= itemBegin + "R/GV" + itemEnd;
+  reconstructionTable+= "<table border=\"1\">\n<tr>\n";
+  reconstructionTable+= itemBegin + "R/GV<br>(prob)" + itemEnd;
   for (Enums::ParticleIterator particleIt = Enums::particleBegin(); particleIt != Enums::particleEnd(); ++particleIt)
     if (particleIt.key() & m_processor->particles())
       reconstructionTable+= itemBegin + particleIt.value() + itemEnd;
+  reconstructionTable+= itemBegin + "sum" + itemEnd;
   reconstructionTable+= "</tr>\n";
   QString additionalReconstructionTable = reconstructionTable;
 
   Enums::ReconstructionMethodIterator reconstructionEnd = Enums::reconstructionMethodEnd();
   for (Enums::ReconstructionMethodIterator reconstructionIt = Enums::reconstructionMethodBegin(); reconstructionIt != reconstructionEnd; ++reconstructionIt) {
+    //qDebug() << reconstructionIt.value();
     const Reconstruction* reconstruction = m_processor->reconstruction(reconstructionIt.key());
     QString& table = reconstruction->externalInformation() ? additionalReconstructionTable : reconstructionTable; 
     table+= "<tr>\n";
     table+= itemBegin + reconstructionIt.value().left(4) + itemEnd;
+    double sum = 0;
     QVector<Enums::Particle>::ConstIterator particleIt = reconstruction->particles().begin();
     QVector<Enums::Particle>::ConstIterator particleEnd = reconstruction->particles().end();
     QVector<QPointF>::ConstIterator minimumIt = reconstruction->minima().begin();
     for (int it = 0; particleIt != particleEnd; ++minimumIt, ++particleIt, ++it) {
-      QString text = QString("%1").arg(1./minimumIt->x(), 0, 'g', 3);//.arg(minimumIt->y(), 0, 'g', 3);
+      //m_processor->particle()->hypothesis(*particleIt, reconstructionIt.key())->dump();
+      const Hypothesis* hypothesis = m_processor->particle()->hypothesis(*particleIt, reconstructionIt.key());
+      //qDebug() << reconstructionIt.value() << hypothesis->rigidity() << 1./minimumIt->x();
+      //Q_ASSERT((std::isnan(hypothesis->rigidity()) && std::isnan(1./minimumIt->x())) || (std::isinf(hypothesis->rigidity()) && std::isinf(1./minimumIt->x())) || qFuzzyCompare(hypothesis->rigidity(), 1./minimumIt->x()));
+      QString text = QString("%1<br>%2\%").arg(hypothesis->rigidity(), 0, 'g', 2).arg(qRound(100.*hypothesis->probability()));
       if (it == reconstruction->indexOfGlobalMinimum()) {
-        text.prepend("<span style=\" color:#ff0000;\">");
+        text.prepend("<span style=\"color:red\">");
         text.append("</span>");
       }
       table+= itemBegin + text + itemEnd; 
+      sum+= hypothesis->probability();
     }
+    table+= itemBegin + QString("%1\%").arg(qRound(100.*sum)) + itemEnd;
     table+= "</tr>\n";
   }
 
@@ -201,7 +212,7 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
   infoTextEdit.append(reconstructionTable);
 
   additionalReconstructionTable+= "</table>";
-  infoTextEdit.append("\nexternal information:");
+  infoTextEdit.append("\ntogether with external information:");
   infoTextEdit.append(additionalReconstructionTable);
 
   delete event;

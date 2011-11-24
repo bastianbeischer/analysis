@@ -50,6 +50,7 @@ Reconstruction* Reconstruction::newReconstruction(Enums::ReconstructionMethod me
 Reconstruction::Reconstruction(Enums::LikelihoodVariables likelihoods, Enums::Particles particles)
   : m_externalInformation(false)
   , m_method(Enums::UndefinedReconstructionMethod)
+  , m_variables(likelihoods)
   , m_likelihoods()
   , m_particles()
   , m_minima()
@@ -145,5 +146,6 @@ TMultiGraph* Reconstruction::graph() const
   g->SetPoint(3, -2, 90);
   g->SetPoint(4, -2, 0);
   m_graph->Add(g);
+  m_graph->SetTitle(qPrintable(QString(Enums::label(m_variables)).remove(" likelihood")));
   return m_graph;
 }

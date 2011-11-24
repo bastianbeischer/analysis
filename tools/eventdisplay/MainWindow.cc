@@ -68,6 +68,8 @@ void MainWindow::processArguments(QStringList arguments)
     else
       addFileList(argument);
   }
+  m_ui.reconstructionMethodWidget1->setMethod(Enums::Chi2);
+  m_ui.reconstructionMethodWidget2->setMethod(Enums::Likelihood);
 }
 
 void MainWindow::setFileList(const QString& fileList)
@@ -117,7 +119,7 @@ void MainWindow::update()
   double trackerPull = m_ui.trackerPullSpinBox->value();
   double trdPull = m_ui.trdPullSpinBox->value();
   m_ui.plotter->updateTrackFindingParameters(slopeBins, offsetBins, trackerPull, trdPull);
-  
+
   bool drawTracks = m_ui.drawTrackCheckBox->isChecked();
   m_ui.fitMethodComboBox->setEnabled(drawTracks);
   m_ui.allClustersCheckBox->setEnabled(drawTracks);

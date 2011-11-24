@@ -9,6 +9,7 @@ TOFReconstruction::TOFReconstruction(Enums::LikelihoodVariables variables, Enums
 {
   m_externalInformation = additionalInformation;
   m_method = additionalInformation ? Enums::TOFExternalInformation : Enums::TOF; 
+  m_minima = QVector<QPointF>(m_particles.count());
 }
 
 TOFReconstruction::~TOFReconstruction()
@@ -19,7 +20,7 @@ TOFReconstruction::~TOFReconstruction()
 void TOFReconstruction::identify(AnalyzedEvent* event)
 {
   m_event = event;
-  m_indexOfGlobalMinimum = 0;
+  m_indexOfGlobalMinimum = -1;
 
   QVector<Enums::Particle>::ConstIterator particleIt = m_particles.begin();
   QVector<Enums::Particle>::ConstIterator particleEnd = m_particles.end();
@@ -34,5 +35,7 @@ void TOFReconstruction::identify(AnalyzedEvent* event)
     Hypothesis* h = new Hypothesis(*particleIt, curvature);
     h->setProbability(1); //TODO
     event->particle()->addHypothesis(m_method, h);
+    Q_ASSERT(pointIt != m_minima.end());
+    *pointIt = QPointF(curvature, 0);
   }
 }

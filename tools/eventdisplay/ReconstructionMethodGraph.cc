@@ -14,6 +14,7 @@ ReconstructionMethodGraph::ReconstructionMethodGraph(QWidget* parent)
   : QWidget(parent)
   , m_widget(new TQtWidget)
   , m_methodComboBox(new QComboBox)
+  , m_method(Enums::UndefinedReconstructionMethod)
 {
   Enums::ReconstructionMethodIterator end = Enums::reconstructionMethodEnd();
   for (Enums::ReconstructionMethodIterator it = Enums::reconstructionMethodBegin(); it != end; ++it)
@@ -27,7 +28,6 @@ ReconstructionMethodGraph::ReconstructionMethodGraph(QWidget* parent)
   layout->addWidget(m_methodComboBox);
   layout->addWidget(m_widget);
   setLayout(layout);
-
   setMethod(Enums::Likelihood);
 }
 
@@ -53,6 +53,7 @@ void ReconstructionMethodGraph::setMethod(Enums::ReconstructionMethod method)
 
 void ReconstructionMethodGraph::draw(TMultiGraph* mg, TLegend* legend)
 {
+  Q_ASSERT(mg);
   TVirtualPad* previousPad = gPad;
   m_widget->cd();
   m_widget->GetCanvas()->Clear();

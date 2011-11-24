@@ -167,5 +167,7 @@ void AnalysisProcessor::process(SimpleEvent* simpleEvent)
 
 const Reconstruction* AnalysisProcessor::reconstruction(Enums::ReconstructionMethod method) const
 {
-  return m_reconstructions[method];
+  const Reconstruction* reconstruction = m_reconstructions[method];
+  Q_ASSERT(reconstruction);
+  return reconstruction;
 }

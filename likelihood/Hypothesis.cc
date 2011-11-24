@@ -20,7 +20,7 @@ Enums::Particle Hypothesis::particle() const
   return m_properties.type();
 }
 
-double Hypothesis::propability() const
+double Hypothesis::probability() const
 {
   return m_probability;
 }
