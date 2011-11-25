@@ -17,14 +17,15 @@ public:
   double mass() const;
   double curvature() const;
   double rigidity() const;
+  double absoluteRigidity() const;
   double beta() const;
   double inverseBeta() const;
-
-  void dump() const;
 private:
   ParticleProperties m_properties;
   double m_curvature;
   double m_probability;
 };
+
+QDebug operator<<(QDebug, const Hypothesis&);
 
 #endif

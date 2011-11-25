@@ -51,6 +51,11 @@ double Hypothesis::rigidity() const
   return 1. / m_curvature;
 }
 
+double Hypothesis::absoluteRigidity() const
+{
+  return qAbs(rigidity());
+}
+
 double Hypothesis::beta() const
 {
   return 1. / inverseBeta();
@@ -61,8 +66,9 @@ double Hypothesis::inverseBeta() const
   return Helpers::addQuad(1., m_properties.mass() * m_curvature);
 }
 
-void Hypothesis::dump() const
+QDebug operator<<(QDebug debug, const Hypothesis& h)
 {
-  qDebug() << qPrintable(QString("%1 (probability %2) K=%3/GV R=%4GV beta=%5").arg(Enums::label(m_properties.type()))
-    .arg(m_probability).arg(m_curvature).arg(rigidity()).arg(beta()));
+  debug << QString("%1 (prob %2) K=%3/GV R=%4GV beta=%5").arg(Enums::label(h.particle()))
+    .arg(h.probability()).arg(h.curvature()).arg(h.rigidity()).arg(h.beta());
+  return debug;
 }

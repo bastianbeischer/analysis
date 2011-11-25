@@ -65,7 +65,8 @@ void AnalysisProcessor::initReconstructions()
 {
   Q_ASSERT(m_reconstructions.count() == 0); // should only be called once!
 
-  Enums::LikelihoodVariables internal = Enums::TrackerMomentumLikelihood | Enums::TimeOfFlightLikelihood;
+  Enums::LikelihoodVariables internal = Enums::TrackerMomentumLikelihood | Enums::TimeOfFlightLikelihood
+    | Enums::SignalHeightTrdLikelihood;
   QVector<Enums::ReconstructionMethod> internalReconstruction = QVector<Enums::ReconstructionMethod>()
     << Enums::Spectrometer << Enums::TOF << Enums::WeightedMean << Enums::Chi2 << Enums::Likelihood;
   foreach (Enums::ReconstructionMethod method, internalReconstruction)

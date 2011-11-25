@@ -60,7 +60,7 @@ public:
   static CutIterator cutBegin();
   static CutIterator cutEnd();
 
-  enum LikelihoodVariable {UndefinedLikelihood = 0, SignalHeightTrackerLikelihood = 1<<0, SignalHeightTRDLikelihood = 1<<1, TimeOverThresholdLikelihood = 1<<2,
+  enum LikelihoodVariable {UndefinedLikelihood = 0, SignalHeightTrackerLikelihood = 1<<0, SignalHeightTrdLikelihood = 1<<1, TimeOverThresholdLikelihood = 1<<2,
     TimeOfFlightLikelihood = 1<<3, TrackerMomentumLikelihood = 1<<4, CherenkovLikelihood = 1<<5};
   static const QString label(LikelihoodVariable);
   static LikelihoodVariable likelihoodVariable(const QString&);

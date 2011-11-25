@@ -17,7 +17,8 @@ CLASSES += \
   TOFReconstruction \
   WeightedMeanReconstruction \
   Chi2Reconstruction \
-  LikelihoodReconstruction
+  LikelihoodReconstruction \
+  SignalHeightTrdLikelihood
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \

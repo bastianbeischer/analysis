@@ -44,7 +44,7 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
   connect(m_ui->canvasListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectCanvas(QListWidgetItem*)));
   connect(m_ui->canvasListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
     this, SLOT(selectCanvas(QListWidgetItem*, QListWidgetItem*)));
-  //connect(m_ui->plotListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectPlot(QListWidgetItem*)));
+  connect(m_ui->plotListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectPlot(QListWidgetItem*)));
   connect(m_ui->plotListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
     this, SLOT(selectPlot(QListWidgetItem*, QListWidgetItem*)));
   connect(m_ui->plotOptionComboBox, SIGNAL(currentIndexChanged(const QString&)),
@@ -159,11 +159,15 @@ PostAnalysisCanvas* PostAnalysisWindow::addCanvas(TFile* file, const QString& na
 
 void PostAnalysisWindow::addPlot(PostAnalysisPlot* plot)
 {
+  m_ui->plotListWidget->disconnect();
   m_plots.append(plot);
   QListWidgetItem* item = new QListWidgetItem(plot->title());
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
   m_ui->plotListWidget->addItem(item);
   m_ui->plotListWidget->show();
+  connect(m_ui->plotListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectPlot(QListWidgetItem*)));
+  connect(m_ui->plotListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
+    this, SLOT(selectPlot(QListWidgetItem*, QListWidgetItem*)));
 }
 
 void PostAnalysisWindow::clearPlots()

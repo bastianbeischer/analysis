@@ -3,8 +3,11 @@
 
 #include "PostAnalysisWindow.hh"
 
+#include <QVector>
+
 class TrackerMomentumLikelihood;
 class TimeOfFlightLikelihood;
+class SignalHeightTrdLikelihood;
 
 class MainWindow : public PostAnalysisWindow {
 Q_OBJECT
@@ -16,6 +19,7 @@ protected:
 private:
   TrackerMomentumLikelihood* m_trackerLikelihood;
   TimeOfFlightLikelihood* m_tofLikelihood;
+  QVector<SignalHeightTrdLikelihood*> m_signalHeightTrdLikelihoods;
 };
 
 #endif

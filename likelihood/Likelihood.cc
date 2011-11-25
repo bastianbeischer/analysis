@@ -4,6 +4,7 @@
 #include "TimeOfFlightLikelihood.hh"
 #include "TrackerMomentumLikelihood.hh"
 #include "CherenkovLikelihood.hh"
+#include "SignalHeightTrdLikelihood.hh"
 
 #include <QSettings>
 #include <QStringList>
@@ -35,46 +36,48 @@ Enums::LikelihoodVariable Likelihood::likelihoodVariableType() const
   return m_likelihoodVariableType;
 }
 
-Likelihood::MomentumMap::ConstIterator Likelihood::end(Enums::Particle type) const
+Likelihood::AbsoluteRigidityMap::ConstIterator Likelihood::end(Enums::Particle type) const
 {
   return m_nodes[type].end();
 }
 
-Likelihood::MomentumMap::ConstIterator Likelihood::lowerNode(const Hypothesis& hypothesis) const
+Likelihood::AbsoluteRigidityMap::ConstIterator Likelihood::lowerNode(const Hypothesis& hypothesis) const
 {
   ParticleMap::ConstIterator particleIt = m_nodes.find(hypothesis.particle());
-  MomentumMap::ConstIterator momentumIt = particleIt.value().lowerBound(hypothesis.rigidity());
-  if (qFuzzyCompare(momentumIt.key(), hypothesis.rigidity()))
+  if (particleIt == m_nodes.end()) {
+    qDebug() << "No lower node for hypothesis" << hypothesis << "found.";
+    Q_ASSERT(false);
+  }
+  Q_ASSERT_X(particleIt.value().count(), "Likelihood::lowerNode()", "No momenta found for requested particle species.");
+  AbsoluteRigidityMap::ConstIterator momentumIt = particleIt.value().lowerBound(hypothesis.absoluteRigidity());
+  //Q_ASSERT(momentumIt != particleIt.value().end());
+  if (qFuzzyCompare(momentumIt.key(), hypothesis.absoluteRigidity()))
     return momentumIt;
   return --momentumIt;
 }
 
-Likelihood::MomentumMap::ConstIterator Likelihood::upperNode(const Hypothesis& hypothesis) const
+Likelihood::AbsoluteRigidityMap::ConstIterator Likelihood::upperNode(const Hypothesis& hypothesis) const
 {
   return ++lowerNode(hypothesis);
 }
 
-Likelihood::ParameterVector Likelihood::linearInterpolation(const Hypothesis& hypothesis, bool* goodInterpolation) const
+Likelihood::ParameterVector Likelihood::interpolation(const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
-  MomentumMap::ConstIterator endIt = end(hypothesis.particle());
-  MomentumMap::ConstIterator l = lowerNode(hypothesis);
-  if (qFuzzyCompare(l.key(), hypothesis.rigidity()))
+  // linear interpolation method. Other methods should be implemented in the
+  // according class that inherits Likelihood.
+  AbsoluteRigidityMap::ConstIterator endIt = end(hypothesis.particle());
+  AbsoluteRigidityMap::ConstIterator l = lowerNode(hypothesis);
+  if (qFuzzyCompare(l.key(), hypothesis.absoluteRigidity()))
     return l.value();
-  MomentumMap::ConstIterator u = l;
+  AbsoluteRigidityMap::ConstIterator u = l;
   ++u;
-  if (l == endIt || u == endIt) {
-    if (goodInterpolation) {
-      *goodInterpolation = false;
-    } else {
-      qWarning()
-        << "No values for an interpolation of" << Enums::label(m_likelihoodVariableType)
-        << "for" << Enums::label(hypothesis.particle()) << "at R =" << hypothesis.rigidity() << "GV.";
-    }
-    return defaultParameters();
-  }
   if (goodInterpolation)
-    *goodInterpolation = true;
-  double k = (hypothesis.rigidity() - l.key()) / (u.key() - l.key());
+    *goodInterpolation = (l != endIt) && (u != endIt);
+  if (l == endIt)
+    return u.value();
+  if (u == endIt)
+    return l.value();
+  double k = (hypothesis.absoluteRigidity() - l.key()) / (u.key() - l.key());
   ParameterVector vector(numberOfParameters());
   for (int i = 0; i < numberOfParameters(); ++i)
     vector[i] = l.value()[i] + k * (u.value()[i] - l.value()[i]);
@@ -86,29 +89,38 @@ void Likelihood::loadNodes()
   QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
   Q_ASSERT(QFile::exists(fileName));
   QSettings settings(fileName, QSettings::IniFormat);
+  m_nodes.clear();
   settings.beginGroup(Enums::label(m_likelihoodVariableType));
-  
-  foreach (QString particleKey, settings.childGroups()) {
-    settings.beginGroup(particleKey);
-    Enums::Particle particle = Enums::particle(particleKey);
-    ParticleMap::Iterator particleIt = m_nodes.find(particle);
-    if (particleIt == m_nodes.end())
-      particleIt = m_nodes.insert(particle, MomentumMap());
-    foreach (QString momentumKey, settings.childKeys()) {
-      double p = momentumKey.toDouble();
-      QVariant variant = settings.value(momentumKey);
-      variant.convert(QVariant::StringList);
-      QList<QVariant> variantList = variant.toList();
+  Enums::Particles particlesInFile = Enums::particles(settings.value("particles").toString());
+  Enums::ParticleIterator particleEnd = Enums::particleEnd();
+  for (Enums::ParticleIterator particleIt = Enums::particleBegin(); particleIt != particleEnd; ++particleIt) {
+    if (particleIt.key() == Enums::NoParticle || !(particleIt.key() & particlesInFile))
+      continue;
+    ParticleMap::Iterator particleNodeIterator = m_nodes.find(particleIt.key());
+    if (particleNodeIterator == m_nodes.end())
+      particleNodeIterator = m_nodes.insert(particleIt.key(), AbsoluteRigidityMap());
+    settings.beginGroup(particleIt.value());
+    QList<QVariant> rigiditiesVariantList = settings.value("absoluteRigidities").toList();
+    foreach(QVariant rigidityVariant, rigiditiesVariantList) {
+      double rigidity = rigidityVariant.toDouble();
+      QString key = QString("%1GV").arg(rigidityVariant.toString());
+      QList<QVariant> variantList = settings.value(key).toList();
       Q_ASSERT(variantList.size() == numberOfParameters());
-      MomentumMap::Iterator momentumIt = particleIt.value().find(p);
-      if (momentumIt == particleIt.value().end())
-        momentumIt = particleIt.value().insert(p, ParameterVector(variantList.size()));
+      AbsoluteRigidityMap::Iterator rigidityNodeIterator = particleNodeIterator.value().find(rigidity);
+      if (rigidityNodeIterator == particleNodeIterator.value().end())
+        rigidityNodeIterator = particleNodeIterator.value().insert(rigidity, ParameterVector(variantList.size()));
       for (int i = 0; i < variantList.size(); ++i)
-        momentumIt.value()[i] = variantList[i].toDouble();
+        rigidityNodeIterator.value()[i] = variantList[i].toDouble();
     }
     settings.endGroup();
   }
   settings.endGroup();
+  /*Hypothesis h(Enums::Electron, -1./2.3);
+  qDebug() << h;
+  if (lowerNode(h) == end(h.particle())) qDebug() << "lower end";
+  else qDebug() << "lower" << *lowerNode(h);
+  if (upperNode(h) == end(h.particle())) qDebug() << "upper end";
+  else qDebug() << "upper" << *upperNode(h);*/
 }
 
 LikelihoodPDF* Likelihood::pdf(const KineticVariable& variable) const
@@ -136,7 +148,7 @@ Likelihood* Likelihood::newLikelihood(Enums::LikelihoodVariable type, Enums::Par
   switch (type) {
     case Enums::UndefinedLikelihood: return 0;
     case Enums::SignalHeightTrackerLikelihood: return 0;
-    case Enums::SignalHeightTRDLikelihood: return 0;
+    case Enums::SignalHeightTrdLikelihood: return new SignalHeightTrdLikelihood(particles);
     case Enums::TimeOverThresholdLikelihood: return 0;
     case Enums::TimeOfFlightLikelihood: return new TimeOfFlightLikelihood(particles);
     case Enums::TrackerMomentumLikelihood: return new TrackerMomentumLikelihood(particles);

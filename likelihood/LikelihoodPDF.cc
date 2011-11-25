@@ -13,8 +13,8 @@ LikelihoodPDF::LikelihoodPDF(const Likelihood* likelihood, const KineticVariable
 {
   SetNpx(1000);
   SetLineColor(Particle(variable.particle()).color());
-  GetXaxis()->SetTitle(qPrintable(Enums::label(likelihood->measuredValueType())));
-  GetYaxis()->SetTitle("probability");
+  //GetXaxis()->SetTitle(qPrintable(Enums::label(likelihood->measuredValueType())));
+  //GetYaxis()->SetTitle("probability");
 }
 
 LikelihoodPDF::~LikelihoodPDF()

@@ -11,6 +11,7 @@
 #include "WeightedMeanReconstruction.hh"
 #include "Chi2Reconstruction.hh"
 #include "LikelihoodReconstruction.hh"
+#include "SignalHeightTrdLikelihood.hh"
 
 #include <Math/IFunction.h>
 #include <Math/BrentMinimizer1D.h>
@@ -60,8 +61,19 @@ Reconstruction::Reconstruction(Enums::LikelihoodVariables likelihoods, Enums::Pa
   , m_graph(0)
 {
   for (Enums::LikelihoodVariableIterator it = Enums::likelihoodVariableBegin(); it != Enums::likelihoodVariableEnd(); ++it)
-    if ((it.key() & likelihoods) == it.key())
-      m_likelihoods.append(Likelihood::newLikelihood(it.key(), particles));
+    if ((it.key() & likelihoods) == it.key()) {
+      Likelihood* lh = 0;
+      if (it.key() == Enums::SignalHeightTrdLikelihood) {
+        for (int layer = 0; layer < 1; ++layer) {
+          lh = Likelihood::newLikelihood(it.key(), particles);
+          static_cast<SignalHeightTrdLikelihood*>(lh)->setLayer(layer);
+          m_likelihoods.append(lh);
+        }
+      } else {
+        lh = Likelihood::newLikelihood(it.key(), particles);
+        m_likelihoods.append(lh);
+      }
+    }
 
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it)
     if (it.key() != Enums::NoParticle && (it.key() & particles) == it.key())
