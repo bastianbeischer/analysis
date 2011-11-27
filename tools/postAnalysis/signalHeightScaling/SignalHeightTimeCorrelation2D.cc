@@ -54,12 +54,12 @@ void SignalHeightTimeCorrelation2D::updateProjection()
     const QDateTime& lowTime = QDateTime::fromTime_t(histogram()->GetXaxis()->GetBinLowEdge(projectionBin()));
     const QDateTime& upTime = QDateTime::fromTime_t(histogram()->GetXaxis()->GetBinLowEdge(projectionBin() + 1));
     const int nEntries = projection()->GetEntries();
+    projection()->Fit(projectionFunction(), "EQN0");
     const double mpv = projectionFunction()->GetParameter(1);
     const double rms = projection()->GetRMS();
     projectionLatex(0)->SetTitle(qPrintable(QString("time: %1 to %2").arg(lowTime.toString("h:mm:ss")).arg(upTime.toString("h:mm:ss"))));
     projectionLatex(1)->SetTitle(qPrintable(QString("entries: %1").arg(nEntries)));
     projectionLatex(2)->SetTitle(qPrintable(QString("mpv: %1").arg(mpv)));
     projectionLatex(3)->SetTitle(qPrintable(QString("sigma: %1").arg(rms / sqrt(nEntries))));
-    projection()->Fit(projectionFunction(), "EQN0");
   }
 }
