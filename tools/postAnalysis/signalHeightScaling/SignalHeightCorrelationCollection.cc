@@ -7,7 +7,6 @@
 #include "SignalHeightTimeCorrelation2D.hh"
 #include "TrackerSipmSelectionWidget.hh"
 #include "PostAnalysisCanvas.hh"
-#include "LocationSelectonWidget.hh"
 
 #include <TFile.h>
 
@@ -18,7 +17,6 @@ SignalHeightCorrelationCollection::SignalHeightCorrelationCollection(Type type, 
 {
   QWidget* widget = new QWidget;
   QVBoxLayout* layout = new QVBoxLayout(widget);
-  LocationSelectonWidget* locationSelector = 0;
   QStringList moduleIDs;
   Setup* setup = Setup::instance();
   const ElementIterator elementStartIt = setup->firstElement();
@@ -30,14 +28,9 @@ SignalHeightCorrelationCollection::SignalHeightCorrelationCollection(Type type, 
       moduleIDs.append(qPrintable(QString("0x%1").arg(id, 0, 16)));
       PostAnalysisPlot* plot = 0;
       if (type == Time) {
-        if (!locationSelector) {
-          locationSelector = new LocationSelectonWidget;
-          layout->addWidget(locationSelector);
-        }
         setTitle("signal height time dependent");
         const QString& plotName = QString("signal height time correlation 0x%1 canvas").arg(id, 0, 16);
-        plot = new SignalHeightTimeCorrelation(PostAnalysisCanvas::fromFile(file, plotName), id, locationSelector->situation());
-        connect(locationSelector, SIGNAL(selectionChanged(Enums::Situation)), static_cast<SignalHeightTimeCorrelation*>(plot), SLOT(updateLocation(Enums::Situation)));
+        plot = new SignalHeightTimeCorrelation(PostAnalysisCanvas::fromFile(file, plotName), id);
       }
       if (type == Time2D) {
         setTitle("signal height 2d time dependent");

@@ -4,7 +4,6 @@
 #include "PostAnalysisCanvas.hh"
 #include "PostAnalysisPlot.hh"
 #include "GraphPlot.hh"
-#include "Enums.hh"
 
 #include <QObject>
 #include <QString>
@@ -18,18 +17,16 @@ class TSpline3;
 class SignalHeightTimeCorrelation : public QObject, public PostAnalysisPlot, public GraphPlot {
 Q_OBJECT
 public:
-  SignalHeightTimeCorrelation(PostAnalysisCanvas*, unsigned short sipmId, Enums::Situation);
+  SignalHeightTimeCorrelation(PostAnalysisCanvas*, unsigned short sipmId);
   virtual ~SignalHeightTimeCorrelation();
-public slots:
-  void updateLocation(Enums::Situation);
 private:
-  TGraphErrors* meanGraph(unsigned short sipmId, TH2D*, TGraphErrors*, double referenceValue);
+  TGraphErrors* meanGraph(unsigned short sipmId, TH2D*);
   void save(unsigned short sipmId);
   TH2D* m_histogram;
   unsigned short m_sipmId;
   RootQtWidget* m_secondaryRootWidget;
   TSpline3* m_spline;
-  static QMap<unsigned short, TGraph*> s_graphs;
+  static QMap<unsigned short, TGraph*> s_factorGraphs;
   void drawFactorGraph();
 private slots:
   void save();

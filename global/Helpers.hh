@@ -16,7 +16,6 @@ namespace Helpers
   void updateMirroredHistogram(TH1D* histogramToUpdate, TH1D* dataHistogram);
   QString analysisPath();
   QString dataPath();
-  double idealTrackerSignalHeight(Enums::Situation);
 }
 
 #endif

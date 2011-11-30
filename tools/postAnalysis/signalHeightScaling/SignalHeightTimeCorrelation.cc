@@ -3,7 +3,6 @@
 #include "Corrections.hh"
 #include "Constants.hh"
 #include "RootQtWidget.hh"
-#include "Helpers.hh"
 
 #include <TH1.h>
 #include <TH2.h>
@@ -27,9 +26,9 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-QMap<unsigned short, TGraph*> SignalHeightTimeCorrelation::s_graphs;
+QMap<unsigned short, TGraph*> SignalHeightTimeCorrelation::s_factorGraphs;
 
-SignalHeightTimeCorrelation::SignalHeightTimeCorrelation(PostAnalysisCanvas* canvas, unsigned short sipmId, Enums::Situation situation)
+SignalHeightTimeCorrelation::SignalHeightTimeCorrelation(PostAnalysisCanvas* canvas, unsigned short sipmId)
   : PostAnalysisPlot()
   , GraphPlot()
   , m_histogram(0)
@@ -40,9 +39,7 @@ SignalHeightTimeCorrelation::SignalHeightTimeCorrelation(PostAnalysisCanvas* can
   m_histogram = canvas->histograms2D().at(0);
   QString title = QString(canvas->name()).replace("canvas", "graph");
   setTitle(title);
-  TGraphErrors* graph = 0;
-  graph = meanGraph(sipmId, m_histogram, graph, Helpers::idealTrackerSignalHeight(situation));
-  addGraph(graph, P);
+  addGraph(meanGraph(sipmId, m_histogram), P);
   setAxisTitle("time", "signal height / adc counts");
   TLatex* latex = 0;
   latex = RootPlot::newLatex(.47, .85);
@@ -66,7 +63,6 @@ SignalHeightTimeCorrelation::SignalHeightTimeCorrelation(PostAnalysisCanvas* can
   setSecondaryWidget(widget);
   connect(saveButton, SIGNAL(clicked()), this, SLOT(save()));
   connect(saveAllButton, SIGNAL(clicked()), this, SLOT(saveAll()));
-
   drawFactorGraph();
 }
 
@@ -85,7 +81,7 @@ void SignalHeightTimeCorrelation::drawFactorGraph()
   TCanvas* can = m_secondaryRootWidget->GetCanvas();
   can->cd();
   can->Clear();
-  TGraph* factorGraph = s_graphs[m_sipmId];
+  TGraph* factorGraph = s_factorGraphs[m_sipmId];
   factorGraph->Draw("ALP");
   m_spline = new TSpline3(qPrintable(QString("spline 0x%1").arg(QString::number(m_sipmId, 16))), factorGraph);
   m_spline->SetLineColor(kRed);
@@ -98,21 +94,18 @@ void SignalHeightTimeCorrelation::drawFactorGraph()
   gPad->Update();
 }
 
-TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short sipmId, TH2D* histogram, TGraphErrors* graph, double referenceValue) 
+TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short sipmId, TH2D* histogram) 
 {
+  const double referenceValue = Constants::idealTrackerSignalHeight;
   const double minAdc = 300;
   const int minEntries = 30;
-  if (!graph) {
-    graph = new TGraphErrors();
-  } else {
-    graph->Set(0);
-  }
+  TGraphErrors* graph = new TGraphErrors();
   TGraph* factorGraph = 0;
-  if (!s_graphs.keys().contains(sipmId)) {
+  if (!s_factorGraphs.keys().contains(sipmId)) {
     factorGraph = new TGraphErrors();
-    s_graphs.insert(sipmId, factorGraph);
+    s_factorGraphs.insert(sipmId, factorGraph);
   } else {
-    factorGraph = s_graphs[sipmId];
+    factorGraph = s_factorGraphs[sipmId];
     factorGraph->Set(0);
   }
   double timeLow = histogram->GetXaxis()->GetBinLowEdge(1);
@@ -149,8 +142,8 @@ TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short sipmId, TH2D
 
 void SignalHeightTimeCorrelation::save(unsigned short sipmId) 
 {
-  Q_ASSERT(s_graphs[sipmId]);
-  TGraph* graph = s_graphs[sipmId];
+  Q_ASSERT(s_factorGraphs[sipmId]);
+  TGraph* graph = s_factorGraphs[sipmId];
   QVector<double> times;
   QVector<double> factors;
   for (int i = 0; i < graph->GetN(); ++i) {
@@ -168,16 +161,6 @@ void SignalHeightTimeCorrelation::save()
 
 void SignalHeightTimeCorrelation::saveAll()
 {
-  foreach (unsigned short sipmId, s_graphs.keys())
+  foreach (unsigned short sipmId, s_factorGraphs.keys())
     save(sipmId);
-}
-
-void SignalHeightTimeCorrelation::updateLocation(Enums::Situation situation)
-{
-  if (!secondaryWidget()->isVisible())
-    return;
-  meanGraph(m_sipmId, m_histogram, static_cast<TGraphErrors*>(graph()), Helpers::idealTrackerSignalHeight(situation));
-  drawFactorGraph();
-  gPad->Modified();
-  gPad->Update();
 }

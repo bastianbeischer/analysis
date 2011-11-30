@@ -75,17 +75,4 @@ namespace Helpers
       qFatal("ERROR: You need to set PERDAIXDATA_PATH environment variable to the toplevel location of the data!");
     return env;
   }
-  
-  double idealTrackerSignalHeight(Enums::Situation situation)
-  {
-    switch (situation) {
-      case Enums::KirunaFlight:
-        return Constants::idealTrackerSignalHeightFlight;
-      case Enums::KirunaMuons:
-        return Constants::idealTrackerSignalHeightGround;
-      default:
-        qDebug("Warning: Reference value for this situation is not set yet.");
-        return 0;
-    }
-  }
 }
