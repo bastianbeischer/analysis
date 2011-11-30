@@ -13,6 +13,7 @@ class RootQtWidget;
 class TGraphErrors;
 class TH2D;
 class TSpline3;
+class TF1;
 
 class SignalHeightTimeCorrelation : public QObject, public PostAnalysisPlot, public GraphPlot {
 Q_OBJECT

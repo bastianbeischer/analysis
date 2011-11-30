@@ -17,7 +17,7 @@
 
 #include <iostream>
 #include <iomanip>
-#include <math.h>
+#include <cmath>
 
 #include <QDebug>
 #include <QStringList>
@@ -99,6 +99,7 @@ TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short sipmId, TH2D
   const double referenceValue = Constants::idealTrackerSignalHeight;
   const double minAdc = 300;
   const int minEntries = 30;
+  const int minTotalEntries = 30;
   TGraphErrors* graph = new TGraphErrors();
   TGraph* factorGraph = 0;
   if (!s_factorGraphs.keys().contains(sipmId)) {
@@ -110,6 +111,21 @@ TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short sipmId, TH2D
   }
   double timeLow = histogram->GetXaxis()->GetBinLowEdge(1);
   double timeUp = histogram->GetXaxis()->GetBinLowEdge(histogram->GetXaxis()->GetNbins()+1);
+  TH1D* totalProjection = histogram->ProjectionY("_full_py", 1, histogram->GetNbinsX());
+  double totalAdc = totalProjection->GetMean();
+  double totalAdcError = totalProjection->GetRMS() / sqrt(totalProjection->GetEntries());
+  if (totalProjection->GetEntries() > minTotalEntries) {
+    TF1* totalFunction = new TF1(qPrintable(QString(totalProjection->GetTitle()) + "Function"), "landau", totalProjection->GetXaxis()->GetXmin(), totalProjection->GetXaxis()->GetXmax());
+    totalProjection->Fit(totalFunction, "EQN0");
+    if (totalFunction->GetParameter(1) > 0) {
+      totalAdc = totalFunction->GetParameter(1);
+      totalAdcError = totalFunction->GetParError(1);
+    }
+    delete totalFunction;
+    totalFunction = 0;
+  }
+  delete totalProjection;
+  totalProjection = 0;
   for (int bin = 0; bin < histogram->GetNbinsX(); ++bin) {
     TH1D* projectionHistogram = histogram->ProjectionY("_py", bin + 1, bin + 1);
     int nEntries = projectionHistogram->GetEntries();
@@ -118,21 +134,22 @@ TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short sipmId, TH2D
     double adc = function->GetParameter(1);
     double adcError = function->GetParError(1);
     delete function;
+    function = 0;
     double time = histogram->GetXaxis()->GetBinCenter(bin+1);
     double timeError = histogram->GetXaxis()->GetBinWidth(bin+1) / sqrt(12);
     if (adc > minAdc && nEntries > minEntries) {
-      if (factorGraph->GetN() == 0)
-        factorGraph->SetPoint(factorGraph->GetN(), timeLow, referenceValue / adc);
       int nPoints = graph->GetN();
       graph->SetPoint(nPoints, time, adc);
       graph->SetPointError(nPoints, timeError, adcError);
-      factorGraph->SetPoint(factorGraph->GetN(), time, referenceValue / adc);
     } else {
-      if (factorGraph->GetN() == 0)
-        factorGraph->SetPoint(factorGraph->GetN(), timeLow, 1);
-      factorGraph->SetPoint(factorGraph->GetN(), time, 1);
+      adc = totalAdc;
+      adcError = totalAdcError;
     }
+    if (factorGraph->GetN() == 0)
+      factorGraph->SetPoint(factorGraph->GetN(), timeLow, referenceValue / adc);
+    factorGraph->SetPoint(factorGraph->GetN(), time, referenceValue / adc);
     delete projectionHistogram;
+    projectionHistogram = 0;
   }
   double x, y;
   factorGraph->GetPoint(factorGraph->GetN() - 1, x, y);
