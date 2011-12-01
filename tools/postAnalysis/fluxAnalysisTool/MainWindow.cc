@@ -3,15 +3,16 @@
 #include "PostAnalysisPlot.hh"
 #include "PostAnalysisCanvas.hh"
 #include "RigidityMigrationPlot.hh"
-#include "MeasurementTimePostAnalysisPlot.hh"
 #include "SmearedRigidityComparissonPlot.hh"
+#include "MeasurementTimePostAnalysisPlot.hh"
 #include "SmearedRigidityComparissonGraph.hh"
+#include "RigidityParticleSpectrumRatio.hh"
 #include "EfficiencyCorrectionSettings.hh"
 #include "RigidityParticleSpectrum.hh"
 #include "PostAnalysisGraphPlot.hh"
-#include "RigidityMcSpectrum.hh"
 #include "PostAnalysisH2DPlot.hh"
 #include "PostAnalysisH1DPlot.hh"
+#include "RigidityMcSpectrum.hh"
 #include "RigidityUnfolding.hh"
 #include "RigidityFluxPlot.hh"
 #include "Enums.hh"
@@ -86,6 +87,8 @@ void MainWindow::setupAnalysis()
   addPlot(timePlot);
   double measurementTime = timePlot->measurementTime();
 
+  addPlot(new RigidityParticleSpectrumRatio(addCanvas(file, "rigidity spectrum ratio canvas")));
+
   name = QString("particle spectrum - nonAlbedo canvas");
   canvas = addCanvas(file, qPrintable(name));
   RigidityParticleSpectrum* particleSpectrum = new RigidityParticleSpectrum(canvas);
@@ -99,7 +102,7 @@ void MainWindow::setupAnalysis()
   EfficiencyCorrectionSettings::instance()->efficiencyCorrection(rawSpectrum, multiLayerEff);
   EfficiencyCorrectionSettings::instance()->efficiencyCorrection(rawSpectrum, trackFindingEff);
   EfficiencyCorrectionSettings::instance()->efficiencyCorrection(rawSpectrum, 0.999);//estimate for TOF trigger efficiency
-  
+
   addPlot(new RigidityFluxPlot(canvas, rawSpectrum, measurementTime, Enums::Positive));
   addPlot(new RigidityFluxPlot(canvas, rawSpectrum, measurementTime, Enums::Negative));
 

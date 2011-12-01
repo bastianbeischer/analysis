@@ -2,7 +2,6 @@
 
 #include "EfficiencyCorrectionSettings.hh"
 #include "SimulationFluxRatioWidget.hh"
-#include "BessFluxRatioWidget.hh"
 #include "ParticleInformation.hh"
 #include "RootQtWidget.hh"
 #include "SimpleEvent.hh"
@@ -30,7 +29,6 @@ RigiditySpectrumRatio::RigiditySpectrumRatio()
   : AnalysisPlot(Enums::MomentumReconstruction)
   , H1DPlot()
   , m_simulationWidget(new SimulationFluxRatioWidget)
-  , m_bessWidget(new BessFluxRatioWidget)
 {
   QString title = "rigidity spectrum ratio";
   setTitle(title);
@@ -62,7 +60,6 @@ RigiditySpectrumRatio::RigiditySpectrumRatio()
   TLegend* leg = new TLegend(.80, .72, .98, .98);
   leg->SetFillColor(kWhite);
   addLegend(leg);
-
   legend()->AddEntry(histogram, "Perdaix Data", "p");
 
   QWidget* secWidget = new QWidget();
@@ -70,8 +67,6 @@ RigiditySpectrumRatio::RigiditySpectrumRatio()
   layout->setContentsMargins(0, 0, 0, 0);
   layout->addWidget(m_simulationWidget);
   connect(m_simulationWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
-  layout->addWidget(m_bessWidget);
-  connect(m_bessWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
   setSecondaryWidget(secWidget);
 }
 
@@ -133,13 +128,6 @@ void RigiditySpectrumRatio::selectionChanged()
     newHisto->Smooth(1);
     addHistogram(newHisto, H1DPlot::HIST);
     legend()->AddEntry(newHisto, newHisto->GetTitle(), "l");
-  }
-  foreach(TH1D* histogram, m_bessWidget->selectedHistograms()) {
-    TH1D* newHisto = new TH1D(*histogram);
-    if (!newHisto->GetSumw2())
-      newHisto->Sumw2();
-    addHistogram(newHisto, H1DPlot::P);
-    legend()->AddEntry(newHisto, newHisto->GetTitle(), "p");
   }
   draw(Plotter::rootWidget()->GetCanvas());
   gPad->Modified();

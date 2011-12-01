@@ -11,7 +11,6 @@ class TH1D;
 class Particle;
 class SimpleEvent;
 class SimulationFluxRatioWidget;
-class BessFluxRatioWidget;
 
 class RigiditySpectrumRatio : public QObject, public AnalysisPlot, public H1DPlot {
 Q_OBJECT
@@ -24,7 +23,6 @@ private slots:
   void selectionChanged();
 private:
   SimulationFluxRatioWidget* m_simulationWidget;
-  BessFluxRatioWidget* m_bessWidget;
   TH1D* m_numerator;
   TH1D* m_denominator;
 };

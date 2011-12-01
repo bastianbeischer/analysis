@@ -6,6 +6,7 @@
 #include "SimulationFluxWidget.hh"
 #include "PostAnalysisCanvas.hh"
 #include "EfficiencyCorrectionSettings.hh"
+#include "BessFluxWidget.hh"
 #include "Particle.hh"
 #include "Enums.hh"
 
@@ -23,17 +24,21 @@
 
 #include <QDebug>
 #include <QMutex>
+#include <QWidget>
+#include <QVBoxLayout>
 
 RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpectrum, double measurementTime, Enums::ChargeSign type, TH1D* particleSpectrumLow, TH1D* particleSpectrumUp)
-: PostAnalysisPlot()
-, H1DPlot()
-, m_canvas(canvas->canvas())
-, m_particleHistogram(0)
-, m_particleHistogramLow(0)
-, m_particleHistogramUp(0)
-, m_fluxCalculation(0)
-, m_type(type)
-, m_sysbelt(0)
+  : PostAnalysisPlot()
+  , H1DPlot()
+  , m_canvas(canvas->canvas())
+  , m_particleHistogram(0)
+  , m_particleHistogramLow(0)
+  , m_particleHistogramUp(0)
+  , m_fluxCalculation(0)
+  , m_type(type)
+  , m_sysbelt(0)
+  , m_simulationWidget(new SimulationFluxWidget)
+  , m_bessWidget(new BessFluxWidget)
 {
   QString name = canvas->name();
   name.remove(" canvas");
@@ -105,8 +110,13 @@ RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpe
   latex(m_nBinsNew)->SetTitle(qPrintable(m_phiFit->gammaLabel()));
   latex(m_nBinsNew+1)->SetTitle(qPrintable(m_phiFit->phiLabel()));
 
-  SimulationFluxWidget* secWidget = new SimulationFluxWidget;
-  connect(secWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
+  QWidget* secWidget = new QWidget();
+  QVBoxLayout* layout = new QVBoxLayout(secWidget);
+  layout->setContentsMargins(0, 0, 0, 0);
+  layout->addWidget(m_simulationWidget);
+  connect(m_simulationWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
+  layout->addWidget(m_bessWidget);
+  connect(m_bessWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
   setSecondaryWidget(secWidget);
 
   if (particleSpectrumLow && particleSpectrumUp) {
@@ -172,12 +182,19 @@ void RigidityFluxPlot::selectionChanged()
   while(numberOfHistograms() > 1) {
     removeHistogram(1);
   }
-  foreach(TH1D* histogram, static_cast<SimulationFluxWidget*>(secondaryWidget())->selectedHistograms()) {
+  foreach(TH1D* histogram, m_simulationWidget->selectedHistograms()) {
     TH1D* newHisto = new TH1D(*histogram);
     if (!newHisto->GetSumw2())
       newHisto->Sumw2();
     addHistogram(newHisto, H1DPlot::HIST);
     legend()->AddEntry(newHisto, newHisto->GetTitle(), "l");
+  }
+  foreach(TH1D* histogram, m_bessWidget->selectedHistograms()) {
+    TH1D* newHisto = new TH1D(*histogram);
+    if (!newHisto->GetSumw2())
+      newHisto->Sumw2();
+    addHistogram(newHisto, H1DPlot::P);
+    legend()->AddEntry(newHisto, newHisto->GetTitle(), "p");
   }
   draw(m_canvas);
   gPad->Update();

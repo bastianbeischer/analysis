@@ -14,12 +14,12 @@
 #include <QDebug>
 
 SmearedRigidityComparissonGraph::SmearedRigidityComparissonGraph(Enums::ChargeSign type, TH1D* generatedSpectrum, TH1D* reconstructedSpectrum, TH1D* reconstructedSpectrumLow, TH1D* reconstructedSpectrumUp)
-: PostAnalysisPlot()
-, H1DPlot()
-, m_type(type)
-, m_generatedSpectrum(generatedSpectrum)
-, m_reconstructedSpectrum(reconstructedSpectrum)
-, m_sysbelt(0)
+  : PostAnalysisPlot()
+  , H1DPlot()
+  , m_type(type)
+  , m_generatedSpectrum(generatedSpectrum)
+  , m_reconstructedSpectrum(reconstructedSpectrum)
+  , m_sysbelt(0)
 {
   QString name = QString("SmearedRigidityComparissonGraph ") + Enums::label(type);
   setTitle(name);

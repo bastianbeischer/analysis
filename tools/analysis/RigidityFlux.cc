@@ -7,7 +7,6 @@
 #include "ParticleInformation.hh"
 #include "EfficiencyCorrectionSettings.hh"
 #include "SimulationFluxWidget.hh"
-#include "BessFluxWidget.hh"
 #include "SettingsManager.hh"
 #include "SimpleEvent.hh"
 #include "Particle.hh"
@@ -43,7 +42,6 @@ RigidityFlux::RigidityFlux(Enums::ChargeSign type, int numberOfThreads, TH1D* pa
   , m_phiFit(0)
   , m_situation(Settings::Unknown)
   , m_simulationWidget(new SimulationFluxWidget)
-  , m_bessWidget(new BessFluxWidget)
 {
   loadEfficiencies();
   QString title = "flux spectrum";
@@ -104,8 +102,6 @@ RigidityFlux::RigidityFlux(Enums::ChargeSign type, int numberOfThreads, TH1D* pa
   layout->setContentsMargins(0, 0, 0, 0);
   layout->addWidget(m_simulationWidget);
   connect(m_simulationWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
-  layout->addWidget(m_bessWidget);
-  connect(m_bessWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
   setSecondaryWidget(secWidget);
 }
 
@@ -221,13 +217,6 @@ void RigidityFlux::selectionChanged()
       newHisto->Sumw2();
     addHistogram(newHisto, H1DPlot::HIST);
     legend()->AddEntry(newHisto, newHisto->GetTitle(), "l");
-  }
-  foreach(TH1D* histogram, m_bessWidget->selectedHistograms()) {
-    TH1D* newHisto = new TH1D(*histogram);
-    if (!newHisto->GetSumw2())
-      newHisto->Sumw2();
-    addHistogram(newHisto, H1DPlot::P);
-    legend()->AddEntry(newHisto, newHisto->GetTitle(), "p");
   }
   draw(Plotter::rootWidget()->GetCanvas());
   gPad->Modified();

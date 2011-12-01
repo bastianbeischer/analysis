@@ -22,7 +22,6 @@ class Particle;
 class SimpleEvent;
 class TF1;
 class SimulationFluxWidget;
-class BessFluxWidget;
 
 class RigidityFlux : public QObject, public AnalysisPlot, public H1DPlot {
 Q_OBJECT
@@ -52,7 +51,6 @@ private:
   TH1D* m_trackFindingEff;
   Settings::Situation m_situation;
   SimulationFluxWidget* m_simulationWidget;
-  BessFluxWidget* m_bessWidget;
 };
 
 #endif
