@@ -11,6 +11,7 @@
 
 class ParticleProperties;
 class RootQtWidget;
+class TLatex;
 
 class RigidityResolutionPlot : public AnalysisPlot, public H1DPlot {
 public:
@@ -34,7 +35,6 @@ private:
   double weightedMeanResolution(double*, double*) const;
   bool fitTracker(TH1D*, double curvature);
   bool fitTof(TH1D*, double inverseBeta);
-  void saveHistos();
 
   RootQtWidget* m_rigDistributionWidget;
   const int m_numberOfBins;
@@ -47,7 +47,15 @@ private:
   QVector<TH1D*> m_trackerResolutionHistograms;
   QVector<TH1D*> m_tofResolutionHistograms;
   QVector<TH1D*> m_weightedMeanResolutionHistograms;
+  QVector<TH1D*> m_chi2ResolutionHistograms;
   QVector<TH1D*> m_likelihoodResolutionHistograms;
+  TLatex* m_projectionTrackerLatex;
+  TLatex* m_projectionTofLatex;
+  TLatex* m_projectionWeightedMeanLatex;
+  TLatex* m_projectionChi2FitLatex;
+  TLatex* m_projectionLikelihoodLatex;
+
+  static const double s_probability;
 };
 
 #endif // RigidityResolutionPlot_hh

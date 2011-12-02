@@ -13,6 +13,7 @@ public:
   LikelihoodPDF(const Likelihood*, const KineticVariable&);
   ~LikelihoodPDF();
   const KineticVariable& variable() const;
+  void setAxisTitle(const QString&);
   double integral();
 private:
   double rootFunctionPointer(double*, double*) const;

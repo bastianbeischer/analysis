@@ -1,6 +1,8 @@
 #ifndef MainWindow_h
 #define MainWindow_h
 
+#include "Enums.hh"
+
 #include "PostAnalysisWindow.hh"
 
 #include <QVector>
@@ -17,6 +19,7 @@ public:
 protected:
   virtual void setupAnalysis();
 private:
+  Enums::Particles m_particles;
   TrackerMomentumLikelihood* m_trackerLikelihood;
   TimeOfFlightLikelihood* m_tofLikelihood;
   QVector<SignalHeightTrdLikelihood*> m_signalHeightTrdLikelihoods;

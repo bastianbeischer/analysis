@@ -9,9 +9,14 @@ LikelihoodPDFPlot::LikelihoodPDFPlot(Likelihood* likelihood, double momentum)
   , H1DPlot()
 {
   setTitle(QString("%1 PDF %2 GeV").arg(Enums::label(likelihood->likelihoodVariableType())).arg(momentum, 3, 'f', 1, '0'));
-  for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it)
-    if (it.key() != Enums::NoParticle)
-      addFunction(likelihood->pdf(KineticVariable(it.key(), Enums::Momentum, momentum)));
+  Enums::Particles particles = likelihood->particles();
+  for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
+    if (!(it.key() & particles))
+      continue;
+    LikelihoodPDF* pdf = likelihood->pdf(KineticVariable(it.key(), Enums::Momentum, momentum));
+    if (pdf)
+      addFunction(pdf);
+  }
 }
 
 LikelihoodPDFPlot::~LikelihoodPDFPlot()

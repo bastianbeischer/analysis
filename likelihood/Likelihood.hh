@@ -23,6 +23,7 @@ public:
   virtual double min() const;
   virtual double max() const;
   virtual int numberOfParameters() const;
+  Enums::Particles particles() const;
 
   virtual double eval(const AnalyzedEvent*, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const = 0;
   virtual double eval(double measuredValue, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const = 0;

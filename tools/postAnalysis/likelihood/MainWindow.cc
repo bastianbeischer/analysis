@@ -6,18 +6,26 @@
 #include "TimeOfFlightLikelihood.hh"
 #include "SignalHeightTrdLikelihood.hh"
 #include "LikelihoodPDFPlot.hh"
+#include "Setup.hh"
 
 #include <QVector>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget* parent)
   : PostAnalysisWindow(parent)
-  , m_trackerLikelihood(new TrackerMomentumLikelihood)
-  , m_tofLikelihood(new TimeOfFlightLikelihood)
+  , m_particles(Enums::NoParticle)
+  , m_trackerLikelihood(0)
+  , m_tofLikelihood(0)
   , m_signalHeightTrdLikelihoods()
 {
+  m_particles = Setup::instance()->proposedParticles();
+
+  qDebug() << Enums::label(m_particles);
+
+  m_trackerLikelihood = new TrackerMomentumLikelihood(m_particles);
+  m_tofLikelihood = new TimeOfFlightLikelihood(m_particles);
   for (int layer = 0; layer < 8; ++layer) {
-    SignalHeightTrdLikelihood* trdLikelihood = new SignalHeightTrdLikelihood();
+    SignalHeightTrdLikelihood* trdLikelihood = new SignalHeightTrdLikelihood(m_particles);
     trdLikelihood->setLayer(layer);
     m_signalHeightTrdLikelihoods.append(trdLikelihood);
   }

@@ -14,7 +14,8 @@ INCLUDEPATH += \
   $$TOPLEVEL/particle \
   $$TOPLEVEL/tracking \
   $$TOPLEVEL/trdAnalysis \
-  $$TOPLEVEL/fluxAnalysis
+  $$TOPLEVEL/fluxAnalysis \
+  $$TOPLEVEL/likelihood
 
 LIBS += \
   -L$$TOPLEVEL/lib \

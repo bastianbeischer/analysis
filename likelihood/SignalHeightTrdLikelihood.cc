@@ -35,9 +35,6 @@ void SignalHeightTrdLikelihood::setLayer(int layer)
 
 double SignalHeightTrdLikelihood::noTransitionRadiation(double x, const ParameterVector& p) const
 {
-  //qDebug()
-  //  << "double SignalHeightTrdLikelihood::noTransitionRadiation(double x, const ParameterVector& p) const"
-  //  << "x =" << x << "p =" << p;
   Q_ASSERT(m_numberOfParameters == p.count());
   //p[0] normalization factor
   //p[1] mopv
@@ -58,15 +55,11 @@ double SignalHeightTrdLikelihood::noTransitionRadiation(double x, const Paramete
 
 double SignalHeightTrdLikelihood::transitionRadiation(double x, const ParameterVector& p) const
 {
-  //qDebug()
-  //  << "double SignalHeightTrdLikelihood::transitionRadiation(double x, const ParameterVector& p) const"
-  //  << "x =" << x << "p =" << p;
   Q_ASSERT(m_numberOfParameters == p.count());
   double leftLandau = p[0] * TMath::Landau(x, p[1], p[2]);
   double rightLandau = p[3] * TMath::Landau(x, p[4], p[5]);
   double exponential = TMath::Exp(p[6] + p[7] * x);
   //p[8] is not used.
-  //qDebug() << (leftLandau + rightLandau) * exponential;
   double result = (leftLandau + rightLandau) * exponential;
   if (qAbs(result) > 100.)
     return 0;
@@ -104,8 +97,9 @@ void SignalHeightTrdLikelihood::loadNodes()
   Enums::Particles particlesInFile = Enums::particles(settings.value("particles").toString());
   Enums::ParticleIterator particleEnd = Enums::particleEnd();
   for (Enums::ParticleIterator particleIt = Enums::particleBegin(); particleIt != particleEnd; ++particleIt) {
-    if (particleIt.key() == Enums::NoParticle || !(particleIt.key() & particlesInFile))
+    if (particleIt.key() == Enums::NoParticle || !(particleIt.key() & m_particles) || !(particleIt.key() & particlesInFile))
       continue;
+    Q_ASSERT(particleIt.key() & m_particles);
     bool trParticle = (particleIt.key() == Enums::Electron) || (particleIt.key() == Enums::Positron);
     ParticleMap::Iterator particleNodeIterator = m_nodes.find(particleIt.key());
     if (particleNodeIterator == m_nodes.end())
@@ -127,10 +121,4 @@ void SignalHeightTrdLikelihood::loadNodes()
     settings.endGroup();
   }
   settings.endGroup();
-  /*Hypothesis h(Enums::Electron, -1./2.3);
-  qDebug() << h;
-  if (lowerNode(h) == end(h.particle())) qDebug() << "lower end";
-  else qDebug() << "lower" << *lowerNode(h);
-  if (upperNode(h) == end(h.particle())) qDebug() << "upper end";
-  else qDebug() << "upper" << *upperNode(h);*/
 }

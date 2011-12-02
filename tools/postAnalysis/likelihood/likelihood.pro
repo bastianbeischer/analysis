@@ -6,6 +6,8 @@ CONFIG += debug
 TOPLEVEL = ../../..
 
 INCLUDEPATH += \
+  $$TOPLEVEL/event \
+  $$TOPLEVEL/setup \
   $$TOPLEVEL/likelihood \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/global \
@@ -20,6 +22,8 @@ LIBS += \
   -lglobal \
   -lparticle \
   -lprocessing \
+  -lsetup \
+  -lSimpleEvent \
   -lpostAnalysis
 
 CLASSES = \

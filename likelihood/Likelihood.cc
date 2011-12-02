@@ -44,10 +44,8 @@ Likelihood::AbsoluteRigidityMap::ConstIterator Likelihood::end(Enums::Particle t
 Likelihood::AbsoluteRigidityMap::ConstIterator Likelihood::lowerNode(const Hypothesis& hypothesis) const
 {
   ParticleMap::ConstIterator particleIt = m_nodes.find(hypothesis.particle());
-  if (particleIt == m_nodes.end()) {
-    qDebug() << "No lower node for hypothesis" << hypothesis << "found.";
-    Q_ASSERT(false);
-  }
+  if (particleIt == m_nodes.end())
+    return 0;
   Q_ASSERT_X(particleIt.value().count(), "Likelihood::lowerNode()", "No momenta found for requested particle species.");
   AbsoluteRigidityMap::ConstIterator momentumIt = particleIt.value().lowerBound(hypothesis.absoluteRigidity());
   //Q_ASSERT(momentumIt != particleIt.value().end());
@@ -115,17 +113,13 @@ void Likelihood::loadNodes()
     settings.endGroup();
   }
   settings.endGroup();
-  /*Hypothesis h(Enums::Electron, -1./2.3);
-  qDebug() << h;
-  if (lowerNode(h) == end(h.particle())) qDebug() << "lower end";
-  else qDebug() << "lower" << *lowerNode(h);
-  if (upperNode(h) == end(h.particle())) qDebug() << "upper end";
-  else qDebug() << "upper" << *upperNode(h);*/
 }
 
 LikelihoodPDF* Likelihood::pdf(const KineticVariable& variable) const
 {
-  return new LikelihoodPDF(this, variable);
+  if (variable.particle() & m_particles)
+    return new LikelihoodPDF(this, variable);
+  return 0;
 }
 
 double Likelihood::min() const
@@ -141,6 +135,11 @@ double Likelihood::max() const
 int Likelihood::numberOfParameters() const
 {
   return m_numberOfParameters;
+}
+
+Enums::Particles Likelihood::particles() const
+{
+  return m_particles;
 }
 
 Likelihood* Likelihood::newLikelihood(Enums::LikelihoodVariable type, Enums::Particles particles)

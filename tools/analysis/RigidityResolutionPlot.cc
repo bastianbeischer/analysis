@@ -11,16 +11,20 @@
 #include "RootQtWidget.hh"
 #include "StringSpinBox.hh"
 #include "Constants.hh"
+#include "Hypothesis.hh"
 
 #include <TH1D.h>
 #include <TF1.h>
 #include <TLatex.h>
 #include <TMath.h>
 #include <TLegend.h>
+#include <TLatex.h>
 
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QDebug>
+  
+const double RigidityResolutionPlot::s_probability = 0.9;
 
 RigidityResolutionPlot::RigidityResolutionPlot(Enums::AnalysisTopic topic, Enums::Particle type)
   : AnalysisPlot(topic)
@@ -37,7 +41,13 @@ RigidityResolutionPlot::RigidityResolutionPlot(Enums::AnalysisTopic topic, Enums
   , m_trackerResolutionHistograms(m_numberOfBins, 0)
   , m_tofResolutionHistograms(m_numberOfBins, 0)
   , m_weightedMeanResolutionHistograms(m_numberOfBins, 0)
+  , m_chi2ResolutionHistograms(m_numberOfBins, 0)
   , m_likelihoodResolutionHistograms(m_numberOfBins, 0)
+  , m_projectionTrackerLatex(RootPlot::newLatex(0.65, 0.85))
+  , m_projectionTofLatex(newLatex(0.65, 0.85))
+  , m_projectionWeightedMeanLatex(newLatex(0.65, 0.85))
+  , m_projectionChi2FitLatex(newLatex(0.65, 0.85))
+  , m_projectionLikelihoodLatex(newLatex(0.65, 0.65))
 {
   QString particleName = m_particleProperties.name();
   QString title = "rigidity resolution " + particleName;
@@ -65,12 +75,20 @@ RigidityResolutionPlot::RigidityResolutionPlot(Enums::AnalysisTopic topic, Enums
   legend->AddEntry(h, "weighted mean", "L");
   addHistogram(h);
 
+  h = new TH1D(qPrintable("chi2 fit " + title), "", m_numberOfBins, m_min, m_max);
+  h->SetMarkerColor(kRed);
+  h->SetLineColor(kRed);
+  legend->AddEntry(h, "chi2 fit", "L");
+  addHistogram(h);
+
   addHistogram(new TH1D(qPrintable("likelihood " + title), "", m_numberOfBins, m_min, m_max));
 
   m_trackerFunction = newTrackerResolutionFunction("expected tracker resolution " + particleName);
   addFunction(m_trackerFunction);
+  
   m_tofFunction = newTofResolutionFunction("expected TOF resolution " + particleName);
   addFunction(m_tofFunction);
+  
   addFunction(newWeightedMeanResolutionFunction("expected weighted mean resolution " + particleName));
 
   for (int bin = 1; bin <= m_numberOfBins; ++bin) {
@@ -78,13 +96,15 @@ RigidityResolutionPlot::RigidityResolutionPlot(Enums::AnalysisTopic topic, Enums
     QString histTitle = QString("rigidity resolution for %1 at %2 GV").arg(particleName).arg(generated.absoluteRigidity());
     int resolutionBins = 100;
     double curvatureRange = 5 * m_trackerFunction->Eval(generated.absoluteRigidity());
-    m_trackerResolutionHistograms[bin-1] = new TH1D(qPrintable("tracker " + histTitle), "spectrometer;1/R;",
+    m_trackerResolutionHistograms[bin-1] = new TH1D(qPrintable("tracker " + histTitle), "spectrometer;1/R / 1/GV;",
       resolutionBins, generated.curvature() - curvatureRange, generated.curvature() + curvatureRange);
     m_tofResolutionHistograms[bin-1] = new TH1D(qPrintable("TOF " + histTitle), "TOF;1/#beta;",
       resolutionBins, 0., 10.);
-    m_weightedMeanResolutionHistograms[bin-1] = new TH1D(qPrintable("weighted mean " + histTitle), "weighted mean;1/R;",
+    m_weightedMeanResolutionHistograms[bin-1] = new TH1D(qPrintable("weighted mean " + histTitle), "weighted mean;1/R / 1/GV;",
       resolutionBins, generated.curvature() - curvatureRange, generated.curvature() + curvatureRange);
-    m_likelihoodResolutionHistograms[bin-1] = new TH1D(qPrintable("likelihood " + histTitle), "likelihood;1/R;",
+    m_chi2ResolutionHistograms[bin-1] = new TH1D(qPrintable("chi2 fit " + histTitle), "chi2 fit;1/R / 1/GV;",
+      resolutionBins, generated.curvature() - curvatureRange, generated.curvature() + curvatureRange);
+    m_likelihoodResolutionHistograms[bin-1] = new TH1D(qPrintable("likelihood " + histTitle), "likelihood;1/R / 1/GV;",
       resolutionBins, generated.curvature() - curvatureRange, generated.curvature() + curvatureRange);
   }
 
@@ -107,7 +127,7 @@ RigidityResolutionPlot::RigidityResolutionPlot(Enums::AnalysisTopic topic, Enums
   setAxisTitle("R / GV", "#sigma_{R}/R");
   yAxis()->SetRangeUser(0, 1.5);
 
-  m_rigDistributionWidget->GetCanvas()->Divide(4, 1);
+  m_rigDistributionWidget->GetCanvas()->Divide(5, 1);
   setSecondaryWidget(m_rigDistributionWidget);
 
 }
@@ -115,6 +135,11 @@ RigidityResolutionPlot::RigidityResolutionPlot(Enums::AnalysisTopic topic, Enums
 RigidityResolutionPlot::~RigidityResolutionPlot()
 {
   qDeleteAll(m_trackerResolutionHistograms);
+  delete m_projectionTrackerLatex;
+  delete m_projectionTofLatex;
+  delete m_projectionWeightedMeanLatex;
+  delete m_projectionChi2FitLatex;
+  delete m_projectionLikelihoodLatex;
 }
 
 TF1* RigidityResolutionPlot::newTrackerResolutionFunction(const QString& name) const
@@ -202,35 +227,43 @@ void RigidityResolutionPlot::positionChanged(double posX, double)
   canvas->cd(2)->Clear();
   canvas->cd(3)->Clear();
   canvas->cd(4)->Clear();
+  canvas->cd(5)->Clear();
   int bin = histogram(0)->FindBin(posX);
   if (bin < 1 || m_numberOfBins < bin) {
     prevPad->cd();
     return;
   }
 
-  canvas->cd(1);
   KineticVariable variable(m_particleProperties.type(), Enums::AbsoluteRigidity, xAxis()->GetBinCenter(bin));
-  //qDebug() << variable.rigidity() << variable.curvature() << variable.inverseBeta();
-
+  
+  canvas->cd(1);
   m_trackerResolutionHistograms[bin-1]->Draw();
+  m_projectionTrackerLatex->SetText(0.65, 0.85, qPrintable(QString("n = %1").arg(m_trackerResolutionHistograms[bin-1]->GetEntries())));
+  m_projectionTrackerLatex->Draw();
   if (fitTracker(m_trackerResolutionHistograms[bin-1], variable.curvature()))
     m_trackerResolutionGauss->Draw("SAME");
 
   canvas->cd(2);
   m_tofResolutionHistograms[bin-1]->Draw();
+  m_projectionTofLatex->SetText(0.65, 0.85, qPrintable(QString("n = %1").arg(m_tofResolutionHistograms[bin-1]->GetEntries())));
+  m_projectionTofLatex->Draw();
   if (fitTof(m_tofResolutionHistograms[bin-1], variable.inverseBeta()))
     m_tofResolutionGauss->Draw("SAME");
 
   canvas->cd(3);
+  m_projectionWeightedMeanLatex->SetText(0.65, 0.85, qPrintable(QString("n = %1").arg(m_weightedMeanResolutionHistograms[bin-1]->GetEntries())));
+  m_projectionWeightedMeanLatex->Draw();
   m_weightedMeanResolutionHistograms[bin-1]->Draw();
-  //if (fitGauss(m_weightedMeanResolutionHistograms[bin-1], m_tofResolutionGauss))
-    //m_tofResolutionGauss->Draw("SAME");
 
   canvas->cd(4);
-  m_likelihoodResolutionHistograms[bin-1]->Draw();
-  //if (fitGauss(m_weightedMeanResolutionHistograms[bin-1], m_tofResolutionGauss))
-    //m_tofResolutionGauss->Draw("SAME");
+  m_projectionChi2FitLatex->SetText(0.65, 0.85, qPrintable(QString("n = %1").arg(m_chi2ResolutionHistograms[bin-1]->GetEntries())));
+  m_projectionChi2FitLatex->Draw();
+  m_chi2ResolutionHistograms[bin-1]->Draw();
 
+  canvas->cd(5);
+  m_projectionLikelihoodLatex->SetText(0.65, 0.85, qPrintable(QString("n = %1").arg(m_likelihoodResolutionHistograms[bin-1]->GetEntries())));
+  m_projectionLikelihoodLatex->Draw();
+  m_likelihoodResolutionHistograms[bin-1]->Draw();
 
   canvas->cd();
   canvas->Modified();
@@ -248,37 +281,27 @@ void RigidityResolutionPlot::processEvent(const AnalyzedEvent* event)
   if (event->flagsSet(ParticleInformation::MagnetCollision))
     return;
 
-  KineticVariable reference(m_particleProperties.type(), Enums::AbsoluteRigidity, qAbs(referenceRigidity(event)));
+  const QMap<Enums::ReconstructionMethod, Hypothesis*>& hypotheses = event->particle()->hypotheses();
+  QMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator it = hypotheses.constBegin();
+  const QMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator end = hypotheses.constEnd();
 
-  int bin = histogram(0)->FindBin(reference.absoluteRigidity());
-  if (0 < bin  && bin <= m_numberOfBins) {
-    KineticVariable variable(m_particleProperties.type());
-    double enumerator = 0;
-    double denominator = 0;
-    double sigmaR = 0;
-
-    variable.setAbsoluteRigidity(qAbs(track->rigidity()));
-    m_trackerResolutionHistograms[bin-1]->Fill(variable.curvature());
-    sigmaR = m_trackerFunction->Eval(variable.rigidity());
-    enumerator+= variable.rigidity() / (sigmaR * sigmaR);
-    denominator+= 1. / (sigmaR * sigmaR);
-
-    double beta = event->particle()->beta();
-    variable.setBeta(beta);
-    m_tofResolutionHistograms[bin-1]->Fill(1./beta);
-    //m_tofResolutionHistograms[bin-1]->Fill(variable.inverseBeta());
-    sigmaR = m_tofFunction->Eval(variable.rigidity());
-    enumerator+= variable.rigidity() / (sigmaR * sigmaR);
-    denominator+= 1. / (sigmaR * sigmaR);
-
-    if (beta < 1)
-      m_weightedMeanResolutionHistograms[bin-1]->Fill(enumerator / denominator);
-
-/*    if (event->particle()->variable().particle() == m_particleProperties.type()) {
-      if (m_particleProperties.type() == Enums::Proton && event->particle()->variable().curvature() < 0.2)
-        qDebug() << event->simpleEvent()->eventId();
-      m_likelihoodResolutionHistograms[bin-1]->Fill(event->particle()->variable().curvature());
-    }*/
+  int bin = histogram(0)->FindBin(qAbs(referenceRigidity(event)));
+  Q_ASSERT(0 < bin  && bin <= m_numberOfBins);
+  qDebug();
+  while (it != end) {
+    const Hypothesis* h = it.value();
+    if (it.key() == Enums::SpectrometerExternalInformation && h->particle() == m_particleProperties.type()) {
+      m_trackerResolutionHistograms[bin-1]->Fill(h->curvature());
+    } else if (it.key() == Enums::TOFExternalInformation && h->particle() == m_particleProperties.type()) {
+      m_tofResolutionHistograms[bin-1]->Fill(h->inverseBeta());
+    } else if (it.key() == Enums::WeightedMeanExternalInformation && h->particle() == m_particleProperties.type()) {
+      m_weightedMeanResolutionHistograms[bin-1]->Fill(h->curvature());
+    } else if (it.key() == Enums::Chi2ExternalInformation && h->particle() == m_particleProperties.type()) {
+      m_chi2ResolutionHistograms[bin-1]->Fill(h->curvature());
+    } else if (it.key() == Enums::LikelihoodExternalInformation && h->particle() == m_particleProperties.type()) {
+      m_likelihoodResolutionHistograms[bin-1]->Fill(h->curvature());
+    }
+    ++it;
   }
 }
 
@@ -305,7 +328,7 @@ bool RigidityResolutionPlot::fitTof(TH1D* h, double inverseBeta)
   m_tofResolutionGauss->SetParameter(2, 0.4);
   m_tofResolutionGauss->SetParameter(3, h->GetBinContent(h->FindBin(1.)));
   m_tofResolutionGauss->SetParameter(4, 0.4);
-  m_tofResolutionGauss->SetRange(h->GetXaxis()->GetXmin(), h->GetXaxis()->GetXmax());
+  m_tofResolutionGauss->SetRange(1., h->GetXaxis()->GetXmax());
   h->Fit(m_tofResolutionGauss, "RQN0");
   return true;
 }
@@ -315,22 +338,24 @@ void RigidityResolutionPlot::update()
   histogram(0)->Reset();
   histogram(1)->Reset();
   histogram(2)->Reset();
+  histogram(3)->Reset();
+  histogram(4)->Reset();
   for (int bin = 1; bin <= m_numberOfBins; ++bin) {
     KineticVariable generated(m_particleProperties.type(), Enums::AbsoluteRigidity, xAxis()->GetBinCenter(bin));
     if (fitTracker(m_trackerResolutionHistograms[bin-1], generated.curvature())) {
       double sigmaCurvature = m_trackerResolutionGauss->GetParameter(2);
       double sigmaCurvatureError = m_trackerResolutionGauss->GetParError(2);
-      histogram(0)->SetBinContent(bin, sigmaCurvature / generated.curvature());
-      histogram(0)->SetBinError(bin, sigmaCurvatureError / generated.curvature());
+      histogram(0)->SetBinContent(bin, sigmaCurvature / qAbs(generated.curvature()));
+      histogram(0)->SetBinError(bin, sigmaCurvatureError / qAbs(generated.curvature()));
     }
     if (fitTof(m_tofResolutionHistograms[bin-1], generated.inverseBeta())) {
+      double beta = generated.beta();
       double sigmaInverseBeta = m_tofResolutionGauss->GetParameter(2);
-      double sigmaInverseBetaError = m_tofResolutionGauss->GetParError(2);
-
-
-      //TODO
-      histogram(1)->SetBinContent(bin, 0);
-      histogram(1)->SetBinError(bin, 0);
+      double sigmaKOverK = sigmaInverseBeta * beta / (1 - beta*beta);
+      histogram(1)->SetBinContent(bin, sigmaInverseBeta * beta / (1 - beta*beta));
+      double sigmaSigmaInverseBetaError = m_tofResolutionGauss->GetParError(2);
+      double sigmaSigmaKOverK = sigmaKOverK * sigmaSigmaInverseBetaError / sigmaInverseBeta;
+      histogram(1)->SetBinError(bin, sigmaSigmaKOverK);
     }
   }
 }
@@ -349,18 +374,4 @@ void RigidityResolutionPlot::finalize()
   addFunction(expectedRes);
   addFunction(fittedRes);
   */
-
-
-  //saveHistos();
-}
-
-void RigidityResolutionPlot::saveHistos()
-{
-  for (int bin = 1; bin <= m_numberOfBins; ++bin) {
-    TH1D* hist = m_trackerResolutionHistograms[bin-1];
-    if (hist->GetEntries() < 10)
-      continue;
-    double genRig = histogram(0)->GetBinCenter(bin);
-    hist->SaveAs(qPrintable(QString("rigres_for_%1_at_%2GV.root").arg(m_particleProperties.name()).arg(genRig)));
-  }
 }
