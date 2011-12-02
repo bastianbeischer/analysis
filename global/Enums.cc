@@ -81,10 +81,10 @@ const QMap<Enums::Cut, QString> Enums::s_cutMap = InitializableMap<Enums::Cut, Q
   << QPair<Enums::Cut, QString>(Enums::CherenkovCut, "cherenkov cut");
 
 const QMap<Enums::Situation, QString> Enums::s_situationMap = InitializableMap<Enums::Situation, QString>()
-<< QPair<Enums::Situation, QString>(Enums::NoSituation, "unknown")
-<< QPair<Enums::Situation, QString>(Enums::KirunaMuons, "kirunamuons")
-<< QPair<Enums::Situation, QString>(Enums::KirunaFlight, "kirunaflight")
-<< QPair<Enums::Situation, QString>(Enums::Testbeam11, "testbeam11");
+  << QPair<Enums::Situation, QString>(Enums::NoSituation, "unknown")
+  << QPair<Enums::Situation, QString>(Enums::KirunaMuons, "kirunamuons")
+  << QPair<Enums::Situation, QString>(Enums::KirunaFlight, "kirunaflight")
+  << QPair<Enums::Situation, QString>(Enums::Testbeam11, "testbeam11");
 
 // ChargeSign
 const QString Enums::label(Enums::ChargeSign key) {return s_chargeSignMap.value(key);}
