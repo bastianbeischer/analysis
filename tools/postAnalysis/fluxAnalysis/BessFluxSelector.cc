@@ -73,7 +73,7 @@ void BessFluxSelector::fillMenu(QPushButton* button)
   QMenu* menu = button->menu();
   QAction* action = 0;
   foreach (BessFlux::Type type, BessFlux::instance()->types()) {
-    QString actionName = BessFlux::typeName(type);
+    QString actionName = BessFlux::instance()->typeName(type);
     action = new QAction(actionName, menu);
     action->setCheckable(true);
     menu->addAction(action);
