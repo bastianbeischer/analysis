@@ -12,6 +12,7 @@
 MeasurementTimePostAnalysisPlot::MeasurementTimePostAnalysisPlot(PostAnalysisCanvas* canvas)
   : PostAnalysisPlot()
   , H1DPlot()
+  , m_timeCalculation(0)
 {
   TH1D* measurementTimeHistogram = new TH1D(*canvas->histograms1D().at(0));
 
@@ -20,8 +21,8 @@ MeasurementTimePostAnalysisPlot::MeasurementTimePostAnalysisPlot(PostAnalysisCan
   QString name = canvas->name();
   name.replace("canvas", "histogram");
   setTitle(name);
-  addHistogram(m_timeCalculation->histogram());
-  setAxisTitle(m_timeCalculation->histogram()->GetXaxis()->GetTitle(), m_timeCalculation->histogram()->GetYaxis()->GetTitle());
+  addHistogram(m_timeCalculation->measurementTimeDistribution());
+  setAxisTitle(m_timeCalculation->measurementTimeDistribution()->GetXaxis()->GetTitle(), m_timeCalculation->measurementTimeDistribution()->GetYaxis()->GetTitle());
 }
 
 MeasurementTimePostAnalysisPlot::~MeasurementTimePostAnalysisPlot()

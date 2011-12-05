@@ -1,5 +1,5 @@
 TEMPLATE = app
-TARGET = fluxAnalysisTool
+TARGET = fluxAnalysis
 
 CONFIG += debug
 

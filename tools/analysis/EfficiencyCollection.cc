@@ -1,6 +1,8 @@
 #include "EfficiencyCollection.hh"
 #include "AllTrackerLayersFlagEfficiency.hh"
 #include "TrackFindingEfficiency.hh"
+#include "TrackFindingEfficiencyAzimuthCorrelation.hh"
+#include "TrackFindingEfficiencyZenithCorrelation.hh"
 #include "Constants.hh"
 #include "EfficiencyCorrectionSettings.hh"
 
@@ -35,6 +37,14 @@ EfficiencyCollection::EfficiencyCollection()
   comboBox->addItem(QString("TrackFindingEfficiency %1").arg(nBinsUnfolded));
   addPlot(new TrackFindingEfficiency(EfficiencyCorrectionSettings::Raw));
   comboBox->addItem(QString("TrackFindingEfficiency %1").arg(nBinsRaw));
+  addPlot(new TrackFindingEfficiencyZenithCorrelation(EfficiencyCorrectionSettings::Unfolded));
+  comboBox->addItem(QString("TrackFindingEfficiencyZenithCorrelation %1").arg(nBinsUnfolded));
+  addPlot(new TrackFindingEfficiencyZenithCorrelation(EfficiencyCorrectionSettings::Raw));
+  comboBox->addItem(QString("TrackFindingEfficiencyZenithCorrelation %1").arg(nBinsRaw));
+  addPlot(new TrackFindingEfficiencyAzimuthCorrelation(EfficiencyCorrectionSettings::Unfolded));
+  comboBox->addItem(QString("TrackFindingEfficiencyAzimuthCorrelation %1").arg(nBinsUnfolded));
+  addPlot(new TrackFindingEfficiencyAzimuthCorrelation(EfficiencyCorrectionSettings::Raw));
+  comboBox->addItem(QString("TrackFindingEfficiencyAzimuthCorrelation %1").arg(nBinsRaw));
 
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPlot(int)));
 }

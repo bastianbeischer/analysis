@@ -7,6 +7,7 @@
 #include <QString>
 
 class TH1D;
+class TGraphAsymmErrors;
 
 namespace Helpers
 {
@@ -16,6 +17,8 @@ namespace Helpers
   void updateMirroredHistogram(TH1D* histogramToUpdate, TH1D* dataHistogram);
   QString analysisPath();
   QString dataPath();
+  void scaleToBinWidth(TH1D*);
+  TGraphAsymmErrors* createBeltWithSystematicUncertainty(const TH1D* histogram,const TH1D* lowerHistogram,const TH1D* upperHistogram);
 }
 
 #endif

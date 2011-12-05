@@ -19,7 +19,6 @@ public:
 private:
   TH1D* projectionX(TH2D*, int firstBin, int lastBin);
   TH1D* projectionY(TH2D*, int firstBin, int lastBin);
-  void scaleToBinWidth(TH1D*);
 };
 
 #endif

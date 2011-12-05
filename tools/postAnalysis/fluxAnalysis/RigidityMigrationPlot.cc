@@ -108,10 +108,3 @@ TH1D* RigidityMigrationPlot::projectionY(TH2D* histogram, int firstBin, int last
     projHistogram->Sumw2();
   return projHistogram;
 }
-
-void RigidityMigrationPlot::scaleToBinWidth(TH1D* histogram)
-{
-  if (!histogram->GetSumw2())
-    histogram->Sumw2();
-  histogram->Scale(1., "width");
-}

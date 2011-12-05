@@ -1,4 +1,7 @@
 #include "EventTimeDifferencePlot.hh"
+
+#include "SettingsManager.hh"
+#include "Settings.hh"
 #include "SimpleEvent.hh"
 
 #include <TH1D.h>
@@ -16,30 +19,6 @@ EventTimeDifferencePlot::EventTimeDifferencePlot(int numberOfThreads)
   , m_active(numberOfThreads == 1)
 {
   setTitle("event time difference");
-  TH1D* histogram = new TH1D(qPrintable(title()), "", 400, 0, 400);
-  histogram->Sumw2();
-  setAxisTitle("#Deltat / ms", "");
-  addHistogram(histogram, H1DPlot::P);
-  if (m_active) {
-    const int nParams = 1;
-    const double fitMin = 15;
-    const double fitMax = 250;
-    TF1* fit = new TF1("exponential distribution fit", this, &EventTimeDifferencePlot::exponentialDistribution,
-      fitMin, fitMax, nParams, "EventTimeDifferencePlot", "exponentialDistribution");
-    fit->SetLineColor(kGreen);
-    fit->SetParameters(0, 30);
-    fit->SetParLimits(0, 1., 100.);
-    addFunction(fit);
-    addLatex(RootPlot::newLatex(.4, .88));
-    latex(0)->SetTitle("P(#Deltat) = #frac{1}{#tau} e^{#frac{- #Deltat}{#tau}}");
-    addLatex(RootPlot::newLatex(.4, .81));
-    addLatex(RootPlot::newLatex(.4, .74));
-  } else { 
-    const int prevNumberOfLatexs = numberOfLatexs();
-    addLatex(RootPlot::newLatex(.2, .55));
-    latex(prevNumberOfLatexs)->SetTextColor(kRed);
-    latex(prevNumberOfLatexs)->SetTitle("This plot has to be filled by only one thread.");
-  }
 }
 
 EventTimeDifferencePlot::~EventTimeDifferencePlot()
@@ -48,6 +27,60 @@ EventTimeDifferencePlot::~EventTimeDifferencePlot()
 
 void EventTimeDifferencePlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
 {
+  if (numberOfHistograms() == 0) {
+    const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+    Q_ASSERT(settings);
+    Enums::Situation situation = settings->situation();
+    unsigned int nBins = 200;
+    double xMin = 0.;
+    double xMax = 60000.;
+    double fitMin = 15;
+    double fitMax = 8000;
+    double parameter = -1;
+    double maxParameter = -1;
+    if (situation == Enums::KirunaFlight) {
+      nBins = 3000;
+      xMin = 0;
+      xMax = 40000;
+      fitMin = 15;
+      fitMax = 300;
+      parameter = 30.;
+      maxParameter = 100;
+    }
+    if (situation == Enums::KirunaMuons) {
+      nBins = 200;
+      xMin = 0;
+      xMax = 60000;
+      fitMin = 250;
+      fitMax = 8000;
+      parameter = 1000.;
+      maxParameter = 3000.;
+    }
+    TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, xMin, xMax);
+    histogram->Sumw2();
+    setAxisTitle("#Deltat / ms", "probability density");
+    addHistogram(histogram, H1DPlot::P);
+    if (m_active) {
+      const int nParams = 1;
+      TF1* fit = new TF1("exponential distribution fit", this, &EventTimeDifferencePlot::exponentialDistribution, fitMin, fitMax, nParams, "EventTimeDifferencePlot", "exponentialDistribution");
+      fit->SetLineColor(kGreen);
+      if (parameter > 0 && maxParameter > 0) {
+        fit->SetParameters(0, parameter);
+        fit->SetParLimits(0, 1., maxParameter);
+      }
+      addFunction(fit);
+      addLatex(RootPlot::newLatex(.4, .88));
+      latex(0)->SetTitle("P(#Deltat) = #frac{1}{#tau} e^{#frac{- #Deltat}{#tau}}");
+      addLatex(RootPlot::newLatex(.4, .81));
+      addLatex(RootPlot::newLatex(.4, .74));
+      addLatex(RootPlot::newLatex(.4, .67));
+    } else {
+      const int prevNumberOfLatexs = numberOfLatexs();
+      addLatex(RootPlot::newLatex(.2, .55));
+      latex(prevNumberOfLatexs)->SetTextColor(kRed);
+      latex(prevNumberOfLatexs)->SetTitle("This plot has to be filled by only one thread.");
+    }
+  }
   if (!m_active)
     return;
   double eventTime = event->time() * 1000;
@@ -60,24 +93,27 @@ void EventTimeDifferencePlot::update()
 {
   if (!m_active)
     return;
-  double entries = histogram()->GetEntries();
-  double nUnderflow = histogram()->GetBinContent(0);
-  double nOverflow = histogram()->GetBinContent(histogram()->GetNbinsX() + 1);
+  const double entries = histogram()->GetEntries();
+  const double nUnderflow = histogram()->GetBinContent(0);
+  const double nOverflow = histogram()->GetBinContent(histogram()->GetNbinsX() + 1);
+  const double lowEdge = histogram()->GetBinLowEdge(1);
+  const double upEdge = histogram()->GetBinLowEdge(histogram()->GetNbinsX() + 1);
   latex(2)->SetTitle(qPrintable(QString("%1 entries (%2 uflow, %3 oflow)").arg(entries).arg(nUnderflow).arg(nOverflow)));
+  latex(3)->SetTitle(qPrintable(QString("range %1 ms to %2 ms").arg(lowEdge).arg(upEdge)));
 }
 
 void EventTimeDifferencePlot::finalize()
 {
   if (!m_active)
     return;
-  const double integral = histogram()->Integral("width");
+  const double integral = histogram()->Integral(1, histogram()->GetNbinsX(), "width");
   histogram()->Scale(1. / integral);
   histogram()->SetBinContent(0, histogram()->GetBinContent(0) * integral);
   histogram()->SetBinContent(histogram()->GetNbinsX() + 1, histogram()->GetBinContent(histogram()->GetNbinsX() + 1) * integral);
   histogram()->Fit(function(),"EQRN0");
   double tau = function()->GetParameter(0);
   double tauError = function()->GetParError(0);
-  latex(1)->SetTitle(qPrintable(QString("#tau = %1 #pm %2").arg(tau, 0, 'g', 3).arg(tauError, 0, 'g', 3)));
+  latex(1)->SetTitle(qPrintable(QString("#tau / ms = %1 #pm %2").arg(tau, 0, 'g', 3).arg(tauError, 0, 'g', 3)));
 }
 
 double EventTimeDifferencePlot::exponentialDistribution(double* x, double* par)

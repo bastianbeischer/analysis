@@ -3,8 +3,7 @@
 
 #include "AnalysisPlot.hh"
 #include "H1DPlot.hh"
-
-class TH1D;
+#include "MeasurementTimeCalculation.hh"
 
 class MeasurementTimeDistributionPlot : public AnalysisPlot, public H1DPlot {
 public:
@@ -13,11 +12,7 @@ public:
   void processEvent(const QVector<Hit*>&, const Particle* const = 0, const SimpleEvent* const = 0);
   virtual void update();
 private:
-  bool m_active;
-  double m_lastEventTime;
-  QVector<double> m_positionInsideBin;
-  QVector<int> m_positionInsideBinCounter;
-  TH1D* m_histogram;
+  MeasurementTimeCalculation* m_calculation;
 };
 
 #endif
