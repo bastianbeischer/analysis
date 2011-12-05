@@ -12,6 +12,7 @@ class LikelihoodPDF : public TF1 {
 public:
   LikelihoodPDF(const Likelihood*, const KineticVariable&);
   ~LikelihoodPDF();
+  void setVariable(const KineticVariable&);
   const KineticVariable& variable() const;
   void setAxisTitle(const QString&);
   double integral();

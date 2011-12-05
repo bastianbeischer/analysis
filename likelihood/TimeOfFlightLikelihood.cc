@@ -16,6 +16,7 @@ TimeOfFlightLikelihood::TimeOfFlightLikelihood(Enums::Particles particles)
   m_min = 0.;
   m_max = 5.;
   m_numberOfParameters = 0;
+  m_title = Enums::label(m_likelihoodVariableType);
 }
 
 TimeOfFlightLikelihood::~TimeOfFlightLikelihood()

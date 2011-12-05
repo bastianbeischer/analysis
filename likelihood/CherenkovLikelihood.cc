@@ -20,6 +20,7 @@ CherenkovLikelihood::CherenkovLikelihood(Enums::Particles particles)
   m_min = 0.;
   m_max = 0.;
   m_numberOfParameters = 0;
+  m_title = Enums::label(m_likelihoodVariableType);
   Enums::ParticleIterator end = Enums::particleEnd();
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it)
     if (it.key() != Enums::NoParticle && m_particles & it.key())

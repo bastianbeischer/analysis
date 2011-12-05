@@ -19,6 +19,11 @@ LikelihoodPDF::~LikelihoodPDF()
 {
 }
 
+void LikelihoodPDF::setVariable(const KineticVariable& variable)
+{
+  m_variable = variable;
+}
+
 const KineticVariable& LikelihoodPDF::variable() const
 {
   return m_variable;

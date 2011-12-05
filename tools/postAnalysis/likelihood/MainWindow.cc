@@ -7,6 +7,7 @@
 #include "SignalHeightTrdLikelihood.hh"
 #include "LikelihoodPDFPlot.hh"
 #include "Setup.hh"
+#include "ParameterPlot.hh"
 
 #include <QVector>
 #include <QDebug>
@@ -45,13 +46,13 @@ void MainWindow::setupAnalysis()
 
   momenta = QVector<double>()
     << 0.4 << 0.6 << 0.8 << 1.0 << 2.0 << 5.0;
-  foreach (double momentum, momenta) {
-    foreach (SignalHeightTrdLikelihood* trdLikelihood, m_signalHeightTrdLikelihoods) {
-      LikelihoodPDFPlot* pdf = new LikelihoodPDFPlot(trdLikelihood, momentum);
-      pdf->setTitle(QString("%1 layer %2").arg(pdf->title()).arg(trdLikelihood->layer()));
-      addPlot(pdf);
-    }
-  }
+  foreach (double momentum, momenta)
+    foreach (SignalHeightTrdLikelihood* trdLikelihood, m_signalHeightTrdLikelihoods)
+      addPlot(new LikelihoodPDFPlot(trdLikelihood, momentum));
+
+  foreach (SignalHeightTrdLikelihood* trdLikelihood, m_signalHeightTrdLikelihoods)
+    foreach (Enums::Particle particle, Setup::instance()->proposedParticleVector())
+      addPlot(new ParameterPlot(trdLikelihood, particle));
 
   momenta = QVector<double>()
     << -100.0 << -10.0 << -7.5 << -5.0 << -4.0 << -3.0 << -2.0 << -1.5 << -1.0
@@ -59,4 +60,7 @@ void MainWindow::setupAnalysis()
     << 1.0 << 1.5 << 2.0 << 3.0 << 4.0 << 5.0 << 7.5 << 10.0 << 100.0;
   foreach (double momentum, momenta)
     addPlot(new LikelihoodPDFPlot(m_trackerLikelihood, momentum));
+
+  //foreach (Enums::Particle particle, QVector<Enums::Particle>() << Enums::Proton)//Setup::instance()->proposedParticleVector())
+  //  addPlot(new ParameterPlot(m_trackerLikelihood, particle));
 }

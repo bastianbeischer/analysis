@@ -256,3 +256,14 @@ Enums::Particles Setup::proposedParticles() const
 {
   return Enums::particles(m_settings->value("proposedParticles").toString());
 }
+
+QVector<Enums::Particle> Setup::proposedParticleVector() const
+{
+  QVector<Enums::Particle> particleVector;
+  Enums::Particles particles = proposedParticles();
+  Enums::ParticleIterator end = Enums::particleEnd();
+  for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it)
+    if ((it.key() & particles) && (it.key() != Enums::NoParticle))
+      particleVector.append(it.key());
+  return particleVector;
+}

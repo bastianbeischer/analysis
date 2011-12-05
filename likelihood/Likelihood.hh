@@ -7,6 +7,7 @@
 
 #include <QMap>
 #include <QVector>
+#include <QString>
 #include <QDebug>
 
 class AnalyzedEvent;
@@ -14,8 +15,12 @@ class LikelihoodPDF;
 
 class Likelihood {
 public:
+  typedef QVector<double> ParameterVector;
+
   Likelihood(Enums::Particles);
   ~Likelihood();
+
+  const QString& title() const;
   Enums::KineticVariable measuredValueType() const;
   Enums::LikelihoodVariable likelihoodVariableType() const;
   static Likelihood* newLikelihood(Enums::LikelihoodVariable, Enums::Particles);
@@ -27,8 +32,8 @@ public:
 
   virtual double eval(const AnalyzedEvent*, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const = 0;
   virtual double eval(double measuredValue, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const = 0;
+  virtual ParameterVector interpolation(const Hypothesis&, bool* goodInterpolation = 0) const;
 protected:
-  typedef QVector<double> ParameterVector;
   typedef QMap<double, ParameterVector> AbsoluteRigidityMap;
   typedef QMap<Enums::Particle, AbsoluteRigidityMap> ParticleMap;
 
@@ -37,8 +42,8 @@ protected:
   virtual AbsoluteRigidityMap::ConstIterator upperNode(const Hypothesis&) const;
   virtual ParameterVector defaultParameters() const;
   virtual void loadNodes();
-  virtual ParameterVector interpolation(const Hypothesis&, bool* goodInterpolation = 0) const;
 
+  QString m_title;
   Enums::Particles m_particles;
   Enums::KineticVariable m_measuredValueType;
   Enums::LikelihoodVariable m_likelihoodVariableType;

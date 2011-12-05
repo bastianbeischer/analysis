@@ -12,7 +12,8 @@
 #include <QDebug>
 
 Likelihood::Likelihood(Enums::Particles particles)
-  : m_particles(particles)
+  : m_title("no title")
+  , m_particles(particles)
   , m_measuredValueType(Enums::UndefinedKineticVariable)
   , m_likelihoodVariableType()
   , m_min(0)
@@ -24,6 +25,11 @@ Likelihood::Likelihood(Enums::Particles particles)
 
 Likelihood::~Likelihood()
 {
+}
+
+const QString& Likelihood::title() const
+{
+  return m_title;
 }
 
 Enums::KineticVariable Likelihood::measuredValueType() const
@@ -43,12 +49,10 @@ Likelihood::AbsoluteRigidityMap::ConstIterator Likelihood::end(Enums::Particle t
 
 Likelihood::AbsoluteRigidityMap::ConstIterator Likelihood::lowerNode(const Hypothesis& hypothesis) const
 {
-  ParticleMap::ConstIterator particleIt = m_nodes.find(hypothesis.particle());
-  if (particleIt == m_nodes.end())
-    return 0;
+  ParticleMap::ConstIterator particleIt = m_nodes.constFind(hypothesis.particle());
+  Q_ASSERT(particleIt != m_nodes.constEnd());
   Q_ASSERT_X(particleIt.value().count(), "Likelihood::lowerNode()", "No momenta found for requested particle species.");
   AbsoluteRigidityMap::ConstIterator momentumIt = particleIt.value().lowerBound(hypothesis.absoluteRigidity());
-  //Q_ASSERT(momentumIt != particleIt.value().end());
   if (qFuzzyCompare(momentumIt.key(), hypothesis.absoluteRigidity()))
     return momentumIt;
   return --momentumIt;
@@ -56,7 +60,13 @@ Likelihood::AbsoluteRigidityMap::ConstIterator Likelihood::lowerNode(const Hypot
 
 Likelihood::AbsoluteRigidityMap::ConstIterator Likelihood::upperNode(const Hypothesis& hypothesis) const
 {
-  return ++lowerNode(hypothesis);
+  ParticleMap::ConstIterator particleIt = m_nodes.constFind(hypothesis.particle());
+  Q_ASSERT(particleIt != m_nodes.end());
+  Q_ASSERT_X(particleIt.value().count(), "Likelihood::upperNode()", "No momenta found for requested particle species.");
+  AbsoluteRigidityMap::ConstIterator momentumIt = particleIt.value().upperBound(hypothesis.absoluteRigidity());
+  if (qFuzzyCompare(momentumIt.key(), hypothesis.absoluteRigidity()))
+    return momentumIt;
+  return ++momentumIt;
 }
 
 Likelihood::ParameterVector Likelihood::interpolation(const Hypothesis& hypothesis, bool* goodInterpolation) const
@@ -65,15 +75,15 @@ Likelihood::ParameterVector Likelihood::interpolation(const Hypothesis& hypothes
   // according class that inherits Likelihood.
   AbsoluteRigidityMap::ConstIterator endIt = end(hypothesis.particle());
   AbsoluteRigidityMap::ConstIterator l = lowerNode(hypothesis);
-  if (qFuzzyCompare(l.key(), hypothesis.absoluteRigidity()))
-    return l.value();
-  AbsoluteRigidityMap::ConstIterator u = l;
-  ++u;
+  AbsoluteRigidityMap::ConstIterator u = upperNode(hypothesis);
   if (goodInterpolation)
     *goodInterpolation = (l != endIt) && (u != endIt);
+  Q_ASSERT(!(l == endIt && u == endIt));
   if (l == endIt)
     return u.value();
   if (u == endIt)
+    return l.value();
+  if (qFuzzyCompare(l.key(), hypothesis.absoluteRigidity()))
     return l.value();
   double k = (hypothesis.absoluteRigidity() - l.key()) / (u.key() - l.key());
   ParameterVector vector(numberOfParameters());

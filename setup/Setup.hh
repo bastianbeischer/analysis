@@ -47,6 +47,7 @@ public:
   double configFileTimeShift(unsigned short detId) const;
 
   Enums::Particles proposedParticles() const;
+  QVector<Enums::Particle> proposedParticleVector() const;
 
   void writeSettings();
 

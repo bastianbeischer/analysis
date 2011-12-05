@@ -19,6 +19,7 @@ SignalHeightTrdLikelihood::SignalHeightTrdLikelihood(Enums::Particles particles)
   m_min = -1.; //keV
   m_max = 11.; //keV
   m_numberOfParameters = 9;
+  m_title = Enums::label(m_likelihoodVariableType) + "undefined layer";
 }
 
 int SignalHeightTrdLikelihood::layer() const
@@ -30,6 +31,7 @@ void SignalHeightTrdLikelihood::setLayer(int layer)
 {
   Q_ASSERT(0 <= layer && layer <= 7);
   m_layer = layer;
+  m_title = QString("%1 layer %2").arg(Enums::label(m_likelihoodVariableType)).arg(m_layer);
   loadNodes();
 }
 

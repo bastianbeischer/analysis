@@ -28,7 +28,8 @@ LIBS += \
 
 CLASSES = \
   MainWindow \
-  LikelihoodPDFPlot
+  LikelihoodPDFPlot \
+  ParameterPlot
 
 SOURCES = \
   main.cc

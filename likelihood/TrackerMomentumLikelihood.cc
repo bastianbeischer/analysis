@@ -16,6 +16,7 @@ TrackerMomentumLikelihood::TrackerMomentumLikelihood(Enums::Particles particles)
   m_min = -50.;
   m_max = +50.;
   m_numberOfParameters = 0;
+  m_title = Enums::label(m_likelihoodVariableType);
 }
 
 TrackerMomentumLikelihood::~TrackerMomentumLikelihood()
