@@ -27,6 +27,7 @@ public:
   TAxis* xAxis();
   TAxis* yAxis();
 private:
+  void setRange();
   QVector<TGraph*> m_graphs;
   TAxis* m_xAxis;
   TAxis* m_yAxis;

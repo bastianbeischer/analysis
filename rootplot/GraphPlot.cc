@@ -5,6 +5,12 @@
 #include <TAxis.h>
 #include <TList.h>
 #include <TMultiGraph.h>
+#include <TH1.h>
+#include <TMath.h>
+
+#include <QDebug>
+
+#include <cfloat>
 
 const QVector<RootPlot::DrawOption> GraphPlot::s_drawOptions = QVector<DrawOption>()
   << P << AP << AC << ALP << ACP << ALX << LX << LP;
@@ -29,11 +35,41 @@ GraphPlot::~GraphPlot()
   m_graphs.clear();
 }
 
+void GraphPlot::setRange()
+{
+  int n = 100;
+  double xMin = DBL_MAX;
+  double xMax = DBL_MIN;
+  double yMin = DBL_MAX;
+  double yMax = DBL_MIN;
+  for (int i = 0; i < numberOfGraphs(); ++i) {
+    double x0, x1, y0, y1;
+    graph(i)->ComputeRange(x0, y0, x1, y1);
+    n = qMax(n, graph(i)->GetN());
+    xMin = qMin(xMin, x0);
+    xMax = qMax(xMax, x1);
+    yMin = qMin(yMin, y0);
+    yMax = qMax(yMax, y1);
+  }
+  TH1* h = graph()->GetHistogram();
+
+  double dx = 0.05 * (xMax - xMin);
+  h->SetBins(1000, xMin - dx, xMax + dx);
+  
+  double dy = 0.05 * (yMax - yMin);
+  yMin-= dy;
+  yMax+= dy;
+  h->SetMinimum(yMin);
+  h->SetMaximum(yMax);
+  h->GetYaxis()->SetLimits(yMin, yMax);
+}
+
 void GraphPlot::draw(TCanvas* canvas)
 {
   if (!numberOfGraphs())
     return;
   canvas->cd();
+  setRange();
   graph()->SetTitle(qPrintable(";" + m_xAxisTitle + ";" + m_yAxisTitle));
   graph()->Draw(qPrintable(drawOption(m_drawOption)));
   for (int i = 1; i < numberOfGraphs(); ++i)
@@ -45,8 +81,11 @@ void GraphPlot::draw(TCanvas* canvas)
 void GraphPlot::unzoom()
 {
   if (m_drawn) {
+    setRange();
     xAxis()->UnZoom();
     yAxis()->UnZoom();
+    gPad->Modified();
+    gPad->Update();
   }
 }
 
