@@ -27,7 +27,8 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
   , m_plots()
   , m_dialogOptions(QFileDialog::DontUseNativeDialog)
   , m_ui(new Ui_postAnalysisWindow)
-  , m_selectedPlot(-1)
+  , m_selectedCanvas(0)
+  , m_selectedPlot(0)
 {
   m_ui->setupUi(this);
   m_ui->aspectRatioComboBox->addItem("auto", -1.);
@@ -57,7 +58,10 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
   connect(m_ui->qtWidget, SIGNAL(positionChanged(double, double)), this, SLOT(canvasPositionChanged(double, double)));
   connect(m_ui->qtWidget, SIGNAL(unzoomButtonPressed()), this, SLOT(unzoom()));
 
-  connect(m_ui->filterEdit, SIGNAL(textChanged(const QString&)), this, SLOT(filterChanged(const QString&)));
+  connect(m_ui->canvasFilterEdit, SIGNAL(textChanged(const QString&)), this, SLOT(canvasFilterChanged(const QString&)));
+  connect(m_ui->plotFilterEdit, SIGNAL(textChanged(const QString&)), this, SLOT(plotFilterChanged(const QString&)));
+  connect(m_ui->clearCanvasFilterButton, SIGNAL(clicked()), m_ui->canvasFilterEdit, SLOT(clear()));
+  connect(m_ui->clearPlotFilterButton, SIGNAL(clicked()), m_ui->plotFilterEdit, SLOT(clear()));
 
   m_ui->plotListWidget->hide();
 }
@@ -67,7 +71,7 @@ PostAnalysisWindow::~PostAnalysisWindow()
   delete m_ui;
 }
 
-void PostAnalysisWindow::filterChanged(const QString& text)
+void PostAnalysisWindow::canvasFilterChanged(const QString& text)
 {
   m_ui->canvasListWidget->disconnect();
   m_ui->canvasListWidget->clear();
@@ -83,6 +87,22 @@ void PostAnalysisWindow::filterChanged(const QString& text)
     this, SLOT(selectCanvas(QListWidgetItem*, QListWidgetItem*)));
 }
 
+void PostAnalysisWindow::plotFilterChanged(const QString& text)
+{
+  m_ui->plotListWidget->disconnect();
+  m_ui->plotListWidget->clear();
+  foreach(PostAnalysisPlot* plot, m_plots) {
+    if (plot->title().contains(QRegExp(text))) {
+      QListWidgetItem* item = new QListWidgetItem(plot->title());
+      item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+      m_ui->plotListWidget->addItem(item);
+    }
+  }
+  connect(m_ui->plotListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectPlot(QListWidgetItem*)));
+  connect(m_ui->plotListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
+    this, SLOT(selectPlot(QListWidgetItem*, QListWidgetItem*)));
+}
+
 void PostAnalysisWindow::selectCanvas(QListWidgetItem* item, QListWidgetItem*)
 {
   selectCanvas(item);
@@ -90,13 +110,18 @@ void PostAnalysisWindow::selectCanvas(QListWidgetItem* item, QListWidgetItem*)
 
 void PostAnalysisWindow::selectCanvas(QListWidgetItem* item)
 {
-  m_selectedPlot = -1;
+  gPad->Clear();
+  m_selectedPlot = 0;
   RootStyle::setPalette(RootStyle::DefaultPalette);
   m_ui->qtWidget->GetCanvas()->cd();
   m_ui->qtWidget->GetCanvas()->Clear();
-  foreach (PostAnalysisCanvas* canvas, m_canvases)
-    if (item->text() == canvas->name())
+  foreach (PostAnalysisCanvas* canvas, m_canvases) {
+    if (item->text() == canvas->name()) {
       canvas->draw(m_ui->qtWidget->GetCanvas());
+      m_selectedCanvas = canvas;
+      break;
+    }
+  }
   plotOptionComboBoxCurrentIndexChanged(m_ui->plotOptionComboBox->currentText());
   m_ui->titleLabel->setText(item->text());
   if (m_ui->verticalLayoutLeft->count() > 3) {
@@ -112,11 +137,17 @@ void PostAnalysisWindow::selectPlot(QListWidgetItem* item, QListWidgetItem*)
 void PostAnalysisWindow::selectPlot(QListWidgetItem* item)
 {
   gPad->Clear();
-  m_selectedPlot = m_ui->plotListWidget->row(item);
-  m_plots[m_selectedPlot]->draw(m_ui->qtWidget->GetCanvas());
+  m_selectedCanvas = 0;
+  foreach (PostAnalysisPlot* plot, m_plots) {
+    if (item->text() == plot->title()) {
+      plot->draw(m_ui->qtWidget->GetCanvas());
+      m_selectedPlot = plot;
+      break;
+    }
+  }
   plotOptionComboBoxCurrentIndexChanged(m_ui->plotOptionComboBox->currentText());
   m_ui->titleLabel->setText(item->text());
-  QWidget* secondaryWidget = m_plots[m_selectedPlot]->secondaryWidget();
+  QWidget* secondaryWidget = m_selectedPlot->secondaryWidget();
   if (m_ui->verticalLayoutLeft->count() > 3) {
     m_ui->verticalLayoutLeft->itemAt(1)->widget()->close();
   }
@@ -256,8 +287,12 @@ void PostAnalysisWindow::aspectRatioChanged(int i)
 
 void PostAnalysisWindow::canvasPositionChanged(double x, double y)
 {
-  if (m_selectedPlot >= 0)
-    m_plots[m_selectedPlot]->positionChanged(x, y);
+  if (m_selectedPlot)
+    m_selectedPlot->positionChanged(x, y);
+  if (m_selectedCanvas) {
+    m_ui->positionLabel->setText("");
+    return;
+  }
   m_ui->positionLabel->setText(QString("%1%2  %3%4")
       .arg(x < 0 ? '-' : '+').arg(qAbs(x), 7, 'f', 3, '0')
       .arg(y < 0 ? '-' : '+').arg(qAbs(y), 7, 'f', 3, '0'));

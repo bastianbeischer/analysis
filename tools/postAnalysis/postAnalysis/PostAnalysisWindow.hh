@@ -28,7 +28,8 @@ protected:
   QVector<PostAnalysisPlot*> m_plots;
   QFileDialog::Options m_dialogOptions;
 private slots:
-  void filterChanged(const QString&);
+  void canvasFilterChanged(const QString&);
+  void plotFilterChanged(const QString&);
   void saveButtonClicked();
   void saveAllButtonClicked();
   void selectCanvas(QListWidgetItem*);
@@ -41,7 +42,8 @@ private slots:
   void unzoom();
 protected:
   Ui_postAnalysisWindow* m_ui;
-  int m_selectedPlot;
+  PostAnalysisCanvas* m_selectedCanvas;//int m_selectedPlot;
+  PostAnalysisPlot* m_selectedPlot;//int m_selectedPlot;
 };
 
 #endif

@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>883</width>
-    <height>557</height>
+    <width>1154</width>
+    <height>766</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>PERDaix post analysis</string>
   </property>
   <widget class="QWidget" name="mainWidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QHBoxLayout" name="horizontalLayout_6">
     <item>
      <widget class="QSplitter" name="verticalSplitter">
       <property name="sizePolicy">
@@ -110,7 +110,7 @@
          <family>DejaVu Sans</family>
         </font>
        </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
         <property name="margin">
          <number>0</number>
         </property>
@@ -122,11 +122,30 @@
           <widget class="QWidget" name="verticalLayoutWidget">
            <layout class="QVBoxLayout" name="verticalLayout">
             <item>
-             <widget class="QLineEdit" name="filterEdit">
-              <property name="text">
-               <string>*</string>
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <property name="spacing">
+               <number>0</number>
               </property>
-             </widget>
+              <item>
+               <widget class="QLineEdit" name="canvasFilterEdit">
+                <property name="font">
+                 <font>
+                  <pointsize>12</pointsize>
+                 </font>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QToolButton" name="clearCanvasFilterButton">
+                <property name="text">
+                 <string> X </string>
+                </property>
+                <property name="toolButtonStyle">
+                 <enum>Qt::ToolButtonTextOnly</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
              <widget class="QListWidget" name="canvasListWidget">
@@ -140,18 +159,44 @@
             </item>
            </layout>
           </widget>
-          <widget class="QListWidget" name="plotListWidget">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="font">
-            <font>
-             <family>DejaVu Sans</family>
-            </font>
-           </property>
+          <widget class="QWidget" name="verticalLayoutWidget_2">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <property name="spacing">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QLineEdit" name="plotFilterEdit"/>
+              </item>
+              <item>
+               <widget class="QToolButton" name="clearPlotFilterButton">
+                <property name="text">
+                 <string> X </string>
+                </property>
+                <property name="toolButtonStyle">
+                 <enum>Qt::ToolButtonTextOnly</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QListWidget" name="plotListWidget">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>DejaVu Sans</family>
+               </font>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </widget>
           <widget class="QWidget" name="layoutWidget">
            <layout class="QHBoxLayout" name="controlHorizontalLayout">
