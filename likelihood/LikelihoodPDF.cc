@@ -31,7 +31,7 @@ const KineticVariable& LikelihoodPDF::variable() const
 
 double LikelihoodPDF::integral()
 {
-  return Integral(m_likelihood->min(), m_likelihood->max());
+  return Integral(m_likelihood->min(), m_likelihood->max(), static_cast<const double*>(0), 1e-4);
 }
 
 double LikelihoodPDF::rootFunctionPointer(double* x, double*) const
