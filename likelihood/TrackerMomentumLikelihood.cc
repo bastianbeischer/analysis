@@ -13,8 +13,8 @@ TrackerMomentumLikelihood::TrackerMomentumLikelihood(Enums::Particles particles)
 {
   m_likelihoodVariableType = Enums::TrackerMomentumLikelihood;
   m_measuredValueType = Enums::Curvature;
-  m_min = -50.;
-  m_max = +50.;
+  m_min = -10.;
+  m_max = +10.;
   m_numberOfParameters = 0;
   m_title = Enums::label(m_likelihoodVariableType);
 }
