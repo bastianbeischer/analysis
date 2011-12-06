@@ -60,13 +60,7 @@ Likelihood::AbsoluteRigidityMap::ConstIterator Likelihood::lowerNode(const Hypot
 
 Likelihood::AbsoluteRigidityMap::ConstIterator Likelihood::upperNode(const Hypothesis& hypothesis) const
 {
-  ParticleMap::ConstIterator particleIt = m_nodes.constFind(hypothesis.particle());
-  Q_ASSERT(particleIt != m_nodes.end());
-  Q_ASSERT_X(particleIt.value().count(), "Likelihood::upperNode()", "No momenta found for requested particle species.");
-  AbsoluteRigidityMap::ConstIterator momentumIt = particleIt.value().upperBound(hypothesis.absoluteRigidity());
-  if (qFuzzyCompare(momentumIt.key(), hypothesis.absoluteRigidity()))
-    return momentumIt;
-  return ++momentumIt;
+  return ++lowerNode(hypothesis);
 }
 
 Likelihood::ParameterVector Likelihood::interpolation(const Hypothesis& hypothesis, bool* goodInterpolation) const
@@ -75,7 +69,8 @@ Likelihood::ParameterVector Likelihood::interpolation(const Hypothesis& hypothes
   // according class that inherits Likelihood.
   AbsoluteRigidityMap::ConstIterator endIt = end(hypothesis.particle());
   AbsoluteRigidityMap::ConstIterator l = lowerNode(hypothesis);
-  AbsoluteRigidityMap::ConstIterator u = upperNode(hypothesis);
+  AbsoluteRigidityMap::ConstIterator u = l;
+  ++u;
   if (goodInterpolation)
     *goodInterpolation = (l != endIt) && (u != endIt);
   Q_ASSERT(!(l == endIt && u == endIt));
