@@ -85,8 +85,8 @@ double SignalHeightTrdLikelihood::eval(double signal, const Hypothesis& hypothes
   Q_ASSERT_X(0 <= m_layer && m_layer <= 7, "SignalHeightTrdLikelihood::eval()", "call setLayer() before evaluating the PDF!");
   const ParameterVector& parameters = interpolation(hypothesis, goodInterpolation);
   if (hypothesis.particle() == Enums::Electron || hypothesis.particle() == Enums::Positron)
-    return transitionRadiation(signal, parameters);
-  return noTransitionRadiation(signal, parameters);
+    return normalizationInterpolation(hypothesis) * transitionRadiation(signal, parameters);
+  return normalizationInterpolation(hypothesis) * noTransitionRadiation(signal, parameters);
 }
 
 void SignalHeightTrdLikelihood::loadNodes()
@@ -107,6 +107,18 @@ void SignalHeightTrdLikelihood::loadNodes()
     if (particleNodeIterator == m_nodes.end())
       particleNodeIterator = m_nodes.insert(particleIt.key(), AbsoluteRigidityMap());
     settings.beginGroup(particleIt.value());
+
+    QString postFix;
+    if (trParticle)
+      postFix+= QString("/layer%1").arg(m_layer);
+    QList<QVariant> normalizationRrigiditiesVariantList = settings.value("normalizationRigidities" + postFix).toList();
+    QList<QVariant> normalizationFactorsVariantList = settings.value("normalizationFactors" + postFix).toList();
+    Q_ASSERT(normalizationRrigiditiesVariantList.size() == normalizationFactorsVariantList.size());
+    NormalizationMap normalizationMap;
+    for (int i = 0; i < normalizationFactorsVariantList.size(); ++i)
+      normalizationMap.insert(normalizationRrigiditiesVariantList[i].toDouble(), normalizationFactorsVariantList[i].toDouble());
+    m_normalization.insert(particleIt.key(), normalizationMap);
+
     QList<QVariant> rigiditiesVariantList = settings.value("absoluteRigidities").toList();
     foreach(QVariant rigidityVariant, rigiditiesVariantList) {
       double rigidity = rigidityVariant.toDouble();

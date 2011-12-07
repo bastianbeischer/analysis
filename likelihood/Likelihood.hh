@@ -34,6 +34,8 @@ public:
   virtual double eval(double measuredValue, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const = 0;
   virtual ParameterVector interpolation(const Hypothesis&, bool* goodInterpolation = 0) const;
 protected:
+  typedef QMap<double, double> NormalizationMap;
+  typedef QMap<Enums::Particle, NormalizationMap> NormalizationParticleMap;
   typedef QMap<double, ParameterVector> AbsoluteRigidityMap;
   typedef QMap<Enums::Particle, AbsoluteRigidityMap> ParticleMap;
 
@@ -41,6 +43,12 @@ protected:
   virtual AbsoluteRigidityMap::ConstIterator lowerNode(const Hypothesis&) const;
   virtual AbsoluteRigidityMap::ConstIterator upperNode(const Hypothesis&) const;
   virtual ParameterVector defaultParameters() const;
+
+  virtual NormalizationMap::ConstIterator normalizationEnd(Enums::Particle) const;
+  virtual NormalizationMap::ConstIterator normalizationLowerNode(const Hypothesis&) const;
+  virtual NormalizationMap::ConstIterator normalizationUpperNode(const Hypothesis&) const;
+  virtual double normalizationInterpolation(const Hypothesis&) const;
+
   virtual void loadNodes();
 
   QString m_title;
@@ -51,6 +59,7 @@ protected:
   double m_max;
   int m_numberOfParameters;
   ParticleMap m_nodes;
+  NormalizationParticleMap m_normalization;
 };
 
 #endif

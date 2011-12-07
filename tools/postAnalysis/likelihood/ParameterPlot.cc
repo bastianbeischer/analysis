@@ -32,11 +32,11 @@ ParameterPlot::ParameterPlot(Likelihood* likelihood, Enums::Particle particle)
   }
 
   TGraph* integralGraph = new TGraph(numberOfPoints);
-  LikelihoodPDF* pdf = likelihood->pdf(KineticVariable(particle));
   for (int point = 0; point < numberOfPoints; ++point) {
     double absoluteRigidity = min + point * step;
-    pdf->setVariable(KineticVariable(particle, Enums::AbsoluteRigidity, absoluteRigidity));
+    LikelihoodPDF* pdf = likelihood->pdf(KineticVariable(particle, Enums::AbsoluteRigidity, absoluteRigidity));
     double integral = pdf->integral();
+    delete pdf;
     integralGraph->SetPoint(point, absoluteRigidity, integral);
   }
   integralGraph->SetMarkerColor(kRed);

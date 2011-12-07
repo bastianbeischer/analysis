@@ -20,6 +20,7 @@ Likelihood::Likelihood(Enums::Particles particles)
   , m_max(0)
   , m_numberOfParameters(0)
   , m_nodes()
+  , m_normalization()
 {
 }
 
@@ -51,6 +52,8 @@ Likelihood::AbsoluteRigidityMap::ConstIterator Likelihood::lowerNode(const Hypot
 {
   ParticleMap::ConstIterator particleIt = m_nodes.constFind(hypothesis.particle());
   Q_ASSERT(particleIt != m_nodes.constEnd());
+  if (!particleIt.value().count())
+    qDebug() << hypothesis;
   Q_ASSERT_X(particleIt.value().count(), "Likelihood::lowerNode()", "No momenta found for requested particle species.");
   AbsoluteRigidityMap::ConstIterator momentumIt = particleIt.value().lowerBound(hypothesis.absoluteRigidity());
   if (qFuzzyCompare(momentumIt.key(), hypothesis.absoluteRigidity()))
@@ -87,6 +90,46 @@ Likelihood::ParameterVector Likelihood::interpolation(const Hypothesis& hypothes
   return vector;
 }
 
+Likelihood::NormalizationMap::ConstIterator Likelihood::normalizationEnd(Enums::Particle p) const
+{
+  return m_normalization[p].end();
+}
+
+Likelihood::NormalizationMap::ConstIterator Likelihood::normalizationLowerNode(const Hypothesis& h) const
+{
+  NormalizationParticleMap::ConstIterator particleIt = m_normalization.constFind(h.particle());
+  Q_ASSERT(particleIt != m_normalization.constEnd());
+  if (!particleIt.value().count())
+    qDebug() << h;
+  Q_ASSERT_X(particleIt.value().count(), "Likelihood::normalizationLowerNode()", "No normalization found for requested particle species.");
+  NormalizationMap::ConstIterator momentumIt = particleIt.value().lowerBound(h.absoluteRigidity());
+  if (qFuzzyCompare(momentumIt.key(), h.absoluteRigidity()))
+    return momentumIt;
+  return --momentumIt;
+}
+
+Likelihood::NormalizationMap::ConstIterator Likelihood::normalizationUpperNode(const Hypothesis& h) const
+{
+  return ++normalizationLowerNode(h);
+}
+
+double Likelihood::normalizationInterpolation(const Hypothesis& h) const
+{
+  NormalizationMap::ConstIterator endIt = normalizationEnd(h.particle());
+  NormalizationMap::ConstIterator l = normalizationLowerNode(h);
+  NormalizationMap::ConstIterator u = l;
+  ++u;
+  Q_ASSERT(!(l == endIt && u == endIt));
+  if (l == endIt)
+    return u.value();
+  if (u == endIt)
+    return l.value();
+  if (qFuzzyCompare(l.key(), h.absoluteRigidity()))
+    return l.value();
+  double k = (h.absoluteRigidity() - l.key()) / (u.key() - l.key());
+  return l.value() + k * (u.value() - l.value());
+}
+
 void Likelihood::loadNodes()
 {
   QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
@@ -103,6 +146,15 @@ void Likelihood::loadNodes()
     if (particleNodeIterator == m_nodes.end())
       particleNodeIterator = m_nodes.insert(particleIt.key(), AbsoluteRigidityMap());
     settings.beginGroup(particleIt.value());
+
+    QList<QVariant> normalizationRrigiditiesVariantList = settings.value("normalizationRigidities").toList();
+    QList<QVariant> normalizationFactorsVariantList = settings.value("normalizationFactors").toList();
+    Q_ASSERT(normalizationRrigiditiesVariantList.size() == normalizationFactorsVariantList.size());
+    NormalizationMap normalizationMap;
+    for (int i = 0; i < normalizationFactorsVariantList.size(); ++i)
+      normalizationMap.insert(normalizationRrigiditiesVariantList[i].toDouble(), normalizationFactorsVariantList[i].toDouble());
+    m_normalization.insert(particleIt.key(), normalizationMap);
+
     QList<QVariant> rigiditiesVariantList = settings.value("absoluteRigidities").toList();
     foreach(QVariant rigidityVariant, rigiditiesVariantList) {
       double rigidity = rigidityVariant.toDouble();
