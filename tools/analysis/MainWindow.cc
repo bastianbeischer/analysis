@@ -32,11 +32,23 @@
 
 MainWindow::MainWindow(Analysis* analysis, bool batch, QWidget* parent)
   : QMainWindow(parent)
+  , m_ui()
   , m_batch(batch)
   , m_analysis(analysis)
   , m_analysisSetting(analysis->analysisSetting())
   , m_analysisPath(Helpers::analysisPath())
   , m_activePlots()
+  , m_topicSelectors()
+  , m_trackerSelectors()
+  , m_trdSelectors()
+  , m_tofSelectors()
+  , m_controlWidgets()
+  , m_correctionCheckBoxes()
+  , m_particleCheckBoxes()
+  , m_likelihoodCheckBoxes()
+  , m_particleFilterCheckBoxes()
+  , m_mcParticleFilterCheckBoxes()
+  , m_cutSelectors()
   , m_drawOptions()
   , m_inhibitDraw(false)
   , m_time()
@@ -47,7 +59,7 @@ MainWindow::MainWindow(Analysis* analysis, bool batch, QWidget* parent)
 
   setupTopicSelectors();
   setupCorrectionsCheckBoxes();
-  setupParticleCheckBoxes();
+  setupLhCheckBoxes();
   setupParticleFilterCheckBoxes();
   setupCutSelectors();
   setupViewActions();
@@ -181,10 +193,12 @@ void MainWindow::setupCorrectionsCheckBoxes()
   m_ui.correctionsTab->setLayout(layout);
 }
 
-void MainWindow::setupParticleCheckBoxes()
+void MainWindow::setupLhCheckBoxes()
 {
-  QVBoxLayout* layout = new QVBoxLayout;
-  layout->addWidget(new QLabel("possible particles:"));
+  QVBoxLayout* layout = 0;
+  QGridLayout* gLayout = new QGridLayout;
+  gLayout->addWidget(new QLabel("include:"), 0, 0);
+  layout = new QVBoxLayout;
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
     if (it.key() != Enums::NoParticle && ParticleProperties(it.key()).charge() != 0) {
       QCheckBox* checkBox = new QCheckBox(it.value());
@@ -194,7 +208,36 @@ void MainWindow::setupParticleCheckBoxes()
       m_particleCheckBoxes.append(checkBox);
     }
   }
-  m_ui.particlesTab->setLayout(layout);
+  gLayout->addLayout(layout, 1, 0);
+
+  gLayout->addWidget(new QLabel("variables:"), 0, 1);
+  layout = new QVBoxLayout;
+  for (Enums::LikelihoodVariableIterator it = Enums::likelihoodVariableBegin(); it != Enums::likelihoodVariableEnd(); ++it) {
+    if (it.key() != Enums::UndefinedLikelihood) {
+      QStringList list = it.value().split(" ");
+      QString text;
+      QString add;
+      foreach (QString section, list) {
+        if (add.size() + section.size() > 13) {
+          text+= add + "\n";
+          add = section;
+        } else {
+          if (!add.isEmpty())
+            add+= " ";
+          add+= section;
+        }
+      }
+      text+= add;
+      QCheckBox* checkBox = new QCheckBox(text);
+      //checkBox->setCheckState((Setup::instance()->proposedParticles() & it.key()) ? Qt::Checked : Qt::Unchecked);
+      layout->addWidget(checkBox);
+      m_controlWidgets.append(checkBox);
+      m_likelihoodCheckBoxes.append(checkBox);
+    }
+  }
+  gLayout->addLayout(layout, 1, 1);
+
+  m_ui.lhTab->setLayout(gLayout);
 }
 
 

@@ -508,7 +508,7 @@
            </font>
           </property>
           <property name="currentIndex">
-           <number>0</number>
+           <number>1</number>
           </property>
           <property name="usesScrollButtons">
            <bool>false</bool>
@@ -521,9 +521,9 @@
             <string>Corrections</string>
            </attribute>
           </widget>
-          <widget class="QWidget" name="particlesTab">
+          <widget class="QWidget" name="lhTab">
            <attribute name="title">
-            <string>Particles</string>
+            <string>LH</string>
            </attribute>
           </widget>
           <widget class="QWidget" name="filterTab">
