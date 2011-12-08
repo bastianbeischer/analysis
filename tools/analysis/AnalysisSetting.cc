@@ -17,6 +17,7 @@ void AnalysisSetting::clear()
   reconstructionMethod = Enums::UndefinedReconstructionMethod;
   corrections = Enums::NoCorrection;
   particles = Enums::NoParticle;
+  likelihoods = Enums::UndefinedLikelihood;
   particleFilter = Enums::NoParticle;
   mcParticleFilter = Enums::NoParticle;
   cutFilter.clear();
@@ -34,6 +35,7 @@ void AnalysisSetting::save(const QString& file) const
   settings.setValue("reconstructionMethod", Enums::label(reconstructionMethod));
   settings.setValue("corrections", Enums::label(corrections));
   settings.setValue("particles", Enums::label(particles));
+  settings.setValue("likelihoods", Enums::label(likelihoods));
   settings.setValue("particleFilter", Enums::label(particleFilter));
   settings.setValue("mcParticleFilter", Enums::label(mcParticleFilter));
   settings.setValue("cuts", cutFilter.toString());
@@ -53,6 +55,7 @@ void AnalysisSetting::load(const QString& file)
   reconstructionMethod = Enums::reconstructionMethod(settings.value("reconstructionMethod").toString());
   corrections = Enums::corrections(settings.value("corrections").toString());
   particles = Enums::particles(settings.value("particles").toString());
+  likelihoods = Enums::likelihoodVariables(settings.value("likelihoods").toString());
   particleFilter = Enums::particles(settings.value("particleFilter").toString());
   mcParticleFilter = Enums::particles(settings.value("mcParticleFilter").toString());
   cutFilter = CutFilter(settings.value("cuts").toString());

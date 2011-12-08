@@ -257,6 +257,12 @@ Enums::Particles Setup::proposedParticles() const
   return Enums::particles(m_settings->value("proposedParticles").toString());
 }
 
+Enums::LikelihoodVariables Setup::proposedLikelihoodVariables() const
+{
+  return Enums::likelihoodVariables(m_settings->value("proposedLikelihoods").toString());
+}
+
+
 QVector<Enums::Particle> Setup::proposedParticleVector() const
 {
   QVector<Enums::Particle> particleVector;

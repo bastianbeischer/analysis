@@ -150,7 +150,8 @@ void Analysis::start(const AnalysisSetting& analysisSetting)
     QVector<EventDestination*> destinations;
     foreach(AnalysisPlot* plot, m_plots)
       destinations.append(plot);
-    AnalysisProcessor* processor = new AnalysisProcessor(destinations, m_analysisSetting.trackType, m_analysisSetting.corrections, m_analysisSetting.particles);
+    AnalysisProcessor* processor = new AnalysisProcessor(destinations, m_analysisSetting.trackType,
+      m_analysisSetting.corrections, m_analysisSetting.particles, m_analysisSetting.likelihoods);
     processor->setReconstructionMethod(m_analysisSetting.reconstructionMethod);
     processor->setParticleFilter(m_analysisSetting.particleFilter);
     processor->setMCFilter(m_analysisSetting.mcParticleFilter);

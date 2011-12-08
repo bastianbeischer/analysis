@@ -21,7 +21,7 @@ class Reconstruction;
 class AnalysisProcessor : public EventProcessor {
 public:
   AnalysisProcessor();
-  AnalysisProcessor(QVector<EventDestination*>, Enums::TrackType, Enums::Corrections, Enums::Particles);
+  AnalysisProcessor(QVector<EventDestination*>, Enums::TrackType, Enums::Corrections, Enums::Particles, Enums::LikelihoodVariables);
   ~AnalysisProcessor();
 
   void setTrackType(Enums::TrackType);
@@ -45,8 +45,9 @@ public:
 private:
   void initReconstructions();
 
-  Particle* m_particle;
   Enums::Particles m_particles;
+  Enums::LikelihoodVariables m_likelihoods;
+  Particle* m_particle;
   ParticleFilter* m_particleFilter;
   CutFilter* m_cutFilter;
   MCFilter* m_mcFilter;

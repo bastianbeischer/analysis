@@ -229,7 +229,7 @@ void MainWindow::setupLhCheckBoxes()
       }
       text+= add;
       QCheckBox* checkBox = new QCheckBox(text);
-      //checkBox->setCheckState((Setup::instance()->proposedParticles() & it.key()) ? Qt::Checked : Qt::Unchecked);
+      checkBox->setCheckState((Setup::instance()->proposedLikelihoodVariables() & it.key()) ? Qt::Checked : Qt::Unchecked);
       layout->addWidget(checkBox);
       m_controlWidgets.append(checkBox);
       m_likelihoodCheckBoxes.append(checkBox);

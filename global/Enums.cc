@@ -204,6 +204,12 @@ Enums::CutIterator Enums::cutEnd() {return s_cutMap.constEnd();}
 // LikelihoodVariable
 const QString Enums::label(Enums::LikelihoodVariable key) {return s_likelihoodVariableMap.value(key);}
 Enums::LikelihoodVariable Enums::likelihoodVariable(const QString& value) {return s_likelihoodVariableMap.key(value);}
+bool Enums::isInternalLikelihoodVariable(LikelihoodVariable variable)
+{
+  if (variable == CherenkovLikelihood)
+    return false;
+  return true;
+}
 Enums::LikelihoodVariableIterator Enums::likelihoodVariableBegin() {return s_likelihoodVariableMap.constBegin();}
 Enums::LikelihoodVariableIterator Enums::likelihoodVariableEnd() {return s_likelihoodVariableMap.constEnd();}
 const QString Enums::label(Enums::LikelihoodVariables keys)

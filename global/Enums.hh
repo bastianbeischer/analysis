@@ -64,6 +64,7 @@ public:
     TimeOfFlightLikelihood = 1<<3, TrackerMomentumLikelihood = 1<<4, CherenkovLikelihood = 1<<5};
   static const QString label(LikelihoodVariable);
   static LikelihoodVariable likelihoodVariable(const QString&);
+  static bool isInternalLikelihoodVariable(LikelihoodVariable);
   typedef QMap<LikelihoodVariable, QString>::ConstIterator LikelihoodVariableIterator;
   static LikelihoodVariableIterator likelihoodVariableBegin();
   static LikelihoodVariableIterator likelihoodVariableEnd();
