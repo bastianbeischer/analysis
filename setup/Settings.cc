@@ -20,8 +20,10 @@ Settings::~Settings()
 {
 }
 
-Enums::Particles Settings::aboveThreshold(int* n) const
+Enums::Particles Settings::aboveThreshold(int* numberOfParticlesAboveThreshold) const
 {
+  if (numberOfParticlesAboveThreshold)
+    *numberOfParticlesAboveThreshold = 0;
   Enums::Particles particles;
   Enums::ParticleIterator end = Enums::particleEnd();
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it) {
@@ -29,8 +31,8 @@ Enums::Particles Settings::aboveThreshold(int* n) const
       continue;
     ParticleProperties properties(it.key());
     if (properties.charge() != 0 && isAboveThreshold(properties.mass())) {
-      if (n)
-        ++(*n);
+      if (numberOfParticlesAboveThreshold)
+        ++(*numberOfParticlesAboveThreshold);
       particles|= it.key();
     }
   }

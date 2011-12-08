@@ -35,7 +35,7 @@ public:
   double pressure() const {return m_pressure;}
   bool magnet() const {return m_magnet;}
 
-  Enums::Particles aboveThreshold(int* n = 0) const;
+  Enums::Particles aboveThreshold(int* numberOfParticlesAboveThreshold = 0) const;
   bool isAboveThreshold(double) const;
 
 private:
