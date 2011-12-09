@@ -36,7 +36,8 @@ const QMap<Enums::AnalysisTopic, QString> Enums::s_analysisTopicMap = Initializa
   << QPair<Enums::AnalysisTopic, QString>(Enums::MonteCarloTRD, "monte carlo TRD")
   << QPair<Enums::AnalysisTopic, QString>(Enums::MonteCarloTOF, "monte carlo TOF")
   << QPair<Enums::AnalysisTopic, QString>(Enums::MonteCarlo, "monte carlo")
-  << QPair<Enums::AnalysisTopic, QString>(Enums::Testbeam, "testbeam");
+  << QPair<Enums::AnalysisTopic, QString>(Enums::Testbeam, "testbeam")
+  << QPair<Enums::AnalysisTopic, QString>(Enums::LikelihoodTopic, "likelihood");
 
 const QMap<Enums::TrackType, QString> Enums::s_trackTypeMap = InitializableMap<Enums::TrackType, QString>()
   << QPair<Enums::TrackType, QString>(Enums::NoTrack, "no track")

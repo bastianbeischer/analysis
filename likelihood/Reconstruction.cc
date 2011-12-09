@@ -161,3 +161,17 @@ TMultiGraph* Reconstruction::graph() const
   m_graph->SetTitle(qPrintable(QString(Enums::label(m_variables)).remove(" likelihood")));
   return m_graph;
 }
+
+double Reconstruction::eval(const AnalyzedEvent* event, const Hypothesis& hypothesis, bool* goodInterpolation) const
+{
+  Q_ASSERT(m_likelihoods.count());
+  double lnL = 0;
+  QVector<Likelihood*>::ConstIterator end = m_likelihoods.end();
+  for (QVector<Likelihood*>::ConstIterator it = m_likelihoods.begin(); it != end; ++it) {
+    double value = (*it)->eval(event, hypothesis, goodInterpolation);
+    if (qIsNull(value))
+      return 1e9; //infinity
+    lnL+= -2*log(value);
+  }
+  return lnL / m_likelihoods.count();
+}

@@ -4,6 +4,8 @@
 #include "AnalyzedEvent.hh"
 #include "Particle.hh"
 
+#include <cfloat>
+
 TOFReconstruction::TOFReconstruction(Enums::LikelihoodVariables variables, Enums::Particles particles, bool additionalInformation)
   : Reconstruction(variables, particles)
 {
@@ -14,17 +16,22 @@ TOFReconstruction::TOFReconstruction(Enums::LikelihoodVariables variables, Enums
 
 TOFReconstruction::~TOFReconstruction()
 {
-
 }
 
 void TOFReconstruction::identify(AnalyzedEvent* event)
 {
   m_event = event;
-  m_indexOfGlobalMinimum = -1;
+  bool goodInterpolation = true;
+  m_indexOfGlobalMinimum = 0;
 
+  QVector<QPointF>::Iterator pointIt = m_minima.begin();
+  QVector<QPointF>::Iterator pointEnd = m_minima.end();
+  for (; pointIt != pointEnd; ++pointIt)
+    pointIt->setY(DBL_MAX);
+
+  pointIt = m_minima.begin();
   QVector<Enums::Particle>::ConstIterator particleIt = m_particles.begin();
   QVector<Enums::Particle>::ConstIterator particleEnd = m_particles.end();
-  QVector<QPointF>::Iterator pointIt = m_minima.begin();
   for (int it = 0; particleIt != particleEnd; ++it, ++particleIt, ++pointIt) {
     Q_ASSERT(*particleIt != Enums::NoParticle);
     double beta = event->particle()->beta();
@@ -32,10 +39,14 @@ void TOFReconstruction::identify(AnalyzedEvent* event)
     double mass = ParticleProperties(*particleIt).mass();
     double mass2 = mass * mass;
     double curvature = (1. - beta2) / (mass2 * beta2);
+
     Hypothesis* h = new Hypothesis(*particleIt, curvature);
-    h->setProbability(1); //TODO
+    double value = eval(event, *h, &goodInterpolation);
+    if (value < m_minima[m_indexOfGlobalMinimum].y()) 
+      m_indexOfGlobalMinimum = it;
+    h->setLogLikelihood(value);
     event->particle()->addHypothesis(m_method, h);
     Q_ASSERT(pointIt != m_minima.end());
-    *pointIt = QPointF(curvature, 0);
+    *pointIt = QPointF(curvature, value);
   }
 }

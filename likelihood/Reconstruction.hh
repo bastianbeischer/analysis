@@ -2,6 +2,7 @@
 #define Reconstruction_hh
 
 #include "Enums.hh"
+#include "Hypothesis.hh"
 
 #include <QVector>
 #include <QPointF>
@@ -25,6 +26,7 @@ public:
   virtual void identify(AnalyzedEvent*) = 0;
   virtual TLegend* legend() const;
   virtual TMultiGraph* graph() const;
+  double eval(const AnalyzedEvent*, const Hypothesis&, bool* goodInterpolation = 0) const;
 protected:
   Reconstruction(Enums::LikelihoodVariables, Enums::Particles);
   void setupDefaultLegend() const;

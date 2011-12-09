@@ -6,6 +6,7 @@
 #include "Helpers.hh"
 
 #include <cmath>
+#include <cfloat>
 
 WeightedMeanReconstruction::WeightedMeanReconstruction(Enums::LikelihoodVariables variables, Enums::Particles particles, bool additionalInformation)
   : Reconstruction(variables, particles)
@@ -22,11 +23,17 @@ WeightedMeanReconstruction::~WeightedMeanReconstruction()
 void WeightedMeanReconstruction::identify(AnalyzedEvent* event)
 {
   m_event = event;
-  m_indexOfGlobalMinimum = -1;
+  bool goodInterpolation = true;
+  m_indexOfGlobalMinimum = 0;
 
+  QVector<QPointF>::Iterator pointIt = m_minima.begin();
+  QVector<QPointF>::Iterator pointEnd = m_minima.end();
+  for (; pointIt != pointEnd; ++pointIt)
+    pointIt->setY(DBL_MAX);
+
+  pointIt = m_minima.begin();
   QVector<Enums::Particle>::ConstIterator particleIt = m_particles.begin();
   QVector<Enums::Particle>::ConstIterator particleEnd = m_particles.end();
-  QVector<QPointF>::Iterator pointIt = m_minima.begin();
   for (int it = 0; particleIt != particleEnd; ++it, ++particleIt, ++pointIt) {
     Q_ASSERT(*particleIt != Enums::NoParticle);
     double enumeratur = 0;
@@ -50,11 +57,14 @@ void WeightedMeanReconstruction::identify(AnalyzedEvent* event)
       enumeratur+= curvatureTof/sigmaCurvatureTof2;
       denumerator+= 1./sigmaCurvatureTof2;
     }
-    double mean = qIsNull(denumerator) ? 0 : enumeratur / denumerator;
-    Hypothesis* h = new Hypothesis(*particleIt, mean);
-    h->setProbability(1); //TODO
+    double curvature = qIsNull(denumerator) ? 0 : enumeratur / denumerator;
+    Hypothesis* h = new Hypothesis(*particleIt, curvature);
+    double value = eval(event, *h, &goodInterpolation);
+    if (value < m_minima[m_indexOfGlobalMinimum].y()) 
+      m_indexOfGlobalMinimum = it;
+    h->setLogLikelihood(value);
     event->particle()->addHypothesis(m_method, h);
     Q_ASSERT(pointIt != m_minima.end());
-    *pointIt = QPointF(mean, 0);
+    *pointIt = QPointF(curvature, value);
   }
 }

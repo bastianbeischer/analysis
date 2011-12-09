@@ -58,7 +58,7 @@ private:
 LikelihoodReconstruction::LikelihoodReconstruction(Enums::LikelihoodVariables likelihoods, Enums::Particles particles, bool additionalInformation)
   : Reconstruction(likelihoods, particles)
   , m_lhMinimizer(new ROOT::Math::BrentMinimizer1D)
-  , m_lhFunction(new LogLikelihoodFunction(this, &LikelihoodReconstruction::eval))
+  , m_lhFunction(new LogLikelihoodFunction(this, &Reconstruction::eval))
 {
   m_externalInformation = additionalInformation;
   m_method = additionalInformation ? Enums::LikelihoodExternalInformation : Enums::Likelihood;
@@ -78,9 +78,14 @@ void LikelihoodReconstruction::identify(AnalyzedEvent* event)
   bool goodInterpolation = true;
   m_indexOfGlobalMinimum = 0;
 
+  QVector<QPointF>::Iterator pointIt = m_minima.begin();
+  QVector<QPointF>::Iterator pointEnd = m_minima.end();
+  for (; pointIt != pointEnd; ++pointIt)
+    pointIt->setY(DBL_MAX);
+
+  pointIt = m_minima.begin();
   QVector<Enums::Particle>::ConstIterator particleIt = m_particles.begin();
   QVector<Enums::Particle>::ConstIterator particleEnd = m_particles.end();
-  QVector<QPointF>::Iterator pointIt = m_minima.begin();
   for (int it = 0; particleIt != particleEnd; ++it, ++particleIt, ++pointIt) {
     Q_ASSERT(*particleIt != Enums::NoParticle);
     Q_ASSERT(pointIt != m_minima.end());
@@ -91,26 +96,13 @@ void LikelihoodReconstruction::identify(AnalyzedEvent* event)
       if (it > 0 && m_lhMinimizer->FValMinimum() < m_minima[m_indexOfGlobalMinimum].y())
         m_indexOfGlobalMinimum = it;
       Hypothesis* h = new Hypothesis(*particleIt, m_lhMinimizer->XMinimum());
-      h->setProbability(1); //TODO
+      h->setLogLikelihood(m_lhMinimizer->FValMinimum());
       event->particle()->addHypothesis(m_method, h);
     } else {
       pointIt->setX(0);
       pointIt->setY(0);
     }
   }
-}
-
-double LikelihoodReconstruction::eval(const AnalyzedEvent* event, const Hypothesis& hypothesis, bool* goodInterpolation) const
-{
-  double lnL = 0;
-  QVector<Likelihood*>::ConstIterator end = m_likelihoods.end();
-  for (QVector<Likelihood*>::ConstIterator it = m_likelihoods.begin(); it != end; ++it) {
-    double value = (*it)->eval(event, hypothesis, goodInterpolation);
-    if (qIsNull(value))
-      return 1e10; //infinity
-    lnL+= -2*log(value);
-  }
-  return lnL;
 }
 
 TLegend* LikelihoodReconstruction::legend() const

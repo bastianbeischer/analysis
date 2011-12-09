@@ -98,6 +98,7 @@
 #include "EventTimeDifferencePlot.hh"
 #include "MeasurementTimeDistributionPlot.hh"
 #include "TOFProbabilityDensityFunction.hh"
+#include "LogLikelihoodPlot.hh"
 
 #include <TPad.h>
 #include <TCanvas.h>
@@ -401,6 +402,12 @@ void Analysis::setupPlots()
     addPlot(new AlbedosVsMomentumPlot());
     addPlot(new MeasurementTimePlot(first, last));
     addPlot(new FluxCollection(first, last));
+  }
+  if (m_analysisSetting.analysisTopics & Enums::LikelihoodTopic) {
+    Enums::ParticleIterator end = Enums::particleEnd();
+    for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it)
+      if (it.key() == Enums::Electron && it.key() != Enums::NoParticle && (it.key() & m_analysisSetting.particles))
+        addPlot(new LogLikelihoodPlot(it.key(), m_analysisSetting.particles & ~it.key()));
   }
   if (m_analysisSetting.analysisTopics & Enums::EfficiencyTOF) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {

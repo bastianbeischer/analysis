@@ -428,6 +428,14 @@ void MainWindow::guiToAnalysisSetting()
     if (checkBox->isChecked())
       m_analysisSetting.particles|= Enums::particle(checkBox->text());
 
+  m_analysisSetting.likelihoods = Enums::UndefinedLikelihood;
+  foreach (QCheckBox* checkBox, m_likelihoodCheckBoxes)
+    if (checkBox->isChecked()) {
+      QString text = checkBox->text();
+      text.replace("\n", " ");
+      m_analysisSetting.likelihoods|= Enums::likelihoodVariable(text);
+    }
+
   m_analysisSetting.particleFilter = Enums::NoParticle;
   foreach (QCheckBox* checkBox, m_particleFilterCheckBoxes)
     if (checkBox->isChecked())

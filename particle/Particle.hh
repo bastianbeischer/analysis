@@ -36,7 +36,7 @@ public:
 
   void addHypothesis(Enums::ReconstructionMethod, Hypothesis*);
   const QMap<Enums::ReconstructionMethod, Hypothesis*>& hypotheses() const;
-  const Hypothesis* hypothesis();
+  const Hypothesis* hypothesis() const;
   const Hypothesis* hypothesis(Enums::Particle) const;
   const Hypothesis* hypothesis(Enums::Particle, Enums::ReconstructionMethod) const;
 

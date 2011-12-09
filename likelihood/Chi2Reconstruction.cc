@@ -37,7 +37,7 @@ public:
     double tracker = 0;
     double rigidity = m_event->particle()->track()->rigidity();
     if (m_properties.charge() * rigidity < 0)
-      return 1e10;
+      return 1e9;
     if (!qIsNull(rigidity)) {
       double curvature = 1. / rigidity;
       double sigmaCurvature = curvature * Helpers::trackerResolution(curvature, m_properties.type());
@@ -84,11 +84,19 @@ Chi2Reconstruction::~Chi2Reconstruction()
 void Chi2Reconstruction::identify(AnalyzedEvent* event)
 {
   m_event = event;
+  bool goodInterpolation = true;
   m_indexOfGlobalMinimum = 0;
 
+  QVector<QPointF>::Iterator pointIt = m_minima.begin();
+  QVector<QPointF>::Iterator pointEnd = m_minima.end();
+  for (; pointIt != pointEnd; ++pointIt)
+    pointIt->setY(DBL_MAX);
+
+  double min = DBL_MAX;
+
+  pointIt = m_minima.begin();
   QVector<Enums::Particle>::ConstIterator particleIt = m_particles.begin();
   QVector<Enums::Particle>::ConstIterator particleEnd = m_particles.end();
-  QVector<QPointF>::Iterator pointIt = m_minima.begin();
   for (int it = 0; particleIt != particleEnd; ++it, ++particleIt, ++pointIt) {
     Q_ASSERT(*particleIt != Enums::NoParticle);
     Q_ASSERT(pointIt != m_minima.end());
@@ -97,10 +105,13 @@ void Chi2Reconstruction::identify(AnalyzedEvent* event)
     if (m_chi2Minimizer->Minimize(100)) {
       pointIt->setX(m_chi2Minimizer->XMinimum());
       pointIt->setY(m_chi2Minimizer->FValMinimum());
-      if (it > 0 && m_chi2Minimizer->FValMinimum() < m_minima[m_indexOfGlobalMinimum].y())
-        m_indexOfGlobalMinimum = it;
       Hypothesis* h = new Hypothesis(*particleIt, m_chi2Minimizer->XMinimum());
-      h->setProbability(1); //TODO
+      double value = eval(event, *h, &goodInterpolation);
+      if (value < min) {
+        m_indexOfGlobalMinimum = it;
+        min = value;
+      }
+      h->setLogLikelihood(value);
       event->particle()->addHypothesis(m_method, h);
     } else {
       pointIt->setX(0);

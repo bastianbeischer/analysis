@@ -7,7 +7,7 @@
 Hypothesis::Hypothesis(Enums::Particle particle, double curvature)
   : m_properties(particle)
   , m_curvature(curvature)
-  , m_probability(-1)
+  , m_logLikelihood(-1)
 {
 }
 
@@ -20,15 +20,14 @@ Enums::Particle Hypothesis::particle() const
   return m_properties.type();
 }
 
-double Hypothesis::probability() const
+double Hypothesis::logLikelihood() const
 {
-  return m_probability;
+  return m_logLikelihood;
 }
 
-void Hypothesis::setProbability(double p)
+void Hypothesis::setLogLikelihood(double llh)
 {
-  Q_ASSERT(0 <= p && p <= 1);
-  m_probability = p;
+  m_logLikelihood = llh;
 }
 
 int Hypothesis::charge() const
@@ -68,7 +67,7 @@ double Hypothesis::inverseBeta() const
 
 QDebug operator<<(QDebug debug, const Hypothesis& h)
 {
-  debug << QString("%1 (prob %2) K=%3/GV R=%4GV beta=%5").arg(Enums::label(h.particle()))
-    .arg(h.probability()).arg(h.curvature()).arg(h.rigidity()).arg(h.beta());
+  debug << QString("%1 (logL %2) K=%3/GV R=%4GV beta=%5").arg(Enums::label(h.particle()))
+    .arg(h.logLikelihood()).arg(h.curvature()).arg(h.rigidity()).arg(h.beta());
   return debug;
 }

@@ -20,7 +20,7 @@ EventReader::EventReader(QObject* parent)
   , m_readEvents(0)
   , m_chain(new DataChain())
   , m_nThreads(0)
-  , m_bufferSize(10000)
+  , m_bufferSize(500)
   , m_threads()
 {
 }

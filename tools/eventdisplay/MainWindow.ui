@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>953</width>
+    <width>1091</width>
     <height>702</height>
    </rect>
   </property>
@@ -23,7 +23,7 @@
       <widget class="QWidget" name="leftWidget" native="true">
        <property name="minimumSize">
         <size>
-         <width>300</width>
+         <width>400</width>
          <height>0</height>
         </size>
        </property>
@@ -383,7 +383,7 @@
        </property>
        <property name="minimumSize">
         <size>
-         <width>300</width>
+         <width>400</width>
          <height>0</height>
         </size>
        </property>

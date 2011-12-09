@@ -18,7 +18,6 @@ public:
   virtual TLegend* legend() const;
   virtual TMultiGraph* graph() const;
 private:
-  double eval(const AnalyzedEvent*, const Hypothesis&, bool* goodInterpolation = 0) const;
   double rootFunctorPointer(const double* momentum);
   ROOT::Math::BrentMinimizer1D* m_lhMinimizer;
   LogLikelihoodFunction* m_lhFunction;

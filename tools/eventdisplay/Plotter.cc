@@ -171,7 +171,7 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
 
   QString reconstructionTable;
   reconstructionTable+= "<table border=\"1\">\n<tr>\n";
-  reconstructionTable+= itemBegin + "R/GV<br>(prob)" + itemEnd;
+  reconstructionTable+= itemBegin + "R/GV<br>(logL)" + itemEnd;
   for (Enums::ParticleIterator particleIt = Enums::particleBegin(); particleIt != Enums::particleEnd(); ++particleIt)
     if (particleIt.key() & m_processor->particles())
       reconstructionTable+= itemBegin + particleIt.value() + itemEnd;
@@ -186,24 +186,19 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
     QString& table = reconstruction->externalInformation() ? additionalReconstructionTable : reconstructionTable; 
     table+= "<tr>\n";
     table+= itemBegin + reconstructionIt.value().left(4) + itemEnd;
-    double sum = 0;
     QVector<Enums::Particle>::ConstIterator particleIt = reconstruction->particles().begin();
     QVector<Enums::Particle>::ConstIterator particleEnd = reconstruction->particles().end();
     QVector<QPointF>::ConstIterator minimumIt = reconstruction->minima().begin();
     for (int it = 0; particleIt != particleEnd; ++minimumIt, ++particleIt, ++it) {
-      //m_processor->particle()->hypothesis(*particleIt, reconstructionIt.key())->dump();
       const Hypothesis* hypothesis = m_processor->particle()->hypothesis(*particleIt, reconstructionIt.key());
-      //qDebug() << reconstructionIt.value() << hypothesis->rigidity() << 1./minimumIt->x();
-      //Q_ASSERT((std::isnan(hypothesis->rigidity()) && std::isnan(1./minimumIt->x())) || (std::isinf(hypothesis->rigidity()) && std::isinf(1./minimumIt->x())) || qFuzzyCompare(hypothesis->rigidity(), 1./minimumIt->x()));
-      QString text = QString("%1<br>%2\%").arg(hypothesis->rigidity(), 0, 'g', 2).arg(qRound(100.*hypothesis->probability()));
+      QString text = QString("%1<br>%2").arg(hypothesis->rigidity(), 0, 'g', 2).arg(hypothesis->logLikelihood(), 0, 'g', 2);
       if (it == reconstruction->indexOfGlobalMinimum()) {
         text.prepend("<span style=\"color:red\">");
         text.append("</span>");
       }
       table+= itemBegin + text + itemEnd; 
-      sum+= hypothesis->probability();
     }
-    table+= itemBegin + QString("%1\%").arg(qRound(100.*sum)) + itemEnd;
+    table+= itemBegin + itemEnd;
     table+= "</tr>\n";
   }
 

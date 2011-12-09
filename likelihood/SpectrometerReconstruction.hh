@@ -2,6 +2,7 @@
 #define SpectrometerReconstruction_hh
 
 #include "Reconstruction.hh"
+#include "Hypothesis.hh"
 
 class AnalyzedEvent;
 class TMultiGraph;
