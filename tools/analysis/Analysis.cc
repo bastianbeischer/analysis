@@ -160,7 +160,11 @@ void Analysis::start(const AnalysisSetting& analysisSetting)
     processor->setCutFilter(m_analysisSetting.cutFilter);
     m_processors.append(processor);
   }
-  m_reader->start(m_processors, m_analysisSetting.firstEvent, m_analysisSetting.lastEvent);
+  if (m_analysisSetting.firstEvent == 0 && m_analysisSetting.lastEvent == 0) {
+    m_reader->start(m_processors, 0, numberOfEvents() - 1);
+  } else {
+    m_reader->start(m_processors, m_analysisSetting.firstEvent, m_analysisSetting.lastEvent);
+  }
 }
 
 void Analysis::addPlot(AnalysisPlot* plot)
