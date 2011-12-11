@@ -137,10 +137,15 @@ const QMap<Enums::ReconstructionMethod, Hypothesis*>& Particle::hypotheses() con
 
 const Hypothesis* Particle::hypothesis() const
 {
+  return hypothesis(m_method);
+}
+
+const Hypothesis* Particle::hypothesis(Enums::ReconstructionMethod method) const
+{
   const Hypothesis* hypothesis = 0;
-  QMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator upperBound = m_hypotheses.upperBound(m_method);
-  for (QMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator it = m_hypotheses.lowerBound(m_method); it != upperBound; ++it) {
-    Q_ASSERT(it.key() == m_method);
+  QMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator upperBound = m_hypotheses.upperBound(method);
+  for (QMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator it = m_hypotheses.lowerBound(method); it != upperBound; ++it) {
+    Q_ASSERT(it.key() == method);
     if (!hypothesis) {
       hypothesis = it.value();
     } else if (it.value()->logLikelihood() < hypothesis->logLikelihood()) {
