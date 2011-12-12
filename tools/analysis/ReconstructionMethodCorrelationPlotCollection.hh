@@ -2,16 +2,21 @@
 #define ReconstructionMethodCorrelationPlotCollection_hh
 
 #include "PlotCollection.hh"
+#include "Enums.hh"
 
 #include <QComboBox>
 
 class ReconstructionMethodCorrelationPlotCollection : public PlotCollection {
+Q_OBJECT
 public:
-  ReconstructionMethodCorrelationPlotCollection();
+  ReconstructionMethodCorrelationPlotCollection(Enums::Particles);
   ~ReconstructionMethodCorrelationPlotCollection();
+public slots:
   virtual void update();
 private:
-  int methodsToIndex(Enums::ReconstructionMethod, Enums::ReconstructionMethod);
+  int methodsToIndex(Enums::ReconstructionMethod, Enums::ReconstructionMethod, Enums::Particle);
+  Enums::Particles m_particles;
+  QComboBox* m_particleComboBox;
   QComboBox* m_reconstructionMethodXComboBox;
   QComboBox* m_reconstructionMethodYComboBox;
 };

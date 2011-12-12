@@ -8,10 +8,11 @@ class TGraphErrors;
 
 class ReconstructionMethodCorrelationPlot : public AnalysisPlot, public H2DPlot {
 public:
-  explicit ReconstructionMethodCorrelationPlot(Enums::ReconstructionMethod, Enums::ReconstructionMethod);
+  explicit ReconstructionMethodCorrelationPlot(Enums::ReconstructionMethod, Enums::ReconstructionMethod, Enums::Particle = Enums::NoParticle);
   virtual ~ReconstructionMethodCorrelationPlot();
   virtual void processEvent(const AnalyzedEvent*);
 private:
+  Enums::Particle m_particle;
   Enums::ReconstructionMethod m_methodX;
   Enums::ReconstructionMethod m_methodY;
 };
