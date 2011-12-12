@@ -18,6 +18,9 @@
 
 #include <QDebug>
 #include <QStringList>
+#include <QWidget>
+#include <QHBoxLayout>
+#include <QPushButton>
 
 QMap<unsigned int, TGraphErrors> TimeOverThresholdScaling::timeOverThresholdScalingGraphs;
 QMap<unsigned int, TF1> TimeOverThresholdScaling::timeOverThresholdScalingFits;
@@ -25,11 +28,12 @@ QMap<unsigned int, double> TimeOverThresholdScaling::minTofTemps;
 QMap<unsigned int , double> TimeOverThresholdScaling::maxTofTemps;
 
 TimeOverThresholdScaling::TimeOverThresholdScaling(PostAnalysisCanvas* canvas, unsigned int tofId)
-  : PostAnalysisPlot()
-  , GraphPlot()
+: PostAnalysisPlot()
+, GraphPlot()
+, m_tofId(tofId)
 {
   TH2D* histogram = canvas->histograms2D().at(0);
-  scaling(tofId, histogram);
+  fit(tofId, histogram);
   QString title = QString(canvas->name()).replace("canvas", "graph");
   setTitle(title);
   TGraphErrors* graph = new TGraphErrors(TimeOverThresholdScaling::timeOverThresholdScalingGraphs[tofId]);
@@ -54,20 +58,31 @@ TimeOverThresholdScaling::TimeOverThresholdScaling(PostAnalysisCanvas* canvas, u
   graph->GetYaxis()->SetRangeUser(15, 40);
   function()->SetRange(graph->GetXaxis()->GetBinLowEdge(1), graph->GetXaxis()->GetBinLowEdge(graph->GetXaxis()->GetNbins()));
 
+  QWidget* widget = new QWidget;
+  QHBoxLayout* layout = new QHBoxLayout(widget);
+  layout->setContentsMargins(0, 0, 0, 0);
+  QPushButton* saveButton = new QPushButton("save channel");
+  layout->addWidget(saveButton);
+  QPushButton* saveAllButton = new QPushButton("save all channels");
+  layout->addWidget(saveAllButton);
+  layout->addStretch();
+  setSecondaryWidget(widget);
+  connect(saveButton, SIGNAL(clicked()), this, SLOT(save()));
+  connect(saveAllButton, SIGNAL(clicked()), this, SLOT(saveAll()));
 }
 
 TimeOverThresholdScaling::~TimeOverThresholdScaling()
 {
 }
 
-void TimeOverThresholdScaling::scaling(unsigned int tofId, TH2D* histogram) 
+void TimeOverThresholdScaling::fit(unsigned int tofId, TH2D* histogram) 
 {
   const double minTot = 0;
   const int minEntries = 100;
   TGraphErrors graph;
-  
+
   QMap<double, double> temperatureMap;
-  
+
   for (int bin = 0; bin < histogram->GetNbinsX(); ++bin) {
     TH1* projectionHistogram = histogram->ProjectionY("_py", bin + 1, bin + 1);
     int nEntries = projectionHistogram->GetEntries();
@@ -81,7 +96,7 @@ void TimeOverThresholdScaling::scaling(unsigned int tofId, TH2D* histogram)
     double totError = sigma / sqrt(nEntries);
     double temperature = histogram->GetBinCenter(bin+1);
     double temperatureError = histogram->GetBinWidth(bin+1)/sqrt(12);
-    
+
     if (tot > minTot && nEntries > minEntries) {
       int nPoints = graph.GetN();
       graph.SetPoint(nPoints, temperature, tot);
@@ -89,14 +104,14 @@ void TimeOverThresholdScaling::scaling(unsigned int tofId, TH2D* histogram)
       temperatureMap.insert(temperature, tot);
     }
   }
-  
+
   double min = 0;
   double max = 0;
-  
+
   if (temperatureMap.keys().size() > 0) {
     min = temperatureMap.keys()[0];
     max = min;
-    
+
     foreach(double temperature, temperatureMap.keys()) {
       if (temperature < min) {
         min = temperature;
@@ -109,9 +124,9 @@ void TimeOverThresholdScaling::scaling(unsigned int tofId, TH2D* histogram)
 
   TimeOverThresholdScaling::minTofTemps.insert(tofId, min);
   TimeOverThresholdScaling::maxTofTemps.insert(tofId, max);
-  
+
   TimeOverThresholdScaling::timeOverThresholdScalingGraphs.insert(tofId, graph);
-  
+
   //Linear fit
   QString htitle =QString("Fit time over threshold temperature dependent 0x%1").arg(tofId,0,16);
   TF1 f(qPrintable(htitle), "pol1");
@@ -120,12 +135,27 @@ void TimeOverThresholdScaling::scaling(unsigned int tofId, TH2D* histogram)
   f.SetLineStyle(2);
   graph.Fit(&f, "EQ");
   TimeOverThresholdScaling::timeOverThresholdScalingFits.insert(tofId, f);
-  
+}
+
+void TimeOverThresholdScaling::save(unsigned int tofId) 
+{
   QList<QVariant> param;
+  const TF1& f = timeOverThresholdScalingFits[tofId];
   param.push_back( f.GetParameter(0) );
   param.push_back( f.GetParameter(1) );
-  
   Corrections* correction = new Corrections();
   correction->setTotScaling(tofId, param);
   delete correction;
+}
+
+void TimeOverThresholdScaling::save()
+{
+  save(m_tofId);
+}
+
+void TimeOverThresholdScaling::saveAll()
+{
+  foreach (unsigned int tofId, timeOverThresholdScalingFits.keys()) {
+    save(tofId);
+  }
 }

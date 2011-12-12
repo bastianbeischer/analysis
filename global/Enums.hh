@@ -32,7 +32,7 @@ public:
   static TrackTypeIterator trackTypeEnd();
 
   enum Correction {NoCorrection = 0, Alignment = 1<<0, TimeShifts = 1<<1, TrdMopv = 1<<2, TrdTime = 1<<3, TrdPressure = 1<<4,
-    TrdTemperature = 1<<5, TofTimeOverThreshold = 1<<6, MultipleScattering = 1<<7, PhotonTravelTime = 1<<8};
+    TrdTemperature = 1<<5, TofTimeOverThreshold = 1<<6, MultipleScattering = 1<<7, PhotonTravelTime = 1<<8, TrackerSignalHeight = 1<<9};
   static const QString label(Correction);
   static Correction correction(const QString&);
   typedef QMap<Correction, QString>::ConstIterator CorrectionIterator;
@@ -88,6 +88,12 @@ public:
   static ReconstructionMethodIterator reconstructionMethodBegin();
   static ReconstructionMethodIterator reconstructionMethodEnd();
 
+  enum Situation {NoSituation=-1, KirunaMuons, KirunaFlight, Testbeam11};
+  static const QString label(Situation);
+  static Situation situation(const QString&);
+  static QMap<Situation, QString>::ConstIterator situationBegin();
+  static QMap<Situation, QString>::ConstIterator situationEnd();
+
 private:
   static const QMap<ChargeSign, QString> s_chargeSignMap;
   static const QMap<AnalysisTopic, QString> s_analysisTopicMap;
@@ -98,6 +104,7 @@ private:
   static const QMap<LikelihoodVariable, QString> s_likelihoodVariableMap;
   static const QMap<KineticVariable, QString> s_kineticVariableMap;
   static const QMap<ReconstructionMethod, QString> s_reconstructionMethodMap;
+  static const QMap<Situation, QString> s_situationMap;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::AnalysisTopics);

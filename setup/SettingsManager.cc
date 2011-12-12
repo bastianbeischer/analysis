@@ -10,6 +10,7 @@
 #include "Settings.hh"
 #include "SimpleEvent.hh"
 #include "Helpers.hh"
+#include "Enums.hh"
 
 SettingsManager* SettingsManager::s_instance = 0;
 
@@ -75,11 +76,7 @@ void SettingsManager::readSettings()
     double momentum = m_configFile->value("momentum", 0.).toDouble();
     bool magnet = m_configFile->value("magnet", "yes").toString() == "yes" ? true : false;
 
-    Settings::Situation situation;
-    if (situationString == "unknown") situation = Settings::Unknown;
-    else if (situationString == "kirunamuons") situation = Settings::KirunaMuons;
-    else if (situationString == "kirunaflight") situation = Settings::KirunaFlight;
-    else if (situationString == "testbeam11") situation = Settings::Testbeam11;
+    Enums::Situation situation = Enums::situation(situationString);
 
     Q_ASSERT(firstRun <= lastRun);
 

@@ -24,7 +24,7 @@ ProjectionControlWidget::ProjectionControlWidget(H2DProjectionPlot* plot, QWidge
 
   m_spinBox->setMinimum(1);
   m_spinBox->setValue(1);
-  
+
   m_checkBoxLogX->setText("log x");
   m_checkBoxLogY->setText("log y");
 
@@ -82,6 +82,11 @@ void ProjectionControlWidget::changeProjectionType(int index)
 QSpinBox* ProjectionControlWidget::spinBox()
 {
   return m_spinBox;
+}
+
+QComboBox* ProjectionControlWidget::comboBox()
+{
+  return m_comboBox;
 }
 
 void ProjectionControlWidget::setElementStatus(bool status)

@@ -7,10 +7,10 @@
 #include "ParticleInformation.hh"
 #include "EfficiencyCorrectionSettings.hh"
 #include "SimulationFluxWidget.hh"
+#include "SettingsManager.hh"
 #include "SimpleEvent.hh"
 #include "Particle.hh"
 #include "Helpers.hh"
-
 
 #include <TH1D.h>
 #include <TLatex.h>
@@ -23,11 +23,14 @@
 
 #include <QVector>
 #include <QDebug>
+#include <QString>
+#include <QWidget>
+#include <QVBoxLayout>
 
 #include <cmath>
 #include <vector>
 
-RigidityFlux::RigidityFlux(Enums::ChargeSign type, const QDateTime& first, const QDateTime& last, TH1D* particleHistogram)
+RigidityFlux::RigidityFlux(Enums::ChargeSign type, int numberOfThreads, TH1D* particleHistogram, bool isAlbedo)
   : AnalysisPlot(Enums::MomentumReconstruction)
   , H1DPlot()
   , m_type(type)
@@ -35,11 +38,14 @@ RigidityFlux::RigidityFlux(Enums::ChargeSign type, const QDateTime& first, const
   , m_fluxCalculation(0)
   , m_particleHistogram(particleHistogram)
   , m_particleHistogramMirrored(0)
+  , m_isAlbedo(isAlbedo)
   , m_phiFit(0)
+  , m_situation(Enums::NoSituation)
+  , m_simulationWidget(new SimulationFluxWidget)
 {
   loadEfficiencies();
   QString title = "flux spectrum";
-  m_measurementTimeCalculation = new MeasurementTimeCalculation(first, last);
+  m_measurementTimeCalculation = new MeasurementTimeCalculation(numberOfThreads);
   if (m_type == Enums::Negative) {
     title += " - negative";
     m_particleHistogramMirrored = Helpers::createMirroredHistogram(m_particleHistogram);
@@ -84,24 +90,24 @@ RigidityFlux::RigidityFlux(Enums::ChargeSign type, const QDateTime& first, const
   legend->AddEntry(histogram, "Data", "p");
   addLegend(legend);
 
-  if (m_type == Enums::Positive) {
-    m_phiFit = new SolarModulationFit(histogram);
-    addFunction(m_phiFit->fit());
-    TLatex* gammaLatex = RootPlot::newLatex(.4, .88);
-    TLatex* phiLatex = RootPlot::newLatex(.4, .83);
-    addLatex(gammaLatex);
-    addLatex(phiLatex);
-  }
+  const int low = histogram->GetXaxis()->FindBin(0.5);
+  const int up = histogram->GetXaxis()->FindBin(10);
+  histogram->GetXaxis()->SetRange(low, up);
 
-  SimulationFluxWidget* secWidget = new SimulationFluxWidget;
-  connect(secWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
+  histogram->GetXaxis()->SetTitleOffset(1.2);
+  histogram->GetYaxis()->SetTitleOffset(1.2);
+
+  QWidget* secWidget = new QWidget();
+  QVBoxLayout* layout = new QVBoxLayout(secWidget);
+  layout->setContentsMargins(0, 0, 0, 0);
+  layout->addWidget(m_simulationWidget);
+  connect(m_simulationWidget, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
   setSecondaryWidget(secWidget);
 }
 
 RigidityFlux::~RigidityFlux()
 {
   if (m_measurementTimeCalculation) {
-    delete m_measurementTimeCalculation->histogram();
     delete m_measurementTimeCalculation;
     m_measurementTimeCalculation = 0;
   }
@@ -117,20 +123,45 @@ RigidityFlux::~RigidityFlux()
 
 void RigidityFlux::processEvent(const AnalyzedEvent* event)
 {
+  const Settings* settings = event->settings();
+  Q_ASSERT(settings);
+  m_situation = settings->situation();
   m_measurementTimeCalculation->update(event->simpleEvent());
 }
 
 void RigidityFlux::update()
 {
+  if (!m_phiFit && !m_isAlbedo && m_situation == Enums::KirunaFlight) {
+    if (m_type == Enums::Negative) {
+      m_phiFit = new SolarModulationFit(m_fluxCalculation->fluxHistogram(), Particle(Enums::Electron).pdgId());
+      m_phiFit->setGamma(2.7);
+    } else {
+      m_phiFit = new SolarModulationFit(m_fluxCalculation->fluxHistogram(), Particle(Enums::Proton).pdgId());
+    }
+    addFunction(m_phiFit->fit());
+    TLatex* J0Latex = RootPlot::newLatex(.4, .90);
+    TLatex* gammaLatex = RootPlot::newLatex(.4, .85);
+    TLatex* phiLatex = RootPlot::newLatex(.4, .80);
+    TLatex* gammaClatex = RootPlot::newLatex(.4, .75);
+    TLatex* rClatex = RootPlot::newLatex(.4, .70);
+    addLatex(J0Latex);
+    addLatex(gammaLatex);
+    addLatex(phiLatex);
+    addLatex(gammaClatex);
+    addLatex(rClatex);
+  }
   if (m_particleHistogramMirrored)
     Helpers::updateMirroredHistogram(m_particleHistogramMirrored, m_particleHistogram);
   m_fluxCalculation->update(m_measurementTimeCalculation->measurementTime());
   efficiencyCorrection();
   updateBinTitles();
-  if (m_type == Enums::Positive) {
+  if (m_phiFit) {
     m_phiFit->fit();
-    latex(m_nBinsNew)->SetTitle(qPrintable(m_phiFit->gammaLabel()));
-    latex(m_nBinsNew + 1)->SetTitle(qPrintable(m_phiFit->phiLabel()));
+    latex(m_nBinsNew + 0)->SetTitle(qPrintable(m_phiFit->J0Label()));
+    latex(m_nBinsNew + 1)->SetTitle(qPrintable(m_phiFit->gammaLabel()));
+    latex(m_nBinsNew + 2)->SetTitle(qPrintable(m_phiFit->phiLabel()));
+    latex(m_nBinsNew + 3)->SetTitle(qPrintable(m_phiFit->gammaClabel()));
+    latex(m_nBinsNew + 4)->SetTitle(qPrintable(m_phiFit->rClabel()));
   }
 }
 
@@ -141,16 +172,18 @@ void RigidityFlux::updateBinTitles()
     double x = xAxis()->GetBinCenterLog(bin + 1);
     double y = histogram()->GetBinContent(bin + 1);
     double value = m_particleHistogram->GetBinContent(bin);
-    QString text = "#scale[0.6]{"+QString::number(value,'d',0)+"}";
+    QString text = QString::number(value,'d',0);
+    if (histogram(0)->GetXaxis()->GetFirst() > bin + 1 || bin + 1 >histogram(0)->GetXaxis()->GetLast())
+      text = " ";
     latex(i)->SetX(x);
-    latex(i)->SetY(y);
+    latex(i)->SetY(y*1.1);
     latex(i)->SetTitle(qPrintable(text));
   }
 }
 
 void RigidityFlux::loadEfficiencies()
 {
-  const EfficiencyCorrectionSettings::FoldingType type = EfficiencyCorrectionSettings::Raw;
+  const EfficiencyCorrectionSettings::FoldingType type = EfficiencyCorrectionSettings::Unfolded;
   if (m_type == Enums::Negative) {
     m_multiLayerEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->allTrackerLayerCutEfficiency(type));
     m_trackFindingEff = Helpers::createMirroredHistogram(EfficiencyCorrectionSettings::instance()->trackFindingEfficiency(type));
@@ -178,7 +211,7 @@ void RigidityFlux::selectionChanged()
   while(numberOfHistograms() > 1) {
     removeHistogram(1);
   }
-  foreach(TH1D* histogram, static_cast<SimulationFluxWidget*>(secondaryWidget())->selectedHistograms()) {
+  foreach(TH1D* histogram, m_simulationWidget->selectedHistograms()) {
     TH1D* newHisto = new TH1D(*histogram);
     if (!newHisto->GetSumw2())
       newHisto->Sumw2();

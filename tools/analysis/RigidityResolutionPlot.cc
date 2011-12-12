@@ -287,7 +287,6 @@ void RigidityResolutionPlot::processEvent(const AnalyzedEvent* event)
 
   int bin = histogram(0)->FindBin(qAbs(referenceRigidity(event)));
   Q_ASSERT(0 < bin  && bin <= m_numberOfBins);
-  qDebug();
   while (it != end) {
     const Hypothesis* h = it.value();
     if (it.key() == Enums::SpectrometerExternalInformation && h->particle() == m_particleProperties.type()) {

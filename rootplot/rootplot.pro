@@ -18,6 +18,7 @@ CLASSES += \
   StringSpinBox \
   DetectorSelectionWidget \
   TOFChannelSelectionWidget \
+  TrackerSipmSelectionWidget \
   GraphPlot \
   PerdaixDisplay \
   H3DPlot

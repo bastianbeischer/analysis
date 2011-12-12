@@ -7,7 +7,6 @@ SUBDIRS  = \
   timeShift \
   photonTravelTime \
   tofEfficiency \
-  timeOverThreshold \
   timeOverThresholdScaling \
   timeResolution \
   mcComparison \
@@ -16,6 +15,7 @@ SUBDIRS  = \
   fileCompare \
   efficiencyCorrection \
   angularDistribution \
-  fluxAnalysisTool \
-  browser \
-  likelihood
+  likelihood \
+  fluxAnalysis \
+  signalHeightScaling \
+  browser

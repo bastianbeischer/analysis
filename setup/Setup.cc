@@ -17,6 +17,7 @@
 #include <QStringList>
 #include <QSettings>
 #include <QMutex>
+#include <QDebug>
 #include <QDir>
 
 #include <TVector3.h>
@@ -216,11 +217,29 @@ void Setup::writeSettings()
   m_settings->sync();
 }
 
+bool Setup::isTrackerId(unsigned short id)
+{
+  return ((0x3000 <= id && id < 0x3200) || (0x3300 <= id && id < 0x3400) || (0x3700 <= id && id < 0x3800) || (0x6000 <= id && id < 0x8000));
+}
+
+bool Setup::isTofId(unsigned short id)
+{
+  return (0x8000 <= id && id <= 0x803f);
+}
+
+bool Setup::isTrdId(unsigned short id)
+{
+  return ((0x3200 <= id && id < 0x3300) || (0x3400 <= id && id < 0x3700));
+}
+
 SensorTypes::Type Setup::sensorForId(unsigned short id)
 {
-  if (0x8000 <= id && id <= 0x803f)
+  if (isTrackerId(id))
+    return trackerSensorForId(id);
+  if (isTofId(id))
     return tofSensorForId(id);
-  //TODO: Tracker, TRD
+  if (isTrdId(id))
+    Q_ASSERT(false); //TODO: TRD
   Q_ASSERT(false);
   return SensorTypes::N_SENSOR_TYPES;
 }
@@ -233,17 +252,14 @@ SensorTypes::Type Setup::tofSensorForId(unsigned short id)
     SensorTypes::TOF_2_TEMP, SensorTypes::TOF_2_TEMP, SensorTypes::TOF_4_TEMP, SensorTypes::TOF_4_TEMP,
     SensorTypes::TOF_1_TEMP, SensorTypes::TOF_1_TEMP, SensorTypes::TOF_3_TEMP, SensorTypes::TOF_3_TEMP,
     SensorTypes::TOF_1_TEMP, SensorTypes::TOF_1_TEMP, SensorTypes::TOF_3_TEMP, SensorTypes::TOF_3_TEMP,
-    
     SensorTypes::TOF_2_TEMP, SensorTypes::TOF_2_TEMP, SensorTypes::TOF_4_TEMP, SensorTypes::TOF_4_TEMP,
     SensorTypes::TOF_2_TEMP, SensorTypes::TOF_2_TEMP, SensorTypes::TOF_4_TEMP, SensorTypes::TOF_4_TEMP,
     SensorTypes::TOF_1_TEMP, SensorTypes::TOF_1_TEMP, SensorTypes::TOF_3_TEMP, SensorTypes::TOF_3_TEMP,
     SensorTypes::TOF_1_TEMP, SensorTypes::TOF_1_TEMP, SensorTypes::TOF_3_TEMP, SensorTypes::TOF_3_TEMP,
-    
     SensorTypes::TOF_6_TEMP, SensorTypes::TOF_6_TEMP, SensorTypes::TOF_8_TEMP, SensorTypes::TOF_8_TEMP,
     SensorTypes::TOF_6_TEMP, SensorTypes::TOF_6_TEMP, SensorTypes::TOF_8_TEMP, SensorTypes::TOF_8_TEMP,
     SensorTypes::TOF_5_TEMP, SensorTypes::TOF_5_TEMP, SensorTypes::TOF_7_TEMP, SensorTypes::TOF_7_TEMP,
     SensorTypes::TOF_5_TEMP, SensorTypes::TOF_5_TEMP, SensorTypes::TOF_7_TEMP, SensorTypes::TOF_7_TEMP,
-    
     SensorTypes::TOF_6_TEMP, SensorTypes::TOF_6_TEMP, SensorTypes::TOF_8_TEMP, SensorTypes::TOF_8_TEMP,
     SensorTypes::TOF_6_TEMP, SensorTypes::TOF_6_TEMP, SensorTypes::TOF_8_TEMP, SensorTypes::TOF_8_TEMP,
     SensorTypes::TOF_5_TEMP, SensorTypes::TOF_5_TEMP, SensorTypes::TOF_7_TEMP, SensorTypes::TOF_7_TEMP,
@@ -262,7 +278,6 @@ Enums::LikelihoodVariables Setup::proposedLikelihoodVariables() const
   return Enums::likelihoodVariables(m_settings->value("proposedLikelihoods").toString());
 }
 
-
 QVector<Enums::Particle> Setup::proposedParticleVector() const
 {
   QVector<Enums::Particle> particleVector;
@@ -272,4 +287,30 @@ QVector<Enums::Particle> Setup::proposedParticleVector() const
     if ((it.key() & particles) && (it.key() != Enums::NoParticle))
       particleVector.append(it.key());
   return particleVector;
+}
+
+SensorTypes::Type Setup::trackerSensorForId(unsigned short id)
+{
+  if (0x3000 <= id && id <= 0x30ff) return (id - 0x3000 < 128) ? SensorTypes::HPE_0x3000_TEMP : SensorTypes::HPE_0x3001_TEMP;
+  if (0x3100 <= id && id <= 0x31ff) return (id - 0x3100 < 128) ? SensorTypes::HPE_0x3100_TEMP : SensorTypes::HPE_0x3101_TEMP;
+  if (0x3300 <= id && id <= 0x33ff) return (id - 0x3300 < 128) ? SensorTypes::HPE_0x3300_TEMP : SensorTypes::HPE_0x3301_TEMP;
+  if (0x3700 <= id && id <= 0x37ff) return (id - 0x3700 < 128) ? SensorTypes::HPE_0x3700_TEMP : SensorTypes::HPE_0x3701_TEMP;
+  if (0x6000 <= id && id <= 0x60ff) return (id - 0x6000 < 128) ? SensorTypes::HPE_0x6000_TEMP : SensorTypes::HPE_0x6001_TEMP;
+  if (0x6100 <= id && id <= 0x61ff) return (id - 0x6100 < 128) ? SensorTypes::HPE_0x6100_TEMP : SensorTypes::HPE_0x6101_TEMP;
+  if (0x6200 <= id && id <= 0x62ff) return (id - 0x6200 < 128) ? SensorTypes::HPE_0x6200_TEMP : SensorTypes::HPE_0x6201_TEMP;
+  if (0x6300 <= id && id <= 0x63ff) return (id - 0x6300 < 128) ? SensorTypes::HPE_0x6300_TEMP : SensorTypes::HPE_0x6301_TEMP;
+  if (0x6400 <= id && id <= 0x64ff) return (id - 0x6400 < 128) ? SensorTypes::HPE_0x6400_TEMP : SensorTypes::HPE_0x6401_TEMP;
+  if (0x6500 <= id && id <= 0x65ff) return (id - 0x6500 < 128) ? SensorTypes::HPE_0x6500_TEMP : SensorTypes::HPE_0x6501_TEMP;
+  if (0x6600 <= id && id <= 0x66ff) return (id - 0x6600 < 128) ? SensorTypes::HPE_0x6600_TEMP : SensorTypes::HPE_0x6601_TEMP;
+  if (0x6700 <= id && id <= 0x67ff) return (id - 0x6700 < 128) ? SensorTypes::HPE_0x6700_TEMP : SensorTypes::HPE_0x6701_TEMP;
+  if (0x7800 <= id && id <= 0x78ff) return (id - 0x7800 < 128) ? SensorTypes::HPE_0x7800_TEMP : SensorTypes::HPE_0x7801_TEMP;
+  if (0x7900 <= id && id <= 0x79ff) return (id - 0x7900 < 128) ? SensorTypes::HPE_0x7900_TEMP : SensorTypes::HPE_0x7901_TEMP;
+  if (0x7a00 <= id && id <= 0x7aff) return (id - 0x7a00 < 128) ? SensorTypes::HPE_0x7a00_TEMP : SensorTypes::HPE_0x7a01_TEMP;
+  if (0x7b00 <= id && id <= 0x7bff) return (id - 0x7b00 < 128) ? SensorTypes::HPE_0x7b00_TEMP : SensorTypes::HPE_0x7b01_TEMP;
+  if (0x7c00 <= id && id <= 0x7cff) return (id - 0x7c00 < 128) ? SensorTypes::HPE_0x7c00_TEMP : SensorTypes::HPE_0x7c01_TEMP;
+  if (0x7d00 <= id && id <= 0x7dff) return (id - 0x7d00 < 128) ? SensorTypes::HPE_0x7d00_TEMP : SensorTypes::HPE_0x7d01_TEMP;
+  if (0x7e00 <= id && id <= 0x7eff) return (id - 0x7e00 < 128) ? SensorTypes::HPE_0x7e00_TEMP : SensorTypes::HPE_0x7e01_TEMP;
+  if (0x7f00 <= id && id <= 0x7fff) return (id - 0x7f00 < 128) ? SensorTypes::HPE_0x7f00_TEMP : SensorTypes::HPE_0x7f01_TEMP;
+  Q_ASSERT(false);
+  return SensorTypes::N_SENSOR_TYPES;
 }

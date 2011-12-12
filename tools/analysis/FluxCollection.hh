@@ -9,7 +9,7 @@ class TH1D;
 
 class FluxCollection : public PlotCollection {
 public:
-  FluxCollection(const QDateTime& first, const QDateTime& last);
+  FluxCollection(int numberOfThreads);
   ~FluxCollection();
   void processEvent(const AnalyzedEvent*);
 private:

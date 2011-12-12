@@ -28,6 +28,9 @@ namespace Constants
   const int nTofBars = 16;
   const int nTofSipmsPerBar = 4;
 
+  const int nTrackerSipms = 160;
+  const double idealTrackerSignalHeight = 2000.;    // adc counts
+
   const double TRDTubeRadius = 3.0;                 // mm
 
   const int runLength = 600;                        // seconds

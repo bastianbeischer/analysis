@@ -3,7 +3,6 @@
 
 #include "AnalysisPlot.hh"
 #include "H1DPlot.hh"
-#include "MeasurementTimeCalculation.hh"
 
 #include <QDateTime>
 
@@ -14,8 +13,6 @@ public:
   void processEvent(const AnalyzedEvent*);
   void update();
   void draw(TCanvas* canvas);
-private:
-  MeasurementTimeCalculation m_calculation;
 };
 
 #endif

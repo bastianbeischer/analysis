@@ -73,7 +73,7 @@ void TimeResolutionPlot::processEvent(const AnalyzedEvent* event)
     return;
   if (!settings && !event->flagsSet(ParticleInformation::InsideMagnet))
     return;
-  if (settings && settings->situation() != Settings::Testbeam11 && !event->flagsSet(ParticleInformation::InsideMagnet))
+  if (settings && settings->situation() != Enums::Testbeam11 && !event->flagsSet(ParticleInformation::InsideMagnet))
     return;
 
   const TimeOfFlight* tof = event->particle()->timeOfFlight();
@@ -95,7 +95,7 @@ void TimeResolutionPlot::processEvent(const AnalyzedEvent* event)
     double lCorrection = (d - l) / Constants::speedOfLight;
     double rigidity = 0;
     double m = 0;
-    if (settings && settings->situation() == Settings::Testbeam11) {
+    if (settings && settings->situation() == Enums::Testbeam11) {
       rigidity = settings->momentum();
       if (settings->polarity() < 0) {
         if (event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV1) > 200 || event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV2) > 200) {

@@ -28,7 +28,9 @@ LIBS += \
 
 CLASSES = \
   MainWindow \
-  TimeOverThresholdScaling
+  TimeOverThresholdScaling \
+  ResiduePlot \
+  TimeOverThresholdProjection
 
 SOURCES = \
   main.cc

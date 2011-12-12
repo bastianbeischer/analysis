@@ -53,7 +53,7 @@ void SettingTimePlot::processEvent(const AnalyzedEvent* event)
 {
   //get settings if present
   const Settings* settings = event->settings();
-  if (!settings || settings->situation() != Settings::Testbeam11)
+  if (!settings || settings->situation() != Enums::Testbeam11)
     return;
 
   double value = 0;

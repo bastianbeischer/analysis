@@ -56,7 +56,8 @@ const QMap<Enums::Correction, QString> Enums::s_correctionMap = InitializableMap
    //<< QPair<Enums::Correction, QString>(Enums::TrdTemperature, "TRD temperature")
    << QPair<Enums::Correction, QString>(Enums::TofTimeOverThreshold, "time over threshold")
    << QPair<Enums::Correction, QString>(Enums::MultipleScattering, "multiple scattering")
-   << QPair<Enums::Correction, QString>(Enums::PhotonTravelTime, "photon travel time");
+   << QPair<Enums::Correction, QString>(Enums::PhotonTravelTime, "photon travel time")
+   << QPair<Enums::Correction, QString>(Enums::TrackerSignalHeight, "tracker signal height");
 
 const QMap<Enums::Particle, QString> Enums::s_particleMap = InitializableMap<Enums::Particle, QString>()
    << QPair<Enums::Particle, QString>(Enums::NoParticle, "no particle")
@@ -110,6 +111,12 @@ const QMap<Enums::ReconstructionMethod, QString> Enums::s_reconstructionMethodMa
   << QPair<Enums::ReconstructionMethod, QString>(Enums::WeightedMeanExternalInformation, "weighted mean with external information")
   << QPair<Enums::ReconstructionMethod, QString>(Enums::Chi2ExternalInformation, "chi2 with external information")
   << QPair<Enums::ReconstructionMethod, QString>(Enums::LikelihoodExternalInformation, "likelihood with external information");
+
+const QMap<Enums::Situation, QString> Enums::s_situationMap = InitializableMap<Enums::Situation, QString>()
+  << QPair<Enums::Situation, QString>(Enums::NoSituation, "unknown")
+  << QPair<Enums::Situation, QString>(Enums::KirunaMuons, "kirunamuons")
+  << QPair<Enums::Situation, QString>(Enums::KirunaFlight, "kirunaflight")
+  << QPair<Enums::Situation, QString>(Enums::Testbeam11, "testbeam11");
 
 // ChargeSign
 const QString Enums::label(Enums::ChargeSign key) {return s_chargeSignMap.value(key);}
@@ -244,3 +251,9 @@ const QString Enums::label(Enums::ReconstructionMethod key) {return s_reconstruc
 Enums::ReconstructionMethod Enums::reconstructionMethod(const QString& value) {return s_reconstructionMethodMap.key(value);}
 Enums::ReconstructionMethodIterator Enums::reconstructionMethodBegin() {return s_reconstructionMethodMap.constBegin();}
 Enums::ReconstructionMethodIterator Enums::reconstructionMethodEnd() {return s_reconstructionMethodMap.constEnd();}
+
+// Situation
+const QString Enums::label(Enums::Situation key) {return s_situationMap.value(key);}
+Enums::Situation Enums::situation(const QString& value) {return s_situationMap.key(value);}
+QMap<Enums::Situation, QString>::ConstIterator Enums::situationBegin() {return s_situationMap.constBegin();}
+QMap<Enums::Situation, QString>::ConstIterator Enums::situationEnd() {return s_situationMap.constEnd();}

@@ -8,12 +8,11 @@
 
 class ParticleProperties
 {
-  
 public:
   ParticleProperties();
   ParticleProperties(const Enums::Particle&);
   ~ParticleProperties();
-  
+
   void setType(const Enums::Particle&);
 
   Enums::Particle type() const {return m_type;}

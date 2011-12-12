@@ -34,7 +34,7 @@ CherenkovLikelihood::~CherenkovLikelihood()
 double CherenkovLikelihood::eval(const AnalyzedEvent* event, const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
   // CherenkovLikelihood should not be used for non testbeam data.
-  Q_ASSERT(event->settings()->situation() == Settings::Testbeam11);
+  Q_ASSERT(event->settings()->situation() == Enums::Testbeam11);
   if (goodInterpolation)
     *goodInterpolation = true;
   int n;

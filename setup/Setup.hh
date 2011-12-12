@@ -17,17 +17,15 @@ class DetectorElement;
 class QSettings;
 class MagneticField;
 
-typedef QMap<double,Layer*>::const_iterator LayerIterator ;
-typedef QMap<unsigned short,DetectorElement*>::const_iterator ElementIterator;
+typedef QMap<double, Layer*>::const_iterator LayerIterator;
+typedef QMap<unsigned short, DetectorElement*>::const_iterator ElementIterator;
 
-class Setup
-{
- 
+class Setup {
 public:
   ~Setup();
 
   static Setup* instance();
- 
+
 public:
   Layer* layer(double z);
   DetectorElement* element(unsigned short id);
@@ -52,6 +50,9 @@ public:
 
   void writeSettings();
 
+  bool isTrackerId(unsigned short id);
+  bool isTofId(unsigned short id);
+  bool isTrdId(unsigned short id);
   SensorTypes::Type sensorForId(unsigned short id);
 
 private:
@@ -62,6 +63,7 @@ private:
   DetectorElement* constructElement(unsigned short id);
 
   SensorTypes::Type tofSensorForId(unsigned short id);
+  SensorTypes::Type trackerSensorForId(unsigned short id);
 
 private:
   static Setup* s_instance;

@@ -29,6 +29,7 @@
 #include "TOFPositionCorrelationPlot.hh"
 #include "MomentumSpectrumPlot.hh"
 #include "SignalHeight2DPlot.hh"
+#include "SignalHeight2DNormalizedPlot.hh"
 #include "SignalHeightPlot.hh"
 #include "ClusterLengthPlot.hh"
 #include "ClusterShapePlot.hh"
@@ -100,6 +101,7 @@
 #include "TOFProbabilityDensityFunction.hh"
 #include "LogLikelihoodPlot.hh"
 #include "ReconstructionMethodCorrelationPlotCollection.hh"
+#include "SignalHeightCorrelationPlotCollection.hh"
 
 #include <TPad.h>
 #include <TCanvas.h>
@@ -293,6 +295,10 @@ void Analysis::setupPlots()
 
   if (m_analysisSetting.analysisTopics & Enums::SignalHeightTracker) {
     addPlot(new SignalHeight2DPlot);
+    addPlot(new SignalHeight2DNormalizedPlot);
+    addPlot(new SignalHeightCorrelationPlotCollection(SignalHeightCorrelationPlot::Temperature));
+    addPlot(new SignalHeightCorrelationPlotCollection(SignalHeightCorrelationPlot::Time, first, last));
+    addPlot(new SignalHeightCorrelationPlotCollection(SignalHeightCorrelationPlot::Rigidity));
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tracker)
@@ -406,7 +412,7 @@ void Analysis::setupPlots()
     addPlot(new MomentumSpectrumPlot(Enums::Positive | Enums::Negative, true));
     addPlot(new AlbedosVsMomentumPlot());
     addPlot(new MeasurementTimePlot(first, last));
-    addPlot(new FluxCollection(first, last));
+    addPlot(new FluxCollection(m_analysisSetting.numberOfThreads));
     addPlot(new ReconstructionMethodCorrelationPlotCollection(m_analysisSetting.particles));
   }
   if (m_analysisSetting.analysisTopics & Enums::LikelihoodTopic) {

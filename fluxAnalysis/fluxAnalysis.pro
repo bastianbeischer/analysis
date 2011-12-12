@@ -8,6 +8,7 @@ TOPLEVEL = ..
 INCLUDEPATH+= \
   $$TOPLEVEL/global \
   $$TOPLEVEL/particle \
+  $$TOPLEVEL/setup \
   $$TOPLEVEL/tracking \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/processing \
@@ -19,6 +20,7 @@ LIBS += \
   -L$$TOPLEVEL/lib \
   -lglobal \
   -lparticle \
+  -lsetup \
   -lrootplot \
   -lprocessing
 
