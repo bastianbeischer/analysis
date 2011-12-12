@@ -39,15 +39,11 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
   m_ui->aspectRatioComboBox->addItem("16:10", 16./10.);
   m_ui->aspectRatioComboBox->addItem("16:9", 16./9.);
   connect(m_ui->aspectRatioComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(aspectRatioChanged(int)));
-
+  m_ui->verticalSplitter->setStretchFactor(0, 1);
+  m_ui->verticalSplitter->setStretchFactor(1, 1);
+  m_ui->verticalSplitter->setStretchFactor(2, 0);
   m_ui->userControlWidget->hide();
   m_ui->userControlWidget->layout()->setAlignment(Qt::AlignLeft | Qt::AlignHCenter);
-  connect(m_ui->canvasListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectCanvas(QListWidgetItem*)));
-  connect(m_ui->canvasListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
-    this, SLOT(selectCanvas(QListWidgetItem*, QListWidgetItem*)));
-  connect(m_ui->plotListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectPlot(QListWidgetItem*)));
-  connect(m_ui->plotListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
-    this, SLOT(selectPlot(QListWidgetItem*, QListWidgetItem*)));
   connect(m_ui->plotOptionComboBox, SIGNAL(currentIndexChanged(const QString&)),
     this, SLOT(plotOptionComboBoxCurrentIndexChanged(const QString&)));
   connect(m_ui->saveButton, SIGNAL(clicked()), this, SLOT(saveButtonClicked()));
@@ -57,13 +53,12 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
   connect(m_ui->logZCheckBox, SIGNAL(stateChanged(int)), m_ui->qtWidget, SLOT(setLogZ(int)));
   connect(m_ui->qtWidget, SIGNAL(positionChanged(double, double)), this, SLOT(canvasPositionChanged(double, double)));
   connect(m_ui->qtWidget, SIGNAL(unzoomButtonPressed()), this, SLOT(unzoom()));
-
   connect(m_ui->canvasFilterEdit, SIGNAL(textChanged(const QString&)), this, SLOT(canvasFilterChanged(const QString&)));
-  connect(m_ui->plotFilterEdit, SIGNAL(textChanged(const QString&)), this, SLOT(plotFilterChanged(const QString&)));
   connect(m_ui->clearCanvasFilterButton, SIGNAL(clicked()), m_ui->canvasFilterEdit, SLOT(clear()));
+  connect(m_ui->plotFilterEdit, SIGNAL(textChanged(const QString&)), this, SLOT(plotFilterChanged(const QString&)));
   connect(m_ui->clearPlotFilterButton, SIGNAL(clicked()), m_ui->plotFilterEdit, SLOT(clear()));
-
-  m_ui->plotListWidget->hide();
+  m_ui->canvasWidget->hide();
+  m_ui->plotWidget->hide();
 }
 
 PostAnalysisWindow::~PostAnalysisWindow()
@@ -178,6 +173,7 @@ void PostAnalysisWindow::addAnalysisFiles(const QStringList& files)
 
 PostAnalysisCanvas* PostAnalysisWindow::addCanvas(TFile* file, const QString& name)
 {
+  m_ui->canvasListWidget->disconnect();
   PostAnalysisCanvas* canvas = PostAnalysisCanvas::fromFile(file, name);
   if (!canvas)
     return 0;
@@ -185,6 +181,10 @@ PostAnalysisCanvas* PostAnalysisWindow::addCanvas(TFile* file, const QString& na
   QListWidgetItem* item = new QListWidgetItem(canvas->name());
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
   m_ui->canvasListWidget->addItem(item);
+  m_ui->canvasWidget->show();
+  connect(m_ui->canvasListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectCanvas(QListWidgetItem*)));
+  connect(m_ui->canvasListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
+    this, SLOT(selectCanvas(QListWidgetItem*, QListWidgetItem*)));
   return canvas;
 }
 
@@ -195,7 +195,7 @@ void PostAnalysisWindow::addPlot(PostAnalysisPlot* plot)
   QListWidgetItem* item = new QListWidgetItem(plot->title());
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
   m_ui->plotListWidget->addItem(item);
-  m_ui->plotListWidget->show();
+  m_ui->plotWidget->show();
   connect(m_ui->plotListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectPlot(QListWidgetItem*)));
   connect(m_ui->plotListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
     this, SLOT(selectPlot(QListWidgetItem*, QListWidgetItem*)));

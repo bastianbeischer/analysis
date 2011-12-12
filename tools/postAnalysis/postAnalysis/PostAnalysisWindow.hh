@@ -42,8 +42,8 @@ private slots:
   void unzoom();
 protected:
   Ui_postAnalysisWindow* m_ui;
-  PostAnalysisCanvas* m_selectedCanvas;//int m_selectedPlot;
-  PostAnalysisPlot* m_selectedPlot;//int m_selectedPlot;
+  PostAnalysisCanvas* m_selectedCanvas;
+  PostAnalysisPlot* m_selectedPlot;
 };
 
 #endif

@@ -14,15 +14,9 @@
    <string>PERDaix post analysis</string>
   </property>
   <widget class="QWidget" name="mainWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_6">
+   <layout class="QHBoxLayout" name="horizontalLayout_3">
     <item>
-     <widget class="QSplitter" name="verticalSplitter">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
+     <widget class="QSplitter" name="horizontalSplitter">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -34,6 +28,9 @@
         </sizepolicy>
        </property>
        <layout class="QVBoxLayout" name="verticalLayoutLeft">
+        <property name="spacing">
+         <number>2</number>
+        </property>
         <property name="margin">
          <number>0</number>
         </property>
@@ -87,7 +84,7 @@
             <number>0</number>
            </property>
            <item>
-            <spacer name="horizontalSpacer_2">
+            <spacer name="userControlHorizontalSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
              </property>
@@ -105,24 +102,31 @@
        </layout>
       </widget>
       <widget class="QWidget" name="rightWidget" native="true">
-       <property name="font">
-        <font>
-         <family>DejaVu Sans</family>
-        </font>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_3">
+       <layout class="QHBoxLayout" name="leftHorizontalLayout">
         <property name="margin">
          <number>0</number>
         </property>
         <item>
-         <widget class="QSplitter" name="splitter">
+         <widget class="QSplitter" name="verticalSplitter">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
-          <widget class="QWidget" name="verticalLayoutWidget">
-           <layout class="QVBoxLayout" name="verticalLayout">
+          <widget class="QWidget" name="canvasWidget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <layout class="QVBoxLayout" name="canvasVerticalLayout">
+            <property name="spacing">
+             <number>2</number>
+            </property>
+            <property name="margin">
+             <number>0</number>
+            </property>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
+             <layout class="QHBoxLayout" name="canvasRegExpHorizontalLayout">
               <property name="spacing">
                <number>0</number>
               </property>
@@ -130,6 +134,7 @@
                <widget class="QLineEdit" name="canvasFilterEdit">
                 <property name="font">
                  <font>
+                  <family>DejaVu Sans Mono</family>
                   <pointsize>12</pointsize>
                  </font>
                 </property>
@@ -159,15 +164,34 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="verticalLayoutWidget_2">
-           <layout class="QVBoxLayout" name="verticalLayout_2">
+          <widget class="QWidget" name="plotWidget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <layout class="QVBoxLayout" name="plotVerticalLayout">
+            <property name="spacing">
+             <number>2</number>
+            </property>
+            <property name="margin">
+             <number>0</number>
+            </property>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_5">
+             <layout class="QHBoxLayout" name="plotRegExphorizontalLayout">
               <property name="spacing">
                <number>0</number>
               </property>
               <item>
-               <widget class="QLineEdit" name="plotFilterEdit"/>
+               <widget class="QLineEdit" name="plotFilterEdit">
+                <property name="font">
+                 <font>
+                  <family>DejaVu Sans Mono</family>
+                  <pointsize>12</pointsize>
+                 </font>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QToolButton" name="clearPlotFilterButton">
@@ -198,154 +222,159 @@
             </item>
            </layout>
           </widget>
-          <widget class="QWidget" name="layoutWidget">
-           <layout class="QHBoxLayout" name="controlHorizontalLayout">
-            <property name="sizeConstraint">
-             <enum>QLayout::SetMaximumSize</enum>
+          <widget class="QWidget" name="controlWidget" native="true">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <property name="spacing">
+             <number>2</number>
+            </property>
+            <property name="margin">
+             <number>0</number>
             </property>
             <item>
-             <layout class="QVBoxLayout" name="verticalLayout_5">
+             <layout class="QHBoxLayout" name="plotHorizontalLayout">
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_3">
-                <item>
-                 <widget class="QCheckBox" name="logXCheckBox">
-                  <property name="text">
-                   <string>logX</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="logYCheckBox">
-                  <property name="text">
-                   <string>logY</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="logZCheckBox">
-                  <property name="text">
-                   <string>logZ</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_3">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>40</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QComboBox" name="aspectRatioComboBox"/>
-                </item>
-               </layout>
+               <widget class="QCheckBox" name="logXCheckBox">
+                <property name="text">
+                 <string>logX</string>
+                </property>
+               </widget>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_4">
-                <item>
-                 <widget class="QComboBox" name="plotOptionComboBox">
-                  <property name="currentIndex">
-                   <number>0</number>
-                  </property>
-                  <item>
-                   <property name="text">
-                    <string>COL Z</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>SURF1</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>LEGO E</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>CONT4 Z</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>LEGO2</string>
-                   </property>
-                  </item>
-                  <item>
-                   <property name="text">
-                    <string>COL Z TEXT</string>
-                   </property>
-                  </item>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="saveButton">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>DejaVu Sans</family>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>save</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="saveAllButton">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>DejaVu Sans</family>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>save all</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               <widget class="QCheckBox" name="logYCheckBox">
+                <property name="text">
+                 <string>logY</string>
+                </property>
+               </widget>
               </item>
               <item>
-               <widget class="QLabel" name="positionLabel">
+               <widget class="QCheckBox" name="logZCheckBox">
+                <property name="text">
+                 <string>logZ</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="plotHorizontalSpacer">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QComboBox" name="aspectRatioComboBox"/>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="controlHorizontalLayout">
+              <item>
+               <widget class="QComboBox" name="plotOptionComboBox">
+                <property name="currentIndex">
+                 <number>0</number>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>COL Z</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>SURF1</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>LEGO E</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>CONT4 Z</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>LEGO2</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>COL Z TEXT</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="saveButton">
                 <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                   <horstretch>0</horstretch>
                   <verstretch>0</verstretch>
                  </sizepolicy>
                 </property>
                 <property name="font">
                  <font>
-                  <family>DejaVu Sans Mono</family>
-                  <pointsize>12</pointsize>
+                  <family>DejaVu Sans</family>
                  </font>
                 </property>
                 <property name="text">
-                 <string/>
+                 <string>save</string>
                 </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="saveAllButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="font">
+                 <font>
+                  <family>DejaVu Sans</family>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>save all</string>
                 </property>
                </widget>
               </item>
              </layout>
+            </item>
+            <item>
+             <widget class="QLabel" name="positionLabel">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="font">
+               <font>
+                <family>DejaVu Sans Mono</family>
+                <pointsize>12</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>
