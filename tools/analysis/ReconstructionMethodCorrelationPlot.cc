@@ -20,7 +20,6 @@ ReconstructionMethodCorrelationPlot::ReconstructionMethodCorrelationPlot(Enums::
   TH2D* histogram = new TH2D(qPrintable(title()), "", 240, -12., 12., 240, -12., 12.);
   setAxisTitle("R_{" + Enums::label(methodX) + "} / GV", "R_{" + Enums::label(methodY) + "} / GV" , "");
   addHistogram(histogram);
-  qDebug() << "ReconstructionMethodCorrelationPlot::ReconstructionMethodCorrelationPlot";
 }
 
 ReconstructionMethodCorrelationPlot::~ReconstructionMethodCorrelationPlot()

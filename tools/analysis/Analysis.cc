@@ -99,7 +99,7 @@
 #include "MeasurementTimeDistributionPlot.hh"
 #include "TOFProbabilityDensityFunction.hh"
 #include "LogLikelihoodPlot.hh"
-#include "ReconstructionMethodCorrelationPlot.hh"
+#include "ReconstructionMethodCorrelationPlotCollection.hh"
 
 #include <TPad.h>
 #include <TCanvas.h>
@@ -407,10 +407,7 @@ void Analysis::setupPlots()
     addPlot(new AlbedosVsMomentumPlot());
     addPlot(new MeasurementTimePlot(first, last));
     addPlot(new FluxCollection(first, last));
-    Enums::ReconstructionMethodIterator end = Enums::reconstructionMethodEnd();
-    for (Enums::ReconstructionMethodIterator xIt = Enums::reconstructionMethodBegin(); xIt != end; ++xIt)
-      for (Enums::ReconstructionMethodIterator yIt = Enums::reconstructionMethodBegin(); yIt != end; ++yIt)
-        addPlot(new ReconstructionMethodCorrelationPlot(xIt.key(), yIt.key()));
+    addPlot(new ReconstructionMethodCorrelationPlotCollection());
   }
   if (m_analysisSetting.analysisTopics & Enums::LikelihoodTopic) {
     Enums::ParticleIterator end = Enums::particleEnd();
