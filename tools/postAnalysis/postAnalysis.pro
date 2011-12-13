@@ -15,7 +15,7 @@ SUBDIRS  = \
   fileCompare \
   efficiencyCorrection \
   angularDistribution \
-  likelihood \
+  likelihoodFit \
   fluxAnalysis \
   signalHeightScaling \
   browser

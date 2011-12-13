@@ -1,9 +1,9 @@
 TEMPLATE = app
-TARGET = likelihood
+TARGET = trdSignalLikelihoodFit
 
 CONFIG += debug
 
-TOPLEVEL = ../../..
+TOPLEVEL = ../../../..
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \
@@ -13,7 +13,8 @@ INCLUDEPATH += \
   $$TOPLEVEL/global \
   $$TOPLEVEL/particle \
   $$TOPLEVEL/tracking \
-  $$TOPLEVEL/tools/postAnalysis/postAnalysis
+  $$TOPLEVEL/tools/postAnalysis/postAnalysis \
+  $$TOPLEVEL/tools/postAnalysis/likelihoodFit
 
 LIBS += \
   -L$$TOPLEVEL/lib \
@@ -24,12 +25,11 @@ LIBS += \
   -lprocessing \
   -lsetup \
   -lSimpleEvent \
-  -lpostAnalysis
+  -lpostAnalysis \
+  -llikelihoodFit
 
 CLASSES = \
-  MainWindow \
-  LikelihoodPDFPlot \
-  ParameterPlot
+  MainWindow
 
 SOURCES = \
   main.cc
