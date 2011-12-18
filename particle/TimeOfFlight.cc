@@ -15,6 +15,7 @@
 TimeOfFlight::TimeOfFlight()
   : m_startTime(0.)
   , m_stopTime(0.)
+  , m_timeOverThreshold(0.)
   , m_good(false)
 {
 }
@@ -27,6 +28,7 @@ void TimeOfFlight::reset()
 {
   m_startTime = 0.;
   m_stopTime = 0.;
+  m_timeOverThreshold = 0.;
   m_good = false;
 }
 
@@ -58,11 +60,15 @@ void TimeOfFlight::calculateTimes(const Track* track)
         } else {
           stopTimes.append(startTime);
         }
+        m_timeOverThreshold+= tot;
       }
     }
   }
-  if (startTimes.count() < 6 || stopTimes.count() < 6)
+  if (startTimes.count() < 6 || stopTimes.count() < 6) {
+    m_timeOverThreshold = 0.;
     return;
+  }
+  m_timeOverThreshold/= startTimes.count() + stopTimes.count();
   qSort(startTimes);
   qSort(stopTimes);
   m_startTime = bestTime(startTimes);

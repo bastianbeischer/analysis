@@ -9,32 +9,40 @@
 ParameterPlot::ParameterPlot(Likelihood* likelihood, Enums::Particle particle)
   : PostAnalysisPlot()
   , GraphPlot()
+  , m_likelihood(likelihood)
+  , m_particle(particle)
+  , m_numberOfPoints(101)
+  , m_min(0.)
+  , m_max(10.)
+  , m_step((m_max - m_min) / (m_numberOfPoints - 1))
 {
-  setTitle(QString("%1 parameters %2").arg(likelihood->title()).arg(Enums::label(particle)));
-  int numberOfParameters = likelihood->numberOfParameters();
-
-  const int numberOfPoints = 101;
-  double min = 0.;
-  double max = 10.;
-  double step = (max - min) / (numberOfPoints - 1);
+  setTitle(QString("%1 parameters %2").arg(m_likelihood->title()).arg(Enums::label(m_particle)));
+  int numberOfParameters = m_likelihood->numberOfParameters();
 
   for (int parameter = 0; parameter < numberOfParameters; ++parameter)
-    addGraph(new TGraph(numberOfPoints), RootPlot::LP);
+    addGraph(new TGraph(m_numberOfPoints), RootPlot::LP);
 
   if (numberOfParameters) {
-    for (int point = 0; point < numberOfPoints; ++point) {
-      double absoluteRigidity = min + point * step;
-      Likelihood::ParameterVector parameters = likelihood->interpolation(Hypothesis(particle, 1. / absoluteRigidity));
+    for (int point = 0; point < m_numberOfPoints; ++point) {
+      double absoluteRigidity = m_min + point * m_step;
+      Likelihood::ParameterVector parameters = m_likelihood->interpolation(Hypothesis(m_particle, 1. / absoluteRigidity));
       Q_ASSERT(parameters.count() == numberOfParameters);
       for (int parameter = 0; parameter < numberOfParameters; ++parameter)
         graph(parameter)->SetPoint(point, absoluteRigidity, parameters[parameter]);
     }
   }
+}
 
-  TGraph* integralGraph = new TGraph(numberOfPoints);
-  for (int point = 0; point < numberOfPoints; ++point) {
-    double absoluteRigidity = min + point * step;
-    LikelihoodPDF* pdf = likelihood->pdf(KineticVariable(particle, Enums::AbsoluteRigidity, absoluteRigidity));
+ParameterPlot::~ParameterPlot()
+{
+}
+
+void ParameterPlot::addIntegral()
+{
+  TGraph* integralGraph = new TGraph(m_numberOfPoints);
+  for (int point = 0; point < m_numberOfPoints; ++point) {
+    double absoluteRigidity = m_min + point * m_step;
+    LikelihoodPDF* pdf = m_likelihood->pdf(KineticVariable(m_particle, Enums::AbsoluteRigidity, absoluteRigidity));
     double integral = pdf->integral();
     delete pdf;
     integralGraph->SetPoint(point, absoluteRigidity, integral);
@@ -44,23 +52,23 @@ ParameterPlot::ParameterPlot(Likelihood* likelihood, Enums::Particle particle)
 
   setAxisTitle("|R| / GV", "parameter / a.u.");
 
-  qDebug() << qPrintable(likelihood->title() + ":");
+  qDebug() << qPrintable(m_likelihood->title() + ":");
   QString key;
-  key = Enums::label(particle);
+  key = Enums::label(m_particle);
   key.replace("+", "%2B");
   key+= "/normalizationRigidities=";
-  for (int point = 0; point < numberOfPoints; ++point) {
-    double absoluteRigidity = min + point * step;
+  for (int point = 0; point < m_numberOfPoints; ++point) {
+    double absoluteRigidity = m_min + point * m_step;
     if (point)
       key+= ", ";
     key+= QString::number(absoluteRigidity);
   }
   qDebug() << qPrintable(key);
 
-  key = Enums::label(particle);
+  key = Enums::label(m_particle);
   key.replace("+", "%2B");
   key+= "/normalizationFactors=";
-  for (int point = 0; point < numberOfPoints; ++point) {
+  for (int point = 0; point < m_numberOfPoints; ++point) {
     double integral = integralGraph->GetY()[point];
     if (point)
       key+= ", ";
@@ -68,8 +76,4 @@ ParameterPlot::ParameterPlot(Likelihood* likelihood, Enums::Particle particle)
   }
   qDebug() << qPrintable(key);
   qDebug();
-}
-
-ParameterPlot::~ParameterPlot()
-{
 }

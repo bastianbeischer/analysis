@@ -102,6 +102,7 @@
 #include "LogLikelihoodPlot.hh"
 #include "ReconstructionMethodCorrelationPlotCollection.hh"
 #include "SignalHeightCorrelationPlotCollection.hh"
+#include "SignalHeightPdfPlotCollection.hh"
 
 #include <TPad.h>
 #include <TCanvas.h>
@@ -420,6 +421,9 @@ void Analysis::setupPlots()
     for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it)
       if (it.key() == Enums::Electron && it.key() != Enums::NoParticle && (it.key() & m_analysisSetting.particles))
         addPlot(new LogLikelihoodPlot(it.key(), m_analysisSetting.particles & ~it.key()));
+    addPlot(new SignalHeightPdfPlotCollection(Hit::tof, m_analysisSetting.particles));
+    addPlot(new SignalHeightPdfPlotCollection(Hit::trd, m_analysisSetting.particles));
+    addPlot(new SignalHeightPdfPlotCollection(Hit::tracker, m_analysisSetting.particles));
   }
   if (m_analysisSetting.analysisTopics & Enums::EfficiencyTOF) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
