@@ -10,6 +10,8 @@
 
 #include <TH2.h>
 
+#include <QDebug>
+
 SignalHeightPdfPlot::SignalHeightPdfPlot(Hit::ModuleType type, Enums::Particle particle, const QVector<double>& xBins, const QVector<double>& yBins)
   : AnalysisPlot(Enums::LikelihoodTopic)
   , H2DPlot()
@@ -27,6 +29,8 @@ SignalHeightPdfPlot::SignalHeightPdfPlot(Hit::ModuleType type, Enums::Particle p
   QString title = QString("signal height pdf %1 %2").arg(typeString).arg(Enums::label(particle));
   TH2D* h = new TH2D(qPrintable(title), "", xBins.count() - 1, xBins.constData(), yBins.count() - 1, yBins.constData());
   addHistogram(h);
+  setAxisTitle("|R| / GV", "signal height / a.u.", "");
+  setDrawOption(RootPlot::COLZ);
 }
 
 SignalHeightPdfPlot::~SignalHeightPdfPlot()
@@ -41,16 +45,17 @@ void SignalHeightPdfPlot::processEvent(const AnalyzedEvent* event)
   if (!event->flagsSet(ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet | ParticleInformation::Chi2Good | ParticleInformation::BetaGood))
     return;
   const Hypothesis* h = event->particle()->hypothesis();
-  double signal = 0;
-  if (m_type == Hit::tracker) {
-    //signal = event->;
-  } else if (m_type == Hit::tof) {
-    signal = event->particle()->timeOfFlight()->timeOverThreshold();
-  } else if (m_type == Hit::trd) {
-    //TODO: handle layers
-    const EnergyDeposition& deposition = event->particle()->trdReconstruction()->energyDepositionForLayer(0);
-    signal = deposition.edepOnTrackPerLength;
-  }
-  if (h->particle() == m_particle)
+  if (m_particle == Enums::NoParticle || h->particle() == m_particle) {
+    double signal = 0;
+    if (m_type == Hit::tracker) {
+      signal = event->particle()->track()->signalHeight();
+    } else if (m_type == Hit::tof) {
+      signal = event->particle()->timeOfFlight()->timeOverThreshold();
+    } else if (m_type == Hit::trd) {
+      //TODO: handle layers
+      const EnergyDeposition& deposition = event->particle()->trdReconstruction()->energyDepositionForLayer(0);
+      signal = deposition.edepOnTrackPerLength;
+    }
     histogram()->Fill(h->absoluteRigidity(), signal);
+  }
 }

@@ -12,14 +12,16 @@
 #include <cfloat>
 #include <iostream>
 
-Track::Track() :
-  m_type(Enums::NoTrack),
-  m_matrix(0),
-  m_verbose(0),
-  m_fitGood(0),
-  m_chi2(0),
-  m_ndf(0),
-  m_transverseRigidity(0.)
+Track::Track()
+  : m_type(Enums::NoTrack)
+  , m_matrix(0)
+  , m_verbose(0)
+  , m_fitGood(0)
+  , m_chi2(0)
+  , m_ndf(0)
+  , m_transverseRigidity(0.)
+  , m_signalHeight(0.)
+  , m_hits()
 {
 }
 
@@ -34,11 +36,18 @@ void Track::reset()
   m_chi2 = 0;
   m_ndf = 0;
   m_transverseRigidity = 0;
+  m_signalHeight = 0;
   m_matrix->reset();
 }
 
 int Track::fit(const QVector<Hit*>& hits)
 {
+  if (!hits.count())
+    return 0;
+  QVector<Hit*>::ConstIterator end = hits.constEnd();
+  for (QVector<Hit*>::ConstIterator it = hits.constBegin(); it != end; ++it)
+    m_signalHeight+= (*it)->signalHeight();
+  m_signalHeight/= hits.count();
   m_hits = hits;
   m_fitGood = m_matrix->fit(m_hits);
   if (m_fitGood) {

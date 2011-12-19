@@ -72,7 +72,7 @@ void AnalysisProcessor::initReconstructions()
 
   Enums::LikelihoodVariables internal = Enums::UndefinedLikelihood;
   for (Enums::LikelihoodVariableIterator it = Enums::likelihoodVariableBegin(); it != end; ++it)
-    if ((it.key() & m_likelihoods) && Enums::isInternalLikelihoodVariable(it.key()))
+    if (it.key() & m_likelihoods && Enums::isInternalLikelihoodVariable(it.key()))
       internal|= it.key();
   QVector<Enums::ReconstructionMethod> internalReconstruction = QVector<Enums::ReconstructionMethod>()
     << Enums::Spectrometer << Enums::TOF << Enums::WeightedMean << Enums::Chi2 << Enums::Likelihood;
@@ -80,7 +80,7 @@ void AnalysisProcessor::initReconstructions()
     m_reconstructions.insert(method, Reconstruction::newReconstruction(method, internal, m_particles));
 
   // include e.g. Cherenkov counters
-  Enums::LikelihoodVariables external = Enums::CherenkovLikelihood;
+  Enums::LikelihoodVariables external = Enums::UndefinedLikelihood;
   for (Enums::LikelihoodVariableIterator it = Enums::likelihoodVariableBegin(); it != end; ++it)
     if (it.key() & m_likelihoods)
       external|= it.key();

@@ -9,8 +9,7 @@
 #include <QSpinBox>
 #include <QComboBox>
 #include <QHBoxLayout>
-
-#include <iostream>
+#include <QDebug>
 
 SignalHeightPdfPlotCollection::SignalHeightPdfPlotCollection(Hit::ModuleType type, Enums::Particles particles)
   : PlotCollection(Enums::LikelihoodTopic)
@@ -23,7 +22,6 @@ SignalHeightPdfPlotCollection::SignalHeightPdfPlotCollection(Hit::ModuleType typ
   QWidget* widget = new QWidget();
   widget->setLayout(layout);
   secondaryWidget()->layout()->addWidget(widget);
-  connect(m_particleComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
 
   QString typeString;
   if (type == Hit::tracker) {
@@ -36,14 +34,23 @@ SignalHeightPdfPlotCollection::SignalHeightPdfPlotCollection(Hit::ModuleType typ
   Q_ASSERT(!typeString.isEmpty());
   setTitle(typeString + " signal height pdf plot collection");
 
-  QVector<double> xBins = QVector<double>() << 0 << 1 << 2 << 3;
-  QVector<double> yBins = QVector<double>() << 0 << 1 << 2 << 3;
+  QVector<double> xBins;
+  QVector<double> yBins;
+  for (double value = 0; value < 100; ++value) {
+    xBins << value;
+    yBins << value;
+  }
+  
+  m_particleComboBox->addItem("all particles");
+  addPlot(new SignalHeightPdfPlot(type, Enums::NoParticle, xBins, yBins));
+
   Enums::ParticleIterator end = Enums::particleEnd();
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it)
     if ((it.key() != Enums::NoParticle) && ((it.key() & m_particles) == it.key())) {
       m_particleComboBox->addItem(it.value());
       addPlot(new SignalHeightPdfPlot(type, it.key(), xBins, yBins));
     }
+  connect(m_particleComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
 }
 
 SignalHeightPdfPlotCollection::~SignalHeightPdfPlotCollection()
@@ -52,12 +59,16 @@ SignalHeightPdfPlotCollection::~SignalHeightPdfPlotCollection()
 
 void SignalHeightPdfPlotCollection::update()
 {
+  if (m_particleComboBox->currentText() == "all particles") {
+    selectPlot(0);
+    return;
+  }
   Enums::ParticleIterator end = Enums::particleEnd();
   Enums::ParticleIterator it = Enums::particleBegin();
-  for (int i = 0; it != end; ++it) {
-    if ((it.key() == Enums::NoParticle) || ((it.key() & m_particles) == it.key()))
+  for (int i = 1; it != end; ++it) {
+    if ((it.key() == Enums::NoParticle) || ((it.key() & m_particles) != it.key()))
       continue;
-    if (it.key() == Enums::particle(m_particleComboBox->currentText())) {
+    if (it.value() == m_particleComboBox->currentText()) {
       selectPlot(i);
       return;
     }
