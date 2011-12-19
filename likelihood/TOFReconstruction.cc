@@ -5,6 +5,7 @@
 #include "Particle.hh"
 
 #include <cfloat>
+#include <cmath>
 
 TOFReconstruction::TOFReconstruction(Enums::LikelihoodVariables variables, Enums::Particles particles, bool additionalInformation)
   : Reconstruction(variables, particles)
@@ -36,9 +37,12 @@ void TOFReconstruction::identify(AnalyzedEvent* event)
     Q_ASSERT(*particleIt != Enums::NoParticle);
     double beta = event->particle()->beta();
     double beta2 = beta * beta;
-    double mass = ParticleProperties(*particleIt).mass();
-    double mass2 = mass * mass;
-    double curvature = (1. - beta2) / (mass2 * beta2);
+    ParticleProperties properties(*particleIt);
+    double mass = properties.mass();
+    double charge = properties.charge();
+    double curvature = 1e9;
+    if (beta < 1)
+      curvature = charge * sqrt(1 - beta2) / (mass * beta);
 
     Hypothesis* h = new Hypothesis(*particleIt, curvature);
     double value = eval(event, *h, &goodInterpolation);

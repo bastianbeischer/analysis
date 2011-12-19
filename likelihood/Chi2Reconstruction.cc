@@ -48,7 +48,7 @@ public:
     if (!qIsNull(beta)) {
       double inverseBeta = 1. / beta;
       double sigmaInverseBeta = Helpers::tofResolution();
-      double y = Helpers::addQuad(1., m_properties.mass() * x);
+      double y = Helpers::addQuad(1., m_properties.mass() * x / m_properties.charge());
       tof = (y - inverseBeta) * (y - inverseBeta) / (sigmaInverseBeta * sigmaInverseBeta);
     }
     return tracker + tof;
