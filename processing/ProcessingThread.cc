@@ -5,12 +5,12 @@
 #include "EventProcessor.hh"
 #include "SimpleEvent.hh"
 
-ProcessingThread::ProcessingThread(EventProcessor* processor, QObject* parent) :
-  QThread(parent),
-  m_queue(new LimitedEventQueue),
-  m_processor(processor),
-  m_abort(true),
-  m_mutex()
+ProcessingThread::ProcessingThread(EventProcessor* processor, QObject* parent)
+  : QThread(parent)
+  , m_queue(new LimitedEventQueue)
+  , m_processor(processor)
+  , m_abort(true)
+  , m_mutex()
 {
 }
 
