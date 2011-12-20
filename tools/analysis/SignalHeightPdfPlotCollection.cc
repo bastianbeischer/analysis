@@ -5,6 +5,7 @@
 #include "Hit.hh"
 #include "Particle.hh"
 #include "DetectorElement.hh"
+#include "Helpers.hh"
 
 #include <QSpinBox>
 #include <QComboBox>
@@ -24,23 +25,21 @@ SignalHeightPdfPlotCollection::SignalHeightPdfPlotCollection(Hit::ModuleType typ
   secondaryWidget()->layout()->addWidget(widget);
 
   QString typeString;
+  QVector<double> xBins = Helpers::linearBinning(50, 0, 10);
+  QVector<double> yBins;
   if (type == Hit::tracker) {
     typeString = "tracker";
+    yBins = Helpers::linearBinning(100, 0, 5000);
   } else if (type == Hit::tof) {
     typeString = "tof";
+    yBins = Helpers::linearBinning(40, 20, 60);
   } else if (type == Hit::trd) {
     typeString = "trd";
+    yBins = Helpers::linearBinning(100, 0, 50);
   }
   Q_ASSERT(!typeString.isEmpty());
   setTitle(typeString + " signal height pdf plot collection");
 
-  QVector<double> xBins;
-  QVector<double> yBins;
-  for (double value = 0; value < 100; ++value) {
-    xBins << value;
-    yBins << value;
-  }
-  
   m_particleComboBox->addItem("all particles");
   addPlot(new SignalHeightPdfPlot(type, Enums::NoParticle, xBins, yBins));
 

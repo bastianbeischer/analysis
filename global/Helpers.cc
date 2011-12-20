@@ -14,11 +14,13 @@
 
 namespace Helpers
 {
-  double addQuad(double a, double b, double c, double d, double e) {
+  double addQuad(double a, double b, double c, double d, double e)
+  {
     return sqrt(a*a + b*b + c*c + d*d + e*e);
   }
 
-  QVector<double> logBinning(unsigned int nBins, double min, double max) {
+  QVector<double> logBinning(unsigned int nBins, double min, double max)
+  {
     QVector<double> binning;
     const double delta = (log(max) / log(min) - 1) / nBins;
     for (unsigned int i = 0; i <= nBins; ++i) {
@@ -27,6 +29,16 @@ namespace Helpers
     return binning;
   }
   
+  QVector<double> linearBinning(unsigned int nBins, double min, double max)
+  {
+    QVector<double> binning;
+    const double step = (max - min) / nBins;
+    for (unsigned int i = 0; i <= nBins; ++i) {
+      binning.append(min + i * step);
+    }
+    return binning;
+  }
+
   void updateMirroredHistogram(TH1D* histogramToUpdate, TH1D* dataHistogram)
   {
     const int nBins = dataHistogram->GetNbinsX();

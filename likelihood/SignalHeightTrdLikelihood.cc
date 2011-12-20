@@ -135,4 +135,6 @@ void SignalHeightTrdLikelihood::loadNodes()
     settings.endGroup();
   }
   settings.endGroup();
+
+  setupParametrizations();
 }

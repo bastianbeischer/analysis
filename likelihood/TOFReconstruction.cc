@@ -36,14 +36,14 @@ void TOFReconstruction::identify(AnalyzedEvent* event)
   for (int it = 0; particleIt != particleEnd; ++it, ++particleIt, ++pointIt) {
     Q_ASSERT(*particleIt != Enums::NoParticle);
     double beta = event->particle()->beta();
-    double beta2 = beta * beta;
-    ParticleProperties properties(*particleIt);
-    double mass = properties.mass();
-    double charge = properties.charge();
-    double curvature = 1e9;
-    if (beta < 1)
+    double curvature = beta < 0 ? -1e-9 : 1e-9;
+    if (qAbs(beta) < 1) {
+      double beta2 = beta * beta;
+      ParticleProperties properties(*particleIt);
+      double mass = properties.mass();
+      double charge = properties.charge();
       curvature = charge * sqrt(1 - beta2) / (mass * beta);
-
+    }
     Hypothesis* h = new Hypothesis(*particleIt, curvature);
     double value = eval(event, *h, &goodInterpolation);
     if (value < m_minima[m_indexOfGlobalMinimum].y()) 

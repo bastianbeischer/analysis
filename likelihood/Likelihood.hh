@@ -32,12 +32,18 @@ public:
 
   virtual double eval(const AnalyzedEvent*, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const = 0;
   virtual double eval(double measuredValue, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const = 0;
-  virtual ParameterVector interpolation(const Hypothesis&, bool* goodInterpolation = 0) const;
+  ParameterVector interpolation(const Hypothesis&, bool* goodInterpolation = 0) const;
+  double normalizationInterpolation(const Hypothesis&, bool* goodInterpolation = 0) const;
 protected:
   typedef QMap<double, double> NormalizationMap;
   typedef QMap<Enums::Particle, NormalizationMap> NormalizationParticleMap;
   typedef QMap<double, ParameterVector> AbsoluteRigidityMap;
   typedef QMap<Enums::Particle, AbsoluteRigidityMap> ParticleMap;
+
+  typedef QVector<Likelihood::ParameterVector> Parametrization;
+  typedef QMap<Enums::Particle, Parametrization> ParametrizationMap;
+  typedef QVector<double> ParametrizationNormalization;
+  typedef QMap<Enums::Particle, ParametrizationNormalization> ParametrizationNormalizationMap;
 
   virtual AbsoluteRigidityMap::ConstIterator end(Enums::Particle) const;
   virtual AbsoluteRigidityMap::ConstIterator lowerNode(const Hypothesis&) const;
@@ -47,9 +53,13 @@ protected:
   virtual NormalizationMap::ConstIterator normalizationEnd(Enums::Particle) const;
   virtual NormalizationMap::ConstIterator normalizationLowerNode(const Hypothesis&) const;
   virtual NormalizationMap::ConstIterator normalizationUpperNode(const Hypothesis&) const;
-  virtual double normalizationInterpolation(const Hypothesis&) const;
+
+  ParameterVector calculateInterpolation(const Hypothesis&, bool* goodInterpolation = 0) const;
+  double calculateNormalizationInterpolation(const Hypothesis&, bool* goodInterpolation = 0) const;
 
   virtual void loadNodes();
+  void setupParametrizations();
+  int valueToIndex(double absoluteRigidity) const;
 
   QString m_title;
   Enums::Particles m_particles;
@@ -60,6 +70,13 @@ protected:
   int m_numberOfParameters;
   ParticleMap m_nodes;
   NormalizationParticleMap m_normalization;
+  
+  static const double s_parametrizationMin;
+  static const double s_parametrizationMax;
+  static const double s_parametrizationNumberOfPoints;
+  static const double s_parametrizationStep;
+  ParametrizationMap m_parametrizations;
+  ParametrizationNormalizationMap m_parametrizationNormalization;
 };
 
 #endif

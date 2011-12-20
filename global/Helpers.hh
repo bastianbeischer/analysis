@@ -13,6 +13,7 @@ namespace Helpers
 {
   double addQuad(double a, double b, double c = 0, double d = 0, double e = 0);
   QVector<double> logBinning(unsigned int nBins, double min, double max);
+  QVector<double> linearBinning(unsigned int nBins, double min, double max);
   TH1D* createMirroredHistogram(TH1D* histogram);
   void updateMirroredHistogram(TH1D* histogramToUpdate, TH1D* dataHistogram);
   QString analysisPath();
