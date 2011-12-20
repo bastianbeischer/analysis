@@ -29,10 +29,10 @@ public:
   double slopeX(double) const {return slopeX();}
   double slopeY(double) const {return slopeY();}
   double bendingAngle() const {return 0.;}
-  double trackLength() const;
   
 private:
   void retrieveFitResults();
+  void calulateTrackLength();
 
 private:
   double m_x0;

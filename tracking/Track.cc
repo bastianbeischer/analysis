@@ -20,6 +20,7 @@ Track::Track()
   , m_chi2(0)
   , m_ndf(0)
   , m_transverseRigidity(0.)
+  , m_trackLength(-1.)
   , m_signalHeight(0.)
   , m_hits()
 {
@@ -36,6 +37,7 @@ void Track::reset()
   m_chi2 = 0;
   m_ndf = 0;
   m_transverseRigidity = 0;
+  m_trackLength = -1.;
   m_signalHeight = 0;
   m_matrix->reset();
 }
@@ -44,6 +46,7 @@ int Track::fit(const QVector<Hit*>& hits)
 {
   if (!hits.count())
     return 0;
+  m_trackLength = -1;
   QVector<Hit*>::ConstIterator end = hits.constEnd();
   for (QVector<Hit*>::ConstIterator it = hits.constBegin(); it != end; ++it)
     m_signalHeight+= (*it)->signalHeight();
@@ -53,6 +56,7 @@ int Track::fit(const QVector<Hit*>& hits)
   if (m_fitGood) {
     retrieveFitResults();
     calculateTransverseRigidity();
+    calulateTrackLength();
   }
   return m_fitGood;
 }

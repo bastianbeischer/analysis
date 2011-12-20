@@ -50,9 +50,10 @@ void StraightLine::retrieveFitResults()
   }
 }
 
-double StraightLine::trackLength() const
+void StraightLine::calulateTrackLength()
 {
+  Q_ASSERT(m_trackLength < 0);
   const TVector3& upperPoint = position(Constants::upperTofPosition);
   const TVector3& lowerPoint = position(Constants::lowerTofPosition);
-  return (upperPoint-lowerPoint).Mag();
+  m_trackLength = (upperPoint-lowerPoint).Mag();
 }

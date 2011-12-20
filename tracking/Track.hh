@@ -8,6 +8,7 @@
 
 #include <QVector>
 #include <QMap>
+#include <QDebug>
 
 class Hit;
 
@@ -27,6 +28,7 @@ public:
   double chi2() const {return m_chi2;}
   unsigned int ndf() const {return m_ndf;}
   double transverseRigidity() const {return m_transverseRigidity;}
+  double trackLength() const {return m_trackLength;}
   double signalHeight() const {return m_signalHeight;}
   const QVector<Hit*>& hits() const {return m_hits;}
 
@@ -35,7 +37,6 @@ public:
   virtual double slopeX(double z) const = 0;
   virtual double slopeY(double z) const = 0;
   virtual double bendingAngle() const = 0;
-  virtual double trackLength() const = 0;
   
   double azimuthAngle() const;
   double zenithAngle() const;
@@ -51,6 +52,7 @@ public:
 
 private:
   virtual void retrieveFitResults() = 0;
+  virtual void calulateTrackLength() = 0;
   void calculateTransverseRigidity();
 
 protected:
@@ -65,6 +67,7 @@ protected:
   unsigned int m_ndf;
 
   double m_transverseRigidity;
+  double m_trackLength;
   double m_signalHeight;
   QVector<Hit*> m_hits;
 };

@@ -10,15 +10,15 @@
 #include <cmath>
 #include <iostream>
 
-CenteredBrokenLine2D::CenteredBrokenLine2D() :
-  Track(),
-  m_x0(0),
-  m_upperSlopeX(0),
-  m_lowerSlopeX(0),
-  m_y0(0),
-  m_upperSlopeY(0),
-  m_lowerSlopeY(0),
-  m_zIntersection(0.)
+CenteredBrokenLine2D::CenteredBrokenLine2D()
+  : Track()
+  , m_x0(0)
+  , m_upperSlopeX(0)
+  , m_lowerSlopeX(0)
+  , m_y0(0)
+  , m_upperSlopeY(0)
+  , m_lowerSlopeY(0)
+  , m_zIntersection(0.)
 {
   m_type = Enums::CenteredBrokenLine2D;
   m_matrix = new CenteredBrokenLineMatrix2D;
@@ -84,10 +84,11 @@ double CenteredBrokenLine2D::slopeY(double z) const
   return m_lowerSlopeY;
 }
 
-double CenteredBrokenLine2D::trackLength() const
+void CenteredBrokenLine2D::calulateTrackLength()
 {
+  Q_ASSERT(m_trackLength >= 0);
   const TVector3& upperPoint = position(Constants::upperTofPosition);
   const TVector3& middlePoint = position(0);
   const TVector3& lowerPoint = position(Constants::lowerTofPosition);
-  return (upperPoint-middlePoint).Mag() + (middlePoint-lowerPoint).Mag();
+  m_trackLength = (upperPoint-middlePoint).Mag() + (middlePoint-lowerPoint).Mag();
 }

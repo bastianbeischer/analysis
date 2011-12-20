@@ -29,7 +29,6 @@ public:
   double lowerSlopeX() const {return m_lowerSlopeX;}
   double slopeY() const {return m_slopeY;}
   double bendingAngle() const {return atan(m_upperSlopeX) - atan(m_lowerSlopeX);}
-  double trackLength() const;
   double zIntersection() const {return m_zIntersection;}
 
   double x(double z) const;
@@ -39,6 +38,7 @@ public:
 
 private:
   void retrieveFitResults();
+  void calulateTrackLength();
 
 private:
   double m_upperX0;

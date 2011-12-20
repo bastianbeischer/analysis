@@ -81,10 +81,11 @@ double BrokenLine::slopeY(double) const
   return m_slopeY;
 }
 
-double BrokenLine::trackLength() const
+void BrokenLine::calulateTrackLength()
 {
+  Q_ASSERT(m_trackLength < 0);
   const TVector3& upperPoint = position(Constants::upperTofPosition);
   const TVector3& middlePoint = position(m_zIntersection);
   const TVector3& lowerPoint = position(Constants::lowerTofPosition);
-  return (upperPoint-middlePoint).Mag() + (middlePoint-lowerPoint).Mag();
+  m_trackLength = (upperPoint-middlePoint).Mag() + (middlePoint-lowerPoint).Mag();
 }
