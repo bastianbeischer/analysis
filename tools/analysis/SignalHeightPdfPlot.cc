@@ -24,13 +24,14 @@ SignalHeightPdfPlot::SignalHeightPdfPlot(Hit::ModuleType type, Enums::Particle p
   } else if (type == Hit::tof) {
     typeString = "tof";
   } else if (type == Hit::trd) {
-    typeString == "trd";
+    typeString = "trd";
   }
   QString title = QString("signal height pdf %1 %2").arg(typeString).arg(Enums::label(particle));
   TH2D* h = new TH2D(qPrintable(title), "", xBins.count() - 1, xBins.constData(), yBins.count() - 1, yBins.constData());
   addHistogram(h);
   setAxisTitle("|R| / GV", "signal height / a.u.", "");
   setDrawOption(RootPlot::COLZ);
+  setTitle(title);
 }
 
 SignalHeightPdfPlot::~SignalHeightPdfPlot()
