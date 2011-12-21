@@ -35,9 +35,10 @@ void SignalHeightTrdLikelihood::setLayer(int layer)
   loadNodes();
 }
 
-double SignalHeightTrdLikelihood::noTransitionRadiation(double x, const ParameterVector& p) const
+double SignalHeightTrdLikelihood::noTransitionRadiation(double x, const ParameterVector& parameterVector) const
 {
-  Q_ASSERT(m_numberOfParameters == p.count());
+  Q_ASSERT(m_numberOfParameters == parameterVector.count());
+  const double* p = parameterVector.constData();
   //p[0] normalization factor
   //p[1] mopv
   //p[2] sigma of rising landau flank
@@ -55,9 +56,10 @@ double SignalHeightTrdLikelihood::noTransitionRadiation(double x, const Paramete
   return result;
 }
 
-double SignalHeightTrdLikelihood::transitionRadiation(double x, const ParameterVector& p) const
+double SignalHeightTrdLikelihood::transitionRadiation(double x, const ParameterVector& parameterVector) const
 {
-  Q_ASSERT(m_numberOfParameters == p.count());
+  Q_ASSERT(m_numberOfParameters == parameterVector.count());
+  const double* p = parameterVector.constData();
   double leftLandau = p[0] * TMath::Landau(x, p[1], p[2]);
   double rightLandau = p[3] * TMath::Landau(x, p[4], p[5]);
   double exponential = TMath::Exp(p[6] + p[7] * x);

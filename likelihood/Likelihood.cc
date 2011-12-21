@@ -102,6 +102,7 @@ Likelihood::ParameterVector Likelihood::interpolation(const Hypothesis& hypothes
     return m_parametrizationBuffer->first();
   if (absoluteRigidity > s_parametrizationMax)
     return  m_parametrizationBuffer->last();
+  return (m_parametrizationBuffer->constData())[valueToIndex(absoluteRigidity)];
   return m_parametrizationBuffer->at(valueToIndex(absoluteRigidity));
 }
 
