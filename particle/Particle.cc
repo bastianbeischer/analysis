@@ -186,9 +186,7 @@ double Particle::momentum() const
 
 double Particle::beta() const
 {
-  if (m_track)
-    return m_track->trackLength() / (m_tof->timeOfFlight() * Constants::speedOfLight);
-  return 0.;
+  return m_tof->beta();
 }
 
 //////////////////////////////////////////////////

@@ -165,13 +165,11 @@ TMultiGraph* Reconstruction::graph() const
 double Reconstruction::eval(const AnalyzedEvent* event, const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
   Q_ASSERT(m_likelihoods.count());
-  double lnL = 0;
+  double L = 1;
   QVector<Likelihood*>::ConstIterator end = m_likelihoods.end();
-  for (QVector<Likelihood*>::ConstIterator it = m_likelihoods.begin(); it != end; ++it) {
-    double value = (*it)->eval(event, hypothesis, goodInterpolation);
-    if (qIsNull(value))
-      return 1e9; //infinity
-    lnL+= -2*log(value);
-  }
-  return lnL / m_likelihoods.count();
+  for (QVector<Likelihood*>::ConstIterator it = m_likelihoods.begin(); it != end; ++it)
+    L*= (*it)->eval(event, hypothesis, goodInterpolation);
+  if (qIsNull(L))
+    return 1e9; //infinity
+  return -2 * log(L) / m_likelihoods.count();
 }

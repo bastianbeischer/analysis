@@ -47,8 +47,9 @@ void WeightedMeanReconstruction::identify(AnalyzedEvent* event)
       enumeratur+= curvature/sigmaCurvature2;
       denumerator+= 1./sigmaCurvature2;
     }
-    double inverseBeta = 1. / event->particle()->beta();
-    if (inverseBeta > 1) {
+    double beta = event->particle()->beta();
+    if (!qIsNull(beta) && qAbs(beta) < 1) {
+      double inverseBeta = 1. / event->particle()->beta();
       double tofResolution = Helpers::tofResolution();
       double mass = ParticleProperties(*particleIt).mass();
       double curvatureTof = sqrt(inverseBeta*inverseBeta - 1) / mass;
