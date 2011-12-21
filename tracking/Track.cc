@@ -20,6 +20,7 @@ Track::Track()
   , m_chi2(0)
   , m_ndf(0)
   , m_transverseRigidity(0.)
+  , m_rigidity(0.)
   , m_trackLength(-1.)
   , m_signalHeight(0.)
   , m_hits()
@@ -37,6 +38,7 @@ void Track::reset()
   m_chi2 = 0;
   m_ndf = 0;
   m_transverseRigidity = 0;
+  m_rigidity = 0;
   m_trackLength = -1.;
   m_signalHeight = 0;
   m_matrix->reset();
@@ -55,13 +57,13 @@ int Track::fit(const QVector<Hit*>& hits)
   m_fitGood = m_matrix->fit(m_hits);
   if (m_fitGood) {
     retrieveFitResults();
-    calculateTransverseRigidity();
+    calculateRigidities();
     calulateTrackLength();
   }
   return m_fitGood;
 }
 
-void Track::calculateTransverseRigidity()
+void Track::calculateRigidities()
 {
   double alpha = bendingAngle();
   if (alpha == 0.)
@@ -79,6 +81,9 @@ void Track::calculateTransverseRigidity()
 
     m_transverseRigidity = 0.3*B_estimate*L/alpha/1e6; // GeV
   }
+
+  double theta = fabs(atan(slopeY(0.)));
+  m_rigidity = m_transverseRigidity/cos(theta);
 }
 
 TVector3 Track::meanFieldAlongTrack()
@@ -100,13 +105,6 @@ TVector3 Track::meanFieldAlongTrack()
   for(int i = 0; i < 3; i++) meanB[i] /= nSteps;
 
   return TVector3(meanB[0], meanB[1], meanB[2]);
-}
-
-double Track::rigidity() const
-{
-  double theta = fabs(atan(slopeY(0.)));
-  double rigidity = m_transverseRigidity/cos(theta);
-  return rigidity;
 }
 
 double Track::zenithAngle() const

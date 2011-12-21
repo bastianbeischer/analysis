@@ -28,6 +28,7 @@ public:
   double chi2() const {return m_chi2;}
   unsigned int ndf() const {return m_ndf;}
   double transverseRigidity() const {return m_transverseRigidity;}
+  double rigidity() const {return m_rigidity;}
   double trackLength() const {return m_trackLength;}
   double signalHeight() const {return m_signalHeight;}
   const QVector<Hit*>& hits() const {return m_hits;}
@@ -44,7 +45,6 @@ public:
   TVector3 position(double z) const {return TVector3(x(z), y(z), z);}
 
   TVector3 meanFieldAlongTrack();
-  double rigidity() const;
 
 public:
   void reset();
@@ -53,7 +53,7 @@ public:
 private:
   virtual void retrieveFitResults() = 0;
   virtual void calulateTrackLength() = 0;
-  void calculateTransverseRigidity();
+  void calculateRigidities();
 
 protected:
   Enums::TrackType m_type;
@@ -67,6 +67,7 @@ protected:
   unsigned int m_ndf;
 
   double m_transverseRigidity;
+  double m_rigidity;
   double m_trackLength;
   double m_signalHeight;
   QVector<Hit*> m_hits;
