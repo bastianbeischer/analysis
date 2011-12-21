@@ -11,8 +11,6 @@
 #include <QFile>
 #include <QDebug>
 
-#include <cmath>
-
 const double Likelihood::s_parametrizationMin = 0;
 const double Likelihood::s_parametrizationMax = 100;
 const double Likelihood::s_parametrizationNumberOfPoints = 2002;
@@ -84,7 +82,7 @@ Likelihood::AbsoluteRigidityMap::ConstIterator Likelihood::upperNode(const Hypot
 int Likelihood::valueToIndex(double absoluteRigidity) const
 {
   Q_ASSERT((s_parametrizationMin <= absoluteRigidity) && (absoluteRigidity <= s_parametrizationMax));
-  return floor((absoluteRigidity - s_parametrizationMin) / s_parametrizationStep);
+  return (absoluteRigidity - s_parametrizationMin) / s_parametrizationStep;
 }
 
 Likelihood::ParameterVector Likelihood::interpolation(const Hypothesis& hypothesis, bool* goodInterpolation) const
