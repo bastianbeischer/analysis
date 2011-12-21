@@ -41,9 +41,9 @@ protected:
   typedef QMap<Enums::Particle, AbsoluteRigidityMap> ParticleMap;
 
   typedef QVector<Likelihood::ParameterVector> Parametrization;
-  typedef QMap<Enums::Particle, Parametrization> ParametrizationMap;
+  typedef QMap<Enums::Particle, Parametrization*> ParametrizationMap;
   typedef QVector<double> ParametrizationNormalization;
-  typedef QMap<Enums::Particle, ParametrizationNormalization> ParametrizationNormalizationMap;
+  typedef QMap<Enums::Particle, ParametrizationNormalization*> ParametrizationNormalizationMap;
 
   virtual AbsoluteRigidityMap::ConstIterator end(Enums::Particle) const;
   virtual AbsoluteRigidityMap::ConstIterator lowerNode(const Hypothesis&) const;
@@ -76,7 +76,11 @@ protected:
   static const double s_parametrizationNumberOfPoints;
   static const double s_parametrizationStep;
   ParametrizationMap m_parametrizations;
-  ParametrizationNormalizationMap m_parametrizationNormalization;
+  mutable const Parametrization* m_parametrizationBuffer;
+  mutable Enums::Particle m_parametrizationParticleBuffer;
+  ParametrizationNormalizationMap m_parametrizationNormalizations;
+  mutable const ParametrizationNormalization* m_parametrizationNormalizationBuffer;
+  mutable Enums::Particle m_parametrizationNormalizationParticleBuffer;
 };
 
 #endif
