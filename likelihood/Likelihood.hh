@@ -32,8 +32,8 @@ public:
 
   virtual double eval(const AnalyzedEvent*, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const = 0;
   virtual double eval(double measuredValue, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const = 0;
-  const ParameterVector& interpolation(const Hypothesis&, bool* goodInterpolation = 0) const;
-  double normalizationInterpolation(const Hypothesis&, bool* goodInterpolation = 0) const;
+
+  const ParameterVector& interpolation(const Hypothesis&, double& normalizationFactor, bool* goodInterpolation = 0) const;
 protected:
   typedef QMap<double, double> NormalizationMap;
   typedef QMap<Enums::Particle, NormalizationMap> NormalizationParticleMap;
@@ -76,11 +76,10 @@ protected:
   static const double s_parametrizationNumberOfPoints;
   static const double s_parametrizationStep;
   ParametrizationMap m_parametrizations;
-  mutable const Parametrization* m_parametrizationBuffer;
-  mutable Enums::Particle m_parametrizationParticleBuffer;
   ParametrizationNormalizationMap m_parametrizationNormalizations;
+  mutable Enums::Particle m_parametrizationParticleBuffer;
+  mutable const Parametrization* m_parametrizationBuffer;
   mutable const ParametrizationNormalization* m_parametrizationNormalizationBuffer;
-  mutable Enums::Particle m_parametrizationNormalizationParticleBuffer;
 };
 
 #endif

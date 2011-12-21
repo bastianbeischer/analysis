@@ -21,14 +21,19 @@ ParameterPlot::ParameterPlot(Likelihood* likelihood, Enums::Particle particle)
 
   for (int parameter = 0; parameter < numberOfParameters; ++parameter)
     addGraph(new TGraph(m_numberOfPoints), RootPlot::LP);
+  addGraph(new TGraph(m_numberOfPoints), RootPlot::LP);
+  graph(numberOfParameters)->SetLineColor(kGreen);
+  graph(numberOfParameters)->SetMarkerColor(kGreen);
 
   if (numberOfParameters) {
     for (int point = 0; point < m_numberOfPoints; ++point) {
       double absoluteRigidity = m_min + point * m_step;
-      Likelihood::ParameterVector parameters = m_likelihood->interpolation(Hypothesis(m_particle, 1. / absoluteRigidity));
+      double normalizationFactor = 0;
+      Likelihood::ParameterVector parameters = m_likelihood->interpolation(Hypothesis(m_particle, 1. / absoluteRigidity), normalizationFactor);
       Q_ASSERT(parameters.count() == numberOfParameters);
       for (int parameter = 0; parameter < numberOfParameters; ++parameter)
         graph(parameter)->SetPoint(point, absoluteRigidity, parameters[parameter]);
+      graph(numberOfParameters)->SetPoint(point, absoluteRigidity, normalizationFactor);
     }
   }
 }

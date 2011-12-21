@@ -55,7 +55,11 @@ double Hypothesis::rigidity() const
 double Hypothesis::absoluteRigidity() const
 {
   double r = rigidity();
-  return r >= 0 ? r : -r;
+  if (r >= 0) {
+    return r;
+  } else {
+    return -r;
+  }
 }
 
 double Hypothesis::beta() const

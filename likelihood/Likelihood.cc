@@ -27,11 +27,10 @@ Likelihood::Likelihood(Enums::Particles particles)
   , m_nodes()
   , m_normalization()
   , m_parametrizations()
-  , m_parametrizationBuffer(0)
-  , m_parametrizationParticleBuffer(Enums::NoParticle)
   , m_parametrizationNormalizations()
+  , m_parametrizationParticleBuffer(Enums::NoParticle)
+  , m_parametrizationBuffer(0)
   , m_parametrizationNormalizationBuffer(0)
-  , m_parametrizationNormalizationParticleBuffer(Enums::NoParticle)
 {
 }
 
@@ -85,24 +84,32 @@ int Likelihood::valueToIndex(double absoluteRigidity) const
   return (absoluteRigidity - s_parametrizationMin) / s_parametrizationStep;
 }
 
-const Likelihood::ParameterVector& Likelihood::interpolation(const Hypothesis& hypothesis, bool* goodInterpolation) const
+const Likelihood::ParameterVector& Likelihood::interpolation(const Hypothesis& hypothesis, double& normalizationFactor, bool* goodInterpolation) const
 {
   double absoluteRigidity = hypothesis.absoluteRigidity();
   if (goodInterpolation)
     *goodInterpolation = (s_parametrizationMin <= absoluteRigidity) && (absoluteRigidity <= s_parametrizationMax);
   Enums::Particle particle = hypothesis.particle();
   if (m_parametrizationParticleBuffer != particle) {
-    ParametrizationMap::ConstIterator it = m_parametrizations.find(particle);
-    Q_ASSERT(it != m_parametrizations.constEnd());
-    m_parametrizationBuffer = *it;
+    ParametrizationMap::ConstIterator pIt = m_parametrizations.find(particle);
+    ParametrizationNormalizationMap::ConstIterator nIt = m_parametrizationNormalizations.find(particle);
+    Q_ASSERT(pIt != m_parametrizations.constEnd() && nIt != m_parametrizationNormalizations.constEnd());
     m_parametrizationParticleBuffer = particle;
+    m_parametrizationBuffer = *pIt;
+    m_parametrizationNormalizationBuffer = *nIt;
   }
-  Q_ASSERT(m_parametrizationBuffer);
-  if (absoluteRigidity < s_parametrizationMin)
+  Q_ASSERT(m_parametrizationBuffer && m_parametrizationNormalizationBuffer);
+  if (absoluteRigidity < s_parametrizationMin) {
+    normalizationFactor = m_parametrizationNormalizationBuffer->first();
     return m_parametrizationBuffer->first();
-  if (absoluteRigidity > s_parametrizationMax)
+  }
+  if (absoluteRigidity > s_parametrizationMax) {
+    normalizationFactor = m_parametrizationNormalizationBuffer->last();
     return m_parametrizationBuffer->last();
-  return (m_parametrizationBuffer->constData())[valueToIndex(absoluteRigidity)];
+  }
+  int index = valueToIndex(absoluteRigidity);
+  normalizationFactor = (m_parametrizationNormalizationBuffer->constData())[index];
+  return (m_parametrizationBuffer->constData())[index];
 }
 
 Likelihood::ParameterVector Likelihood::calculateInterpolation(const Hypothesis& hypothesis, bool* goodInterpolation) const
@@ -150,26 +157,6 @@ Likelihood::NormalizationMap::ConstIterator Likelihood::normalizationLowerNode(c
 Likelihood::NormalizationMap::ConstIterator Likelihood::normalizationUpperNode(const Hypothesis& h) const
 {
   return ++normalizationLowerNode(h);
-}
-
-double Likelihood::normalizationInterpolation(const Hypothesis& hypothesis, bool* goodInterpolation) const
-{
-  double absoluteRigidity = hypothesis.absoluteRigidity();
-  if (goodInterpolation)
-    *goodInterpolation = (s_parametrizationMin <= absoluteRigidity) && (absoluteRigidity <= s_parametrizationMax);
-  Enums::Particle particle = hypothesis.particle();
-  if (m_parametrizationNormalizationParticleBuffer != particle) {
-    ParametrizationNormalizationMap::ConstIterator it = m_parametrizationNormalizations.find(particle);
-    Q_ASSERT(it != m_parametrizationNormalizations.constEnd());
-    m_parametrizationNormalizationBuffer = *it;
-    m_parametrizationNormalizationParticleBuffer = particle;
-  }
-  Q_ASSERT(m_parametrizationNormalizationBuffer);
-  if (absoluteRigidity < s_parametrizationMin)
-    return m_parametrizationNormalizationBuffer->first();
-  if (absoluteRigidity > s_parametrizationMax)
-    return m_parametrizationNormalizationBuffer->last();
-  return (m_parametrizationNormalizationBuffer->constData())[valueToIndex(absoluteRigidity)];
 }
 
 double Likelihood::calculateNormalizationInterpolation(const Hypothesis& h, bool* goodInterpolation) const

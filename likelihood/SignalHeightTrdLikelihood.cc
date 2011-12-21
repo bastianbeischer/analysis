@@ -85,12 +85,12 @@ double SignalHeightTrdLikelihood::eval(const AnalyzedEvent* event, const Hypothe
 double SignalHeightTrdLikelihood::eval(double signal, const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
   Q_ASSERT_X(0 <= m_layer && m_layer <= 7, "SignalHeightTrdLikelihood::eval()", "call setLayer() before evaluating the PDF!");
-  const ParameterVector& parameters = interpolation(hypothesis, goodInterpolation);
-  //int nParameters = parameters.count();
+  double normalization = 0;
+  const ParameterVector& parameters = interpolation(hypothesis, normalization, goodInterpolation);
   Enums::Particle particle = hypothesis.particle();
   if (particle == Enums::Electron || particle == Enums::Positron)
-    return normalizationInterpolation(hypothesis) * transitionRadiation(signal, parameters);
-  return normalizationInterpolation(hypothesis) * noTransitionRadiation(signal, parameters);
+    return normalization * transitionRadiation(signal, parameters);
+  return normalization * noTransitionRadiation(signal, parameters);
 }
 
 void SignalHeightTrdLikelihood::loadNodes()
