@@ -3,11 +3,7 @@
 
 #include "Enums.hh"
 
-#include <QString>
-#include <TColor.h>
-
-class ParticleProperties
-{
+class ParticleProperties {
 public:
   ParticleProperties();
   ParticleProperties(const Enums::Particle&);
@@ -17,19 +13,17 @@ public:
 
   Enums::Particle type() const {return m_type;}
   int pdgId() const {return m_pdgId;}
-  QString name() const {return m_name;}
   double mass() const {return m_mass;}
   int charge() const {return m_charge;}
-  Color_t color() const {return m_color;}
+  
+  QString name() const;
+  int color() const;
 
 private:
   Enums::Particle m_type;
   int m_pdgId;
-  QString m_name;
   double m_mass;
   int m_charge;
-  Color_t m_color;
-
 };
 
 #endif /* ParticleProperties_hh */
