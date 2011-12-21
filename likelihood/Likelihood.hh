@@ -32,7 +32,7 @@ public:
 
   virtual double eval(const AnalyzedEvent*, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const = 0;
   virtual double eval(double measuredValue, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const = 0;
-  ParameterVector interpolation(const Hypothesis&, bool* goodInterpolation = 0) const;
+  const ParameterVector& interpolation(const Hypothesis&, bool* goodInterpolation = 0) const;
   double normalizationInterpolation(const Hypothesis&, bool* goodInterpolation = 0) const;
 protected:
   typedef QMap<double, double> NormalizationMap;

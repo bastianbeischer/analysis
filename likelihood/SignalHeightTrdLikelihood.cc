@@ -51,7 +51,7 @@ double SignalHeightTrdLikelihood::noTransitionRadiation(double x, const Paramete
   double polynom = p[4] * x + p[5] * x*x + p[6] * x*x*x;
   double sigma = x < p[1] ? p[2] : p[3];
   double result = p[0] * TMath::Landau(x, p[1], sigma) * TMath::Exp(polynom) + p[7] * TMath::Gaus(x, 0., p[8]);
-  if (qAbs(result) > 100.)
+  if (result < -100. || result > 100.)
     return 0;
   return result;
 }
@@ -65,7 +65,7 @@ double SignalHeightTrdLikelihood::transitionRadiation(double x, const ParameterV
   double exponential = TMath::Exp(p[6] + p[7] * x);
   //p[8] is not used.
   double result = (leftLandau + rightLandau) * exponential;
-  if (qAbs(result) > 100.)
+  if (result < -100. || result > 100.)
     return 0;
   return result;
 }
@@ -86,7 +86,9 @@ double SignalHeightTrdLikelihood::eval(double signal, const Hypothesis& hypothes
 {
   Q_ASSERT_X(0 <= m_layer && m_layer <= 7, "SignalHeightTrdLikelihood::eval()", "call setLayer() before evaluating the PDF!");
   const ParameterVector& parameters = interpolation(hypothesis, goodInterpolation);
-  if (hypothesis.particle() == Enums::Electron || hypothesis.particle() == Enums::Positron)
+  //int nParameters = parameters.count();
+  Enums::Particle particle = hypothesis.particle();
+  if (particle == Enums::Electron || particle == Enums::Positron)
     return normalizationInterpolation(hypothesis) * transitionRadiation(signal, parameters);
   return normalizationInterpolation(hypothesis) * noTransitionRadiation(signal, parameters);
 }

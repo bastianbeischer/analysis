@@ -85,7 +85,7 @@ int Likelihood::valueToIndex(double absoluteRigidity) const
   return (absoluteRigidity - s_parametrizationMin) / s_parametrizationStep;
 }
 
-Likelihood::ParameterVector Likelihood::interpolation(const Hypothesis& hypothesis, bool* goodInterpolation) const
+const Likelihood::ParameterVector& Likelihood::interpolation(const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
   double absoluteRigidity = hypothesis.absoluteRigidity();
   if (goodInterpolation)
@@ -101,9 +101,8 @@ Likelihood::ParameterVector Likelihood::interpolation(const Hypothesis& hypothes
   if (absoluteRigidity < s_parametrizationMin)
     return m_parametrizationBuffer->first();
   if (absoluteRigidity > s_parametrizationMax)
-    return  m_parametrizationBuffer->last();
+    return m_parametrizationBuffer->last();
   return (m_parametrizationBuffer->constData())[valueToIndex(absoluteRigidity)];
-  return m_parametrizationBuffer->at(valueToIndex(absoluteRigidity));
 }
 
 Likelihood::ParameterVector Likelihood::calculateInterpolation(const Hypothesis& hypothesis, bool* goodInterpolation) const
@@ -170,7 +169,7 @@ double Likelihood::normalizationInterpolation(const Hypothesis& hypothesis, bool
     return m_parametrizationNormalizationBuffer->first();
   if (absoluteRigidity > s_parametrizationMax)
     return m_parametrizationNormalizationBuffer->last();
-  return m_parametrizationNormalizationBuffer->at(valueToIndex(absoluteRigidity));
+  return (m_parametrizationNormalizationBuffer->constData())[valueToIndex(absoluteRigidity)];
 }
 
 double Likelihood::calculateNormalizationInterpolation(const Hypothesis& h, bool* goodInterpolation) const

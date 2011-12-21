@@ -4,6 +4,8 @@
 
 #include <QDebug>
 
+#include <cmath>
+
 Hypothesis::Hypothesis(Enums::Particle particle, double curvature)
   : m_properties(particle)
   , m_curvature(curvature)
@@ -52,7 +54,8 @@ double Hypothesis::rigidity() const
 
 double Hypothesis::absoluteRigidity() const
 {
-  return qAbs(rigidity());
+  double r = rigidity();
+  return r >= 0 ? r : -r;
 }
 
 double Hypothesis::beta() const
@@ -62,7 +65,8 @@ double Hypothesis::beta() const
 
 double Hypothesis::inverseBeta() const
 {
-  return Helpers::addQuad(1., m_properties.mass() * m_curvature);
+  double m = m_properties.mass();
+  return sqrt(1. + m * m * m_curvature * m_curvature);
 }
 
 QDebug operator<<(QDebug debug, const Hypothesis& h)
