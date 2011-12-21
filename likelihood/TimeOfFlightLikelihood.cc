@@ -25,9 +25,10 @@ TimeOfFlightLikelihood::~TimeOfFlightLikelihood()
 
 double TimeOfFlightLikelihood::eval(const AnalyzedEvent* event, const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
-  if (qIsNull(event->particle()->beta()))
+  double beta = event->particle()->beta();
+  if (qIsNull(beta))
     return 0;
-  return eval(1./event->particle()->beta(), hypothesis, goodInterpolation);
+  return eval(1./beta, hypothesis, goodInterpolation);
 }
 
 double TimeOfFlightLikelihood::eval(double inverseBeta, const Hypothesis& hypothesis, bool* goodInterpolation) const
@@ -36,8 +37,8 @@ double TimeOfFlightLikelihood::eval(double inverseBeta, const Hypothesis& hypoth
     *goodInterpolation = true;
   if (inverseBeta < m_min || inverseBeta > m_max)
       return 0;
-  double timeResolution = 0.4;
-  double length = Constants::upperTofPosition - Constants::lowerTofPosition;
-  double invBetaResolution = Constants::speedOfLight * timeResolution / length;
+  const double timeResolution = 0.4;
+  const double length = Constants::upperTofPosition - Constants::lowerTofPosition;
+  const double invBetaResolution = Constants::speedOfLight * timeResolution / length;
   return TMath::Gaus(inverseBeta, hypothesis.inverseBeta(), invBetaResolution, true);
 }
