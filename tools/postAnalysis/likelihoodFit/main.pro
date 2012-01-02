@@ -30,7 +30,8 @@ CLASSES = \
   LikelihoodFitWindow \
   LikelihoodPDFPlot \
   ParameterPlot \
-  ParameterWidget
+  ParameterWidget \
+  LikelihoodPdfFitPlot
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

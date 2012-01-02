@@ -3,6 +3,8 @@
 
 #include "LikelihoodFitWindow.hh"
 
+class Likelihood;
+
 class MainWindow : public LikelihoodFitWindow {
 Q_OBJECT
 public:
@@ -10,6 +12,8 @@ public:
   ~MainWindow();
 protected:
   virtual void setupAnalysis();
+private:
+  QVector<const Likelihood*> m_likelihoods;
 };
 
 #endif
