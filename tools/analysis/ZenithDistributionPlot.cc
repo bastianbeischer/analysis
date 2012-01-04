@@ -52,7 +52,7 @@ void ZenithDistributionPlot::processEvent(const AnalyzedEvent* event)
     return;
   if (qAbs(yL) > Constants::tofBarLength/2. || qAbs(xL) > Constants::tofBarWidth*2.)
     return;
-  
+
   double zenith = track->zenithAngle();
 
   histogram()->Fill(cos(zenith));

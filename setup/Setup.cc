@@ -126,7 +126,7 @@ Layer* Setup::constructLayer(double z)
 DetectorElement* Setup::constructElement(unsigned short id)
 {
   unsigned short usbBoard = (id >> 8) << 8;
-  
+
   // should not exist already
   Q_ASSERT(!m_elements[id]);
 

@@ -78,7 +78,7 @@ void ProjectionControlWidget::changeProjectionType(int index)
     break;
   }
 }
-  
+
 QSpinBox* ProjectionControlWidget::spinBox()
 {
   return m_spinBox;

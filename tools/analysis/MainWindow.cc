@@ -90,7 +90,7 @@ MainWindow::MainWindow(Analysis* analysis, bool batch, QWidget* parent)
   connect(m_ui.saveEpsButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
   connect(m_ui.savePngButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
   connect(m_ui.saveRootButton, SIGNAL(clicked()), this, SLOT(saveButtonsClicked()));
-  
+
   connect(m_ui.saveCanvasDialogAction, SIGNAL(triggered()), this, SLOT(saveCanvasDialogActionTriggered()));
   connect(m_ui.saveAllCanvasesDialogAction, SIGNAL(triggered()), this, SLOT(saveAllCanvasDialogActionTriggered()));
   connect(m_ui.saveForPostAnalysisAction, SIGNAL(triggered()), this, SLOT(saveForPostAnalysisActionTriggered()));
@@ -245,7 +245,7 @@ void MainWindow::setupParticleFilterCheckBoxes()
 {
   Enums::Particles particles = Enums::NoParticle;
   int row;
-  
+
   QGridLayout* layout = new QGridLayout;
   layout->addWidget(new QLabel("data:"), 0, 0);
   row = 1;
@@ -260,7 +260,7 @@ void MainWindow::setupParticleFilterCheckBoxes()
       ++row;
     }
   }
-  
+
   layout->addWidget(new QLabel("mc:"), 0, 1);
   row = 1;
   particles = Enums::Proton | Enums::AntiProton | Enums::Helium | Enums::Electron | Enums::Positron | Enums::Muon
@@ -445,7 +445,7 @@ void MainWindow::guiToAnalysisSetting()
   foreach (QCheckBox* checkBox, m_mcParticleFilterCheckBoxes)
     if (checkBox->isChecked())
       m_analysisSetting.mcParticleFilter|= Enums::particle(checkBox->text());
-  
+
   foreach (CutSelector* selector, m_cutSelectors)
     if (selector->checked())
       m_analysisSetting.cutFilter.addCut(selector->cut());
@@ -629,7 +629,7 @@ void MainWindow::saveForPostAnalysisActionTriggered()
 
 void MainWindow::saveForPostAnalysisDialogActionTriggered()
 {
-  QString fileEnding; 
+  QString fileEnding;
   QString fileName = QFileDialog::getSaveFileName(this, "save current canvas", ".", "*.root", &fileEnding, m_dialogOptions);
   if (fileName.isEmpty())
     return;
@@ -668,7 +668,7 @@ void MainWindow::changeTopicGroup()
 
   checkSelectAll();
 }
- 
+
 void MainWindow::checkSelectAll()
 {
   bool allTopicsChecked = true;

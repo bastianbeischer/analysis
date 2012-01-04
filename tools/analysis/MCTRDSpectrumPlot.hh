@@ -12,7 +12,7 @@ class TCanvas;
 
 class MCTRDSpectrumPlot : public AnalysisPlot, public H1DPlot
 {
-  
+
 public:
   MCTRDSpectrumPlot(unsigned short = 0, TRDSpectrumPlot::TRDSpectrumType = TRDSpectrumPlot::completeTRD);
   ~MCTRDSpectrumPlot();

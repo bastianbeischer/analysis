@@ -87,12 +87,12 @@ void H3DPlot::addHistogram(TH3D* h, DrawOption option)
     m_zAxis = h->GetZaxis();
   }
 }
-  
+
 const QVector<RootPlot::DrawOption>& H3DPlot::drawOptions()
 {
   return s_drawOptions;
 }
-  
+
 void H3DPlot::setAxisTitle(const QString& x, const QString& y, const QString& z)
 {
   m_xAxisTitle = x;
@@ -104,7 +104,7 @@ int H3DPlot::numberOfHistograms()
 {
   return m_histograms.size();
 }
-  
+
 TAxis* H3DPlot::xAxis()
 {
   Q_ASSERT(m_xAxis);

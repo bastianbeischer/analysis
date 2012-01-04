@@ -1,5 +1,5 @@
 #include "EventDestination.hh"
-  
+
 EventDestination::EventDestination() :
   m_needsLocking(false)
 {

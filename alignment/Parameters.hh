@@ -27,7 +27,7 @@ public:
   unsigned int indexForDetId(unsigned short detId) const;
 
 private:
-  
+
   unsigned int m_nPar;
   float*       m_parameters;
   float*       m_parameterSigma;

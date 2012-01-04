@@ -14,11 +14,11 @@ class TFile;
 
 class DataManager
 {
-  
+
 public:
   DataManager();
   ~DataManager();
-  
+
 public:
   void setOutputFileName(QString fileName) {m_outputFileName = fileName;}
 
@@ -37,7 +37,7 @@ private:
 private:
   QList<SingleFile*> m_inputFiles;
   QList<MCSingleFile*> m_inputMCFiles;
-  
+
   DataDescription*   m_description;
   SensorsData*       m_sensorsData;
   SensorsData*       m_atcData;

@@ -41,7 +41,7 @@ SmearedRigidityComparissonPlot::SmearedRigidityComparissonPlot(Enums::ChargeSign
     nBinsNew = nBins / 2;
   else
     nBinsNew = (nBins - 1) / 2;
-  
+
   if (nBins%2 == 0)
     nBinsStart = nBinsNew + 1;
   else

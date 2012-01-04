@@ -30,7 +30,7 @@ StraightLine::~StraightLine()
 void StraightLine::retrieveFitResults()
 {
   double* solution = m_matrix->solution();
-    
+
   // return information from the fit.
   m_x0      = solution[0];
   m_y0      = solution[1];

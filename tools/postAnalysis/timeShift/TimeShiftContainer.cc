@@ -53,7 +53,7 @@ void TimeShiftContainer::shiftOnFirstChannel()
     }
   }
 }
- 
+
 void TimeShiftContainer::dump()
 {
   for (int barPair = 0; barPair < Constants::nTofBars/2; ++barPair) {
@@ -92,7 +92,7 @@ void TimeShiftContainer::finalizeChannelShifts()
     m_result[ch] = sum / n + m_channelShift[ch];
   }
 }
-  
+
 double TimeShiftContainer::data(int id, int channel)
 {
   int i = id - 0x8000;
@@ -185,7 +185,7 @@ void TimeShiftContainer::applyBarShifts(const QVector<BarShiftPlot*>& plots)
   TMatrixT<double> A;
   AFull.GetSub(0, n-1, 1, m-1, A);
   --m;
-  
+
   TMatrixT<double> At(m, n);
   At.Transpose(A);
   TMatrixT<double> Result = (At * A).Invert() * At * b;
@@ -202,7 +202,7 @@ void TimeShiftContainer::applyBarShifts(const QVector<BarShiftPlot*>& plots)
     m_resultWithBarShift[ch] = m_result[ch] + shift[bar];
   }
 }
- 
+
 void TimeShiftContainer::dumpMatrix(const TMatrixT<double>& m)
 {
   int width = 9;

@@ -38,7 +38,7 @@ TOTTemperatureCorrelationPlot::TOTTemperatureCorrelationPlot(unsigned int id)
   addHistogram(histogram);
 }
 
-TOTTemperatureCorrelationPlot::~TOTTemperatureCorrelationPlot() 
+TOTTemperatureCorrelationPlot::~TOTTemperatureCorrelationPlot()
 {
 }
 
@@ -48,7 +48,7 @@ void TOTTemperatureCorrelationPlot::processEvent(const AnalyzedEvent* event)
   if (!track)
     return;
 
-  const QVector<Hit*>& hits = track->hits(); 
+  const QVector<Hit*>& hits = track->hits();
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Hit* hit = *it;

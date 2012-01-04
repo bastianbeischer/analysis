@@ -13,7 +13,7 @@ public:
   int numberOfEvents();
   void enqueue(SimpleEvent*);
   SimpleEvent* dequeue();
-    
+
 protected:
   QQueue<SimpleEvent*> m_queue;
   QMutex m_mutex;

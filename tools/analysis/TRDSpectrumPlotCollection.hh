@@ -6,7 +6,7 @@
 class TRDSpectrumPlotCollection :
   public PlotCollection
 {
-  
+
 public:
   TRDSpectrumPlotCollection();
   ~TRDSpectrumPlotCollection();

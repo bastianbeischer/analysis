@@ -53,11 +53,11 @@ void SimulationFluxSelector::activate()
   m_acceptanceComboBox = new QComboBox(this);
   m_layout->addWidget(m_acceptanceComboBox);
   connect(m_acceptanceComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
-  
+
   m_sourceComboBox = new QComboBox(this);
   m_layout->addWidget(m_sourceComboBox);
   connect(m_sourceComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
-  
+
   for (int i = 0; i < m_numberOfSelectors; ++i) {
     QMenu* menu = new QMenu(this);
     QPushButton* button = new QPushButton("particles", this);

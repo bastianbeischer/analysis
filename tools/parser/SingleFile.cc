@@ -82,7 +82,7 @@ void SingleFile::open(QString fileName)
     delete m_runFile;
   }
   m_runFile = new RunFile(fileName, RunFile::MODE_READING);
-  
+
   int nCalibrationEvents = m_runFile->GetNumberOfCalibrationEvents();
   int nEvents = m_runFile->GetNumberOfEvents() - nCalibrationEvents;
   std::cout << qPrintable(fileName) << ": contains " << nEvents << " regular events and " << nCalibrationEvents << " calibration events" << std::endl;

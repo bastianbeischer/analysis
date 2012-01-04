@@ -91,7 +91,7 @@ BetaMomentumCorrelationPlot::BetaMomentumCorrelationPlot()
   function->SetLineStyle(2);
   legend->AddEntry(function, "He", "l");
   addFunction(function);
-  
+
   addLegend(legend);
 }
 

@@ -25,7 +25,7 @@ TOTLayerCollection::TOTLayerCollection(Type type)
   layout->addStretch();
   secondaryWidget()->layout()->addWidget(selectionWidget);
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPlot(int)));
-  
+
   QString title = "time-over-threshold ";
   switch (type) {
     case Projection:

@@ -19,7 +19,7 @@ Q_OBJECT
 public:
   PreAnalysisManager(QObject* = 0);
   ~PreAnalysisManager();
-  
+
   void processArgument(QString);
   void start(int);
 

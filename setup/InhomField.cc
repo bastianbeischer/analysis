@@ -68,7 +68,7 @@ void InhomField::fieldValue(const double* x, double* B) const
     if (pos[i] < axis[i]->binCenter(lowerBin[i])) {
       lowerBin[i]--;
     }
-    
+
     // if everything is normal, lowerBin[i] contains the number of the bin to the left of pos[i], while upperBin[i] will be set to the next bin, i.e. the one to the right
     if (lowerBin[i] >= 0 && lowerBin[i] < axis[i]->nBins()-1) {
       upperBin[i] = lowerBin[i] + 1;
@@ -96,7 +96,7 @@ void InhomField::fieldValue(const double* x, double* B) const
     double a2 = values[i][lowerBin[0]][upperBin[1]][lowerBin[2]]*(1. - d[2]) + values[i][lowerBin[0]][upperBin[1]][upperBin[2]]*d[2];
     double b1 = values[i][upperBin[0]][lowerBin[1]][lowerBin[2]]*(1. - d[2]) + values[i][upperBin[0]][lowerBin[1]][upperBin[2]]*d[2];
     double b2 = values[i][upperBin[0]][upperBin[1]][lowerBin[2]]*(1. - d[2]) + values[i][upperBin[0]][upperBin[1]][upperBin[2]]*d[2];
-    double c1 = a1*(1. - d[1]) + a2*d[1]; 
+    double c1 = a1*(1. - d[1]) + a2*d[1];
     double c2 = b1*(1. - d[1]) + b2*d[1];
     B[i] = (c1*(1. - d[0]) + c2*d[0]);
   }
@@ -109,7 +109,7 @@ void InhomField::readData()
     std::cerr << "Error reading file : " << m_dataFileName << std::endl;
     return;
   }
-  
+
   // read two lines of header informaiton
   double disX, disY, disZ;
   double x0, x1, y0, y1, z0, z1;
@@ -135,10 +135,10 @@ void InhomField::readData()
       m_field_z[i][j] = new double[nBins_z];
       for (int k = 0; k < nBins_z; k++) {
         m_field_x[i][j][k] = 0.;
-        m_field_y[i][j][k] = 0.;        
+        m_field_y[i][j][k] = 0.;
         m_field_z[i][j][k] = 0.;
       }
-   } 
+   }
   }
 
   // read the data
@@ -184,7 +184,7 @@ void InhomField::readData()
       }
     }
   }
-  
+
   // close file
   file.close();
 }

@@ -36,7 +36,7 @@ private:
   double m_max;
   bool passesCuts(double value) const;
   double sumOfSignalHeights(const Hit::ModuleType type, const Track* track, const QVector<Hit*>& clusters) const;
-  
+
 };
 
 #endif /* Cut_hh */

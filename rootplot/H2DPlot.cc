@@ -88,12 +88,12 @@ void H2DPlot::addHistogram(TH2D* h, DrawOption option)
     m_zAxis = h->GetZaxis();
   }
 }
-  
+
 const QVector<RootPlot::DrawOption>& H2DPlot::drawOptions()
 {
   return s_drawOptions;
 }
-  
+
 void H2DPlot::setAxisTitle(const QString& x, const QString& y, const QString& z)
 {
   m_xAxisTitle = x;
@@ -105,7 +105,7 @@ int H2DPlot::numberOfHistograms()
 {
   return m_histograms.size();
 }
-  
+
 TAxis* H2DPlot::xAxis()
 {
   Q_ASSERT(m_xAxis);

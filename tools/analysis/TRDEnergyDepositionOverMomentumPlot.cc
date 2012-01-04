@@ -59,9 +59,9 @@ void TRDEnergyDepositionOverMomentumPlot::processEvent(const AnalyzedEvent* even
 
   for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != hitsEnd; ++it) {
     Cluster* cluster = static_cast<Cluster*>(*it);
-    if (cluster->type() != Hit::trd) 
+    if (cluster->type() != Hit::trd)
       continue;
-    
+
     const std::vector<Hit*>& subHits = cluster->hits();
     const std::vector<Hit*>::const_iterator subHitsEndIt = subHits.end();
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {

@@ -10,7 +10,7 @@ class Cluster;
 class TOFBar :
   public DetectorElement
 {
-  
+
 public:
   explicit TOFBar(unsigned short detId, const Setup* setup);
   ~TOFBar();

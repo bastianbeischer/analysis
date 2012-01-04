@@ -90,7 +90,7 @@ void SettingsManager::readSettings()
     settings->setMagnet(magnet);
     settings->setPolarity(polarity);
     settings->setSituation(situation);
-    
+
     m_settings.append(settings);
     m_configFile->endGroup();
   }

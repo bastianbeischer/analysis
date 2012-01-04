@@ -45,7 +45,7 @@ void TOFTimeDifferencePlot::processEvent(const AnalyzedEvent* event)
     return;
   if (!event->flagsSet(ParticleInformation::Chi2Good))
     return;
-  
+
   const QVector<Hit*>& clusters = track->hits();
   const QVector<Hit*>::const_iterator endIt = clusters.end();
   for (QVector<Hit*>::const_iterator it = clusters.begin(); it != endIt; ++it) {

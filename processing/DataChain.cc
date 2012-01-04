@@ -82,7 +82,7 @@ void DataChain::addFileList(const char* listName)
       addRootFile(qPrintable(fullname));
     }
   }
-  
+
   std::cout << "DONE: Chain now contains " << m_chain->GetEntries() << " events in total (after addition of " << listName << ")" << std::endl;
 }
 
@@ -98,7 +98,7 @@ void DataChain::addRootFile(const char* filename)
   int nEntries = tree->GetEntries();
   if (m_offsets.size() == 0)
     m_offsets.push_back(nEntries);
-  else 
+  else
     m_offsets.push_back(nEntries + m_offsets.back());
   DataDescription* desc = (DataDescription*) tree->GetUserInfo()->First();
   std::cout << " with " << nEntries << " events";
@@ -122,7 +122,7 @@ SimpleEvent* DataChain::event(unsigned int i)
   assert(i < m_chain->GetEntries());
   m_currentEntry = i;
   m_event = 0;
-  m_chain->GetEntry(i); 
+  m_chain->GetEntry(i);
   TTree* tree = m_chain->GetTree();
   const DataDescription* desc = m_descriptionBuffer[tree];
   if (!desc) {
@@ -140,7 +140,7 @@ SimpleEvent* DataChain::nextEvent()
     m_currentEntry = -1;
     return 0;
   }
-  m_chain->GetEntry(m_currentEntry); 
+  m_chain->GetEntry(m_currentEntry);
   return m_event;
 }
 
@@ -167,7 +167,7 @@ const std::string& DataChain::rawFileNameForEvent() const
 {
   return currentDescription()->runFileNameForEventNumber(entryInFile());
 }
- 
+
 QDateTime DataChain::time(int eventNumber)
 {
   int savedEntry = m_currentEntry;

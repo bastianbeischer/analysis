@@ -114,7 +114,7 @@
   XX(BEAM_CHERENKOV2,) \
   XX(TRD_PRESSURE_SMOOTHED,) \
   XX(N_SENSOR_TYPES,) /* end marker */
-  
+
 namespace SensorTypes
 {
   DECLARE_ENUM(Type,SENSOR_TYPES)

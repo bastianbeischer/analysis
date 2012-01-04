@@ -8,11 +8,11 @@ class TrackerLayerStatisticsPlot :
   public AnalysisPlot,
   public H1DPlot
 {
-  
+
 public:
   TrackerLayerStatisticsPlot();
   ~TrackerLayerStatisticsPlot();
-  
+
   void processEvent(const AnalyzedEvent*);
   void update();
   void finalize();

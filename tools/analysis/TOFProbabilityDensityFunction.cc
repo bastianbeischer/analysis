@@ -67,7 +67,7 @@ void TOFProbabilityDensityFunction::processEvent(const AnalyzedEvent* event)
     return;
 
   addFunctions(settings->momentum());
-  
+
   double signal1 = event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV1);
   double signal2 = event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV2);
 

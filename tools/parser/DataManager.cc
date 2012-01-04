@@ -122,7 +122,7 @@ void DataManager::initializeOutput()
   m_description = new DataDescription;
   m_description->setSoftwareVersionHash();
   m_outputTree->GetUserInfo()->Add(m_description);
-  m_outputTree->Branch("event", "SimpleEvent", &m_currentEvent); 
+  m_outputTree->Branch("event", "SimpleEvent", &m_currentEvent);
 }
 
 void DataManager::saveAndCloseOutput()

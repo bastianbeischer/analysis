@@ -12,7 +12,7 @@ Q_OBJECT
 public:
   PostAnalysisPlotCollection();
   virtual ~PostAnalysisPlotCollection();
-  
+
   void addPlot(PostAnalysisPlot*);
   virtual void draw(TCanvas*);
   virtual bool isPostAnalysisPlotCollection();

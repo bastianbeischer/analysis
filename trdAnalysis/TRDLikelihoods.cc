@@ -49,7 +49,7 @@ TRDLikelihoods::TRDLikelihoods()
 {
   for (int i = 0; i < 8; ++i)
     m_LHFunctionTRLayer << prototypeLHFunctionTR();
-  
+
   QString path = Helpers::analysisPath() + "/conf/";
   m_trdLikelihoodSettings = new QSettings(path + "TRDLikelihood.conf", QSettings::IniFormat);
 

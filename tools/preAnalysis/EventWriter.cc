@@ -78,7 +78,7 @@ void EventWriter::run()
       break;
     }
     m_mutex.unlock();
-  } 
+  }
 
   // write the events still left in the queue
   while(m_queue->numberOfEvents() > 0) {

@@ -9,7 +9,7 @@ class ParticleFilter {
 public:
   ParticleFilter(Enums::Particles = Enums::NoParticle);
   ~ParticleFilter();
-  
+
   void setTypes(Enums::Particles types) {m_types = types;}
 
   Enums::Particles types() const {return m_types;}
@@ -17,7 +17,7 @@ public:
 
 private:
   Enums::Particles m_types;
-  
+
 };
 
 #endif /* ParticleFilter_hh */

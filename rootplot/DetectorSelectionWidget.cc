@@ -46,7 +46,7 @@ void DetectorSelectionWidget::selectedPlotChanged()
 {
   int module = m_moduleSpinBox->value();
   int channel = m_channelSpinBox->value();
-  
+
   int index = module*(m_channelSpinBox->maximum()+2);
   if (m_individualChannelCheckBox->isChecked())
     index += channel + 1;

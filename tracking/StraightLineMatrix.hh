@@ -6,14 +6,14 @@
 class StraightLineMatrix :
   public Matrix
 {
-  
+
 public:
   StraightLineMatrix();
   virtual ~StraightLineMatrix();
-  
+
 protected:
   void fillMatrixFromHit(double* A, double k, double c, double s) const;
-  
+
 };
 
 #endif /* StraightLineMatrix_hh */

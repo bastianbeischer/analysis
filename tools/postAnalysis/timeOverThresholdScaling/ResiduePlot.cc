@@ -40,7 +40,7 @@ ResiduePlot::ResiduePlot(PostAnalysisCanvas* canvas, const QString& title)
   setAxisTitle(h2->GetYaxis()->GetTitle(), "");
   addHistogram(histogram);
 
-  TLatex* latex = 0;  
+  TLatex* latex = 0;
   latex = RootPlot::newLatex(.65, .85);
   latex->SetTitle(qPrintable(QString("n  = %1").arg(histogram->GetEntries())));
   addLatex(latex);

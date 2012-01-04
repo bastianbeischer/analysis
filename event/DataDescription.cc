@@ -74,7 +74,7 @@ long DataDescription::eventNumberInRunFile(long eventNumber) const
 int DataDescription::runFileForEventNumber(long eventNumber) const
 {
   int runNo = 0;
-  
+
   for (int i = 0; i < m_numberOfRuns-1; ++i) {
     if (eventNumber >= m_eventNumberOffset[i] && eventNumber < m_eventNumberOffset[i+1]) {
       runNo = i+1;
@@ -90,7 +90,7 @@ const std::string& DataDescription::runFileNameForEventNumber(long eventNumber) 
   int runNo = runFileForEventNumber(eventNumber);
   return m_runFileNames[runNo];
 }
-    
+
 long DataDescription::numberOfEventsInRunFile(int i) const
 {
   assert(i < m_numberOfRuns);

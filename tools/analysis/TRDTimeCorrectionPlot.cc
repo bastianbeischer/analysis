@@ -32,7 +32,7 @@ TRDTimeCorrectionPlot::TRDTimeCorrectionPlot(QDateTime first, QDateTime last)
   int t1 = m_t1 - 0.1*dur;
   int t2 = m_t2 + 0.1*dur;
   int nBins = (t2 - t1) / 60 *10;
-  
+
   TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, t1, t2);
 
   m_normalizationHistogram = new TH1D(qPrintable(title() + "normalization"), "", nBins, t1, t2);

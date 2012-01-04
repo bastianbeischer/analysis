@@ -39,7 +39,7 @@ void CutStatisticsPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->particle()->track();
   Q_ASSERT(track);
   histogram()->Fill(0);
-  
+
   if (!track || !track->fitGood())
     return;
   histogram()->Fill(1);

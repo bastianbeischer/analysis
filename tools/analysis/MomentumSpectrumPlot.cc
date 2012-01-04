@@ -20,7 +20,7 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Enums::ChargeSigns type, bool inverte
   , m_inverted(inverted)
 {
   QString title = "momentum spectrum";
-  
+
   if (inverted) {
     title+= " - Inverted";
     setAxisTitle("1/R / 1/GV", "particles / bin");
@@ -42,7 +42,7 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Enums::ChargeSigns type, bool inverte
     const QVector<double>& axis = Helpers::logBinning(nBins, 0.1, 20.);
     histogram = new TH1D(qPrintable(title), "", nBins, axis.constData());
   }
-  
+
   histogram->SetLineColor(kBlack);
   addHistogram(histogram);
   addLatex(RootPlot::newLatex(.15, .85));

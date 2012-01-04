@@ -70,7 +70,7 @@ void SimulationFluxKey::construct()
   if (!s_locationNames.count()) {
     s_locationNames.insert(GroundEsrange, "Ground Esrange");
     s_locationNames.insert(Flight, "Flight");
-  
+
     s_acceptanceNames.insert(InsideMagnetAcceptance, "perdaix");
     s_acceptanceNames.insert(TofAcceptance, "perdaixTof");
     s_acceptanceNames.insert(TwoPiAcceptance, "twoPi");

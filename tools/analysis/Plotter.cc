@@ -37,7 +37,7 @@ Plotter::Plotter(QWidget* parent)
 Plotter::~Plotter()
 {
 }
-  
+
 void Plotter::canvasPositionChanged(double x, double y)
 {
   if (!m_plot)

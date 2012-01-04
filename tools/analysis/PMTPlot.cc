@@ -6,7 +6,7 @@
 
 #include "SimpleEvent.hh"
 #include "SensorTypes.hh"
- 
+
 const int PMTPlot::s_threshold = 200.;
 
 PMTPlot::PMTPlot(SensorTypes::Type type) :
@@ -24,7 +24,7 @@ PMTPlot::PMTPlot(SensorTypes::Type type) :
   m_line->SetLineWidth(2);
   m_line->SetLineColor(kGreen);
   m_line->SetLineStyle(2);
-  
+
   addLatex(RootPlot::newLatex(.80, .85));
 }
 

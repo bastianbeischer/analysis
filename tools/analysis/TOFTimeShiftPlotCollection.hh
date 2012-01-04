@@ -6,14 +6,14 @@
 class TOFTimeShiftPlotCollection :
   public PlotCollection
 {
-  
+
 public:
   TOFTimeShiftPlotCollection();
   ~TOFTimeShiftPlotCollection();
-  
+
 private:
-  
-  
+
+
 };
 
 #endif /* TOFTimeShiftPlotCollection_hh */

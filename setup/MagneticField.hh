@@ -7,11 +7,11 @@ class Track;
 
 class MagneticField
 {
- 
+
 public:
   MagneticField();
   ~MagneticField();
- 
+
 public:
   void setZ0(const double& z0) {m_z0 = z0;}
   void setZ1(const double& z1) {m_z1 = z1;}

@@ -6,11 +6,11 @@
 class TRDModule :
   public DetectorElement
 {
-  
+
 public:
   explicit TRDModule(unsigned short detId, const Setup* setup);
   ~TRDModule();
-  
+
 public:
   QVector<Hit*> findClusters(const QVector<Hit*>&); // these clusters have to be deleted by hand!
 

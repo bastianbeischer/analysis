@@ -64,7 +64,7 @@ void TOFBarShiftPlot::processEvent(const AnalyzedEvent* event)
     return;
   if (settings && settings->situation() != Enums::Testbeam11 && !event->flagsSet(ParticleInformation::InsideMagnet))
     return;
- 
+
   const TimeOfFlight* tof = event->particle()->timeOfFlight();
   const QVector<Hit*>& hits = track->hits();
 

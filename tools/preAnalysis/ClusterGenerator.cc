@@ -22,7 +22,7 @@ ClusterGenerator::ClusterGenerator() :
     for (int i = 0; i < nChannels; i++) {
       m_hitStorage[element].append(0);
     }
-  }  
+  }
 }
 
 ClusterGenerator::~ClusterGenerator()

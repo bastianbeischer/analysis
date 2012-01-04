@@ -34,17 +34,17 @@ Cut::Cut(const QString& string)
     setMax(stringList[2].toDouble());
 }
 
-Cut::~Cut() 
+Cut::~Cut()
 {
 }
 
-void Cut::setMin(double min) 
+void Cut::setMin(double min)
 {
   m_minIsSet = true;
   m_min = min;
 }
 
-void Cut::setMax(double max) 
+void Cut::setMax(double max)
 {
   m_maxIsSet = true;
   m_max = max;

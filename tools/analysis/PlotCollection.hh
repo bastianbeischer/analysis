@@ -13,7 +13,7 @@ class PlotCollection : public QObject, public AnalysisPlot
 public:
   PlotCollection(Enums::AnalysisTopic);
   virtual ~PlotCollection();
-  
+
   void addPlot(AnalysisPlot* plot) {m_plots.append(plot);}
   virtual void processEvent(const AnalyzedEvent*);
   virtual void finalize();
@@ -31,7 +31,7 @@ protected slots:
 private:
   int m_selectedPlot;
   QVector<AnalysisPlot*> m_plots;
-  
+
 };
 
 #endif /* PlotCollection_hh */

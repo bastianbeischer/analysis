@@ -37,7 +37,7 @@ Strategy::Strategy() :
 Strategy::~Strategy()
 {
   delete m_parameters;
-  foreach(Constraint* cons, m_constraints) 
+  foreach(Constraint* cons, m_constraints)
     delete cons;
   delete m_dataInterface;
 }
@@ -48,7 +48,7 @@ void Strategy::init()
 
   m_parameters->setMillepedeParameters();
 
-  foreach(Constraint* cons, m_constraints) 
+  foreach(Constraint* cons, m_constraints)
     cons->activate();
 
   INITUN(m_nIter, m_cutValue);
@@ -74,7 +74,7 @@ bool Strategy::readFromFile(QString fileName)
 
     QString parameterName = list[0];
     QString value = list[1];
-    
+
     if (parameterName == "nGlobal") {
       m_nGlobal = value.toUInt();
       m_parameters->reInitParameterArrays(m_nGlobal);

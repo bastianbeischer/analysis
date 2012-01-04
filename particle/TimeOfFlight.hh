@@ -7,11 +7,11 @@ class Track;
 
 class TimeOfFlight
 {
-  
+
 public:
   TimeOfFlight();
   ~TimeOfFlight();
-  
+
 public:
   void reset();
   void calculateTimes(const Track*);

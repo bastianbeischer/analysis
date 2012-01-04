@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
   //h->Smooth(4);
   TSpectrum spectrum;
   nPeaks = spectrum.Search(h, .5, "", 0.01);
- 
+
   TGraph* g1 = new TGraph;
   for (int i = 0; i < nPeaks; ++i) {
     g1->SetPoint(i, spectrum.GetPositionX()[i], spectrum.GetPositionY()[i]);

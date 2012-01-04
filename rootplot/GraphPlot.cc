@@ -55,7 +55,7 @@ void GraphPlot::setRange()
 
   double dx = 0.05 * (xMax - xMin);
   h->SetBins(1000, xMin - dx, xMax + dx);
-  
+
   double dy = 0.05 * (yMax - yMin);
   yMin-= dy;
   yMax+= dy;
@@ -135,13 +135,13 @@ const QVector<RootPlot::DrawOption>& GraphPlot::drawOptions()
 {
   return s_drawOptions;
 }
- 
+
 void GraphPlot::setAxisTitle(const QString& x, const QString& y)
 {
   m_xAxisTitle = x;
   m_yAxisTitle = y;
 }
-  
+
 TAxis* GraphPlot::xAxis()
 {
   Q_ASSERT(m_xAxis);

@@ -8,11 +8,11 @@ class Hit;
 
 class Matrix
 {
-  
+
 public:
   Matrix();
   virtual ~Matrix();
-  
+
   void reset();
   int fit(const QVector<Hit*>& hits);
   double* solution() const {return m_solution;}
@@ -20,7 +20,7 @@ public:
   unsigned int nCol() const {return m_nCol;}
   double chi2() const {return m_chi2;}
   double ndf() const {return m_ndf;}
-  
+
 protected:
   virtual bool checkInvertability(const QVector<Hit*>& hits) const;
   virtual void fillMatrixFromHit(double* A, double k, double c, double s) const = 0;

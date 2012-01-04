@@ -83,7 +83,7 @@ private:
   QVector<TopicSelector*> m_trackerSelectors;
   QVector<TopicSelector*> m_trdSelectors;
   QVector<TopicSelector*> m_tofSelectors;
-  
+
   QVector<QWidget*> m_controlWidgets;
   QVector<QCheckBox*> m_correctionCheckBoxes;
   QVector<QCheckBox*> m_particleCheckBoxes;

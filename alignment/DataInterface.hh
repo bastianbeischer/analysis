@@ -9,11 +9,11 @@ class Corrections;
 
 class DataInterface
 {
-  
+
 public:
   DataInterface();
   ~DataInterface();
-  
+
 public:
   void addFiles(const char* listName);
   void process(AlignmentMatrix* matrix);

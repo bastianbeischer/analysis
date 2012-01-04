@@ -11,7 +11,7 @@ class ZenithDistributionPlot :
 public:
   ZenithDistributionPlot();
   ~ZenithDistributionPlot();
-  
+
   void processEvent(const AnalyzedEvent*);
   void update();
 

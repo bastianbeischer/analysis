@@ -19,7 +19,7 @@ ResiduePlot::ResiduePlot(const QVector<TimeOfFlightHistogram*>& histograms, cons
   foreach (TimeOfFlightHistogram* h, histograms)
     if (h->fitGood())
       ++nBins;
-  
+
   TH1D* histogram = new TH1D("residueHistogram", "", nBins, 0, nBins);
   addHistogram(histogram);
   setDrawOption(P);
@@ -34,7 +34,7 @@ ResiduePlot::ResiduePlot(const QVector<TimeOfFlightHistogram*>& histograms, cons
     histogram->SetBinError(counter, resError);
     ++counter;
   }
-  
+
   yAxis()->SetRangeUser(-1.0, 1.0);
   setAxisTitle("", "residue / ns");
 }

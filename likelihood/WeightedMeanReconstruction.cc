@@ -61,7 +61,7 @@ void WeightedMeanReconstruction::identify(AnalyzedEvent* event)
     double curvature = qIsNull(denumerator) ? 0 : enumeratur / denumerator;
     Hypothesis* h = new Hypothesis(*particleIt, curvature);
     double value = eval(event, *h, &goodInterpolation);
-    if (value < m_minima[m_indexOfGlobalMinimum].y()) 
+    if (value < m_minima[m_indexOfGlobalMinimum].y())
       m_indexOfGlobalMinimum = it;
     h->setLogLikelihood(value);
     event->particle()->addHypothesis(m_method, h);

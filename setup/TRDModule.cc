@@ -24,7 +24,7 @@ QVector<Hit*> TRDModule::findClusters(const QVector<Hit*>& rawhits)
 
   for (unsigned short channel = 0; channel < m_nChannels; ++channel) {
     Hit* hit = rawhits[channel];
-      
+
     if (hit && hit->signalHeight() > seedThreshold) {
       Cluster* cluster = new Cluster;
 

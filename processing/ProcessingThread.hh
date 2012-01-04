@@ -8,14 +8,14 @@ class LimitedEventQueue;
 class EventDestination;
 class EventProcessor;
 
-class ProcessingThread : 
+class ProcessingThread :
   public QThread
 {
-  
+
 public:
   ProcessingThread(EventProcessor*, QObject* = 0);
   ~ProcessingThread();
-  
+
   LimitedEventQueue* queue();
   EventProcessor* processor();
 
@@ -30,7 +30,7 @@ protected:
   EventProcessor* m_processor;
   bool m_abort;
   QMutex m_mutex;
-  
+
 };
 
 #endif /* ProcessingThread_hh */

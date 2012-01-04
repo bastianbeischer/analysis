@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
   histograms[3][1] = new TH2D("time resolution 0x800c 0x801c, 0x8024 0x8034", ";;#Deltat / ns;", nBins*nBins, 0., nBins*nBins, 30, 0., 6.);
   histograms[3][2] = new TH2D("time resolution 0x800c 0x801c, 0x8028 0x8038", ";;#Deltat / ns;", nBins*nBins, 0., nBins*nBins, 30, 0., 6.);
   histograms[3][3] = new TH2D("time resolution 0x800c 0x801c, 0x802c 0x803c", ";;#Deltat / ns;", nBins*nBins, 0., nBins*nBins, 30, 0., 6.);
-  
+
   for (int i = 0; i < 4; ++i) {
     for (int j = 0; j < 4; ++j) {
       for (int upperBin = 0; upperBin < nBins; ++upperBin) {

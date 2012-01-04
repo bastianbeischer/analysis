@@ -74,7 +74,7 @@ void TOFCluster::processHits()
   int signalHeight = 0;
   for (std::vector<Hit*>::iterator it = m_hits.begin(); it != m_hits.end(); it++) {
     signalHeight+= (*it)->signalHeight();
-  }  
+  }
 
   m_type = Hit::tof;
   m_detId = detId;
@@ -100,4 +100,4 @@ void TOFCluster::dump()
   for (unsigned int i = 0; i < m_hits.size(); ++i) {
     static_cast<TOFSipmHit*>(m_hits[i])->dump();
   }
-} 
+}

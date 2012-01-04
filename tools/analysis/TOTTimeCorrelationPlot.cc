@@ -42,7 +42,7 @@ TOTTimeCorrelationPlot::TOTTimeCorrelationPlot(unsigned int id, QDateTime first,
   addHistogram(histogram);
 }
 
-TOTTimeCorrelationPlot::~TOTTimeCorrelationPlot() 
+TOTTimeCorrelationPlot::~TOTTimeCorrelationPlot()
 {
 }
 

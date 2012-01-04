@@ -19,13 +19,13 @@ public:
   QSpinBox* spinBox();
   QComboBox* comboBox();
   void setProjectionType(H2DProjectionPlot::ProjectionType);
-  
+
 private:
   void setElementStatus(bool);
 
 private slots:
   void changeProjectionType(int);
-  
+
 private:
   H2DProjectionPlot* m_projectionPlot;
   QComboBox* m_comboBox;

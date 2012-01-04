@@ -18,11 +18,11 @@ class MCSimpleEventDigi;
 
 class Converter
 {
-  
+
 public:
   Converter();
   ~Converter();
-  
+
 public:
   SimpleEvent* generateNextSimpleEvent(const SingleFile* file, const MCSingleFile* mcFile);
 
@@ -30,7 +30,7 @@ private:
   const MCEventInformation* generateNextMCEventInformation(const MCSingleFile* mcFile);
   const MCSimpleEventParticle* constructMCSimpleEventParticle(MCParticle* mcParticle);
   const QVector<const MCSimpleEventDigi*> getAllMCDigis(const MCEvent*);
-  
+
 private:
   QMap<unsigned short, TVector3> m_positions;
   QMap<unsigned short, TVector3> m_counterPositions;

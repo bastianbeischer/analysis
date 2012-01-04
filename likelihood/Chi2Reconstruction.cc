@@ -70,7 +70,7 @@ Chi2Reconstruction::Chi2Reconstruction(Enums::LikelihoodVariables likelihoods, E
   , m_chi2Function(new Chi2Function)
 {
   m_externalInformation = additionalInformation;
-  m_method = additionalInformation ? Enums::Chi2 : Enums::Chi2ExternalInformation; 
+  m_method = additionalInformation ? Enums::Chi2 : Enums::Chi2ExternalInformation;
   m_minima = QVector<QPointF>(m_particles.count());
   m_chi2Minimizer->SetFunction(*m_chi2Function, -10, 10);
 }
@@ -100,7 +100,7 @@ void Chi2Reconstruction::identify(AnalyzedEvent* event)
   for (int it = 0; particleIt != particleEnd; ++it, ++particleIt, ++pointIt) {
     Q_ASSERT(*particleIt != Enums::NoParticle);
     Q_ASSERT(pointIt != m_minima.end());
-    // minimize: (K - 1/p)^2 / (sigma_1/p)^2 + (sqrt((mK)^2 + 1) - 1/beta)^2 / (sigma_1/beta)^2 
+    // minimize: (K - 1/p)^2 / (sigma_1/p)^2 + (sqrt((mK)^2 + 1) - 1/beta)^2 / (sigma_1/beta)^2
     m_chi2Function->setParameters(event, *particleIt);
     if (m_chi2Minimizer->Minimize(100)) {
       pointIt->setX(m_chi2Minimizer->XMinimum());

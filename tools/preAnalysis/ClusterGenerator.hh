@@ -15,11 +15,11 @@ typedef QMap< DetectorElement*, QVector<Hit*> >::iterator HitStorageIterator;
 class ClusterGenerator :
   public EventProcessor
 {
-  
+
 public:
   ClusterGenerator();
   ~ClusterGenerator();
-  
+
   void process(SimpleEvent*);
 
 private:

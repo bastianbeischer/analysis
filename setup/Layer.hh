@@ -11,12 +11,12 @@ class Hit;
 
 class Layer
 {
- 
+
 public:
   Layer();
   Layer(double z);
   ~Layer();
- 
+
 public:
   void addElement(DetectorElement* element) {m_elements[element->id()] = element;}
 

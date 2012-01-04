@@ -153,7 +153,7 @@ int main(int argc, char* argv[])
     qFatal("Usage: \"fileCompare postAnaFile1.txt postAnaFile2.txt\"");
   if (!QFile::exists(argv[1]) || !QFile::exists(argv[2]))
     qFatal("At least one of the files does not exist.");
-  
+
   TFile file1(argv[1]);
   gROOT->cd();
   TFile file2(argv[2]);
@@ -199,6 +199,6 @@ int main(int argc, char* argv[])
 
   file2.Close();
   file1.Close();
-  
+
   return 1;
 }

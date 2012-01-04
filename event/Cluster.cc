@@ -58,7 +58,7 @@ void Cluster::processHits()
   if (m_hits.size() == 0) {
     return;
   }
-  
+
   double x  = 0., y  = 0., z  = 0.;
   double xc = 0., yc = 0., zc = 0.;
   unsigned short detId = 0;
@@ -106,7 +106,7 @@ void Cluster::processHits()
   m_signalHeight = amplitude;
   m_position = TVector3(x,y,z);
   m_counterPosition = TVector3(xc,yc,zc);
-  
+
   calculateAngle();
 }
 

@@ -13,7 +13,7 @@ ParameterWidget::ParameterWidget(QWidget* parent)
   , m_maxSpinBox(new QDoubleSpinBox)
 {
   QVBoxLayout* layout = new QVBoxLayout;
-  
+
   m_valueSpinBox->setValue(0);
   connect(m_valueSpinBox, SIGNAL(valueChanged(double)), this, SLOT(update()));
   layout->addWidget(m_valueSpinBox);
@@ -29,7 +29,7 @@ ParameterWidget::ParameterWidget(QWidget* parent)
   m_maxSpinBox->setValue(+100);
   connect(m_maxSpinBox, SIGNAL(valueChanged(double)), this, SLOT(update()));
   layout->addWidget(m_maxSpinBox);
-  
+
   update();
 
   setLayout(layout);

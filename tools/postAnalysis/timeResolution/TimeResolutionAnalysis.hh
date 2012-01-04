@@ -30,7 +30,7 @@ private:
     double v, vError;
     double upperY, lowerY;
   };
-  
+
   double sumSigmaErrorJL(const QMap<Key, Value>& map, int i, int k);
   double sumSigmaErrorIK(const QMap<Key, Value>& map, int j, int l);
   double sumRelativeSigmaError(const QMap<Key, Value>& map, int i, int j, int k, int l);

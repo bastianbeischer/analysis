@@ -39,7 +39,7 @@ SignalHeightTempCorrelation::~SignalHeightTempCorrelation()
 {
 }
 
-TGraphErrors* SignalHeightTempCorrelation::meanGraph(TH2D* histogram) 
+TGraphErrors* SignalHeightTempCorrelation::meanGraph(TH2D* histogram)
 {
   const double minAdc = 0;
   const int minEntries = 10;

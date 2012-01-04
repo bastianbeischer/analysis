@@ -72,7 +72,7 @@ void ChannelTriggerProbabilityPlot::finalize()
 {
   histogram()->Divide(m_normalizationHistogram);
 }
-  
+
 void ChannelTriggerProbabilityPlot::draw(TCanvas* canvas)
 {
   if (m_drawn) {

@@ -67,7 +67,7 @@ AnalysisProcessor::~AnalysisProcessor()
 void AnalysisProcessor::initReconstructions()
 {
   Q_ASSERT(m_reconstructions.count() == 0); // should only be called once!
-  
+
   Enums::LikelihoodVariableIterator end = Enums::likelihoodVariableEnd();
 
   Enums::LikelihoodVariables internal = Enums::UndefinedLikelihood;

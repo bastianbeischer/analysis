@@ -11,7 +11,7 @@ TOFReconstruction::TOFReconstruction(Enums::LikelihoodVariables variables, Enums
   : Reconstruction(variables, particles)
 {
   m_externalInformation = additionalInformation;
-  m_method = additionalInformation ? Enums::TOFExternalInformation : Enums::TOF; 
+  m_method = additionalInformation ? Enums::TOFExternalInformation : Enums::TOF;
   m_minima = QVector<QPointF>(m_particles.count());
 }
 
@@ -46,7 +46,7 @@ void TOFReconstruction::identify(AnalyzedEvent* event)
     }
     Hypothesis* h = new Hypothesis(*particleIt, curvature);
     double value = eval(event, *h, &goodInterpolation);
-    if (value < m_minima[m_indexOfGlobalMinimum].y()) 
+    if (value < m_minima[m_indexOfGlobalMinimum].y())
       m_indexOfGlobalMinimum = it;
     h->setLogLikelihood(value);
     event->particle()->addHypothesis(m_method, h);

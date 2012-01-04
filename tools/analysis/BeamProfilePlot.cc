@@ -26,7 +26,7 @@ BeamProfilePlot::BeamProfilePlot(Type type) :
 {
   int nBinsX = 0, nBinsY = 0;
   double x0 = 0., x1 = 0.;
-  double y0 = 0., y1 = 0.;  
+  double y0 = 0., y1 = 0.;
   if (m_type == Horizontal) {
     nBinsX = 200;
     x0 = -150.;
@@ -59,7 +59,7 @@ BeamProfilePlot::BeamProfilePlot(Type type) :
   controlWidget->spinBox()->setMaximum(1024);
   controlWidget->layout()->addWidget(m_fileNameLineEdit);
   controlWidget->layout()->addWidget(saveButton);
-  
+
   connect(saveButton, SIGNAL(clicked()), this, SLOT(saveHistograms()));
 }
 

@@ -24,7 +24,7 @@ BarEfficiencyPlot::BarEfficiencyPlot(PostAnalysisCanvas* c1, PostAnalysisCanvas*
   QString title;
   title = QString("%1 bar efficiency").arg(c1->name());
   setTitle(title);
-  
+
   double sum1 = sumEntries(h1);
   double mean1 = sum1 / (h1->GetXaxis()->GetNbins() * h1->GetYaxis()->GetNbins());
   double sum2 = sumEntries(h2);
@@ -33,9 +33,9 @@ BarEfficiencyPlot::BarEfficiencyPlot(PostAnalysisCanvas* c1, PostAnalysisCanvas*
   double mean3 = sum3 / (h3->GetXaxis()->GetNbins() * h3->GetYaxis()->GetNbins());
   double sum4 = sumEntries(h4);
   double mean4 = sum4 / (h4->GetXaxis()->GetNbins() * h4->GetYaxis()->GetNbins());
-  
+
   qDebug() << title << ((1.-mean1)+(1.-mean2)+(1.-mean3)+(1.-mean4))/4.;
- 
+
   int nBinsX = h1->GetXaxis()->GetNbins();
   int nBinsY = h1->GetYaxis()->GetNbins();
   double minX = h1->GetXaxis()->GetXmin();

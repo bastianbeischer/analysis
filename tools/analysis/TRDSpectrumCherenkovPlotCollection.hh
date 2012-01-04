@@ -6,7 +6,7 @@
 class TRDSpectrumCherenkovPlotCollection :
   public PlotCollection
 {
-  
+
 public:
   TRDSpectrumCherenkovPlotCollection();
   ~TRDSpectrumCherenkovPlotCollection();

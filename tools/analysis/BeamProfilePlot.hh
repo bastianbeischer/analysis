@@ -10,7 +10,7 @@ class BeamProfilePlot :
   public H2DProjectionPlot,
   public AnalysisPlot
 {
-  
+
 Q_OBJECT
 
 public:
@@ -19,7 +19,7 @@ public:
 public:
   BeamProfilePlot(Type);
   ~BeamProfilePlot();
-  
+
   void processEvent(const AnalyzedEvent*);
 
 private slots:

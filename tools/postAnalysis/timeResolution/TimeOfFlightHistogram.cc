@@ -34,7 +34,7 @@ TimeOfFlightHistogram::TimeOfFlightHistogram(PostAnalysisCanvas* canvas, int bin
   , m_vError(NAN)
   , m_fitted(false)
   , m_fitGood(false)
-{ 
+{
   TH2D* histogram = canvas->histograms2D().at(0);
   histogram->Draw("COLZ");
   extractIndizes(canvas->name(), histogram, bin);

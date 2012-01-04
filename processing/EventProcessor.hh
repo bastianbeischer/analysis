@@ -11,12 +11,12 @@ class AnalyzedEvent;
 
 class EventProcessor
 {
-  
+
 public:
   EventProcessor();
   EventProcessor(QVector<EventDestination*>);
   virtual ~EventProcessor();
-  
+
   void addDestination(EventDestination*);
   void clearDestinations();
 

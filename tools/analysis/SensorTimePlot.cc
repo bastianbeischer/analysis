@@ -20,14 +20,14 @@ SensorTimePlot::SensorTimePlot(SensorTypes::Type type, QDateTime first, QDateTim
   int t2 = last.toTime_t();
   t2+= 120 - (t2 % 60);
   int nBins = (t2 - t1) / 60;
-  
+
   TH1D* histogram = 0;
-  
+
   histogram = new TH1D(qPrintable(title()), "", nBins, t1, t2);
   histogram->SetMarkerSize(0.5);
   addHistogram(histogram, H1DPlot::P);
   setDrawOption(H1DPlot::P);
-  
+
   m_normalizationHistogram = new TH1D(qPrintable(title() + "normalization"), "", nBins, t1, t2);
 }
 

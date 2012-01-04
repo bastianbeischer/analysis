@@ -34,7 +34,7 @@ void ParticleIdentifier::identify(Particle* particle)
   // calculate charge sign
   bool albedo = tof->timeOfFlight() > 0 ? false: true;
   int chargeSign = track->rigidity() > 0 ? 1: -1;
-  if (albedo) 
+  if (albedo)
     chargeSign *= -1;
 
   // remove candidates according to charge sign and set particle type to most likely value

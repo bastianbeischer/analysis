@@ -18,13 +18,13 @@ class EventWriter :
   public QThread,
   public EventDestination
 {
-  
+
 Q_OBJECT
 
 public:
   EventWriter(QObject* = 0);
   ~EventWriter();
-  
+
   void init(QString filename);
   void processEvent(const AnalyzedEvent*);
   void start();
@@ -46,7 +46,7 @@ private:
   SimpleEvent* m_event;
   DataDescription* m_description;
   EventQueue* m_queue;
-  
+
 };
 
 #endif /* EventWriter_hh */

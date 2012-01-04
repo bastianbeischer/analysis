@@ -13,16 +13,16 @@ typedef QMap< DetectorElement*, QVector<Hit*> >::iterator HitStorageIterator;
 
 class PreAnalysis
 {
-  
+
 public:
   PreAnalysis();
   ~PreAnalysis();
-  
+
   SimpleEvent* generateCompressedEvent(SimpleEvent* event);
 
 private:
   HitStorage m_hitStorage;
-  
+
 };
 
 #endif /* PreAnalysis_hh */

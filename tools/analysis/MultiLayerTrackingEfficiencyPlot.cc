@@ -25,7 +25,7 @@ MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot(Type type) :
   m_layerZ(new double[m_nLayers])
 {
   QString htitle = "Multi Layer Efficiency";
-  
+
   if (m_type == Positive)
     htitle += " positive";
   if (m_type == Negative)
@@ -33,20 +33,20 @@ MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot(Type type) :
   if (m_type == All)
     htitle += " all";
   setTitle(htitle);
-  
+
   int nBinsY = m_nLayers;
   double y0 = 0.5;
   double y1 = m_nLayers+0.5;
-  
+
   const int nBins = 21;
   const double min = 0.1;
   const double max = 20;
   const QVector<double>& axis = Helpers::logBinning(nBins, min, max);
-  
+
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBins, axis.constData(), nBinsY, y0, y1);
   setAxisTitle("R / GV", "number of layers", "");
   addHistogram(histogram);
-  
+
   m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBins, axis.constData());
 
   int i = 0;
@@ -61,7 +61,7 @@ MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot(Type type) :
     }
   }
   setDrawOption(COLZTEXT);
-  
+
   controlWidget()->spinBox()->setMaximum(histogram->GetNbinsY());
 }
 
@@ -84,7 +84,7 @@ void MultiLayerTrackingEfficiencyPlot::processEvent(const AnalyzedEvent* event)
     return;
   if (m_type == Negative && rigidity > 0)
     return;
-  
+
   int nbOfLayers = 0;
   for (int i = 0; i < m_nLayers; i++) {
     // determine if the layer has a hit matching the track
@@ -99,7 +99,7 @@ void MultiLayerTrackingEfficiencyPlot::processEvent(const AnalyzedEvent* event)
       }
     }
   }
- 
+
   double absRigidity = qAbs(rigidity);
   histogram()->Fill(absRigidity, nbOfLayers);
   m_normHisto->Fill(absRigidity);

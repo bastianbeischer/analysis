@@ -48,7 +48,7 @@ void MainWindow::setupAnalysis()
     }
     addPlot(new AllChannelsTimeShiftPlot(canvases[refCh], refCh));
   }
-  
+
   for (unsigned int bar = 0; bar < 8; ++bar) {
     for (int refCh = 0; refCh < 8; ++refCh) {
       QString title = QString("time shift 0x%1 0x%2 ch %3 canvas")
@@ -66,7 +66,7 @@ void MainWindow::setupAnalysis()
   TimeShiftContainer::instance()->shiftOnFirstChannel();
   //TimeShiftContainer::instance()->dump();
 
-  qDebug() << "Calculate results (before bar shifts:)"; 
+  qDebug() << "Calculate results (before bar shifts:)";
   TimeShiftContainer::instance()->finalizeChannelShifts();
   //TimeShiftContainer::instance()->dump();
 
@@ -83,7 +83,7 @@ void MainWindow::setupAnalysis()
     }
   }
   addPlot(new BarTimeShiftHistogram(barShiftPlots));
-  
+
   qDebug() << "Calculate results (after bar shifts:)";
   TimeShiftContainer::instance()->applyBarShifts(barShiftPlots);
   TimeShiftContainer::instance()->dump();

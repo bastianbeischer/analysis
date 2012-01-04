@@ -272,7 +272,7 @@ void PostAnalysisWindow::saveAllButtonClicked()
     }
   }
 }
-  
+
 void PostAnalysisWindow::addWidget(QWidget* widget)
 {
   m_ui->userControlWidget->show();

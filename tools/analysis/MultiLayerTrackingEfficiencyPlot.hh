@@ -10,7 +10,7 @@ class TCanvas;
 class MultiLayerTrackingEfficiencyPlot : public AnalysisPlot, public H2DProjectionPlot {
 public:
   enum Type {Positive, Negative, All};
-  
+
   MultiLayerTrackingEfficiencyPlot(Type type);
   ~MultiLayerTrackingEfficiencyPlot();
   void processEvent(const AnalyzedEvent*);

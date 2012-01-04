@@ -6,7 +6,7 @@
 class TRDSpectrumVsPressurePlotCollection :
   public PlotCollection
 {
-  
+
 public:
   TRDSpectrumVsPressurePlotCollection();
   ~TRDSpectrumVsPressurePlotCollection();

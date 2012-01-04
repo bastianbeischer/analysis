@@ -26,13 +26,13 @@ TimeOverThresholdProjection::TimeOverThresholdProjection(PostAnalysisCanvas* can
   setTitle(title);
   setAxisTitle("time over threshold / ns", "");
   addHistogram(histogram);
-  
+
   TLatex* latex = 0;
-  
+
   latex = RootPlot::newLatex(.67, .85);
   latex->SetTitle(qPrintable(QString("id = 0x%1").arg(ch | 0x8000, 0, 16)));
   addLatex(latex);
-  
+
   latex = RootPlot::newLatex(.67, .82);
   latex->SetTitle(qPrintable(QString("n  = %1").arg(histogram->GetEntries())));
   addLatex(latex);

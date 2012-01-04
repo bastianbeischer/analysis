@@ -84,7 +84,7 @@ void RootQtWidget::resizeEvent(QResizeEvent* event)
   }
   m_inhibitResizeEvent = false;
 }
-  
+
 QSize RootQtWidget::sizeHint() const
 {
   return QSize(300, 300);

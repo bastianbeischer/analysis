@@ -51,7 +51,7 @@ RigidityFlux::RigidityFlux(Enums::ChargeSign type, int numberOfThreads, TH1D* pa
     m_particleHistogramMirrored = Helpers::createMirroredHistogram(m_particleHistogram);
   } else if (m_type == Enums::Positive) {
     title += " - positive";
-  } 
+  }
   if (m_particleHistogramMirrored) {
     m_fluxCalculation = new FluxCalculation(m_particleHistogramMirrored, m_measurementTimeCalculation->measurementTime());
   } else {
@@ -68,13 +68,13 @@ RigidityFlux::RigidityFlux(Enums::ChargeSign type, int numberOfThreads, TH1D* pa
     m_nBinsNew = nBins / 2;
   else
     m_nBinsNew = (nBins - 1) / 2;
-  
+
   if (nBins%2 == 0)
     m_nBinsStart = m_nBinsNew + 1;
   else
     m_nBinsStart = m_nBinsNew + 2;
   histogram->GetXaxis()->SetRange(m_nBinsStart, nBins);
-  
+
   for(int i = 0; i < m_nBinsNew; i++) {
     TLatex* latex = new TLatex;
     latex->SetTextFont(42);
@@ -199,7 +199,7 @@ void RigidityFlux::efficiencyCorrection()
   EfficiencyCorrectionSettings::instance()->efficiencyCorrection(histogram(), m_trackFindingEff);
   EfficiencyCorrectionSettings::instance()->efficiencyCorrection(histogram(), 0.999); //estimate for TOF trigger efficiency
 }
-  
+
 void RigidityFlux::selectionChanged()
 {
   while (legend()->GetListOfPrimitives()->GetEntries() > 1) {

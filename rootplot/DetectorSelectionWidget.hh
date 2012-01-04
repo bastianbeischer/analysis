@@ -14,7 +14,7 @@ class DetectorSelectionWidget : public QWidget
 public:
   DetectorSelectionWidget(const QStringList&, int);
   ~DetectorSelectionWidget();
-  
+
 signals:
   void selectPlot(int);
 
@@ -26,7 +26,7 @@ private:
   StringSpinBox* m_moduleSpinBox;
   QSpinBox* m_channelSpinBox;
   QCheckBox* m_individualChannelCheckBox;
-  
+
 };
 
 #endif /* DetectorSelectionWidget_hh */

@@ -14,7 +14,7 @@ class SimpleEvent;
 
 class CutFilter
 {
-public:  
+public:
   CutFilter();
   CutFilter(const QString&);
   ~CutFilter();

@@ -3,7 +3,7 @@
 
 class Axis
 {
-  
+
 public:
   explicit Axis(double, double, int);
   ~Axis();
@@ -16,7 +16,7 @@ private:
   double m_x0;
   double m_x1;
   int m_nBins;
-  
+
 };
 
 #endif /* Axis_hh */

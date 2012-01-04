@@ -10,7 +10,7 @@
 class TH1D;
 
 class TrackFindingEfficiency : public AnalysisPlot, public H1DPlot {
-  
+
 public:
   TrackFindingEfficiency(EfficiencyCorrectionSettings::FoldingType);
   ~TrackFindingEfficiency();

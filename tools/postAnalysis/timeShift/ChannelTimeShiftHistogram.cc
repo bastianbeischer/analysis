@@ -90,7 +90,7 @@ ChannelTimeShiftHistogram::~ChannelTimeShiftHistogram()
 {
   qDeleteAll(m_lines);
 }
-  
+
 void ChannelTimeShiftHistogram::draw(TCanvas* canvas)
 {
   H1DPlot::draw(canvas);

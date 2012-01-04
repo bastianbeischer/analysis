@@ -51,11 +51,11 @@ LogLikelihoodPlot::LogLikelihoodPlot(Enums::Particle signal, Enums::Particles ba
       h->SetLineColor(ParticleProperties(it.key()).color());
       addHistogram(h);
     }
-  
+
   addHistogram(new TH1D(qPrintable(title() + " background normalized"), "", m_nBins, min, max));
-  
+
   setAxisTitle("-2 ln L", "");
-  
+
   addLatex(RootPlot::newLatex(.15, .85));
   latex(0)->SetTextColor(kRed);
   addLatex(RootPlot::newLatex(.15, .82));
@@ -78,7 +78,7 @@ void LogLikelihoodPlot::processEvent(const AnalyzedEvent* event)
   if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::BetaGood | ParticleInformation::InsideMagnet))
     return;
 
-  const Hypothesis* hypothesis = event->particle()->hypothesis(); 
+  const Hypothesis* hypothesis = event->particle()->hypothesis();
 
   if (hypothesis->particle() == m_signal) {
     m_signalHypothesisHistogram->Fill(hypothesis->logLikelihood());

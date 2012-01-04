@@ -11,11 +11,11 @@ class Chi2VsMomentumPlot :
   public AnalysisPlot,
   public H2DPlot
 {
-  
+
 public:
   Chi2VsMomentumPlot();
   ~Chi2VsMomentumPlot();
-  
+
   void processEvent(const AnalyzedEvent*);
   void finalize();
 

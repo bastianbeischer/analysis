@@ -20,7 +20,7 @@ TimeResolutionPlot::TimeResolutionPlot(const TimeResolutionAnalysis* const analy
     postFix.append(" with MC");
   title.append(postFix);
   setTitle(title);
-  
+
   int nBins = analysis->nBins();
 
   double r = -1;

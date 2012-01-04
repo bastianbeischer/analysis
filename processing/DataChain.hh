@@ -11,12 +11,12 @@ class DataDescription;
 
 class DataChain
 {
-  
+
 public:
   DataChain();
   DataChain(const char* listName);
   ~DataChain();
-  
+
 public:
   void clear();
   void setFileList(const char* listName);

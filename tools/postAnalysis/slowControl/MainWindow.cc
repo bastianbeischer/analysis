@@ -31,7 +31,7 @@ void MainWindow::setupAnalysis()
   PostAnalysisCanvas* heightCanvas = addCanvas(&file, "EBASS_HEIGHT canvas");
   addPlot(new TriggerRateHeightTimePlot(triggerRateCanvas, heightCanvas));
   addPlot(new TriggerRateHeightCorrelationPlot(triggerRateCanvas, heightCanvas));
-  
+
   QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());
 
   QVector<PostAnalysisCanvas*> trackerTemperatures;

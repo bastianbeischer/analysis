@@ -6,7 +6,7 @@
 
 class ClusterLengthPlot : public AnalysisPlot, public H1DPlot
 {
-  
+
 public:
   ClusterLengthPlot(Enums::AnalysisTopic, unsigned short);
   ~ClusterLengthPlot();
@@ -16,7 +16,7 @@ public:
 
 private:
   unsigned short m_id;
-  
+
 };
 
 #endif /* ClusterLengthPlot_hh */

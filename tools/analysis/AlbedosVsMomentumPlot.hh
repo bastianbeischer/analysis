@@ -10,11 +10,11 @@ class AlbedosVsMomentumPlot :
   public AnalysisPlot,
   public H1DPlot
 {
-  
+
 public:
   AlbedosVsMomentumPlot();
   ~AlbedosVsMomentumPlot();
-  
+
   void processEvent(const AnalyzedEvent*);
   void update();
 

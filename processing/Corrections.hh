@@ -27,7 +27,7 @@ class Corrections
 public:
   Corrections(Enums::Corrections = Enums::NoCorrection);
   ~Corrections();
-  
+
 public:
   void setFlags(const Enums::Corrections& flags) {m_flags = flags;}
   Enums::Corrections flags() const {return m_flags;}
@@ -53,7 +53,7 @@ private:
   void tofTot(Hit* hit, SimpleEvent* event);
   void trackerSignalHeight(Hit* hit, SimpleEvent* event);
   void multipleScattering(Particle*);
-  void photonTravelTime(Particle*); 
+  void photonTravelTime(Particle*);
 
 public:
   double trdScalingFactor(unsigned int);
@@ -69,7 +69,7 @@ public:
   double trdTimeDependendFactor(double time);
   void setTotScaling(const unsigned int tofId, const QList<QVariant> param);
   void writeTrackerSignalScaling(const unsigned short sipmId, const QVector<double>& times, const QVector<double>& factors);
-  
+
 private:
   QString m_tofTotScalingPrefix;
   double m_totScalings[Constants::nTofChannels][nTotScalingParameters];
@@ -87,7 +87,7 @@ private:
 public:
   TSpline3* trdTimeSpline() const;
   QMap<double, double> trdTimeFactors() const {return m_TRDMapTime;}
-  
+
 private:
   QSettings* m_trdSettings;
   QSettings* m_trackerSettings;

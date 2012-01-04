@@ -6,11 +6,11 @@
 
 class Chi2PerNdfPlot : public AnalysisPlot, public H1DPlot
 {
-  
+
 public:
   Chi2PerNdfPlot();
   ~Chi2PerNdfPlot();
-  
+
   void processEvent(const AnalyzedEvent*);
   void update();
 

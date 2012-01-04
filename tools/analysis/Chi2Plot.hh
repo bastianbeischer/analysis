@@ -6,11 +6,11 @@
 
 class Chi2Plot : public AnalysisPlot, public H1DPlot
 {
-  
+
 public:
   Chi2Plot(unsigned short);
   ~Chi2Plot();
-  
+
   void processEvent(const AnalyzedEvent*);
   void finalize();
   void update();

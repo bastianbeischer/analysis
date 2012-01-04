@@ -115,7 +115,7 @@ TGraphErrors* MoPVScaling::generateMoPVGraph(TH2D* histogram)
 
     double xValue = histogram->GetXaxis()->GetBinCenter(bin);
     double xValueErr = 0; //histogram->GetXaxis()->GetBinWidth(bin)/sqrt(12);
-    
+
     x << xValue;
     xErr << xValueErr;
     y << mpv;

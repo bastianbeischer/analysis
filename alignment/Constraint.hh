@@ -14,7 +14,7 @@ public:
 private:
   float* m_listOfCoefficients;
   float  m_rhs;
-  
+
 };
 
 #endif /* Constraint_hh */

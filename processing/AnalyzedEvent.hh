@@ -30,7 +30,7 @@ public:
   Particle* particle() {return m_particle;}
   const Particle* particle() const {return m_particle;}
   void setParticle(Particle* particle) {m_particle = particle;}
-  
+
   const SimpleEvent* simpleEvent() const {return m_simpleEvent;}
   void setSimpleEvent(SimpleEvent* event) {m_simpleEvent = event;}
 private:

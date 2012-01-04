@@ -11,11 +11,11 @@ class Particle;
 class Track;
 
 class ResidualPlot : public AnalysisPlot, public H2DProjectionPlot {
-  
+
 public:
   ResidualPlot(Enums::AnalysisTopic topic, Layer* layer);
   ~ResidualPlot();
-  
+
 public:
   void processEvent(const AnalyzedEvent*);
 

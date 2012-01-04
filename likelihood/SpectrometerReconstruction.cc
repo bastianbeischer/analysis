@@ -33,7 +33,7 @@ void SpectrometerReconstruction::identify(AnalyzedEvent* event)
     double curvature = 1. / event->particle()->track()->rigidity();
     Hypothesis* h = new Hypothesis(*particleIt, curvature);
     double value = eval(event, *h, &goodInterpolation);
-    if (value < m_minima[m_indexOfGlobalMinimum].y()) 
+    if (value < m_minima[m_indexOfGlobalMinimum].y())
       m_indexOfGlobalMinimum = it;
     h->setLogLikelihood(value);
     event->particle()->addHypothesis(m_method, h);

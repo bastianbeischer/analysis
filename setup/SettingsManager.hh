@@ -9,10 +9,10 @@ class SimpleEvent;
 
 class SettingsManager
 {
-  
+
 public:
   ~SettingsManager();
-  
+
   static SettingsManager* instance();
   const Settings* settingsForEvent(const SimpleEvent* const) const;
   const Settings* settingsForRun(int) const;

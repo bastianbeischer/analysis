@@ -38,7 +38,7 @@ void Parameters::reInitParameterArrays(unsigned int nPar)
   m_nPar           = nPar;
   m_parameters     = new float[nPar];
   m_parameterSigma = new float[nPar];
-  
+
   for (unsigned int i = 0; i < nPar; i++) {
     m_parameters[i] = 0.;
     // -1 means that this sigma is not used.

@@ -47,17 +47,17 @@ void PostAnalysisCanvas::draw(TCanvas* canvas)
   RootStyle::setPalette(m_palette);
   m_canvas->DrawClonePad();
 }
-  
+
 void PostAnalysisCanvas::setPalette(RootStyle::PaletteType palette)
 {
   m_palette = palette;
 }
-  
+
 QString PostAnalysisCanvas::name()
 {
   return m_canvas->GetName();
 }
-  
+
 QVector<TH1D*> PostAnalysisCanvas::histograms1D()
 {
   QVector<TH1D*> ret;

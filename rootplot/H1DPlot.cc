@@ -96,13 +96,13 @@ const QVector<RootPlot::DrawOption>& H1DPlot::drawOptions()
 {
   return s_drawOptions;
 }
-  
+
 void H1DPlot::setAxisTitle(const QString& x, const QString& y)
 {
   m_xAxisTitle = x;
   m_yAxisTitle = y;
 }
-  
+
 TAxis* H1DPlot::xAxis()
 {
   Q_ASSERT(m_xAxis);

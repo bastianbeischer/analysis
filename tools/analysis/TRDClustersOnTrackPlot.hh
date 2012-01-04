@@ -6,7 +6,7 @@
 
 class TRDClustersOnTrackPlot : public AnalysisPlot, public H1DPlot
 {
-  
+
 public:
   TRDClustersOnTrackPlot(Enums::AnalysisTopic);
   ~TRDClustersOnTrackPlot();

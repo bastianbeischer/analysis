@@ -20,7 +20,7 @@ public:
 public:
   explicit DetectorElement(Type type, unsigned short id, unsigned short nChannels, const Setup* setup);
   virtual ~DetectorElement();
- 
+
 public:
   virtual QVector<Hit*> findClusters(const QVector<Hit*>&) = 0;
 

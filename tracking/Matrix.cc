@@ -64,7 +64,7 @@ int Matrix::fit(const QVector<Hit*>& hits)
 
     double c = cos(angle);
     double s = sin(angle);
-    
+
     b[i] = c*pos.x() - s*pos.y();
 
     for (unsigned int j = 0; j < m_nCol; j++)
@@ -73,7 +73,7 @@ int Matrix::fit(const QVector<Hit*>& hits)
 
     weights[i] = 1./(sigmaU*sigmaU); // this is the inverse of the sigma for the i'th measurement
   } // loop over hits
-  
+
   // calculate solution
   TMatrixD Minv(m_nCol, m_nCol);
   for (unsigned int i = 0; i < m_nCol; i++) {

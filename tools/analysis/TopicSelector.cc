@@ -11,7 +11,7 @@ TopicSelector::TopicSelector(Enums::AnalysisTopic topic, QWidget* parent)
   , m_topic(topic)
 {
   m_checkBox = new QCheckBox(Enums::label(topic));
-  
+
   m_button = new QPushButton("+");
   m_button->setEnabled(false);
   m_button->setMaximumWidth(27);

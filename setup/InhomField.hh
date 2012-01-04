@@ -8,11 +8,11 @@ class Axis;
 class InhomField :
   public MagneticField
 {
-  
+
 public:
   explicit InhomField(const char*);
   ~InhomField();
-  
+
   void fieldValue(const double* x, double* B) const;
 
 private:
@@ -27,7 +27,7 @@ private:
   double*** m_field_x;
   double*** m_field_y;
   double*** m_field_z;
-  
+
 };
 
 #endif /* InhomField_hh */

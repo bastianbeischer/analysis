@@ -17,14 +17,14 @@ Chi2VsMomentumPlot::Chi2VsMomentumPlot() :
   H2DPlot()
 {
   setTitle("Chi2 vs Momentum");
-  
+
   int nBinsX = 30;
   double x0 = 0.;
   double x1 = 10.;
   int nBinsY = 100.;
   double y0 = 0.;
   double y1 = 10.;
-  
+
   TH2D* histogram = new TH2D(qPrintable(title()), "", nBinsX, x0, x1, nBinsY, y0, y1);
   setAxisTitle("R / GV", "#chi^{2} / ndf", "");
   addHistogram(histogram);

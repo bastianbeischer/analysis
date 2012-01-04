@@ -6,14 +6,14 @@
 class CenteredBrokenLineMatrix2D :
   public Matrix
 {
-  
+
 public:
   CenteredBrokenLineMatrix2D();
   virtual ~CenteredBrokenLineMatrix2D();
-  
+
 protected:
   void fillMatrixFromHit(double* A, double k, double c, double s) const;
-  
+
 };
 
 #endif /* CenteredBrokenLineMatrix2D_hh */

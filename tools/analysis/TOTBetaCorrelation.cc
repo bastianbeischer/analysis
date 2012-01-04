@@ -62,7 +62,7 @@ void TOTBetaCorrelation::processEvent(const AnalyzedEvent* event)
   if (nTofHits > 0)
     histogram()->Fill(event->particle()->beta(), totSum / nTofHits);
 }
-  
+
 void TOTBetaCorrelation::finalize()
 {
   setDrawOption(CONT4Z);

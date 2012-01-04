@@ -14,7 +14,7 @@ CutSelector::CutSelector(Enums::Cut cut, QWidget* parent)
   QString label(Enums::label(cut));
   label.chop(4);
   m_checkBox = new QCheckBox(label);
-  
+
   m_minimumEdit = new QLineEdit("min");
   m_minimumEdit->setMaximumWidth(50);
   m_minimumEdit->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);

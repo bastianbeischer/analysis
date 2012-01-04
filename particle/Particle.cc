@@ -165,7 +165,7 @@ const Hypothesis* Particle::hypothesis(Enums::Particle particle, Enums::Reconstr
   QMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator upperBound = m_hypotheses.upperBound(method);
   for (QMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator it = m_hypotheses.lowerBound(method); it != upperBound; ++it) {
     if (it.value()->particle() == particle)
-      return it.value(); 
+      return it.value();
   }
   return 0;
 }

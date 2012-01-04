@@ -17,12 +17,12 @@ class SimpleEvent;
 
 class SingleFile
 {
-  
+
 public:
   SingleFile();
   SingleFile(QString fileName);
   ~SingleFile();
-  
+
 public:
   unsigned int    getNumberOfEvents() const;
   const RawEvent* getNextRawEvent() const;

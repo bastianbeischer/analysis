@@ -63,5 +63,5 @@ void TOTProjectionPlot::processEvent(const AnalyzedEvent* event)
   if (nTofHits > 0) {
     histogram()->Fill(totSum / nTofHits);
   }
-} 
+}
 

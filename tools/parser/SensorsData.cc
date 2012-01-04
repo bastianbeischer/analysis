@@ -37,7 +37,7 @@ bool SensorsData::addRootFile(const char* filename)
     delete m_file;
     m_file = 0;
     return false;
-  } 
+  }
 
   switch (m_type) {
   case SENSORS:
@@ -61,7 +61,7 @@ bool SensorsData::addRootFile(const char* filename)
 int SensorsData::entryForTime(unsigned int time) const
 {
   if (time < m_firstTime || time > m_firstTime + m_tree->GetEntries()) {
-    // std::cerr << "Tree does not contain the requested time " << time 
+    // std::cerr << "Tree does not contain the requested time " << time
     //           << " (first time = " << m_firstTime << ", entries = " << m_tree->GetEntries() << ")" << std::endl;
     return -1;
   }
@@ -78,7 +78,7 @@ float SensorsData::previousValue(const char* id, unsigned int time, int& diff)
   }
 
   long exactEntry = entryForTime(time);
-  
+
   int N = m_tree->GetEntries();
   m_var = sqrt(-1);
 

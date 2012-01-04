@@ -10,7 +10,7 @@ class ParticleInformation {
 public:
   ParticleInformation(const Particle* particle);
   ~ParticleInformation();
-  
+
   enum Flag {None=0, AllTrackerLayers=1<<0, InsideMagnet=1<<1, OutsideMagnet=1<<2, HighTransverseRigidity=1<<3,
     MagnetCollision=1<<4, Albedo=1<<5, Chi2Good=1<<6, BetaGood=1<<7};
 

@@ -138,7 +138,7 @@ void EventReader::run()
     if (m_abort)
       break;
   }
-  
+
   do {
     usleep(10000);
   } while (queuedEvents());

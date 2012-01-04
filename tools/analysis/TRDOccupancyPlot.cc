@@ -92,7 +92,7 @@ void TRDOccupancyPlot::processEvent(const AnalyzedEvent* event)
 
       m_hits[hit->detId()]++;
       m_signalHeightSum[hit->detId()] += signal;
-    
+
       //fill histo
       double value = 0;
       int binToFill = histogram()->FindBin(hit->position().x(), hit->position().z());

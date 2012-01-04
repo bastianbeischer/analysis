@@ -36,7 +36,7 @@ BarShiftPlot::BarShiftPlot(PostAnalysisCanvas* canvas)
   setAxisTitle("#Deltat / ns", "");
   addHistogram(originalHistogram);
   addHistogram(modifiedHistogram);
-  
+
   if (modifiedHistogram->GetEntries() > 200)
     modifiedHistogram->Smooth();
   modifiedHistogram->SetLineColor(kRed);
@@ -59,7 +59,7 @@ BarShiftPlot::BarShiftPlot(PostAnalysisCanvas* canvas)
   }
   function->SetRange(modifiedHistogram->GetXaxis()->GetXmin(), modifiedHistogram->GetXaxis()->GetXmax());
   addFunction(function);
-  
+
   TLatex* latex = 0;
   latex = RootPlot::newLatex(0.15, 0.85);
   latex->SetTextColor(kRed);
@@ -76,7 +76,7 @@ BarShiftPlot::BarShiftPlot(PostAnalysisCanvas* canvas)
   TLine* line = 0;
   double x = 0;
   double max = 1.05 * originalHistogram->GetMaximum();
-  
+
   x = modifiedHistogram->GetMean();
   line = new TLine(x, 0, x, max);
   line->SetLineColor(kRed);
@@ -97,7 +97,7 @@ BarShiftPlot::~BarShiftPlot()
 {
   qDeleteAll(m_lines);
 }
-  
+
 void BarShiftPlot::draw(TCanvas* canvas)
 {
   H1DPlot::draw(canvas);

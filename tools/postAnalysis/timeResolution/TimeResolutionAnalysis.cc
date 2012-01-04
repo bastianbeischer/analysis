@@ -198,7 +198,7 @@ void TimeResolutionAnalysis::dumpMatrix(const TMatrixT<double>& m)
     std::cout << (r == m.GetNrows() - 1 ? " _|" : "  |") << std::endl;
   }
 }
-  
+
 int TimeResolutionAnalysis::nBins() const
 {
   return m_nBins;

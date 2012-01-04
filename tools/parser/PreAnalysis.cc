@@ -20,7 +20,7 @@ PreAnalysis::PreAnalysis()
     for (int i = 0; i < nChannels; i++) {
       m_hitStorage[element].append(0);
     }
-  }  
+  }
 }
 
 PreAnalysis::~PreAnalysis()
@@ -67,7 +67,7 @@ SimpleEvent* PreAnalysis::generateCompressedEvent(SimpleEvent* sourceEvent)
   for (unsigned int i = 0; i < SensorTypes::N_SENSOR_TYPES; i++) {
     destinationEvent->setSensorData((SensorTypes::Type)i, sourceEvent->sensorData((SensorTypes::Type)i) );
   }
-  
+
   delete sourceEvent;
 
   return destinationEvent;

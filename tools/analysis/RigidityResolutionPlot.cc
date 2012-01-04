@@ -23,7 +23,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QDebug>
-  
+
 const double RigidityResolutionPlot::s_probability = 0.9;
 
 RigidityResolutionPlot::RigidityResolutionPlot(Enums::AnalysisTopic topic, Enums::Particle type)
@@ -85,10 +85,10 @@ RigidityResolutionPlot::RigidityResolutionPlot(Enums::AnalysisTopic topic, Enums
 
   m_trackerFunction = newTrackerResolutionFunction("expected tracker resolution " + particleName);
   addFunction(m_trackerFunction);
-  
+
   m_tofFunction = newTofResolutionFunction("expected TOF resolution " + particleName);
   addFunction(m_tofFunction);
-  
+
   addFunction(newWeightedMeanResolutionFunction("expected weighted mean resolution " + particleName));
 
   for (int bin = 1; bin <= m_numberOfBins; ++bin) {
@@ -235,7 +235,7 @@ void RigidityResolutionPlot::positionChanged(double posX, double)
   }
 
   KineticVariable variable(m_particleProperties.type(), Enums::AbsoluteRigidity, xAxis()->GetBinCenter(bin));
-  
+
   canvas->cd(1);
   m_trackerResolutionHistograms[bin-1]->Draw();
   m_projectionTrackerLatex->SetText(0.65, 0.85, qPrintable(QString("n = %1").arg(m_trackerResolutionHistograms[bin-1]->GetEntries())));

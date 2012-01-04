@@ -56,7 +56,7 @@ private:
   const DataDescription* m_description; //!
 
   ClassDef( SimpleEvent, 1 );
- 
+
 };
 
 #endif /* SimpleEvent_hh */

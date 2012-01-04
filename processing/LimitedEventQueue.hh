@@ -5,7 +5,7 @@
 
 class LimitedEventQueue : public EventQueue
 {
-  
+
 public:
   LimitedEventQueue(int = 1000);
   ~LimitedEventQueue();
@@ -16,7 +16,7 @@ public:
 
 private:
   int m_bufferSize;
-  
+
 };
 
 #endif /* LimitedEventQueue_hh */

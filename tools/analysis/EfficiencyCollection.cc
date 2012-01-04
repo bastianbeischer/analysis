@@ -15,7 +15,7 @@
 #include <QVector>
 #include <QDebug>
 
-EfficiencyCollection::EfficiencyCollection() 
+EfficiencyCollection::EfficiencyCollection()
   : PlotCollection(Enums::MiscellaneousTracker)
 {
   QWidget* widget = new QWidget;

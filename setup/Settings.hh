@@ -45,7 +45,7 @@ private:
   int m_polarity;
   double m_pressure;
   bool m_magnet;
-  
+
 };
 
 #endif /* Settings_hh */

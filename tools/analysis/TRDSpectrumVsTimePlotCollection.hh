@@ -8,7 +8,7 @@ class QDateTime;
 class TRDSpectrumVsTimePlotCollection :
   public PlotCollection
 {
-  
+
 public:
   TRDSpectrumVsTimePlotCollection(const QDateTime&, const QDateTime&);
   ~TRDSpectrumVsTimePlotCollection();

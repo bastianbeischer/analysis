@@ -55,7 +55,7 @@ void DataInterface::process(AlignmentMatrix* matrix)
     m_processor->process(event);
     delete event;
     FITLOC();
-    
+
     if ( i > iFactors*nEntries/100. ) {
       std::cout << "#" << std::flush;
       iFactors++;

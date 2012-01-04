@@ -6,14 +6,14 @@
 class TOTTemperatureCorrelationPlotCollection :
   public PlotCollection
 {
-  
+
 public:
   TOTTemperatureCorrelationPlotCollection();
   ~TOTTemperatureCorrelationPlotCollection();
-  
+
 private:
-  
-  
+
+
 };
 
 #endif /* TOTTemperatureCorrelationPlotCollection_hh */

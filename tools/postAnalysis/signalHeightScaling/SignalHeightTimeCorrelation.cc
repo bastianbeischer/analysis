@@ -94,7 +94,7 @@ void SignalHeightTimeCorrelation::drawFactorGraph()
   gPad->Update();
 }
 
-TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short sipmId, TH2D* histogram) 
+TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short sipmId, TH2D* histogram)
 {
   const double referenceValue = Constants::idealTrackerSignalHeight;
   const double minAdc = 300;
@@ -157,7 +157,7 @@ TGraphErrors* SignalHeightTimeCorrelation::meanGraph(unsigned short sipmId, TH2D
   return graph;
 }
 
-void SignalHeightTimeCorrelation::save(unsigned short sipmId) 
+void SignalHeightTimeCorrelation::save(unsigned short sipmId)
 {
   Q_ASSERT(s_factorGraphs[sipmId]);
   TGraph* graph = s_factorGraphs[sipmId];

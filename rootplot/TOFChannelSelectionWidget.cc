@@ -12,7 +12,7 @@ TOFChannelSelectionWidget::TOFChannelSelectionWidget(const QStringList& moduleID
   StringSpinBox* spinBox = new StringSpinBox(moduleIDs);
   layout->addWidget(new QLabel("channel: "));
   layout->addWidget(spinBox);
-  
+
   connect(spinBox, SIGNAL(valueChanged(int)), this, SIGNAL(channelChanged(int)));
 }
 

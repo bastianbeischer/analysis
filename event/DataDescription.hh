@@ -31,7 +31,7 @@ public:
   long eventNumberInRunFile(long eventNumber) const;
   int runFileForEventNumber(long eventNumber) const;
   const std::string& runFileNameForEventNumber(long eventNumber) const;
-    
+
 private:
   std::string m_comment;
   std::string m_softwareVersionHash; //SHA1 hash of the latest commit

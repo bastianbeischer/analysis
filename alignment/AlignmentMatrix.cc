@@ -66,7 +66,7 @@ void AlignmentMatrix::processEvent(const AnalyzedEvent* event)
   }
 
   const QVector<Hit*>& hits = track->hits();
-  
+
   foreach(Hit* hit, hits) {
     // use only tracker and trd hits for alignment
     if(hit->type() == Hit::tof)
@@ -95,7 +95,7 @@ void AlignmentMatrix::processEvent(const AnalyzedEvent* event)
 
     // derivative for Delta_u!
     m_globalDerivatives[index] = 1.;
-      
+
     int offsetXindex = 0;
     int offsetYindex = 1;
     int slopeXindex = 2;

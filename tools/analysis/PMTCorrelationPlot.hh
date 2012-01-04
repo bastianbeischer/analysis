@@ -16,7 +16,7 @@ class PMTCorrelationPlot :
 public:
   PMTCorrelationPlot();
   ~PMTCorrelationPlot();
-  
+
   void draw(TCanvas*);
   void processEvent(const AnalyzedEvent*);
   void update();
