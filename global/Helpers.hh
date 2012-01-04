@@ -4,6 +4,8 @@
 #include "Enums.hh"
 
 #include <QVector>
+#include <QVariant>
+#include <QList>
 #include <QString>
 
 class TH1D;
@@ -22,6 +24,10 @@ namespace Helpers
   double tofResolution();
   void scaleToBinWidth(TH1D*);
   TGraphAsymmErrors* createBeltWithSystematicUncertainty(const TH1D* histogram,const TH1D* lowerHistogram,const TH1D* upperHistogram);
+  QVector<double> variantToDoubleVector(const QVariant&);
+  double min(const QVector<double>&);
+  double max(const QVector<double>&);
+  bool sorted(const QVector<double>&);
 }
 
 #endif

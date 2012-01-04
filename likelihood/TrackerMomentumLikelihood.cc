@@ -13,9 +13,10 @@ TrackerMomentumLikelihood::TrackerMomentumLikelihood(Enums::Particles particles)
 {
   m_likelihoodVariableType = Enums::TrackerMomentumLikelihood;
   m_measuredValueType = Enums::Curvature;
-  m_min = -10.;
-  m_max = +10.;
+  m_measuredValueMin = -10.;
+  m_measuredValueMax = +10.;
   m_numberOfParameters = 0;
+  m_defaultParameters = PDFParameters(m_numberOfParameters);
   m_title = Enums::label(m_likelihoodVariableType);
 }
 
@@ -33,7 +34,7 @@ double TrackerMomentumLikelihood::eval(double curvature, const Hypothesis& hypot
 {
   if (goodInterpolation)
     *goodInterpolation = true;
-  if (curvature < m_min || curvature > m_max)
+  if (curvature < m_measuredValueMin || curvature > m_measuredValueMax)
     return 0;
   if (hypothesis.charge() * hypothesis.curvature() < 0)
     return 0;

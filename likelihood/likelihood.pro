@@ -19,7 +19,9 @@ CLASSES += \
   Chi2Reconstruction \
   LikelihoodReconstruction \
   SignalHeightTrdLikelihood \
-  TimeOverThresholdLikelihood
+  TimeOverThresholdLikelihood \
+  PDFParameters \
+  PDFParametersVector
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \

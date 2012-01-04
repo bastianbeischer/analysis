@@ -8,7 +8,7 @@ class Hypothesis {
 public:
   Hypothesis(Enums::Particle, double curvature);
   ~Hypothesis();
-  
+
   double logLikelihood() const;
   void setLogLikelihood(double);
 

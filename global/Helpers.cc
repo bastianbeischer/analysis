@@ -28,7 +28,7 @@ namespace Helpers
     }
     return binning;
   }
-  
+
   QVector<double> linearBinning(unsigned int nBins, double min, double max)
   {
     QVector<double> binning;
@@ -49,7 +49,7 @@ namespace Helpers
     }
     histogramToUpdate->SetEntries(dataHistogram->GetEntries());
   }
-  
+
   TH1D* createMirroredHistogram(TH1D* histogram)
   {
     QString title = histogram->GetTitle();
@@ -71,7 +71,7 @@ namespace Helpers
     mirroredHistogram->SetLineStyle(histogram->GetLineStyle());
     mirroredHistogram->SetXTitle(qPrintable(QString("- ")+histogram->GetXaxis()->GetTitle()));
     updateMirroredHistogram(mirroredHistogram, histogram);
-    
+
     return mirroredHistogram;
   }
 
@@ -147,5 +147,51 @@ namespace Helpers
     QString name = QString(histogram->GetName()) + "_graph";
     graph->SetName(name.toStdString().c_str());
     return graph;
+  }
+
+  QVector<double> variantToDoubleVector(const QVariant& variant)
+  {
+    QList<QVariant> variantList = variant.toList();
+    QList<QVariant>::ConstIterator it = variantList.begin();
+    QList<QVariant>::ConstIterator end = variantList.end();
+    QVector<double> vector(variantList.count());
+    int i = 0;
+    while (it != end) {
+      vector[i] = it->toDouble();
+      ++i;
+      ++it;
+    }
+    return vector;
+  }
+
+  double min(const QVector<double>& vector)
+  {
+    Q_ASSERT(vector.count());
+    double minValue = DBL_MAX;
+    foreach(double value, vector)
+      if (value < minValue)
+        minValue = value;
+    return minValue;
+  }
+
+  double max(const QVector<double>& vector)
+  {
+    Q_ASSERT(vector.count());
+    double maxValue = DBL_MIN;
+    foreach(double value, vector)
+      if (value > maxValue)
+        maxValue = value;
+    return maxValue;
+  }
+
+  bool sorted(const QVector<double>& vector)
+  {
+    if (vector.count() < 2)
+      return true;
+    const QVector<double>::ConstIterator end = vector.end() - 1;
+    for (QVector<double>::ConstIterator it = vector.begin(); it != end; ++it)
+      if (*(it+1) < *it)
+        return false;
+    return true;
   }
 }

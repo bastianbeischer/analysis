@@ -17,9 +17,10 @@ CherenkovLikelihood::CherenkovLikelihood(Enums::Particles particles)
 {
   m_likelihoodVariableType = Enums::CherenkovLikelihood;
   m_measuredValueType = Enums::UndefinedKineticVariable;
-  m_min = 0.;
-  m_max = 0.;
+  m_measuredValueMin = 0.;
+  m_measuredValueMax = 0.;
   m_numberOfParameters = 0;
+  m_defaultParameters = PDFParameters(m_numberOfParameters);
   m_title = Enums::label(m_likelihoodVariableType);
   Enums::ParticleIterator end = Enums::particleEnd();
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it)

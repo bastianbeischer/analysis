@@ -16,9 +16,10 @@ SignalHeightTrdLikelihood::SignalHeightTrdLikelihood(Enums::Particles particles)
 {
   m_likelihoodVariableType = Enums::SignalHeightTrdLikelihood;
   m_measuredValueType = Enums::UndefinedKineticVariable;
-  m_min = -1.; //keV
-  m_max = 11.; //keV
+  m_measuredValueMin = -1.; //keV
+  m_measuredValueMax = 11.; //keV
   m_numberOfParameters = 9;
+  m_defaultParameters = PDFParameters(m_numberOfParameters);
   m_title = Enums::label(m_likelihoodVariableType) + "undefined layer";
 }
 
@@ -32,10 +33,10 @@ void SignalHeightTrdLikelihood::setLayer(int layer)
   Q_ASSERT(0 <= layer && layer <= 7);
   m_layer = layer;
   m_title = QString("%1 layer %2").arg(Enums::label(m_likelihoodVariableType)).arg(m_layer);
-  loadNodes();
+  loadParameters();
 }
 
-double SignalHeightTrdLikelihood::noTransitionRadiation(double x, const ParameterVector& parameterVector) const
+double SignalHeightTrdLikelihood::noTransitionRadiation(double x, const PDFParameters& parameterVector) const
 {
   Q_ASSERT(m_numberOfParameters == parameterVector.count());
   const double* p = parameterVector.constData();
@@ -56,7 +57,7 @@ double SignalHeightTrdLikelihood::noTransitionRadiation(double x, const Paramete
   return result;
 }
 
-double SignalHeightTrdLikelihood::transitionRadiation(double x, const ParameterVector& parameterVector) const
+double SignalHeightTrdLikelihood::transitionRadiation(double x, const PDFParameters& parameterVector) const
 {
   Q_ASSERT(m_numberOfParameters == parameterVector.count());
   const double* p = parameterVector.constData();
@@ -85,60 +86,60 @@ double SignalHeightTrdLikelihood::eval(const AnalyzedEvent* event, const Hypothe
 double SignalHeightTrdLikelihood::eval(double signal, const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
   Q_ASSERT_X(0 <= m_layer && m_layer <= 7, "SignalHeightTrdLikelihood::eval()", "call setLayer() before evaluating the PDF!");
-  double normalization = 0;
-  const ParameterVector& parameters = interpolation(hypothesis, normalization, goodInterpolation);
+  const PDFParameters& parameters = interpolation(hypothesis, goodInterpolation);
   Enums::Particle particle = hypothesis.particle();
   if (particle == Enums::Electron || particle == Enums::Positron)
-    return normalization * transitionRadiation(signal, parameters);
-  return normalization * noTransitionRadiation(signal, parameters);
+    return parameters.normalizationFactor() * transitionRadiation(signal, parameters);
+  return parameters.normalizationFactor() * noTransitionRadiation(signal, parameters);
 }
 
-void SignalHeightTrdLikelihood::loadNodes()
+void SignalHeightTrdLikelihood::loadParameters()
 {
   QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
   Q_ASSERT(QFile::exists(fileName));
   QSettings settings(fileName, QSettings::IniFormat);
-  m_nodes.clear();
+  m_parametersVectors.clear();
   settings.beginGroup(Enums::label(m_likelihoodVariableType));
   Enums::Particles particlesInFile = Enums::particles(settings.value("particles").toString());
   Enums::ParticleIterator particleEnd = Enums::particleEnd();
+
   for (Enums::ParticleIterator particleIt = Enums::particleBegin(); particleIt != particleEnd; ++particleIt) {
-    if (particleIt.key() == Enums::NoParticle || !(particleIt.key() & m_particles) || !(particleIt.key() & particlesInFile))
+    if (particleIt.key() == Enums::NoParticle || !(particleIt.key() & particlesInFile))
       continue;
-    Q_ASSERT(particleIt.key() & m_particles);
-    bool trParticle = (particleIt.key() == Enums::Electron) || (particleIt.key() == Enums::Positron);
-    ParticleMap::Iterator particleNodeIterator = m_nodes.find(particleIt.key());
-    if (particleNodeIterator == m_nodes.end())
-      particleNodeIterator = m_nodes.insert(particleIt.key(), AbsoluteRigidityMap());
     settings.beginGroup(particleIt.value());
-
-    QString postFix;
-    if (trParticle)
-      postFix+= QString("/layer%1").arg(m_layer);
-    QList<QVariant> normalizationRrigiditiesVariantList = settings.value("normalizationRigidities" + postFix).toList();
-    QList<QVariant> normalizationFactorsVariantList = settings.value("normalizationFactors" + postFix).toList();
-    Q_ASSERT(normalizationRrigiditiesVariantList.size() == normalizationFactorsVariantList.size());
-    NormalizationMap normalizationMap;
-    for (int i = 0; i < normalizationFactorsVariantList.size(); ++i)
-      normalizationMap.insert(normalizationRrigiditiesVariantList[i].toDouble(), normalizationFactorsVariantList[i].toDouble());
-    m_normalization.insert(particleIt.key(), normalizationMap);
-
-    QList<QVariant> rigiditiesVariantList = settings.value("absoluteRigidities").toList();
-    foreach(QVariant rigidityVariant, rigiditiesVariantList) {
-      double rigidity = rigidityVariant.toDouble();
-      QString key = trParticle ? QString("%1GV/layer%2").arg(rigidityVariant.toString()).arg(m_layer)
-        : QString("%1GV").arg(rigidityVariant.toString());
-      QList<QVariant> variantList = settings.value(key).toList();
-      Q_ASSERT(variantList.size() == numberOfParameters());
-      AbsoluteRigidityMap::Iterator rigidityNodeIterator = particleNodeIterator.value().find(rigidity);
-      if (rigidityNodeIterator == particleNodeIterator.value().end())
-        rigidityNodeIterator = particleNodeIterator.value().insert(rigidity, ParameterVector(variantList.size()));
-      for (int i = 0; i < variantList.size(); ++i)
-        rigidityNodeIterator.value()[i] = variantList[i].toDouble();
+    const QVector<double>& rigidities = Helpers::variantToDoubleVector(settings.value("absoluteRigidities"));
+    Q_ASSERT(Helpers::sorted(rigidities));
+    if (rigidities.size()) {
+      double min = rigidities.first();
+      double max = rigidities.last();
+      int numberOfElements = (max - min) / m_parametersVectorsStep + 1;
+      PDFParametersVector parametersVector(numberOfElements, m_numberOfParameters);
+      parametersVector.setRange(min, max);
+      QString prefix;
+      if (particleIt.key() == Enums::Electron || particleIt.key() == Enums::Positron)
+        prefix = QString("layer%1/").arg(m_layer);
+      QVector<double> normalizationRigidities = Helpers::variantToDoubleVector(settings.value(prefix + "normalizationRigidities"));
+      bool normalization = normalizationRigidities.count();
+      Q_ASSERT(Helpers::sorted(normalizationRigidities));
+      Q_ASSERT(!normalization || qFuzzyCompare(normalizationRigidities.first(), min));
+      Q_ASSERT(!normalization || qFuzzyCompare(normalizationRigidities.last(), max));
+      QVector<double> normalizationFactors = Helpers::variantToDoubleVector(settings.value(prefix + "normalizationFactors"));
+      Q_ASSERT(normalizationRigidities.count() == normalizationFactors.count());
+      for (int i = 0; i < numberOfElements; ++i) {
+        double rigidity = min + i * m_parametersVectorsStep;
+        double normalizationFactor = 1;
+        if (normalization)
+          normalizationFactor = interpolation(rigidity, normalizationRigidities, normalizationFactors);
+        parametersVector[i].setNormalizationFactor(normalizationFactor);
+        for (int parameter = 0; parameter < m_numberOfParameters; ++parameter) {
+          QString key = QString::number(parameter);
+          const QVector<double>& parameters = Helpers::variantToDoubleVector(settings.value(prefix + QString::number(parameter)));
+          parametersVector[i][parameter] = interpolation(rigidity, rigidities, parameters);
+        }
+      }
+      m_parametersVectors.insert(particleIt.key(), parametersVector);
     }
     settings.endGroup();
   }
   settings.endGroup();
-
-  setupParametrizations();
 }

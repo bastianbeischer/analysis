@@ -12,9 +12,9 @@ ParameterPlot::ParameterPlot(Likelihood* likelihood, Enums::Particle particle)
   , GraphPlot()
   , m_likelihood(likelihood)
   , m_particle(particle)
-  , m_numberOfPoints(201)
+  , m_numberOfPoints(2*105+1)
   , m_min(0.)
-  , m_max(10.)
+  , m_max(10.5)
   , m_step((m_max - m_min) / (m_numberOfPoints - 1))
 {
   setTitle(QString("%1 parameters %2").arg(m_likelihood->title()).arg(Enums::label(m_particle)));
@@ -55,9 +55,11 @@ ParameterPlot::ParameterPlot(Likelihood* likelihood, Enums::Particle particle)
   }
 
   foreach (TGraph* g, extrapolatedGraphs)
-    addGraph(g, RootPlot::P);
+    if (g->GetN())
+      addGraph(g, RootPlot::P);
   foreach (TGraph* g, interpolatedGraphs)
-    addGraph(g, RootPlot::LP);
+    if (g->GetN())
+      addGraph(g, RootPlot::LP);
   addGraph(normalizationFactorGraph, RootPlot::LP);
   setDrawOption(RootPlot::AP);
 }

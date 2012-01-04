@@ -15,7 +15,7 @@ public:
   int pdgId() const {return m_pdgId;}
   double mass() const {return m_mass;}
   int charge() const {return m_charge;}
-  
+
   QString name() const;
   int color() const;
 

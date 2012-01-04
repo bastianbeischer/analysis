@@ -13,9 +13,10 @@ TimeOfFlightLikelihood::TimeOfFlightLikelihood(Enums::Particles particles)
 {
   m_likelihoodVariableType = Enums::TimeOfFlightLikelihood;
   m_measuredValueType = Enums::InverseBeta;
-  m_min = 0.;
-  m_max = 5.;
+  m_measuredValueMin = 0.;
+  m_measuredValueMax = 5.;
   m_numberOfParameters = 0;
+  m_defaultParameters = PDFParameters(m_numberOfParameters);
   m_title = Enums::label(m_likelihoodVariableType);
 }
 
@@ -35,7 +36,7 @@ double TimeOfFlightLikelihood::eval(double inverseBeta, const Hypothesis& hypoth
 {
   if (goodInterpolation)
     *goodInterpolation = true;
-  if (inverseBeta < m_min || inverseBeta > m_max)
+  if (inverseBeta < m_measuredValueMin || inverseBeta > m_measuredValueMax)
       return 0;
   const double timeResolution = 0.4;
   const double length = Constants::upperTofPosition - Constants::lowerTofPosition;

@@ -13,9 +13,10 @@ TimeOverThresholdLikelihood::TimeOverThresholdLikelihood(Enums::Particles partic
 {
   m_likelihoodVariableType = Enums::TimeOverThresholdLikelihood;
   m_measuredValueType = Enums::UndefinedKineticVariable;
-  m_min = 0.;
-  m_max = 60.;
+  m_measuredValueMin = 0.;
+  m_measuredValueMax = 60.;
   m_numberOfParameters = 2;
+  m_defaultParameters = PDFParameters(m_numberOfParameters); 
   m_title = Enums::label(m_likelihoodVariableType);
 }
 
@@ -31,7 +32,6 @@ double TimeOverThresholdLikelihood::eval(const AnalyzedEvent* event, const Hypot
 
 double TimeOverThresholdLikelihood::eval(double signal, const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
-  double normalization = 0;
-  const ParameterVector& parameters = interpolation(hypothesis, normalization, goodInterpolation);
+  const PDFParameters& parameters = interpolation(hypothesis, goodInterpolation);
   return TMath::Gaus(signal, parameters[0], parameters[1]);
 }

@@ -33,7 +33,7 @@ public:
   void setBeta(double);
   void setInverseBeta(double);
   void setSquaredCurvature(double);
-  
+
 private:
   ParticleProperties m_properties;
   double m_kineticEnergy;

@@ -2,6 +2,8 @@
 #define Likelihood_hh
 
 #include "Enums.hh"
+#include "PDFParameters.hh"
+#include "PDFParametersVector.hh"
 #include "Hypothesis.hh"
 #include "KineticVariable.hh"
 
@@ -9,77 +11,47 @@
 #include <QVector>
 #include <QString>
 #include <QDebug>
+#include <QPair>
+#include <QVariant>
 
 class AnalyzedEvent;
 class LikelihoodPDF;
 
 class Likelihood {
 public:
-  typedef QVector<double> ParameterVector;
-
+  static Likelihood* newLikelihood(Enums::LikelihoodVariable, Enums::Particles);
   Likelihood(Enums::Particles);
   ~Likelihood();
 
   const QString& title() const;
-  Enums::KineticVariable measuredValueType() const;
   Enums::LikelihoodVariable likelihoodVariableType() const;
-  static Likelihood* newLikelihood(Enums::LikelihoodVariable, Enums::Particles);
-  virtual LikelihoodPDF* pdf(const KineticVariable&) const;
-  virtual double min() const;
-  virtual double max() const;
-  virtual int numberOfParameters() const;
   Enums::Particles particles() const;
-
+  Enums::KineticVariable measuredValueType() const;
+  int numberOfParameters() const;
+  double measuredValueMin() const;
+  double measuredValueMax() const;
+  LikelihoodPDF* pdf(const KineticVariable&) const;
   virtual double eval(const AnalyzedEvent*, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const = 0;
   virtual double eval(double measuredValue, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const = 0;
-
-  const ParameterVector& interpolation(const Hypothesis&, double& normalizationFactor, bool* goodInterpolation = 0) const;
+  virtual const PDFParameters& interpolation(const Hypothesis&, bool* goodInterpolation = 0) const;
 protected:
-  typedef QMap<double, double> NormalizationMap;
-  typedef QMap<Enums::Particle, NormalizationMap> NormalizationParticleMap;
-  typedef QMap<double, ParameterVector> AbsoluteRigidityMap;
-  typedef QMap<Enums::Particle, AbsoluteRigidityMap> ParticleMap;
+  typedef QMap<Enums::Particle, PDFParametersVector> PDFParametersVectorMap;
+  typedef QPair<Enums::Particle, const PDFParametersVector*> Buffer;
 
-  typedef QVector<Likelihood::ParameterVector> Parametrization;
-  typedef QMap<Enums::Particle, Parametrization*> ParametrizationMap;
-  typedef QVector<double> ParametrizationNormalization;
-  typedef QMap<Enums::Particle, ParametrizationNormalization*> ParametrizationNormalizationMap;
-
-  virtual AbsoluteRigidityMap::ConstIterator end(Enums::Particle) const;
-  virtual AbsoluteRigidityMap::ConstIterator lowerNode(const Hypothesis&) const;
-  virtual AbsoluteRigidityMap::ConstIterator upperNode(const Hypothesis&) const;
-  virtual ParameterVector defaultParameters() const;
-
-  virtual NormalizationMap::ConstIterator normalizationEnd(Enums::Particle) const;
-  virtual NormalizationMap::ConstIterator normalizationLowerNode(const Hypothesis&) const;
-  virtual NormalizationMap::ConstIterator normalizationUpperNode(const Hypothesis&) const;
-
-  ParameterVector calculateInterpolation(const Hypothesis&, bool* goodInterpolation = 0) const;
-  double calculateNormalizationInterpolation(const Hypothesis&, bool* goodInterpolation = 0) const;
-
-  virtual void loadNodes();
-  void setupParametrizations();
-  int valueToIndex(double absoluteRigidity) const;
+  virtual double interpolation(double rigidity, const QVector<double>& rigidities, const QVector<double>& values);
+  virtual void loadParameters();
 
   QString m_title;
+  Enums::LikelihoodVariable m_likelihoodVariableType;
   Enums::Particles m_particles;
   Enums::KineticVariable m_measuredValueType;
-  Enums::LikelihoodVariable m_likelihoodVariableType;
-  double m_min;
-  double m_max;
   int m_numberOfParameters;
-  ParticleMap m_nodes;
-  NormalizationParticleMap m_normalization;
-  
-  static const double s_parametrizationMin;
-  static const double s_parametrizationMax;
-  static const double s_parametrizationNumberOfPoints;
-  static const double s_parametrizationStep;
-  ParametrizationMap m_parametrizations;
-  ParametrizationNormalizationMap m_parametrizationNormalizations;
-  mutable Enums::Particle m_parametrizationParticleBuffer;
-  mutable const Parametrization* m_parametrizationBuffer;
-  mutable const ParametrizationNormalization* m_parametrizationNormalizationBuffer;
+  double m_measuredValueMin;
+  double m_measuredValueMax;
+  const double m_parametersVectorsStep;
+  PDFParametersVectorMap m_parametersVectors;
+  PDFParameters m_defaultParameters;
+  mutable Buffer m_buffer;
 };
 
 #endif

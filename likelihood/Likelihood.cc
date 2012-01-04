@@ -11,262 +11,7 @@
 #include <QStringList>
 #include <QFile>
 #include <QDebug>
-
-const double Likelihood::s_parametrizationMin = 0;
-const double Likelihood::s_parametrizationMax = 100;
-const double Likelihood::s_parametrizationNumberOfPoints = 2002;
-const double Likelihood::s_parametrizationStep = (s_parametrizationMax - s_parametrizationMin) / (s_parametrizationNumberOfPoints - 1);
-
-Likelihood::Likelihood(Enums::Particles particles)
-  : m_title("no title")
-  , m_particles(particles)
-  , m_measuredValueType(Enums::UndefinedKineticVariable)
-  , m_likelihoodVariableType()
-  , m_min(0)
-  , m_max(0)
-  , m_numberOfParameters(0)
-  , m_nodes()
-  , m_normalization()
-  , m_parametrizations()
-  , m_parametrizationNormalizations()
-  , m_parametrizationParticleBuffer(Enums::NoParticle)
-  , m_parametrizationBuffer(0)
-  , m_parametrizationNormalizationBuffer(0)
-{
-}
-
-Likelihood::~Likelihood()
-{
-  qDeleteAll(m_parametrizations);
-  qDeleteAll(m_parametrizationNormalizations);
-}
-
-const QString& Likelihood::title() const
-{
-  return m_title;
-}
-
-Enums::KineticVariable Likelihood::measuredValueType() const
-{
-  return m_measuredValueType;
-}
-
-Enums::LikelihoodVariable Likelihood::likelihoodVariableType() const
-{
-  return m_likelihoodVariableType;
-}
-
-Likelihood::AbsoluteRigidityMap::ConstIterator Likelihood::end(Enums::Particle type) const
-{
-  return m_nodes[type].end();
-}
-
-Likelihood::AbsoluteRigidityMap::ConstIterator Likelihood::lowerNode(const Hypothesis& hypothesis) const
-{
-  ParticleMap::ConstIterator particleIt = m_nodes.constFind(hypothesis.particle());
-  Q_ASSERT(particleIt != m_nodes.constEnd());
-  if (!particleIt.value().count())
-    qDebug() << hypothesis;
-  Q_ASSERT_X(particleIt.value().count(), "Likelihood::lowerNode()", "No momenta found for requested particle species.");
-  AbsoluteRigidityMap::ConstIterator momentumIt = particleIt.value().lowerBound(hypothesis.absoluteRigidity());
-  if (qFuzzyCompare(momentumIt.key(), hypothesis.absoluteRigidity()))
-    return momentumIt;
-  return --momentumIt;
-}
-
-Likelihood::AbsoluteRigidityMap::ConstIterator Likelihood::upperNode(const Hypothesis& hypothesis) const
-{
-  return ++lowerNode(hypothesis);
-}
-
-int Likelihood::valueToIndex(double absoluteRigidity) const
-{
-  Q_ASSERT((s_parametrizationMin <= absoluteRigidity) && (absoluteRigidity <= s_parametrizationMax));
-  return (absoluteRigidity - s_parametrizationMin) / s_parametrizationStep;
-}
-
-const Likelihood::ParameterVector& Likelihood::interpolation(const Hypothesis& hypothesis, double& normalizationFactor, bool* goodInterpolation) const
-{
-  double absoluteRigidity = hypothesis.absoluteRigidity();
-  if (goodInterpolation)
-    *goodInterpolation = (s_parametrizationMin <= absoluteRigidity) && (absoluteRigidity <= s_parametrizationMax);
-  Enums::Particle particle = hypothesis.particle();
-  if (m_parametrizationParticleBuffer != particle) {
-    ParametrizationMap::ConstIterator pIt = m_parametrizations.find(particle);
-    ParametrizationNormalizationMap::ConstIterator nIt = m_parametrizationNormalizations.find(particle);
-    Q_ASSERT(pIt != m_parametrizations.constEnd() && nIt != m_parametrizationNormalizations.constEnd());
-    m_parametrizationParticleBuffer = particle;
-    m_parametrizationBuffer = *pIt;
-    m_parametrizationNormalizationBuffer = *nIt;
-  }
-  Q_ASSERT(m_parametrizationBuffer && m_parametrizationNormalizationBuffer);
-  if (absoluteRigidity < s_parametrizationMin) {
-    normalizationFactor = m_parametrizationNormalizationBuffer->first();
-    return m_parametrizationBuffer->first();
-  }
-  if (absoluteRigidity > s_parametrizationMax) {
-    normalizationFactor = m_parametrizationNormalizationBuffer->last();
-    return m_parametrizationBuffer->last();
-  }
-  int index = valueToIndex(absoluteRigidity);
-  normalizationFactor = (m_parametrizationNormalizationBuffer->constData())[index];
-  return (m_parametrizationBuffer->constData())[index];
-}
-
-Likelihood::ParameterVector Likelihood::calculateInterpolation(const Hypothesis& hypothesis, bool* goodInterpolation) const
-{
-  // linear interpolation method. Other methods should be implemented in the
-  // according class that inherits Likelihood.
-  AbsoluteRigidityMap::ConstIterator endIt = end(hypothesis.particle());
-  AbsoluteRigidityMap::ConstIterator l = lowerNode(hypothesis);
-  AbsoluteRigidityMap::ConstIterator u = l;
-  ++u;
-  if (goodInterpolation)
-    *goodInterpolation = (l != endIt) && (u != endIt);
-  Q_ASSERT(!(l == endIt && u == endIt));
-  if (l == endIt)
-    return u.value();
-  if (u == endIt)
-    return l.value();
-  if (qFuzzyCompare(l.key(), hypothesis.absoluteRigidity()))
-    return l.value();
-  double k = (hypothesis.absoluteRigidity() - l.key()) / (u.key() - l.key());
-  ParameterVector vector(numberOfParameters());
-  for (int i = 0; i < numberOfParameters(); ++i)
-    vector[i] = l.value()[i] + k * (u.value()[i] - l.value()[i]);
-  return vector;
-}
-
-Likelihood::NormalizationMap::ConstIterator Likelihood::normalizationEnd(Enums::Particle p) const
-{
-  return m_normalization[p].end();
-}
-
-Likelihood::NormalizationMap::ConstIterator Likelihood::normalizationLowerNode(const Hypothesis& h) const
-{
-  NormalizationParticleMap::ConstIterator particleIt = m_normalization.constFind(h.particle());
-  Q_ASSERT(particleIt != m_normalization.constEnd());
-  if (!particleIt.value().count())
-    qDebug() << h;
-  Q_ASSERT_X(particleIt.value().count(), "Likelihood::normalizationLowerNode()", "No normalization found for requested particle species.");
-  NormalizationMap::ConstIterator momentumIt = particleIt.value().lowerBound(h.absoluteRigidity());
-  if (qFuzzyCompare(momentumIt.key(), h.absoluteRigidity()))
-    return momentumIt;
-  return --momentumIt;
-}
-
-Likelihood::NormalizationMap::ConstIterator Likelihood::normalizationUpperNode(const Hypothesis& h) const
-{
-  return ++normalizationLowerNode(h);
-}
-
-double Likelihood::calculateNormalizationInterpolation(const Hypothesis& h, bool* goodInterpolation) const
-{
-  NormalizationMap::ConstIterator endIt = normalizationEnd(h.particle());
-  NormalizationMap::ConstIterator l = normalizationLowerNode(h);
-  NormalizationMap::ConstIterator u = l;
-  ++u;
-  if (goodInterpolation)
-    *goodInterpolation = (l != endIt) && (u != endIt);
-  if (l == endIt)
-    return u.value();
-  if (u == endIt)
-    return l.value();
-  if (qFuzzyCompare(l.key(), h.absoluteRigidity()))
-    return l.value();
-  double k = (h.absoluteRigidity() - l.key()) / (u.key() - l.key());
-  return l.value() + k * (u.value() - l.value());
-}
-
-void Likelihood::loadNodes()
-{
-  QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
-  Q_ASSERT(QFile::exists(fileName));
-  QSettings settings(fileName, QSettings::IniFormat);
-  m_nodes.clear();
-  settings.beginGroup(Enums::label(m_likelihoodVariableType));
-  Enums::Particles particlesInFile = Enums::particles(settings.value("particles").toString());
-  Enums::ParticleIterator particleEnd = Enums::particleEnd();
-  for (Enums::ParticleIterator particleIt = Enums::particleBegin(); particleIt != particleEnd; ++particleIt) {
-    if (particleIt.key() == Enums::NoParticle || !(particleIt.key() & particlesInFile))
-      continue;
-    ParticleMap::Iterator particleNodeIterator = m_nodes.find(particleIt.key());
-    if (particleNodeIterator == m_nodes.end())
-      particleNodeIterator = m_nodes.insert(particleIt.key(), AbsoluteRigidityMap());
-    settings.beginGroup(particleIt.value());
-
-    QList<QVariant> normalizationRrigiditiesVariantList = settings.value("normalizationRigidities").toList();
-    QList<QVariant> normalizationFactorsVariantList = settings.value("normalizationFactors").toList();
-    Q_ASSERT(normalizationRrigiditiesVariantList.size() == normalizationFactorsVariantList.size());
-    NormalizationMap normalizationMap;
-    for (int i = 0; i < normalizationFactorsVariantList.size(); ++i)
-      normalizationMap.insert(normalizationRrigiditiesVariantList[i].toDouble(), normalizationFactorsVariantList[i].toDouble());
-    m_normalization.insert(particleIt.key(), normalizationMap);
-
-    QList<QVariant> rigiditiesVariantList = settings.value("absoluteRigidities").toList();
-    foreach(QVariant rigidityVariant, rigiditiesVariantList) {
-      double rigidity = rigidityVariant.toDouble();
-      QString key = QString("%1GV").arg(rigidityVariant.toString());
-      QList<QVariant> variantList = settings.value(key).toList();
-      Q_ASSERT(variantList.size() == numberOfParameters());
-      AbsoluteRigidityMap::Iterator rigidityNodeIterator = particleNodeIterator.value().find(rigidity);
-      if (rigidityNodeIterator == particleNodeIterator.value().end())
-        rigidityNodeIterator = particleNodeIterator.value().insert(rigidity, ParameterVector(variantList.size()));
-      for (int i = 0; i < variantList.size(); ++i)
-        rigidityNodeIterator.value()[i] = variantList[i].toDouble();
-    }
-    settings.endGroup();
-  }
-  settings.endGroup();
-
-  setupParametrizations();
-}
-
-void Likelihood::setupParametrizations()
-{
-  Enums::ParticleIterator end = Enums::particleEnd();
-  for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it) {
-    if (it.key() == Enums::NoParticle || (it.key() & m_particles) != it.key())
-      continue;
-    Parametrization* parametrization = new Parametrization(s_parametrizationNumberOfPoints, defaultParameters());
-    ParametrizationNormalization* normalization = new ParametrizationNormalization(s_parametrizationNumberOfPoints, 1);
-    for (int i = 0; i < s_parametrizationNumberOfPoints; ++i) {
-      double absoluteRigidity = s_parametrizationMin + i * s_parametrizationStep;
-      Hypothesis h(it.key(), 1. / absoluteRigidity);
-      (*parametrization)[i] = calculateInterpolation(h);
-      (*normalization)[i] = calculateNormalizationInterpolation(h);
-    }
-    m_parametrizations.insert(it.key(), parametrization);
-    m_parametrizationNormalizations.insert(it.key(), normalization);
-  }
-}
-
-LikelihoodPDF* Likelihood::pdf(const KineticVariable& variable) const
-{
-  if (variable.particle() & m_particles)
-    return new LikelihoodPDF(this, variable);
-  return 0;
-}
-
-double Likelihood::min() const
-{
-  return m_min;
-}
-
-double Likelihood::max() const
-{
-  return m_max;
-}
-
-int Likelihood::numberOfParameters() const
-{
-  return m_numberOfParameters;
-}
-
-Enums::Particles Likelihood::particles() const
-{
-  return m_particles;
-}
+#include <QVariant>
 
 Likelihood* Likelihood::newLikelihood(Enums::LikelihoodVariable type, Enums::Particles particles)
 {
@@ -282,7 +27,151 @@ Likelihood* Likelihood::newLikelihood(Enums::LikelihoodVariable type, Enums::Par
   return 0;
 }
 
-Likelihood::ParameterVector Likelihood::defaultParameters() const
+Likelihood::Likelihood(Enums::Particles particles)
+  : m_title("no title")
+  , m_likelihoodVariableType()
+  , m_particles(particles)
+  , m_measuredValueType(Enums::UndefinedKineticVariable)
+  , m_numberOfParameters(0)
+  , m_measuredValueMin(0)
+  , m_measuredValueMax(0)
+  , m_parametersVectorsStep(0.01) //GV
+  , m_parametersVectors()
+  , m_buffer(Buffer(Enums::NoParticle, 0))
 {
-  return ParameterVector(numberOfParameters());
+}
+
+Likelihood::~Likelihood()
+{
+}
+
+const QString& Likelihood::title() const
+{
+  return m_title;
+}
+
+Enums::LikelihoodVariable Likelihood::likelihoodVariableType() const
+{
+  return m_likelihoodVariableType;
+}
+
+Enums::Particles Likelihood::particles() const
+{
+  return m_particles;
+}
+
+Enums::KineticVariable Likelihood::measuredValueType() const
+{
+  return m_measuredValueType;
+}
+
+int Likelihood::numberOfParameters() const
+{
+  return m_numberOfParameters;
+}
+
+double Likelihood::measuredValueMin() const
+{
+  return m_measuredValueMin;
+}
+
+double Likelihood::measuredValueMax() const
+{
+  return m_measuredValueMax;
+}
+
+LikelihoodPDF* Likelihood::pdf(const KineticVariable& variable) const
+{
+  if (variable.particle() & m_particles)
+    return new LikelihoodPDF(this, variable);
+  return 0;
+}
+
+const PDFParameters& Likelihood::interpolation(const Hypothesis& hypothesis, bool* goodInterpolation) const
+{
+  double absoluteRigidity = hypothesis.absoluteRigidity();
+  Enums::Particle particle = hypothesis.particle();
+  if (m_buffer.first != particle) {
+    PDFParametersVectorMap::ConstIterator pIt = m_parametersVectors.find(particle);
+    if (pIt == m_parametersVectors.constEnd())
+      return m_defaultParameters;
+    Q_ASSERT(pIt != m_parametersVectors.constEnd());
+    m_buffer.first = particle;
+    m_buffer.second = &pIt.value();
+  }
+  double min = m_buffer.second->min();
+  double max = m_buffer.second->max();
+  if (goodInterpolation)
+    *goodInterpolation = (min <= absoluteRigidity) && (absoluteRigidity <= max);
+  if (absoluteRigidity < min)
+    return m_buffer.second->first();
+  if (absoluteRigidity > max)
+    return m_buffer.second->last();
+  int index = (absoluteRigidity - min) / m_parametersVectorsStep;//buffer.second->count();
+  return (m_buffer.second->constData())[index];
+}
+
+double Likelihood::interpolation(double rigidity, const QVector<double>& rigidities, const QVector<double>& values)
+{
+  Q_ASSERT(rigidities.count() == values.count());
+  Q_ASSERT(rigidities.first() <= rigidity && rigidity <= rigidities.last());
+  if (qFuzzyCompare(rigidity, rigidities.first()))
+    return values.first();
+  if (qFuzzyCompare(rigidity, rigidities.last()))
+    return values.last();
+  int i = 1;
+  int n = rigidities.count();
+  for (; i < n; ++i) {
+    if (rigidity < rigidities[i])
+      break;
+  }
+  return values[i-1] + (rigidity-rigidities[i-1]) * (values[i]-values[i-1]) / (rigidities[i]-rigidities[i-1]);
+}
+
+void Likelihood::loadParameters()
+{
+  QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
+  Q_ASSERT(QFile::exists(fileName));
+  QSettings settings(fileName, QSettings::IniFormat);
+  m_parametersVectors.clear();
+  settings.beginGroup(Enums::label(m_likelihoodVariableType));
+  Enums::Particles particlesInFile = Enums::particles(settings.value("particles").toString());
+  Enums::ParticleIterator particleEnd = Enums::particleEnd();
+
+  for (Enums::ParticleIterator particleIt = Enums::particleBegin(); particleIt != particleEnd; ++particleIt) {
+    if (particleIt.key() == Enums::NoParticle || !(particleIt.key() & particlesInFile))
+      continue;
+    settings.beginGroup(particleIt.value());
+    const QVector<double>& rigidities = Helpers::variantToDoubleVector(settings.value("absoluteRigidities"));
+    Q_ASSERT(Helpers::sorted(rigidities));
+    if (rigidities.size()) {
+      double min = rigidities.first();
+      double max = rigidities.last();
+      int numberOfElements = (max - min) / m_parametersVectorsStep + 1;
+      PDFParametersVector parametersVector(numberOfElements, m_numberOfParameters);
+      parametersVector.setRange(min, max);
+      QVector<double> normalizationRigidities = Helpers::variantToDoubleVector(settings.value("normalizationRigidities"));
+      bool normalization = normalizationRigidities.count();
+      Q_ASSERT(Helpers::sorted(normalizationRigidities));
+      Q_ASSERT(!normalization || qFuzzyCompare(normalizationRigidities.first(), min));
+      Q_ASSERT(!normalization || qFuzzyCompare(normalizationRigidities.last(), max));
+      QVector<double> normalizationFactors = Helpers::variantToDoubleVector(settings.value("normalizationFactors"));
+      Q_ASSERT(normalizationRigidities.count() == normalizationFactors.count());
+      for (int i = 0; i < numberOfElements; ++i) {
+        double rigidity = min + i * m_parametersVectorsStep;
+        double normalizationFactor = 1;
+        if (normalization)
+          normalizationFactor = interpolation(rigidity, normalizationRigidities, normalizationFactors);
+        parametersVector[i].setNormalizationFactor(normalizationFactor);
+        for (int parameter = 0; parameter < m_numberOfParameters; ++parameter) {
+          QString key = QString::number(parameter);
+          const QVector<double>& parameters = Helpers::variantToDoubleVector(settings.value(QString::number(parameter)));
+          parametersVector[i][parameter] = interpolation(rigidity, rigidities, parameters);
+        }
+      }
+      m_parametersVectors.insert(particleIt.key(), parametersVector);
+    }
+    settings.endGroup();
+  }
+  settings.endGroup();
 }
