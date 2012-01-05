@@ -30,8 +30,13 @@ double TimeOverThresholdLikelihood::eval(const AnalyzedEvent* event, const Hypot
   return eval(signal, hypothesis, goodInterpolation);
 }
 
-double TimeOverThresholdLikelihood::eval(double signal, const Hypothesis& hypothesis, bool* goodInterpolation) const
+double TimeOverThresholdLikelihood::eval(double timeOverThreshold, const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
   const PDFParameters& parameters = interpolation(hypothesis, goodInterpolation);
-  return TMath::Gaus(signal, parameters[0], parameters[1]);
+  return TMath::Gaus(timeOverThreshold, parameters[0], parameters[1]);
+}
+
+double TimeOverThresholdLikelihood::eval(double timeOverThreshold, const Hypothesis&, const PDFParameters& parameters) const
+{
+  return TMath::Gaus(timeOverThreshold, parameters[0], parameters[1], true);
 }

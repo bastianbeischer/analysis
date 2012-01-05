@@ -8,9 +8,9 @@ class TimeOfFlightLikelihood : public Likelihood {
 public:
   TimeOfFlightLikelihood(Enums::Particles = Enums::NoParticle);
   ~TimeOfFlightLikelihood();
-
-  virtual double eval(const AnalyzedEvent*, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const;
-  virtual double eval(double inverseBeta, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const;
+  virtual double eval(const AnalyzedEvent*, const Hypothesis&, bool* goodInterpolation = 0) const;
+  virtual double eval(double inverseBeta, const Hypothesis&, bool* goodInterpolation = 0) const;
+  virtual double eval(double inverseBeta, const Hypothesis&, const PDFParameters&) const;
 };
 
 #endif

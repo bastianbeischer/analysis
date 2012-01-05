@@ -30,9 +30,11 @@ public:
   int numberOfParameters() const;
   double measuredValueMin() const;
   double measuredValueMax() const;
+  const PDFParameters& defaultParameters() const;
   LikelihoodPDF* pdf(const KineticVariable&) const;
-  virtual double eval(const AnalyzedEvent*, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const = 0;
-  virtual double eval(double measuredValue, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const = 0;
+  virtual double eval(const AnalyzedEvent*, const Hypothesis&, bool* goodInterpolation = 0) const = 0;
+  virtual double eval(double measuredValue, const Hypothesis&, bool* goodInterpolation = 0) const = 0;
+  virtual double eval(double measuredValue, const Hypothesis&, const PDFParameters&) const = 0;
   virtual const PDFParameters& interpolation(const Hypothesis&, bool* goodInterpolation = 0) const;
 protected:
   typedef QMap<Enums::Particle, PDFParametersVector> PDFParametersVectorMap;

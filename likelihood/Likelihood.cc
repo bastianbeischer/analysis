@@ -80,10 +80,18 @@ double Likelihood::measuredValueMax() const
   return m_measuredValueMax;
 }
 
+const PDFParameters& Likelihood::defaultParameters() const
+{
+  return m_defaultParameters;
+}
+
 LikelihoodPDF* Likelihood::pdf(const KineticVariable& variable) const
 {
-  if (variable.particle() & m_particles)
-    return new LikelihoodPDF(this, variable);
+  if (variable.particle() & m_particles) {
+    LikelihoodPDF* pdf = new LikelihoodPDF(this, variable);
+    pdf->setParameters(interpolation(Hypothesis(variable.particle(), variable.curvature())));
+    return pdf;
+  }
   return 0;
 }
 

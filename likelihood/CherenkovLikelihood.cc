@@ -56,3 +56,9 @@ double CherenkovLikelihood::eval(double, const Hypothesis&, bool*) const
   Q_ASSERT(false);
   return 0;
 }
+
+double CherenkovLikelihood::eval(double, const Hypothesis&, const PDFParameters&) const
+{
+  Q_ASSERT(false);
+  return 0;
+}

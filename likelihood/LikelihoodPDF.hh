@@ -3,6 +3,7 @@
 
 #include "Enums.hh"
 #include "KineticVariable.hh"
+#include "PDFParameters.hh"
 
 #include <TF1.h>
 
@@ -12,12 +13,13 @@ class LikelihoodPDF : public TF1 {
 public:
   LikelihoodPDF(const Likelihood*, const KineticVariable&);
   ~LikelihoodPDF();
-  void setVariable(const KineticVariable&);
+  void setParameters(const PDFParameters&);
   const KineticVariable& variable() const;
-  void setAxisTitle(const QString&);
   double integral();
+  void setAxisTitle(const QString&);
 private:
   double rootFunctionPointer(double*, double*) const;
+  PDFParameters m_parameters;
   KineticVariable m_variable;
   const Likelihood* m_likelihood;
 };

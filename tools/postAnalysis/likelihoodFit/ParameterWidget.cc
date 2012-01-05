@@ -39,6 +39,16 @@ ParameterWidget::~ParameterWidget()
 {
 }
 
+double ParameterWidget::value() const
+{
+  return m_valueSpinBox->value();
+}
+
+void ParameterWidget::setText(const QString& text)
+{
+  m_valueSpinBox->setPrefix(text);
+}
+
 QSize ParameterWidget::minimumSizeHint() const
 {
   return QSize(100, 100);

@@ -8,8 +8,9 @@ class CherenkovLikelihood : public Likelihood {
 public:
   CherenkovLikelihood(Enums::Particles);
   ~CherenkovLikelihood();
-  virtual double eval(const AnalyzedEvent*, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const;
-  virtual double eval(double inverseBeta, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const;
+  virtual double eval(const AnalyzedEvent*, const Hypothesis&, bool* goodInterpolation = 0) const;
+  virtual double eval(double, const Hypothesis&, bool* goodInterpolation = 0) const;
+  virtual double eval(double, const Hypothesis&, const PDFParameters&) const;
 private:
   int m_numberOfParticles;
 };

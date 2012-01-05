@@ -34,6 +34,11 @@ double TrackerMomentumLikelihood::eval(double curvature, const Hypothesis& hypot
 {
   if (goodInterpolation)
     *goodInterpolation = true;
+  return eval(curvature, hypothesis, m_defaultParameters);
+}
+
+double TrackerMomentumLikelihood::eval(double curvature, const Hypothesis& hypothesis, const PDFParameters&) const
+{
   if (curvature < m_measuredValueMin || curvature > m_measuredValueMax)
     return 0;
   if (hypothesis.charge() * hypothesis.curvature() < 0)

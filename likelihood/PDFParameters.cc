@@ -1,7 +1,7 @@
 #include "PDFParameters.hh"
 
 PDFParameters::PDFParameters()
-  : QVector<double>(0, 0)
+  : QVector<double>()
   , m_normalizationFactor(1.)
 {
 }

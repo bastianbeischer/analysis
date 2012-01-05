@@ -36,8 +36,13 @@ double TimeOfFlightLikelihood::eval(double inverseBeta, const Hypothesis& hypoth
 {
   if (goodInterpolation)
     *goodInterpolation = true;
+  return eval(inverseBeta, hypothesis, m_defaultParameters);
+}
+
+double TimeOfFlightLikelihood::eval(double inverseBeta, const Hypothesis& hypothesis, const PDFParameters&) const
+{
   if (inverseBeta < m_measuredValueMin || inverseBeta > m_measuredValueMax)
-      return 0;
+    return 0;
   const double timeResolution = 0.4;
   const double length = Constants::upperTofPosition - Constants::lowerTofPosition;
   const double invBetaResolution = Constants::speedOfLight * timeResolution / length;

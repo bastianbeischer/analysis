@@ -11,6 +11,8 @@ Q_OBJECT
 public:
   ParameterWidget(QWidget* parent = 0);
   ~ParameterWidget();
+  double value() const;
+  void setText(const QString&);
   virtual QSize minimumSizeHint() const;
 signals:
   void changed();

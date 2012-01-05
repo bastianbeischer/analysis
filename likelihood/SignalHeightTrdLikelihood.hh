@@ -9,8 +9,9 @@ public:
   ~SignalHeightTrdLikelihood();
   int layer() const;
   void setLayer(int layer);
-  virtual double eval(const AnalyzedEvent*, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const;
-  virtual double eval(double trdSignal, const Hypothesis& hypothesis, bool* goodInterpolation = 0) const;
+  virtual double eval(const AnalyzedEvent*, const Hypothesis&, bool* goodInterpolation = 0) const;
+  virtual double eval(double trdSignal, const Hypothesis&, bool* goodInterpolation = 0) const;
+  virtual double eval(double trdSignal, const Hypothesis&, const PDFParameters&) const;
 protected:
   virtual void loadParameters();
 private:
