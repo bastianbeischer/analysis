@@ -177,7 +177,7 @@ namespace Helpers
   double max(const QVector<double>& vector)
   {
     Q_ASSERT(vector.count());
-    double maxValue = DBL_MIN;
+    double maxValue = -DBL_MAX;
     foreach(double value, vector)
       if (value > maxValue)
         maxValue = value;

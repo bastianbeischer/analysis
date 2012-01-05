@@ -39,9 +39,9 @@ void GraphPlot::setRange()
 {
   int n = 100;
   double xMin = DBL_MAX;
-  double xMax = DBL_MIN;
+  double xMax = -DBL_MAX;
   double yMin = DBL_MAX;
-  double yMax = DBL_MIN;
+  double yMax = -DBL_MAX;
   for (int i = 0; i < numberOfGraphs(); ++i) {
     double x0, x1, y0, y1;
     graph(i)->ComputeRange(x0, y0, x1, y1);
