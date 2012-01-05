@@ -105,7 +105,10 @@ void PostAnalysisWindow::selectCanvas(QListWidgetItem* item, QListWidgetItem*)
 
 void PostAnalysisWindow::selectCanvas(QListWidgetItem* item)
 {
+  if (!item)
+    return;
   gPad->Clear();
+  m_ui->plotListWidget->setCurrentItem(0);
   m_selectedPlot = 0;
   RootStyle::setPalette(RootStyle::DefaultPalette);
   m_ui->qtWidget->GetCanvas()->cd();
@@ -131,7 +134,10 @@ void PostAnalysisWindow::selectPlot(QListWidgetItem* item, QListWidgetItem*)
 
 void PostAnalysisWindow::selectPlot(QListWidgetItem* item)
 {
+  if (!item)
+    return;
   gPad->Clear();
+  m_ui->canvasListWidget->setCurrentItem(0);
   m_selectedCanvas = 0;
   foreach (PostAnalysisPlot* plot, m_plots) {
     if (item->text() == plot->title()) {
