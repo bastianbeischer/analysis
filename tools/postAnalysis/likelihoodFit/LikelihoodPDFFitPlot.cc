@@ -41,15 +41,18 @@ LikelihoodPDFFitPlot::LikelihoodPDFFitPlot(const Likelihood* lh, const TH2D* h, 
 
   QHBoxLayout* layout = new QHBoxLayout();
   layout->setContentsMargins(0, 0, 0, 0);
+
   m_normalizationFactorWidget = new ParameterWidget();
-  m_normalizationFactorWidget->setText("norm:");
+  connect(m_normalizationFactorWidget, SIGNAL(valueChanged(double)), this, SLOT(update()));
+  layout->addWidget(m_normalizationFactorWidget);
+
   for (int parameter = 0; parameter < lh->numberOfParameters(); ++parameter) {
     ParameterWidget* parameterWidget = new ParameterWidget();
-    parameterWidget->setText(QString("p%1: ").arg(parameter));
     m_parameterWidgets.append(parameterWidget);
-    connect(parameterWidget, SIGNAL(changed()), this, SLOT(update()));
+    connect(parameterWidget, SIGNAL(valueChanged(double)), this, SLOT(update()));
     layout->addWidget(parameterWidget);
   }
+
   layout->addStretch();
   QWidget* widget = new QWidget;
   widget->setLayout(layout);

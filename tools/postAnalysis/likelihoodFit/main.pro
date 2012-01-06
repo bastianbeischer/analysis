@@ -31,7 +31,8 @@ CLASSES = \
   LikelihoodPDFPlot \
   ParameterPlot \
   ParameterWidget \
-  LikelihoodPDFFitPlot
+  LikelihoodPDFFitPlot \
+  DoubleEdit
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

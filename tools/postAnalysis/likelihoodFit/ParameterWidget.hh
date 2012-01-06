@@ -4,7 +4,8 @@
 #include <QWidget>
 #include <QSize>
 
-class QDoubleSpinBox;
+class DoubleEdit;
+class QScrollBar;
 
 class ParameterWidget : public QWidget {
 Q_OBJECT
@@ -12,16 +13,22 @@ public:
   ParameterWidget(QWidget* parent = 0);
   ~ParameterWidget();
   double value() const;
-  void setText(const QString&);
-  virtual QSize minimumSizeHint() const;
 signals:
-  void changed();
+  void valueChanged(double);
 private slots:
-  void update();
+  void valueEditChanged(double);
+  void scollBarChanged(int);
+  void minEditChanged(double);
+  void maxEditChanged(double);
 private:
-  QDoubleSpinBox* m_valueSpinBox;
-  QDoubleSpinBox* m_minSpinBox;
-  QDoubleSpinBox* m_maxSpinBox;
+  int exponent(double);
+  void updateStepWidth();
+
+  DoubleEdit* m_valueEdit;
+  QScrollBar* m_scrollBar;
+  DoubleEdit* m_minEdit;
+  DoubleEdit* m_maxEdit;
+  int m_nTicks;
 };
 
 #endif
