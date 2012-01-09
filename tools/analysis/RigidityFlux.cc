@@ -124,8 +124,10 @@ RigidityFlux::~RigidityFlux()
 void RigidityFlux::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
 {
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
-  Q_ASSERT(settings);
-  m_situation = settings->situation();
+  if (settings)
+    m_situation = settings->situation();
+  else
+    m_situation = Enums::NoSituation;
   m_measurementTimeCalculation->update(event);
 }
 

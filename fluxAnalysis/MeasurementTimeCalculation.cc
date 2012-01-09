@@ -61,8 +61,9 @@ MeasurementTimeCalculation::~MeasurementTimeCalculation()
 void MeasurementTimeCalculation::update(const SimpleEvent* const event)
 {
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
-  Q_ASSERT(settings);
-  Enums::Situation situation = settings->situation();
+  Enums::Situation situation = Enums::NoSituation;
+  if (settings)
+    situation = settings->situation();
   if (!m_active && m_situation != Enums::NoSituation && m_situation != situation)
     qDebug("Warning: running over files with different settings. For the measurement time a preset value for the float or muon lists is used if more than one thread is active. This leads to a wrong measurement time for the flux calculation");
   m_situation = situation;
