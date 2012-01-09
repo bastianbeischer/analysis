@@ -603,6 +603,8 @@ void Corrections::loadTotScaling()
 
 double Corrections::totScalingFactor(const unsigned int tofId, const double temperature)
 {
+  if (std::isnan(temperature))
+    return 1;
   double value = m_totScalings[tofChannel(tofId)][0] + m_totScalings[tofChannel(tofId)][1] * temperature;
   return (value == 0) ? 0 : Constants::idealTot / value;
   //TODO: some kind of information if the temperature value is valid for this scaling
