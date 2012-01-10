@@ -63,12 +63,12 @@ void H1DPlot::clear(int i)
   histogram(i)->Clear();
 }
 
-int H1DPlot::numberOfHistograms()
+int H1DPlot::numberOfHistograms() const
 {
   return m_histograms.size();
 }
 
-TH1D* H1DPlot::histogram(int i)
+TH1D* H1DPlot::histogram(int i) const
 {
   Q_ASSERT(0 <= i && i < numberOfHistograms());
   return m_histograms[i];
@@ -103,13 +103,13 @@ void H1DPlot::setAxisTitle(const QString& x, const QString& y)
   m_yAxisTitle = y;
 }
 
-TAxis* H1DPlot::xAxis()
+TAxis* H1DPlot::xAxis() const
 {
   Q_ASSERT(m_xAxis);
   return m_xAxis;
 }
 
-TAxis* H1DPlot::yAxis()
+TAxis* H1DPlot::yAxis() const
 {
   Q_ASSERT(m_yAxis);
   return m_yAxis;

@@ -72,7 +72,7 @@ void H2DPlot::clear()
     histogram(i)->Clear();
 }
 
-TH2D* H2DPlot::histogram(int i)
+TH2D* H2DPlot::histogram(int i) const
 {
   Q_ASSERT(0 <= i && i <= numberOfHistograms());
   return m_histograms[i];
@@ -101,24 +101,24 @@ void H2DPlot::setAxisTitle(const QString& x, const QString& y, const QString& z)
   m_zAxisTitle = z;
 }
 
-int H2DPlot::numberOfHistograms()
+int H2DPlot::numberOfHistograms() const
 {
   return m_histograms.size();
 }
 
-TAxis* H2DPlot::xAxis()
+TAxis* H2DPlot::xAxis() const
 {
   Q_ASSERT(m_xAxis);
   return m_xAxis;
 }
 
-TAxis* H2DPlot::yAxis()
+TAxis* H2DPlot::yAxis() const
 {
   Q_ASSERT(m_yAxis);
   return m_yAxis;
 }
 
-TAxis* H2DPlot::zAxis()
+TAxis* H2DPlot::zAxis() const
 {
   Q_ASSERT(m_zAxis);
   return m_zAxis;

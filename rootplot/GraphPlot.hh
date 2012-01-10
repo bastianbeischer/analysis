@@ -20,12 +20,12 @@ public:
   virtual void clear();
   virtual void clear(int);
   int numberOfGraphs() const;
-  TGraph* graph(int i = 0);
+  TGraph* graph(int i = 0) const;
   void setAxisTitle(const QString&, const QString&);
   void addGraph(TGraph*, DrawOption = P);
   void removeGraph(int i = 0);
-  TAxis* xAxis();
-  TAxis* yAxis();
+  TAxis* xAxis() const;
+  TAxis* yAxis() const;
 private:
   void setRange();
   QVector<TGraph*> m_graphs;

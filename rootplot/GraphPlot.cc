@@ -125,7 +125,7 @@ void GraphPlot::removeGraph(int i)
   m_drawOptions.remove(i);
 }
 
-TGraph* GraphPlot::graph(int i)
+TGraph* GraphPlot::graph(int i) const
 {
   Q_ASSERT(0 <= i && i < numberOfGraphs());
   return m_graphs[i];
@@ -142,13 +142,13 @@ void GraphPlot::setAxisTitle(const QString& x, const QString& y)
   m_yAxisTitle = y;
 }
 
-TAxis* GraphPlot::xAxis()
+TAxis* GraphPlot::xAxis() const
 {
   Q_ASSERT(m_xAxis);
   return m_xAxis;
 }
 
-TAxis* GraphPlot::yAxis()
+TAxis* GraphPlot::yAxis() const
 {
   Q_ASSERT(m_yAxis);
   return m_yAxis;

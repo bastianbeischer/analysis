@@ -18,13 +18,13 @@ public:
   virtual void unzoom();
   virtual void clear();
   virtual void clear(int);
-  int numberOfHistograms();
-  TH1D* histogram(int i = 0);
+  int numberOfHistograms() const;
+  TH1D* histogram(int i = 0) const;
   void setAxisTitle(const QString&, const QString&);
   void addHistogram(TH1D*, DrawOption = BLANK);
   void removeHistogram(int i = 0);
-  TAxis* xAxis();
-  TAxis* yAxis();
+  TAxis* xAxis() const;
+  TAxis* yAxis() const;
 private:
   QVector<TH1D*> m_histograms;
   TAxis* m_xAxis;

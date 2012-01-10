@@ -71,7 +71,7 @@ void H3DPlot::clear()
     histogram(i)->Clear();
 }
 
-TH3D* H3DPlot::histogram(int i)
+TH3D* H3DPlot::histogram(int i) const
 {
   Q_ASSERT(0 <= i && i <= numberOfHistograms());
   return m_histograms[i];
@@ -100,24 +100,24 @@ void H3DPlot::setAxisTitle(const QString& x, const QString& y, const QString& z)
   m_zAxisTitle = z;
 }
 
-int H3DPlot::numberOfHistograms()
+int H3DPlot::numberOfHistograms() const
 {
   return m_histograms.size();
 }
 
-TAxis* H3DPlot::xAxis()
+TAxis* H3DPlot::xAxis() const
 {
   Q_ASSERT(m_xAxis);
   return m_xAxis;
 }
 
-TAxis* H3DPlot::yAxis()
+TAxis* H3DPlot::yAxis() const
 {
   Q_ASSERT(m_yAxis);
   return m_yAxis;
 }
 
-TAxis* H3DPlot::zAxis()
+TAxis* H3DPlot::zAxis() const
 {
   Q_ASSERT(m_zAxis);
   return m_zAxis;

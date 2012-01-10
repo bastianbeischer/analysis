@@ -20,14 +20,14 @@ public:
   virtual void unzoom();
   virtual void clear(int);
   virtual void clear();
-  int numberOfHistograms();
-  TH2D* histogram(int i = 0);
+  int numberOfHistograms() const;
+  TH2D* histogram(int i = 0) const;
   void setAxisTitle(const QString&, const QString&, const QString&);
   void addHistogram(TH2D*, DrawOption = COLZ);
   void setPalette(RootStyle::PaletteType);
-  TAxis* xAxis();
-  TAxis* yAxis();
-  TAxis* zAxis();
+  TAxis* xAxis() const;
+  TAxis* yAxis() const;
+  TAxis* zAxis() const;
 private:
   TAxis* m_xAxis;
   TAxis* m_yAxis;
