@@ -45,9 +45,9 @@ LogLikelihoodPlot::LogLikelihoodPlot(Enums::Particle signal, Enums::Particles ba
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it)
     if (it.key() != Enums::NoParticle && (it.key() & background)) {
       m_typeToIndex.insert(it.key(), m_backgroundHypothesisHistograms.count());
-      h = new TH1D(qPrintable(title() + " background" + it.value()), "", m_nBins, min, max);
+      h = new TH1D(qPrintable(title() + " background " + it.value()), "", m_nBins, min, max);
       m_backgroundHypothesisHistograms.append(h);
-      h = new TH1D(qPrintable(title() + " background normalized" + it.value()), "", m_nBins, min, max);
+      h = new TH1D(qPrintable(title() + " background normalized " + it.value()), "", m_nBins, min, max);
       h->SetLineColor(ParticleProperties(it.key()).color());
       addHistogram(h);
     }

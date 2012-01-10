@@ -6,6 +6,8 @@
 #include "Particle.hh"
 #include "DetectorElement.hh"
 #include "Helpers.hh"
+#include "TimeOverThresholdLikelihood.hh"
+#include "SignalHeightTrdLikelihood.hh"
 
 #include <QSpinBox>
 #include <QComboBox>
@@ -27,16 +29,23 @@ SignalHeightPdfPlotCollection::SignalHeightPdfPlotCollection(Hit::ModuleType typ
   QString typeString;
   QVector<double> xBins = Helpers::linearBinning(50, 0, 10);
   QVector<double> yBins;
+  Likelihood* lh = 0;
   if (type == Hit::tracker) {
     typeString = "tracker";
+    //lh = new TrackerSignalLikelihood();
+    //yBins = Helpers::linearBinning(100, lh->measuredValueMin(), lh->measuredValueMax());
     yBins = Helpers::linearBinning(100, 0, 5000);
   } else if (type == Hit::tof) {
     typeString = "tof";
-    yBins = Helpers::linearBinning(40, 20, 60);
+    lh = new TimeOverThresholdLikelihood();
+    yBins = Helpers::linearBinning(60, lh->measuredValueMin(), lh->measuredValueMax());
   } else if (type == Hit::trd) {
     typeString = "trd";
-    yBins = Helpers::linearBinning(100, 0, 50);
+    lh = new SignalHeightTrdLikelihood();
+    yBins = Helpers::linearBinning(100, lh->measuredValueMin(), lh->measuredValueMax());
   }
+  if (lh)
+    delete lh;
   Q_ASSERT(!typeString.isEmpty());
   setTitle(typeString + " signal height pdf plot collection");
 
