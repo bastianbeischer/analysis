@@ -28,6 +28,18 @@ void LikelihoodPDF::setScaleFactor(double factor)
   SetParameter(m_numberOfParameters, factor);
 }
 
+void LikelihoodPDF::setParameter(int parameterNumber, double value)
+{
+  Q_ASSERT(0 <= parameterNumber && parameterNumber < m_numberOfParameters);
+  SetParameter(parameterNumber, value);
+}
+
+void LikelihoodPDF::setLimits(int parameterNumber, double min, double max)
+{
+  Q_ASSERT(0 <= parameterNumber && parameterNumber < m_numberOfParameters);
+  SetParLimits(parameterNumber, min, max);
+}
+
 double LikelihoodPDF::scaleFactor() const
 {
   return GetParameter(m_numberOfParameters);

@@ -6,6 +6,7 @@
 #include <TH2.h>
 #include <TAxis.h>
 #include <TPad.h>
+#include <TLatex.h>
 
 #include <QDebug>
 #include <QHBoxLayout>
@@ -49,10 +50,46 @@ LikelihoodPDFFitPlot::LikelihoodPDFFitPlot(Likelihood* lh, const TH2D* h, int bi
   }
   Q_ASSERT(m_particle != Enums::NoParticle);
   m_scaleWidget = new ParameterWidget();
+  addLatex(RootPlot::newLatex(0.12, 0.88));
 }
 
 LikelihoodPDFFitPlot::~LikelihoodPDFFitPlot()
 {
+}
+
+double LikelihoodPDFFitPlot::chi2() const
+{
+  double chi2 = 10;
+  int nBins = histogram()->GetXaxis()->GetNbins();
+  for (int bin = 1; bin <= nBins; ++bin) {
+    double y = histogram()->GetBinContent(bin);
+    if (y > 0) {
+      double x = histogram()->GetXaxis()->GetBinCenter(bin);
+      double fy = m_previewFunction->Eval(x);
+      double yError = histogram()->GetBinError(bin);
+      chi2+= (y - fy) * (y - fy) / (yError * yError);
+    }
+  }
+  return chi2;
+}
+
+int LikelihoodPDFFitPlot::ndf() const
+{
+  int ndf = -m_likelihood->numberOfParameters();
+  int nBins = histogram()->GetXaxis()->GetNbins();
+  for (int bin = 1; bin <= nBins; ++bin)
+    if (histogram()->GetBinContent(bin) > 0)
+      ++ndf;
+  return ndf;
+}
+
+bool LikelihoodPDFFitPlot::goodFit() const
+{
+  int n = ndf();
+  if (n < 20.)
+    return false;
+  double c = chi2();
+  return n > 0 && c/n < 10.0;
 }
 
 void LikelihoodPDFFitPlot::setup()
@@ -85,6 +122,8 @@ void LikelihoodPDFFitPlot::setup()
   QWidget* widget = new QWidget;
   widget->setLayout(hLayout);
   setSecondaryWidget(widget);
+
+  updateLatex();
 }
 
 void LikelihoodPDFFitPlot::update()
@@ -96,9 +135,23 @@ void LikelihoodPDFFitPlot::update()
   m_previewFunction->setScaleFactor(m_scaleWidget->value());
   for (int parameter = 0; parameter < m_parameterWidgets.count(); ++parameter)
     previewParameters.append(m_parameterWidgets[parameter]->value());
+  updateLatex();
   m_previewFunction->setParameters(previewParameters);
   gPad->Modified();
   gPad->Update();
+}
+
+void LikelihoodPDFFitPlot::updateLatex()
+{
+  int n = ndf();
+  double c = chi2();
+  QString title;
+  if (n > 0) {
+    title = QString("chi2 / ndf = %1 / %2 = %3").arg(c, 0, 'f', 2, ' ').arg(n).arg(c/n, 0, 'f', 2, ' ');
+  } else {
+    title = QString("chi2 = %1").arg(c, 0, 'f', 2, ' ');
+  }
+  latex()->SetTitle(qPrintable(title));
 }
 
 void LikelihoodPDFFitPlot::reset()
@@ -108,23 +161,8 @@ void LikelihoodPDFFitPlot::reset()
     m_parameterWidgets[i]->setValue(parameters[i]);
 }
 
-void LikelihoodPDFFitPlot::fit()
-{
-  histogram()->Fit(m_previewFunction, "ERQN0");
-  m_scaleWidget->disconnect();
-  m_scaleWidget->setValue(m_previewFunction->scaleFactor());
-  connect(m_scaleWidget, SIGNAL(valueChanged(double)), this, SLOT(update()));
-  const PDFParameters& parameters = m_previewFunction->parameters();
-  for (int parameter = 0; parameter < m_parameterWidgets.count(); ++parameter) {
-    m_parameterWidgets[parameter]->disconnect();
-    m_parameterWidgets[parameter]->setValue(parameters[parameter]);
-    connect(m_parameterWidgets[parameter], SIGNAL(valueChanged(double)), this, SLOT(update()));
-  }
-  update();
-}
-
 void LikelihoodPDFFitPlot::save()
 {
   m_likelihood->saveParameters(Hypothesis(m_particle, 1. / m_absoluteMomentum), m_previewFunction->parameters());
-  emit currentChanged();
+  emit configFileChanged();
 }

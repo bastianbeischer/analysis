@@ -14,18 +14,11 @@
 MainWindow::MainWindow(QWidget* parent)
   : LikelihoodFitWindow(parent)
   , m_likelihoods()
-  , m_totFitPlots()
 {
 }
 
 MainWindow::~MainWindow()
 {
-}
-
-void MainWindow::currentChanged()
-{
-  foreach (TimeOverThresholdFitPlot* plot, m_totFitPlots)
-    plot->update();
 }
 
 void MainWindow::setupAnalysis()
@@ -34,6 +27,8 @@ void MainWindow::setupAnalysis()
   gROOT->cd();
   Enums::ParticleIterator end = Enums::particleEnd();
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it) {
+    if (it.key() == Enums::NoParticle)
+      continue;
     QString particleLabel = (it.key() == Enums::NoParticle) ? "all particles" : it.value();
     QString title = "signal height pdf tof " + particleLabel + " canvas";
     PostAnalysisCanvas* canvas = addCanvas(&file, qPrintable(title));
@@ -42,8 +37,8 @@ void MainWindow::setupAnalysis()
       TH2D* h = canvas->histograms2D().at(0);
       for (int bin = 1; bin <= h->GetXaxis()->GetNbins(); ++bin) {
         TimeOverThresholdFitPlot* plot = new TimeOverThresholdFitPlot(lh, h, bin);
-        m_totFitPlots.append(plot);
-        connect(plot, SIGNAL(currentChanged()), this, SLOT(currentChanged()));
+        m_fitPlots.append(plot);
+        connect(plot, SIGNAL(configFileChanged()), this, SLOT(configFileChanged()));
         addPlot(plot);
       }
     }

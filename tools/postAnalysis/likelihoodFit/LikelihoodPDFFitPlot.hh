@@ -4,6 +4,7 @@
 #include "PostAnalysisPlot.hh"
 #include "H1DPlot.hh"
 #include "Enums.hh"
+#include "PDFParameters.hh"
 
 #include <QObject>
 #include <QVector>
@@ -19,15 +20,20 @@ Q_OBJECT
 public:
   LikelihoodPDFFitPlot(Likelihood*, const TH2D*, int bin);
   ~LikelihoodPDFFitPlot();
+  virtual PDFParameters startParameters() const = 0;
+  double chi2() const;
+  int ndf() const;
+  virtual bool goodFit() const;
 signals:
-  void currentChanged();
+  void configFileChanged();
 public slots:
+  virtual void fit() = 0;
   void update();
-  void fit();
   void reset();
   void save();
 protected:
   void setup();
+  void updateLatex();
 
   double m_absoluteMomentum;
   Enums::Particle m_particle;
