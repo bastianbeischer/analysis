@@ -16,7 +16,6 @@ TimeOfFlightLikelihood::TimeOfFlightLikelihood(Enums::Particles particles)
   m_measuredValueMin = 0.;
   m_measuredValueMax = 5.;
   m_numberOfParameters = 0;
-  m_defaultParameters = PDFParameters(m_numberOfParameters);
   m_title = Enums::label(m_likelihoodVariableType);
 }
 

@@ -25,6 +25,7 @@ namespace Helpers
   void scaleToBinWidth(TH1D*);
   TGraphAsymmErrors* createBeltWithSystematicUncertainty(const TH1D* histogram,const TH1D* lowerHistogram,const TH1D* upperHistogram);
   QVector<double> variantToDoubleVector(const QVariant&);
+  QVariant doubleVectorToVariant(const QVector<double>&);
   double min(const QVector<double>&);
   double max(const QVector<double>&);
   bool sorted(const QVector<double>&);

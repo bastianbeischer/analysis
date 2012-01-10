@@ -8,6 +8,7 @@
 
 #include <QVector>
 #include <QString>
+#include <QStringList>
 
 #include <TH1.h>
 #include <TGraphAsymmErrors.h>
@@ -151,10 +152,10 @@ namespace Helpers
 
   QVector<double> variantToDoubleVector(const QVariant& variant)
   {
-    QList<QVariant> variantList = variant.toList();
-    QList<QVariant>::ConstIterator it = variantList.begin();
-    QList<QVariant>::ConstIterator end = variantList.end();
-    QVector<double> vector(variantList.count());
+    QStringList list = variant.toStringList();
+    QStringList::ConstIterator it = list.begin();
+    QStringList::ConstIterator end = list.end();
+    QVector<double> vector(list.count());
     int i = 0;
     while (it != end) {
       vector[i] = it->toDouble();
@@ -162,6 +163,14 @@ namespace Helpers
       ++it;
     }
     return vector;
+  }
+
+  QVariant doubleVectorToVariant(const QVector<double>& vector)
+  {
+    QStringList list;
+    foreach (double value, vector)
+      list.append(QString::number(value));
+    return list;
   }
 
   double min(const QVector<double>& vector)

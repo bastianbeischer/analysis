@@ -16,8 +16,9 @@ TimeOverThresholdLikelihood::TimeOverThresholdLikelihood(Enums::Particles partic
   m_measuredValueMin = 0.;
   m_measuredValueMax = 60.;
   m_numberOfParameters = 2;
-  m_defaultParameters = PDFParameters(m_numberOfParameters);
+  m_defaultParameters = PDFParameters() << 30.0 << 1.0;
   m_title = Enums::label(m_likelihoodVariableType);
+  loadParameters();
 }
 
 TimeOverThresholdLikelihood::~TimeOverThresholdLikelihood()

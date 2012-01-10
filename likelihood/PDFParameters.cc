@@ -21,3 +21,9 @@ double PDFParameters::normalizationFactor() const
 {
   return m_normalizationFactor;
 }
+
+PDFParameters& PDFParameters::operator<<(double value)
+{
+  append(value);
+  return *this;
+}

@@ -12,7 +12,13 @@ Q_OBJECT
 public:
   ParameterWidget(QWidget* parent = 0);
   ~ParameterWidget();
+  void setValue(double);
   double value() const;
+  void setMinimum(double);
+  double minimum() const;
+  void setMaximum(double);
+  double maximum() const;
+  void setRange(double min, double max);
 signals:
   void valueChanged(double);
 private slots:

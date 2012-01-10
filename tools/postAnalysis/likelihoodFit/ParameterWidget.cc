@@ -33,7 +33,6 @@ ParameterWidget::ParameterWidget(QWidget* parent)
   valueEditChanged(m_valueEdit->value());
 
   connect(m_valueEdit, SIGNAL(valueChanged(double)), this, SLOT(valueEditChanged(double)));
-  connect(m_valueEdit, SIGNAL(valueChanged(double)), this, SIGNAL(valueChanged(double)));
   connect(m_minEdit, SIGNAL(valueChanged(double)), this, SLOT(minEditChanged(double)));
   connect(m_maxEdit, SIGNAL(valueChanged(double)), this, SLOT(maxEditChanged(double)));
 
@@ -53,9 +52,41 @@ ParameterWidget::~ParameterWidget()
 {
 }
 
+void ParameterWidget::setValue(double value)
+{
+  m_valueEdit->setValue(value);
+  emit valueChanged(value);
+}
+
 double ParameterWidget::value() const
 {
   return m_valueEdit->value();
+}
+
+void ParameterWidget::setMinimum(double value)
+{
+  m_minEdit->setValue(value);
+}
+
+double ParameterWidget::minimum() const
+{
+  return m_minEdit->value();
+}
+
+void ParameterWidget::setMaximum(double value)
+{
+  m_maxEdit->setValue(value);
+}
+
+double ParameterWidget::maximum() const
+{
+  return m_maxEdit->value();
+}
+
+void ParameterWidget::setRange(double min, double max)
+{
+  setMinimum(min);
+  setMaximum(max);
 }
 
 void ParameterWidget::valueEditChanged(double value)
@@ -66,6 +97,7 @@ void ParameterWidget::valueEditChanged(double value)
   m_scrollBar->disconnect();
   m_scrollBar->setSliderPosition(position);
   connect(m_scrollBar, SIGNAL(valueChanged(int)), this, SLOT(scollBarChanged(int)));
+  emit valueChanged(value);
 }
 
 void ParameterWidget::scollBarChanged(int position)
@@ -76,6 +108,7 @@ void ParameterWidget::scollBarChanged(int position)
   m_valueEdit->disconnect();
   m_valueEdit->setValue(value);
   connect(m_valueEdit, SIGNAL(valueChanged(double)), this, SLOT(valueEditChanged(double)));
+  emit valueChanged(value);
 }
 
 void ParameterWidget::minEditChanged(double current)

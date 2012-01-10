@@ -1,7 +1,8 @@
 #include "MainWindow.hh"
 #include "PostAnalysisCanvas.hh"
 #include "TimeOverThresholdLikelihood.hh"
-#include "LikelihoodPDFFitPlot.hh"
+#include "TimeOverThresholdFitPlot.hh"
+#include "PDFParameters.hh"
 
 #include <TROOT.h>
 #include <TFile.h>
@@ -12,11 +13,19 @@
 
 MainWindow::MainWindow(QWidget* parent)
   : LikelihoodFitWindow(parent)
+  , m_likelihoods()
+  , m_totFitPlots()
 {
 }
 
 MainWindow::~MainWindow()
 {
+}
+
+void MainWindow::currentChanged()
+{
+  foreach (TimeOverThresholdFitPlot* plot, m_totFitPlots)
+    plot->update();
 }
 
 void MainWindow::setupAnalysis()
@@ -29,10 +38,14 @@ void MainWindow::setupAnalysis()
     QString title = "signal height pdf tof " + particleLabel + " canvas";
     PostAnalysisCanvas* canvas = addCanvas(&file, qPrintable(title));
     if (canvas) {
-      const TimeOverThresholdLikelihood* lh = new TimeOverThresholdLikelihood(it.key());
+      TimeOverThresholdLikelihood* lh = new TimeOverThresholdLikelihood(it.key());
       TH2D* h = canvas->histograms2D().at(0);
-      for (int bin = 1; bin <= h->GetXaxis()->GetNbins(); ++bin)
-        addPlot(new LikelihoodPDFFitPlot(lh, h, bin));
+      for (int bin = 1; bin <= h->GetXaxis()->GetNbins(); ++bin) {
+        TimeOverThresholdFitPlot* plot = new TimeOverThresholdFitPlot(lh, h, bin);
+        m_totFitPlots.append(plot);
+        connect(plot, SIGNAL(currentChanged()), this, SLOT(currentChanged()));
+        addPlot(plot);
+      }
     }
   }
 }

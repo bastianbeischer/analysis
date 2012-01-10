@@ -13,15 +13,19 @@ class LikelihoodPDF : public TF1 {
 public:
   LikelihoodPDF(const Likelihood*, const KineticVariable&);
   ~LikelihoodPDF();
+  void setScaleFactor(double);
+  double scaleFactor() const;
   void setParameters(const PDFParameters&);
+  PDFParameters parameters() const;
   const KineticVariable& variable() const;
   double integral();
   void setAxisTitle(const QString&);
 private:
   double rootFunctionPointer(double*, double*) const;
-  PDFParameters m_parameters;
+  double m_normalizationFactor;
   KineticVariable m_variable;
   const Likelihood* m_likelihood;
+  int m_numberOfParameters;
 };
 
 #endif

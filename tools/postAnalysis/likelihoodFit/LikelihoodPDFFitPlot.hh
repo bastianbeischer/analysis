@@ -17,14 +17,24 @@ class LikelihoodPDFFitPlot : public QObject, public PostAnalysisPlot, public H1D
 {
 Q_OBJECT
 public:
-  LikelihoodPDFFitPlot(const Likelihood*, const TH2D*, int bin);
+  LikelihoodPDFFitPlot(Likelihood*, const TH2D*, int bin);
   ~LikelihoodPDFFitPlot();
+signals:
+  void currentChanged();
 public slots:
-  virtual void update();
-private:
+  void update();
+  void fit();
+  void reset();
+  void save();
+protected:
+  void setup();
+
+  double m_absoluteMomentum;
+  Enums::Particle m_particle;
+  Likelihood* m_likelihood;
   LikelihoodPDF* m_currentFunction;
   LikelihoodPDF* m_previewFunction;
-  ParameterWidget* m_normalizationFactorWidget;
+  ParameterWidget* m_scaleWidget;
   QVector<ParameterWidget*> m_parameterWidgets;
 };
 

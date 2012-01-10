@@ -30,6 +30,7 @@ public:
   int numberOfParameters() const;
   double measuredValueMin() const;
   double measuredValueMax() const;
+  void saveParameters(const Hypothesis&, const PDFParameters&);
   const PDFParameters& defaultParameters() const;
   LikelihoodPDF* pdf(const KineticVariable&) const;
   virtual double eval(const AnalyzedEvent*, const Hypothesis&, bool* goodInterpolation = 0) const = 0;
