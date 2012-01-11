@@ -10,6 +10,7 @@
 
 #include <QDebug>
 #include <QString>
+#include <QComboBox>
 
 MainWindow::MainWindow(QWidget* parent)
   : LikelihoodFitWindow(parent)
@@ -37,10 +38,10 @@ void MainWindow::setupAnalysis()
       TH2D* h = canvas->histograms2D().at(0);
       for (int bin = 1; bin <= h->GetXaxis()->GetNbins(); ++bin) {
         TimeOverThresholdFitPlot* plot = new TimeOverThresholdFitPlot(lh, h, bin);
-        m_fitPlots.append(plot);
         connect(plot, SIGNAL(configFileChanged()), this, SLOT(configFileChanged()));
-        addPlot(plot);
+        m_fitPlots.append(plot);
       }
     }
   }
+  plotSelectionChanged();
 }

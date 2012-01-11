@@ -41,7 +41,7 @@ PDFParameters TimeOverThresholdFitPlot::startParameters() const
 
 void TimeOverThresholdFitPlot::fit()
 {
-  if (ndf() > 20) {
+  if (!lowStatistics()) {
     for (int parameter = 0; parameter < m_likelihood->numberOfParameters(); ++parameter)
       m_previewFunction->setLimits(parameter, m_parameterWidgets[parameter]->minimum(), m_parameterWidgets[parameter]->maximum());
     histogram()->Fit(m_previewFunction, "ERQN0");

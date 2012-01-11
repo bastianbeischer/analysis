@@ -21,9 +21,11 @@ public:
   LikelihoodPDFFitPlot(Likelihood*, const TH2D*, int bin);
   ~LikelihoodPDFFitPlot();
   virtual PDFParameters startParameters() const = 0;
-  double chi2() const;
   int ndf() const;
-  virtual bool goodFit() const;
+  double chi2() const;
+  virtual bool bad() const;
+  virtual bool good() const;
+  virtual bool lowStatistics() const;
 signals:
   void configFileChanged();
 public slots:

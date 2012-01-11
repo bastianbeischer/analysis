@@ -7,6 +7,8 @@
 #include <QVector>
 
 class LikelihoodPDFFitPlot;
+class PostAnalysisPlot;
+class QComboBox;
 
 class LikelihoodFitWindow : public PostAnalysisWindow {
 Q_OBJECT
@@ -17,13 +19,16 @@ public slots:
   void configFileChanged();
   void fitAll();
   void normalizeAll();
-  void saveAll();
-  void saveGood();
+  void save();
+protected slots:
+  void plotSelectionChanged();
 protected:
   virtual void setupAnalysis() = 0;
-
+  bool passes(const LikelihoodPDFFitPlot*);
   Enums::Particles m_particles;
   QVector<LikelihoodPDFFitPlot*> m_fitPlots;
+  QVector<PostAnalysisPlot*> m_otherPlots;
+  QComboBox* m_comboBox;
 };
 
 #endif

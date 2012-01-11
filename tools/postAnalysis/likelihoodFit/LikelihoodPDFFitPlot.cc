@@ -59,7 +59,7 @@ LikelihoodPDFFitPlot::~LikelihoodPDFFitPlot()
 
 double LikelihoodPDFFitPlot::chi2() const
 {
-  double chi2 = 10;
+  double chi2 = 0.;
   int nBins = histogram()->GetXaxis()->GetNbins();
   for (int bin = 1; bin <= nBins; ++bin) {
     double y = histogram()->GetBinContent(bin);
@@ -75,7 +75,7 @@ double LikelihoodPDFFitPlot::chi2() const
 
 int LikelihoodPDFFitPlot::ndf() const
 {
-  int ndf = -m_likelihood->numberOfParameters();
+  int ndf = -m_likelihood->numberOfParameters()-1;
   int nBins = histogram()->GetXaxis()->GetNbins();
   for (int bin = 1; bin <= nBins; ++bin)
     if (histogram()->GetBinContent(bin) > 0)
@@ -83,18 +83,23 @@ int LikelihoodPDFFitPlot::ndf() const
   return ndf;
 }
 
-bool LikelihoodPDFFitPlot::goodFit() const
+bool LikelihoodPDFFitPlot::bad() const
 {
-  int n = ndf();
-  if (n < 20.)
-    return false;
-  double c = chi2();
-  return n > 0 && c/n < 10.0;
+  return !lowStatistics() && chi2() / ndf() > 3.0;
+}
+
+bool LikelihoodPDFFitPlot::good() const
+{
+  return !lowStatistics() && !bad();
+}
+
+bool LikelihoodPDFFitPlot::lowStatistics() const
+{
+  return histogram()->GetEntries() < 20.;
 }
 
 void LikelihoodPDFFitPlot::setup()
 {
-  m_previewFunction->SetLineColor(kSpring);
   m_previewFunction->SetLineStyle(kDashed);
   QHBoxLayout* hLayout = new QHBoxLayout();
   hLayout->setContentsMargins(0, 0, 0, 0);
