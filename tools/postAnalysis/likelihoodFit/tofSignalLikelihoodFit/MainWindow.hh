@@ -13,8 +13,6 @@ public:
   ~MainWindow();
 protected:
   virtual void setupAnalysis();
-private:
-  QVector<const Likelihood*> m_likelihoods;
 };
 
 #endif

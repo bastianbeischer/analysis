@@ -3,6 +3,8 @@
 
 #include "LikelihoodPDFFitPlot.hh"
 
+class Likelihood;
+
 class TimeOverThresholdFitPlot : public LikelihoodPDFFitPlot
 {
 public:

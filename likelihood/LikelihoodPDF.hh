@@ -17,6 +17,7 @@ public:
   double scaleFactor() const;
   void setParameters(const PDFParameters&);
   void setParameter(int parameterNumber, double);
+  void setNormalizationFactor(double);
   void setLimits(int parameterNumber, double min, double max);
   PDFParameters parameters() const;
   const KineticVariable& variable() const;

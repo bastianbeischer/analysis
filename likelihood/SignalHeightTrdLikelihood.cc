@@ -105,35 +105,44 @@ void SignalHeightTrdLikelihood::loadParameters()
   Q_ASSERT(QFile::exists(fileName));
   QSettings settings(fileName, QSettings::IniFormat);
   m_parametersVectors.clear();
+  m_parametrizationMin = 0;
+  m_parametrizationMax = 0;
+  m_buffer = Buffer(Enums::NoParticle, 0);
   settings.beginGroup(Enums::label(m_likelihoodVariableType));
   Enums::Particles particlesInFile = Enums::particles(settings.value("particles").toString());
   Enums::ParticleIterator particleEnd = Enums::particleEnd();
 
   for (Enums::ParticleIterator particleIt = Enums::particleBegin(); particleIt != particleEnd; ++particleIt) {
-    if (particleIt.key() == Enums::NoParticle || !(particleIt.key() & particlesInFile))
+    if (particleIt.key() == Enums::NoParticle)
+      continue;
+    if ((particleIt.key() & particlesInFile) != particleIt.key())
+      continue;
+    if ((particleIt.key() & m_particles) != particleIt.key())
       continue;
     settings.beginGroup(particleIt.value());
     const QVector<double>& rigidities = Helpers::variantToDoubleVector(settings.value("absoluteRigidities"));
     Q_ASSERT(Helpers::sorted(rigidities));
     if (rigidities.size()) {
-      double min = rigidities.first();
-      double max = rigidities.last();
-      int numberOfElements = (max - min) / m_parametersVectorsStep + 1;
+      m_parametrizationMin = rigidities.first();
+      m_parametrizationMax = rigidities.last();
+      int numberOfElements = (m_parametrizationMax - m_parametrizationMin) / m_parametrizationStep + 1;
       PDFParametersVector parametersVector(numberOfElements, m_numberOfParameters);
-      parametersVector.setRange(min, max);
+      parametersVector.setRange(m_parametrizationMin, m_parametrizationMax);
       QString prefix;
       if (particleIt.key() == Enums::Electron || particleIt.key() == Enums::Positron)
         prefix = QString("layer%1/").arg(m_layer);
       QVector<double> normalizationRigidities = Helpers::variantToDoubleVector(settings.value(prefix + "normalizationRigidities"));
       bool normalization = normalizationRigidities.count();
       Q_ASSERT(Helpers::sorted(normalizationRigidities));
-      Q_ASSERT(!normalization || qFuzzyCompare(normalizationRigidities.first(), min));
-      Q_ASSERT(!normalization || qFuzzyCompare(normalizationRigidities.last(), max));
+      Q_ASSERT(!normalization || qFuzzyCompare(normalizationRigidities.first(), m_parametrizationMin));
+      Q_ASSERT(!normalization || qFuzzyCompare(normalizationRigidities.last(), m_parametrizationMax));
       QVector<double> normalizationFactors = Helpers::variantToDoubleVector(settings.value(prefix + "normalizationFactors"));
       Q_ASSERT(normalizationRigidities.count() == normalizationFactors.count());
       for (int i = 0; i < numberOfElements; ++i) {
-        double rigidity = min + i * m_parametersVectorsStep;
-        double normalizationFactor = 1;
+        double rigidity = m_parametrizationMin + i * m_parametrizationStep;
+        if (i == numberOfElements - 1) // necessary to prevent rounding error
+          rigidity = m_parametrizationMax;
+        double normalizationFactor = 1.;
         if (normalization)
           normalizationFactor = interpolation(rigidity, normalizationRigidities, normalizationFactors);
         parametersVector[i].setNormalizationFactor(normalizationFactor);

@@ -34,9 +34,12 @@ public:
   void setInverseBeta(double);
   void setSquaredCurvature(double);
 
+  bool operator<(const KineticVariable&) const;
 private:
   ParticleProperties m_properties;
   double m_kineticEnergy;
 };
+
+QDebug operator<<(QDebug, const KineticVariable&);
 
 #endif

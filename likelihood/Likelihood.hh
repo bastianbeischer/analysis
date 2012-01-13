@@ -30,7 +30,12 @@ public:
   int numberOfParameters() const;
   double measuredValueMin() const;
   double measuredValueMax() const;
+  bool parametrizationAvailable() const;
+  double parametrizationStep() const;
+  double parametrizationMin() const;
+  double parametrizationMax() const;
   void saveParameters(const Hypothesis&, const PDFParameters&);
+  void saveNormalization(Enums::Particle, const QVector<double>& rigidities, const QVector<double>& normalizationFactors);
   const PDFParameters& defaultParameters() const;
   LikelihoodPDF* pdf(const KineticVariable&) const;
   virtual double eval(const AnalyzedEvent*, const Hypothesis&, bool* goodInterpolation = 0) const = 0;
@@ -51,7 +56,9 @@ protected:
   int m_numberOfParameters;
   double m_measuredValueMin;
   double m_measuredValueMax;
-  const double m_parametersVectorsStep;
+  const double m_parametrizationStep;
+  double m_parametrizationMin;
+  double m_parametrizationMax;
   PDFParametersVectorMap m_parametersVectors;
   PDFParameters m_defaultParameters;
   mutable Buffer m_buffer;

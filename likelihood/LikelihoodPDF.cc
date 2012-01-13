@@ -53,6 +53,12 @@ void LikelihoodPDF::setParameters(const PDFParameters& parameters)
     SetParameter(i, parameters[i]);
 }
 
+void LikelihoodPDF::setNormalizationFactor(double factor)
+{
+  Q_ASSERT(m_normalizationFactor > 0);
+  m_normalizationFactor = factor;
+}
+
 PDFParameters LikelihoodPDF::parameters() const
 {
   PDFParameters parameters(m_numberOfParameters);

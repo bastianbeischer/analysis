@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include <QDebug>
+
 KineticVariable::KineticVariable(Enums::Particle particleType)
   : m_properties(particleType)
   , m_kineticEnergy(0)
@@ -143,4 +145,20 @@ void KineticVariable::setSquaredCurvature(double value)
 {
   Q_ASSERT(value >= 0);
   setCurvature(sqrt(value));
+}
+
+bool KineticVariable::operator<(const KineticVariable& other) const
+{
+  if (m_properties.type() < other.m_properties.type())
+    return true;
+  if (m_properties.type() == other.m_properties.type() && m_kineticEnergy < other.m_kineticEnergy)
+    return true;
+  return false;
+}
+
+QDebug operator<<(QDebug debug, const KineticVariable& variable)
+{
+  debug << QString("%1 K=%3/GV R=%4GV beta=%5").arg(Enums::label(variable.particle()))
+    .arg(variable.curvature()).arg(variable.rigidity()).arg(variable.beta());
+  return debug;
 }

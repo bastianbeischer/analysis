@@ -32,7 +32,8 @@ CLASSES = \
   ParameterPlot \
   ParameterWidget \
   LikelihoodPDFFitPlot \
-  DoubleEdit
+  DoubleEdit \
+  NormalizationThread
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/macx.pri)

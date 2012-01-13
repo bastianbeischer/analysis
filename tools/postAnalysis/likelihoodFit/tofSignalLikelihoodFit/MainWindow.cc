@@ -14,7 +14,6 @@
 
 MainWindow::MainWindow(QWidget* parent)
   : LikelihoodFitWindow(parent)
-  , m_likelihoods()
 {
 }
 
@@ -35,6 +34,7 @@ void MainWindow::setupAnalysis()
     PostAnalysisCanvas* canvas = addCanvas(&file, qPrintable(title));
     if (canvas) {
       TimeOverThresholdLikelihood* lh = new TimeOverThresholdLikelihood(it.key());
+      m_likelihoods.append(lh);
       TH2D* h = canvas->histograms2D().at(0);
       for (int bin = 1; bin <= h->GetXaxis()->GetNbins(); ++bin) {
         TimeOverThresholdFitPlot* plot = new TimeOverThresholdFitPlot(lh, h, bin);
