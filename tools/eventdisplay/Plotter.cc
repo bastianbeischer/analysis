@@ -177,13 +177,11 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
   for (Enums::ParticleIterator particleIt = Enums::particleBegin(); particleIt != Enums::particleEnd(); ++particleIt)
     if (particleIt.key() & m_processor->particles())
       reconstructionTable+= itemBegin + particleIt.value() + itemEnd;
-  reconstructionTable+= itemBegin + "sum" + itemEnd;
   reconstructionTable+= "</tr>\n";
   QString additionalReconstructionTable = reconstructionTable;
 
   Enums::ReconstructionMethodIterator reconstructionEnd = Enums::reconstructionMethodEnd();
   for (Enums::ReconstructionMethodIterator reconstructionIt = Enums::reconstructionMethodBegin(); reconstructionIt != reconstructionEnd; ++reconstructionIt) {
-    //qDebug() << reconstructionIt.value();
     const Reconstruction* reconstruction = m_processor->reconstruction(reconstructionIt.key());
     QString& table = reconstruction->externalInformation() ? additionalReconstructionTable : reconstructionTable;
     table+= "<tr>\n";
@@ -200,7 +198,6 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
       }
       table+= itemBegin + text + itemEnd;
     }
-    table+= itemBegin + itemEnd;
     table+= "</tr>\n";
   }
 
