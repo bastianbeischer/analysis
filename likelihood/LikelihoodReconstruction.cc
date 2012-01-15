@@ -146,9 +146,8 @@ TMultiGraph* LikelihoodReconstruction::graph() const
   TGraph* minimumGraph = new TGraph(1);
   minimumGraph->SetMarkerStyle(20);
   minimumGraph->SetMarkerColor(kRed);
-  qDebug() << m_indexOfGlobalMinimum;
   if (0 <= m_indexOfGlobalMinimum)
-  minimumGraph->SetPoint(0, m_minima[m_indexOfGlobalMinimum].x(), m_minima[m_indexOfGlobalMinimum].y());
+    minimumGraph->SetPoint(0, m_minima[m_indexOfGlobalMinimum].x(), m_minima[m_indexOfGlobalMinimum].y());
   m_graph->Add(minimumGraph, "P");
   m_graph->SetTitle(qPrintable(QString(Enums::label(m_variables)).remove(" likelihood")));
   return m_graph;

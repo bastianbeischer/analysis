@@ -85,7 +85,7 @@ void Chi2Reconstruction::identify(AnalyzedEvent* event)
 {
   m_event = event;
   bool goodInterpolation = true;
-  m_indexOfGlobalMinimum = 0;
+  m_indexOfGlobalMinimum = -1;
 
   QVector<QPointF>::Iterator pointIt = m_minima.begin();
   QVector<QPointF>::Iterator pointEnd = m_minima.end();
@@ -162,7 +162,8 @@ TMultiGraph* Chi2Reconstruction::graph() const
   TGraph* minimumGraph = new TGraph(1);
   minimumGraph->SetMarkerStyle(20);
   minimumGraph->SetMarkerColor(kRed);
-  minimumGraph->SetPoint(0, m_minima[m_indexOfGlobalMinimum].x(), m_minima[m_indexOfGlobalMinimum].y());
+  if (0 <= m_indexOfGlobalMinimum)
+    minimumGraph->SetPoint(0, m_minima[m_indexOfGlobalMinimum].x(), m_minima[m_indexOfGlobalMinimum].y());
   m_graph->Add(minimumGraph, "P");
   m_graph->SetTitle(qPrintable(QString(Enums::label(m_variables)).remove(" likelihood")));
   return m_graph;

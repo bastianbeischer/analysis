@@ -162,7 +162,8 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
     infoTextEdit.append(QString("TOF: beta = %1").arg(particle->beta()));
   }
 
-  if (SettingsManager::instance()->settingsForEvent(event)->situation() == Enums::Testbeam11)
+  const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
+  if (settings && settings->situation() == Enums::Testbeam11)
     infoTextEdit.append(QString("Cherenkovs: %1, %2 ADC counts\n")
       .arg(event->sensorData(SensorTypes::BEAM_CHERENKOV1)).arg(event->sensorData(SensorTypes::BEAM_CHERENKOV2)));
 
