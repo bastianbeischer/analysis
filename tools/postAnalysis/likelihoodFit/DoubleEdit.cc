@@ -23,7 +23,7 @@ DoubleEdit::DoubleEdit(QWidget* parent)
 {
   setMinimumSize(50, 20);
   m_edit->setMinimumSize(50, 20);
-  m_edit->setValidator(new QDoubleValidator);
+  m_edit->setValidator(new QDoubleValidator(this));
   m_edit->setAlignment(Qt::AlignCenter);
   connect(m_edit, SIGNAL(textEdited(const QString&)), this, SLOT(textEdited(const QString&)));
   QHBoxLayout* layout = new QHBoxLayout;
