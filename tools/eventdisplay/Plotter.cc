@@ -47,6 +47,7 @@ Plotter::Plotter(QWidget* parent)
 {
   m_processor->setCorrectionFlags(~Enums::Corrections(0));
   m_processor->setParticleFilter(~Enums::Particles(0));
+  m_processor->setMCFilter(~Enums::Particles(0));
   m_processor->addDestination(m_hitsPlot);
   m_hitsPlot->draw(GetCanvas());
   gPad->Update();

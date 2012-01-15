@@ -28,9 +28,6 @@ EventTimeDifferencePlot::~EventTimeDifferencePlot()
 void EventTimeDifferencePlot::processEvent(const AnalyzedEvent* event)
 {
   if (numberOfHistograms() == 0) {
-    const Settings* settings = event->settings();
-    Q_ASSERT(settings);
-    Enums::Situation situation = settings->situation();
     unsigned int nBins = 200;
     double xMin = 0.;
     double xMax = 60000.;
@@ -38,23 +35,27 @@ void EventTimeDifferencePlot::processEvent(const AnalyzedEvent* event)
     double fitMax = 8000;
     double parameter = -1;
     double maxParameter = -1;
-    if (situation == Enums::KirunaFlight) {
-      nBins = 3000;
-      xMin = 0;
-      xMax = 40000;
-      fitMin = 15;
-      fitMax = 300;
-      parameter = 30.;
-      maxParameter = 100;
-    }
-    if (situation == Enums::KirunaMuons) {
-      nBins = 200;
-      xMin = 0;
-      xMax = 60000;
-      fitMin = 250;
-      fitMax = 8000;
-      parameter = 1000.;
-      maxParameter = 3000.;
+    const Settings* settings = event->settings();
+    if (settings) {
+      Enums::Situation situation = settings->situation();
+      if (situation == Enums::KirunaFlight) {
+        nBins = 3000;
+        xMin = 0;
+        xMax = 40000;
+        fitMin = 15;
+        fitMax = 300;
+        parameter = 30.;
+        maxParameter = 100;
+      }
+      if (situation == Enums::KirunaMuons) {
+        nBins = 200;
+        xMin = 0;
+        xMax = 60000;
+        fitMin = 250;
+        fitMax = 8000;
+        parameter = 1000.;
+        maxParameter = 3000.;
+      }
     }
     TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, xMin, xMax);
     histogram->Sumw2();

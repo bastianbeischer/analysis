@@ -124,8 +124,10 @@ RigidityFlux::~RigidityFlux()
 void RigidityFlux::processEvent(const AnalyzedEvent* event)
 {
   const Settings* settings = event->settings();
-  Q_ASSERT(settings);
-  m_situation = settings->situation();
+  if (settings)
+    m_situation = settings->situation();
+  else
+    m_situation = Enums::NoSituation;
   m_measurementTimeCalculation->update(event->simpleEvent());
 }
 
