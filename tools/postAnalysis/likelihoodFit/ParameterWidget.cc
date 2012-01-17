@@ -36,7 +36,7 @@ ParameterWidget::ParameterWidget(QWidget* parent)
   connect(m_minEdit, SIGNAL(valueChanged(double)), this, SLOT(minEditChanged(double)));
   connect(m_maxEdit, SIGNAL(valueChanged(double)), this, SLOT(maxEditChanged(double)));
 
-  setFixedWidth(150);
+  setFixedWidth(120);
   QGridLayout* layout = new QGridLayout();
   layout->setSpacing(1);
   layout->setContentsMargins(0, 0, 0, 0);

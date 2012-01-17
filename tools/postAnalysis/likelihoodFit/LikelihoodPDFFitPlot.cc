@@ -13,6 +13,7 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QWidget>
+#include <QScrollArea>
 
 LikelihoodPDFFitPlot::LikelihoodPDFFitPlot(Likelihood* lh, const TH2D* h, int bin)
   : PostAnalysisPlot()
@@ -111,21 +112,37 @@ void LikelihoodPDFFitPlot::setup()
     hLayout->addWidget(parameterWidget);
   }
   hLayout->addStretch();
+  QScrollArea* scrollArea = new QScrollArea;
+  QWidget* widget = new QWidget;
+  widget->setContentsMargins(0, 0, 0, 0);
+  widget->setLayout(hLayout);
+  scrollArea->setWidget(widget);
+  scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  scrollArea->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+  scrollArea->setFrameShape(QFrame::NoFrame);
+
+  hLayout = new QHBoxLayout();
+  hLayout->addWidget(scrollArea);
   QVBoxLayout* vLayout = new QVBoxLayout();
   vLayout->setContentsMargins(0, 0, 0, 0);
   QPushButton* button = 0;
   button = new QPushButton("fit");
+  button->setFixedWidth(50);
   connect(button, SIGNAL(clicked()), this, SLOT(fit()));
   vLayout->addWidget(button);
   button = new QPushButton("reset");
+  button->setFixedWidth(50);
   connect(button, SIGNAL(clicked()), this, SLOT(reset()));
   vLayout->addWidget(button);
   button = new QPushButton("save");
+  button->setFixedWidth(50);
   connect(button, SIGNAL(clicked()), this, SLOT(save()));
   vLayout->addWidget(button);
   hLayout->addLayout(vLayout);
-  QWidget* widget = new QWidget;
+  widget = new QWidget;
   widget->setLayout(hLayout);
+  widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   setSecondaryWidget(widget);
 
   updateLatex();
