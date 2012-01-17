@@ -70,6 +70,7 @@
 #include "TOTTimeCorrelationPlotCollection.hh"
 #include "TOTTemperatureCorrelationPlot.hh"
 #include "TOTTimeCorrelationPlot.hh"
+#include "TOFStartTimePlot.hh"
 #include "TemperatureTimePlot.hh"
 #include "PressureTimePlot.hh"
 #include "SettingTimePlot.hh"
@@ -471,6 +472,7 @@ void Analysis::setupPlots()
     }
     addPlot(new EventTimeDifferencePlot(m_analysisSetting.numberOfThreads));
     addPlot(new MeasurementTimeDistributionPlot(m_analysisSetting.numberOfThreads));
+    addPlot(new TOFStartTimePlot());
   }
   if (m_analysisSetting.analysisTopics & Enums::SlowControl) {
     QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());

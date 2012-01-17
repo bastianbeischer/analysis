@@ -106,7 +106,7 @@ void DataChain::addRootFile(const char* filename)
     std::cout << " (version: " << desc->softwareVersionHash() << ")" << std::endl;
     for (int i = 0; i < desc->numberOfRuns(); i++) {
       QString name(desc->runFileName(i).c_str());
-      QRegExp re("run_(\\d+)");
+      QRegExp re("run.*(\\d+)\\.dat");
       if(name.contains(re)) {
         unsigned int time = re.cap(1).toUInt();
         m_runNumbers.push_back(time);
