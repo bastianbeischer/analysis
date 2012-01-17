@@ -10,13 +10,12 @@
 #include "Constants.hh"
 #include "ProjectionControlWidget.hh"
 
-#include <QSpinBox>
-
 #include <TH2D.h>
 #include <TAxis.h>
- 
+
 #include <QString>
 #include <QDebug>
+#include <QSpinBox>
 
 TOFStartTimePlot::TOFStartTimePlot()
   : AnalysisPlot(Enums::MiscellaneousTOF)
@@ -40,7 +39,7 @@ TOFStartTimePlot::~TOFStartTimePlot()
 
 void TOFStartTimePlot::processEvent(const QVector<Hit*>&, const Particle* const, const SimpleEvent* const event)
 {
-  const QVector<Hit*>& hits = QVector<Hit*>::fromStdVector(event->hits()); 
+  const QVector<Hit*>& hits = QVector<Hit*>::fromStdVector(event->hits());
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Hit* hit = *it;
