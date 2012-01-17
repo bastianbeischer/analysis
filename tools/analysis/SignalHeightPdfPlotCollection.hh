@@ -6,6 +6,7 @@
 #include "Enums.hh"
 
 class QComboBox;
+class SignalHeightPdfPlot;
 
 class SignalHeightPdfPlotCollection : public PlotCollection {
 Q_OBJECT
@@ -14,9 +15,13 @@ public:
   ~SignalHeightPdfPlotCollection();
 public slots:
   void update();
+  void particleChanged();
 private:
   Enums::Particles m_particles;
+  Hit::ModuleType m_type;
   QComboBox* m_particleComboBox;
+  QComboBox* m_layerComboBox;
+  QVector<SignalHeightPdfPlot*> m_signalHeightPdfPlots;
 };
 
 #endif /* SignalHeightPdfPlotCollection_hh */

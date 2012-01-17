@@ -17,6 +17,7 @@ TimeOverThresholdLikelihood::TimeOverThresholdLikelihood(Enums::Particles partic
   m_measuredValueMax = 60.;
   m_numberOfParameters = 2;
   m_defaultParameters = PDFParameters() << 30.0 << 1.0;
+  m_defaultParametersMap.insert(Enums::Helium, PDFParameters() << 40.0 << 1.0);
   m_title = Enums::label(m_likelihoodVariableType);
   loadParameters();
 }

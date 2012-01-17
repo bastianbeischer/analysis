@@ -19,8 +19,16 @@ SignalHeightTrdLikelihood::SignalHeightTrdLikelihood(Enums::Particles particles)
   m_measuredValueMin = -1.; //keV
   m_measuredValueMax = 11.; //keV
   m_numberOfParameters = 9;
-  m_defaultParameters = PDFParameters(m_numberOfParameters);
-  m_title = Enums::label(m_likelihoodVariableType) + "undefined layer";
+  PDFParameters parameters = PDFParameters()
+    << 11.6699 << 0.2354 << 0.0734 << 0.1088 << -0.2164 << 0.0102 << -0.0004 << 0.1350 << 0.0052;
+  m_defaultParameters = parameters;
+  parameters = PDFParameters()
+    << 1.8357 << 0.3923 << 0.1393 << 0.5024 << 2.0420 << 0.58549 << 1.1104 << -0.2729 << 0;
+  m_defaultParametersMap.insert(Enums::Electron, parameters);
+  m_defaultParametersMap.insert(Enums::Positron, parameters);
+  m_title = Enums::label(m_likelihoodVariableType);
+  if (!((m_particles & Enums::Electron) || (m_particles & Enums::Positron)))
+    loadParameters();
 }
 
 int SignalHeightTrdLikelihood::layer() const
@@ -30,7 +38,7 @@ int SignalHeightTrdLikelihood::layer() const
 
 void SignalHeightTrdLikelihood::setLayer(int layer)
 {
-  Q_ASSERT(0 <= layer && layer <= 7);
+  Q_ASSERT(!((m_particles & Enums::Electron) || (m_particles & Enums::Positron)) || (0 <= layer && layer <= 7));
   m_layer = layer;
   m_title = QString("%1 layer %2").arg(Enums::label(m_likelihoodVariableType)).arg(m_layer);
   loadParameters();
@@ -77,7 +85,9 @@ SignalHeightTrdLikelihood::~SignalHeightTrdLikelihood()
 
 double SignalHeightTrdLikelihood::eval(const AnalyzedEvent* event, const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
-  Q_ASSERT(0 <= m_layer && m_layer <= 7);
+  Enums::Particle particle = hypothesis.particle();
+  Q_ASSERT_X((particle != Enums::Electron && particle != Enums::Positron)
+   || (0 <= m_layer && m_layer <= 7), "SignalHeightTrdLikelihood::eval()", "call setLayer() before evaluating the PDF!");
   const EnergyDeposition& deposition = event->particle()->trdReconstruction()->energyDepositionForLayer(m_layer);
   double signal = deposition.edepOnTrackPerLength;
   return eval(signal, hypothesis, goodInterpolation);
@@ -85,15 +95,18 @@ double SignalHeightTrdLikelihood::eval(const AnalyzedEvent* event, const Hypothe
 
 double SignalHeightTrdLikelihood::eval(double signal, const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
-  Q_ASSERT_X(0 <= m_layer && m_layer <= 7, "SignalHeightTrdLikelihood::eval()", "call setLayer() before evaluating the PDF!");
+  Enums::Particle particle = hypothesis.particle();
+  Q_ASSERT_X((particle != Enums::Electron && particle != Enums::Positron)
+   || (0 <= m_layer && m_layer <= 7), "SignalHeightTrdLikelihood::eval()", "call setLayer() before evaluating the PDF!");
   const PDFParameters& parameters = interpolation(hypothesis, goodInterpolation);
   return eval(signal, hypothesis, parameters);
 }
 
 double SignalHeightTrdLikelihood::eval(double signal, const Hypothesis& hypothesis, const PDFParameters& parameters) const
 {
-  Q_ASSERT_X(0 <= m_layer && m_layer <= 7, "SignalHeightTrdLikelihood::eval()", "call setLayer() before evaluating the PDF!");
   Enums::Particle particle = hypothesis.particle();
+  Q_ASSERT_X((particle != Enums::Electron && particle != Enums::Positron )
+    || (0 <= m_layer && m_layer <= 7), "SignalHeightTrdLikelihood::eval()", "call setLayer() before evaluating the PDF!");
   if (particle == Enums::Electron || particle == Enums::Positron)
     return parameters.normalizationFactor() * transitionRadiation(signal, parameters);
   return parameters.normalizationFactor() * noTransitionRadiation(signal, parameters);

@@ -12,11 +12,12 @@
 
 #include <QDebug>
 
-SignalHeightPdfPlot::SignalHeightPdfPlot(Hit::ModuleType type, Enums::Particle particle, const QVector<double>& xBins, const QVector<double>& yBins)
+SignalHeightPdfPlot::SignalHeightPdfPlot(Hit::ModuleType type, Enums::Particle particle, const QVector<double>& xBins, const QVector<double>& yBins, int layer)
   : AnalysisPlot(Enums::LikelihoodTopic)
   , H2DPlot()
   , m_type(type)
   , m_particle(particle)
+  , m_layer(layer)
 {
   QString typeString;
   if (type == Hit::tracker) {
@@ -25,6 +26,8 @@ SignalHeightPdfPlot::SignalHeightPdfPlot(Hit::ModuleType type, Enums::Particle p
     typeString = "tof";
   } else if (type == Hit::trd) {
     typeString = "trd";
+    if (0 <= layer && layer < 8)
+      typeString+= " layer " + QString::number(layer);
   }
   QString particleLabel = (particle == Enums::NoParticle) ? "all particles" : Enums::label(particle);
   QString title = QString("signal height pdf %1 %2").arg(typeString).arg(particleLabel);
@@ -48,16 +51,18 @@ void SignalHeightPdfPlot::processEvent(const AnalyzedEvent* event)
     return;
   const Hypothesis* h = event->particle()->hypothesis();
   if (m_particle == Enums::NoParticle || h->particle() == m_particle) {
-    double signal = 0;
     if (m_type == Hit::tracker) {
-      signal = event->particle()->track()->signalHeight();
+      histogram()->Fill(h->absoluteRigidity(), event->particle()->track()->signalHeight());
     } else if (m_type == Hit::tof) {
-      signal = event->particle()->timeOfFlight()->timeOverThreshold();
+      histogram()->Fill(h->absoluteRigidity(), event->particle()->timeOfFlight()->timeOverThreshold());
     } else if (m_type == Hit::trd) {
-      //TODO: handle layers
-      const EnergyDeposition& deposition = event->particle()->trdReconstruction()->energyDepositionForLayer(0);
-      signal = deposition.edepOnTrackPerLength;
+      if (0 <= m_layer) {
+        const EnergyDeposition& deposition = event->particle()->trdReconstruction()->energyDepositionForLayer(m_layer);
+        histogram()->Fill(h->absoluteRigidity(), deposition.edepOnTrackPerLength);
+      } else for (int layer = 0; layer < 8; ++layer){
+        const EnergyDeposition& deposition = event->particle()->trdReconstruction()->energyDepositionForLayer(layer);
+        histogram()->Fill(h->absoluteRigidity(), deposition.edepOnTrackPerLength);
+      }
     }
-    histogram()->Fill(h->absoluteRigidity(), signal);
   }
 }

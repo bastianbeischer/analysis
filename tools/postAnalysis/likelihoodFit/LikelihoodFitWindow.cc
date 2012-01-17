@@ -91,12 +91,7 @@ void LikelihoodFitWindow::normalizeAll()
   QVector<LikelihoodPDF*> pdfs;
   m_results.clear();
   foreach (Likelihood* lh, m_likelihoods) {
-    QVector<Enums::Particle> particles;
-    for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it)
-      if (it.key() & lh->particles())
-        particles.append(it.key());
-    Q_ASSERT(particles.count() == 1);
-    Enums::Particle particle = particles.first();
+    Enums::Particle particle = Enums::particle(lh->particles());
     if (lh->parametrizationAvailable()) {
       double min = lh->parametrizationMin();
       double max = lh->parametrizationMax();

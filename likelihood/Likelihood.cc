@@ -40,6 +40,7 @@ Likelihood::Likelihood(Enums::Particles particles)
   , m_parametrizationMax(0)
   , m_parametersVectors()
   , m_defaultParameters()
+  , m_defaultParametersMap()
   , m_buffer(Buffer(Enums::NoParticle, 0))
 {
 }
@@ -145,6 +146,14 @@ void Likelihood::saveNormalization(Enums::Particle particle, const QVector<doubl
 const PDFParameters& Likelihood::defaultParameters() const
 {
   return m_defaultParameters;
+}
+
+const PDFParameters& Likelihood::defaultParameters(Enums::Particle particle) const
+{
+  QMap<Enums::Particle, PDFParameters>::ConstIterator it = m_defaultParametersMap.find(particle);
+  if (it != m_defaultParametersMap.end())
+    return it.value();
+  return defaultParameters();
 }
 
 LikelihoodPDF* Likelihood::pdf(const KineticVariable& variable) const

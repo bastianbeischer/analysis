@@ -19,7 +19,7 @@ class LikelihoodFitWindow : public PostAnalysisWindow {
 Q_OBJECT
 public:
   LikelihoodFitWindow(QWidget* parent = 0);
-  ~LikelihoodFitWindow();
+  virtual ~LikelihoodFitWindow();
 public slots:
   void configFileChanged();
   void fitAll();

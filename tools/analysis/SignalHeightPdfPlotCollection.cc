@@ -8,6 +8,7 @@
 #include "Helpers.hh"
 #include "TimeOverThresholdLikelihood.hh"
 #include "SignalHeightTrdLikelihood.hh"
+#include "SignalHeightTrackerLikelihood.hh"
 
 #include <QSpinBox>
 #include <QComboBox>
@@ -17,11 +18,15 @@
 SignalHeightPdfPlotCollection::SignalHeightPdfPlotCollection(Hit::ModuleType type, Enums::Particles particles)
   : PlotCollection(Enums::LikelihoodTopic)
   , m_particles(particles)
+  , m_type(type)
   , m_particleComboBox(new QComboBox)
+  , m_layerComboBox(new QComboBox)
+  , m_signalHeightPdfPlots()
 {
   QHBoxLayout* layout = new QHBoxLayout();
   layout->addStretch();
   layout->addWidget(m_particleComboBox);
+  layout->addWidget(m_layerComboBox);
   QWidget* widget = new QWidget();
   widget->setLayout(layout);
   secondaryWidget()->layout()->addWidget(widget);
@@ -32,9 +37,8 @@ SignalHeightPdfPlotCollection::SignalHeightPdfPlotCollection(Hit::ModuleType typ
   Likelihood* lh = 0;
   if (type == Hit::tracker) {
     typeString = "tracker";
-    //lh = new TrackerSignalLikelihood();
-    //yBins = Helpers::linearBinning(100, lh->measuredValueMin(), lh->measuredValueMax());
-    yBins = Helpers::linearBinning(100, 0, 5000);
+    lh = new SignalHeightTrackerLikelihood();
+    yBins = Helpers::linearBinning(100, lh->measuredValueMin(), lh->measuredValueMax());
   } else if (type == Hit::tof) {
     typeString = "tof";
     lh = new TimeOverThresholdLikelihood();
@@ -50,36 +54,56 @@ SignalHeightPdfPlotCollection::SignalHeightPdfPlotCollection(Hit::ModuleType typ
   setTitle(typeString + " signal height pdf plot collection");
 
   m_particleComboBox->addItem("all particles");
-  addPlot(new SignalHeightPdfPlot(type, Enums::NoParticle, xBins, yBins));
+  m_layerComboBox->addItem("all layers");
+  m_signalHeightPdfPlots.append(new SignalHeightPdfPlot(type, Enums::NoParticle, xBins, yBins));
 
   Enums::ParticleIterator end = Enums::particleEnd();
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it)
     if ((it.key() != Enums::NoParticle) && ((it.key() & m_particles) == it.key())) {
       m_particleComboBox->addItem(it.value());
-      addPlot(new SignalHeightPdfPlot(type, it.key(), xBins, yBins));
+      if (type != Hit::trd || (it.key() != Enums::Electron && it.key() != Enums::Positron))
+        m_signalHeightPdfPlots.append(new SignalHeightPdfPlot(type, it.key(), xBins, yBins));
+      else for (int layer = 0; layer < 8; ++layer)
+        m_signalHeightPdfPlots.append(new SignalHeightPdfPlot(type, it.key(), xBins, yBins, layer));
     }
-  connect(m_particleComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
+  foreach (SignalHeightPdfPlot* plot, m_signalHeightPdfPlots)
+    addPlot(plot);
+  connect(m_particleComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(particleChanged()));
+  connect(m_layerComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
 }
 
 SignalHeightPdfPlotCollection::~SignalHeightPdfPlotCollection()
 {
 }
 
+void SignalHeightPdfPlotCollection::particleChanged()
+{
+  Enums::Particle particle = Enums::particle(m_particleComboBox->currentText());
+  m_layerComboBox->disconnect();
+  m_layerComboBox->clear();
+  if (m_type != Hit::trd || (particle != Enums::Electron && particle != Enums::Positron))
+    m_layerComboBox->addItem("all layers");
+  else for (int layer = 0; layer < 8; ++layer)
+    m_layerComboBox->addItem(QString("layer %1").arg(layer));
+  connect(m_layerComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
+  update();
+}
+
 void SignalHeightPdfPlotCollection::update()
 {
-  if (m_particleComboBox->currentText() == "all particles") {
-    selectPlot(0);
-    return;
+  Enums::Particle particle = Enums::particle(m_particleComboBox->currentText());
+  int layer = -1;
+  QString string = m_layerComboBox->currentText();
+  if (string != "all layers") {
+    string.remove("layer ");
+    layer = string.toInt();
   }
-  Enums::ParticleIterator end = Enums::particleEnd();
-  Enums::ParticleIterator it = Enums::particleBegin();
-  for (int i = 1; it != end; ++it) {
-    if ((it.key() == Enums::NoParticle) || ((it.key() & m_particles) != it.key()))
-      continue;
-    if (it.value() == m_particleComboBox->currentText()) {
+  for (int i = 0; i < m_signalHeightPdfPlots.count(); ++i) {
+    SignalHeightPdfPlot* plot = m_signalHeightPdfPlots[i];
+    if (plot->particle() == particle && plot->layer() == layer) {
       selectPlot(i);
       return;
     }
-    ++i;
   }
+  Q_ASSERT(false);
 }

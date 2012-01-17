@@ -14,7 +14,6 @@ public:
   ~MainWindow();
 protected:
   virtual void setupAnalysis();
-  QVector<SignalHeightTrdLikelihood*> m_signalHeightTrdLikelihoods;
 };
 
 #endif

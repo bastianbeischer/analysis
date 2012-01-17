@@ -37,6 +37,7 @@ public:
   void saveParameters(const Hypothesis&, const PDFParameters&);
   void saveNormalization(Enums::Particle, const QVector<double>& rigidities, const QVector<double>& normalizationFactors);
   const PDFParameters& defaultParameters() const;
+  const PDFParameters& defaultParameters(Enums::Particle) const;
   LikelihoodPDF* pdf(const KineticVariable&) const;
   virtual double eval(const AnalyzedEvent*, const Hypothesis&, bool* goodInterpolation = 0) const = 0;
   virtual double eval(double measuredValue, const Hypothesis&, bool* goodInterpolation = 0) const = 0;
@@ -61,6 +62,7 @@ protected:
   double m_parametrizationMax;
   PDFParametersVectorMap m_parametersVectors;
   PDFParameters m_defaultParameters;
+  QMap<Enums::Particle, PDFParameters> m_defaultParametersMap;
   mutable Buffer m_buffer;
 };
 

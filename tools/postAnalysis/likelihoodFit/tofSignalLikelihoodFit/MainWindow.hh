@@ -10,7 +10,7 @@ class MainWindow : public LikelihoodFitWindow {
 Q_OBJECT
 public:
   MainWindow(QWidget* parent = 0);
-  ~MainWindow();
+  virtual ~MainWindow();
 protected:
   virtual void setupAnalysis();
 };

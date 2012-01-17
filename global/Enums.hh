@@ -3,6 +3,7 @@
 
 #include <QMap>
 #include <QPair>
+#include <QVector>
 
 class Enums {
 public:
@@ -52,6 +53,8 @@ public:
   Q_DECLARE_FLAGS(Particles, Particle);
   static const QString label(Particles);
   static Particles particles(const QString&);
+  static const QVector<Particle> particles(Particles);
+  static Particle particle(Particles);
 
   enum Cut {RigidityCut, BetaCut, TimeOverThresholdCut, TrdSignalCut, CherenkovCut};
   static const QString label(Cut);
