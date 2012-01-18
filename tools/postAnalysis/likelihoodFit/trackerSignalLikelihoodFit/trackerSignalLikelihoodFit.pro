@@ -29,7 +29,8 @@ LIBS += \
   -llikelihoodFit
 
 CLASSES = \
-  MainWindow
+  MainWindow \
+  SignalHeightTrackerFitPlot
 
 SOURCES = \
   main.cc

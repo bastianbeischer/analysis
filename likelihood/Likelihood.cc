@@ -6,6 +6,7 @@
 #include "CherenkovLikelihood.hh"
 #include "SignalHeightTrdLikelihood.hh"
 #include "TimeOverThresholdLikelihood.hh"
+#include "SignalHeightTrackerLikelihood.hh"
 
 #include <QSettings>
 #include <QStringList>
@@ -17,7 +18,7 @@ Likelihood* Likelihood::newLikelihood(Enums::LikelihoodVariable type, Enums::Par
 {
   switch (type) {
     case Enums::UndefinedLikelihood: return 0;
-    case Enums::SignalHeightTrackerLikelihood: return 0; //TODO
+    case Enums::SignalHeightTrackerLikelihood: return new SignalHeightTrackerLikelihood(particles);
     case Enums::SignalHeightTrdLikelihood: return new SignalHeightTrdLikelihood(particles);
     case Enums::TimeOverThresholdLikelihood: return new TimeOverThresholdLikelihood(particles);
     case Enums::TimeOfFlightLikelihood: return new TimeOfFlightLikelihood(particles);
