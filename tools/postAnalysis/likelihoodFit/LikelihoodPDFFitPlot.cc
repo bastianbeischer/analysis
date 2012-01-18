@@ -19,37 +19,31 @@ LikelihoodPDFFitPlot::LikelihoodPDFFitPlot(Likelihood* lh, const TH2D* h, int bi
   : PostAnalysisPlot()
   , H1DPlot()
   , m_absoluteMomentum(0)
-  , m_particle(Enums::NoParticle)
+  , m_particle(Enums::particle(lh->particles()))
   , m_likelihood(lh)
   , m_currentFunction(0)
   , m_previewFunction(0)
   , m_parameterWidgets()
 {
+  Q_ASSERT(m_particle != Enums::NoParticle);
   double rangeMin = h->GetXaxis()->GetBinLowEdge(bin);
   double rangeMax = h->GetXaxis()->GetBinUpEdge(bin);
   m_absoluteMomentum = .5 * (rangeMin + rangeMax);
 
-  Enums::Particles particles = lh->particles();
-
-  QString particleLabel = (particles == Enums::NoParticle) ? "all particles" : Enums::label(particles);
   QString title = QString("%1 PDF %2..%3 GeV %4").arg(lh->title()).arg(rangeMin, 4, 'f', 2, '0')
-    .arg(rangeMax, 4, 'f', 2, '0').arg(particleLabel);
+    .arg(rangeMax, 4, 'f', 2, '0').arg(Enums::label(m_particle));
   setTitle(title);
 
+  KineticVariable variable(m_particle, Enums::AbsoluteRigidity, m_absoluteMomentum);
+
   TH1D* projection = h->ProjectionY(qPrintable(title), bin, bin);
-  for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
-    if (!(it.key() & particles))
-      continue;
-    m_particle = it.key();
-    addHistogram(projection);
-    m_currentFunction = lh->pdf(KineticVariable(it.key(), Enums::AbsoluteRigidity, m_absoluteMomentum));
-    addFunction(m_currentFunction);
-    m_previewFunction = lh->pdf(KineticVariable(it.key(), Enums::AbsoluteRigidity, m_absoluteMomentum));
-    addFunction(m_previewFunction);
-    for (int i = 0; i < m_likelihood->numberOfParameters(); ++i)
-      m_parameterWidgets.append(new ParameterWidget());
-  }
-  Q_ASSERT(m_particle != Enums::NoParticle);
+  addHistogram(projection);
+  m_currentFunction = lh->pdf(variable);
+  addFunction(m_currentFunction);
+  m_previewFunction = lh->pdf(variable);
+  addFunction(m_previewFunction);
+  for (int i = 0; i < m_likelihood->numberOfParameters(); ++i)
+    m_parameterWidgets.append(new ParameterWidget());
   m_scaleWidget = new ParameterWidget();
   addLatex(RootPlot::newLatex(0.12, 0.88));
 }
