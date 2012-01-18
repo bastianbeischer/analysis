@@ -32,8 +32,8 @@ LikelihoodPDFFitPlot::LikelihoodPDFFitPlot(Likelihood* lh, const TH2D* h, int bi
   Enums::Particles particles = lh->particles();
 
   QString particleLabel = (particles == Enums::NoParticle) ? "all particles" : Enums::label(particles);
-  QString title = QString("%1 PDF %2..%3 GeV %4").arg(lh->title()).arg(rangeMin, 3, 'f', 1, '0')
-    .arg(rangeMax, 3, 'f', 1, '0').arg(particleLabel);
+  QString title = QString("%1 PDF %2..%3 GeV %4").arg(lh->title()).arg(rangeMin, 4, 'f', 2, '0')
+    .arg(rangeMax, 4, 'f', 2, '0').arg(particleLabel);
   setTitle(title);
 
   TH1D* projection = h->ProjectionY(qPrintable(title), bin, bin);

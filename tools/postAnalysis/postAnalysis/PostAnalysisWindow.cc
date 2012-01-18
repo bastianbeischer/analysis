@@ -116,6 +116,9 @@ void PostAnalysisWindow::selectCanvas(QListWidgetItem* item)
   foreach (PostAnalysisCanvas* canvas, m_canvases) {
     if (item->text() == canvas->name()) {
       canvas->draw(m_ui->qtWidget->GetCanvas());
+      gPad->SetLogx(m_ui->logXCheckBox->isChecked());
+      gPad->SetLogy(m_ui->logYCheckBox->isChecked());
+      gPad->SetLogz(m_ui->logZCheckBox->isChecked());
       m_selectedCanvas = canvas;
       break;
     }
@@ -142,6 +145,9 @@ void PostAnalysisWindow::selectPlot(QListWidgetItem* item)
   foreach (PostAnalysisPlot* plot, m_plots) {
     if (item->text() == plot->title()) {
       plot->draw(m_ui->qtWidget->GetCanvas());
+      gPad->SetLogx(m_ui->logXCheckBox->isChecked());
+      gPad->SetLogy(m_ui->logYCheckBox->isChecked());
+      gPad->SetLogz(m_ui->logZCheckBox->isChecked());
       m_selectedPlot = plot;
       break;
     }

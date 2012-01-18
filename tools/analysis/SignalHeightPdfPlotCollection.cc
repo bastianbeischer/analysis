@@ -32,7 +32,7 @@ SignalHeightPdfPlotCollection::SignalHeightPdfPlotCollection(Hit::ModuleType typ
   secondaryWidget()->layout()->addWidget(widget);
 
   QString typeString;
-  QVector<double> xBins = Helpers::linearBinning(50, 0, 10);
+  QVector<double> xBins = Helpers::logBinning(20, 0.1, 10);
   QVector<double> yBins;
   Likelihood* lh = 0;
   if (type == Hit::tracker) {
