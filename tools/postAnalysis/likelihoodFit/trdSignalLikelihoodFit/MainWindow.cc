@@ -30,26 +30,27 @@ void MainWindow::setupAnalysis()
   gROOT->cd();
   Enums::ParticleIterator end = Enums::particleEnd();
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it) {
-    if (it.key() == Enums::NoParticle)
-      continue;
-    QString particleLabel = (it.key() == Enums::NoParticle) ? "all particles" : it.value();
-    int n = (it.key() == Enums::Electron || it.key() == Enums::Positron) ? 8 : 1;
-    for (int layer = 0; layer < n; ++layer) {
-      QString title = "signal height pdf trd ";
-      if (n > 1)
-        title+= QString("layer %1 ").arg(layer);
-      title+= particleLabel + " canvas";
-      PostAnalysisCanvas* canvas = addCanvas(&file, qPrintable(title));
-      if (canvas) {
-        SignalHeightTrdLikelihood* lh = new SignalHeightTrdLikelihood(it.key());
+    if (it.key() == Enums::NoParticle) {
+      addCanvas(&file, "signal height pdf trd all particles canvas");
+    } else {
+      int n = (it.key() == Enums::Electron || it.key() == Enums::Positron) ? 8 : 1;
+      for (int layer = 0; layer < n; ++layer) {
+        QString title = "signal height pdf trd ";
         if (n > 1)
-          lh->setLayer(layer);
-        m_likelihoods.append(lh);
-        TH2D* h = canvas->histograms2D().at(0);
-        for (int bin = 1; bin <= h->GetXaxis()->GetNbins(); ++bin) {
-          SignalHeightTrdFitPlot* plot = new SignalHeightTrdFitPlot(lh, h, bin);
-          connect(plot, SIGNAL(configFileChanged()), this, SLOT(configFileChanged()));
-          m_fitPlots.append(plot);
+          title+= QString("layer %1 ").arg(layer);
+        title+= it.value() + " canvas";
+        PostAnalysisCanvas* canvas = addCanvas(&file, qPrintable(title));
+        if (canvas) {
+          SignalHeightTrdLikelihood* lh = new SignalHeightTrdLikelihood(it.key());
+          if (n > 1)
+            lh->setLayer(layer);
+          m_likelihoods.append(lh);
+          TH2D* h = canvas->histograms2D().at(0);
+          for (int bin = 1; bin <= h->GetXaxis()->GetNbins(); ++bin) {
+            SignalHeightTrdFitPlot* plot = new SignalHeightTrdFitPlot(lh, h, bin);
+            connect(plot, SIGNAL(configFileChanged()), this, SLOT(configFileChanged()));
+            m_fitPlots.append(plot);
+          }
         }
       }
     }

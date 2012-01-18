@@ -27,19 +27,20 @@ void MainWindow::setupAnalysis()
   gROOT->cd();
   Enums::ParticleIterator end = Enums::particleEnd();
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it) {
-    if (it.key() == Enums::NoParticle)
-      continue;
-    QString particleLabel = (it.key() == Enums::NoParticle) ? "all particles" : it.value();
-    QString title = "signal height pdf tof " + particleLabel + " canvas";
-    PostAnalysisCanvas* canvas = addCanvas(&file, qPrintable(title));
-    if (canvas) {
-      TimeOverThresholdLikelihood* lh = new TimeOverThresholdLikelihood(it.key());
-      m_likelihoods.append(lh);
-      TH2D* h = canvas->histograms2D().at(0);
-      for (int bin = 1; bin <= h->GetXaxis()->GetNbins(); ++bin) {
-        TimeOverThresholdFitPlot* plot = new TimeOverThresholdFitPlot(lh, h, bin);
-        connect(plot, SIGNAL(configFileChanged()), this, SLOT(configFileChanged()));
-        m_fitPlots.append(plot);
+    if (it.key() == Enums::NoParticle) {
+      addCanvas(&file, "signal height pdf tof all particles canvas");
+    } else {
+      QString title = "signal height pdf tof " + it.value() + " canvas";
+      PostAnalysisCanvas* canvas = addCanvas(&file, qPrintable(title));
+      if (canvas) {
+        TimeOverThresholdLikelihood* lh = new TimeOverThresholdLikelihood(it.key());
+        m_likelihoods.append(lh);
+        TH2D* h = canvas->histograms2D().at(0);
+        for (int bin = 1; bin <= h->GetXaxis()->GetNbins(); ++bin) {
+          TimeOverThresholdFitPlot* plot = new TimeOverThresholdFitPlot(lh, h, bin);
+          connect(plot, SIGNAL(configFileChanged()), this, SLOT(configFileChanged()));
+          m_fitPlots.append(plot);
+        }
       }
     }
   }
