@@ -191,12 +191,10 @@ void PostAnalysisWindow::addAnalysisFiles(const QStringList& files)
   setupAnalysis();
 }
 
-PostAnalysisCanvas* PostAnalysisWindow::addCanvas(TFile* file, const QString& name)
+void PostAnalysisWindow::addCanvas(PostAnalysisCanvas* canvas)
 {
-  PostAnalysisCanvas* canvas = PostAnalysisCanvas::fromFile(file, name);
-  if (!canvas)
-    return 0;
-  m_ui->canvasListWidget->disconnect();
+  Q_ASSERT(canvas);
+   m_ui->canvasListWidget->disconnect();
   m_canvases.append(canvas);
   QListWidgetItem* item = new QListWidgetItem(canvas->name());
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -205,6 +203,14 @@ PostAnalysisCanvas* PostAnalysisWindow::addCanvas(TFile* file, const QString& na
   connect(m_ui->canvasListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectCanvas(QListWidgetItem*)));
   connect(m_ui->canvasListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
     this, SLOT(selectCanvas(QListWidgetItem*, QListWidgetItem*)));
+}
+
+PostAnalysisCanvas* PostAnalysisWindow::addCanvas(TFile* file, const QString& name)
+{
+  PostAnalysisCanvas* canvas = PostAnalysisCanvas::fromFile(file, name);
+  if (!canvas)
+    return 0;
+  addCanvas(canvas);
   return canvas;
 }
 

@@ -9,19 +9,21 @@
 
 MainWindow::MainWindow(QWidget* parent)
   : PostAnalysisWindow(parent)
+  , m_file(0)
 {
 }
 
 MainWindow::~MainWindow()
 {
+  m_file->Close();
+  delete m_file;
 }
 
 void MainWindow::setupAnalysis()
 {
-  TFile file(qPrintable(m_analysisFiles.at(0)));
+  m_file = new TFile(qPrintable(m_analysisFiles.at(0)));
+  QStringList list = PostAnalysisCanvas::savedCanvases(m_file);
   gROOT->cd();
-  TList* listOfKeys = file.GetListOfKeys();
-  for (int i = 0; i < listOfKeys->GetSize(); ++i) {
-    addCanvas(&file, listOfKeys->At(i)->GetName());
-  }
+  foreach (const QString& name, list)
+    addCanvas(new PostAnalysisCanvas(m_file, name));
 }

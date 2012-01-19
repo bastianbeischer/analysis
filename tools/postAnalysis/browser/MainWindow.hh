@@ -4,6 +4,7 @@
 #include "PostAnalysisWindow.hh"
 
 class PostAnalysisPlot;
+class TFile;
 
 class MainWindow : public PostAnalysisWindow {
 Q_OBJECT
@@ -12,6 +13,7 @@ public:
   ~MainWindow();
 protected:
   virtual void setupAnalysis();
+  TFile* m_file;
 };
 
 #endif

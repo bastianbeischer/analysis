@@ -5,6 +5,8 @@
 
 #include <QVector>
 #include <QString>
+#include <QRegExp>
+#include <QStringList>
 
 class TH1D;
 class TH2D;
@@ -16,7 +18,9 @@ class TCanvas;
 class PostAnalysisCanvas {
 public:
   PostAnalysisCanvas(TCanvas*);
+  PostAnalysisCanvas(TFile*, const QString& name);
   virtual ~PostAnalysisCanvas();
+  static QStringList savedCanvases(TFile*, const QRegExp& = QRegExp());
   static PostAnalysisCanvas* fromFile(TFile*, const QString& name);
   virtual void draw(TCanvas*);
   void setPalette(RootStyle::PaletteType);
@@ -25,11 +29,14 @@ public:
   QVector<TH2D*> histograms2D();
   QVector<TH3D*> histograms3D();
   QVector<TF1*> functions();
-  TCanvas* canvas() const {return m_canvas;}
+  TCanvas* canvas();
 private:
-  void setCanvas(TCanvas* canvas) {m_canvas = canvas;}
+  static TCanvas* loadCanvas(TFile*, const QString& name);
+  void loadCanvas();
   PostAnalysisCanvas();
   RootStyle::PaletteType m_palette;
+  TFile* m_file;
+  QString m_name;
   TCanvas* m_canvas;
 };
 
