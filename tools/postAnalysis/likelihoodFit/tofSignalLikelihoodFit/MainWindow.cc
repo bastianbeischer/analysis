@@ -11,10 +11,24 @@
 #include <QDebug>
 #include <QString>
 #include <QComboBox>
+#include <QRegExp>
 
 MainWindow::MainWindow(QWidget* parent)
   : LikelihoodFitWindow(parent)
 {
+  addPlotFilter("p\\+ all");
+  addPlotFilter("p- all");
+  addPlotFilter("e\\+ all");
+  addPlotFilter("e- all");
+  addPlotFilter("mu\\+ all");
+  addPlotFilter("mu- all");
+
+  addPlotFilter("p\\+$");
+  addPlotFilter("p-$");
+  addPlotFilter("e\\+$");
+  addPlotFilter("e-$");
+  addPlotFilter("mu\\+$");
+  addPlotFilter("mu-$");
 }
 
 MainWindow::~MainWindow()
@@ -24,23 +38,23 @@ MainWindow::~MainWindow()
 void MainWindow::setupAnalysis()
 {
   TFile file(qPrintable(m_analysisFiles.at(0)));
+  QStringList list = PostAnalysisCanvas::savedCanvases(&file, QRegExp("signal height pdf tof .* canvas"));
   gROOT->cd();
-  Enums::ParticleIterator end = Enums::particleEnd();
-  for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it) {
-    if (it.key() == Enums::NoParticle) {
-      addCanvas(&file, "signal height pdf tof all particles canvas");
-    } else {
-      QString title = "signal height pdf tof " + it.value() + " canvas";
-      PostAnalysisCanvas* canvas = addCanvas(&file, qPrintable(title));
-      if (canvas) {
-        TimeOverThresholdLikelihood* lh = new TimeOverThresholdLikelihood(it.key());
-        m_likelihoods.append(lh);
-        TH2D* h = canvas->histograms2D().at(0);
-        for (int bin = 1; bin <= h->GetXaxis()->GetNbins(); ++bin) {
-          TimeOverThresholdFitPlot* plot = new TimeOverThresholdFitPlot(lh, h, bin);
-          connect(plot, SIGNAL(configFileChanged()), this, SLOT(configFileChanged()));
-          m_fitPlots.append(plot);
-        }
+  foreach (const QString& canvasName, list) {
+    QString particlesLabel = canvasName;
+    particlesLabel.remove("signal height pdf tof ");
+    particlesLabel.remove(" canvas");
+    QVector<Enums::Particle> particles = Enums::particleVector(particlesLabel);
+    PostAnalysisCanvas* canvas = addCanvas(&file, canvasName);
+    TH2D* h = canvas->histograms2D().at(0);
+    foreach (Enums::Particle particle, particles) {
+      QMap<Enums::Particle, Likelihood*>::Iterator lhIt = m_likelihoods.find(particle);
+      if (lhIt == m_likelihoods.end())
+        lhIt = m_likelihoods.insert(particle, new TimeOverThresholdLikelihood(particle));
+      for (int bin = 1; bin <= h->GetXaxis()->GetNbins(); ++bin) {
+        TimeOverThresholdFitPlot* plot = new TimeOverThresholdFitPlot(lhIt.value(), h, bin, particles.count() == 1);
+        connect(plot, SIGNAL(configFileChanged()), this, SLOT(configFileChanged()));
+        m_fitPlots.append(plot);
       }
     }
   }

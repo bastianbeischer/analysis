@@ -12,11 +12,11 @@
 
 #include <QDebug>
 
-SignalHeightPdfPlot::SignalHeightPdfPlot(Hit::ModuleType type, Enums::Particle particle, const QVector<double>& xBins, const QVector<double>& yBins, int layer)
+SignalHeightPdfPlot::SignalHeightPdfPlot(Hit::ModuleType type, Enums::Particles particles, const QVector<double>& xBins, const QVector<double>& yBins, int layer)
   : AnalysisPlot(Enums::LikelihoodTopic)
   , H2DPlot()
   , m_type(type)
-  , m_particle(particle)
+  , m_particles(particles)
   , m_layer(layer)
 {
   QString typeString;
@@ -26,11 +26,10 @@ SignalHeightPdfPlot::SignalHeightPdfPlot(Hit::ModuleType type, Enums::Particle p
     typeString = "tof";
   } else if (type == Hit::trd) {
     typeString = "trd";
-    if (0 <= layer && layer < 8)
-      typeString+= " layer " + QString::number(layer);
   }
-  QString particleLabel = (particle == Enums::NoParticle) ? "all particles" : Enums::label(particle);
-  QString title = QString("signal height pdf %1 %2").arg(typeString).arg(particleLabel);
+  QString title = QString("signal height pdf %1 %2").arg(typeString).arg(Enums::label(particles));
+  if (type == Hit::trd && 0 <= layer && layer < 8)
+    title+= " layer " + QString::number(layer);
   TH2D* h = new TH2D(qPrintable(title), "", xBins.count() - 1, xBins.constData(), yBins.count() - 1, yBins.constData());
   addHistogram(h);
   setAxisTitle("|R| / GV", "signal height / a.u.", "");
@@ -50,7 +49,7 @@ void SignalHeightPdfPlot::processEvent(const AnalyzedEvent* event)
   if (!event->flagsSet(ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet | ParticleInformation::Chi2Good | ParticleInformation::BetaGood))
     return;
   const Hypothesis* h = event->particle()->hypothesis();
-  if (m_particle == Enums::NoParticle || h->particle() == m_particle) {
+  if (h->particle() & m_particles) {
     if (m_type == Hit::tracker) {
       histogram()->Fill(h->absoluteRigidity(), event->particle()->track()->signalHeight());
     } else if (m_type == Hit::tof) {

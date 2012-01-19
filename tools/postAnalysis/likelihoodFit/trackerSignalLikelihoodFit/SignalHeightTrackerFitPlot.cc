@@ -8,8 +8,8 @@
 
 #include <cmath>
 
-SignalHeightTrackerFitPlot::SignalHeightTrackerFitPlot(Likelihood* lh, const TH2D* h, int bin)
-  : LikelihoodPDFFitPlot(lh, h, bin)
+SignalHeightTrackerFitPlot::SignalHeightTrackerFitPlot(Likelihood* lh, const TH2D* h, int bin, bool singleParticle)
+  : LikelihoodPDFFitPlot(lh, h, bin, singleParticle)
 {
   const PDFParameters& parameters = startParameters();
 

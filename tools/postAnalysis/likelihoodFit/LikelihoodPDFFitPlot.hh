@@ -18,7 +18,7 @@ class LikelihoodPDFFitPlot : public QObject, public PostAnalysisPlot, public H1D
 {
 Q_OBJECT
 public:
-  LikelihoodPDFFitPlot(Likelihood*, const TH2D*, int bin);
+  LikelihoodPDFFitPlot(Likelihood*, const TH2D*, int bin, bool singleParticle);
   ~LikelihoodPDFFitPlot();
   virtual PDFParameters startParameters() const = 0;
   int ndf() const;

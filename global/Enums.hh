@@ -53,7 +53,8 @@ public:
   Q_DECLARE_FLAGS(Particles, Particle);
   static const QString label(Particles);
   static Particles particles(const QString&);
-  static const QVector<Particle> particles(Particles);
+  static const QVector<Particle> particleVector(Particles);
+  static const QVector<Particle> particleVector(const QString&);
   static Particle particle(Particles);
 
   enum Cut {RigidityCut, BetaCut, TimeOverThresholdCut, TrdSignalCut, CherenkovCut};

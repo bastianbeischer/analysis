@@ -8,7 +8,7 @@ class Likelihood;
 class SignalHeightTrackerFitPlot : public LikelihoodPDFFitPlot
 {
 public:
-  SignalHeightTrackerFitPlot(Likelihood*, const TH2D*, int);
+  SignalHeightTrackerFitPlot(Likelihood*, const TH2D*, int bin, bool singleParticle);
   virtual PDFParameters startParameters() const;
 public slots:
   void fit();

@@ -17,7 +17,6 @@ public slots:
   void update();
   void particleChanged();
 private:
-  Enums::Particles m_particles;
   Hit::ModuleType m_type;
   QComboBox* m_particleComboBox;
   QComboBox* m_layerComboBox;

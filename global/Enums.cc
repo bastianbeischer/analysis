@@ -202,19 +202,23 @@ Enums::Particles Enums::particles(const QString& value)
     particles|= particle(string);
   return particles;
 }
-const QVector<Enums::Particle> Enums::particles(Enums::Particles p)
+const QVector<Enums::Particle> Enums::particleVector(Enums::Particles particles)
 {
   QVector<Enums::Particle> pVector;
   for (Enums::ParticleIterator it = particleBegin(); it != particleEnd(); ++it) {
-    if (it.key() != Enums::NoParticle && (it.key() & p)) {
+    if (it.key() != Enums::NoParticle && (it.key() & particles)) {
       pVector.append(it.key());
     }
   }
   return pVector;
 }
+const QVector<Enums::Particle> Enums::particleVector(const QString& value)
+{
+  return Enums::particleVector(Enums::particles(value));
+}
 Enums::Particle Enums::particle(Enums::Particles particles)
 {
-  QVector<Enums::Particle> pVector = Enums::particles(particles);
+  QVector<Enums::Particle> pVector = Enums::particleVector(particles);
   Q_ASSERT(pVector.count() == 1);
   return pVector.first();
 }

@@ -8,15 +8,15 @@
 
 class SignalHeightPdfPlot : public AnalysisPlot, public H2DPlot {
 public:
-  SignalHeightPdfPlot(Hit::ModuleType, Enums::Particle, const QVector<double>& xBins, const QVector<double>& yBins, int layer = -1);
+  SignalHeightPdfPlot(Hit::ModuleType, Enums::Particles, const QVector<double>& xBins, const QVector<double>& yBins, int layer = -1);
   ~SignalHeightPdfPlot();
   void processEvent(const AnalyzedEvent*);
   Hit::ModuleType type() const {return m_type;}
-  Enums::Particle particle() const {return m_particle;}
+  Enums::Particles particles() const {return m_particles;}
   int layer() const {return m_layer;}
 private:
   Hit::ModuleType m_type;
-  Enums::Particle m_particle;
+  Enums::Particles m_particles;
   int m_layer;
 };
 

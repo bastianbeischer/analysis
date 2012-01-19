@@ -28,16 +28,16 @@ public slots:
 protected slots:
   void plotSelectionChanged();
   void normalizationFinished();
+  virtual void setupAnalysis() = 0;
 protected:
   typedef QVector<QPointF> ResultVector;
   static bool lessThan(const QPointF&, const QPointF&);
-  virtual void setupAnalysis() = 0;
   bool passes(const LikelihoodPDFFitPlot*);
   Enums::Particles m_particles;
   QVector<LikelihoodPDFFitPlot*> m_fitPlots;
   QVector<PostAnalysisPlot*> m_otherPlots;
   QComboBox* m_comboBox;
-  QVector<Likelihood*> m_likelihoods;
+  QMap<Enums::Particle, Likelihood*> m_likelihoods;
   QMap<Enums::Particle, ResultVector> m_results;
   int m_runningThreadsCounter;
 };

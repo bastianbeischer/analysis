@@ -15,7 +15,7 @@
 #include <QWidget>
 #include <QScrollArea>
 
-LikelihoodPDFFitPlot::LikelihoodPDFFitPlot(Likelihood* lh, const TH2D* h, int bin)
+LikelihoodPDFFitPlot::LikelihoodPDFFitPlot(Likelihood* lh, const TH2D* h, int bin, bool singleParticle)
   : PostAnalysisPlot()
   , H1DPlot()
   , m_absoluteMomentum(0)
@@ -32,6 +32,8 @@ LikelihoodPDFFitPlot::LikelihoodPDFFitPlot(Likelihood* lh, const TH2D* h, int bi
 
   QString title = QString("%1 PDF %2..%3 GeV %4").arg(lh->title()).arg(rangeMin, 4, 'f', 2, '0')
     .arg(rangeMax, 4, 'f', 2, '0').arg(Enums::label(m_particle));
+  if (!singleParticle)
+    title+= " all";
   setTitle(title);
 
   KineticVariable variable(m_particle, Enums::AbsoluteRigidity, m_absoluteMomentum);

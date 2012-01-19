@@ -17,7 +17,6 @@
 
 SignalHeightPdfPlotCollection::SignalHeightPdfPlotCollection(Hit::ModuleType type, Enums::Particles particles)
   : PlotCollection(Enums::LikelihoodTopic)
-  , m_particles(particles)
   , m_type(type)
   , m_particleComboBox(new QComboBox)
   , m_layerComboBox(new QComboBox)
@@ -52,14 +51,16 @@ SignalHeightPdfPlotCollection::SignalHeightPdfPlotCollection(Hit::ModuleType typ
     delete lh;
   Q_ASSERT(!typeString.isEmpty());
   setTitle(typeString + " signal height pdf plot collection");
+  
+  qDebug() << Enums::label(particles);
 
-  m_particleComboBox->addItem("all particles");
+  m_particleComboBox->addItem(Enums::label(particles));//"all particles");
   m_layerComboBox->addItem("all layers");
-  m_signalHeightPdfPlots.append(new SignalHeightPdfPlot(type, Enums::NoParticle, xBins, yBins));
+  m_signalHeightPdfPlots.append(new SignalHeightPdfPlot(type, particles, xBins, yBins));
 
   Enums::ParticleIterator end = Enums::particleEnd();
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it)
-    if ((it.key() != Enums::NoParticle) && ((it.key() & m_particles) == it.key())) {
+    if ((it.key() != Enums::NoParticle) && ((it.key() & particles) == it.key())) {
       m_particleComboBox->addItem(it.value());
       if (type != Hit::trd || (it.key() != Enums::Electron && it.key() != Enums::Positron))
         m_signalHeightPdfPlots.append(new SignalHeightPdfPlot(type, it.key(), xBins, yBins));
@@ -78,10 +79,10 @@ SignalHeightPdfPlotCollection::~SignalHeightPdfPlotCollection()
 
 void SignalHeightPdfPlotCollection::particleChanged()
 {
-  Enums::Particle particle = Enums::particle(m_particleComboBox->currentText());
+  QVector<Enums::Particle> particles = Enums::particleVector(m_particleComboBox->currentText());
   m_layerComboBox->disconnect();
   m_layerComboBox->clear();
-  if (m_type != Hit::trd || (particle != Enums::Electron && particle != Enums::Positron))
+  if (particles.count() > 1 || m_type != Hit::trd || (particles.first() != Enums::Electron && particles.first() != Enums::Positron))
     m_layerComboBox->addItem("all layers");
   else for (int layer = 0; layer < 8; ++layer)
     m_layerComboBox->addItem(QString("layer %1").arg(layer));
@@ -91,7 +92,7 @@ void SignalHeightPdfPlotCollection::particleChanged()
 
 void SignalHeightPdfPlotCollection::update()
 {
-  Enums::Particle particle = Enums::particle(m_particleComboBox->currentText());
+  Enums::Particles particles = Enums::particles(m_particleComboBox->currentText());
   int layer = -1;
   QString string = m_layerComboBox->currentText();
   if (string != "all layers") {
@@ -100,7 +101,7 @@ void SignalHeightPdfPlotCollection::update()
   }
   for (int i = 0; i < m_signalHeightPdfPlots.count(); ++i) {
     SignalHeightPdfPlot* plot = m_signalHeightPdfPlots[i];
-    if (plot->particle() == particle && plot->layer() == layer) {
+    if (plot->particles() == particles && plot->layer() == layer) {
       selectPlot(i);
       return;
     }

@@ -8,8 +8,8 @@
 
 #include <cmath>
 
-TimeOverThresholdFitPlot::TimeOverThresholdFitPlot(Likelihood* lh, const TH2D* h, int bin)
-  : LikelihoodPDFFitPlot(lh, h, bin)
+TimeOverThresholdFitPlot::TimeOverThresholdFitPlot(Likelihood* lh, const TH2D* h, int bin, bool singleParticle)
+  : LikelihoodPDFFitPlot(lh, h, bin, singleParticle)
 {
   const PDFParameters& parameters = startParameters();
 
