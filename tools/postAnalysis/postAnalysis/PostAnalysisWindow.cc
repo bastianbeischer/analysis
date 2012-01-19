@@ -53,10 +53,8 @@ PostAnalysisWindow::PostAnalysisWindow(QWidget* parent)
   connect(m_ui->logZCheckBox, SIGNAL(stateChanged(int)), m_ui->qtWidget, SLOT(setLogZ(int)));
   connect(m_ui->qtWidget, SIGNAL(positionChanged(double, double)), this, SLOT(canvasPositionChanged(double, double)));
   connect(m_ui->qtWidget, SIGNAL(unzoomButtonPressed()), this, SLOT(unzoom()));
-  connect(m_ui->canvasFilterEdit, SIGNAL(textChanged(const QString&)), this, SLOT(canvasFilterChanged(const QString&)));
-  connect(m_ui->clearCanvasFilterButton, SIGNAL(clicked()), m_ui->canvasFilterEdit, SLOT(clear()));
-  connect(m_ui->plotFilterEdit, SIGNAL(textChanged(const QString&)), this, SLOT(plotFilterChanged(const QString&)));
-  connect(m_ui->clearPlotFilterButton, SIGNAL(clicked()), m_ui->plotFilterEdit, SLOT(clear()));
+  connect(m_ui->canvasFilterComboBox, SIGNAL(editTextChanged(const QString&)), this, SLOT(canvasFilterChanged(const QString&)));
+  connect(m_ui->plotFilterComboBox, SIGNAL(editTextChanged(const QString&)), this, SLOT(plotFilterChanged(const QString&)));
   m_ui->canvasWidget->hide();
   m_ui->plotWidget->hide();
 }
@@ -96,6 +94,16 @@ void PostAnalysisWindow::plotFilterChanged(const QString& text)
   connect(m_ui->plotListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectPlot(QListWidgetItem*)));
   connect(m_ui->plotListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
     this, SLOT(selectPlot(QListWidgetItem*, QListWidgetItem*)));
+}
+
+void PostAnalysisWindow::addCanvasFilter(const QString& string)
+{
+  m_ui->canvasFilterComboBox->addItem(string);
+}
+
+void PostAnalysisWindow::addPlotFilter(const QString& string)
+{
+  m_ui->plotFilterComboBox->addItem(string);
 }
 
 void PostAnalysisWindow::selectCanvas(QListWidgetItem* item, QListWidgetItem*)

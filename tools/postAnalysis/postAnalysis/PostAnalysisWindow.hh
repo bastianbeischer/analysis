@@ -17,6 +17,8 @@ public:
   PostAnalysisWindow(QWidget* parent = 0);
   ~PostAnalysisWindow();
   void addAnalysisFiles(const QStringList&);
+  void addCanvasFilter(const QString&);
+  void addPlotFilter(const QString&);
 protected:
   void addWidget(QWidget*);
   virtual void setupAnalysis() = 0;
