@@ -17,7 +17,12 @@
 
 MainWindow::MainWindow(QWidget* parent)
   : LikelihoodFitWindow(parent)
+  , m_layerSpinBox(new QSpinBox)
 {
+  m_layerSpinBox->setPrefix("layer: ");
+  m_layerSpinBox->setRange(0, 7);
+  connect(m_layerSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setupAnalysis()));
+  addWidget(m_layerSpinBox);
 }
 
 MainWindow::~MainWindow()
@@ -26,32 +31,41 @@ MainWindow::~MainWindow()
 
 void MainWindow::setupAnalysis()
 {
+  clear();
   TFile file(qPrintable(m_analysisFiles.at(0)));
+  QStringList list = PostAnalysisCanvas::savedCanvases(&file, QRegExp("signal height pdf trd .* canvas"));
   gROOT->cd();
-  Enums::ParticleIterator end = Enums::particleEnd();
-  for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it) {
-    if (it.key() == Enums::NoParticle) {
-      addCanvas(&file, "signal height pdf trd all particles canvas");
-    } else {
-      int n = (it.key() == Enums::Electron || it.key() == Enums::Positron) ? 8 : 1;
-      for (int layer = 0; layer < n; ++layer) {
-        QString title = "signal height pdf trd ";
-        if (n > 1)
-          title+= QString("layer %1 ").arg(layer);
-        title+= it.value() + " canvas";
-        PostAnalysisCanvas* canvas = addCanvas(&file, qPrintable(title));
-        if (canvas) {
-          SignalHeightTrdLikelihood* lh = new SignalHeightTrdLikelihood(it.key());
-          if (n > 1)
-            lh->setLayer(layer);
-          m_likelihoods.append(lh);
-          TH2D* h = canvas->histograms2D().at(0);
-          for (int bin = 1; bin <= h->GetXaxis()->GetNbins(); ++bin) {
-            SignalHeightTrdFitPlot* plot = new SignalHeightTrdFitPlot(lh, h, bin);
-            connect(plot, SIGNAL(configFileChanged()), this, SLOT(configFileChanged()));
-            m_fitPlots.append(plot);
-          }
-        }
+  foreach (const QString& canvasName, list) {
+    QString particlesLabel = canvasName;
+    particlesLabel.remove("signal height pdf trd ");
+    particlesLabel.remove(QRegExp(" layer [0-9]"));
+    particlesLabel.remove(" canvas");
+
+    QString layerLabel = canvasName;
+    layerLabel.remove("signal height pdf trd " + particlesLabel);
+    layerLabel.remove(" layer ");
+    layerLabel.remove(" canvas");
+
+    QVector<Enums::Particle> particles = Enums::particleVector(particlesLabel);
+    int layer = layerLabel.isEmpty() ? -1 : layerLabel.toInt();
+    if (0 <= layer && layer != m_layerSpinBox->value())
+      continue;
+
+    PostAnalysisCanvas* canvas = addCanvas(&file, canvasName);
+    TH2D* h = canvas->histograms2D().at(0);
+    foreach (Enums::Particle particle, particles) {
+      //qDebug() << canvasName << Enums::label(particle) << layer;
+      QMap<Enums::Particle, Likelihood*>::Iterator lhIt = m_likelihoods.find(particle);
+      if (lhIt == m_likelihoods.end()) {
+        SignalHeightTrdLikelihood* lh = new SignalHeightTrdLikelihood(particle);
+        if (particle == Enums::Electron || particle == Enums::Positron)
+          lh->setLayer(m_layerSpinBox->value());
+        lhIt = m_likelihoods.insert(particle, lh);
+      }
+      for (int bin = 1; bin <= h->GetXaxis()->GetNbins(); ++bin) {
+        SignalHeightTrdFitPlot* plot = new SignalHeightTrdFitPlot(lhIt.value(), h, bin, particles.count() == 1);
+        connect(plot, SIGNAL(configFileChanged()), this, SLOT(configFileChanged()));
+        m_fitPlots.append(plot);
       }
     }
   }

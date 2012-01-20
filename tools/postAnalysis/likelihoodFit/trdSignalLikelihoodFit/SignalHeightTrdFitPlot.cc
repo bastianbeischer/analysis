@@ -8,8 +8,8 @@
 
 #include <cmath>
 
-SignalHeightTrdFitPlot::SignalHeightTrdFitPlot(Likelihood* lh, const TH2D* h, int bin)
-  : LikelihoodPDFFitPlot(lh, h, bin)
+SignalHeightTrdFitPlot::SignalHeightTrdFitPlot(Likelihood* lh, const TH2D* h, int bin, bool singleParticle)
+  : LikelihoodPDFFitPlot(lh, h, bin, singleParticle)
 {
   const PDFParameters& parameters = startParameters();
   Enums::Particle particle = Enums::particle(lh->particles());

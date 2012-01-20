@@ -4,6 +4,7 @@
 #include "LikelihoodFitWindow.hh"
 
 #include <QVector>
+#include <QSpinBox>
 
 class SignalHeightTrdLikelihood;
 
@@ -14,6 +15,7 @@ public:
   ~MainWindow();
 protected:
   virtual void setupAnalysis();
+  QSpinBox* m_layerSpinBox;
 };
 
 #endif

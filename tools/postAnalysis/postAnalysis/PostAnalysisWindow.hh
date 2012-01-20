@@ -23,6 +23,7 @@ protected:
   void addWidget(QWidget*);
   virtual void setupAnalysis() = 0;
   void addCanvas(PostAnalysisCanvas*);
+  void clearCanvases();
   PostAnalysisCanvas* addCanvas(TFile*, const QString& name);
   void addPlot(PostAnalysisPlot*);
   void clearPlots();

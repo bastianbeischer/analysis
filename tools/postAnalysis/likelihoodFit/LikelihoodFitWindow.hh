@@ -28,6 +28,7 @@ public slots:
 protected slots:
   void plotSelectionChanged();
   void normalizationFinished();
+  void clear();
   virtual void setupAnalysis() = 0;
 protected:
   typedef QVector<QPointF> ResultVector;

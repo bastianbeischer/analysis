@@ -47,7 +47,7 @@ QStringList PostAnalysisCanvas::savedCanvases(TFile* file, const QRegExp& regula
     TKey* key = static_cast<TKey*>(rootList->At(i));
     QString name(key->GetName());
     if (name.contains(regularExpression))
-      list.append(key->GetName());
+      list.append(name);
   }
   QStringList duplicates;
   foreach (const QString& name, list) {

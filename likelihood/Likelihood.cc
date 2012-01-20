@@ -36,7 +36,7 @@ Likelihood::Likelihood(Enums::Particles particles)
   , m_numberOfParameters(0)
   , m_measuredValueMin(+1.)
   , m_measuredValueMax(-1.)
-  , m_parametrizationStep(0.1) //GV
+  , m_parametrizationStep(0.01) //GV
   , m_parametrizationMin(0)
   , m_parametrizationMax(0)
   , m_parametersVectors()
@@ -174,7 +174,7 @@ const PDFParameters& Likelihood::interpolation(const Hypothesis& hypothesis, boo
   if (m_buffer.first != particle) {
     PDFParametersVectorMap::ConstIterator pIt = m_parametersVectors.find(particle);
     if (pIt == m_parametersVectors.constEnd())
-      return m_defaultParameters;
+      return defaultParameters(particle);
     Q_ASSERT(pIt != m_parametersVectors.constEnd());
     m_buffer.first = particle;
     m_buffer.second = &pIt.value();

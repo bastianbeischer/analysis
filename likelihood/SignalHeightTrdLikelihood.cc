@@ -112,6 +112,74 @@ double SignalHeightTrdLikelihood::eval(double signal, const Hypothesis& hypothes
   return parameters.normalizationFactor() * noTransitionRadiation(signal, parameters);
 }
 
+void SignalHeightTrdLikelihood::saveParameters(const Hypothesis& h, const PDFParameters& parameters)
+{
+  QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
+  Q_ASSERT(QFile::exists(fileName));
+  QSettings settings(fileName, QSettings::IniFormat);
+
+  settings.beginGroup(Enums::label(m_likelihoodVariableType));
+  settings.beginGroup(Enums::label(h.particle()));
+
+  QString prefix;
+  if (h.particle() == Enums::Electron || h.particle() == Enums::Positron)
+    prefix = QString("layer%1/").arg(m_layer);
+
+  typedef QVector<double> DoubleVector;
+  DoubleVector rigidities = Helpers::variantToDoubleVector(settings.value(prefix + "absoluteRigidities"));
+  QVector<DoubleVector> values = QVector<DoubleVector>(m_numberOfParameters);
+  for (int parameter = 0; parameter < m_numberOfParameters; ++parameter)
+    values[parameter] = Helpers::variantToDoubleVector(settings.value(prefix + QString::number(parameter)));
+
+  for (int i = 0; i < rigidities.size(); ++i) {
+    if (qFuzzyCompare(h.absoluteRigidity(), rigidities[i])) {
+      rigidities.remove(i);
+      for (int parameter = 0; parameter < m_numberOfParameters; ++parameter)
+        values[parameter].remove(i);
+    }
+  }
+
+  int position = 0;
+  while (position < rigidities.size() && rigidities[position] < h.absoluteRigidity())
+    ++position;
+
+  rigidities.insert(position, h.absoluteRigidity());
+  Q_ASSERT(Helpers::sorted(rigidities));
+  settings.setValue(prefix + "absoluteRigidities", Helpers::doubleVectorToVariant(rigidities));
+  for (int parameter = 0; parameter < m_numberOfParameters; ++parameter) {
+    values[parameter].insert(position, parameters[parameter]);
+    settings.setValue(prefix + QString::number(parameter), Helpers::doubleVectorToVariant(values[parameter]));
+  }
+
+  settings.endGroup();
+  settings.endGroup();
+  settings.sync();
+
+  loadParameters();
+}
+
+void SignalHeightTrdLikelihood::saveNormalization(Enums::Particle particle, const QVector<double>& rigidities, const QVector<double>& normalizationFactors)
+{
+  QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
+  Q_ASSERT(QFile::exists(fileName));
+  QSettings settings(fileName, QSettings::IniFormat);
+  Q_ASSERT(rigidities.count() == normalizationFactors.count());
+  settings.beginGroup(Enums::label(m_likelihoodVariableType));
+  settings.beginGroup(Enums::label(particle));
+
+  QString prefix;
+  if (particle == Enums::Electron || particle == Enums::Positron)
+    prefix = QString("layer%1/").arg(m_layer);
+  settings.setValue(prefix + "normalizationRigidities", Helpers::doubleVectorToVariant(rigidities));
+  settings.setValue(prefix + "normalizationFactors", Helpers::doubleVectorToVariant(normalizationFactors));
+
+  settings.endGroup();
+  settings.endGroup();
+  settings.sync();
+
+  loadParameters();
+}
+
 void SignalHeightTrdLikelihood::loadParameters()
 {
   QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
@@ -133,7 +201,10 @@ void SignalHeightTrdLikelihood::loadParameters()
     if ((particleIt.key() & m_particles) != particleIt.key())
       continue;
     settings.beginGroup(particleIt.value());
-    const QVector<double>& rigidities = Helpers::variantToDoubleVector(settings.value("absoluteRigidities"));
+    QString prefix;
+    if (particleIt.key() == Enums::Electron || particleIt.key() == Enums::Positron)
+      prefix = QString("layer%1/").arg(m_layer);
+    const QVector<double>& rigidities = Helpers::variantToDoubleVector(settings.value(prefix + "absoluteRigidities"));
     Q_ASSERT(Helpers::sorted(rigidities));
     if (rigidities.size()) {
       m_parametrizationMin = rigidities.first();
@@ -141,9 +212,6 @@ void SignalHeightTrdLikelihood::loadParameters()
       int numberOfElements = (m_parametrizationMax - m_parametrizationMin) / m_parametrizationStep + 1;
       PDFParametersVector parametersVector(numberOfElements, m_numberOfParameters);
       parametersVector.setRange(m_parametrizationMin, m_parametrizationMax);
-      QString prefix;
-      if (particleIt.key() == Enums::Electron || particleIt.key() == Enums::Positron)
-        prefix = QString("layer%1/").arg(m_layer);
       QVector<double> normalizationRigidities = Helpers::variantToDoubleVector(settings.value(prefix + "normalizationRigidities"));
       bool normalization = normalizationRigidities.count();
       Q_ASSERT(Helpers::sorted(normalizationRigidities));

@@ -113,9 +113,9 @@ void PostAnalysisWindow::selectCanvas(QListWidgetItem* item, QListWidgetItem*)
 
 void PostAnalysisWindow::selectCanvas(QListWidgetItem* item)
 {
+  gPad->Clear();
   if (!item)
     return;
-  gPad->Clear();
   m_ui->plotListWidget->setCurrentItem(0);
   m_selectedPlot = 0;
   RootStyle::setPalette(RootStyle::DefaultPalette);
@@ -145,9 +145,9 @@ void PostAnalysisWindow::selectPlot(QListWidgetItem* item, QListWidgetItem*)
 
 void PostAnalysisWindow::selectPlot(QListWidgetItem* item)
 {
+  gPad->Clear();
   if (!item)
     return;
-  gPad->Clear();
   m_ui->canvasListWidget->setCurrentItem(0);
   m_selectedCanvas = 0;
   foreach (PostAnalysisPlot* plot, m_plots) {
@@ -200,6 +200,7 @@ void PostAnalysisWindow::addCanvas(PostAnalysisCanvas* canvas)
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
   m_ui->canvasListWidget->addItem(item);
   m_ui->canvasWidget->show();
+  canvasFilterChanged(m_ui->canvasFilterComboBox->currentText());
   connect(m_ui->canvasListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectCanvas(QListWidgetItem*)));
   connect(m_ui->canvasListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
     this, SLOT(selectCanvas(QListWidgetItem*, QListWidgetItem*)));
@@ -222,14 +223,27 @@ void PostAnalysisWindow::addPlot(PostAnalysisPlot* plot)
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
   m_ui->plotListWidget->addItem(item);
   m_ui->plotWidget->show();
+  plotFilterChanged(m_ui->plotFilterComboBox->currentText());
   connect(m_ui->plotListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectPlot(QListWidgetItem*)));
   connect(m_ui->plotListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
+    this, SLOT(selectPlot(QListWidgetItem*, QListWidgetItem*)));
+}
+
+void PostAnalysisWindow::clearCanvases()
+{
+  m_ui->canvasListWidget->disconnect();
+  m_selectedCanvas = 0;
+  m_ui->canvasListWidget->clear();
+  m_canvases.clear();
+  connect(m_ui->canvasListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectPlot(QListWidgetItem*)));
+  connect(m_ui->canvasListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
     this, SLOT(selectPlot(QListWidgetItem*, QListWidgetItem*)));
 }
 
 void PostAnalysisWindow::clearPlots()
 {
   m_ui->plotListWidget->disconnect();
+  m_selectedPlot = 0;
   m_ui->plotListWidget->clear();
   m_plots.clear();
   connect(m_ui->plotListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectPlot(QListWidgetItem*)));

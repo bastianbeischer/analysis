@@ -34,8 +34,8 @@ public:
   double parametrizationStep() const;
   double parametrizationMin() const;
   double parametrizationMax() const;
-  void saveParameters(const Hypothesis&, const PDFParameters&);
-  void saveNormalization(Enums::Particle, const QVector<double>& rigidities, const QVector<double>& normalizationFactors);
+  virtual void saveParameters(const Hypothesis&, const PDFParameters&);
+  virtual void saveNormalization(Enums::Particle, const QVector<double>& rigidities, const QVector<double>& normalizationFactors);
   const PDFParameters& defaultParameters() const;
   const PDFParameters& defaultParameters(Enums::Particle) const;
   LikelihoodPDF* pdf(const KineticVariable&) const;

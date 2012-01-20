@@ -6,6 +6,8 @@
 #include "KineticVariable.hh"
 #include "LikelihoodPDF.hh"
 
+#include <TPad.h>
+
 #include <QDebug>
 #include <QPushButton>
 #include <QWidget>
@@ -85,6 +87,21 @@ void LikelihoodFitWindow::plotSelectionChanged()
       addPlot(plot);
 }
 
+void LikelihoodFitWindow::clear()
+{
+  clearCanvases();
+  clearPlots();
+  qDeleteAll(m_otherPlots);
+  m_otherPlots.clear();
+  qDeleteAll(m_fitPlots);
+  m_fitPlots.clear();
+  qDeleteAll(m_likelihoods);
+  m_likelihoods.clear();
+  m_results.clear();
+  gPad->Clear();
+  gPad->Update();
+}
+
 void LikelihoodFitWindow::normalizeAll()
 {
   Q_ASSERT(m_likelihoods.count());
@@ -96,11 +113,11 @@ void LikelihoodFitWindow::normalizeAll()
       double min = lh->parametrizationMin();
       double max = lh->parametrizationMax();
       double step = lh->parametrizationStep();
-      int numberOfElements = (max - min) / step + 1;
+      int numberOfElements = qMax(2., (max - min) / step + 1);
       for (int i = 0; i < numberOfElements; ++i) {
         double rigidity = min + i * step;
-        if (i == numberOfElements - 1) // necessary to prevent rounding error
-          rigidity = max;
+        if (i == numberOfElements - 1)
+          rigidity = max; // necessary to prevent rounding error
         pdfs.append(lh->pdf(KineticVariable(particle, Enums::AbsoluteRigidity, rigidity)));
       }
     }

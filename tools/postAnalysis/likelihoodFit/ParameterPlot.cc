@@ -37,6 +37,7 @@ ParameterPlot::ParameterPlot(Likelihood* likelihood, Enums::Particle particle)
   }
 
   TGraph* normalizationFactorGraph = new TGraph(m_numberOfPoints);
+  normalizationFactorGraph->SetName("normalizationFactorGraph");
   normalizationFactorGraph->SetLineColor(kGreen);
   normalizationFactorGraph->SetMarkerColor(kGreen);
 
