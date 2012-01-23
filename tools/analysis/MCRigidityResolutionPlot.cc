@@ -6,6 +6,7 @@
 MCRigidityResolutionPlot::MCRigidityResolutionPlot(const Enums::Particle& type)
   : RigidityResolutionPlot(Enums::MonteCarloTracker, type)
 {
+  setTitle("MC " + title());
 }
 
 MCRigidityResolutionPlot::~MCRigidityResolutionPlot()

@@ -24,8 +24,6 @@
 #include <QLabel>
 #include <QDebug>
 
-const double RigidityResolutionPlot::s_probability = 0.9;
-
 RigidityResolutionPlot::RigidityResolutionPlot(Enums::AnalysisTopic topic, Enums::Particle type)
   : AnalysisPlot(topic)
   , H1DPlot()

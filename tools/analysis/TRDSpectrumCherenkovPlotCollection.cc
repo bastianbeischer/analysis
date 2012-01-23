@@ -14,15 +14,15 @@ TRDSpectrumCherenkovPlotCollection::TRDSpectrumCherenkovPlotCollection() :
   QComboBox* comboBox = new QComboBox();
 
   comboBox->addItem("no cherenkov cut");
-  addPlot(new TRDSpectrumCherenkovPlot(TRDSpectrumCherenkovPlot::None));
+  addPlot(new TRDSpectrumCherenkovPlot(0, TRDSpectrumCherenkovPlot::completeTRD, TRDSpectrumCherenkovPlot::None));
   comboBox->addItem("below both");
-  addPlot(new TRDSpectrumCherenkovPlot(TRDSpectrumCherenkovPlot::BothBelow));
+  addPlot(new TRDSpectrumCherenkovPlot(0, TRDSpectrumCherenkovPlot::completeTRD, TRDSpectrumCherenkovPlot::BothBelow));
   comboBox->addItem("above both");
-  addPlot(new TRDSpectrumCherenkovPlot(TRDSpectrumCherenkovPlot::BothAbove));
+  addPlot(new TRDSpectrumCherenkovPlot(0, TRDSpectrumCherenkovPlot::completeTRD, TRDSpectrumCherenkovPlot::BothAbove));
   comboBox->addItem("c1 above and c2 below");
-  addPlot(new TRDSpectrumCherenkovPlot(TRDSpectrumCherenkovPlot::C1AboveC2Below));
+  addPlot(new TRDSpectrumCherenkovPlot(0, TRDSpectrumCherenkovPlot::completeTRD, TRDSpectrumCherenkovPlot::C1AboveC2Below));
   comboBox->addItem("c1 below and c2 above");
-  addPlot(new TRDSpectrumCherenkovPlot(TRDSpectrumCherenkovPlot::C1BelowC2Above));
+  addPlot(new TRDSpectrumCherenkovPlot(0, TRDSpectrumCherenkovPlot::completeTRD, TRDSpectrumCherenkovPlot::C1BelowC2Above));
 
   QWidget* selectionWidget = new QWidget();
 

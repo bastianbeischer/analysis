@@ -47,11 +47,13 @@ RigidityFlux::RigidityFlux(Enums::ChargeSign type, int numberOfThreads, TH1D* pa
   QString title = "flux spectrum";
   m_measurementTimeCalculation = new MeasurementTimeCalculation(numberOfThreads);
   if (m_type == Enums::Negative) {
-    title += " - negative";
+    title+= " - negative";
     m_particleHistogramMirrored = Helpers::createMirroredHistogram(m_particleHistogram);
   } else if (m_type == Enums::Positive) {
-    title += " - positive";
+    title+= " - positive";
   }
+  if (isAlbedo)
+    title+= " albedo";
   if (m_particleHistogramMirrored) {
     m_fluxCalculation = new FluxCalculation(m_particleHistogramMirrored, m_measurementTimeCalculation->measurementTime());
   } else {

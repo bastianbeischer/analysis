@@ -27,7 +27,6 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Enums::ChargeSigns type, bool inverte
   } else {
     setAxisTitle("R / GV", "particles / GV");
   }
-  setTitle(title);
 
   int nBins = inverted ? 1200 : 100;
   TH1D* histogram = 0;
@@ -42,6 +41,8 @@ MomentumSpectrumPlot::MomentumSpectrumPlot(Enums::ChargeSigns type, bool inverte
     const QVector<double>& axis = Helpers::logBinning(nBins, 0.1, 20.);
     histogram = new TH1D(qPrintable(title), "", nBins, axis.constData());
   }
+
+  setTitle(title);
 
   histogram->SetLineColor(kBlack);
   addHistogram(histogram);

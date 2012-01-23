@@ -7,6 +7,7 @@
 TestbeamRigidityResolutionPlot::TestbeamRigidityResolutionPlot(const Enums::Particle& type) :
   RigidityResolutionPlot(Enums::Testbeam, type)
 {
+  setTitle("testbeam " + title());
 }
 
 TestbeamRigidityResolutionPlot::~TestbeamRigidityResolutionPlot()

@@ -54,8 +54,6 @@ private:
   TLatex* m_projectionWeightedMeanLatex;
   TLatex* m_projectionChi2FitLatex;
   TLatex* m_projectionLikelihoodLatex;
-
-  static const double s_probability;
 };
 
 #endif // RigidityResolutionPlot_hh

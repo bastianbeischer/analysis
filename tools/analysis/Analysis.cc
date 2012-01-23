@@ -352,18 +352,6 @@ void Analysis::setupPlots()
     addPlot(new TOTLayerCollection(TOTLayerCollection::BetaCorrelation));
     addPlot(new TOTTemperatureCorrelationPlotCollection);
     addPlot(new TOTTimeCorrelationPlotCollection(first, last));
-    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
-      DetectorElement* element = *elementIt;
-      if (element->type() == DetectorElement::tof)
-        for (int ch = 0; ch < 4; ++ch)
-          addPlot(new TOTTemperatureCorrelationPlot(element->id() | ch));
-    }
-    for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
-      DetectorElement* element = *elementIt;
-      if (element->type() == DetectorElement::tof)
-        for (int ch = 0; ch < 4; ++ch)
-          addPlot(new TOTTimeCorrelationPlot(element->id() | ch, first, last));
-    }
   }
   if (m_analysisSetting.analysisTopics & Enums::Tracking) {
     addPlot(new BendingPositionPlot);
@@ -394,14 +382,14 @@ void Analysis::setupPlots()
   if (m_analysisSetting.analysisTopics & Enums::ResidualsTracker) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
-      if (layer->z() > -240 && layer->z() < 240)
+      if (-240 < layer->z() && layer->z() < 240)
         addPlot(new ResidualPlot(Enums::ResidualsTracker, layer));
     }
   }
   if (m_analysisSetting.analysisTopics & Enums::ResidualsTRD) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
-      if (layer->z() > -520 && layer->z() < -240)
+      if (-520 < layer->z() && layer->z() < -240)
         addPlot(new ResidualPlot(Enums::ResidualsTRD, layer));
     }
   }
@@ -503,7 +491,7 @@ void Analysis::setupPlots()
     addPlot(new MCTRDSpectrumPlot());
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
-      if (layer->z() > -520 && layer->z() < -240)
+      if (-520 < layer->z() && layer->z() < -240)
         addPlot(new ResidualPlotMC(Enums::MonteCarloTRD, layer));
     }
     addPlot(new MCTRDCalibrationPlot());
@@ -518,7 +506,7 @@ void Analysis::setupPlots()
     addPlot(new MCRigidityResolutionPlot(Enums::Helium));
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
-      if (layer->z() > -240 && layer->z() < 240)
+      if (-240 < layer->z() && layer->z() < 240)
         addPlot(new ResidualPlotMC(Enums::MonteCarloTracker, layer));
     }
     addPlot(new AzimuthMigrationHistogram());

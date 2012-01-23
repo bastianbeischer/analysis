@@ -17,11 +17,11 @@ TRDSpectrumPlotCollection::TRDSpectrumPlotCollection() :
   const ElementIterator elementEndIt = setup->lastElement();
   for (ElementIterator elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
     DetectorElement* element = *elementIt;
-    if (element->type() == DetectorElement::trd){
+    if (element->type() == DetectorElement::trd) {
       moduleIDs.append("0x" + QString::number(element->id(), 16));
-      addPlot(new TRDSpectrumPlot(element->id(),TRDSpectrumPlot::module));
+      addPlot(new TRDSpectrumPlot(element->id(), TRDSpectrumPlot::module));
       for(unsigned short tubeNo = 0; tubeNo < 16; tubeNo++) {
-        addPlot(new TRDSpectrumPlot(element->id() | tubeNo,TRDSpectrumPlot::channel));
+        addPlot(new TRDSpectrumPlot(element->id() | tubeNo, TRDSpectrumPlot::channel));
       }
     }
   }

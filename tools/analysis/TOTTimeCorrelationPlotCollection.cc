@@ -6,6 +6,7 @@
 #include "TOFChannelSelectionWidget.hh"
 
 #include <QLayout>
+#include <QDebug>
 
 TOTTimeCorrelationPlotCollection::TOTTimeCorrelationPlotCollection(const QDateTime& first, const QDateTime& last) :
   PlotCollection(Enums::TimeOverThreshold)
@@ -18,9 +19,9 @@ TOTTimeCorrelationPlotCollection::TOTTimeCorrelationPlotCollection(const QDateTi
   for (ElementIterator elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
     DetectorElement* element = *elementIt;
     if (element->type() == DetectorElement::tof){
-      for(unsigned short tubeNo = 0; tubeNo < 4; tubeNo++) {
-        moduleIDs.append("0x" + QString::number(element->id() | tubeNo,16));
-        addPlot(new TOTTimeCorrelationPlot(element->id() | tubeNo, first, last));
+      for (unsigned short barNo = 0; barNo < 4; ++barNo) {
+        moduleIDs.append("0x" + QString::number(element->id() | barNo, 16));
+        addPlot(new TOTTimeCorrelationPlot(element->id() | barNo, first, last));
       }
     }
   }

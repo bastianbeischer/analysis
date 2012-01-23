@@ -23,7 +23,13 @@ TRDLikelihoodPlot::TRDLikelihoodPlot(Enums::AnalysisTopic topic)
   , m_EIdentifierLH(new TRDElectronIdentifierLikelihood())
   , m_NonTRRejVsTREffWidget(new RootQtWidget)
 {
-  setTitle("-log(L) distribution");
+  QString topicString;
+  if (topic == Enums::MonteCarloTRD)
+    topicString = "MonteCarloTRD";
+  if (topic == Enums::Testbeam)
+    topicString = "Enums::Testbeam";
+  Q_ASSERT(!topicString.isEmpty());
+  setTitle("-log(L) distribution " + topicString);
 
   m_NonTRHisto = new TH1D(qPrintable(title() + "_nonTR"), "", 500, 0, 3);
   m_TRHisto = new TH1D(qPrintable(title() + "_TR"), "", 500, 0, 3);
