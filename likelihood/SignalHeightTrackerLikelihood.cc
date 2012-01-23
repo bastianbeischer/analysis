@@ -1,7 +1,7 @@
 #include "SignalHeightTrackerLikelihood.hh"
 #include "AnalyzedEvent.hh"
 #include "Particle.hh"
-#include "TimeOfFlight.hh"
+#include "Track.hh"
 #include "Helpers.hh"
 
 #include <TMath.h>
@@ -16,7 +16,7 @@ SignalHeightTrackerLikelihood::SignalHeightTrackerLikelihood(Enums::Particles pa
   m_measuredValueMin = 0.;
   m_measuredValueMax = 5000.;
   m_numberOfParameters = 2;
-  m_defaultParameters = PDFParameters() << 1400.0 << 100.0;
+  m_defaultParameters = PDFParameters() << 1200.0 << 160.0;
   m_title = Enums::label(m_likelihoodVariableType);
   loadParameters();
 }
@@ -27,17 +27,17 @@ SignalHeightTrackerLikelihood::~SignalHeightTrackerLikelihood()
 
 double SignalHeightTrackerLikelihood::eval(const AnalyzedEvent* event, const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
-  double signal = event->particle()->timeOfFlight()->timeOverThreshold();
+  double signal = event->particle()->track()->signalHeight();
   return eval(signal, hypothesis, goodInterpolation);
 }
 
-double SignalHeightTrackerLikelihood::eval(double timeOverThreshold, const Hypothesis& hypothesis, bool* goodInterpolation) const
+double SignalHeightTrackerLikelihood::eval(double signalHeight, const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
   const PDFParameters& parameters = interpolation(hypothesis, goodInterpolation);
-  return TMath::Gaus(timeOverThreshold, parameters[0], parameters[1]);
+  return TMath::Gaus(signalHeight, parameters[0], parameters[1]);
 }
 
-double SignalHeightTrackerLikelihood::eval(double timeOverThreshold, const Hypothesis&, const PDFParameters& parameters) const
+double SignalHeightTrackerLikelihood::eval(double signalHeight, const Hypothesis&, const PDFParameters& parameters) const
 {
-  return TMath::Gaus(timeOverThreshold, parameters[0], parameters[1], true);
+  return TMath::Gaus(signalHeight, parameters[0], parameters[1], true);
 }

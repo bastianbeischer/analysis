@@ -36,7 +36,7 @@ Likelihood::Likelihood(Enums::Particles particles)
   , m_numberOfParameters(0)
   , m_measuredValueMin(+1.)
   , m_measuredValueMax(-1.)
-  , m_parametrizationStep(0.01) //GV
+  , m_parametrizationStep(0.005) //GV
   , m_parametrizationMin(0)
   , m_parametrizationMax(0)
   , m_parametersVectors()
@@ -101,7 +101,7 @@ void Likelihood::saveParameters(const Hypothesis& h, const PDFParameters& parame
     values[parameter] = Helpers::variantToDoubleVector(settings.value(QString::number(parameter)));
 
   for (int i = 0; i < rigidities.size(); ++i) {
-    if (qFuzzyCompare(h.absoluteRigidity(), rigidities[i])) {
+    if (qAbs(h.absoluteRigidity() - rigidities[i]) / h.absoluteRigidity() < 0.01) {
       rigidities.remove(i);
       for (int parameter = 0; parameter < m_numberOfParameters; ++parameter)
         values[parameter].remove(i);

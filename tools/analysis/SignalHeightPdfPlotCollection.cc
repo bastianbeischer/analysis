@@ -52,9 +52,7 @@ SignalHeightPdfPlotCollection::SignalHeightPdfPlotCollection(Hit::ModuleType typ
   Q_ASSERT(!typeString.isEmpty());
   setTitle(typeString + " signal height pdf plot collection");
   
-  qDebug() << Enums::label(particles);
-
-  m_particleComboBox->addItem(Enums::label(particles));//"all particles");
+  m_particleComboBox->addItem(Enums::label(particles));
   m_layerComboBox->addItem("all layers");
   m_signalHeightPdfPlots.append(new SignalHeightPdfPlot(type, particles, xBins, yBins));
 
