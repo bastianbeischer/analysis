@@ -80,5 +80,8 @@ void MainWindow::setupAnalysis()
     }
   }
 
+  updateCanvasFilter();
+  updatePlotFilter();
+
   plotSelectionChanged();
 }

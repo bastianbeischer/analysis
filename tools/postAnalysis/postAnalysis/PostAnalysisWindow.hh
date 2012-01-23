@@ -45,6 +45,8 @@ private slots:
   void aspectRatioChanged(int);
   void unzoom();
 protected:
+  void updateCanvasFilter();
+  void updatePlotFilter();
   Ui_postAnalysisWindow* m_ui;
   PostAnalysisCanvas* m_selectedCanvas;
   PostAnalysisPlot* m_selectedPlot;

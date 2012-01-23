@@ -200,7 +200,6 @@ void PostAnalysisWindow::addCanvas(PostAnalysisCanvas* canvas)
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
   m_ui->canvasListWidget->addItem(item);
   m_ui->canvasWidget->show();
-  canvasFilterChanged(m_ui->canvasFilterComboBox->currentText());
   connect(m_ui->canvasListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectCanvas(QListWidgetItem*)));
   connect(m_ui->canvasListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
     this, SLOT(selectCanvas(QListWidgetItem*, QListWidgetItem*)));
@@ -223,7 +222,6 @@ void PostAnalysisWindow::addPlot(PostAnalysisPlot* plot)
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
   m_ui->plotListWidget->addItem(item);
   m_ui->plotWidget->show();
-  plotFilterChanged(m_ui->plotFilterComboBox->currentText());
   connect(m_ui->plotListWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(selectPlot(QListWidgetItem*)));
   connect(m_ui->plotListWidget, SIGNAL(currentItemChanged(QListWidgetItem*, QListWidgetItem*)),
     this, SLOT(selectPlot(QListWidgetItem*, QListWidgetItem*)));
@@ -362,4 +360,14 @@ void PostAnalysisWindow::unzoom()
   }
   gPad->Modified();
   gPad->Update();
+}
+
+void PostAnalysisWindow::updateCanvasFilter()
+{
+  canvasFilterChanged(m_ui->canvasFilterComboBox->currentText());
+}
+
+void PostAnalysisWindow::updatePlotFilter()
+{
+  plotFilterChanged(m_ui->plotFilterComboBox->currentText());
 }
