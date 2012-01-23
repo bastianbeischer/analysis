@@ -49,14 +49,28 @@ QStringList PostAnalysisCanvas::savedCanvases(TFile* file, const QRegExp& regula
     if (name.contains(regularExpression))
       list.append(name);
   }
-  QStringList duplicates;
-  foreach (const QString& name, list) {
-    QStringList subList = list.filter(name);
-    if (subList.count() > 1 && !duplicates.contains(name)) {
-      qWarning() << "Duplicates found:" << name << "occurs" << subList.count() << "times!";
-      duplicates << name;
+  QMap<QString, int> duplicates;
+  QStringList::ConstIterator begin = list.begin();
+  QStringList::ConstIterator end = list.end();
+  for (QStringList::ConstIterator i = begin; i != end; ++i) {
+    for (QStringList::ConstIterator j = i + 1; j != end; ++j) {
+      if (*i == *j) {
+        QMap<QString, int>::Iterator position = duplicates.find(*i);
+        if (position == duplicates.end()) {
+          duplicates.insert(*i, 2);
+        } else {
+          ++position.value();
+        }
+        break;
+      }
     }
   }
+  QMapIterator<QString, int> duplicatesIterator(duplicates);
+  while (duplicatesIterator.hasNext()) {
+    duplicatesIterator.next();
+    qWarning() << "Duplicates found:" << duplicatesIterator.key() << "occurs" << duplicatesIterator.value() << "times!";
+  }
+  list.removeDuplicates();
   return list;
 }
 
