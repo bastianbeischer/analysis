@@ -18,8 +18,19 @@ ParameterPlot::ParameterPlot(Likelihood* likelihood, Enums::Particle particle)
   , m_step((m_max - m_min) / (m_numberOfPoints - 1))
 {
   setTitle(QString("%1 parameters %2").arg(m_likelihood->title()).arg(Enums::label(m_particle)));
-  int numberOfParameters = m_likelihood->numberOfParameters();
+  setAxisTitle("|R| / GV", "parameter / a.u.");
+  setup();
+}
 
+ParameterPlot::~ParameterPlot()
+{
+}
+
+void ParameterPlot::setup()
+{
+  removeGraphs();
+
+  int numberOfParameters = m_likelihood->numberOfParameters();
   QVector<TGraph*> extrapolatedGraphs;
   QVector<TGraph*> interpolatedGraphs;
   for (int parameter = 0; parameter < numberOfParameters; ++parameter) {
@@ -63,10 +74,7 @@ ParameterPlot::ParameterPlot(Likelihood* likelihood, Enums::Particle particle)
       addGraph(g, RootPlot::LP);
   addGraph(normalizationFactorGraph, RootPlot::LP);
   setDrawOption(RootPlot::AP);
-}
 
-ParameterPlot::~ParameterPlot()
-{
 }
 
 void ParameterPlot::addIntegral()
@@ -81,8 +89,6 @@ void ParameterPlot::addIntegral()
   }
   integralGraph->SetMarkerColor(kRed);
   addGraph(integralGraph, RootPlot::LP);
-
-  setAxisTitle("|R| / GV", "parameter / a.u.");
 
   qDebug() << qPrintable(m_likelihood->title() + ":");
   QString key;

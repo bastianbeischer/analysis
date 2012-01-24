@@ -14,6 +14,7 @@ class PostAnalysisPlot;
 class QComboBox;
 class Likelihood;
 class NormalizationThread;
+class ParameterPlot;
 
 class LikelihoodFitWindow : public PostAnalysisWindow {
 Q_OBJECT
@@ -36,6 +37,7 @@ protected:
   bool passes(const LikelihoodPDFFitPlot*);
   Enums::Particles m_particles;
   QVector<LikelihoodPDFFitPlot*> m_fitPlots;
+  QVector<ParameterPlot*> m_parameterPlots;
   QVector<PostAnalysisPlot*> m_otherPlots;
   QComboBox* m_comboBox;
   QMap<Enums::Particle, Likelihood*> m_likelihoods;

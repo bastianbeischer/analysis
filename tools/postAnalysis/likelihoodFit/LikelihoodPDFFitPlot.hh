@@ -23,6 +23,7 @@ public:
   LikelihoodPDFFitPlot(Likelihood*, const TH2D*, int bin, bool singleParticle);
   ~LikelihoodPDFFitPlot();
   virtual PDFParameters startParameters() const = 0;
+  bool singleParticle() const;
   int ndf() const;
   double chi2() const;
   virtual bool bad() const;
@@ -39,6 +40,7 @@ public slots:
 protected:
   void setup();
 
+  bool m_singleParticle;
   double m_absoluteMomentum;
   Enums::Particle m_particle;
   Likelihood* m_likelihood;

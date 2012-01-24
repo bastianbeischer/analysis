@@ -11,6 +11,7 @@ class ParameterPlot : public PostAnalysisPlot, public GraphPlot {
 public:
   ParameterPlot(Likelihood* likelihood, Enums::Particle);
   ~ParameterPlot();
+  void setup();
   void addIntegral();
 private:
   Likelihood* m_likelihood;

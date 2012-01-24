@@ -23,6 +23,7 @@ public:
   TGraph* graph(int i = 0) const;
   void setAxisTitle(const QString&, const QString&);
   void addGraph(TGraph*, DrawOption = P);
+  void removeGraphs();
   void removeGraph(int i = 0);
   TAxis* xAxis() const;
   TAxis* yAxis() const;

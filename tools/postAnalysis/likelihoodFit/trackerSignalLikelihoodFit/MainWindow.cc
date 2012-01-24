@@ -48,7 +48,7 @@ void MainWindow::setupAnalysis()
   foreach (Enums::Particle particle, Setup::instance()->proposedParticleVector()) {
     QMap<Enums::Particle, Likelihood*>::ConstIterator lhIt = m_likelihoods.find(particle);
     if (lhIt != m_likelihoods.end())
-      m_otherPlots.append(new ParameterPlot(lhIt.value(), particle));
+      m_parameterPlots.append(new ParameterPlot(lhIt.value(), particle));
   }
 
   plotSelectionChanged();

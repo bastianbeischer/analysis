@@ -116,6 +116,12 @@ void GraphPlot::addGraph(TGraph* g, DrawOption option)
   }
 }
 
+void GraphPlot::removeGraphs()
+{
+  while (numberOfGraphs())
+    removeGraph(0);
+}
+
 void GraphPlot::removeGraph(int i)
 {
   Q_ASSERT(0 <= i && i < numberOfGraphs());

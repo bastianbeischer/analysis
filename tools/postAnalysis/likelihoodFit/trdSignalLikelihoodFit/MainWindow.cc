@@ -79,7 +79,7 @@ void MainWindow::setupAnalysis()
     SignalHeightTrdLikelihood* trdLikelihood = static_cast<SignalHeightTrdLikelihood*>(lhIt.value());
     if (electron)
       trdLikelihood->setLayer(layer);
-    m_otherPlots.append(new ParameterPlot(trdLikelihood, particle));
+    m_parameterPlots.append(new ParameterPlot(trdLikelihood, particle));
   }
 
   updateCanvasFilter();

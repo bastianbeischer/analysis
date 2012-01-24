@@ -84,6 +84,12 @@ void H1DPlot::addHistogram(TH1D* h, DrawOption option)
   }
 }
 
+void H1DPlot::removeHistograms()
+{
+  while (numberOfHistograms())
+    removeHistogram(0);
+}
+
 void H1DPlot::removeHistogram(int i)
 {
   delete m_histograms.at(i);

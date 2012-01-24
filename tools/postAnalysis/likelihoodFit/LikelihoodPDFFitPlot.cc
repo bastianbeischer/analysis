@@ -20,6 +20,7 @@
 LikelihoodPDFFitPlot::LikelihoodPDFFitPlot(Likelihood* lh, const TH2D* h, int bin, bool singleParticle)
   : PostAnalysisPlot()
   , H1DPlot()
+  , m_singleParticle(singleParticle)
   , m_absoluteMomentum(0)
   , m_particle(Enums::particle(lh->particles()))
   , m_likelihood(lh)
@@ -56,6 +57,11 @@ LikelihoodPDFFitPlot::LikelihoodPDFFitPlot(Likelihood* lh, const TH2D* h, int bi
 
 LikelihoodPDFFitPlot::~LikelihoodPDFFitPlot()
 {
+}
+
+bool LikelihoodPDFFitPlot::singleParticle() const
+{
+  return m_singleParticle;
 }
 
 double LikelihoodPDFFitPlot::chi2() const

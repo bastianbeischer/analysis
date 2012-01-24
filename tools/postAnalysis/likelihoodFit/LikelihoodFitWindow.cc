@@ -5,6 +5,7 @@
 #include "Likelihood.hh"
 #include "KineticVariable.hh"
 #include "LikelihoodPDF.hh"
+#include "ParameterPlot.hh"
 
 #include <TPad.h>
 
@@ -17,11 +18,19 @@ LikelihoodFitWindow::LikelihoodFitWindow(QWidget* parent)
   : PostAnalysisWindow(parent)
   , m_particles(Setup::instance()->proposedParticles())
   , m_fitPlots()
+  , m_parameterPlots()
+  , m_otherPlots()
   , m_comboBox(new QComboBox)
   , m_likelihoods()
   , m_results()
   , m_runningThreadsCounter(0)
 {
+  QVector<Enums::Particle> particles = Setup::instance()->proposedParticleVector();
+  foreach (Enums::Particle particle, particles)
+    addPlotFilter(QRegExp::escape(Enums::label(particle) + " all"));
+  foreach (Enums::Particle particle, particles)
+    addPlotFilter(QRegExp::escape(Enums::label(particle)) + "$");
+
   m_comboBox->addItem("all (bad + good + low statistics)");
   m_comboBox->addItem("bad");
   m_comboBox->addItem("good");
@@ -55,6 +64,8 @@ void LikelihoodFitWindow::configFileChanged()
 {
   foreach (LikelihoodPDFFitPlot* plot, m_fitPlots)
     plot->update();
+  foreach (ParameterPlot* plot, m_parameterPlots)
+    plot->setup();
 }
 
 void LikelihoodFitWindow::fitAll()
@@ -72,6 +83,8 @@ void LikelihoodFitWindow::save()
 
 bool LikelihoodFitWindow::passes(const LikelihoodPDFFitPlot* plot)
 {
+  if (!plot->singleParticle())
+    return false;
   const QString& text = m_comboBox->currentText();
   return (plot->bad() && text.contains("bad")) || (plot->good() && text.contains("good"))
     || (plot->lowStatistics() && text.contains("low statistics"));
@@ -81,6 +94,8 @@ void LikelihoodFitWindow::plotSelectionChanged()
 {
   clearPlots();
   foreach (PostAnalysisPlot* plot, m_otherPlots)
+    addPlot(plot);
+  foreach (ParameterPlot* plot, m_parameterPlots)
     addPlot(plot);
   foreach (LikelihoodPDFFitPlot* plot, m_fitPlots)
     if (passes(plot))

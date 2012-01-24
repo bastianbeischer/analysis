@@ -18,11 +18,6 @@
 MainWindow::MainWindow(QWidget* parent)
   : LikelihoodFitWindow(parent)
 {
-  QVector<Enums::Particle> particles = Setup::instance()->proposedParticleVector();
-  foreach (Enums::Particle particle, particles)
-    addPlotFilter(QRegExp::escape(Enums::label(particle) + " all"));
-  foreach (Enums::Particle particle, particles)
-    addPlotFilter(QRegExp::escape(Enums::label(particle)) + "$");
 }
 
 MainWindow::~MainWindow()
@@ -56,7 +51,7 @@ void MainWindow::setupAnalysis()
   foreach (Enums::Particle particle, Setup::instance()->proposedParticleVector()) {
     QMap<Enums::Particle, Likelihood*>::ConstIterator lhIt = m_likelihoods.find(particle);
     if (lhIt != m_likelihoods.end())
-      m_otherPlots.append(new ParameterPlot(lhIt.value(), particle));
+      m_parameterPlots.append(new ParameterPlot(lhIt.value(), particle));
   }
 
   plotSelectionChanged();
