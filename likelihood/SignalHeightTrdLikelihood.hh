@@ -9,6 +9,8 @@ public:
   ~SignalHeightTrdLikelihood();
   int layer() const;
   void setLayer(int layer);
+  virtual bool parametersExist(const Hypothesis&);
+  virtual void removeParameters(const Hypothesis&);
   virtual void saveParameters(const Hypothesis&, const PDFParameters&);
   virtual void saveNormalization(Enums::Particle, const QVector<double>& rigidities, const QVector<double>& normalizationFactors);
   virtual double eval(const AnalyzedEvent*, const Hypothesis&, bool* goodInterpolation = 0) const;

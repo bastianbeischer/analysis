@@ -3,6 +3,8 @@
 #include "TimeOverThresholdLikelihood.hh"
 #include "TimeOverThresholdFitPlot.hh"
 #include "PDFParameters.hh"
+#include "Setup.hh"
+#include "ParameterPlot.hh"
 
 #include <TROOT.h>
 #include <TFile.h>
@@ -16,19 +18,11 @@
 MainWindow::MainWindow(QWidget* parent)
   : LikelihoodFitWindow(parent)
 {
-  addPlotFilter("p\\+ all");
-  addPlotFilter("p- all");
-  addPlotFilter("e\\+ all");
-  addPlotFilter("e- all");
-  addPlotFilter("mu\\+ all");
-  addPlotFilter("mu- all");
-
-  addPlotFilter("p\\+$");
-  addPlotFilter("p-$");
-  addPlotFilter("e\\+$");
-  addPlotFilter("e-$");
-  addPlotFilter("mu\\+$");
-  addPlotFilter("mu-$");
+  QVector<Enums::Particle> particles = Setup::instance()->proposedParticleVector();
+  foreach (Enums::Particle particle, particles)
+    addPlotFilter(QRegExp::escape(Enums::label(particle) + " all"));
+  foreach (Enums::Particle particle, particles)
+    addPlotFilter(QRegExp::escape(Enums::label(particle)) + "$");
 }
 
 MainWindow::~MainWindow()
@@ -58,5 +52,12 @@ void MainWindow::setupAnalysis()
       }
     }
   }
+
+  foreach (Enums::Particle particle, Setup::instance()->proposedParticleVector()) {
+    QMap<Enums::Particle, Likelihood*>::ConstIterator lhIt = m_likelihoods.find(particle);
+    if (lhIt != m_likelihoods.end())
+      m_otherPlots.append(new ParameterPlot(lhIt.value(), particle));
+  }
+
   plotSelectionChanged();
 }

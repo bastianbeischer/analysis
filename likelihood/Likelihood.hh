@@ -34,6 +34,8 @@ public:
   double parametrizationStep() const;
   double parametrizationMin() const;
   double parametrizationMax() const;
+  virtual bool parametersExist(const Hypothesis&);
+  virtual void removeParameters(const Hypothesis&);
   virtual void saveParameters(const Hypothesis&, const PDFParameters&);
   virtual void saveNormalization(Enums::Particle, const QVector<double>& rigidities, const QVector<double>& normalizationFactors);
   const PDFParameters& defaultParameters() const;
@@ -49,6 +51,8 @@ protected:
 
   virtual double interpolation(double rigidity, const QVector<double>& rigidities, const QVector<double>& values);
   virtual void loadParameters();
+
+  bool rigiditiesApproximatelyEqual(double, double) const;
 
   QString m_title;
   Enums::LikelihoodVariable m_likelihoodVariableType;

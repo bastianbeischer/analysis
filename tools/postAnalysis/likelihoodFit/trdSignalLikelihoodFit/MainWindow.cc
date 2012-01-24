@@ -71,13 +71,15 @@ void MainWindow::setupAnalysis()
   }
 
   foreach (Enums::Particle particle, Setup::instance()->proposedParticleVector()) {
-    int n = (particle == Enums::Electron || particle == Enums::Positron) ? 8 : 1;
-    for (int layer = 0; layer < n; ++layer) {
-      SignalHeightTrdLikelihood* trdLikelihood = new SignalHeightTrdLikelihood(particle);
-      if (n > 1)
-        trdLikelihood->setLayer(layer);
-      m_otherPlots.append(new ParameterPlot(trdLikelihood, particle));
-    }
+    bool electron = particle == Enums::Electron || particle == Enums::Positron;
+    int layer = m_layerSpinBox->value();
+    QMap<Enums::Particle, Likelihood*>::Iterator lhIt = m_likelihoods.find(particle);
+    if (lhIt == m_likelihoods.end())
+      continue;
+    SignalHeightTrdLikelihood* trdLikelihood = static_cast<SignalHeightTrdLikelihood*>(lhIt.value());
+    if (electron)
+      trdLikelihood->setLayer(layer);
+    m_otherPlots.append(new ParameterPlot(trdLikelihood, particle));
   }
 
   updateCanvasFilter();

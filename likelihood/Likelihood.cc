@@ -37,8 +37,8 @@ Likelihood::Likelihood(Enums::Particles particles)
   , m_measuredValueMin(+1.)
   , m_measuredValueMax(-1.)
   , m_parametrizationStep(0.005) //GV
-  , m_parametrizationMin(0)
-  , m_parametrizationMax(0)
+  , m_parametrizationMin(+1)
+  , m_parametrizationMax(-1)
   , m_parametersVectors()
   , m_defaultParameters()
   , m_defaultParametersMap()
@@ -85,6 +85,60 @@ double Likelihood::measuredValueMax() const
   return m_measuredValueMax;
 }
 
+bool Likelihood::parametersExist(const Hypothesis& h)
+{
+  QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
+  Q_ASSERT(QFile::exists(fileName));
+  QSettings settings(fileName, QSettings::IniFormat);
+  settings.beginGroup(Enums::label(m_likelihoodVariableType));
+  settings.beginGroup(Enums::label(h.particle()));
+  typedef QVector<double> DoubleVector;
+  DoubleVector rigidities = Helpers::variantToDoubleVector(settings.value("absoluteRigidities"));
+  foreach (double rigidity, rigidities)
+    if (rigiditiesApproximatelyEqual(h.absoluteRigidity(), rigidity))
+      return true;
+  return false;
+}
+
+void Likelihood::removeParameters(const Hypothesis& h)
+{
+  QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
+  Q_ASSERT(QFile::exists(fileName));
+  QSettings settings(fileName, QSettings::IniFormat);
+
+  settings.beginGroup(Enums::label(m_likelihoodVariableType));
+  settings.beginGroup(Enums::label(h.particle()));
+
+  typedef QVector<double> DoubleVector;
+  DoubleVector rigidities = Helpers::variantToDoubleVector(settings.value("absoluteRigidities"));
+  QVector<DoubleVector> values = QVector<DoubleVector>(m_numberOfParameters);
+  for (int parameter = 0; parameter < m_numberOfParameters; ++parameter)
+    values[parameter] = Helpers::variantToDoubleVector(settings.value(QString::number(parameter)));
+
+  for (int i = 0; i < rigidities.size(); ++i) {
+    if (rigiditiesApproximatelyEqual(h.absoluteRigidity(), rigidities[i])) {
+      rigidities.remove(i);
+      for (int parameter = 0; parameter < m_numberOfParameters; ++parameter)
+        values[parameter].remove(i);
+    }
+  }
+
+  Q_ASSERT(Helpers::sorted(rigidities));
+  settings.setValue("absoluteRigidities", Helpers::doubleVectorToVariant(rigidities));
+  for (int parameter = 0; parameter < m_numberOfParameters; ++parameter)
+    settings.setValue(QString::number(parameter), Helpers::doubleVectorToVariant(values[parameter]));
+
+  settings.endGroup();
+  settings.endGroup();
+  settings.sync();
+  loadParameters();
+}
+
+bool Likelihood::rigiditiesApproximatelyEqual(double r1, double r2) const
+{
+  return qAbs((r1 - r2) / r1) < 0.01;
+}
+
 void Likelihood::saveParameters(const Hypothesis& h, const PDFParameters& parameters)
 {
   QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
@@ -101,7 +155,7 @@ void Likelihood::saveParameters(const Hypothesis& h, const PDFParameters& parame
     values[parameter] = Helpers::variantToDoubleVector(settings.value(QString::number(parameter)));
 
   for (int i = 0; i < rigidities.size(); ++i) {
-    if (qAbs(h.absoluteRigidity() - rigidities[i]) / h.absoluteRigidity() < 0.01) {
+    if (rigiditiesApproximatelyEqual(h.absoluteRigidity(), rigidities[i])) {
       rigidities.remove(i);
       for (int parameter = 0; parameter < m_numberOfParameters; ++parameter)
         values[parameter].remove(i);
@@ -215,7 +269,7 @@ void Likelihood::loadParameters()
   QSettings settings(fileName, QSettings::IniFormat);
   m_parametersVectors.clear();
   m_parametrizationMin = +1.;
-  m_parametrizationMax = 1.;
+  m_parametrizationMax = -1.;
   m_buffer = Buffer(Enums::NoParticle, 0);
   settings.beginGroup(Enums::label(m_likelihoodVariableType));
   Enums::Particles particlesInFile = Enums::particles(settings.value("particles").toString());

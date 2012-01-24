@@ -14,6 +14,8 @@
 #include <QPushButton>
 #include <QWidget>
 #include <QScrollArea>
+#include <QLineEdit>
+#include <QLabel>
 
 LikelihoodPDFFitPlot::LikelihoodPDFFitPlot(Likelihood* lh, const TH2D* h, int bin, bool singleParticle)
   : PostAnalysisPlot()
@@ -24,6 +26,8 @@ LikelihoodPDFFitPlot::LikelihoodPDFFitPlot(Likelihood* lh, const TH2D* h, int bi
   , m_currentFunction(0)
   , m_previewFunction(0)
   , m_parameterWidgets()
+  , m_removeButton(new QPushButton("remove"))
+  , m_currentParametersEdit(new QLineEdit())
 {
   Q_ASSERT(m_particle != Enums::NoParticle);
   double rangeMin = h->GetXaxis()->GetBinLowEdge(bin);
@@ -119,29 +123,60 @@ void LikelihoodPDFFitPlot::setup()
   scrollArea->setFrameShape(QFrame::NoFrame);
 
   hLayout = new QHBoxLayout();
-  hLayout->addWidget(scrollArea);
-  QVBoxLayout* vLayout = new QVBoxLayout();
-  vLayout->setContentsMargins(0, 0, 0, 0);
+  hLayout->setContentsMargins(0, 0, 0, 0);
+  hLayout->addWidget(scrollArea, 1);
+
+  QGridLayout* gLayout = new QGridLayout();
+  gLayout->setSpacing(3);
+  gLayout->setContentsMargins(0, 0, 0, 0);
+
+  int width = 60;
+
+  QLabel* label = 0;
+
+  label = new QLabel(Enums::label(m_particle));
+  label->setAlignment(Qt::AlignCenter);
+  label->setFixedWidth(width);
+  gLayout->addWidget(label, 0, 0);
+
+  label = new QLabel(QString("%1 GV").arg(m_absoluteMomentum, 4, 'f', 2, '0'));
+  label->setAlignment(Qt::AlignCenter);
+  label->setFixedWidth(width);
+  gLayout->addWidget(label, 1, 0);
+
   QPushButton* button = 0;
+
   button = new QPushButton("fit");
-  button->setFixedWidth(50);
+  button->setFixedWidth(width);
   connect(button, SIGNAL(clicked()), this, SLOT(fit()));
-  vLayout->addWidget(button);
+  gLayout->addWidget(button, 0, 1);
+
   button = new QPushButton("reset");
-  button->setFixedWidth(50);
+  button->setFixedWidth(width);
   connect(button, SIGNAL(clicked()), this, SLOT(reset()));
-  vLayout->addWidget(button);
+  gLayout->addWidget(button, 1, 1);
+
   button = new QPushButton("save");
-  button->setFixedWidth(50);
+  button->setFixedWidth(width);
   connect(button, SIGNAL(clicked()), this, SLOT(save()));
-  vLayout->addWidget(button);
-  hLayout->addLayout(vLayout);
+  gLayout->addWidget(button, 0, 2);
+
+  m_removeButton->setFixedWidth(width);
+  connect(m_removeButton, SIGNAL(clicked()), this, SLOT(remove()));
+  gLayout->addWidget(m_removeButton, 1, 2);
+
+  int colSpan = 3;
+  m_currentParametersEdit->setReadOnly(true);
+  m_currentParametersEdit->setFixedWidth(colSpan * width + (colSpan-1) * gLayout->spacing());
+  gLayout->addWidget(m_currentParametersEdit, 2, 0, 1, colSpan);
+
+  hLayout->addLayout(gLayout, 0);
   widget = new QWidget;
   widget->setLayout(hLayout);
   widget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
   setSecondaryWidget(widget);
 
-  updateLatex();
+  update();
 }
 
 void LikelihoodPDFFitPlot::update()
@@ -153,14 +188,7 @@ void LikelihoodPDFFitPlot::update()
   m_previewFunction->setScaleFactor(m_scaleWidget->value());
   for (int parameter = 0; parameter < m_parameterWidgets.count(); ++parameter)
     previewParameters.append(m_parameterWidgets[parameter]->value());
-  updateLatex();
-  m_previewFunction->setParameters(previewParameters);
-  gPad->Modified();
-  gPad->Update();
-}
 
-void LikelihoodPDFFitPlot::updateLatex()
-{
   int n = ndf();
   double c = chi2();
   QString title;
@@ -170,6 +198,16 @@ void LikelihoodPDFFitPlot::updateLatex()
     title = QString("chi2 = %1").arg(c, 0, 'f', 2, ' ');
   }
   latex()->SetTitle(qPrintable(title));
+  m_removeButton->setEnabled(m_likelihood->parametersExist(Hypothesis(m_particle, 1./ m_absoluteMomentum)));
+  m_previewFunction->setParameters(previewParameters);
+  QString parameterString;
+  foreach (double parameter, currentParameters)
+    parameterString+= QString("%1, ").arg(parameter, 4, 'f', 2, '0');
+  parameterString.chop(2);
+  m_currentParametersEdit->setText(parameterString);
+  m_currentParametersEdit->setCursorPosition(0);
+  gPad->Modified();
+  gPad->Update();
 }
 
 void LikelihoodPDFFitPlot::reset()
@@ -182,5 +220,11 @@ void LikelihoodPDFFitPlot::reset()
 void LikelihoodPDFFitPlot::save()
 {
   m_likelihood->saveParameters(Hypothesis(m_particle, 1. / m_absoluteMomentum), m_previewFunction->parameters());
+  emit configFileChanged();
+}
+
+void LikelihoodPDFFitPlot::remove()
+{
+  m_likelihood->removeParameters(Hypothesis(m_particle, 1. / m_absoluteMomentum));
   emit configFileChanged();
 }

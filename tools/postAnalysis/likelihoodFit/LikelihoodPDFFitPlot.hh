@@ -13,6 +13,8 @@ class Likelihood;
 class TH2D;
 class LikelihoodPDF;
 class ParameterWidget;
+class QPushButton;
+class QLineEdit;
 
 class LikelihoodPDFFitPlot : public QObject, public PostAnalysisPlot, public H1DPlot
 {
@@ -33,9 +35,9 @@ public slots:
   void update();
   void reset();
   void save();
+  void remove();
 protected:
   void setup();
-  void updateLatex();
 
   double m_absoluteMomentum;
   Enums::Particle m_particle;
@@ -44,6 +46,8 @@ protected:
   LikelihoodPDF* m_previewFunction;
   ParameterWidget* m_scaleWidget;
   QVector<ParameterWidget*> m_parameterWidgets;
+  QPushButton* m_removeButton;
+  QLineEdit* m_currentParametersEdit;
 };
 
 #endif
