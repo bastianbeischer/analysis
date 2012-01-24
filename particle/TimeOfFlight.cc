@@ -36,6 +36,7 @@ void TimeOfFlight::reset()
 
 void TimeOfFlight::calculateTimes(const Track* track)
 {
+  Q_ASSERT(qIsNull(m_startTime) && qIsNull(m_stopTime) && qIsNull(m_beta) && qIsNull(m_timeOverThreshold) && m_good == false);
   QVector<double> startTimes;
   QVector<double> stopTimes;
 
@@ -67,8 +68,7 @@ void TimeOfFlight::calculateTimes(const Track* track)
     }
   }
   if (startTimes.count() < 6 || stopTimes.count() < 6) {
-    m_timeOverThreshold = 0.;
-    m_beta = 0.;
+    m_timeOverThreshold = 0;
     return;
   }
   m_timeOverThreshold/= startTimes.count() + stopTimes.count();
