@@ -85,117 +85,9 @@ double Likelihood::measuredValueMax() const
   return m_measuredValueMax;
 }
 
-bool Likelihood::parametersExist(const Hypothesis& h)
-{
-  QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
-  Q_ASSERT(QFile::exists(fileName));
-  QSettings settings(fileName, QSettings::IniFormat);
-  settings.beginGroup(Enums::label(m_likelihoodVariableType));
-  settings.beginGroup(Enums::label(h.particle()));
-  typedef QVector<double> DoubleVector;
-  DoubleVector rigidities = Helpers::variantToDoubleVector(settings.value("absoluteRigidities"));
-  foreach (double rigidity, rigidities)
-    if (rigiditiesApproximatelyEqual(h.absoluteRigidity(), rigidity))
-      return true;
-  return false;
-}
-
-void Likelihood::removeParameters(const Hypothesis& h)
-{
-  QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
-  Q_ASSERT(QFile::exists(fileName));
-  QSettings settings(fileName, QSettings::IniFormat);
-
-  settings.beginGroup(Enums::label(m_likelihoodVariableType));
-  settings.beginGroup(Enums::label(h.particle()));
-
-  typedef QVector<double> DoubleVector;
-  DoubleVector rigidities = Helpers::variantToDoubleVector(settings.value("absoluteRigidities"));
-  QVector<DoubleVector> values = QVector<DoubleVector>(m_numberOfParameters);
-  for (int parameter = 0; parameter < m_numberOfParameters; ++parameter)
-    values[parameter] = Helpers::variantToDoubleVector(settings.value(QString::number(parameter)));
-
-  for (int i = 0; i < rigidities.size(); ++i) {
-    if (rigiditiesApproximatelyEqual(h.absoluteRigidity(), rigidities[i])) {
-      rigidities.remove(i);
-      for (int parameter = 0; parameter < m_numberOfParameters; ++parameter)
-        values[parameter].remove(i);
-    }
-  }
-
-  Q_ASSERT(Helpers::sorted(rigidities));
-  settings.setValue("absoluteRigidities", Helpers::doubleVectorToVariant(rigidities));
-  for (int parameter = 0; parameter < m_numberOfParameters; ++parameter)
-    settings.setValue(QString::number(parameter), Helpers::doubleVectorToVariant(values[parameter]));
-
-  settings.endGroup();
-  settings.endGroup();
-  settings.sync();
-  loadParameters();
-}
-
 bool Likelihood::rigiditiesApproximatelyEqual(double r1, double r2) const
 {
   return qAbs((r1 - r2) / r1) < 0.01;
-}
-
-void Likelihood::saveParameters(const Hypothesis& h, const PDFParameters& parameters)
-{
-  QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
-  Q_ASSERT(QFile::exists(fileName));
-  QSettings settings(fileName, QSettings::IniFormat);
-
-  settings.beginGroup(Enums::label(m_likelihoodVariableType));
-  settings.beginGroup(Enums::label(h.particle()));
-
-  typedef QVector<double> DoubleVector;
-  DoubleVector rigidities = Helpers::variantToDoubleVector(settings.value("absoluteRigidities"));
-  QVector<DoubleVector> values = QVector<DoubleVector>(m_numberOfParameters);
-  for (int parameter = 0; parameter < m_numberOfParameters; ++parameter)
-    values[parameter] = Helpers::variantToDoubleVector(settings.value(QString::number(parameter)));
-
-  for (int i = 0; i < rigidities.size(); ++i) {
-    if (rigiditiesApproximatelyEqual(h.absoluteRigidity(), rigidities[i])) {
-      rigidities.remove(i);
-      for (int parameter = 0; parameter < m_numberOfParameters; ++parameter)
-        values[parameter].remove(i);
-    }
-  }
-
-  int position = 0;
-  while (position < rigidities.size() && rigidities[position] < h.absoluteRigidity())
-    ++position;
-
-  rigidities.insert(position, h.absoluteRigidity());
-  Q_ASSERT(Helpers::sorted(rigidities));
-  settings.setValue("absoluteRigidities", Helpers::doubleVectorToVariant(rigidities));
-  for (int parameter = 0; parameter < m_numberOfParameters; ++parameter) {
-    values[parameter].insert(position, parameters[parameter]);
-    settings.setValue(QString::number(parameter), Helpers::doubleVectorToVariant(values[parameter]));
-  }
-
-  settings.endGroup();
-  settings.endGroup();
-  settings.sync();
-  loadParameters();
-}
-
-void Likelihood::saveNormalization(Enums::Particle particle, const QVector<double>& rigidities, const QVector<double>& normalizationFactors)
-{
-  QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
-  Q_ASSERT(QFile::exists(fileName));
-  QSettings settings(fileName, QSettings::IniFormat);
-  Q_ASSERT(rigidities.count() == normalizationFactors.count());
-  settings.beginGroup(Enums::label(m_likelihoodVariableType));
-  settings.beginGroup(Enums::label(particle));
-  settings.setValue("normalizationRigidities", Helpers::doubleVectorToVariant(rigidities));
-  settings.setValue("normalizationFactors", Helpers::doubleVectorToVariant(normalizationFactors));
-
-  settings.endGroup();
-  settings.endGroup();
-  settings.sync();
-
-  loadParameters();
 }
 
 const PDFParameters& Likelihood::defaultParameters() const
@@ -262,61 +154,9 @@ double Likelihood::interpolation(double rigidity, const QVector<double>& rigidit
   return values[i-1] + (rigidity-rigidities[i-1]) * (values[i]-values[i-1]) / (rigidities[i]-rigidities[i-1]);
 }
 
-void Likelihood::loadParameters()
+QString Likelihood::particlePrefix(Enums::Particle) const
 {
-  QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
-  Q_ASSERT(QFile::exists(fileName));
-  QSettings settings(fileName, QSettings::IniFormat);
-  m_parametersVectors.clear();
-  m_parametrizationMin = +1.;
-  m_parametrizationMax = -1.;
-  m_buffer = Buffer(Enums::NoParticle, 0);
-  settings.beginGroup(Enums::label(m_likelihoodVariableType));
-  Enums::Particles particlesInFile = Enums::particles(settings.value("particles").toString());
-  Enums::ParticleIterator particleEnd = Enums::particleEnd();
-
-  for (Enums::ParticleIterator particleIt = Enums::particleBegin(); particleIt != particleEnd; ++particleIt) {
-    if (particleIt.key() == Enums::NoParticle)
-      continue;
-    if ((particleIt.key() & particlesInFile) != particleIt.key())
-      continue;
-    if ((particleIt.key() & m_particles) != particleIt.key())
-      continue;
-    settings.beginGroup(particleIt.value());
-    const QVector<double>& rigidities = Helpers::variantToDoubleVector(settings.value("absoluteRigidities"));
-    Q_ASSERT(Helpers::sorted(rigidities));
-    if (rigidities.size()) {
-      m_parametrizationMin = rigidities.first();
-      m_parametrizationMax = rigidities.last();
-      int numberOfElements = (m_parametrizationMax - m_parametrizationMin) / m_parametrizationStep + 1;
-      PDFParametersVector parametersVector(numberOfElements, m_numberOfParameters);
-      parametersVector.setRange(m_parametrizationMin, m_parametrizationMax);
-      QVector<double> normalizationRigidities = Helpers::variantToDoubleVector(settings.value("normalizationRigidities"));
-      bool normalization = normalizationRigidities.count();
-      Q_ASSERT(Helpers::sorted(normalizationRigidities));
-      Q_ASSERT(!normalization || qFuzzyCompare(normalizationRigidities.first(), m_parametrizationMin));
-      Q_ASSERT(!normalization || qFuzzyCompare(normalizationRigidities.last(), m_parametrizationMax));
-      QVector<double> normalizationFactors = Helpers::variantToDoubleVector(settings.value("normalizationFactors"));
-      Q_ASSERT(normalizationRigidities.count() == normalizationFactors.count());
-      for (int i = 0; i < numberOfElements; ++i) {
-        double rigidity = m_parametrizationMin + i * m_parametrizationStep;
-        if (i == numberOfElements - 1) // necessary to prevent rounding error
-          rigidity = m_parametrizationMax;
-        double normalizationFactor = 1.;
-        if (normalization)
-          normalizationFactor = interpolation(rigidity, normalizationRigidities, normalizationFactors);
-        parametersVector[i].setNormalizationFactor(normalizationFactor);
-        for (int parameter = 0; parameter < m_numberOfParameters; ++parameter) {
-          QString key = QString::number(parameter);
-          const QVector<double>& parameters = Helpers::variantToDoubleVector(settings.value(QString::number(parameter)));
-          parametersVector[i][parameter] = interpolation(rigidity, rigidities, parameters);
-        }
-      }
-      m_parametersVectors.insert(particleIt.key(), parametersVector);
-    }
-    settings.endGroup();
-  }
-  settings.endGroup();
+  return QString();
 }
 
 bool Likelihood::parametrizationAvailable() const
@@ -337,4 +177,177 @@ double Likelihood::parametrizationMin() const
 double Likelihood::parametrizationMax() const
 {
   return m_parametrizationMax;
+}
+
+bool Likelihood::parametersExist(const Hypothesis& h)
+{
+  QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
+  Q_ASSERT(QFile::exists(fileName));
+  QSettings settings(fileName, QSettings::IniFormat);
+  settings.beginGroup(Enums::label(m_likelihoodVariableType));
+  settings.beginGroup(Enums::label(h.particle()));
+  QString prefix = particlePrefix(h.particle());
+  typedef QVector<double> DoubleVector;
+  DoubleVector rigidities = Helpers::variantToDoubleVector(settings.value(prefix + "absoluteRigidities"));
+  foreach (double rigidity, rigidities)
+    if (rigiditiesApproximatelyEqual(h.absoluteRigidity(), rigidity))
+      return true;
+  return false;
+}
+
+void Likelihood::removeParameters(const Hypothesis& h)
+{
+  QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
+  Q_ASSERT(QFile::exists(fileName));
+  QSettings settings(fileName, QSettings::IniFormat);
+
+  settings.beginGroup(Enums::label(m_likelihoodVariableType));
+  settings.beginGroup(Enums::label(h.particle()));
+
+  QString prefix = particlePrefix(h.particle());
+
+  typedef QVector<double> DoubleVector;
+  DoubleVector rigidities = Helpers::variantToDoubleVector(settings.value(prefix + "absoluteRigidities"));
+  QVector<DoubleVector> values = QVector<DoubleVector>(m_numberOfParameters);
+  for (int parameter = 0; parameter < m_numberOfParameters; ++parameter)
+    values[parameter] = Helpers::variantToDoubleVector(settings.value(prefix + QString::number(parameter)));
+
+  for (int i = 0; i < rigidities.size(); ++i) {
+    if (rigiditiesApproximatelyEqual(h.absoluteRigidity(), rigidities[i])) {
+      rigidities.remove(i);
+      for (int parameter = 0; parameter < m_numberOfParameters; ++parameter)
+        values[parameter].remove(i);
+    }
+  }
+
+  Q_ASSERT(Helpers::sorted(rigidities));
+  settings.setValue(prefix + "absoluteRigidities", Helpers::doubleVectorToVariant(rigidities));
+  for (int parameter = 0; parameter < m_numberOfParameters; ++parameter)
+    settings.setValue(prefix + QString::number(parameter), Helpers::doubleVectorToVariant(values[parameter]));
+
+  settings.endGroup();
+  settings.endGroup();
+  settings.sync();
+  loadParameters();
+}
+
+void Likelihood::saveParameters(const Hypothesis& h, const PDFParameters& parameters)
+{
+  QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
+  Q_ASSERT(QFile::exists(fileName));
+  QSettings settings(fileName, QSettings::IniFormat);
+
+  settings.beginGroup(Enums::label(m_likelihoodVariableType));
+  settings.beginGroup(Enums::label(h.particle()));
+
+  QString prefix = particlePrefix(h.particle());
+
+  typedef QVector<double> DoubleVector;
+  DoubleVector rigidities = Helpers::variantToDoubleVector(settings.value(prefix + "absoluteRigidities"));
+  QVector<DoubleVector> values = QVector<DoubleVector>(m_numberOfParameters);
+  for (int parameter = 0; parameter < m_numberOfParameters; ++parameter)
+    values[parameter] = Helpers::variantToDoubleVector(settings.value(prefix + QString::number(parameter)));
+
+  for (int i = 0; i < rigidities.size(); ++i) {
+    if (rigiditiesApproximatelyEqual(h.absoluteRigidity(), rigidities[i])) {
+      rigidities.remove(i);
+      for (int parameter = 0; parameter < m_numberOfParameters; ++parameter)
+        values[parameter].remove(i);
+    }
+  }
+
+  int position = 0;
+  while (position < rigidities.size() && rigidities[position] < h.absoluteRigidity())
+    ++position;
+
+  rigidities.insert(position, h.absoluteRigidity());
+  Q_ASSERT(Helpers::sorted(rigidities));
+  settings.setValue(prefix + "absoluteRigidities", Helpers::doubleVectorToVariant(rigidities));
+  for (int parameter = 0; parameter < m_numberOfParameters; ++parameter) {
+    values[parameter].insert(position, parameters[parameter]);
+    settings.setValue(prefix + QString::number(parameter), Helpers::doubleVectorToVariant(values[parameter]));
+  }
+
+  settings.endGroup();
+  settings.endGroup();
+  settings.sync();
+  loadParameters();
+}
+
+void Likelihood::saveNormalization(Enums::Particle particle, const QVector<double>& rigidities, const QVector<double>& normalizationFactors)
+{
+  QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
+  Q_ASSERT(QFile::exists(fileName));
+  QSettings settings(fileName, QSettings::IniFormat);
+  Q_ASSERT(rigidities.count() == normalizationFactors.count());
+  settings.beginGroup(Enums::label(m_likelihoodVariableType));
+  settings.beginGroup(Enums::label(particle));
+
+  QString prefix = particlePrefix(particle);
+  settings.setValue(prefix + "normalizationRigidities", Helpers::doubleVectorToVariant(rigidities));
+  settings.setValue(prefix + "normalizationFactors", Helpers::doubleVectorToVariant(normalizationFactors));
+
+  settings.endGroup();
+  settings.endGroup();
+  settings.sync();
+
+  loadParameters();
+}
+
+void Likelihood::loadParameters()
+{
+  QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
+  Q_ASSERT(QFile::exists(fileName));
+  QSettings settings(fileName, QSettings::IniFormat);
+  m_parametersVectors.clear();
+  m_parametrizationMin = +1;
+  m_parametrizationMax = -1;
+  m_buffer = Buffer(Enums::NoParticle, 0);
+  settings.beginGroup(Enums::label(m_likelihoodVariableType));
+  Enums::Particles particlesInFile = Enums::particles(settings.value("particles").toString());
+  Enums::ParticleIterator particleEnd = Enums::particleEnd();
+
+  for (Enums::ParticleIterator particleIt = Enums::particleBegin(); particleIt != particleEnd; ++particleIt) {
+    if (particleIt.key() == Enums::NoParticle)
+      continue;
+    if ((particleIt.key() & particlesInFile) != particleIt.key())
+      continue;
+    if ((particleIt.key() & m_particles) != particleIt.key())
+      continue;
+    settings.beginGroup(particleIt.value());
+    QString prefix = particlePrefix(particleIt.key());
+    const QVector<double>& rigidities = Helpers::variantToDoubleVector(settings.value(prefix + "absoluteRigidities"));
+    Q_ASSERT(Helpers::sorted(rigidities));
+    if (rigidities.size()) {
+      m_parametrizationMin = rigidities.first();
+      m_parametrizationMax = rigidities.last();
+      int numberOfElements = (m_parametrizationMax - m_parametrizationMin) / m_parametrizationStep + 1;
+      PDFParametersVector parametersVector(numberOfElements, m_numberOfParameters);
+      parametersVector.setRange(m_parametrizationMin, m_parametrizationMax);
+      QVector<double> normalizationRigidities = Helpers::variantToDoubleVector(settings.value(prefix + "normalizationRigidities"));
+      bool normalization = normalizationRigidities.count();
+      Q_ASSERT(Helpers::sorted(normalizationRigidities));
+      Q_ASSERT(!normalization || qFuzzyCompare(normalizationRigidities.first(), m_parametrizationMin));
+      Q_ASSERT(!normalization || qFuzzyCompare(normalizationRigidities.last(), m_parametrizationMax));
+      QVector<double> normalizationFactors = Helpers::variantToDoubleVector(settings.value(prefix + "normalizationFactors"));
+      Q_ASSERT(normalizationRigidities.count() == normalizationFactors.count());
+      for (int i = 0; i < numberOfElements; ++i) {
+        double rigidity = m_parametrizationMin + i * m_parametrizationStep;
+        if (i == numberOfElements - 1) // necessary to prevent rounding error
+          rigidity = m_parametrizationMax;
+        double normalizationFactor = 1.;
+        if (normalization)
+          normalizationFactor = interpolation(rigidity, normalizationRigidities, normalizationFactors);
+        parametersVector[i].setNormalizationFactor(normalizationFactor);
+        for (int parameter = 0; parameter < m_numberOfParameters; ++parameter) {
+          QString key = QString::number(parameter);
+          const QVector<double>& parameters = Helpers::variantToDoubleVector(settings.value(prefix + QString::number(parameter)));
+          parametersVector[i][parameter] = interpolation(rigidity, rigidities, parameters);
+        }
+      }
+      m_parametersVectors.insert(particleIt.key(), parametersVector);
+    }
+    settings.endGroup();
+  }
+  settings.endGroup();
 }

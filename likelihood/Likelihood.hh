@@ -51,6 +51,7 @@ protected:
 
   virtual double interpolation(double rigidity, const QVector<double>& rigidities, const QVector<double>& values);
   virtual void loadParameters();
+  virtual QString particlePrefix(Enums::Particle) const;
 
   bool rigiditiesApproximatelyEqual(double, double) const;
 
