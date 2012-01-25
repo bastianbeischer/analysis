@@ -35,7 +35,7 @@ public:
 private:
   std::string m_comment;
   std::string m_softwareVersionHash; //SHA1 hash of the latest commit
-  std::vector<long> m_eventNumberOffset;
+  std::vector<long> m_numberOfEvents;
   std::vector<std::string> m_runFileNames;
   std::vector<std::string> m_runFileSoftwareVersionHash;
   int m_numberOfRuns;
