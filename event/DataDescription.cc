@@ -24,6 +24,7 @@ DataDescription::DataDescription(const DataDescription& other)
   , m_comment(other.m_comment)
   , m_softwareVersionHash(other.m_softwareVersionHash)
   , m_numberOfEvents(other.m_numberOfEvents)
+  , m_numberOfCalibrationEvents(other.m_numberOfCalibrationEvents)
   , m_runFileNames(other.m_runFileNames)
   , m_runFileSoftwareVersionHash(other.m_runFileSoftwareVersionHash)
   , m_numberOfRuns(other.m_numberOfRuns)
@@ -49,10 +50,11 @@ void DataDescription::setSoftwareVersionHash()
   assert(m_softwareVersionHash.length() == 40);
 }
 
-void DataDescription::addRunFile(const std::string& fileName, const std::string& softwareVersionHash, const int nEvents)
+void DataDescription::addRunFile(const std::string& fileName, const std::string& softwareVersionHash, const int nEvents, const int nCalibrationEvents)
 {
   m_runFileNames.push_back(fileName);
   m_numberOfEvents.push_back(nEvents);
+  m_numberOfCalibrationEvents.push_back(nCalibrationEvents);
   m_runFileSoftwareVersionHash.push_back(softwareVersionHash);
   ++m_numberOfRuns;
 }
@@ -93,4 +95,9 @@ long DataDescription::numberOfEventsInRunFile(int i) const
   assert(i < m_numberOfRuns);
   return m_numberOfEvents[i];
 }
+
+long DataDescription::numberOfCalibrationEventsInRunFile(int i) const
+{
+  assert(i < m_numberOfRuns);
+  return m_numberOfCalibrationEvents[i];
 }

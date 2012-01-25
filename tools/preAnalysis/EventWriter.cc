@@ -45,9 +45,15 @@ void EventWriter::addInputFileToDescription(QString filename)
 {
   TFile file(qPrintable(filename), "READ");
   TTree* tree = (TTree*) file.Get("SimpleEventTree");
-  int nEvents = tree->GetEntries();
   DataDescription* inputDesc = (DataDescription*) tree->GetUserInfo()->At(0);
-  m_description->addRunFile(filename.toStdString(), inputDesc->softwareVersionHash(), nEvents);
+  int nEvents = 0;
+  int nCalibrationEvents = 0 ;
+  int nRuns = inputDesc->numberOfRuns();
+  for (int i = 0; i < nRuns; i++) {
+    nEvents += inputDesc->numberOfEventsInRunFile(i);
+    nCalibrationEvents += inputDesc->numberOfCalibrationEventsInRunFile(i);
+  }
+  m_description->addRunFile(filename.toStdString(), inputDesc->softwareVersionHash(), nEvents, nCalibrationEvents);
 }
 
 void EventWriter::start()
