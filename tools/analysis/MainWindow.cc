@@ -480,6 +480,18 @@ void MainWindow::analysisSettingToGui()
       checkBox->setCheckState(Qt::Unchecked);
     }
 
+  Enums::LikelihoodVariables likelihoods;
+
+  foreach (QCheckBox* checkBox, m_likelihoodCheckBoxes) {
+    QString lhLabel = checkBox->text();
+    lhLabel.replace("\n", " ");
+    if (m_analysisSetting.likelihoods & Enums::likelihoodVariable(lhLabel)) {
+      checkBox->setCheckState(Qt::Checked);
+    } else {
+      checkBox->setCheckState(Qt::Unchecked);
+    }
+  }
+
   foreach (QCheckBox* checkBox, m_particleFilterCheckBoxes)
     if (m_analysisSetting.particleFilter & Enums::particle(checkBox->text())) {
       checkBox->setCheckState(Qt::Checked);
