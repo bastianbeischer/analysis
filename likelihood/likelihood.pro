@@ -11,7 +11,6 @@ CLASSES += \
   TimeOfFlightLikelihood \
   TrackerMomentumLikelihood \
   CherenkovLikelihood \
-  Hypothesis \
   Reconstruction \
   SpectrometerReconstruction \
   TOFReconstruction \
@@ -32,13 +31,15 @@ INCLUDEPATH += \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/processing
 
-LIBS += \
-  -L$$TOPLEVEL/lib \
-  -lglobal \
-  -lSimpleEvent \
-  -lparticle \
-  -ltracking \
-  -lsetup
+macx {
+  LIBS += \
+    -L$$TOPLEVEL/lib \
+    -lglobal \
+    -lSimpleEvent \
+    -lparticle \
+    -ltracking \
+    -lsetup
+}
 
 include($$TOPLEVEL/common.pri)
 include($$TOPLEVEL/root.pri)

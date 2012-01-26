@@ -24,6 +24,7 @@ LIBS += \
   -lsetup \
   -lprocessing \
   -lglobal \
+  -llikelihood \
   -lpostAnalysis
 
 SOURCEDIRS += .

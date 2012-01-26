@@ -27,6 +27,7 @@ LIBS += \
   -lprocessing \
   -lglobal \
   -lpostAnalysis \
+  -llikelihood \
   -lfluxAnalysis
 
 SOURCEDIRS = .

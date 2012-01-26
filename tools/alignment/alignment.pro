@@ -17,6 +17,8 @@ LIBS += \
   -lsetup \
   -ltracking \
   -lprocessing \
+  -lparticle \
+  -llikelihood \
   -lmillepede
 
 SOURCES = \

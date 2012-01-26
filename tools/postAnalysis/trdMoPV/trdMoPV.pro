@@ -26,6 +26,7 @@ LIBS += \
   -lprocessing \
   -lglobal \
   -lpostAnalysis \
+  -llikelihood \
   -ltrdAnalysis
 
 CLASSES = \

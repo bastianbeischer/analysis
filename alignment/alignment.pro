@@ -1,4 +1,4 @@
 TEMPLATE = subdirs
 
-SUBDIRS += millepede main.pro
 CONFIG += ordered
+SUBDIRS += millepede main.pro

@@ -23,12 +23,12 @@ LIBS += \
   -lSimpleEvent \
   -lprocessing \
   -lparticle \
+  -llikelihood \
   -ltracking \
   -lrootplot \
   -lsetup \
   -ltrdAnalysis \
-  -lfluxAnalysis \
-  -llikelihood
+  -lfluxAnalysis
 
 SOURCEDIRS = .
 

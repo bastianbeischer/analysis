@@ -22,16 +22,19 @@ INCLUDEPATH += \
   $$TOPLEVEL/global \
   ./millepede
 
+LIBS += -L$$TOPLEVEL/lib \
+  -lmillepede \
+  -lgfortran
+
+macx {
 LIBS += \
   -L$$TOPLEVEL/lib \
   -lSimpleEvent \
   -lsetup \
   -lparticle \
   -ltracking \
-  -L./millepede \
-  -lmillepede \
-  -lprocessing \
-  -lgfortran
+  -lprocessing
+}
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/common.pri)

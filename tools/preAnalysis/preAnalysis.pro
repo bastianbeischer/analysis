@@ -17,6 +17,9 @@ LIBS += \
   -lSimpleEvent \
   -lsetup \
   -lparticle \
+  -ltracking \
+  -lglobal \
+  -llikelihood \
   -lprocessing
 
 SOURCES = \

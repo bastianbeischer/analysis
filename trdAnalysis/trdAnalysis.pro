@@ -17,13 +17,15 @@ INCLUDEPATH += \
   $$TOPLEVEL/global \
   $$TOPLEVEL/processing
 
-LIBS += \
-  -L$$TOPLEVEL/lib \
-  -lglobal \
-  -lSimpleEvent \
-  -lparticle \
-  -ltracking \
-  -lprocessing
+macx {
+  LIBS += \
+    -L$$TOPLEVEL/lib \
+    -lglobal \
+    -lSimpleEvent \
+    -lparticle \
+    -ltracking \
+    -lprocessing
+}
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/common.pri)

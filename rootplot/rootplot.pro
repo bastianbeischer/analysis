@@ -23,9 +23,11 @@ CLASSES += \
   PerdaixDisplay \
   H3DPlot
 
-LIBS += \
-  -L$$TOPLEVEL/lib \
-  -lglobal
+macx {
+  LIBS += \
+    -L$$TOPLEVEL/lib \
+    -lglobal
+}
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/common.pri)

@@ -26,6 +26,8 @@ LIBS += \
   -lsetup \
   -lSimpleEvent \
   -lpostAnalysis \
+  -llikelihood \
+  -ltracking \
   -llikelihoodFit
 
 CLASSES = \

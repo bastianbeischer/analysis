@@ -24,6 +24,8 @@ LIBS += \
   -lprocessing \
   -lsetup \
   -lSimpleEvent \
+  -llikelihood \
+  -ltracking \
   -lpostAnalysis
 
 CLASSES = \

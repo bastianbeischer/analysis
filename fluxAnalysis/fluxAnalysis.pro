@@ -16,13 +16,15 @@ INCLUDEPATH+= \
 
 SOURCEDIRS += .
 
-LIBS += \
-  -L$$TOPLEVEL/lib \
-  -lglobal \
-  -lparticle \
-  -lsetup \
-  -lrootplot \
-  -lprocessing
+macx {
+  LIBS += \
+    -L$$TOPLEVEL/lib \
+    -lglobal \
+    -lparticle \
+    -lrootplot
+    -lsetup \
+    -lprocessing
+}
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/common.pri)

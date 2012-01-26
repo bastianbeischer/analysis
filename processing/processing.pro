@@ -18,7 +18,8 @@ CLASSES += \
   Cut \
   CutFilter \
   MCFilter \
-  AnalyzedEvent
+  AnalyzedEvent \
+  AnalysisProcessorSetting
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \
@@ -28,14 +29,16 @@ INCLUDEPATH += \
   $$TOPLEVEL/global \
   $$TOPLEVEL/likelihood
 
-LIBS += \
-  -L$$TOPLEVEL/lib \
-  -lglobal \
-  -lSimpleEvent \
-  -lsetup \
-  -lparticle \
-  -ltracking \
-  -llikelihood
+macx {
+  LIBS += \
+    -L$$TOPLEVEL/lib \
+    -lglobal \
+    -lSimpleEvent \
+    -lsetup \
+    -lparticle \
+    -ltracking \
+    -llikelihood
+}
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/common.pri)
