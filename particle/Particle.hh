@@ -35,11 +35,16 @@ public:
   Enums::ReconstructionMethod reconstructionMethod() const;
 
   void addHypothesis(Enums::ReconstructionMethod, Hypothesis*);
-  const QMap<Enums::ReconstructionMethod, Hypothesis*>& hypotheses() const;
+  const QMultiMap<Enums::ReconstructionMethod, Hypothesis*>& hypotheses() const;
   const Hypothesis* hypothesis() const;
   const Hypothesis* hypothesis(Enums::ReconstructionMethod) const;
   const Hypothesis* hypothesis(Enums::Particle) const;
-  const Hypothesis* hypothesis(Enums::Particle, Enums::ReconstructionMethod) const;
+  const Hypothesis* hypothesis(Enums::ReconstructionMethod, Enums::Particle) const;
+
+  double signalLikelihood(Enums::Particle) const;
+  double signalLikelihood(Enums::ReconstructionMethod, Enums::Particle) const;
+  double backgroundLikelihood(Enums::Particles) const;
+  double backgroundLikelihood(Enums::ReconstructionMethod, Enums::Particles) const;
 
   double transverseMomentum() const; // To be removed: KineticVariable that
   double momentum() const;           // contains Likelihood analyzed data
@@ -65,7 +70,7 @@ private:
   TRDReconstruction* m_trd;
   ParticleInformation* m_information;
   Enums::ReconstructionMethod m_method;
-  QMap<Enums::ReconstructionMethod, Hypothesis*> m_hypotheses;
+  QMultiMap<Enums::ReconstructionMethod, Hypothesis*> m_hypotheses;
 };
 
 #endif /* Particle_hh */

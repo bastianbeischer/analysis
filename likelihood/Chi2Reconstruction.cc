@@ -111,7 +111,7 @@ void Chi2Reconstruction::identify(AnalyzedEvent* event)
         m_indexOfGlobalMinimum = it;
         min = value;
       }
-      h->setLogLikelihood(value);
+      h->setLikelihood(value);
       event->particle()->addHypothesis(m_method, h);
     } else {
       pointIt->setX(0);

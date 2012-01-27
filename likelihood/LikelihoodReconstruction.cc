@@ -58,7 +58,7 @@ private:
 LikelihoodReconstruction::LikelihoodReconstruction(Enums::LikelihoodVariables likelihoods, Enums::Particles particles, bool additionalInformation)
   : Reconstruction(likelihoods, particles)
   , m_lhMinimizer(new ROOT::Math::BrentMinimizer1D)
-  , m_lhFunction(new LogLikelihoodFunction(this, &Reconstruction::eval))
+  , m_lhFunction(new LogLikelihoodFunction(this, &Reconstruction::logL))
 {
   m_externalInformation = additionalInformation;
   m_method = additionalInformation ? Enums::LikelihoodExternalInformation : Enums::Likelihood;
@@ -98,7 +98,7 @@ void LikelihoodReconstruction::identify(AnalyzedEvent* event)
       if (m_indexOfGlobalMinimum > 0 && m_lhMinimizer->FValMinimum() < m_minima[m_indexOfGlobalMinimum].y())
         m_indexOfGlobalMinimum = it;
       Hypothesis* h = new Hypothesis(*particleIt, m_lhMinimizer->XMinimum());
-      h->setLogLikelihood(m_lhMinimizer->FValMinimum());
+      h->setLikelihood(m_lhMinimizer->FValMinimum());
       event->particle()->addHypothesis(m_method, h);
     } else {
       pointIt->setX(0);
@@ -130,7 +130,7 @@ TMultiGraph* LikelihoodReconstruction::graph() const
     g->SetLineWidth(2);
     for (int i = 0; i < nSteps; ++i) {
       Hypothesis hypothesis(type, s_minimumCurvature + i * kStep);
-      g->SetPoint(i, hypothesis.curvature(), eval(m_event, hypothesis));
+      g->SetPoint(i, hypothesis.curvature(), logL(m_event, hypothesis));
     }
     m_graph->Add(g, "L");
   }

@@ -10,29 +10,32 @@
 
 #include <QDebug>
 
-LogLikelihoodPlot::LogLikelihoodPlot(Enums::Particle signal, Enums::Particles background)
+#include <cmath>
+
+LogLikelihoodPlot::LogLikelihoodPlot(Enums::Particle signalParticle, Enums::Particles backgroundParticles)
   : AnalysisPlot(Enums::LikelihoodTopic)
   , H1DPlot()
-  , m_signal(signal)
-  , m_background(background)
+  , m_signalParticle(signalParticle)
+  , m_backgroundParticles(backgroundParticles)
   , m_nBins(200)
+  , m_normalized(false)
   , m_signalHypothesisHistogram(0)
   , m_backgroundHypothesisHistogram(0)
   , m_typeToIndex()
   , m_backgroundHypothesisHistograms()
 {
-  Q_ASSERT((signal & background) == 0);
+  Q_ASSERT((signalParticle & backgroundParticles) == 0);
 
-  setTitle("ln L distribution " + Enums::label(signal));
+  setTitle("ln L distribution " + Enums::label(signalParticle));
 
   double min = -10.;
-  double max = +10.;
+  double max = +100.;
 
   TH1D* h = 0;
 
   m_signalHypothesisHistogram = new TH1D(qPrintable(title() + " signal"), "", m_nBins, min, max);
   h = new TH1D(qPrintable(title() + " signal normalized"), "", m_nBins, min, max);
-  h->SetLineColor(ParticleProperties(signal).color());
+  h->SetLineColor(ParticleProperties(signalParticle).color());
   addHistogram(h);
 
   h = new TH1D(qPrintable(title() + " signal normalized"), "", m_nBins, min, max);
@@ -43,7 +46,7 @@ LogLikelihoodPlot::LogLikelihoodPlot(Enums::Particle signal, Enums::Particles ba
 
   Enums::ParticleIterator end = Enums::particleEnd();
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it)
-    if (it.key() != Enums::NoParticle && (it.key() & background)) {
+    if (it.key() != Enums::NoParticle && (it.key() & backgroundParticles)) {
       m_typeToIndex.insert(it.key(), m_backgroundHypothesisHistograms.count());
       h = new TH1D(qPrintable(title() + " background " + it.value()), "", m_nBins, min, max);
       m_backgroundHypothesisHistograms.append(h);
@@ -54,7 +57,13 @@ LogLikelihoodPlot::LogLikelihoodPlot(Enums::Particle signal, Enums::Particles ba
 
   addHistogram(new TH1D(qPrintable(title() + " background normalized"), "", m_nBins, min, max));
 
-  setAxisTitle("-2 ln L", "");
+  QString sLabel = Enums::label(m_signalParticle);
+  QString bgLabel = Enums::label(m_backgroundParticles);
+  QString axisTitle = "-2 ln (L_{" + sLabel + "} / (L_{" + sLabel + "} + L_{"+ bgLabel + "})";
+  axisTitle.replace("alpha", "#alpha");
+  axisTitle.replace("mu", "#mu");
+  axisTitle.replace("pi", "#pi");
+  setAxisTitle(axisTitle, "");
 
   addLatex(RootPlot::newLatex(.15, .85));
   latex(0)->SetTextColor(kRed);
@@ -75,18 +84,23 @@ void LogLikelihoodPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::BetaGood | ParticleInformation::InsideMagnet))
+  if (!event->flagsSet(ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet | ParticleInformation::Chi2Good | ParticleInformation::BetaGood))
     return;
 
-  const Hypothesis* hypothesis = event->particle()->hypothesis();
+  const Particle* particle = event->particle();
+  const Hypothesis* hypothesis = particle->hypothesis();
+  double signal = particle->signalLikelihood(m_signalParticle);
+  double background = particle->backgroundLikelihood(m_backgroundParticles);
+  double logL = -2 * log (signal / (signal + background));
 
-  if (hypothesis->particle() == m_signal) {
-    m_signalHypothesisHistogram->Fill(hypothesis->logLikelihood());
+  if (hypothesis->particle() == m_signalParticle) {
+    m_signalHypothesisHistogram->Fill(logL);
   } else {
-    m_backgroundHypothesisHistogram->Fill(hypothesis->logLikelihood());
+    m_backgroundHypothesisHistogram->Fill(logL);
+
     QMap<Enums::Particle, int>::ConstIterator it = m_typeToIndex.find(hypothesis->particle());
     Q_ASSERT(it != m_typeToIndex.end());
-    m_backgroundHypothesisHistograms[it.value()]->Fill(hypothesis->logLikelihood());
+    m_backgroundHypothesisHistograms[it.value()]->Fill(logL);
   }
 }
 
@@ -94,12 +108,12 @@ void LogLikelihoodPlot::update()
 {
   int n = 0;
 
-  n = m_signalHypothesisHistogram->GetEntries();
+  n = m_normalized ? m_signalHypothesisHistogram->GetEntries() : 1;
   for (int bin = 1; bin <= m_nBins; ++bin)
     histogram(0)->SetBinContent(bin, m_signalHypothesisHistogram->GetBinContent(bin) / n);
   histogram(0)->SetEntries(n);
 
-  n = m_backgroundHypothesisHistogram->GetEntries();
+  n = m_normalized ? m_backgroundHypothesisHistogram->GetEntries() : 1;
   for (int bin = 1; bin <= m_nBins; ++bin)
     histogram(1)->SetBinContent(bin, m_backgroundHypothesisHistogram->GetBinContent(bin) / n);
   histogram(1)->SetEntries(n);

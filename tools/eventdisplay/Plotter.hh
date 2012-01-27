@@ -23,8 +23,9 @@ public:
   virtual ~Plotter();
 public:
   unsigned int numberOfEvents();
-  void setFileList(const QString& listName);
-  void addFileList(const QString& listName);
+  void setAnalysisProcessorSettingFile(const QString&);
+  void setFileList(const QString&);
+  void addFileList(const QString&);
   void addRootFile(const QString&);
   void drawEvent(unsigned int i, Enums::TrackType type, bool allClusters, QTextEdit& infoTextBox,
     TQtWidget& trackFindingWidget, ReconstructionMethodGraph&, ReconstructionMethodGraph&);

@@ -8,6 +8,7 @@ class AnalyzedEvent;
 class Likelihood;
 class TMultiGraph;
 class LogLikelihoodFunction;
+
 namespace ROOT {namespace Math {class BrentMinimizer1D;}}
 
 class LikelihoodReconstruction : public Reconstruction {

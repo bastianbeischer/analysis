@@ -27,6 +27,7 @@ public:
   virtual TLegend* legend() const;
   virtual TMultiGraph* graph() const;
   double eval(const AnalyzedEvent*, const Hypothesis&, bool* goodInterpolation = 0) const;
+  double logL(const AnalyzedEvent*, const Hypothesis&, bool* goodInterpolation = 0) const;
 protected:
   Reconstruction(Enums::LikelihoodVariables, Enums::Particles);
   void setupDefaultLegend() const;

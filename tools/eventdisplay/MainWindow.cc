@@ -8,6 +8,8 @@
 
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
+  , m_settingFile()
+  , m_eventList()
 {
   m_ui.setupUi(this);
   connect(m_ui.editEventListButton, SIGNAL(clicked()), this, SLOT(editEventListButtonClicked()));
@@ -56,6 +58,7 @@ void MainWindow::editEventListButtonClicked()
 
 void MainWindow::eventSpinBoxValueChanged(int i)
 {
+  Q_ASSERT(0 <= i && i < m_eventList.count());
   m_ui.eventSpinBox->setValue(m_eventList[i]);
 }
 
@@ -63,10 +66,15 @@ void MainWindow::processArguments(QStringList arguments)
 {
   arguments.removeFirst();
   foreach(QString argument, arguments) {
-    if (argument.endsWith(".root"))
+    if (argument.endsWith(".conf", Qt::CaseInsensitive)) {
+      m_ui.plotter->setAnalysisProcessorSettingFile(argument);
+    } else if (argument.endsWith(".root", Qt::CaseInsensitive)) {
       addRootFile(argument);
-    else
+    } else if (argument.endsWith(".txt", Qt::CaseInsensitive)) {
       addFileList(argument);
+    } else {
+      qWarning() << argument << "has an unknown file ending.";
+    }
   }
   m_ui.reconstructionMethodWidget1->setMethod(Enums::Chi2);
   m_ui.reconstructionMethodWidget2->setMethod(Enums::Likelihood);
@@ -77,7 +85,6 @@ void MainWindow::setFileList(const QString& fileList)
   m_ui.plotter->setFileList(fileList);
   updateEventSpinBox();
 }
-
 
 void MainWindow::addFileList(const QString& fileList)
 {

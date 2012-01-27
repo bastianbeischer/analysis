@@ -14,6 +14,7 @@
 #include "TRDReconstruction.hh"
 #include "ParticleInformation.hh"
 #include "Reconstruction.hh"
+#include "AnalysisProcessorSetting.hh"
 
 #include <QDebug>
 
@@ -30,49 +31,44 @@ AnalysisProcessor::AnalysisProcessor()
   , m_identifier(new ParticleIdentifier)
   , m_reconstructions()
 {
-  initReconstructions();
+  AnalysisProcessorSetting setting;
+  setting.setParticles(m_particles);
+  setting.setLikelihoodVariables(m_likelihoods);
+  setAnalysisProcessorSetting(setting);
 }
 
-AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, Enums::TrackType track
-  , Enums::Corrections flags, Enums::Particles particles, Enums::LikelihoodVariables likelihoods)
+AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, const AnalysisProcessorSetting& setting)
   : EventProcessor(destinations)
-  , m_particles(particles)
-  , m_likelihoods(likelihoods)
+  , m_particles(Enums::NoParticle)
+  , m_likelihoods(Enums::UndefinedLikelihood)
   , m_particle(new Particle)
   , m_particleFilter(new ParticleFilter)
   , m_cutFilter(new CutFilter)
   , m_mcFilter(new MCFilter)
   , m_trackFinding(new TrackFinding)
-  , m_corrections(new Corrections(flags))
+  , m_corrections(new Corrections)
   , m_identifier(new ParticleIdentifier)
   , m_reconstructions()
 {
-  setTrackType(track);
-  setCorrectionFlags(flags);
-  initReconstructions();
+  setAnalysisProcessorSetting(setting);
 }
 
-AnalysisProcessor::~AnalysisProcessor()
+void AnalysisProcessor::setAnalysisProcessorSetting(const AnalysisProcessorSetting& setting)
 {
-  delete m_particle;
-  delete m_particleFilter;
-  delete m_mcFilter;
-  delete m_cutFilter;
-  delete m_trackFinding;
-  delete m_corrections;
-  delete m_identifier;
-  qDeleteAll(m_reconstructions);
-}
-
-void AnalysisProcessor::initReconstructions()
-{
-  Q_ASSERT(m_reconstructions.count() == 0); // should only be called once!
+  m_particles = setting.particles();
+  m_likelihoods = setting.likelihoods();
+  setTrackType(setting.trackType());
+  setCorrectionFlags(setting.corrections());
+  setReconstructionMethod(setting.reconstructionMethod());
+  setParticleFilter(setting.particleFilter());
+  setMCFilter(setting.mcParticleFilter());
+  setCutFilter(setting.cutFilter());
 
   Enums::LikelihoodVariableIterator end = Enums::likelihoodVariableEnd();
 
   Enums::LikelihoodVariables internal = Enums::UndefinedLikelihood;
   for (Enums::LikelihoodVariableIterator it = Enums::likelihoodVariableBegin(); it != end; ++it)
-    if (it.key() & m_likelihoods && Enums::isInternalLikelihoodVariable(it.key()))
+    if ((it.key() & m_likelihoods) && Enums::isInternalLikelihoodVariable(it.key()))
       internal|= it.key();
   QVector<Enums::ReconstructionMethod> internalReconstruction = QVector<Enums::ReconstructionMethod>()
     << Enums::Spectrometer << Enums::TOF << Enums::WeightedMean << Enums::Chi2 << Enums::Likelihood;
@@ -89,6 +85,18 @@ void AnalysisProcessor::initReconstructions()
     << Enums::Chi2ExternalInformation << Enums::LikelihoodExternalInformation;
   foreach (Enums::ReconstructionMethod method, externalReconstruction)
     m_reconstructions.insert(method, Reconstruction::newReconstruction(method, external, m_particles));
+}
+
+AnalysisProcessor::~AnalysisProcessor()
+{
+  delete m_particle;
+  delete m_particleFilter;
+  delete m_mcFilter;
+  delete m_cutFilter;
+  delete m_trackFinding;
+  delete m_corrections;
+  delete m_identifier;
+  qDeleteAll(m_reconstructions);
 }
 
 void AnalysisProcessor::setTrackType(Enums::TrackType trackType)

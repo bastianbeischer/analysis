@@ -9,8 +9,8 @@ public:
   Hypothesis(Enums::Particle, double curvature);
   ~Hypothesis();
 
-  double logLikelihood() const;
-  void setLogLikelihood(double);
+  double likelihood() const;
+  void setLikelihood(double);
 
   Enums::Particle particle() const;
   int charge() const;
@@ -23,7 +23,7 @@ public:
 private:
   ParticleProperties m_properties;
   double m_curvature;
-  double m_logLikelihood;
+  double m_likelihood;
 };
 
 QDebug operator<<(QDebug, const Hypothesis&);

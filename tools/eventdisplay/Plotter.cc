@@ -61,6 +61,13 @@ Plotter::~Plotter()
   delete m_hitsPlot;
 }
 
+void Plotter::setAnalysisProcessorSettingFile(const QString& fileName)
+{
+  AnalysisProcessorSetting setting;
+  setting.load(fileName);
+  m_processor->setAnalysisProcessorSetting(setting);
+}
+
 void Plotter::setFileList(const QString& listName)
 {
   m_chain->setFileList(qPrintable(listName));
@@ -133,7 +140,7 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
   const DataDescription* currentDesc = m_chain->currentDescription();
   quint32 eventNumberInRootFile = m_chain->entryInFile();
   quint32 runFileNo = currentDesc->runFileForEventNumber(eventNumberInRootFile);
-  quint32 eventInRunFile = currentDesc->eventNumberInRunFile(eventNumberInRootFile);
+  quint32 eventInRunFile = currentDesc->eventNumberInRunFile(event->eventId());
   QString rootFileName = QString::fromStdString(m_chain->currentFile()->GetName());
   QString runfileName = QString::fromStdString(currentDesc->runFileNameForEventNumber(eventNumberInRootFile));
   QDateTime timeOfRun = QDateTime::fromTime_t(event->runStartTime());
@@ -190,8 +197,9 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
     QVector<Enums::Particle>::ConstIterator particleEnd = reconstruction->particles().end();
     QVector<QPointF>::ConstIterator minimumIt = reconstruction->minima().begin();
     for (int it = 0; particleIt != particleEnd; ++minimumIt, ++particleIt, ++it) {
-      const Hypothesis* hypothesis = m_processor->particle()->hypothesis(*particleIt, reconstructionIt.key());
-      QString text = QString("%1<br>%2").arg(hypothesis->rigidity(), 0, 'g', 2).arg(hypothesis->logLikelihood(), 0, 'g', 2);
+      const Hypothesis* hypothesis = m_processor->particle()->hypothesis(reconstructionIt.key(), *particleIt);
+      //TODO: give likelihood ratio.
+      QString text = QString("%1<br>%2").arg(hypothesis->rigidity(), 0, 'g', 2).arg(hypothesis->likelihood(), 0, 'g', 2);
       if (it == reconstruction->indexOfGlobalMinimum()) {
         text.prepend("<span style=\"color:red\">");
         text.append("</span>");

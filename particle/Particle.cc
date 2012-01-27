@@ -14,7 +14,7 @@
 #include "TrackFinding.hh"
 #include "Hypothesis.hh"
 
-#include "QDebug"
+#include <QDebug>
 
 Particle::Particle()
   : m_properties(0)
@@ -81,8 +81,8 @@ void Particle::reset()
   m_tof->reset();
   m_trd->reset();
   m_information->reset();
-  QMap<Enums::ReconstructionMethod, Hypothesis*>::Iterator end = m_hypotheses.end();
-  for (QMap<Enums::ReconstructionMethod, Hypothesis*>::Iterator it = m_hypotheses.begin(); it != end; ++it)
+  QMultiMap<Enums::ReconstructionMethod, Hypothesis*>::Iterator end = m_hypotheses.end();
+  for (QMultiMap<Enums::ReconstructionMethod, Hypothesis*>::Iterator it = m_hypotheses.begin(); it != end; ++it)
     delete it.value();
   m_hypotheses.clear();
 }
@@ -126,11 +126,11 @@ Enums::ReconstructionMethod Particle::reconstructionMethod() const
 
 void Particle::addHypothesis(Enums::ReconstructionMethod method, Hypothesis* h)
 {
-  Q_ASSERT(hypothesis(h->particle(), method) == 0);
-  m_hypotheses.insertMulti(method, h);
+  Q_ASSERT(hypothesis(method, h->particle()) == 0);
+  m_hypotheses.insert(method, h);
 }
 
-const QMap<Enums::ReconstructionMethod, Hypothesis*>& Particle::hypotheses() const
+const QMultiMap<Enums::ReconstructionMethod, Hypothesis*>& Particle::hypotheses() const
 {
   return m_hypotheses;
 }
@@ -143,12 +143,12 @@ const Hypothesis* Particle::hypothesis() const
 const Hypothesis* Particle::hypothesis(Enums::ReconstructionMethod method) const
 {
   const Hypothesis* hypothesis = 0;
-  QMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator upperBound = m_hypotheses.upperBound(method);
-  for (QMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator it = m_hypotheses.lowerBound(method); it != upperBound; ++it) {
+  QMultiMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator upperBound = m_hypotheses.upperBound(method);
+  for (QMultiMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator it = m_hypotheses.lowerBound(method); it != upperBound; ++it) {
     Q_ASSERT(it.key() == method);
     if (!hypothesis) {
       hypothesis = it.value();
-    } else if (it.value()->logLikelihood() < hypothesis->logLikelihood()) {
+    } else if (it.value()->likelihood() < hypothesis->likelihood()) {
       hypothesis = it.value();
     }
   }
@@ -157,17 +157,53 @@ const Hypothesis* Particle::hypothesis(Enums::ReconstructionMethod method) const
 
 const Hypothesis* Particle::hypothesis(Enums::Particle particle) const
 {
-  return hypothesis(particle, m_method);
+  return hypothesis(m_method, particle);
 }
 
-const Hypothesis* Particle::hypothesis(Enums::Particle particle, Enums::ReconstructionMethod method) const
+const Hypothesis* Particle::hypothesis(Enums::ReconstructionMethod method, Enums::Particle particle) const
 {
-  QMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator upperBound = m_hypotheses.upperBound(method);
-  for (QMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator it = m_hypotheses.lowerBound(method); it != upperBound; ++it) {
+  QMultiMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator upperBound = m_hypotheses.upperBound(method);
+  for (QMultiMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator it = m_hypotheses.lowerBound(method); it != upperBound; ++it) {
     if (it.value()->particle() == particle)
       return it.value();
   }
   return 0;
+}
+
+double Particle::signalLikelihood(Enums::Particle particle) const
+{
+  return signalLikelihood(m_method, particle);
+}
+
+double Particle::signalLikelihood(Enums::ReconstructionMethod method, Enums::Particle particle) const
+{
+  QMultiMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator it = m_hypotheses.constFind(method);
+  while (it != m_hypotheses.end() && it.key() == method) {
+    Hypothesis* h = it.value();
+    if (h->particle() == particle)
+      return h->likelihood();
+    ++it;
+  }
+  Q_ASSERT(false);
+  return 0;
+}
+
+double Particle::backgroundLikelihood(Enums::Particles particles) const
+{
+  return backgroundLikelihood(m_method, particles);
+}
+
+double Particle::backgroundLikelihood(Enums::ReconstructionMethod method, Enums::Particles particles) const
+{
+  double result = 1.;
+  QMultiMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator it = m_hypotheses.constFind(method);
+  while (it != m_hypotheses.end() && it.key() == method) {
+    Hypothesis* h = it.value();
+    if (h->particle() & particles)
+      result*= h->likelihood();
+    ++it;
+  }
+  return result;
 }
 
 double Particle::transverseMomentum() const

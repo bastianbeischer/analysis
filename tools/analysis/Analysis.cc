@@ -151,22 +151,17 @@ void Analysis::start(const AnalysisSetting& analysisSetting)
   setupPlots();
   qDeleteAll(m_processors);
   m_processors.clear();
-  for (int i = 0; i < m_analysisSetting.numberOfThreads; ++i) {
+  for (int i = 0; i < m_analysisSetting.numberOfThreads(); ++i) {
     QVector<EventDestination*> destinations;
     foreach(AnalysisPlot* plot, m_plots)
       destinations.append(plot);
-    AnalysisProcessor* processor = new AnalysisProcessor(destinations, m_analysisSetting.trackType,
-      m_analysisSetting.corrections, m_analysisSetting.particles, m_analysisSetting.likelihoods);
-    processor->setReconstructionMethod(m_analysisSetting.reconstructionMethod);
-    processor->setParticleFilter(m_analysisSetting.particleFilter);
-    processor->setMCFilter(m_analysisSetting.mcParticleFilter);
-    processor->setCutFilter(m_analysisSetting.cutFilter);
+    AnalysisProcessor* processor = new AnalysisProcessor(destinations, m_analysisSetting);
     m_processors.append(processor);
   }
-  if (m_analysisSetting.firstEvent == 0 && m_analysisSetting.lastEvent == 0) {
+  if (m_analysisSetting.firstEvent() == 0 && m_analysisSetting.lastEvent() == 0) {
     m_reader->start(m_processors, 0, numberOfEvents() - 1);
   } else {
-    m_reader->start(m_processors, m_analysisSetting.firstEvent, m_analysisSetting.lastEvent);
+    m_reader->start(m_processors, m_analysisSetting.firstEvent(), m_analysisSetting.lastEvent());
   }
 }
 
@@ -270,7 +265,7 @@ void Analysis::processArguments(QStringList arguments)
     } else if (argument.endsWith(".txt", Qt::CaseInsensitive)){
       m_reader->addFileList(argument);
     } else {
-      qDebug() << argument << "has an unknown file ending.";
+      qWarning() << argument << "has an unknown file ending.";
     }
   }
 }
@@ -294,7 +289,7 @@ void Analysis::setupPlots()
   QDateTime first = m_reader->startTime();
   QDateTime last = m_reader->stopTime();
 
-  if (m_analysisSetting.analysisTopics & Enums::SignalHeightTracker) {
+  if (m_analysisSetting.analysisTopics() & Enums::SignalHeightTracker) {
     addPlot(new SignalHeight2DPlot);
     addPlot(new SignalHeight2DNormalizedPlot);
     addPlot(new SignalHeightCorrelationPlotCollection(SignalHeightCorrelationPlot::Temperature));
@@ -307,7 +302,7 @@ void Analysis::setupPlots()
     }
   }
 
-  if (m_analysisSetting.analysisTopics & Enums::SignalHeightTRD) {
+  if (m_analysisSetting.analysisTopics() & Enums::SignalHeightTRD) {
     addPlot(new ZSquareTRDPlot);
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
@@ -327,7 +322,7 @@ void Analysis::setupPlots()
     addPlot(new TRDSpectrumVsPressurePlot());
   }
 
-  if (m_analysisSetting.analysisTopics & Enums::ClusterShapeTracker) {
+  if (m_analysisSetting.analysisTopics() & Enums::ClusterShapeTracker) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tracker) {
@@ -336,14 +331,14 @@ void Analysis::setupPlots()
       }
     }
   }
-  if (m_analysisSetting.analysisTopics & Enums::ClusterShapeTRD) {
+  if (m_analysisSetting.analysisTopics() & Enums::ClusterShapeTRD) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::trd)
         addPlot(new ClusterLengthPlot(Enums::ClusterShapeTRD, element->id()));
     }
   }
-  if (m_analysisSetting.analysisTopics & Enums::TimeOverThreshold) {
+  if (m_analysisSetting.analysisTopics() & Enums::TimeOverThreshold) {
     addPlot(new TOTPlot);
     addPlot(new TOTLayerCollection(TOTLayerCollection::Projection));
     addPlot(new TOTLayerCollection(TOTLayerCollection::TrdSignalCorrelation));
@@ -353,7 +348,7 @@ void Analysis::setupPlots()
     addPlot(new TOTTemperatureCorrelationPlotCollection);
     addPlot(new TOTTimeCorrelationPlotCollection(first, last));
   }
-  if (m_analysisSetting.analysisTopics & Enums::Tracking) {
+  if (m_analysisSetting.analysisTopics() & Enums::Tracking) {
     addPlot(new BendingPositionPlot);
     addPlot(new BendingAnglePlot);
     for (double cut = .004; cut < .008; cut+=.001)
@@ -373,27 +368,27 @@ void Analysis::setupPlots()
     addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, Enums::Negative));
     addPlot(new AzimuthPositionCorrelation(AzimuthPositionCorrelation::Y, Enums::Positive | Enums::Negative));
   }
-  if (m_analysisSetting.analysisTopics & Enums::Occupancy) {
+  if (m_analysisSetting.analysisTopics() & Enums::Occupancy) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       addPlot(new GeometricOccupancyPlot(layer->z()));
     }
   }
-  if (m_analysisSetting.analysisTopics & Enums::ResidualsTracker) {
+  if (m_analysisSetting.analysisTopics() & Enums::ResidualsTracker) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       if (-240 < layer->z() && layer->z() < 240)
         addPlot(new ResidualPlot(Enums::ResidualsTracker, layer));
     }
   }
-  if (m_analysisSetting.analysisTopics & Enums::ResidualsTRD) {
+  if (m_analysisSetting.analysisTopics() & Enums::ResidualsTRD) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
       if (-520 < layer->z() && layer->z() < -240)
         addPlot(new ResidualPlot(Enums::ResidualsTRD, layer));
     }
   }
-  if (m_analysisSetting.analysisTopics & Enums::MomentumReconstruction) {
+  if (m_analysisSetting.analysisTopics() & Enums::MomentumReconstruction) {
     addPlot(new BetaMomentumCorrelationPlot());
     addPlot(new MomentumSpectrumPlot(Enums::Positive));
     addPlot(new MomentumSpectrumPlot(Enums::Negative));
@@ -401,19 +396,19 @@ void Analysis::setupPlots()
     addPlot(new MomentumSpectrumPlot(Enums::Positive | Enums::Negative, true));
     addPlot(new AlbedosVsMomentumPlot());
     addPlot(new MeasurementTimePlot(first, last));
-    addPlot(new FluxCollection(m_analysisSetting.numberOfThreads));
-    addPlot(new ReconstructionMethodCorrelationPlotCollection(m_analysisSetting.particles));
+    addPlot(new FluxCollection(m_analysisSetting.numberOfThreads()));
+    addPlot(new ReconstructionMethodCorrelationPlotCollection(m_analysisSetting.particles()));
   }
-  if (m_analysisSetting.analysisTopics & Enums::LikelihoodTopic) {
+  if (m_analysisSetting.analysisTopics() & Enums::LikelihoodTopic) {
     Enums::ParticleIterator end = Enums::particleEnd();
     for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it)
-      if (it.key() != Enums::NoParticle && (it.key() & m_analysisSetting.particles))
-        addPlot(new LogLikelihoodPlot(it.key(), m_analysisSetting.particles & ~it.key()));
-    addPlot(new SignalHeightPdfPlotCollection(Hit::tof, m_analysisSetting.particles));
-    addPlot(new SignalHeightPdfPlotCollection(Hit::trd, m_analysisSetting.particles));
-    addPlot(new SignalHeightPdfPlotCollection(Hit::tracker, m_analysisSetting.particles));
+      if (it.key() != Enums::NoParticle && (it.key() & m_analysisSetting.particles()))
+        addPlot(new LogLikelihoodPlot(it.key(), m_analysisSetting.particles() & ~it.key()));
+    addPlot(new SignalHeightPdfPlotCollection(Hit::tof, m_analysisSetting.particles()));
+    addPlot(new SignalHeightPdfPlotCollection(Hit::trd, m_analysisSetting.particles()));
+    addPlot(new SignalHeightPdfPlotCollection(Hit::tracker, m_analysisSetting.particles()));
   }
-  if (m_analysisSetting.analysisTopics & Enums::EfficiencyTOF) {
+  if (m_analysisSetting.analysisTopics() & Enums::EfficiencyTOF) {
     for (elementIt = elementStartIt; elementIt != elementEndIt; ++elementIt) {
       DetectorElement* element = *elementIt;
       if (element->type() == DetectorElement::tof) {
@@ -423,17 +418,17 @@ void Analysis::setupPlots()
       }
     }
   }
-  if (m_analysisSetting.analysisTopics & Enums::ResolutionTOF) {
+  if (m_analysisSetting.analysisTopics() & Enums::ResolutionTOF) {
     addPlot(new TimeResolutionPlotCollection);
   }
-  if (m_analysisSetting.analysisTopics & Enums::CalibrationTOF) {
+  if (m_analysisSetting.analysisTopics() & Enums::CalibrationTOF) {
     addPlot(new ChannelTriggerProbabilityPlot);
     addPlot(new TOFTimeShiftTriggerPlot);
     addPlot(new TOFTimeShiftPlotCollection);
     addPlot(new TOFTimeDifferencePlotCollection);
     addPlot(new TOFBarShiftPlotCollection);
   }
-  if (m_analysisSetting.analysisTopics & Enums::MiscellaneousTracker) {
+  if (m_analysisSetting.analysisTopics() & Enums::MiscellaneousTracker) {
     addPlot(new TotalSignalHeightPlot);
     addPlot(new CutStatisticsPlot);
     addPlot(new TrackerLayerStatisticsPlot);
@@ -448,7 +443,7 @@ void Analysis::setupPlots()
     addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::All));
     addPlot(new EfficiencyCollection());
   }
-  if (m_analysisSetting.analysisTopics & Enums::MiscellaneousTRD) {
+  if (m_analysisSetting.analysisTopics() & Enums::MiscellaneousTRD) {
     addPlot(new TRDClustersOnTrackPlot(Enums::MiscellaneousTRD));
     addPlot(new TRDDistanceWireToTrackPlot(Enums::MiscellaneousTRD));
     addPlot(new TRDDistanceInTube(Enums::MiscellaneousTRD));
@@ -463,7 +458,7 @@ void Analysis::setupPlots()
     addPlot(new TRDTimeCorrectionPlot(first, last));
     addPlot(new TRDLikelihoodFunctionsPlot());
   }
-  if (m_analysisSetting.analysisTopics & Enums::MiscellaneousTOF) {
+  if (m_analysisSetting.analysisTopics() & Enums::MiscellaneousTOF) {
     addPlot(new BetaPlot);
     addPlot(new TimeReconstructionPlot(TimeReconstructionPlot::Mean));
     addPlot(new TimeReconstructionPlot(TimeReconstructionPlot::Median));
@@ -472,10 +467,10 @@ void Analysis::setupPlots()
       if (element->type() == DetectorElement::tof)
         addPlot(new TOFPositionCorrelationPlot(element->id()));
     }
-    addPlot(new EventTimeDifferencePlot(m_analysisSetting.numberOfThreads));
-    addPlot(new MeasurementTimeDistributionPlot(m_analysisSetting.numberOfThreads));
+    addPlot(new EventTimeDifferencePlot(m_analysisSetting.numberOfThreads()));
+    addPlot(new MeasurementTimeDistributionPlot(m_analysisSetting.numberOfThreads()));
   }
-  if (m_analysisSetting.analysisTopics & Enums::SlowControl) {
+  if (m_analysisSetting.analysisTopics() & Enums::SlowControl) {
     QVector<SensorTypes::Type> temperatureSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::temperatureSensors());
     foreach(SensorTypes::Type sensor, temperatureSensors)
       addPlot(new TemperatureTimePlot(sensor, first, last));
@@ -484,10 +479,10 @@ void Analysis::setupPlots()
     addPlot(new TriggerRateTimePlot(first, last));
     addPlot(new HeightTimePlot(first, last));
   }
-  if (m_analysisSetting.analysisTopics & Enums::MonteCarlo) {
+  if (m_analysisSetting.analysisTopics() & Enums::MonteCarlo) {
     addPlot(new MCTotalEnergyDepositionTRDvsTrackerPlot());
   }
-  if (m_analysisSetting.analysisTopics & Enums::MonteCarloTRD) {
+  if (m_analysisSetting.analysisTopics() & Enums::MonteCarloTRD) {
     addPlot(new MCTRDSpectrumPlot());
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
       Layer* layer = *layerIt;
@@ -497,7 +492,7 @@ void Analysis::setupPlots()
     addPlot(new MCTRDCalibrationPlot());
     addPlot(new TRDLikelihoodPlot(Enums::MonteCarloTRD));
   }
-  if (m_analysisSetting.analysisTopics & Enums::MonteCarloTracker) {
+  if (m_analysisSetting.analysisTopics() & Enums::MonteCarloTracker) {
     addPlot(new MCRigidityResolutionPlot(Enums::Positron));
     addPlot(new MCRigidityResolutionPlot(Enums::Electron));
     addPlot(new MCRigidityResolutionPlot(Enums::Proton));
@@ -512,7 +507,7 @@ void Analysis::setupPlots()
     addPlot(new AzimuthMigrationHistogram());
     addPlot(new RigidityMigrationHistogram());
   }
-  if (m_analysisSetting.analysisTopics & Enums::Testbeam) {
+  if (m_analysisSetting.analysisTopics() & Enums::Testbeam) {
     addPlot(new TOFProbabilityDensityFunction);
     addPlot(new SettingTimePlot(SettingTimePlot::MagnetInstalled, first, last));
     addPlot(new SettingTimePlot(SettingTimePlot::Momentum, first, last));

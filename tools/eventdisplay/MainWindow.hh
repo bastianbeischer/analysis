@@ -23,6 +23,7 @@ private slots:
   void saveButtonClicked();
 private:
   Ui_MainWindow m_ui;
+  QString m_settingFile;
   QVector<int> m_eventList;
 };
 

@@ -26,3 +26,4 @@ out
 *Dict.h
 *Dict.cxx
 callgrind.*
+*.conf

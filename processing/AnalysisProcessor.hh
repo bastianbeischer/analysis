@@ -9,6 +9,7 @@
 #include "MCFilter.hh"
 #include "CutFilter.hh"
 #include "Cut.hh"
+#include "AnalysisProcessorSetting.hh"
 
 #include <QMap>
 #include <QVector>
@@ -21,9 +22,10 @@ class Reconstruction;
 class AnalysisProcessor : public EventProcessor {
 public:
   AnalysisProcessor();
-  AnalysisProcessor(QVector<EventDestination*>, Enums::TrackType, Enums::Corrections, Enums::Particles, Enums::LikelihoodVariables);
+  AnalysisProcessor(QVector<EventDestination*>, const AnalysisProcessorSetting&);
   ~AnalysisProcessor();
 
+  void setAnalysisProcessorSetting(const AnalysisProcessorSetting&);
   void setTrackType(Enums::TrackType);
   void setReconstructionMethod(Enums::ReconstructionMethod);
   void setCorrectionFlags(Enums::Corrections);

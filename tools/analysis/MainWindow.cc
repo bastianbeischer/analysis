@@ -405,87 +405,91 @@ void MainWindow::guiToAnalysisSetting()
 {
   m_analysisSetting.clear();
 
-  m_analysisSetting.firstEvent = m_ui.firstEventSpinBox->value();
-  m_analysisSetting.lastEvent = m_ui.lastEventSpinBox->value();
-  m_analysisSetting.numberOfThreads = m_ui.numberOfThreadsSpinBox->value();
+  m_analysisSetting.setFirstEvent(m_ui.firstEventSpinBox->value());
+  m_analysisSetting.setLastEvent(m_ui.lastEventSpinBox->value());
+  m_analysisSetting.setNumberOfThreads(m_ui.numberOfThreadsSpinBox->value());
 
-  m_analysisSetting.analysisTopics = Enums::NoTopic;
+  Enums::AnalysisTopics topics = Enums::NoTopic;
   foreach (TopicSelector* selector, m_topicSelectors)
     if (selector->checked())
-      m_analysisSetting.analysisTopics|= selector->topic();
+      topics|= selector->topic();
+  m_analysisSetting.setAnalysisTopics(topics);
 
-  m_analysisSetting.trackType = Enums::trackType(m_ui.trackComboBox->currentText());
+  m_analysisSetting.setTrackType(Enums::trackType(m_ui.trackComboBox->currentText()));
 
-  m_analysisSetting.reconstructionMethod = Enums::reconstructionMethod(m_ui.reconstructionMethodComboBox->currentText());
+  m_analysisSetting.setReconstructionMethod(Enums::reconstructionMethod(m_ui.reconstructionMethodComboBox->currentText()));
 
-  m_analysisSetting.corrections = Enums::NoCorrection;
+  Enums::Corrections corrections = Enums::NoCorrection;
   foreach (QCheckBox* checkBox, m_correctionCheckBoxes)
     if (checkBox->isChecked())
-      m_analysisSetting.corrections|= Enums::correction(checkBox->text());
+      corrections|= Enums::correction(checkBox->text());
+  m_analysisSetting.setCorrections(corrections);
 
-  m_analysisSetting.particles = Enums::NoParticle;
+  Enums::Particles particles = Enums::NoParticle;
   foreach (QCheckBox* checkBox, m_particleCheckBoxes)
     if (checkBox->isChecked())
-      m_analysisSetting.particles|= Enums::particle(checkBox->text());
+      particles|= Enums::particle(checkBox->text());
+  m_analysisSetting.setParticles(particles);
 
-  m_analysisSetting.likelihoods = Enums::UndefinedLikelihood;
+  Enums::LikelihoodVariables likelihoodVariables = Enums::UndefinedLikelihood;
   foreach (QCheckBox* checkBox, m_likelihoodCheckBoxes)
     if (checkBox->isChecked()) {
       QString text = checkBox->text();
       text.replace("\n", " ");
-      m_analysisSetting.likelihoods|= Enums::likelihoodVariable(text);
+      likelihoodVariables|= Enums::likelihoodVariable(text);
     }
+  m_analysisSetting.setLikelihoodVariables(likelihoodVariables);
 
-  m_analysisSetting.particleFilter = Enums::NoParticle;
+  Enums::Particles particleFilter = Enums::NoParticle;
   foreach (QCheckBox* checkBox, m_particleFilterCheckBoxes)
     if (checkBox->isChecked())
-      m_analysisSetting.particleFilter|= Enums::particle(checkBox->text());
+      particleFilter|= Enums::particle(checkBox->text());
+  m_analysisSetting.setParticleFilter(particleFilter);
 
-  m_analysisSetting.mcParticleFilter = Enums::NoParticle;
+  Enums::Particles mcParticleFilter = Enums::NoParticle;
   foreach (QCheckBox* checkBox, m_mcParticleFilterCheckBoxes)
     if (checkBox->isChecked())
-      m_analysisSetting.mcParticleFilter|= Enums::particle(checkBox->text());
+      mcParticleFilter|= Enums::particle(checkBox->text());
+  m_analysisSetting.setMcParticleFilter(mcParticleFilter);
 
   foreach (CutSelector* selector, m_cutSelectors)
     if (selector->checked())
-      m_analysisSetting.cutFilter.addCut(selector->cut());
+      m_analysisSetting.cutFilter().addCut(selector->cut());
 }
 
 void MainWindow::analysisSettingToGui()
 {
-  if (m_analysisSetting.numberOfThreads < 0)
+  if (m_analysisSetting.numberOfThreads() < 0)
     return;
-  m_ui.firstEventSpinBox->setValue(m_analysisSetting.firstEvent);
-  m_ui.lastEventSpinBox->setValue(m_analysisSetting.lastEvent);
-  m_ui.numberOfThreadsSpinBox->setValue(m_analysisSetting.numberOfThreads);
+  m_ui.firstEventSpinBox->setValue(m_analysisSetting.firstEvent());
+  m_ui.lastEventSpinBox->setValue(m_analysisSetting.lastEvent());
+  m_ui.numberOfThreadsSpinBox->setValue(m_analysisSetting.numberOfThreads());
 
   foreach (TopicSelector* selector, m_topicSelectors)
-    selector->setChecked(m_analysisSetting.analysisTopics & selector->topic());
+    selector->setChecked(m_analysisSetting.analysisTopics() & selector->topic());
 
-  m_ui.trackComboBox->setCurrentIndex(m_ui.trackComboBox->findText(Enums::label(m_analysisSetting.trackType)));
+  m_ui.trackComboBox->setCurrentIndex(m_ui.trackComboBox->findText(Enums::label(m_analysisSetting.trackType())));
 
-  m_ui.reconstructionMethodComboBox->setCurrentIndex(m_ui.reconstructionMethodComboBox->findText(Enums::label(m_analysisSetting.reconstructionMethod)));
+  m_ui.reconstructionMethodComboBox->setCurrentIndex(m_ui.reconstructionMethodComboBox->findText(Enums::label(m_analysisSetting.reconstructionMethod())));
 
   foreach (QCheckBox* checkBox, m_correctionCheckBoxes)
-    if (m_analysisSetting.corrections & Enums::correction(checkBox->text())) {
+    if (m_analysisSetting.corrections() & Enums::correction(checkBox->text())) {
       checkBox->setCheckState(Qt::Checked);
     } else {
       checkBox->setCheckState(Qt::Unchecked);
     }
 
   foreach (QCheckBox* checkBox, m_particleCheckBoxes)
-    if (m_analysisSetting.particles & Enums::particle(checkBox->text())) {
+    if (m_analysisSetting.particles() & Enums::particle(checkBox->text())) {
       checkBox->setCheckState(Qt::Checked);
     } else {
       checkBox->setCheckState(Qt::Unchecked);
     }
 
-  Enums::LikelihoodVariables likelihoods;
-
   foreach (QCheckBox* checkBox, m_likelihoodCheckBoxes) {
     QString lhLabel = checkBox->text();
     lhLabel.replace("\n", " ");
-    if (m_analysisSetting.likelihoods & Enums::likelihoodVariable(lhLabel)) {
+    if (m_analysisSetting.likelihoods() & Enums::likelihoodVariable(lhLabel)) {
       checkBox->setCheckState(Qt::Checked);
     } else {
       checkBox->setCheckState(Qt::Unchecked);
@@ -493,21 +497,21 @@ void MainWindow::analysisSettingToGui()
   }
 
   foreach (QCheckBox* checkBox, m_particleFilterCheckBoxes)
-    if (m_analysisSetting.particleFilter & Enums::particle(checkBox->text())) {
+    if (m_analysisSetting.particleFilter() & Enums::particle(checkBox->text())) {
       checkBox->setCheckState(Qt::Checked);
     } else {
       checkBox->setCheckState(Qt::Unchecked);
     }
 
   foreach (QCheckBox* checkBox, m_mcParticleFilterCheckBoxes)
-    if (m_analysisSetting.mcParticleFilter & Enums::particle(checkBox->text())) {
+    if (m_analysisSetting.mcParticleFilter() & Enums::particle(checkBox->text())) {
       checkBox->setCheckState(Qt::Checked);
     } else {
       checkBox->setCheckState(Qt::Unchecked);
     }
 
   foreach (CutSelector* selector, m_cutSelectors) {
-    foreach (Cut cut, m_analysisSetting.cutFilter.cuts()) {
+    foreach (Cut cut, m_analysisSetting.cutFilter().cuts()) {
       if (selector->cut().type() == cut.type()) {
         selector->setChecked(true);
         if (cut.minIsSet()) selector->setMinimum(cut.min());

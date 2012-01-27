@@ -7,6 +7,7 @@
 #include "TimeOfFlight.hh"
 #include "TRDReconstruction.hh"
 #include "Hypothesis.hh"
+#include "SimpleEvent.hh"
 
 #include <TH2.h>
 
