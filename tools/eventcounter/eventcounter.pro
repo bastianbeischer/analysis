@@ -12,7 +12,8 @@ INCLUDEPATH += \
 LIBS += \
   -L$$TOPLEVEL/lib \
   -lSimpleEvent \
-  -lsetup
+  -lsetup \
+  -lglobal
 
 SOURCES += \
   main.cc
