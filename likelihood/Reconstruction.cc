@@ -169,7 +169,8 @@ double Reconstruction::eval(const AnalyzedEvent* event, const Hypothesis& hypoth
   QVector<Likelihood*>::ConstIterator end = m_likelihoods.end();
   for (QVector<Likelihood*>::ConstIterator it = m_likelihoods.begin(); it != end; ++it)
     L*= (*it)->eval(event, hypothesis, goodInterpolation);
-  return L;//better?: pow(L, 1./m_likelihoods.count());
+  //return pow(L, 1./m_likelihoods.count());
+  return L;
 }
 
 double Reconstruction::logL(const AnalyzedEvent* event, const Hypothesis& h, bool* goodInterpolation) const

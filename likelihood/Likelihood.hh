@@ -30,6 +30,7 @@ public:
   int numberOfParameters() const;
   double measuredValueMin() const;
   double measuredValueMax() const;
+  const QVector<double> rigidityNodes(Enums::Particle) const;
   bool parametrizationAvailable() const;
   double parametrizationStep() const;
   double parametrizationMin() const;
@@ -46,6 +47,7 @@ public:
   virtual double eval(double measuredValue, const Hypothesis&, const PDFParameters&) const = 0;
   virtual const PDFParameters& interpolation(const Hypothesis&, bool* goodInterpolation = 0) const;
 protected:
+  typedef QVector<double> DoubleVector;
   typedef QMap<Enums::Particle, PDFParametersVector> PDFParametersVectorMap;
   typedef QPair<Enums::Particle, const PDFParametersVector*> Buffer;
 
@@ -62,6 +64,7 @@ protected:
   int m_numberOfParameters;
   double m_measuredValueMin;
   double m_measuredValueMax;
+  QMap<Enums::Particle, DoubleVector> m_rigidityNodes;
   const double m_parametrizationStep;
   double m_parametrizationMin;
   double m_parametrizationMax;

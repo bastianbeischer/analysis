@@ -148,7 +148,7 @@ const Hypothesis* Particle::hypothesis(Enums::ReconstructionMethod method) const
     Q_ASSERT(it.key() == method);
     if (!hypothesis) {
       hypothesis = it.value();
-    } else if (it.value()->likelihood() < hypothesis->likelihood()) {
+    } else if (hypothesis->likelihood() < it.value()->likelihood()) {
       hypothesis = it.value();
     }
   }

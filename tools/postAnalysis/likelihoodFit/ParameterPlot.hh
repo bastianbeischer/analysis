@@ -5,6 +5,9 @@
 #include "GraphPlot.hh"
 #include "Enums.hh"
 
+#include <QVector>
+
+class TLine;
 class Likelihood;
 
 class ParameterPlot : public PostAnalysisPlot, public GraphPlot {
@@ -13,6 +16,7 @@ public:
   ~ParameterPlot();
   void setup();
   void addIntegral();
+  virtual void draw(TCanvas*);
 private:
   Likelihood* m_likelihood;
   Enums::Particle m_particle;
@@ -20,6 +24,7 @@ private:
   double m_min;
   double m_max;
   double m_step;
+  QVector<TLine*> m_lines;
 };
 
 #endif

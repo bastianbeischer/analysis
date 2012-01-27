@@ -36,6 +36,7 @@ Likelihood::Likelihood(Enums::Particles particles)
   , m_numberOfParameters(0)
   , m_measuredValueMin(+1.)
   , m_measuredValueMax(-1.)
+  , m_rigidityNodes()
   , m_parametrizationStep(0.005) //GV
   , m_parametrizationMin(+1)
   , m_parametrizationMax(-1)
@@ -159,6 +160,14 @@ QString Likelihood::particlePrefix(Enums::Particle) const
   return QString();
 }
 
+const QVector<double> Likelihood::rigidityNodes(Enums::Particle particle) const
+{
+  QMap<Enums::Particle, DoubleVector>::ConstIterator it = m_rigidityNodes.find(particle);
+  if (it != m_rigidityNodes.end())
+    return *it;
+  return QVector<double>();
+}
+
 bool Likelihood::parametrizationAvailable() const
 {
   return m_parametrizationMin < m_parametrizationMax;
@@ -187,7 +196,6 @@ bool Likelihood::parametersExist(const Hypothesis& h)
   settings.beginGroup(Enums::label(m_likelihoodVariableType));
   settings.beginGroup(Enums::label(h.particle()));
   QString prefix = particlePrefix(h.particle());
-  typedef QVector<double> DoubleVector;
   DoubleVector rigidities = Helpers::variantToDoubleVector(settings.value(prefix + "absoluteRigidities"));
   foreach (double rigidity, rigidities)
     if (rigiditiesApproximatelyEqual(h.absoluteRigidity(), rigidity))
@@ -299,6 +307,7 @@ void Likelihood::loadParameters()
   QString fileName = Helpers::analysisPath() + "/conf/Likelihood.conf";
   Q_ASSERT(QFile::exists(fileName));
   QSettings settings(fileName, QSettings::IniFormat);
+  m_rigidityNodes.clear();
   m_parametersVectors.clear();
   m_parametrizationMin = +1;
   m_parametrizationMax = -1;
@@ -317,6 +326,7 @@ void Likelihood::loadParameters()
     settings.beginGroup(particleIt.value());
     QString prefix = particlePrefix(particleIt.key());
     const QVector<double>& rigidities = Helpers::variantToDoubleVector(settings.value(prefix + "absoluteRigidities"));
+    m_rigidityNodes.insert(particleIt.key(), rigidities);
     Q_ASSERT(Helpers::sorted(rigidities));
     if (rigidities.size()) {
       m_parametrizationMin = rigidities.first();
