@@ -96,6 +96,14 @@ void H1DPlot::removeHistogram(int i)
   m_histograms[i] = 0;
   m_histograms.remove(i);
   m_drawOptions.remove(i);
+  if (m_histograms.count()) {
+    m_xAxis = m_histograms.first()->GetXaxis();
+    m_yAxis = m_histograms.first()->GetYaxis();
+  } else {
+    m_xAxis = 0;
+    m_yAxis = 0;
+    m_drawn = false;
+  }
 }
 
 const QVector<RootPlot::DrawOption>& H1DPlot::drawOptions()

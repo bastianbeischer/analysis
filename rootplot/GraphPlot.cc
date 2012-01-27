@@ -129,6 +129,14 @@ void GraphPlot::removeGraph(int i)
   m_graphs[i] = 0;
   m_graphs.remove(i);
   m_drawOptions.remove(i);
+  if (m_graphs.count()) {
+    m_xAxis = m_graphs.first()->GetXaxis();
+    m_yAxis = m_graphs.first()->GetYaxis();
+  } else {
+    m_xAxis = 0;
+    m_yAxis = 0;
+    m_drawn = false;
+  }
 }
 
 TGraph* GraphPlot::graph(int i) const
