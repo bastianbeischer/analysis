@@ -33,14 +33,19 @@ void MainWindow::setupAnalysis()
     QVector<Enums::Particle> particles = Enums::particleVector(particlesLabel);
     PostAnalysisCanvas* canvas = addCanvas(&file, canvasName);
     TH2D* h = canvas->histograms2D().at(0);
+    bool singleParticle = particles.count() == 1;
     foreach (Enums::Particle particle, particles) {
       QMap<Enums::Particle, Likelihood*>::Iterator lhIt = m_likelihoods.find(particle);
       if (lhIt == m_likelihoods.end())
         lhIt = m_likelihoods.insert(particle, new SignalHeightTrackerLikelihood(particle));
       for (int bin = 1; bin <= h->GetXaxis()->GetNbins(); ++bin) {
-        SignalHeightTrackerFitPlot* plot = new SignalHeightTrackerFitPlot(lhIt.value(), h, bin, particles.count() == 1);
+        SignalHeightTrackerFitPlot* plot = new SignalHeightTrackerFitPlot(lhIt.value(), h, bin, singleParticle);
         connect(plot, SIGNAL(configFileChanged()), this, SLOT(configFileChanged()));
-        m_fitPlots.append(plot);
+        if (singleParticle) {
+          m_fitPlots.append(plot);
+        } else {
+          m_allParticleFitPlots.append(plot);
+        }
       }
     }
   }

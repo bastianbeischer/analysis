@@ -37,6 +37,7 @@ protected:
   bool passes(const LikelihoodPDFFitPlot*);
   Enums::Particles m_particles;
   QVector<LikelihoodPDFFitPlot*> m_fitPlots;
+  QVector<LikelihoodPDFFitPlot*> m_allParticleFitPlots;
   QVector<ParameterPlot*> m_parameterPlots;
   QVector<PostAnalysisPlot*> m_otherPlots;
   QComboBox* m_comboBox;

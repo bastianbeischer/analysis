@@ -18,6 +18,7 @@ LikelihoodFitWindow::LikelihoodFitWindow(QWidget* parent)
   : PostAnalysisWindow(parent)
   , m_particles(Setup::instance()->proposedParticles())
   , m_fitPlots()
+  , m_allParticleFitPlots()
   , m_parameterPlots()
   , m_otherPlots()
   , m_comboBox(new QComboBox)
@@ -64,6 +65,8 @@ void LikelihoodFitWindow::configFileChanged()
 {
   foreach (LikelihoodPDFFitPlot* plot, m_fitPlots)
     plot->update();
+  foreach (LikelihoodPDFFitPlot* plot, m_allParticleFitPlots)
+    plot->update();
   foreach (ParameterPlot* plot, m_parameterPlots)
     plot->setup();
 }
@@ -97,6 +100,8 @@ void LikelihoodFitWindow::plotSelectionChanged()
     addPlot(plot);
   foreach (ParameterPlot* plot, m_parameterPlots)
     addPlot(plot);
+  foreach (LikelihoodPDFFitPlot* plot, m_allParticleFitPlots)
+    addPlot(plot);
   foreach (LikelihoodPDFFitPlot* plot, m_fitPlots)
     if (passes(plot))
       addPlot(plot);
@@ -110,6 +115,8 @@ void LikelihoodFitWindow::clear()
   m_otherPlots.clear();
   qDeleteAll(m_fitPlots);
   m_fitPlots.clear();
+  qDeleteAll(m_allParticleFitPlots);
+  m_allParticleFitPlots.clear();
   qDeleteAll(m_likelihoods);
   m_likelihoods.clear();
   m_results.clear();
