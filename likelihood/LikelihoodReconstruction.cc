@@ -98,7 +98,7 @@ void LikelihoodReconstruction::identify(AnalyzedEvent* event)
       if (m_indexOfGlobalMinimum > 0 && m_lhMinimizer->FValMinimum() < m_minima[m_indexOfGlobalMinimum].y())
         m_indexOfGlobalMinimum = it;
       Hypothesis* h = new Hypothesis(*particleIt, m_lhMinimizer->XMinimum());
-      h->setLikelihood(m_lhMinimizer->FValMinimum());
+      h->setLikelihood(m_likelihoods.count(), m_lhMinimizer->FValMinimum());
       event->particle()->addHypothesis(m_method, h);
     } else {
       pointIt->setX(0);

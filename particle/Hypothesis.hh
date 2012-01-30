@@ -10,7 +10,8 @@ public:
   ~Hypothesis();
 
   double likelihood() const;
-  void setLikelihood(double);
+  int numberOfLikelihoods() const;
+  void setLikelihood(int, double);
 
   Enums::Particle particle() const;
   int charge() const;
@@ -23,6 +24,7 @@ public:
 private:
   ParticleProperties m_properties;
   double m_curvature;
+  int m_nLikelihoods;
   double m_likelihood;
 };
 

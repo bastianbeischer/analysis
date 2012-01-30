@@ -9,6 +9,7 @@
 Hypothesis::Hypothesis(Enums::Particle particle, double curvature)
   : m_properties(particle)
   , m_curvature(curvature)
+  , m_nLikelihoods(-1)
   , m_likelihood(-1)
 {
 }
@@ -27,8 +28,14 @@ double Hypothesis::likelihood() const
   return m_likelihood;
 }
 
-void Hypothesis::setLikelihood(double lh)
+int Hypothesis::numberOfLikelihoods() const
 {
+  return m_nLikelihoods;
+}
+
+void Hypothesis::setLikelihood(int n, double lh)
+{
+  m_nLikelihoods = n;
   m_likelihood = lh;
 }
 

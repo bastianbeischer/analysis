@@ -181,7 +181,7 @@ double Particle::signalLikelihood(Enums::ReconstructionMethod method, Enums::Par
   while (it != m_hypotheses.end() && it.key() == method) {
     Hypothesis* h = it.value();
     if (h->particle() == particle)
-      return h->likelihood();
+      return pow(h->likelihood(), 1./h->numberOfLikelihoods());
     ++it;
   }
   Q_ASSERT(false);
@@ -196,14 +196,17 @@ double Particle::backgroundLikelihood(Enums::Particles particles) const
 double Particle::backgroundLikelihood(Enums::ReconstructionMethod method, Enums::Particles particles) const
 {
   double result = 1.;
+  int n = 0;
   QMultiMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator it = m_hypotheses.constFind(method);
   while (it != m_hypotheses.end() && it.key() == method) {
     Hypothesis* h = it.value();
-    if (h->particle() & particles)
+    if (h->particle() & particles) {
       result*= h->likelihood();
+      n+= h->numberOfLikelihoods();
+    }
     ++it;
   }
-  return result;
+  return pow(result, 1./n);
 }
 
 double Particle::transverseMomentum() const

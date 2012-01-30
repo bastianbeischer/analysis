@@ -48,7 +48,7 @@ void TOFReconstruction::identify(AnalyzedEvent* event)
     double value = eval(event, *h, &goodInterpolation);
     if (value < m_minima[m_indexOfGlobalMinimum].y())
       m_indexOfGlobalMinimum = it;
-    h->setLikelihood(value);
+    h->setLikelihood(m_likelihoods.count(), value);
     event->particle()->addHypothesis(m_method, h);
     Q_ASSERT(pointIt != m_minima.end());
     *pointIt = QPointF(curvature, value);
