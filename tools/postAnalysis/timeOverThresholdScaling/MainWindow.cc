@@ -43,7 +43,6 @@ void MainWindow::setupAnalysis()
     addPlot(new ResiduePlot(canvas, QString("time. dep. residual 0x%1").arg(ch, 0, 16)));
   }
   canvas = addCanvas(&file, "time over threshold canvas");
-  for (int i = 0; i < 64; ++i)
-    addPlot(new TimeOverThresholdProjection(canvas, i));
+  addPlot(new TimeOverThresholdProjection(canvas));
   file.Close();
 }

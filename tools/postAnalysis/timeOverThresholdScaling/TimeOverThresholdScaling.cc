@@ -137,7 +137,7 @@ void TimeOverThresholdScaling::fit(unsigned int tofId, TH2D* histogram)
   TimeOverThresholdScaling::timeOverThresholdScalingFits.insert(tofId, f);
 }
 
-void TimeOverThresholdScaling::save(unsigned int tofId) 
+void TimeOverThresholdScaling::save(unsigned int tofId)
 {
   QList<QVariant> param;
   const TF1& f = timeOverThresholdScalingFits[tofId];
