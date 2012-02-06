@@ -17,7 +17,7 @@ TimeOverThresholdLikelihood::TimeOverThresholdLikelihood(Enums::Particles partic
   m_measuredValueMax = 60.;
   m_numberOfParameters = 2;
   m_defaultParameters = PDFParameters() << 30.0 << 1.0;
-  m_defaultParametersMap.insert(Enums::Helium, PDFParameters() << 40.0 << 1.0);
+  m_defaultParametersMap.insert(Enums::Helium, PDFParameters() << 40.0 << 5.0);
   m_title = Enums::label(m_likelihoodVariableType);
   loadParameters();
 }
@@ -35,10 +35,14 @@ double TimeOverThresholdLikelihood::eval(const AnalyzedEvent* event, const Hypot
 double TimeOverThresholdLikelihood::eval(double timeOverThreshold, const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
   const PDFParameters& parameters = interpolation(hypothesis, goodInterpolation);
-  return TMath::Gaus(timeOverThreshold, parameters[0], parameters[1]);
+  return eval(timeOverThreshold, hypothesis, parameters);
 }
 
-double TimeOverThresholdLikelihood::eval(double timeOverThreshold, const Hypothesis&, const PDFParameters& parameters) const
+double TimeOverThresholdLikelihood::eval(double timeOverThreshold, const Hypothesis&, const PDFParameters& p) const
 {
-  return TMath::Gaus(timeOverThreshold, parameters[0], parameters[1], true);
+  return TMath::Gaus(timeOverThreshold, p[0], p[1], true);
+  double g1 = TMath::Student((timeOverThreshold - p[0]) / p[1], 15.) / p[1];
+  double g2 = TMath::Gaus(timeOverThreshold, p[0], 10., true);
+  double fraction = .90;
+  return fraction * g1 + (1 - fraction) * g2;
 }

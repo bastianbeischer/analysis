@@ -15,7 +15,6 @@ TimeOverThresholdFitPlot::TimeOverThresholdFitPlot(Likelihood* lh, const TH2D* h
 
   m_parameterWidgets[0]->setRange(qMin(lh->measuredValueMin(), parameters[0]), qMax(lh->measuredValueMax(), parameters[0]));
   m_parameterWidgets[0]->setValue(parameters[0]);
-
   m_parameterWidgets[1]->setRange(qMin(0., parameters[1]), qMax(10., parameters[1]));
   m_parameterWidgets[1]->setValue(parameters[1]);
 
@@ -33,9 +32,10 @@ TimeOverThresholdFitPlot::TimeOverThresholdFitPlot(Likelihood* lh, const TH2D* h
 
 PDFParameters TimeOverThresholdFitPlot::startParameters() const
 {
+  double rms = histogram()->GetRMS();
   PDFParameters parameters(m_likelihood->numberOfParameters());
   parameters[0] = histogram()->GetMean();
-  parameters[1] = histogram()->GetRMS();
+  parameters[1] = 0.6 * rms;
   return parameters;
 }
 

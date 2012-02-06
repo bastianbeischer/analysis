@@ -203,4 +203,12 @@ namespace Helpers
         return false;
     return true;
   }
+
+  QString greekifyLetters(QString string)
+  {
+    string.replace("alpha", "#alpha");
+    string.replace("mu", "#mu");
+    string.replace("pi", "#pi");
+    return string;
+  }
 }

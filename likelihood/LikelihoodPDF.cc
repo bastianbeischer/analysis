@@ -23,6 +23,11 @@ LikelihoodPDF::~LikelihoodPDF()
 {
 }
 
+Enums::LikelihoodVariable LikelihoodPDF::likelihoodVariableType() const
+{
+  return m_likelihood->likelihoodVariableType();
+}
+
 void LikelihoodPDF::setScaleFactor(double factor)
 {
   SetParameter(m_numberOfParameters, factor);

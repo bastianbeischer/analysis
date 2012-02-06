@@ -1,6 +1,7 @@
 #include "Enums.hh"
 
 #include <QStringList>
+#include <QDebug>
 
 template <class Key, class T> class InitializableMap : public QMap<Key, T> {
 public:
@@ -258,6 +259,20 @@ Enums::LikelihoodVariables Enums::likelihoodVariables(const QString& value)
   foreach (QString string, value.split(" | "))
     variables|= likelihoodVariable(string);
   return variables;
+}
+const QVector<Enums::LikelihoodVariable> Enums::likelihoodVariableVector(Enums::LikelihoodVariables likelihoods)
+{
+  QVector<Enums::LikelihoodVariable> lhVector;
+  for (Enums::LikelihoodVariableIterator it = Enums::likelihoodVariableBegin(); it != Enums::likelihoodVariableEnd(); ++it) {
+    if (it.key() != Enums::UndefinedLikelihood && (it.key() & likelihoods)) {
+      lhVector.append(it.key());
+    }
+  }
+  return lhVector;
+}
+const QVector<Enums::LikelihoodVariable> Enums::likelihoodVariableVector(const QString value)
+{
+  return Enums::likelihoodVariableVector(Enums::likelihoodVariables(value));
 }
 
 // KineticVariable

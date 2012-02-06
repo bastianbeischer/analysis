@@ -21,6 +21,8 @@ public:
   double absoluteRigidity() const;
   double beta() const;
   double inverseBeta() const;
+
+  bool operator<(const Hypothesis&) const;
 private:
   ParticleProperties m_properties;
   double m_curvature;

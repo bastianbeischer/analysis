@@ -16,6 +16,7 @@ SUBDIRS  = \
   likelihoodFit \
   fluxAnalysis \
   signalHeightScaling \
+  likelihoodAnalysis \
   browser
 
 timeShift.depends = postAnalysis
@@ -32,4 +33,5 @@ angularDistribution.depends = postAnalysis
 likelihoodFit.depends = postAnalysis
 fluxAnalysis.depends = postAnalysis
 signalHeightScaling.depends = postAnalysis
+likelihoodAnalysis.depends = postAnalysis
 browser.depends = postAnalysis

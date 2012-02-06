@@ -80,6 +80,15 @@ double Hypothesis::inverseBeta() const
   return sqrt(1. + m * m * m_curvature * m_curvature);
 }
 
+bool Hypothesis::operator<(const Hypothesis& other) const
+{
+  if (m_properties.type() < other.m_properties.type())
+    return true;
+  if (m_properties.type() == other.m_properties.type() && m_curvature < other.m_curvature)
+    return true;
+  return false;
+}
+
 QDebug operator<<(QDebug debug, const Hypothesis& h)
 {
   debug << QString("%1 (L %2) K=%3/GV R=%4GV beta=%5").arg(Enums::label(h.particle()))

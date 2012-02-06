@@ -15,10 +15,8 @@ SignalHeightTrackerFitPlot::SignalHeightTrackerFitPlot(Likelihood* lh, const TH2
 
   m_parameterWidgets[0]->setRange(qMin(lh->measuredValueMin(), parameters[0]), qMax(lh->measuredValueMax(), parameters[0]));
   m_parameterWidgets[0]->setValue(parameters[0]);
-
   m_parameterWidgets[1]->setRange(qMin(0., parameters[1]), qMax(500., parameters[1]));
   m_parameterWidgets[1]->setValue(parameters[1]);
-
   m_previewFunction->setParameters(parameters);
 
   double max = qMax(1., histogram()->GetMaximum());

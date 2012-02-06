@@ -37,7 +37,7 @@ SignalHeightPdfPlotCollection::SignalHeightPdfPlotCollection(Hit::ModuleType typ
   if (type == Hit::tracker) {
     typeString = "tracker";
     lh = new SignalHeightTrackerLikelihood();
-    yBins = Helpers::linearBinning(100, lh->measuredValueMin(), lh->measuredValueMax());
+    yBins = Helpers::linearBinning(50, lh->measuredValueMin(), lh->measuredValueMax());
   } else if (type == Hit::tof) {
     typeString = "tof";
     lh = new TimeOverThresholdLikelihood();

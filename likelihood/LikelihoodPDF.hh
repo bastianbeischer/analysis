@@ -13,6 +13,7 @@ class LikelihoodPDF : public TF1 {
 public:
   LikelihoodPDF(const Likelihood*, const KineticVariable&);
   ~LikelihoodPDF();
+  Enums::LikelihoodVariable likelihoodVariableType() const;
   void setScaleFactor(double);
   double scaleFactor() const;
   void setParameters(const PDFParameters&);

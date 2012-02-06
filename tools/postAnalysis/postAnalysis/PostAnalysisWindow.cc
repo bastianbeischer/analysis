@@ -161,6 +161,7 @@ void PostAnalysisWindow::selectPlot(QListWidgetItem* item)
     }
   }
   plotOptionComboBoxCurrentIndexChanged(m_ui->plotOptionComboBox->currentText());
+
   m_ui->titleLabel->setText(item->text());
   QWidget* secondaryWidget = m_selectedPlot->secondaryWidget();
   if (m_ui->verticalLayoutLeft->count() > 3) {

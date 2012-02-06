@@ -34,10 +34,13 @@ double SignalHeightTrackerLikelihood::eval(const AnalyzedEvent* event, const Hyp
 double SignalHeightTrackerLikelihood::eval(double signalHeight, const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
   const PDFParameters& parameters = interpolation(hypothesis, goodInterpolation);
-  return TMath::Gaus(signalHeight, parameters[0], parameters[1]);
+  return eval(signalHeight, hypothesis, parameters);
 }
 
-double SignalHeightTrackerLikelihood::eval(double signalHeight, const Hypothesis&, const PDFParameters& parameters) const
+double SignalHeightTrackerLikelihood::eval(double signalHeight, const Hypothesis&, const PDFParameters& p) const
 {
-  return TMath::Gaus(signalHeight, parameters[0], parameters[1], true);
+  double g1 = TMath::Student((signalHeight - p[0]) / p[1], 5.) / p[1];
+  double g2 = TMath::Gaus(signalHeight, p[0], 100., true);
+  double fraction = .90;
+  return fraction * g1 + (1 - fraction) * g2;
 }

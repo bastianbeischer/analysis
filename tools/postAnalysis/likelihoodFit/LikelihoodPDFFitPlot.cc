@@ -27,7 +27,7 @@ LikelihoodPDFFitPlot::LikelihoodPDFFitPlot(Likelihood* lh, const TH2D* h, int bi
   , m_currentFunction(0)
   , m_previewFunction(0)
   , m_parameterWidgets()
-  , m_removeButton(new QPushButton("remove"))
+  , m_removeButton(new QPushButton("&remove"))
   , m_currentParametersEdit(new QLineEdit())
 {
   Q_ASSERT(m_particle != Enums::NoParticle);
@@ -152,7 +152,7 @@ void LikelihoodPDFFitPlot::setup()
 
   QPushButton* button = 0;
 
-  button = new QPushButton("fit");
+  button = new QPushButton("&fit");
   button->setFixedWidth(width);
   connect(button, SIGNAL(clicked()), this, SLOT(fit()));
   gLayout->addWidget(button, 0, 1);
@@ -162,7 +162,7 @@ void LikelihoodPDFFitPlot::setup()
   connect(button, SIGNAL(clicked()), this, SLOT(reset()));
   gLayout->addWidget(button, 1, 1);
 
-  button = new QPushButton("save");
+  button = new QPushButton("&save");
   button->setFixedWidth(width);
   connect(button, SIGNAL(clicked()), this, SLOT(save()));
   gLayout->addWidget(button, 0, 2);

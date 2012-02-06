@@ -23,6 +23,7 @@ void MainWindow::setupAnalysis()
 {
   m_file = new TFile(qPrintable(m_analysisFiles.at(0)));
   QStringList list = PostAnalysisCanvas::savedCanvases(m_file);
+  list.sort();
   gROOT->cd();
   foreach (const QString& name, list)
     addCanvas(new PostAnalysisCanvas(m_file, name));

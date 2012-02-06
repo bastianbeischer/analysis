@@ -4,6 +4,7 @@
 #include "ParticleProperties.hh"
 #include "SensorTypes.hh"
 #include "SimpleEvent.hh"
+#include "Helpers.hh"
 
 #include <TH1D.h>
 #include <TLatex.h>
@@ -26,18 +27,12 @@ LogLikelihoodPlot::LogLikelihoodPlot(Enums::Particle signalParticle, Enums::Part
 
   setTitle("ln L distribution " + Enums::label(signalParticle));
 
-  addHistogram(new TH1D(qPrintable(title()), "", 2000, -10., 190.));
+  addHistogram(new TH1D(qPrintable(title()), "", 600, -5., 25.));
   histogram()->SetLineColor(ParticleProperties(signalParticle).color());
 
-  QString sLabel = Enums::label(m_signalParticle);
-  sLabel.replace("alpha", "#alpha");
-  sLabel.replace("mu", "#mu");
-  sLabel.replace("pi", "#pi");
-  QString bgLabel = Enums::label(m_backgroundParticles);
-  bgLabel.replace("alpha", "#alpha");
-  bgLabel.replace("mu", "#mu");
-  bgLabel.replace("pi", "#pi");
-  setAxisTitle("-2 ln (L_{" + sLabel + "} / (L_{" + sLabel + "} + L_{"+ bgLabel + "})", "");
+  QString sLabel = Helpers::greekifyLetters(Enums::label(m_signalParticle));
+  QString bgLabel = Helpers::greekifyLetters(Enums::label(m_backgroundParticles));
+  setAxisTitle("-2 ln (L_{" + sLabel + "} / (L_{" + sLabel + "} + L_{"+ bgLabel + "}))", "");
 
   addLatex(RootPlot::newLatex(.65, .85));
   addLatex(RootPlot::newLatex(.65, .82));
@@ -45,12 +40,12 @@ LogLikelihoodPlot::LogLikelihoodPlot(Enums::Particle signalParticle, Enums::Part
   addLatex(RootPlot::newLatex(.65, .76));
 
   double x = -2. * log(1./2.);
-  
+
   m_line = new TLine(x, 0, x, 1);
   m_line->SetLineWidth(2);
   m_line->SetLineColor(kRed);
   m_line->SetLineStyle(kDashed);
-  
+
   TLatex* latex = 0;
   latex = RootPlot::newLatex(.16, .85);
   latex->SetTitle(qPrintable("L_{" + sLabel + "} = L_{" + bgLabel + "}"));
@@ -71,6 +66,8 @@ void LogLikelihoodPlot::processEvent(const AnalyzedEvent* event)
   if (!event->flagsSet(ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet | ParticleInformation::Chi2Good | ParticleInformation::BetaGood))
     return;
   const Particle* particle = event->particle();
+  if (particle->hypothesis()->rigidity() < 0.2)
+    return;
   double signal = particle->signalLikelihood(m_signalParticle);
   double background = particle->backgroundLikelihood(m_backgroundParticles);
   double logL = -2 * log (signal / (signal + background));
@@ -93,7 +90,7 @@ void LogLikelihoodPlot::update()
   latex(0)->SetTitle(qPrintable(QString("n     = %1").arg(histogram()->GetEntries())));
   latex(1)->SetTitle(qPrintable(QString("uflow = %1").arg(histogram()->GetBinContent(0))));
   latex(2)->SetTitle(qPrintable(QString("oflow = %1").arg(histogram()->GetBinContent(histogram()->GetXaxis()->GetNbins()+1))));
-  
+
   double x = -2 * log (1./2.);
   int signal = 0;
   int background = 0;
