@@ -13,7 +13,8 @@ CLASSES += \
   ParticleInformation \
   TimeOfFlight \
   Hypothesis \
-  TRDReconstruction
+  TRDReconstruction \
+  AnalyzedEvent
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \

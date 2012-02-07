@@ -21,7 +21,7 @@ macx {
     -L$$TOPLEVEL/lib \
     -lglobal \
     -lparticle \
-    -lrootplot
+    -lrootplot \
     -lsetup \
     -lprocessing
 }
@@ -29,5 +29,3 @@ macx {
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/common.pri)
 include($$TOPLEVEL/macx.pri)
-
-CLASSES -= SimulationFluxRatioWidget

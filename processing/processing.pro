@@ -18,7 +18,6 @@ CLASSES += \
   Cut \
   CutFilter \
   MCFilter \
-  AnalyzedEvent \
   AnalysisProcessorSetting
 
 INCLUDEPATH += \
