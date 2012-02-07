@@ -9,6 +9,7 @@
 #include "Track.hh"
 #include "ParticleInformation.hh"
 #include "Constants.hh"
+#include "Hypothesis.hh"
 
 #include <TH2D.h>
 #include <TLatex.h>
@@ -60,7 +61,7 @@ void TOTBetaCorrelation::processEvent(const AnalyzedEvent* event)
     }
   }
   if (nTofHits > 0)
-    histogram()->Fill(event->particle()->beta(), totSum / nTofHits);
+    histogram()->Fill(event->particle()->hypothesis()->beta(), totSum / nTofHits);
 }
 
 void TOTBetaCorrelation::finalize()

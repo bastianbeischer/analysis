@@ -209,54 +209,21 @@ double Particle::backgroundLikelihood(Enums::ReconstructionMethod method, Enums:
   return pow(result, 1./n);
 }
 
-double Particle::transverseMomentum() const
-{
-  if (m_track)
-    return m_properties->charge()*m_track->transverseRigidity();
-  return 0.;
-}
-
-double Particle::momentum() const
-{
-  if (m_track)
-    return m_properties->charge()*m_track->rigidity();
-  return 0.;
-}
-
+//double Particle::transverseMomentum() const
+//{
+//  if (m_track)
+//    return m_properties->charge()*m_track->transverseRigidity();
+//  return 0.;
+//}
+//
+//double Particle::momentum() const
+//{
+//  if (m_track)
+//    return m_properties->charge()*m_track->rigidity();
+//  return 0.;
+//}
+//
 double Particle::beta() const
 {
   return m_tof->beta();
-}
-
-//////////////////////////////////////////////////
-// loopthrough functions for convenience
-
-Enums::Particle Particle::type() const
-{
-  return m_properties->type();
-}
-
-int Particle::pdgId() const
-{
-  return m_properties->pdgId();
-}
-
-QString Particle::name() const
-{
-  return m_properties->name();
-}
-
-double Particle::mass() const
-{
-  return m_properties->mass();
-}
-
-int Particle::charge() const
-{
-  return m_properties->charge();
-}
-
-Color_t Particle::color() const
-{
-  return m_properties->color();
 }

@@ -1,7 +1,7 @@
 #ifndef SimulationFluxKey_hh
 #define SimulationFluxKey_hh
 
-#include "Particle.hh"
+#include "Enums.hh"
 
 #include <QList>
 #include <QString>

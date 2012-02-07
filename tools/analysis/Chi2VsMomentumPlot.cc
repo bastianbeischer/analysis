@@ -11,6 +11,7 @@
 #include "Particle.hh"
 #include "Track.hh"
 #include "ParticleInformation.hh"
+#include "Hypothesis.hh"
 
 Chi2VsMomentumPlot::Chi2VsMomentumPlot() :
   AnalysisPlot(Enums::Tracking),
@@ -44,8 +45,8 @@ void Chi2VsMomentumPlot::processEvent(const AnalyzedEvent* event)
     return;
   if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
     return;
-  histogram()->Fill(track->rigidity(), track->chi2() / track->ndf());
-  m_normHisto->Fill(track->rigidity());
+  histogram()->Fill(event->particle()->hypothesis()->rigidity(), track->chi2() / track->ndf());
+  m_normHisto->Fill(event->particle()->hypothesis()->rigidity());
 }
 
 void Chi2VsMomentumPlot::finalize()

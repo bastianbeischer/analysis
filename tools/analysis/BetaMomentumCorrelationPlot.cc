@@ -7,6 +7,7 @@
 #include "TOFCluster.hh"
 #include "Particle.hh"
 #include "Track.hh"
+#include "Hypothesis.hh"
 
 #include <TH2.h>
 #include <TAxis.h>
@@ -106,5 +107,5 @@ void BetaMomentumCorrelationPlot::processEvent(const AnalyzedEvent* event)
     return;
   if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet | ParticleInformation::BetaGood))
     return;
-  histogram()->Fill(track->rigidity(), 1./event->particle()->beta());
+  histogram()->Fill(event->particle()->hypothesis()->rigidity(), 1./event->particle()->hypothesis()->beta());
 }

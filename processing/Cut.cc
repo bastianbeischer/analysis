@@ -9,6 +9,7 @@
 #include "Settings.hh"
 #include "SettingsManager.hh"
 #include "Enums.hh"
+#include "Hypothesis.hh"
 
 #include <cmath>
 
@@ -85,7 +86,7 @@ bool Cut::passes(const QVector<Hit*>& clusters, const Particle* particle) const
     ParticleInformation::Flags flags = particle->information()->flags();
     if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
       return false;
-    return passesCuts(track->rigidity());
+    return passesCuts(particle->hypothesis()->rigidity());
   }
   if (m_type == Enums::BetaCut) {
     const Track* track = particle->track();
@@ -94,7 +95,7 @@ bool Cut::passes(const QVector<Hit*>& clusters, const Particle* particle) const
     ParticleInformation::Flags flags = particle->information()->flags();
     if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
       return false;
-    return passesCuts(particle->beta());
+    return passesCuts(particle->hypothesis()->beta());
   }
   if (m_type == Enums::TimeOverThresholdCut) {
     const Track* track = particle->track();

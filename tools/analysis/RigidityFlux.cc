@@ -9,6 +9,7 @@
 #include "SimulationFluxWidget.hh"
 #include "SettingsManager.hh"
 #include "SimpleEvent.hh"
+#include "ParticleProperties.hh"
 #include "Particle.hh"
 #include "Helpers.hh"
 
@@ -137,10 +138,10 @@ void RigidityFlux::update()
 {
   if (!m_phiFit && !m_isAlbedo && m_situation == Enums::KirunaFlight) {
     if (m_type == Enums::Negative) {
-      m_phiFit = new SolarModulationFit(m_fluxCalculation->fluxHistogram(), Particle(Enums::Electron).pdgId());
+      m_phiFit = new SolarModulationFit(m_fluxCalculation->fluxHistogram(), ParticleProperties(Enums::Electron).pdgId());
       m_phiFit->setGamma(2.7);
     } else {
-      m_phiFit = new SolarModulationFit(m_fluxCalculation->fluxHistogram(), Particle(Enums::Proton).pdgId());
+      m_phiFit = new SolarModulationFit(m_fluxCalculation->fluxHistogram(), ParticleProperties(Enums::Proton).pdgId());
     }
     addFunction(m_phiFit->fit());
     TLatex* J0Latex = RootPlot::newLatex(.4, .90);

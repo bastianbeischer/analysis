@@ -1,6 +1,7 @@
 #include "SolarModulationFit.hh"
 
-#include "Particle.hh"
+#include "ParticleProperties.hh"
+#include "ParticleDB.hh"
 
 #include <TH1.h>
 #include <TF1.h>
@@ -11,8 +12,9 @@
 
 double SolarModulationFit::powerLaw(double* x, double* par)
 {
-  const double z =  Particle(m_pdgId).charge();
-  const double m = Particle(m_pdgId).mass();
+  const ParticleProperties* particleProperties = ParticleDB::instance()->lookupPdgId(m_pdgId);
+  const double z =  particleProperties->charge();
+  const double m = particleProperties->mass();
 
   double R = x[0];
   double J0 = par[0];

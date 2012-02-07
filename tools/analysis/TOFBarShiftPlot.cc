@@ -12,6 +12,7 @@
 #include "TimeOfFlight.hh"
 #include "Settings.hh"
 #include "SimpleEvent.hh"
+#include "Hypothesis.hh"
 
 #include <TH1.h>
 #include <TVector3.h>
@@ -100,8 +101,8 @@ void TOFBarShiftPlot::processEvent(const AnalyzedEvent* event)
         }
       }
     } else {
-      rigidity = track->rigidity();
-      m = event->particle()->mass();
+      rigidity = event->particle()->hypothesis()->rigidity();
+      m = event->particle()->hypothesis()->mass();
     }
     if (rigidity < 1)
       return;

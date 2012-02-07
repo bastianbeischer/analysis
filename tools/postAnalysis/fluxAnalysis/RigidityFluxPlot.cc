@@ -7,7 +7,7 @@
 #include "PostAnalysisCanvas.hh"
 #include "EfficiencyCorrectionSettings.hh"
 #include "BessFluxWidget.hh"
-#include "Particle.hh"
+#include "ParticleProperties.hh"
 #include "Enums.hh"
 
 #include <TH1D.h>
@@ -97,9 +97,9 @@ RigidityFluxPlot::RigidityFluxPlot(PostAnalysisCanvas* canvas, TH1D* particleSpe
   addLegend(legend);
 
   if (m_type == Enums::Negative)
-    m_phiFit = new SolarModulationFit(histogram(), Particle(Enums::Electron).pdgId());
+    m_phiFit = new SolarModulationFit(histogram(), ParticleProperties(Enums::Electron).pdgId());
   else
-    m_phiFit = new SolarModulationFit(histogram(), Particle(Enums::Proton).pdgId());
+    m_phiFit = new SolarModulationFit(histogram(), ParticleProperties(Enums::Proton).pdgId());
   addFunction(m_phiFit->fit());
   TLatex* gammaLatex = RootPlot::newLatex(.4, .88);
   TLatex* phiLatex = RootPlot::newLatex(.4, .83);

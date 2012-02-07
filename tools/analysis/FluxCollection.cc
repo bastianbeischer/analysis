@@ -9,6 +9,7 @@
 #include "SimpleEvent.hh"
 #include "Particle.hh"
 #include "Track.hh"
+#include "Hypothesis.hh"
 
 #include <TH1D.h>
 
@@ -88,8 +89,8 @@ void FluxCollection::processEvent(const AnalyzedEvent* event)
     return;
 
   if (event->flagsSet(ParticleInformation::Albedo)) {
-    m_particleHistogramAlbedo->Fill(-track->rigidity());
+    m_particleHistogramAlbedo->Fill(-event->particle()->hypothesis()->rigidity());
   } else {
-    m_particleHistogram->Fill(track->rigidity());
+    m_particleHistogram->Fill(event->particle()->hypothesis()->rigidity());
   }
 }

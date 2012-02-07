@@ -3,6 +3,7 @@
 #include "KineticVariable.hh"
 #include "AnalyzedEvent.hh"
 #include "Particle.hh"
+#include "ParticleProperties.hh"
 #include "Setup.hh"
 #include "Helpers.hh"
 
@@ -125,7 +126,7 @@ TMultiGraph* LikelihoodReconstruction::graph() const
   foreach (Enums::Particle type, m_particles) {
     TGraph* g = new TGraph(nSteps);
     g->SetName(qPrintable(Enums::label(type)));
-    g->SetLineColor(Particle(type).color());
+    g->SetLineColor(ParticleProperties(type).color());
     g->SetMarkerSize(0.1);
     g->SetLineWidth(2);
     for (int i = 0; i < nSteps; ++i) {

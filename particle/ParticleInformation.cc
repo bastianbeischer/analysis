@@ -111,7 +111,7 @@ void ParticleInformation::checkHighTransverseRigidity()
 
   if (!track->fitGood())
     return;
-  double transverseRigidity = track->transverseRigidity();
+  double transverseRigidity = 0;//track->transverseRigidity();
   // 2GeV currently...
   if (transverseRigidity > 2 || transverseRigidity == DBL_MAX)
     m_flags |= HighTransverseRigidity;

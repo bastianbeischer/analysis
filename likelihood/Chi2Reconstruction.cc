@@ -3,6 +3,7 @@
 #include "KineticVariable.hh"
 #include "AnalyzedEvent.hh"
 #include "Particle.hh"
+#include "ParticleProperties.hh"
 #include "Setup.hh"
 #include "Helpers.hh"
 
@@ -141,7 +142,7 @@ TMultiGraph* Chi2Reconstruction::graph() const
     m_chi2Function->setParameters(m_event, type);
     TGraph* g = new TGraph(nSteps);
     g->SetName(qPrintable(Enums::label(type)));
-    g->SetLineColor(Particle(type).color());
+    g->SetLineColor(ParticleProperties(type).color());
     g->SetMarkerSize(0.1);
     g->SetLineWidth(2);
     for (int i = 0; i < nSteps; ++i) {

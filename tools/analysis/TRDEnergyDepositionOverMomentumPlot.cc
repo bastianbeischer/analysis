@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-#include "math.h"
+#include <cmath>
 
 #include <TH2D.h>
 #include <TAxis.h>
@@ -12,6 +12,7 @@
 #include "Track.hh"
 #include "ParticleInformation.hh"
 #include "TRDReconstruction.hh"
+#include "Hypothesis.hh"
 
 TRDEnergyDepositionOverMomentumPlot::TRDEnergyDepositionOverMomentumPlot(Enums::AnalysisTopic topic) :
   AnalysisPlot(topic),
@@ -35,7 +36,7 @@ void TRDEnergyDepositionOverMomentumPlot::processEvent(const AnalyzedEvent* even
     return;
   if (!event->flagsSet(ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet))
     return;
-  double rigidity = track->rigidity();
+  double rigidity = event->particle()->hypothesis()->rigidity();
   if (qAbs(rigidity) < 10.)
     return;
 

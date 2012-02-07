@@ -1,7 +1,6 @@
 #ifndef SimulationFlux_hh
 #define SimulationFlux_hh
 
-#include "Particle.hh"
 #include "SimulationFluxKey.hh"
 
 #include <TH1D.h>
