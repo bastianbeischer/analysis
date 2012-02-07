@@ -67,7 +67,12 @@ void SingleFile::init()
 
 unsigned int SingleFile::getNumberOfEvents() const
 {
-  return m_runFile->GetNumberOfEvents() - m_runFile->GetNumberOfCalibrationEvents();
+  return m_runFile->GetNumberOfEvents() - getNumberOfCalibrationEvents();
+}
+
+unsigned int SingleFile::getNumberOfCalibrationEvents() const
+{
+  return m_runFile->GetNumberOfCalibrationEvents();
 }
 
 const RawEvent* SingleFile::getNextRawEvent() const

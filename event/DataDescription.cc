@@ -23,7 +23,8 @@ DataDescription::DataDescription(const DataDescription& other)
   : TObject(other)
   , m_comment(other.m_comment)
   , m_softwareVersionHash(other.m_softwareVersionHash)
-  , m_eventNumberOffset(other.m_eventNumberOffset)
+  , m_numberOfEvents(other.m_numberOfEvents)
+  , m_numberOfCalibrationEvents(other.m_numberOfCalibrationEvents)
   , m_runFileNames(other.m_runFileNames)
   , m_runFileSoftwareVersionHash(other.m_runFileSoftwareVersionHash)
   , m_numberOfRuns(other.m_numberOfRuns)
@@ -49,23 +50,22 @@ void DataDescription::setSoftwareVersionHash()
   assert(m_softwareVersionHash.length() == 40);
 }
 
-void DataDescription::addRunFile(const std::string& fileName, const std::string& softwareVersionHash, const int nEvents)
+void DataDescription::addRunFile(const std::string& fileName, const std::string& softwareVersionHash, const int nEvents, const int nCalibrationEvents)
 {
   m_runFileNames.push_back(fileName);
-  m_eventNumberOffset.push_back(m_numberOfRuns == 0 ? nEvents : nEvents + m_eventNumberOffset[m_numberOfRuns-1]);
+  m_numberOfEvents.push_back(nEvents);
+  m_numberOfCalibrationEvents.push_back(nCalibrationEvents);
   m_runFileSoftwareVersionHash.push_back(softwareVersionHash);
   ++m_numberOfRuns;
 }
 
 long DataDescription::eventNumberInRunFile(long eventNumber) const
 {
-  int entryInFile = eventNumber;
-
-  for (unsigned int i = 0; i < m_eventNumberOffset.size() - 1; i++) {
-    if (eventNumber >= m_eventNumberOffset[i] && eventNumber < m_eventNumberOffset[i+1]) {
-      entryInFile -= m_eventNumberOffset[i];
-      break;
-    }
+  assert(m_numberOfRuns > 0);
+  int runNo = runFileForEventNumber(eventNumber);
+  long entryInFile = eventNumber;
+  for (int i = 0; i < runNo; ++i) {
+    entryInFile -= m_numberOfEvents[i];
   }
   assert(entryInFile >= 0);
   return entryInFile;
@@ -73,13 +73,14 @@ long DataDescription::eventNumberInRunFile(long eventNumber) const
 
 int DataDescription::runFileForEventNumber(long eventNumber) const
 {
+  assert(m_numberOfRuns > 0);
   int runNo = 0;
-
-  for (int i = 0; i < m_numberOfRuns-1; ++i) {
-    if (eventNumber >= m_eventNumberOffset[i] && eventNumber < m_eventNumberOffset[i+1]) {
-      runNo = i+1;
+  long totalEvents = m_numberOfEvents[0];
+  while (eventNumber >= totalEvents) {
+    ++runNo;
+    if (runNo == m_numberOfRuns)
       break;
-    }
+    totalEvents += m_numberOfEvents[runNo];
   }
   assert(runNo < m_numberOfRuns);
   return runNo;
@@ -94,5 +95,11 @@ const std::string& DataDescription::runFileNameForEventNumber(long eventNumber) 
 long DataDescription::numberOfEventsInRunFile(int i) const
 {
   assert(i < m_numberOfRuns);
-  return i == 0 ? m_eventNumberOffset[i] : m_eventNumberOffset[i] - m_eventNumberOffset[i-1];
+  return m_numberOfEvents[i];
+}
+
+long DataDescription::numberOfCalibrationEventsInRunFile(int i) const
+{
+  assert(i < m_numberOfRuns);
+  return m_numberOfCalibrationEvents[i];
 }

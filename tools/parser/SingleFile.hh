@@ -25,6 +25,7 @@ public:
 
 public:
   unsigned int    getNumberOfEvents() const;
+  unsigned int    getNumberOfCalibrationEvents() const;
   const RawEvent* getNextRawEvent() const;
   Calibration*    getCalibrationForDetector(DetectorID* id, int whichCali) const;
   unsigned int    getStartTime() const;
