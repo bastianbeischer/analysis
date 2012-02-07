@@ -22,23 +22,23 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 
-QMap<unsigned int, TGraphErrors> TimeOverThresholdScaling::timeOverThresholdScalingGraphs;
-QMap<unsigned int, TF1> TimeOverThresholdScaling::timeOverThresholdScalingFits;
-QMap<unsigned int, double> TimeOverThresholdScaling::minTofTemps;
-QMap<unsigned int , double> TimeOverThresholdScaling::maxTofTemps;
+QMap<unsigned int, TGraphErrors> TimeOverThresholdScaling::s_timeOverThresholdScalingGraphs;
+QMap<unsigned int, TF1> TimeOverThresholdScaling::s_timeOverThresholdScalingFits;
+QMap<unsigned int, double> TimeOverThresholdScaling::s_minTofTemps;
+QMap<unsigned int , double> TimeOverThresholdScaling::s_maxTofTemps;
 
 TimeOverThresholdScaling::TimeOverThresholdScaling(PostAnalysisCanvas* canvas, unsigned int tofId)
-: PostAnalysisPlot()
-, GraphPlot()
-, m_tofId(tofId)
+  : PostAnalysisPlot()
+  , GraphPlot()
+  , m_tofId(tofId)
 {
   TH2D* histogram = canvas->histograms2D().at(0);
   fit(tofId, histogram);
   QString title = QString(canvas->name()).replace("canvas", "graph");
   setTitle(title);
-  TGraphErrors* graph = new TGraphErrors(TimeOverThresholdScaling::timeOverThresholdScalingGraphs[tofId]);
+  TGraphErrors* graph = new TGraphErrors(s_timeOverThresholdScalingGraphs[tofId]);
   addGraph(graph, P);
-  TF1& f = TimeOverThresholdScaling::timeOverThresholdScalingFits[tofId];
+  TF1& f = s_timeOverThresholdScalingFits[tofId];
   addFunction(&f);
   setAxisTitle("temperature /  #circC", "time over threshold / ns");
 
@@ -122,10 +122,10 @@ void TimeOverThresholdScaling::fit(unsigned int tofId, TH2D* histogram)
     }
   }
 
-  TimeOverThresholdScaling::minTofTemps.insert(tofId, min);
-  TimeOverThresholdScaling::maxTofTemps.insert(tofId, max);
+  s_minTofTemps.insert(tofId, min);
+  s_maxTofTemps.insert(tofId, max);
 
-  TimeOverThresholdScaling::timeOverThresholdScalingGraphs.insert(tofId, graph);
+  s_timeOverThresholdScalingGraphs.insert(tofId, graph);
 
   //Linear fit
   QString htitle =QString("Fit time over threshold temperature dependent 0x%1").arg(tofId,0,16);
@@ -134,13 +134,13 @@ void TimeOverThresholdScaling::fit(unsigned int tofId, TH2D* histogram)
   f.SetLineWidth(1);
   f.SetLineStyle(2);
   graph.Fit(&f, "EQ");
-  TimeOverThresholdScaling::timeOverThresholdScalingFits.insert(tofId, f);
+  s_timeOverThresholdScalingFits.insert(tofId, f);
 }
 
-void TimeOverThresholdScaling::save(unsigned int tofId) 
+void TimeOverThresholdScaling::save(unsigned int tofId)
 {
   QList<QVariant> param;
-  const TF1& f = timeOverThresholdScalingFits[tofId];
+  const TF1& f = s_timeOverThresholdScalingFits[tofId];
   param.push_back( f.GetParameter(0) );
   param.push_back( f.GetParameter(1) );
   Corrections* correction = new Corrections();
@@ -155,7 +155,6 @@ void TimeOverThresholdScaling::save()
 
 void TimeOverThresholdScaling::saveAll()
 {
-  foreach (unsigned int tofId, timeOverThresholdScalingFits.keys()) {
+  foreach (unsigned int tofId, s_timeOverThresholdScalingFits.keys())
     save(tofId);
-  }
 }

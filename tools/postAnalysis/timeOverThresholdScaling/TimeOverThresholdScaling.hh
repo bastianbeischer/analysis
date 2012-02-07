@@ -23,10 +23,10 @@ private:
   void fit(unsigned int tofId, TH2D* histogram);
   void save(unsigned int tofId);
   unsigned int m_tofId;
-  static QMap<unsigned int, TGraphErrors> timeOverThresholdScalingGraphs;
-  static QMap<unsigned int, TF1> timeOverThresholdScalingFits;
-  static QMap<unsigned int, double> minTofTemps;
-  static QMap<unsigned int , double> maxTofTemps;
+  static QMap<unsigned int, TGraphErrors> s_timeOverThresholdScalingGraphs;
+  static QMap<unsigned int, TF1> s_timeOverThresholdScalingFits;
+  static QMap<unsigned int, double> s_minTofTemps;
+  static QMap<unsigned int , double> s_maxTofTemps;
 private slots:
   void save();
   void saveAll();
