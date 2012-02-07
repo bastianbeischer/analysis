@@ -42,7 +42,9 @@ void RigidityUnfolding::unfold(double tau)
 {
   TUnfold unfold(m_migrationHistogram, TUnfold::kHistMapOutputVert);
   const int nGen = m_migrationHistogram->GetNbinsY();
-  const Double_t* binningGen =  m_migrationHistogram->GetYaxis()->GetXbins()->GetArray();
+  QVector<double> binning(nGen + 1);
+  for (int bin = 0; bin <= nGen; ++bin)
+    binning[bin] = m_migrationHistogram->GetYaxis()->GetBinLowEdge(bin + 1);
 
   if (unfold.SetInput(m_unfoldInput) >= 10000)
     qDebug() << "Unfolding result may be wrong";
@@ -75,7 +77,7 @@ void RigidityUnfolding::unfold(double tau)
   qDebug() << "tau =" << unfold.GetTau();
   qDebug() << "chi2 =" << unfold.GetChi2A() << "+" << unfold.GetChi2L() << "/" << unfold.GetNdf();
 
-  int* binMap = new int[nGen+2];
+  int* binMap = new int[nGen + 2];
   for (int i = 1; i <= nGen; ++i)
     binMap[i] = i;
   binMap[0] = -1; // discarde underflow bin
@@ -84,7 +86,7 @@ void RigidityUnfolding::unfold(double tau)
   const QString& title = "unfolded";
   const QString& xTitle = m_unfoldInput->GetXaxis()->GetTitle();
 
-  m_unfoldedHistogram = new TH1D(qPrintable(title), qPrintable(xTitle), nGen, binningGen);
+  m_unfoldedHistogram = new TH1D(qPrintable(title), qPrintable(xTitle), nGen, binning.constData());
   m_unfoldedHistogram->Sumw2();
   m_unfoldedHistogram->SetMarkerColor(kRed);
   m_unfoldedHistogram->SetLineColor(kRed);

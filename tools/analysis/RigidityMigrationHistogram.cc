@@ -25,8 +25,8 @@ RigidityMigrationHistogram::RigidityMigrationHistogram()
   const double minGenerated = 0.1;
   const double maxGenerated = 20;
   QVector<double> axisGenerated = Helpers::logBinning(nBinsGenerated, minGenerated, maxGenerated);
-  int axisSize = axisGenerated.size()*2;
-  for (int i = 0; i < axisSize; i+=2) {
+  int axisSize = 2 * axisGenerated.size();
+  for (int i = 0; i < axisSize; i+= 2) {
     double value = axisGenerated.at(i);
     axisGenerated.prepend(-value);
   }

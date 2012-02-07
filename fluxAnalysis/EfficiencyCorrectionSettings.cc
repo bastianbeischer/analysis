@@ -94,25 +94,16 @@ QString EfficiencyCorrectionSettings::foldingTypeName(FoldingType type) const
 
 TH1D* EfficiencyCorrectionSettings::readHistogram(const QString& key)
 {
-  const QList<QVariant>& axisVariant = m_settings.value(key + m_axisKey).toList();
-  const QList<QVariant>& contentVariant = m_settings.value(key + m_contentKey).toList();
-  const QList<QVariant>& errorVariant = m_settings.value(key + m_errorKey).toList();
-
-  QVector<double> axis;
-  for (int i = 0; i < axisVariant.size(); ++i)
-    axis.push_back(axisVariant[i].toDouble());
-
+  QVector<double> axis = Helpers::variantToDoubleVector(m_settings.value(key + m_axisKey));
   const int nBins = axis.size() - 1;
-
   TH1D* histogram = new TH1D(qPrintable(key), "", nBins, axis.constData());
   histogram->Sumw2();
-
+  QVector<double> content = Helpers::variantToDoubleVector(m_settings.value(key + m_contentKey));
+  QVector<double> error = Helpers::variantToDoubleVector(m_settings.value(key + m_errorKey));
   for (int i = 0; i < nBins; ++i) {
-    double content = contentVariant[i].toDouble();
-    double error = errorVariant[i].toDouble();
     int bin = i + 1;
-    histogram->SetBinContent(bin, content);
-    histogram->SetBinError(bin, error);
+    histogram->SetBinContent(bin, content[i]);
+    histogram->SetBinError(bin, error[i]);
   }
   return histogram;
 }

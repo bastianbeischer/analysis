@@ -1,4 +1,5 @@
 #include "MCTRDSpectrumPlot.hh"
+#include "Helpers.hh"
 
 #include <TH1D.h>
 #include <TCanvas.h>
@@ -122,21 +123,14 @@ void MCTRDSpectrumPlot::processEvent(const AnalyzedEvent* event)
 
   TH1D* spectrumHisto = 0;
 
-  if (m_spectrumMap.contains(pdgID))
+  if (m_spectrumMap.contains(pdgID)) {
     spectrumHisto = m_spectrumMap.value(pdgID);
-  else
-  {
+  } else {
     const ParticleProperties* properties = ParticleDB::instance()->lookupPdgId(pdgID);
     QString particleName = properties->name();
     int nBins = TRDReconstruction::s_spectrumDefaultBins;
-    double lowerBound = 1e-3;
-    double upperBound = TRDReconstruction::spectrumUpperLimit();
-    double delta = 1./nBins * (log(upperBound)/log(lowerBound) - 1);
-    double p[nBins+1];
-    for (int i = 0; i < nBins+1; i++) {
-      p[i] = pow(lowerBound, delta*i+1);
-    }
-    spectrumHisto = new TH1D(qPrintable(particleName + " " + title()), "", nBins, p);
+    QVector<double> binning = Helpers::logBinning(nBins, 1e-3, TRDReconstruction::spectrumUpperLimit());
+    spectrumHisto = new TH1D(qPrintable(particleName + " " + title()), "", nBins, binning.constData());
     spectrumHisto->Sumw2();
     spectrumHisto->SetLineColor(RootStyle::rootColor(m_colorCounter++));
     m_spectrumMap.insert(pdgID, spectrumHisto);

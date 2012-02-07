@@ -27,7 +27,11 @@ SignalHeightCorrelationPlot::SignalHeightCorrelationPlot(unsigned short id, Corr
   setTitle(histogram->GetName());
   setAxisTitle(histogram->GetXaxis()->GetTitle(), histogram->GetYaxis()->GetTitle(), "");
   addHistogram(new TH2D(*histogram));
-  m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", histogram->GetNbinsX(), histogram->GetXaxis()->GetXbins()->GetArray());
+  int nBins = histogram->GetNbinsX();
+  QVector<double> binning(nBins + 1);
+  for (int bin = 0; bin <= nBins; ++bin)
+    binning[bin] = histogram->GetXaxis()->GetBinLowEdge(bin + 1);
+  m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBins, binning.constData());
 }
 
 SignalHeightCorrelationPlot::SignalHeightCorrelationPlot(CorrelationType type, TH2D* histogram)
@@ -41,7 +45,11 @@ SignalHeightCorrelationPlot::SignalHeightCorrelationPlot(CorrelationType type, T
   setTitle(histogram->GetName());
   setAxisTitle(histogram->GetXaxis()->GetTitle(), histogram->GetYaxis()->GetTitle(), "");
   addHistogram(new TH2D(*histogram));
-  m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", histogram->GetNbinsX(), histogram->GetXaxis()->GetXbins()->GetArray());
+  int nBins = histogram->GetNbinsX();
+  QVector<double> binning(nBins + 1);
+  for (int bin = 0; bin <= nBins; ++bin)
+    binning[bin] = histogram->GetXaxis()->GetBinLowEdge(bin + 1);
+  m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBins, binning.constData());
 }
 
 SignalHeightCorrelationPlot::~SignalHeightCorrelationPlot()

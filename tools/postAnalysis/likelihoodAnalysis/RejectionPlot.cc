@@ -18,8 +18,10 @@ RejectionPlot::RejectionPlot(LogLikelihoodProjectionPlot* projection)
   Q_ASSERT(nBins == projection->backgroundProjection()->GetXaxis()->GetNbins());
   const double* signal = projection->signalProjection()->GetIntegral();
   const double* background = projection->backgroundProjection()->GetIntegral();
-
-  TH1D* rejectionHistogram = new TH1D(qPrintable(title), "", nBins, xAxis->GetXbins()->GetArray());
+  QVector<double> binning(nBins + 1);
+  for (int bin = 0; bin <= nBins; ++bin)
+    binning[bin] = xAxis->GetBinLowEdge(bin + 1);
+  TH1D* rejectionHistogram = new TH1D(qPrintable(title), "", nBins, binning.constData());
   for (int bin = 1; bin <= nBins; ++bin) {
     if (!qIsNull(background[bin]))
       rejectionHistogram->SetBinContent(bin, 1. + signal[bin]/background[bin]);

@@ -16,9 +16,10 @@ FluxCalculation::FluxCalculation(TH1D* particleHistogram, double measurementTime
   const QString& title = QString(m_particleHistogram->GetTitle()) + "_flux";
   const QString& xTitle = m_particleHistogram->GetXaxis()->GetTitle();
   const int nBins = m_particleHistogram->GetNbinsX();
-  const double* axis = m_particleHistogram->GetXaxis()->GetXbins()->GetArray();
-
-  m_fluxHistogram = new TH1D(qPrintable(title), "", nBins, axis);
+  QVector<double> binning(nBins + 1);
+  for (int bin = 0; bin <= nBins; ++bin)
+    binning[bin] = m_particleHistogram->GetXaxis()->GetBinLowEdge(bin + 1);
+  m_fluxHistogram = new TH1D(qPrintable(title), "", nBins, binning.constData());
   m_fluxHistogram->Sumw2();
   m_fluxHistogram->GetXaxis()->SetTitle(qPrintable(xTitle));
   m_fluxHistogram->GetYaxis()->SetTitle("flux / (GV^{-1}m^{-2}s^{-1}sr^{-1})");

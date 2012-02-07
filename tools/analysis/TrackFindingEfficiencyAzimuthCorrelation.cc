@@ -38,8 +38,8 @@ TrackFindingEfficiencyAzimuthCorrelation::TrackFindingEfficiencyAzimuthCorrelati
   const double minData = 0.1;
   const double maxData = 20;
   QVector<double> axis = Helpers::logBinning(nBinsData, minData, maxData);
-  int axisSize = axis.size()*2;
-  for (int i = 0; i < axisSize; i+=2) {
+  int axisSize = 2 * axis.size();
+  for (int i = 0; i < axisSize; i+= 2) {
     double value = axis.at(i);
     axis.prepend(-value);
   }
@@ -55,7 +55,6 @@ TrackFindingEfficiencyAzimuthCorrelation::TrackFindingEfficiencyAzimuthCorrelati
   histogram->GetXaxis()->SetTitleOffset(1.2);
   histogram->GetYaxis()->SetTitleOffset(1.2);
   histogram->GetZaxis()->SetTitleOffset(1.2);
-//  Plotter::rootWidget()->GetCanvas()->SetRightMargin(0.18);
 
   setAxisTitle("mc rigidity / GV", "mc azimuth / degree", "efficiency");
   addHistogram(histogram);

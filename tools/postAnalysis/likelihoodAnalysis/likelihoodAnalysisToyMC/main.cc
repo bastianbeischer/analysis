@@ -103,8 +103,10 @@ void save(TFile* file, QMap<Enums::Particle, TH2D*>& histograms) {
 int main(int argc, char* argv[])
 {
   RootStyle::set();
-  if (argc != 3)
+  if (argc != 3) {
+    std::cerr << "Usage: " << argv[0] << " numberOfEvents configFile.conf" << std::endl;
     return EXIT_FAILURE;
+  }
   QString programName = argv[0];
   int nEvents = QString(argv[1]).toInt();
   QString configName = argv[2];
@@ -124,15 +126,19 @@ int main(int argc, char* argv[])
   foreach (Enums::LikelihoodVariable variable, variablesVector)
     likelihoods.append(Likelihood::newLikelihood(variable, particles));
 
-  double min = 0;
-  double max = 10.;
+  double rigidityMin = 0;
+  double rigidityMax = 10.;
   double rigidityBinning = .1;
-  //double nBins = (max - min) / rigidityBinning;
+  int numberOfRigidityBins = (rigidityMax - rigidityMin) / rigidityBinning;
+  
+  double likelihoodRatioMin = 0.;
+  double likelihoodRatioMax = 20.;
+  int numberOfikelihoodRatioBins = 2000;
 
   ParticleMap particleMap;
   foreach (Enums::Particle particle, particlesVector) {
     ParticleMap::Iterator particleIt = particleMap.insert(particle, RigidityMap());
-    for (double rigidity = min; rigidity <= max; rigidity+= rigidityBinning) {
+    for (double rigidity = rigidityMin; rigidity <= rigidityMax; rigidity+= rigidityBinning) {
       RigidityMap::Iterator rigidityIt = particleIt.value().insert(rigidity, LikelihoodVector());
       foreach (Likelihood* likelihood, likelihoods) {
         KineticVariable variable(particle, Enums::AbsoluteRigidity, rigidity);
@@ -146,24 +152,23 @@ int main(int argc, char* argv[])
   QMap<Enums::Particle, TH2D*> logLikelihoodSignalHistograms;
   QMap<Enums::Particle, TH2D*> logLikelihoodBackgroundHistograms;
   foreach (Enums::Particle particle, particlesVector) {
-
     QString title = "log likelihood histogram " + Enums::label(particle);
     TH2D* h = 0;
     QString sLabel = Helpers::greekifyLetters(Enums::label(particle));
     QString bgLabel = Helpers::greekifyLetters(Enums::label(particles & ~particle));
     QString axisTitles = ";|R| / GV;-2 ln (L_{" + sLabel + "} / (L_{" + sLabel + "} + L_{"+ bgLabel + "}));";
-    h = new TH2D(qPrintable(title + " signal"), qPrintable(axisTitles), 10/*nBins*/, min, max, 1000, 0., 20.);
+    h = new TH2D(qPrintable(title + " signal"), qPrintable(axisTitles),
+      numberOfRigidityBins, rigidityMin, rigidityMax, numberOfikelihoodRatioBins, likelihoodRatioMin, likelihoodRatioMax);
     logLikelihoodSignalHistograms.insert(particle, h);
-    h = new TH2D(qPrintable(title + " background"), qPrintable(axisTitles), 10/*nBins*/, min, max, 1000, 0., 20.);
+    h = new TH2D(qPrintable(title + " background"), qPrintable(axisTitles),
+      numberOfRigidityBins, rigidityMin, rigidityMax, numberOfikelihoodRatioBins, likelihoodRatioMin, likelihoodRatioMax);
     logLikelihoodBackgroundHistograms.insert(particle, h);
   }
-
-  TH2D* dbgHistogram = new TH2D("dbgHistogram", "", 400, -0.1, 0.1, 400, -0.1, 0.1);
 
   Particle particle;
   for (int event = 0; event < nEvents; ++event) {
     Hypothesis trueHypothesis = randomHypothesis();
-    Q_ASSERT(min <= trueHypothesis.absoluteRigidity() && trueHypothesis.absoluteRigidity() <= max);
+    Q_ASSERT(rigidityMin <= trueHypothesis.absoluteRigidity() && trueHypothesis.absoluteRigidity() <= rigidityMax);
     const LikelihoodVector& likelihoodVector = closestPdfs(particleMap, trueHypothesis);
 
     QMap<Enums::LikelihoodVariable, double> randomValues;
@@ -198,9 +203,6 @@ int main(int argc, char* argv[])
       Q_ASSERT(logLikelihoodBackgroundHistogramIt != logLikelihoodBackgroundHistograms.end());
       const Hypothesis* h = particle.hypothesis(Enums::UndefinedReconstructionMethod, signalParticle);
       Q_ASSERT(h);
-      //qDebug() << s << b;
-      if (signalParticle == Enums::Helium)
-        dbgHistogram->Fill(s, b);
       double likelihoodRatio = -2*log(s/(s+b));
       if (trueHypothesis.particle() == signalParticle) {
         logLikelihoodSignalHistogramIt.value()->Fill(h->absoluteRigidity(), likelihoodRatio);
@@ -220,9 +222,6 @@ int main(int argc, char* argv[])
   save(&file, logLikelihoodBackgroundHistograms);
   file.Close();
 
-  new TCanvas();
-  dbgHistogram->Draw("COLZ");
-
   application.Run();
 
   foreach (RigidityMap rigidityMap, particleMap)
@@ -233,20 +232,3 @@ int main(int argc, char* argv[])
 
   return EXIT_SUCCESS;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

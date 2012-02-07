@@ -40,8 +40,7 @@ double TimeOverThresholdLikelihood::eval(double timeOverThreshold, const Hypothe
 
 double TimeOverThresholdLikelihood::eval(double timeOverThreshold, const Hypothesis&, const PDFParameters& p) const
 {
-  return TMath::Gaus(timeOverThreshold, p[0], p[1], true);
-  double g1 = TMath::Student((timeOverThreshold - p[0]) / p[1], 15.) / p[1];
+  double g1 = TMath::Gaus(timeOverThreshold, p[0], p[1], true);
   double g2 = TMath::Gaus(timeOverThreshold, p[0], 10., true);
   double fraction = .90;
   return fraction * g1 + (1 - fraction) * g2;
