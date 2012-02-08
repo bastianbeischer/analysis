@@ -152,23 +152,23 @@ void compareKeys(TKey* key1, TKey* key2, QStringList& comment, TFile& outputFile
     }
   }
 
-//  const QVector<TH2D*>& h2d1 = canvas1.histograms2D();
-//  const QVector<TH2D*>& h2d2 = canvas2.histograms2D();
-//  for (int i = 0; i < h2d1.count(); ++i) {
-//    if (!histogramsMatch(h2d1[i], h2d2[i], comment)) {
-//      comment << QString("canvases \"%1\", histograms \"%2\" differ.").arg(canvas1.name()).arg(h2d1[i]->GetName());
-//      save(canvas1.name(), QVector<TObject*>() << h2d1[i] << h2d2[i], outputFile);
-//    }
-//  }
-//
-//  const QVector<TF1*>& f1 = canvas1.functions();
-//  const QVector<TF1*>& f2 = canvas2.functions();
-//  for (int i = 0; i < f1.count(); ++i) {
-//    if (!functionsMatch(f1[i], f2[i], comment)) {
-//      comment << QString("canvases \"%1\", functions \"%2\" differ.").arg(canvas1.name()).arg(f1[i]->GetName());
-//      save(canvas1.name(), QVector<TObject*>() << f1[i] << f2[i], outputFile);
-//    }
-//  }
+  const QVector<TH2D*>& h2d1 = canvas1.histograms2D();
+  const QVector<TH2D*>& h2d2 = canvas2.histograms2D();
+  for (int i = 0; i < h2d1.count(); ++i) {
+    if (!histogramsMatch(h2d1[i], h2d2[i], comment)) {
+      comment << QString("canvases \"%1\", histograms \"%2\" differ.").arg(canvas1.name()).arg(h2d1[i]->GetName());
+      save(canvas1.name(), QVector<TObject*>() << h2d1[i] << h2d2[i], outputFile);
+    }
+  }
+
+  const QVector<TF1*>& f1 = canvas1.functions();
+  const QVector<TF1*>& f2 = canvas2.functions();
+  for (int i = 0; i < f1.count(); ++i) {
+    if (!functionsMatch(f1[i], f2[i], comment)) {
+      comment << QString("canvases \"%1\", functions \"%2\" differ.").arg(canvas1.name()).arg(f1[i]->GetName());
+      save(canvas1.name(), QVector<TObject*>() << f1[i] << f2[i], outputFile);
+    }
+  }
 }
 
 int main(int argc, char* argv[])
