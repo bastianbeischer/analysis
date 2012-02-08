@@ -42,13 +42,11 @@ RejectionEfficiencyPlot::RejectionEfficiencyPlot(LogLikelihoodProjectionPlot* pr
     line->SetLineStyle(kDotted);
     line->SetLineWidth(2);
     line->SetLineColor(kBlue);
-    line->SetVertical();
     m_verticalLines.append(line);
     line = new TLine(.0, rejection, efficiency, rejection);
     line->SetLineStyle(kDotted);
     line->SetLineWidth(2);
     line->SetLineColor(kBlue);
-    line->SetHorizontal();
     m_horizontalLines.append(line);
   }
 }

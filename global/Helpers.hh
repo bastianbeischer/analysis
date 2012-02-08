@@ -30,6 +30,7 @@ namespace Helpers
   double max(const QVector<double>&);
   bool sorted(const QVector<double>&);
   QString greekifyLetters(QString string);
+  QVector<double> logLikelihoodBinning();
 }
 
 #endif

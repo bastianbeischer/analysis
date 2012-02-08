@@ -211,4 +211,9 @@ namespace Helpers
     string.replace("pi", "#pi");
     return string;
   }
+
+  QVector<double> logLikelihoodBinning()
+  {
+    return linearBinning(1000, 0, 20);
+  }
 }

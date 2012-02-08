@@ -1,24 +1,55 @@
 #include "LikelihoodPDFPlot.hh"
 #include "Likelihood.hh"
 #include "LikelihoodPDF.hh"
+#include "SignalHeightTrdLikelihood.hh"
+#include "ParameterWidget.hh"
+
+#include <TPad.h>
+#include <TLatex.h>
 
 #include <QDebug>
+#include <QLayout>
 
-LikelihoodPDFPlot::LikelihoodPDFPlot(Likelihood* likelihood, double momentum)
-  : PostAnalysisPlot()
+LikelihoodPDFPlot::LikelihoodPDFPlot(Enums::LikelihoodVariable type, Enums::Particles particles, int layer)
+  : QObject()
+  , PostAnalysisPlot()
   , H1DPlot()
+  , m_likelihood(Likelihood::newLikelihood(type, particles))
+  , m_pdfs()
 {
-  setTitle(QString("%1 PDF %2 GeV").arg(likelihood->title()).arg(momentum, 3, 'f', 1, '0'));
-  Enums::Particles particles = likelihood->particles();
-  for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
-    if (!(it.key() & particles))
-      continue;
-    LikelihoodPDF* pdf = likelihood->pdf(KineticVariable(it.key(), Enums::Momentum, momentum));
-    if (pdf)
-      addFunction(pdf);
+  if (type == Enums::SignalHeightTrdLikelihood)
+    static_cast<SignalHeightTrdLikelihood*>(m_likelihood)->setLayer(layer);
+  setTitle(m_likelihood->title() + " PDF");
+  QVector<Enums::Particle> particleVector = Enums::particleVector(particles);
+  foreach (Enums::Particle particle, particleVector) {
+    LikelihoodPDF* pdf = m_likelihood->pdf(KineticVariable(particle, Enums::AbsoluteRigidity, 1.));
+    Q_ASSERT(pdf);
+    addFunction(pdf);
+    m_pdfs.insert(particle, pdf);
   }
+  addLatex(RootPlot::newLatex(0.12, 0.90));
+  ParameterWidget* widget = new ParameterWidget;
+  widget->setRange(0, 10.);
+  setSecondaryWidget(widget);
+  connect(widget, SIGNAL(valueChanged(double)), this, SLOT(rigidityChanged(double)));
+  widget->setValue(3.0);
 }
 
 LikelihoodPDFPlot::~LikelihoodPDFPlot()
 {
+  delete m_likelihood;
+}
+
+void LikelihoodPDFPlot::rigidityChanged(double rigidity)
+{
+  QMapIterator<Enums::Particle, LikelihoodPDF*> it(m_pdfs);
+  while (it.hasNext()) {
+    it.next();
+    Hypothesis(it.key(), 1./rigidity);
+    const PDFParameters& parameters = m_likelihood->interpolation(Hypothesis(it.key(), 1./rigidity));
+    it.value()->setParameters(parameters);
+  }
+  latex()->SetTitle(qPrintable(QString("%1 %2 GV").arg(m_likelihood->title()).arg(rigidity, 4, 'f', 2, '0')));
+  gPad->Modified();
+  gPad->Update();
 }

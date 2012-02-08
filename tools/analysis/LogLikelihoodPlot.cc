@@ -27,7 +27,8 @@ LogLikelihoodPlot::LogLikelihoodPlot(Enums::Particle signalParticle, Enums::Part
 
   setTitle("ln L distribution " + Enums::label(signalParticle));
 
-  addHistogram(new TH1D(qPrintable(title()), "", 600, -5., 25.));
+  QVector<double> binning = Helpers::logLikelihoodBinning();
+  addHistogram(new TH1D(qPrintable(title()), "", binning.count() - 1, binning.constData()));
   histogram()->SetLineColor(ParticleProperties(signalParticle).color());
 
   QString sLabel = Helpers::greekifyLetters(Enums::label(m_signalParticle));

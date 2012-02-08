@@ -128,12 +128,9 @@ int main(int argc, char* argv[])
 
   double rigidityMin = 0;
   double rigidityMax = 10.;
-  double rigidityBinning = .1;
+  double rigidityBinning = .01;
   int numberOfRigidityBins = (rigidityMax - rigidityMin) / rigidityBinning;
-  
-  double likelihoodRatioMin = 0.;
-  double likelihoodRatioMax = 20.;
-  int numberOfikelihoodRatioBins = 2000;
+  QVector<double> logLikelihoodBinning = Helpers::logLikelihoodBinning();
 
   ParticleMap particleMap;
   foreach (Enums::Particle particle, particlesVector) {
@@ -158,10 +155,10 @@ int main(int argc, char* argv[])
     QString bgLabel = Helpers::greekifyLetters(Enums::label(particles & ~particle));
     QString axisTitles = ";|R| / GV;-2 ln (L_{" + sLabel + "} / (L_{" + sLabel + "} + L_{"+ bgLabel + "}));";
     h = new TH2D(qPrintable(title + " signal"), qPrintable(axisTitles),
-      numberOfRigidityBins, rigidityMin, rigidityMax, numberOfikelihoodRatioBins, likelihoodRatioMin, likelihoodRatioMax);
+      numberOfRigidityBins, rigidityMin, rigidityMax, logLikelihoodBinning.count() - 1, logLikelihoodBinning.constData());
     logLikelihoodSignalHistograms.insert(particle, h);
     h = new TH2D(qPrintable(title + " background"), qPrintable(axisTitles),
-      numberOfRigidityBins, rigidityMin, rigidityMax, numberOfikelihoodRatioBins, likelihoodRatioMin, likelihoodRatioMax);
+      numberOfRigidityBins, rigidityMin, rigidityMax, logLikelihoodBinning.count() - 1, logLikelihoodBinning.constData());
     logLikelihoodBackgroundHistograms.insert(particle, h);
   }
 
@@ -172,8 +169,10 @@ int main(int argc, char* argv[])
     const LikelihoodVector& likelihoodVector = closestPdfs(particleMap, trueHypothesis);
 
     QMap<Enums::LikelihoodVariable, double> randomValues;
-    foreach (LikelihoodPDF* pdf, likelihoodVector)
+    foreach (LikelihoodPDF* pdf, likelihoodVector) {
+      //if (trueHypothesis.particle() == Enums::Proton) std::cout << pdf->GetRandom() << std::endl;
       randomValues.insert(pdf->likelihoodVariableType(), pdf->GetRandom());
+    }
 
     particle.reset();
     foreach (Enums::Particle particleHypothesis, particlesVector) {

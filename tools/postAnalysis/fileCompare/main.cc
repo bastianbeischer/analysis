@@ -115,7 +115,7 @@ bool functionsMatch(TF1* f1, TF1* f2, QStringList& comment)
   return ret;
 }
 
-void save(QString name, const QVector<TObject*>& objects, TFile& outputFile) 
+void save(QString name, const QVector<TObject*>& objects, TFile& outputFile)
 {
   outputFile.cd();
   name.replace("/", "per");

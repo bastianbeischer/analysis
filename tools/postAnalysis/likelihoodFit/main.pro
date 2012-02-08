@@ -7,6 +7,7 @@ TOPLEVEL = ../../..
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \
+  $$TOPLEVEL/widgets \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/likelihood \
   $$TOPLEVEL/rootplot \
@@ -18,6 +19,7 @@ INCLUDEPATH += \
 LIBS += \
   -L$$TOPLEVEL/lib \
   -llikelihood \
+  -lwidgets \
   -lrootplot \
   -lglobal \
   -lparticle \
@@ -30,11 +32,8 @@ LIBS += \
 
 CLASSES = \
   LikelihoodFitWindow \
-  LikelihoodPDFPlot \
   ParameterPlot \
-  ParameterWidget \
   LikelihoodPDFFitPlot \
-  DoubleEdit \
   NormalizationThread
 
 include($$TOPLEVEL/root.pri)

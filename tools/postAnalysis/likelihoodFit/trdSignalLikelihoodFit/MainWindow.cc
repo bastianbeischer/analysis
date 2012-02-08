@@ -2,7 +2,6 @@
 #include "Enums.hh"
 #include "Likelihood.hh"
 #include "SignalHeightTrdLikelihood.hh"
-#include "LikelihoodPDFPlot.hh"
 #include "Setup.hh"
 #include "ParameterPlot.hh"
 #include "SignalHeightTrdFitPlot.hh"

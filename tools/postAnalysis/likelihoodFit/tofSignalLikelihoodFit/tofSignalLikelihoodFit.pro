@@ -7,6 +7,7 @@ TOPLEVEL = ../../../..
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \
+  $$TOPLEVEL/widgets \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/likelihood \
   $$TOPLEVEL/rootplot \
@@ -18,6 +19,7 @@ INCLUDEPATH += \
 
 LIBS += \
   -L$$TOPLEVEL/lib \
+  -lwidgets \
   -llikelihood \
   -lrootplot \
   -lglobal \

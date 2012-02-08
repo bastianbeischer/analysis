@@ -7,6 +7,7 @@ TEMPLATE = subdirs
 SUBDIRS = \
   global \
   event \
+  widgets \
   setup \
   tracking \
   particle \
@@ -22,4 +23,4 @@ macx {
   CONFIG+= ordered
 }
 
-tools.depends = global event tracking setup particle likelihood trdAnalysis alignment rootplot fluxAnalysis
+tools.depends = global event widgets tracking setup particle likelihood trdAnalysis alignment rootplot fluxAnalysis

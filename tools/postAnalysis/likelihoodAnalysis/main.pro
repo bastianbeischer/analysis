@@ -6,14 +6,26 @@ CONFIG += debug
 TOPLEVEL = ../../..
 
 INCLUDEPATH += \
+  $$TOPLEVEL/widgets \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/global \
+  $$TOPLEVEL/event \
+  $$TOPLEVEL/particle \
+  $$TOPLEVEL/setup \
+  $$TOPLEVEL/likelihood \
   $$TOPLEVEL/tools/postAnalysis/postAnalysis
 
 LIBS += \
   -L$$TOPLEVEL/lib \
+  -lwidgets \
   -lrootplot \
   -lglobal \
+  -lsetup \
+  -lSimpleEvent \
+  -ltracking \
+  -lprocessing \
+  -lparticle \
+  -llikelihood \
   -lpostAnalysis
 
 CLASSES = \
@@ -22,7 +34,8 @@ CLASSES = \
   LogLikelihoodProjectionPlot \
   EfficiencyPlot \
   RejectionPlot \
-  RejectionEfficiencyPlot
+  RejectionEfficiencyPlot \
+  LikelihoodPDFPlot
 
 SOURCES = \
   main.cc

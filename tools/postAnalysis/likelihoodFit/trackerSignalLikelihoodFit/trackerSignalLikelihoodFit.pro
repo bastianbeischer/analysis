@@ -6,6 +6,7 @@ CONFIG += debug
 TOPLEVEL = ../../../..
 
 INCLUDEPATH += \
+  $$TOPLEVEL/widgets \
   $$TOPLEVEL/event \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/likelihood \
@@ -18,6 +19,7 @@ INCLUDEPATH += \
 
 LIBS += \
   -L$$TOPLEVEL/lib \
+  -lwidgets \
   -llikelihood \
   -lrootplot \
   -lglobal \
