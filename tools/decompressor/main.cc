@@ -5,11 +5,25 @@
 
 #include <TFileMerger.h>
 
+#include <cstdlib>
+
 int main(int argc, char** argv)
 {
   QStringList sourceFiles;
-  for (int i = 1; i < argc; ++i)
-    sourceFiles.append(argv[i]);
+  bool overwrite = false;
+  for (int i = 1; i < argc; ++i) {
+    QString argument = argv[i];
+    if (argument.contains("--")) {
+      if (argument.contains("overwrite")) {
+        overwrite = true;
+      } else {
+        qDebug() << "Unknown option" << argument;
+        return EXIT_FAILURE;
+      }
+    } else {
+      sourceFiles.append(argument);
+    }
+  }
   foreach (QString sourceFileName, sourceFiles) {
     if (!QFile::exists(sourceFileName)) {
       qDebug() << "File" << sourceFileName << "does not exist!";
@@ -29,6 +43,12 @@ int main(int argc, char** argv)
     merger.OutputFile(qPrintable(destinationFileName), true, 0);
     merger.AddFile(qPrintable(sourceFileName));
     merger.Merge();
+    if (overwrite) {
+      qDebug() << "rm" << sourceFileName;
+      QFile::remove(sourceFileName);
+      qDebug() << "mv" << destinationFileName << "  ---->  " << sourceFileName;
+      QFile::rename(destinationFileName, sourceFileName);
+    }
   }
-  return 0;
+  return EXIT_SUCCESS;
 }
