@@ -78,11 +78,11 @@ TH1D* SimulationFluxReader::spectrum(const QList<SimulationFluxKey>& keys) const
   if (!flux->GetSumw2())
     flux->Sumw2();
   QString title = "MC";
-  title.append(" "+ParticleProperties(keys.at(0).particle()).name());
+  title.append(" " + ParticleProperties(keys.at(0).particle()).name());
   for (int i = 1; i < keys.size(); i++) {
     SimulationFluxKey key = keys[i];
     flux->Add(m_fluxes[keys.at(i)]);
-    title.append(" "+ParticleProperties(keys.at(i).particle()).name());
+    title.append(" " + ParticleProperties(keys.at(i).particle()).name());
   }
   title.append(" sum");
   flux->SetTitle(qPrintable(title));

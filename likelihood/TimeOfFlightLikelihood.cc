@@ -1,4 +1,5 @@
 #include "TimeOfFlightLikelihood.hh"
+#include "TimeOfFlight.hh"
 #include "Helpers.hh"
 #include "Constants.hh"
 #include "AnalyzedEvent.hh"
@@ -25,7 +26,7 @@ TimeOfFlightLikelihood::~TimeOfFlightLikelihood()
 
 double TimeOfFlightLikelihood::eval(const AnalyzedEvent* event, const Hypothesis& hypothesis, bool* goodInterpolation) const
 {
-  double beta = event->particle()->beta();
+  double beta = event->particle()->timeOfFlight()->beta();
   if (qIsNull(beta))
     return 0;
   return eval(1./beta, hypothesis, goodInterpolation);

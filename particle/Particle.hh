@@ -46,10 +46,6 @@ public:
   double backgroundLikelihood(Enums::Particles) const;
   double backgroundLikelihood(Enums::ReconstructionMethod, Enums::Particles) const;
 
-//  double transverseMomentum() const; // To be removed: KineticVariable that
-//  double momentum() const;           // contains Likelihood analyzed data
-  double beta() const;               // should be used!
-
   void reset();
 
 private:

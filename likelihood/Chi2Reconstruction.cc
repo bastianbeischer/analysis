@@ -1,4 +1,5 @@
 #include "Chi2Reconstruction.hh"
+#include "TimeOfFlight.hh"
 #include "Likelihood.hh"
 #include "KineticVariable.hh"
 #include "AnalyzedEvent.hh"
@@ -45,7 +46,7 @@ public:
       tracker = (x - curvature) * (x - curvature) / (sigmaCurvature * sigmaCurvature);
     }
     double tof = 0;
-    double beta = m_event->particle()->beta();
+    double beta = m_event->particle()->timeOfFlight()->beta();
     if (!qIsNull(beta)) {
       double inverseBeta = 1. / beta;
       double sigmaInverseBeta = Helpers::tofResolution();

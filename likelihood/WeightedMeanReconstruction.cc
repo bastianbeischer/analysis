@@ -1,4 +1,5 @@
 #include "WeightedMeanReconstruction.hh"
+#include "TimeOfFlight.hh"
 #include "Likelihood.hh"
 #include "KineticVariable.hh"
 #include "AnalyzedEvent.hh"
@@ -47,9 +48,9 @@ void WeightedMeanReconstruction::identify(AnalyzedEvent* event)
       enumeratur+= curvature/sigmaCurvature2;
       denumerator+= 1./sigmaCurvature2;
     }
-    double beta = event->particle()->beta();
+    double beta = event->particle()->timeOfFlight()->beta();
     if (!qIsNull(beta) && qAbs(beta) < 1) {
-      double inverseBeta = 1. / event->particle()->beta();
+      double inverseBeta = 1. / event->particle()->timeOfFlight()->beta();
       double tofResolution = Helpers::tofResolution();
       double mass = ParticleProperties(*particleIt).mass();
       double curvatureTof = sqrt(inverseBeta*inverseBeta - 1) / mass;

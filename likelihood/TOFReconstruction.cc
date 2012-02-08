@@ -1,4 +1,5 @@
 #include "TOFReconstruction.hh"
+#include "TimeOfFlight.hh"
 #include "Likelihood.hh"
 #include "KineticVariable.hh"
 #include "AnalyzedEvent.hh"
@@ -35,7 +36,7 @@ void TOFReconstruction::identify(AnalyzedEvent* event)
   QVector<Enums::Particle>::ConstIterator particleEnd = m_particles.end();
   for (int it = 0; particleIt != particleEnd; ++it, ++particleIt, ++pointIt) {
     Q_ASSERT(*particleIt != Enums::NoParticle);
-    double beta = event->particle()->beta();
+    double beta = event->particle()->timeOfFlight()->beta();
     double curvature = beta < 0 ? -1e-9 : 1e-9;
     if (qAbs(beta) < 1) {
       double beta2 = beta * beta;

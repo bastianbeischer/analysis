@@ -111,7 +111,7 @@ void ParticleInformation::checkHighTransverseRigidity()
 
   if (!track->fitGood())
     return;
-  double transverseRigidity = 0;//track->transverseRigidity();
+  double transverseRigidity = track->transverseRigidity();
   // 2GeV currently...
   if (transverseRigidity > 2 || transverseRigidity == DBL_MAX)
     m_flags |= HighTransverseRigidity;
@@ -136,7 +136,7 @@ void ParticleInformation::checkAlbedo()
 
   if (!track->fitGood())
     return;
-  if (m_particle->beta() < 0)
+  if (m_particle->timeOfFlight()->beta() < 0)
     m_flags |= Albedo;
 }
 

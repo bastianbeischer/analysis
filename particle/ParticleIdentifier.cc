@@ -33,7 +33,7 @@ void ParticleIdentifier::identify(Particle* particle)
 
   // calculate charge sign
   bool albedo = tof->timeOfFlight() > 0 ? false: true;
-  int chargeSign = 0;//track->rigidity() > 0 ? 1: -1;
+  int chargeSign = track->rigidity() > 0 ? 1: -1;
   if (albedo)
     chargeSign *= -1;
 
