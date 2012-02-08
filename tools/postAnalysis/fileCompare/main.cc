@@ -8,6 +8,7 @@
 #include <TH2.h>
 #include <TF1.h>
 #include <TKey.h>
+#include <TText.h>
 
 #include <cmath>
 
@@ -114,8 +115,27 @@ bool functionsMatch(TF1* f1, TF1* f2, QStringList& comment)
   return ret;
 }
 
+void save(QString name, const QVector<TObject*>& objects, TFile& outputFile) 
+{
+  outputFile.cd();
+  name.replace("/", "per");
+  TCanvas canvas(qPrintable(name), qPrintable(name), 1000, 500);
+  canvas.cd();
+  canvas.Divide(objects.size());
+  for (int i = 0; i < objects.size(); ++i) {
+    canvas.cd(i + 1);
+    objects[i]->DrawClone();
+    TText text(0.5, 1, qPrintable("File: " + QString::number(i)));
+    text.SetNDC();
+    text.SetTextAlign(23);
+    text.DrawClone();
+  }
+  canvas.cd();
+  canvas.Write();
+  gROOT->cd();
+}
 
-void compareKeys(TKey* key1, TKey* key2, QStringList& comment)
+void compareKeys(TKey* key1, TKey* key2, QStringList& comment, TFile& outputFile)
 {
   TObject* object1 = key1->ReadObj();
   TObject* object2 = key2->ReadObj();
@@ -126,25 +146,29 @@ void compareKeys(TKey* key1, TKey* key2, QStringList& comment)
   const QVector<TH1D*>& h1d1 = canvas1.histograms1D();
   const QVector<TH1D*>& h1d2 = canvas2.histograms1D();
   for (int i = 0; i < h1d1.count(); ++i) {
-    if (!histogramsMatch(h1d1[i], h1d2[i], comment))
+    if (!histogramsMatch(h1d1[i], h1d2[i], comment)) {
       comment << QString("canvases \"%1\", histograms \"%2\" differ.").arg(canvas1.name()).arg(h1d1[i]->GetName());
+      save(canvas1.name(), QVector<TObject*>() << h1d1[i] << h1d2[i], outputFile);
+    }
   }
 
-  const QVector<TH2D*>& h2d1 = canvas1.histograms2D();
-  const QVector<TH2D*>& h2d2 = canvas2.histograms2D();
-  for (int i = 0; i < h2d1.count(); ++i) {
-    if (!histogramsMatch(h2d1[i], h2d2[i], comment))
-      comment << QString("canvases \"%1\", histograms \"%2\" differ.").arg(canvas1.name()).arg(h2d1[i]->GetName());
-  }
-
-  const QVector<TF1*>& f1 = canvas1.functions();
-  const QVector<TF1*>& f2 = canvas2.functions();
-  for (int i = 0; i < f1.count(); ++i) {
-    if (!functionsMatch(f1[i], f2[i], comment))
-      comment << QString("canvases \"%1\", functions \"%2\" differ.").arg(canvas1.name()).arg(f1[i]->GetName());
-  }
-
-
+//  const QVector<TH2D*>& h2d1 = canvas1.histograms2D();
+//  const QVector<TH2D*>& h2d2 = canvas2.histograms2D();
+//  for (int i = 0; i < h2d1.count(); ++i) {
+//    if (!histogramsMatch(h2d1[i], h2d2[i], comment)) {
+//      comment << QString("canvases \"%1\", histograms \"%2\" differ.").arg(canvas1.name()).arg(h2d1[i]->GetName());
+//      save(canvas1.name(), QVector<TObject*>() << h2d1[i] << h2d2[i], outputFile);
+//    }
+//  }
+//
+//  const QVector<TF1*>& f1 = canvas1.functions();
+//  const QVector<TF1*>& f2 = canvas2.functions();
+//  for (int i = 0; i < f1.count(); ++i) {
+//    if (!functionsMatch(f1[i], f2[i], comment)) {
+//      comment << QString("canvases \"%1\", functions \"%2\" differ.").arg(canvas1.name()).arg(f1[i]->GetName());
+//      save(canvas1.name(), QVector<TObject*>() << f1[i] << f2[i], outputFile);
+//    }
+//  }
 }
 
 int main(int argc, char* argv[])
@@ -180,16 +204,19 @@ int main(int argc, char* argv[])
   qDebug();
   qDebug() << "Comparing" << commonKeys.count() << "common key(s)...";
   int nDifferingKeys = 0;
+  TFile outputFile("differences.root", "RECREATE");
+  gROOT->cd();
   foreach (QString s, commonKeys) {
     TKey* key1 = file1.GetKey(qPrintable(s));
     TKey* key2 = file2.GetKey(qPrintable(s));
     QStringList comment;
-    compareKeys(key1, key2, comment);
+    compareKeys(key1, key2, comment, outputFile);
     if (comment.size())
       ++nDifferingKeys;
     foreach (QString s, comment)
       qDebug() << qPrintable(s);
   }
+  outputFile.Close();
 
   qDebug();
   qDebug() << "summary:";
