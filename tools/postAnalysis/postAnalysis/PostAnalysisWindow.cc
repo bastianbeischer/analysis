@@ -113,14 +113,13 @@ void PostAnalysisWindow::selectCanvas(QListWidgetItem* item, QListWidgetItem*)
 
 void PostAnalysisWindow::selectCanvas(QListWidgetItem* item)
 {
-  gPad->Clear();
+  m_ui->qtWidget->GetCanvas()->cd();
+  m_ui->qtWidget->GetCanvas()->Clear("D");
   if (!item)
     return;
   m_ui->plotListWidget->setCurrentItem(0);
   m_selectedPlot = 0;
   RootStyle::setPalette(RootStyle::DefaultPalette);
-  m_ui->qtWidget->GetCanvas()->cd();
-  m_ui->qtWidget->GetCanvas()->Clear();
   foreach (PostAnalysisCanvas* canvas, m_canvases) {
     if (item->text() == canvas->name()) {
       canvas->draw(m_ui->qtWidget->GetCanvas());
