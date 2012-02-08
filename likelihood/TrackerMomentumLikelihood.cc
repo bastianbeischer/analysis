@@ -43,6 +43,6 @@ double TrackerMomentumLikelihood::eval(double curvature, const Hypothesis& hypot
     return 0;
   if (hypothesis.charge() * hypothesis.curvature() < 0)
     return 0;
-  double relativeSigma = Helpers::addQuad(0.08 * hypothesis.rigidity(), 0.25 * hypothesis.beta());
+  double relativeSigma = Helpers::addQuad(0.08 * hypothesis.rigidity(), 0.25 / hypothesis.beta());
   return TMath::Gaus(curvature, hypothesis.curvature(), relativeSigma, true);
 }
