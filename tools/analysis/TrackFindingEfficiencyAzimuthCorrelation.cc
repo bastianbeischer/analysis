@@ -15,6 +15,8 @@
 #include "RootQtWidget.hh"
 #include "Hit.hh"
 #include "Helpers.hh"
+#include "ParticleProperties.hh"
+#include "ParticleDB.hh"
 
 #include <TH2D.h>
 #include <TLatex.h>
@@ -84,8 +86,8 @@ void TrackFindingEfficiencyAzimuthCorrelation::processEvent(const AnalyzedEvent*
       return;
     //Todo: albedo handling
     int mcPdgId = event->simpleEvent()->MCInformation()->primary()->pdgID;
-    Particle mcParticle(mcPdgId);
-    rigidity = event->simpleEvent()->MCInformation()->primary()->initialMomentum.Mag() / mcParticle.charge();
+    const ParticleProperties* mcParticle = ParticleDB::instance()->lookupPdgId(mcPdgId);
+    rigidity = event->simpleEvent()->MCInformation()->primary()->initialMomentum.Mag() / mcParticle->charge();
     azimuth = event->simpleEvent()->MCInformation()->primary()->azimuthAngle() * 180. / M_PI;;
     if (!isTriggerEvent(QVector<Hit*>::fromStdVector(event->simpleEvent()->hits())))
       return;

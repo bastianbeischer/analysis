@@ -15,6 +15,7 @@
 #include "Track.hh"
 #include "ParticleInformation.hh"
 #include "Helpers.hh"
+#include "Hypothesis.hh"
 
 #include <QSpinBox>
 
@@ -64,7 +65,7 @@ void AllTrackerLayersFlagEfficiency::processEvent(const AnalyzedEvent* event)
     return;
 
   //TODO: right albedo handling
-  double rigidity = track->rigidity();
+  double rigidity = event->particle()->hypothesis()->rigidity();
   m_normHisto->Fill(rigidity);
   if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
     return;

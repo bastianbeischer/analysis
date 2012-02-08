@@ -12,6 +12,7 @@
 #include "SensorTypes.hh"
 #include "SimpleEvent.hh"
 #include "Helpers.hh"
+#include "Hypothesis.hh"
 
 #include <TSpline.h>
 #include <TGraph.h>
@@ -447,8 +448,8 @@ void Corrections::multipleScattering(Particle* particle)
     for (QVector<Hit*>::ConstIterator it = track->hits().begin(); it != hitsEnd; ++it) {
       Hit* hit = *it;
       if (hit->type() == Hit::tracker) {
-        double p = track->rigidity();
-        double beta = particle->beta();
+        double p = particle->hypothesis()->rigidity();
+        double beta = particle->hypothesis()->beta();
         if (beta == 0 || p == 0)
           return;
         // double m = particle->mass();

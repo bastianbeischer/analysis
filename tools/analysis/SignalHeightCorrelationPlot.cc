@@ -6,6 +6,7 @@
 #include "ParticleInformation.hh"
 #include "SimpleEvent.hh"
 #include "Setup.hh"
+#include "Hypothesis.hh"
 
 #include <QString>
 #include <QDebug>
@@ -97,7 +98,7 @@ void SignalHeightCorrelationPlot::processEvent(const AnalyzedEvent* event)
     }
   }
   if (m_type == Rigidity)
-    m_histo->Fill(track->rigidity(), sumSignalHeightOnTrack / nHitsOnTrack);
+    m_histo->Fill(event->particle()->hypothesis()->rigidity(), sumSignalHeightOnTrack / nHitsOnTrack);
 }
 
 void SignalHeightCorrelationPlot::update()

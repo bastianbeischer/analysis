@@ -4,6 +4,7 @@
 #include "Track.hh"
 #include "ParticleInformation.hh"
 #include "Helpers.hh"
+#include "Hypothesis.hh"
 
 #include <QMap>
 
@@ -48,10 +49,11 @@ void TrackingEfficiencyVsMomentumPlot::processEvent(const AnalyzedEvent* event)
     return;
   if (!event->flagsSet(ParticleInformation::InsideMagnet | ParticleInformation::Chi2Good))
     return;
-  double rigidity = track->rigidity();
-  if (m_type == Enums::Positive && rigidity < 0)
+  double rigidity = event->particle()->hypothesis()->rigidity();
+  int charge = event->particle()->hypothesis()->charge();
+  if (m_type == Enums::Positive && charge < 0)
     return;
-  if (m_type == Enums::Negative && rigidity > 0)
+  if (m_type == Enums::Negative && charge > 0)
     return;
 
   const ParticleInformation* info = event->particle()->information();

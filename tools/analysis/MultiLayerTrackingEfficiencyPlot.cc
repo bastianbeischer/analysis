@@ -13,6 +13,7 @@
 #include "ParticleInformation.hh"
 #include "ProjectionControlWidget.hh"
 #include "Helpers.hh"
+#include "Hypothesis.hh"
 
 #include <QSpinBox>
 
@@ -79,10 +80,11 @@ void MultiLayerTrackingEfficiencyPlot::processEvent(const AnalyzedEvent* event)
   ParticleInformation::Flags flags = event->particle()->information()->flags();
   if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet))
     return;
-  double rigidity = track->rigidity();
-  if (m_type == Positive && rigidity < 0)
+  double rigidity = event->particle()->hypothesis()->rigidity();
+  int charge = event->particle()->hypothesis()->charge();
+  if (m_type == Positive && charge < 0)
     return;
-  if (m_type == Negative && rigidity > 0)
+  if (m_type == Negative && charge > 0)
     return;
 
   int nbOfLayers = 0;

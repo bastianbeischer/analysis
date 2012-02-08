@@ -5,6 +5,7 @@
 #include "ParticleInformation.hh"
 #include "RootQtWidget.hh"
 #include "SimpleEvent.hh"
+#include "Hypothesis.hh"
 #include "Constants.hh"
 #include "Particle.hh"
 #include "Helpers.hh"
@@ -90,7 +91,7 @@ void RigiditySpectrumRatio::processEvent(const AnalyzedEvent* event)
   if (event->flagsSet(ParticleInformation::Albedo))
     return;
 
-  double rigidity = track->rigidity();
+  double rigidity = event->particle()->hypothesis()->rigidity();
   if (rigidity < 0) {
     m_denominator->Fill(-rigidity);
   } else {

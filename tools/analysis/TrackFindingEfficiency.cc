@@ -12,6 +12,8 @@
 #include "TOFCluster.hh"
 #include "Hit.hh"
 #include "Helpers.hh"
+#include "ParticleProperties.hh"
+#include "ParticleDB.hh"
 
 #include <TH1D.h>
 #include <TLatex.h>
@@ -78,8 +80,8 @@ void TrackFindingEfficiency::processEvent(const AnalyzedEvent* event)
       return;
     //Todo: albedo handling
     int mcPdgId = event->simpleEvent()->MCInformation()->primary()->pdgID;
-    Particle mcParticle(mcPdgId);
-    rigidity = event->simpleEvent()->MCInformation()->primary()->initialMomentum.Mag() / mcParticle.charge();
+    const ParticleProperties* mcParticle = ParticleDB::instance()->lookupPdgId(mcPdgId);
+    rigidity = event->simpleEvent()->MCInformation()->primary()->initialMomentum.Mag() / mcParticle->charge();
 
     if (!isTriggerEvent(QVector<Hit*>::fromStdVector(event->simpleEvent()->hits())))
       return;

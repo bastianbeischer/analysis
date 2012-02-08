@@ -11,6 +11,7 @@
 #include "SimpleEvent.hh"
 #include "ProjectionControlWidget.hh"
 #include "Constants.hh"
+#include "Hypothesis.hh"
 
 #include <QSpinBox>
 
@@ -73,10 +74,10 @@ void AzimuthPositionCorrelation::processEvent(const AnalyzedEvent* event)
   if (event->flagsSet(ParticleInformation::Albedo))
     return;
 
-  double rigidity = track->rigidity();
-  if (m_type == Enums::Positive && rigidity < 0)
+  int charge = event->particle()->hypothesis()->charge();
+  if (m_type == Enums::Positive && charge < 0)
     return;
-  if (m_type == Enums::Negative && rigidity > 0)
+  if (m_type == Enums::Negative && charge > 0)
     return;
 
   double azimuth = track->azimuthAngle() * 180. / M_PI;

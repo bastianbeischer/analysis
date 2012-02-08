@@ -136,7 +136,7 @@ void ParticleInformation::checkAlbedo()
 
   if (!track->fitGood())
     return;
-  if (m_particle->beta() < 0)
+  if (m_particle->timeOfFlight()->beta() < 0)
     m_flags |= Albedo;
 }
 

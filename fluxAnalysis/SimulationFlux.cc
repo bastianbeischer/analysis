@@ -1,5 +1,7 @@
 #include "SimulationFlux.hh"
 
+#include "ParticleProperties.hh"
+
 SimulationFlux::SimulationFlux(SimulationFluxKey key, TH2D* h2Spectrum)
   : m_key(key)
   , m_h2Spectrum(h2Spectrum)
@@ -22,9 +24,9 @@ TH1D* SimulationFlux::spectrum()
 
   TH1D* histogram = projectionY(m_h2Spectrum, xMin, xMax);
   scaleToBinWidth(histogram);
-  histogram->SetTitle(qPrintable("MC " + Particle(m_key.particle()).name()));
-  histogram->SetLineColor(Particle(m_key.particle()).color());
-  histogram->SetMarkerColor(Particle(m_key.particle()).color());
+  histogram->SetTitle(qPrintable("MC " + ParticleProperties(m_key.particle()).name()));
+  histogram->SetLineColor(ParticleProperties(m_key.particle()).color());
+  histogram->SetMarkerColor(ParticleProperties(m_key.particle()).color());
   return histogram;
 }
 

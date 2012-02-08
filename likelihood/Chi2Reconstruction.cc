@@ -1,8 +1,10 @@
 #include "Chi2Reconstruction.hh"
+#include "TimeOfFlight.hh"
 #include "Likelihood.hh"
 #include "KineticVariable.hh"
 #include "AnalyzedEvent.hh"
 #include "Particle.hh"
+#include "ParticleProperties.hh"
 #include "Setup.hh"
 #include "Helpers.hh"
 
@@ -44,7 +46,7 @@ public:
       tracker = (x - curvature) * (x - curvature) / (sigmaCurvature * sigmaCurvature);
     }
     double tof = 0;
-    double beta = m_event->particle()->beta();
+    double beta = m_event->particle()->timeOfFlight()->beta();
     if (!qIsNull(beta)) {
       double inverseBeta = 1. / beta;
       double sigmaInverseBeta = Helpers::tofResolution();
@@ -141,7 +143,7 @@ TMultiGraph* Chi2Reconstruction::graph() const
     m_chi2Function->setParameters(m_event, type);
     TGraph* g = new TGraph(nSteps);
     g->SetName(qPrintable(Enums::label(type)));
-    g->SetLineColor(Particle(type).color());
+    g->SetLineColor(ParticleProperties(type).color());
     g->SetMarkerSize(0.1);
     g->SetLineWidth(2);
     for (int i = 0; i < nSteps; ++i) {

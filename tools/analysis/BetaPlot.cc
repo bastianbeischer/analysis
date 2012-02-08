@@ -9,6 +9,7 @@
 #include "TOFBar.hh"
 #include "Particle.hh"
 #include "Track.hh"
+#include "Hypothesis.hh"
 
 #include <TH1.h>
 #include <TVector3.h>
@@ -49,7 +50,7 @@ void BetaPlot::processEvent(const AnalyzedEvent* event)
     return;
   if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::BetaGood))
     return;
-  histogram()->Fill(1./event->particle()->beta());
+  histogram()->Fill(1./event->particle()->hypothesis()->beta());
 }
 
 void BetaPlot::update()

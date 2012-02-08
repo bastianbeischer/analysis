@@ -1,7 +1,7 @@
 #ifndef SimulationFluxReader_hh
 #define SimulationFluxReader_hh
 
-#include "Particle.hh"
+#include "Enums.hh"
 #include "SimulationFluxKey.hh"
 
 #include <QMap>

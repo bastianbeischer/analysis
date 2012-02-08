@@ -16,6 +16,8 @@
 #include "Hit.hh"
 #include "Helpers.hh"
 #include "AnalyzedEvent.hh"
+#include "ParticleProperties.hh"
+#include "ParticleDB.hh"
 
 #include <TH2D.h>
 #include <TLatex.h>
@@ -90,8 +92,8 @@ void TrackFindingEfficiencyZenithCorrelation::processEvent(const AnalyzedEvent* 
       return;
     //Todo: albedo handling
     int mcPdgId = event->simpleEvent()->MCInformation()->primary()->pdgID;
-    Particle mcParticle(mcPdgId);
-    rigidity = event->simpleEvent()->MCInformation()->primary()->initialMomentum.Mag() / mcParticle.charge();
+    const ParticleProperties* mcParticle = ParticleDB::instance()->lookupPdgId(mcPdgId);
+    rigidity = event->simpleEvent()->MCInformation()->primary()->initialMomentum.Mag() / mcParticle->charge();
     zenith = event->simpleEvent()->MCInformation()->primary()->zenithAngle();
     if (!isTriggerEvent(QVector<Hit*>::fromStdVector(event->simpleEvent()->hits())))
       return;

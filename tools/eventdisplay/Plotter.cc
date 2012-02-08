@@ -166,7 +166,7 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
   const Particle* particle = m_processor->particle();
   if (particle->track()) {
     infoTextEdit.append(QString("\nSpectrometer: R = %1 GV").arg(particle->track()->rigidity(), 0, 'g', 3));
-    infoTextEdit.append(QString("TOF: beta = %1").arg(particle->beta()));
+    infoTextEdit.append(QString("TOF: beta = %1").arg(particle->timeOfFlight()->beta()));
   }
 
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);

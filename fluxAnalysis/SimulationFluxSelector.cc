@@ -1,6 +1,7 @@
 #include "SimulationFluxSelector.hh"
 
 #include "SimulationFluxReader.hh"
+#include "ParticleProperties.hh"
 #include "RootQtWidget.hh"
 #include "H1DPlot.hh"
 
@@ -193,7 +194,7 @@ void SimulationFluxSelector::checkParticles(QAction* action, bool positive)
     bool isAlbedo = false;
     if (particleString.contains("albedo", Qt::CaseInsensitive))
       isAlbedo = true;
-    if (!isAlbedo && ((Particle(particleType).charge() > 0 && positive) || (Particle(particleType).charge() < 0 && !positive)))
+    if (!isAlbedo && ((ParticleProperties(particleType).charge() > 0 && positive) || (ParticleProperties(particleType).charge() < 0 && !positive)))
       action->setChecked(true);
   }
   m_inhibitUpdate = false;

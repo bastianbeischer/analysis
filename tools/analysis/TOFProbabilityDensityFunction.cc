@@ -7,6 +7,8 @@
 #include "SimpleEvent.hh"
 #include "Track.hh"
 #include "KineticVariable.hh"
+#include "Hypothesis.hh"
+#include "ParticleProperties.hh"
 
 #include <TH1.h>
 #include <TF1.h>
@@ -42,9 +44,9 @@ TOFProbabilityDensityFunction::TOFProbabilityDensityFunction()
   QVector<Enums::Particle> particles = QVector<Enums::Particle>()
     << Enums::Proton << Enums::PiPlus << Enums::Electron;
   foreach (Enums::Particle particleType, particles) {
-    Particle particle(particleType);
-    TLegendEntry* entry = legend->AddEntry(static_cast<TObject*>(0), qPrintable(particle.name()), "L");
-    entry->SetLineColor(particle.color());
+    ParticleProperties particleProperties(particleType);
+    TLegendEntry* entry = legend->AddEntry(static_cast<TObject*>(0), qPrintable(particleProperties.name()), "L");
+    entry->SetLineColor(particleProperties.color());
     entry->SetLineWidth(2);
   }
   addLegend(legend);
@@ -73,9 +75,9 @@ void TOFProbabilityDensityFunction::processEvent(const AnalyzedEvent* event)
 
   double threshold = 200.;
   if (signal1 < threshold && signal2 < threshold)
-    m_belowThresholdHistogram->Fill(1./event->particle()->beta());
+    m_belowThresholdHistogram->Fill(1./event->particle()->hypothesis()->beta());
   if (signal1 > threshold && signal2 > threshold)
-    m_aboveThresholdHistogram->Fill(1./event->particle()->beta());
+    m_aboveThresholdHistogram->Fill(1./event->particle()->hypothesis()->beta());
 }
 
 double gauss(double* x, double* p)
@@ -92,12 +94,12 @@ void TOFProbabilityDensityFunction::addFunctions(double momentum)
   QVector<Enums::Particle> particles = QVector<Enums::Particle>()
     << Enums::Proton << Enums::PiPlus << Enums::Electron;
   foreach (Enums::Particle particleType, particles) {
-    Particle particle(particleType);
-    TF1* f = new TF1(qPrintable(title() + particle.name()), gauss, m_min, m_max, 2);
-    KineticVariable variable(particle.type());
+    ParticleProperties particleProperties(particleType);
+    TF1* f = new TF1(qPrintable(title() + particleProperties.name()), gauss, m_min, m_max, 2);
+    KineticVariable variable(particleProperties.type());
     variable.setMomentum(momentum);
     f->SetParameters(1./variable.beta(), 0.4 * Constants::speedOfLight / (Constants::upperTofPosition-Constants::lowerTofPosition));
-    f->SetLineColor(particle.color());
+    f->SetLineColor(particleProperties.color());
     f->SetNpx(1000);
     addFunction(f);
   }

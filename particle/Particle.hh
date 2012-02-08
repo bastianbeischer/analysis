@@ -46,18 +46,6 @@ public:
   double backgroundLikelihood(Enums::Particles) const;
   double backgroundLikelihood(Enums::ReconstructionMethod, Enums::Particles) const;
 
-  double transverseMomentum() const; // To be removed: KineticVariable that
-  double momentum() const;           // contains Likelihood analyzed data
-  double beta() const;               // should be used!
-
-  // loopthrough functions to properties
-  Enums::Particle type() const;
-  int pdgId() const;
-  QString name() const;
-  double mass() const;
-  int charge() const;
-  Color_t color() const;
-
   void reset();
 
 private:

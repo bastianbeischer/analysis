@@ -6,6 +6,7 @@
 #include "Track.hh"
 #include "ParticleInformation.hh"
 #include "Enums.hh"
+#include "Hypothesis.hh"
 
 AlbedosVsMomentumPlot::AlbedosVsMomentumPlot() :
   AnalysisPlot(Enums::MomentumReconstruction),
@@ -55,7 +56,7 @@ void AlbedosVsMomentumPlot::processEvent(const AnalyzedEvent* event)
     return;
   if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet | ParticleInformation::BetaGood))
     return;
-  double rigidity = track->rigidity();
+  double rigidity = event->particle()->hypothesis()->rigidity();
   m_totalHisto->Fill(rigidity);
   if (event->flagsSet(ParticleInformation::Albedo))
     m_albedoHisto->Fill(rigidity);

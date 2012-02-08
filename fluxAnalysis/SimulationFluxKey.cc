@@ -1,5 +1,7 @@
 #include "SimulationFluxKey.hh"
 
+#include "ParticleProperties.hh"
+
 #include <QStringList>
 #include <QDebug>
 
@@ -57,7 +59,7 @@ SimulationFluxKey::SimulationFluxKey(Location location, Acceptance acceptance, S
 {
   construct();
   if (!s_particleNames.contains(m_particle)) {
-    qFatal("SimulationFluxKey does not have this particle with name %s", qPrintable(Particle(m_particle).name()));
+    qFatal("SimulationFluxKey does not have this particle with name %s", qPrintable(ParticleProperties(m_particle).name()));
   }
 }
 
@@ -110,7 +112,7 @@ QString SimulationFluxKey::sourceName() const
 
 QString SimulationFluxKey::particleName() const
 {
-  QString name = Particle(m_particle).name();
+  QString name = ParticleProperties(m_particle).name();
   if (m_isAlbedo)
     name.prepend("albedo ");
   return name;
