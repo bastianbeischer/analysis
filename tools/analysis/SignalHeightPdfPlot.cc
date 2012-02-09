@@ -8,6 +8,7 @@
 #include "TRDReconstruction.hh"
 #include "Hypothesis.hh"
 #include "SimpleEvent.hh"
+#include "ParticleDB.hh"
 
 #include <TH2.h>
 
@@ -49,19 +50,37 @@ void SignalHeightPdfPlot::processEvent(const AnalyzedEvent* event)
     return;
   if (!event->flagsSet(ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet | ParticleInformation::Chi2Good | ParticleInformation::BetaGood))
     return;
-  const Hypothesis* h = event->particle()->hypothesis();
-  if (h->particle() & m_particles) {
+  const Hypothesis* hypothesis = event->particle()->hypothesis();
+  double absoluteRigidity = hypothesis->absoluteRigidity();
+  Enums::Particle particleType = hypothesis->particle();
+
+  if (event->simpleEvent()->contentType() == SimpleEvent::MonteCarlo) {
+    if (event->simpleEvent()->MCInformation()->primary()->initialMomentum.Z() > 0)
+      return;
+    if (!event->simpleEvent()->MCInformation()->primary()->isInsideMagnet())
+      return;
+    const int mcPdgId = event->simpleEvent()->MCInformation()->primary()->pdgID;
+    const ParticleProperties* mcParticle = ParticleDB::instance()->lookupPdgId(mcPdgId);
+    particleType = mcParticle->type();
+    const double charge = mcParticle->charge();
+    if (charge == 0)
+      return;
+    const double rigidityGenerated = event->simpleEvent()->MCInformation()->primary()->initialMomentum.Mag() / charge;
+    absoluteRigidity = qAbs(rigidityGenerated);
+  }
+
+  if (particleType & m_particles) {
     if (m_type == Hit::tracker) {
-      histogram()->Fill(h->absoluteRigidity(), event->particle()->track()->signalHeight());
+      histogram()->Fill(absoluteRigidity, event->particle()->track()->signalHeight());
     } else if (m_type == Hit::tof) {
-      histogram()->Fill(h->absoluteRigidity(), event->particle()->timeOfFlight()->timeOverThreshold());
+      histogram()->Fill(absoluteRigidity, event->particle()->timeOfFlight()->timeOverThreshold());
     } else if (m_type == Hit::trd) {
       if (0 <= m_layer) {
         const EnergyDeposition& deposition = event->particle()->trdReconstruction()->energyDepositionForLayer(m_layer);
-        histogram()->Fill(h->absoluteRigidity(), deposition.edepOnTrackPerLength);
+        histogram()->Fill(absoluteRigidity, deposition.edepOnTrackPerLength);
       } else for (int layer = 0; layer < 8; ++layer){
         const EnergyDeposition& deposition = event->particle()->trdReconstruction()->energyDepositionForLayer(layer);
-        histogram()->Fill(h->absoluteRigidity(), deposition.edepOnTrackPerLength);
+        histogram()->Fill(absoluteRigidity, deposition.edepOnTrackPerLength);
       }
     }
   }
