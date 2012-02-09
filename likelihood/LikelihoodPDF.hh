@@ -21,6 +21,7 @@ public:
   void setNormalizationFactor(double);
   void setLimits(int parameterNumber, double min, double max);
   PDFParameters parameters() const;
+  void setVariable(const KineticVariable&);
   const KineticVariable& variable() const;
   double integral();
   void setAxisTitle(const QString&);

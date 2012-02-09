@@ -106,11 +106,8 @@ const PDFParameters& Likelihood::defaultParameters(Enums::Particle particle) con
 
 LikelihoodPDF* Likelihood::pdf(const KineticVariable& variable) const
 {
-  if (variable.particle() & m_particles) {
-    LikelihoodPDF* pdf = new LikelihoodPDF(this, variable);
-    pdf->setParameters(interpolation(Hypothesis(variable.particle(), variable.curvature())));
-    return pdf;
-  }
+  if (variable.particle() & m_particles)
+    return new LikelihoodPDF(this, variable);
   return 0;
 }
 

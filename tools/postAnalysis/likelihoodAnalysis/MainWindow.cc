@@ -38,6 +38,8 @@ void MainWindow::setupAnalysis()
   for (int layer = 0; layer < 8; ++layer)
     addPlot(new LikelihoodPDFPlot(Enums::SignalHeightTrdLikelihood, particles, layer));
   addPlot(new LikelihoodPDFPlot(Enums::TimeOverThresholdLikelihood, particles));
+  addPlot(new LikelihoodPDFPlot(Enums::TimeOfFlightLikelihood, particles));
+  addPlot(new LikelihoodPDFPlot(Enums::TrackerMomentumLikelihood, particles));
 
   int n = signalList.count();
   for (int i = 0; i < n; ++i) {

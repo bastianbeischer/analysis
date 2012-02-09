@@ -14,6 +14,7 @@ LikelihoodPDF::LikelihoodPDF(const Likelihood* likelihood, const KineticVariable
   , m_likelihood(likelihood)
   , m_numberOfParameters(likelihood->numberOfParameters())
 {
+  setVariable(variable);
   setScaleFactor(1.);
   SetNpx(1000);
   SetLineColor(ParticleProperties(variable.particle()).color());
@@ -71,6 +72,12 @@ PDFParameters LikelihoodPDF::parameters() const
   for (int i = 0; i < m_numberOfParameters; ++i)
     parameters[i] = GetParameter(i);
   return parameters;
+}
+
+void LikelihoodPDF::setVariable(const KineticVariable& variable)
+{
+  m_variable = variable;
+  setParameters(m_likelihood->interpolation(Hypothesis(variable.particle(), variable.curvature())));
 }
 
 const KineticVariable& LikelihoodPDF::variable() const

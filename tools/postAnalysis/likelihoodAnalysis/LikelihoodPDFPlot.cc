@@ -46,8 +46,7 @@ void LikelihoodPDFPlot::rigidityChanged(double rigidity)
   while (it.hasNext()) {
     it.next();
     Hypothesis(it.key(), 1./rigidity);
-    const PDFParameters& parameters = m_likelihood->interpolation(Hypothesis(it.key(), 1./rigidity));
-    it.value()->setParameters(parameters);
+    it.value()->setVariable(KineticVariable(it.key(), Enums::AbsoluteRigidity, rigidity));
   }
   latex()->SetTitle(qPrintable(QString("%1 %2 GV").arg(m_likelihood->title()).arg(rigidity, 4, 'f', 2, '0')));
   gPad->Modified();
