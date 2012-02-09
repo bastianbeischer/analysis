@@ -31,6 +31,7 @@ SignalHeightPdfPlotCollection::SignalHeightPdfPlotCollection(Hit::ModuleType typ
   secondaryWidget()->layout()->addWidget(widget);
 
   QString typeString;
+  QString axisTitle;
   QVector<double> xBins = Helpers::logBinning(20, 0.1, 10);
   QVector<double> yBins;
   Likelihood* lh = 0;
@@ -38,14 +39,17 @@ SignalHeightPdfPlotCollection::SignalHeightPdfPlotCollection(Hit::ModuleType typ
     typeString = "tracker";
     lh = new SignalHeightTrackerLikelihood();
     yBins = Helpers::linearBinning(50, lh->measuredValueMin(), lh->measuredValueMax());
+    axisTitle = lh->measuredValueAxisTitle();
   } else if (type == Hit::tof) {
     typeString = "tof";
     lh = new TimeOverThresholdLikelihood();
     yBins = Helpers::linearBinning(60, lh->measuredValueMin(), lh->measuredValueMax());
+    axisTitle = lh->measuredValueAxisTitle();
   } else if (type == Hit::trd) {
     typeString = "trd";
     lh = new SignalHeightTrdLikelihood();
     yBins = Helpers::linearBinning(100, lh->measuredValueMin(), lh->measuredValueMax());
+    axisTitle = lh->measuredValueAxisTitle();
   }
   if (lh)
     delete lh;
@@ -54,16 +58,16 @@ SignalHeightPdfPlotCollection::SignalHeightPdfPlotCollection(Hit::ModuleType typ
 
   m_particleComboBox->addItem(Enums::label(particles));
   m_layerComboBox->addItem("all layers");
-  m_signalHeightPdfPlots.append(new SignalHeightPdfPlot(type, particles, xBins, yBins));
+  m_signalHeightPdfPlots.append(new SignalHeightPdfPlot(axisTitle, type, particles, xBins, yBins));
 
   Enums::ParticleIterator end = Enums::particleEnd();
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it)
     if ((it.key() != Enums::NoParticle) && ((it.key() & particles) == it.key())) {
       m_particleComboBox->addItem(it.value());
       if (type != Hit::trd || (it.key() != Enums::Electron && it.key() != Enums::Positron))
-        m_signalHeightPdfPlots.append(new SignalHeightPdfPlot(type, it.key(), xBins, yBins));
+        m_signalHeightPdfPlots.append(new SignalHeightPdfPlot(axisTitle, type, it.key(), xBins, yBins));
       else for (int layer = 0; layer < 8; ++layer)
-        m_signalHeightPdfPlots.append(new SignalHeightPdfPlot(type, it.key(), xBins, yBins, layer));
+        m_signalHeightPdfPlots.append(new SignalHeightPdfPlot(axisTitle, type, it.key(), xBins, yBins, layer));
     }
   foreach (SignalHeightPdfPlot* plot, m_signalHeightPdfPlots)
     addPlot(plot);

@@ -12,7 +12,7 @@ SignalHeightTrackerLikelihood::SignalHeightTrackerLikelihood(Enums::Particles pa
   : Likelihood(particles)
 {
   m_likelihoodVariableType = Enums::SignalHeightTrackerLikelihood;
-  m_measuredValueType = Enums::UndefinedKineticVariable;
+  m_measuredValueAxisTitle = "tracker signal / ADC counts";
   m_measuredValueMin = 0.;
   m_measuredValueMax = 5000.;
   m_numberOfParameters = 2;

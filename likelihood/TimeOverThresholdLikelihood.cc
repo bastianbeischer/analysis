@@ -12,7 +12,7 @@ TimeOverThresholdLikelihood::TimeOverThresholdLikelihood(Enums::Particles partic
   : Likelihood(particles)
 {
   m_likelihoodVariableType = Enums::TimeOverThresholdLikelihood;
-  m_measuredValueType = Enums::UndefinedKineticVariable;
+  m_measuredValueAxisTitle = "time-over-threshold / ns";
   m_measuredValueMin = 0.;
   m_measuredValueMax = 60.;
   m_numberOfParameters = 2;

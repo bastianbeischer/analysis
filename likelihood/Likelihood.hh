@@ -26,7 +26,7 @@ public:
   const QString& title() const;
   Enums::LikelihoodVariable likelihoodVariableType() const;
   Enums::Particles particles() const;
-  Enums::KineticVariable measuredValueType() const;
+  const QString& measuredValueAxisTitle() const;
   int numberOfParameters() const;
   double measuredValueMin() const;
   double measuredValueMax() const;
@@ -60,7 +60,7 @@ protected:
   QString m_title;
   Enums::LikelihoodVariable m_likelihoodVariableType;
   Enums::Particles m_particles;
-  Enums::KineticVariable m_measuredValueType;
+  QString m_measuredValueAxisTitle;
   int m_numberOfParameters;
   double m_measuredValueMin;
   double m_measuredValueMax;

@@ -8,7 +8,7 @@
 
 class SignalHeightPdfPlot : public AnalysisPlot, public H2DPlot {
 public:
-  SignalHeightPdfPlot(Hit::ModuleType, Enums::Particles, const QVector<double>& xBins, const QVector<double>& yBins, int layer = -1);
+  SignalHeightPdfPlot(const QString& axisTitle, Hit::ModuleType, Enums::Particles, const QVector<double>& xBins, const QVector<double>& yBins, int layer = -1);
   ~SignalHeightPdfPlot();
   void processEvent(const AnalyzedEvent*);
   Hit::ModuleType type() const {return m_type;}

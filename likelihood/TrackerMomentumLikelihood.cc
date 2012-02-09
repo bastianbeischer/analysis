@@ -12,7 +12,7 @@ TrackerMomentumLikelihood::TrackerMomentumLikelihood(Enums::Particles particles)
   : Likelihood(particles)
 {
   m_likelihoodVariableType = Enums::TrackerMomentumLikelihood;
-  m_measuredValueType = Enums::Curvature;
+  m_measuredValueAxisTitle = "K / GV^{-1}";
   m_measuredValueMin = -10.;
   m_measuredValueMax = +10.;
   m_numberOfParameters = 0;

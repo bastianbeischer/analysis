@@ -13,7 +13,7 @@ TimeOfFlightLikelihood::TimeOfFlightLikelihood(Enums::Particles particles)
   : Likelihood(particles)
 {
   m_likelihoodVariableType = Enums::TimeOfFlightLikelihood;
-  m_measuredValueType = Enums::InverseBeta;
+  m_measuredValueAxisTitle = "#beta^{-1}";
   m_measuredValueMin = 0.;
   m_measuredValueMax = 5.;
   m_numberOfParameters = 0;

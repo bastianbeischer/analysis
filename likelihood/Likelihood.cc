@@ -32,7 +32,7 @@ Likelihood::Likelihood(Enums::Particles particles)
   : m_title("no title")
   , m_likelihoodVariableType()
   , m_particles(particles)
-  , m_measuredValueType(Enums::UndefinedKineticVariable)
+  , m_measuredValueAxisTitle("Undefined")
   , m_numberOfParameters(0)
   , m_measuredValueMin(+1.)
   , m_measuredValueMax(-1.)
@@ -66,9 +66,9 @@ Enums::Particles Likelihood::particles() const
   return m_particles;
 }
 
-Enums::KineticVariable Likelihood::measuredValueType() const
+const QString& Likelihood::measuredValueAxisTitle() const
 {
-  return m_measuredValueType;
+  return m_measuredValueAxisTitle;
 }
 
 int Likelihood::numberOfParameters() const

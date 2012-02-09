@@ -16,7 +16,7 @@ CherenkovLikelihood::CherenkovLikelihood(Enums::Particles particles)
   , m_numberOfParticles(0)
 {
   m_likelihoodVariableType = Enums::CherenkovLikelihood;
-  m_measuredValueType = Enums::UndefinedKineticVariable;
+  m_measuredValueAxisTitle = "Cherenkov signal / ADC counts";
   m_measuredValueMin = 0.;
   m_measuredValueMax = 0.;
   m_numberOfParameters = 0;

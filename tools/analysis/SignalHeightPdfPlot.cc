@@ -13,7 +13,7 @@
 
 #include <QDebug>
 
-SignalHeightPdfPlot::SignalHeightPdfPlot(Hit::ModuleType type, Enums::Particles particles, const QVector<double>& xBins, const QVector<double>& yBins, int layer)
+SignalHeightPdfPlot::SignalHeightPdfPlot(const QString& axisTitle, Hit::ModuleType type, Enums::Particles particles, const QVector<double>& xBins, const QVector<double>& yBins, int layer)
   : AnalysisPlot(Enums::LikelihoodTopic)
   , H2DPlot()
   , m_type(type)
@@ -33,7 +33,7 @@ SignalHeightPdfPlot::SignalHeightPdfPlot(Hit::ModuleType type, Enums::Particles 
     title+= " layer " + QString::number(layer);
   TH2D* h = new TH2D(qPrintable(title), "", xBins.count() - 1, xBins.constData(), yBins.count() - 1, yBins.constData());
   addHistogram(h);
-  setAxisTitle("|R| / GV", "signal height / a.u.", "");
+  setAxisTitle("|R| / GV", axisTitle, "");
   setDrawOption(RootPlot::COLZ);
   setTitle(title);
 }

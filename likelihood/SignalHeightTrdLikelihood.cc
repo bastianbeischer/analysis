@@ -15,7 +15,7 @@ SignalHeightTrdLikelihood::SignalHeightTrdLikelihood(Enums::Particles particles)
   , m_layer(-1)
 {
   m_likelihoodVariableType = Enums::SignalHeightTrdLikelihood;
-  m_measuredValueType = Enums::UndefinedKineticVariable;
+  m_measuredValueAxisTitle = "TRD signal / keV";
   m_measuredValueMin = -1.; //keV
   m_measuredValueMax = 11.; //keV
   m_numberOfParameters = 9;
