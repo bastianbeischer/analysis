@@ -3,6 +3,11 @@
 #include <QDebug>
 #include <QStringList>
 
+#include "Particle.hh"
+#include "ParticleDB.hh"
+#include "SimpleEvent.hh"
+#include <TVector3.h>
+
 CutFilter::CutFilter()
 {
 }
@@ -48,6 +53,13 @@ bool CutFilter::passes(const SimpleEvent* event) const
     if(!m_cuts[i].passes(event))
       return false;
   }
+  //get mc rigidity
+//  Particle particle(event->MCInformation()->primary()->pdgID);
+//  double charge = particle.charge();
+ // double genMom = event->MCInformation()->primary()->initialMomentum.Mag();
+//  double genRigidity = genMom / charge;
+//  if (qAbs(genRigidity) < 2.)
+//    return false;
   return true;
 }
 
