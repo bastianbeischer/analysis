@@ -122,7 +122,8 @@ void save(const QVector<PostAnalysisCanvas*>& canvases, TFile& outputFile)
     QString name = canvases[i]->name();
     name.replace("/", "per");
     TCanvas* canvas = canvases[i]->canvas();
-    canvas->SetName(qPrintable(name + " File: " + QString::number(i)));
+    name.replace(QRegExp("canvas$"), "(" + QString::number(i) + ") canvas");
+    canvas->SetName(qPrintable(name ));
     canvas->Write();
   }
   gROOT->cd();

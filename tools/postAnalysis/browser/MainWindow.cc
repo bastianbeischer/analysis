@@ -7,8 +7,6 @@
 #include <TFile.h>
 #include <TROOT.h>
 
-#include <QDebug>
-
 MainWindow::MainWindow(QWidget* parent)
   : PostAnalysisWindow(parent)
   , m_files()
@@ -31,14 +29,15 @@ void MainWindow::setupAnalysis()
     TFile* file = new TFile(qPrintable(fileName));
     QStringList fileKeyList = PostAnalysisCanvas::savedCanvases(file);
     gROOT->cd();
-    foreach (QString key, fileKeyList)
-      allKeys.append(Key(key + " (" + fileName + ")", file));
+    foreach (QString key, fileKeyList) {
+      if (1 < m_analysisFiles.count())
+        key+= " (" + fileName + ")";
+      allKeys.append(Key(key, file));
+    }
     m_files.append(file);
-    qDebug() << fileName;
   }
   qSort(allKeys);
   foreach (Key key, allKeys) {
-    qDebug() << key.first;
     addCanvas(new PostAnalysisCanvas(key.second, key.first));
   }
 }

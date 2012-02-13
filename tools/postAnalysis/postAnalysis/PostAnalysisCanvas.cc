@@ -94,7 +94,7 @@ TCanvas* PostAnalysisCanvas::loadCanvas(TFile* file, const QString& name)
   Q_ASSERT(file);
   Q_ASSERT(!name.isEmpty());
   QString key = name;
-  key.replace(QRegExp("canvas (.*)$"), "canvas");
+  key.replace(QRegExp("canvas \\(.*\\)$"), "canvas");
   TObject* object = file->Get(qPrintable(key));
   if (!object) {
     qDebug() << key << "does not exist in" << file->GetEndpointUrl()->GetFile();
