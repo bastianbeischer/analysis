@@ -113,6 +113,7 @@ void PostAnalysisWindow::selectCanvas(QListWidgetItem* item, QListWidgetItem*)
 
 void PostAnalysisWindow::selectCanvas(QListWidgetItem* item)
 {
+  gPad->Clear();
   m_ui->qtWidget->GetCanvas()->cd();
   m_ui->qtWidget->GetCanvas()->Clear("D");
   if (!item)
