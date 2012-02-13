@@ -13,7 +13,7 @@ public:
   ~MainWindow();
 protected:
   virtual void setupAnalysis();
-  TFile* m_file;
+  QVector<TFile*> m_files;
 };
 
 #endif

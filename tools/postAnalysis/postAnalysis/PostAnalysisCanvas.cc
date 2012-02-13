@@ -93,13 +93,15 @@ TCanvas* PostAnalysisCanvas::loadCanvas(TFile* file, const QString& name)
 {
   Q_ASSERT(file);
   Q_ASSERT(!name.isEmpty());
-  TObject* object = file->Get(qPrintable(name));
+  QString key = name;
+  key.replace(QRegExp("canvas (.*)$"), "canvas");
+  TObject* object = file->Get(qPrintable(key));
   if (!object) {
-    qDebug() << name << "does not exist in" << file->GetEndpointUrl()->GetFile();
+    qDebug() << key << "does not exist in" << file->GetEndpointUrl()->GetFile();
     return 0;
   }
   if (strcmp(object->ClassName(), "TCanvas")) {
-    qDebug() << name << "has type" << object->ClassName() << "not TCanvas!";
+    qDebug() << key << "has type" << object->ClassName() << "not TCanvas!";
     return 0;
   }
   return static_cast<TCanvas*>(object->Clone());

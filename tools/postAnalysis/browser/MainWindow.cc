@@ -7,24 +7,38 @@
 #include <TFile.h>
 #include <TROOT.h>
 
+#include <QDebug>
+
 MainWindow::MainWindow(QWidget* parent)
   : PostAnalysisWindow(parent)
-  , m_file(0)
+  , m_files()
 {
 }
 
 MainWindow::~MainWindow()
 {
-  m_file->Close();
-  delete m_file;
+  foreach (TFile* file, m_files) {
+    file->Close();
+    delete file;
+  }
 }
 
 void MainWindow::setupAnalysis()
 {
-  m_file = new TFile(qPrintable(m_analysisFiles.at(0)));
-  QStringList list = PostAnalysisCanvas::savedCanvases(m_file);
-  list.sort();
-  gROOT->cd();
-  foreach (const QString& name, list)
-    addCanvas(new PostAnalysisCanvas(m_file, name));
+  typedef QPair<QString, TFile*> Key;
+  QVector<Key> allKeys;
+  foreach (QString fileName, m_analysisFiles) {
+    TFile* file = new TFile(qPrintable(fileName));
+    QStringList fileKeyList = PostAnalysisCanvas::savedCanvases(file);
+    gROOT->cd();
+    foreach (QString key, fileKeyList)
+      allKeys.append(Key(key + " (" + fileName + ")", file));
+    m_files.append(file);
+    qDebug() << fileName;
+  }
+  qSort(allKeys);
+  foreach (Key key, allKeys) {
+    qDebug() << key.first;
+    addCanvas(new PostAnalysisCanvas(key.second, key.first));
+  }
 }
