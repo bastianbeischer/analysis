@@ -6,7 +6,8 @@ SUBDIRS  = \
   preAnalysis \
   analysis \
   postAnalysis \
-  presentation
+  presentation \
+  decompressor
 
 exists($(PERDAIX10PATH)) {
   SUBDIRS+= \
