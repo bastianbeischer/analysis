@@ -15,17 +15,19 @@ CutSelector::CutSelector(Enums::Cut cut, QWidget* parent)
   label.chop(4);
   m_checkBox = new QCheckBox(label);
 
-  m_minimumEdit = new QLineEdit("min");
+  m_minimumEdit = new QLineEdit();
+  m_minimumEdit->setPlaceholderText("min");
   m_minimumEdit->setMaximumWidth(50);
   m_minimumEdit->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 
-  m_maximumEdit = new QLineEdit("max");
+  m_maximumEdit = new QLineEdit();
+  m_maximumEdit->setPlaceholderText("max");
   m_maximumEdit->setMaximumWidth(50);
   m_maximumEdit->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 
-  QVBoxLayout* minMaxLayout = new QVBoxLayout;
+  QHBoxLayout* minMaxLayout = new QHBoxLayout;
   minMaxLayout->setContentsMargins(0, 0, 0, 0);
-  minMaxLayout->setSpacing(0);
+  minMaxLayout->setSpacing(2);
   minMaxLayout->addWidget(m_minimumEdit);
   minMaxLayout->addWidget(m_maximumEdit);
 

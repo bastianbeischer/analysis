@@ -10,6 +10,8 @@
 #include "SettingsManager.hh"
 #include "Enums.hh"
 #include "Hypothesis.hh"
+#include "ParticleDB.hh"
+#include "ParticleProperties.hh"
 
 #include <cmath>
 
@@ -73,6 +75,23 @@ bool Cut::passes(const SimpleEvent* event) const
     double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
     double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
     return (passesCuts(c1Signal) && passesCuts(c2Signal));
+  }
+  if (m_type == Enums::McRigidityCut) {
+    const int mcPdgId = event->MCInformation()->primary()->pdgID;
+    const ParticleProperties* mcParticle = ParticleDB::instance()->lookupPdgId(mcPdgId);
+    const double charge = mcParticle->charge();
+    if (charge == 0)
+      return false;
+    const double mcRigidity = event->MCInformation()->primary()->initialMomentum.Mag() / charge;
+    return passesCuts(mcRigidity);
+  }
+  if (m_type == Enums::McBetaCut) {
+    const int mcPdgId = event->MCInformation()->primary()->pdgID;
+    const ParticleProperties* mcParticle = ParticleDB::instance()->lookupPdgId(mcPdgId);
+    const double mcMomentum = event->MCInformation()->primary()->initialMomentum.Mag();
+    const double mcMass = mcParticle->mass();
+    const double mcBeta = 1. / sqrt(1 + pow(mcMass / mcMomentum, 2));
+    return passesCuts(mcBeta);
   }
   return true;
 }

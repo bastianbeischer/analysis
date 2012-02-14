@@ -80,7 +80,9 @@ const QMap<Enums::Cut, QString> Enums::s_cutMap = InitializableMap<Enums::Cut, Q
   << QPair<Enums::Cut, QString>(Enums::BetaCut, "beta cut")
   << QPair<Enums::Cut, QString>(Enums::TimeOverThresholdCut, "TOT cut")
   << QPair<Enums::Cut, QString>(Enums::TrdSignalCut, "TRD signal cut")
-  << QPair<Enums::Cut, QString>(Enums::CherenkovCut, "cherenkov cut");
+  << QPair<Enums::Cut, QString>(Enums::CherenkovCut, "cherenkov cut")
+  << QPair<Enums::Cut, QString>(Enums::McRigidityCut, "MC rigidity cut")
+  << QPair<Enums::Cut, QString>(Enums::McBetaCut, "MC beta cut");
 
 const QMap<Enums::LikelihoodVariable, QString> Enums::s_likelihoodVariableMap = InitializableMap<Enums::LikelihoodVariable, QString>()
   << QPair<Enums::LikelihoodVariable, QString>(Enums::SignalHeightTrackerLikelihood, "signal height tracker likelihood")
