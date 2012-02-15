@@ -25,13 +25,13 @@ TOFStartTimePlot::TOFStartTimePlot()
   controlWidget()->spinBox()->setMaximum(64);
   QString title = QString("tof starttime");
   setTitle(title);
-  const int nBinsTime = 2000;
+  const int nBinsTime = 200;
   const double minTime = 0;
   const double maxTime= 200;
   TH2D* histogram = new TH2D(qPrintable(title), "", 64, -0.5, 63.5, nBinsTime, minTime, maxTime);
   for (int ch = 0; ch < 64; ++ch)
     histogram->GetXaxis()->SetBinLabel(1 + ch, qPrintable(QString("%1").arg(0x8000 | ch, 0, 16)));
-  setAxisTitle("", "starttime / ns", "");
+  setAxisTitle("", "starttime / (100 ps)", "");
   addHistogram(histogram);
 }
 
