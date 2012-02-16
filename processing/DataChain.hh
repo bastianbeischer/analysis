@@ -52,7 +52,7 @@ private:
   int              m_currentEntry;
   std::vector<unsigned int> m_runNumbers;
   std::vector<int> m_offsets;
-  std::map<TTree*, const DataDescription*> m_descriptionBuffer;
+  std::vector<const DataDescription*> m_descriptionBuffer;
 
 };
 

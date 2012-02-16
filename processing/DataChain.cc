@@ -37,8 +37,8 @@ DataChain::DataChain(const char* listName)
 DataChain::~DataChain()
 {
   delete m_chain;
-  for (std::map<TTree*, const DataDescription*>::iterator it = m_descriptionBuffer.begin(); it != m_descriptionBuffer.end(); it++) {
-    delete it->second;
+  for (std::vector<const DataDescription*>::iterator it = m_descriptionBuffer.begin(); it != m_descriptionBuffer.end(); it++) {
+    delete *it;
   }
 }
 
@@ -100,9 +100,10 @@ void DataChain::addRootFile(const char* filename)
     m_offsets.push_back(nEntries);
   else
     m_offsets.push_back(nEntries + m_offsets.back());
-  DataDescription* desc = (DataDescription*) tree->GetUserInfo()->First();
   std::cout << " with " << nEntries << " events";
+  DataDescription* desc = (DataDescription*) tree->GetUserInfo()->First();
   if (desc) {
+    m_descriptionBuffer.push_back(new DataDescription(*desc)); // create a copy because the original vanishes when the TChain closes its TFile
     std::cout << " (version: " << desc->softwareVersionHash() << ")" << std::endl;
     for (int i = 0; i < desc->numberOfRuns(); i++) {
       QString name(desc->runFileName(i).c_str());
@@ -123,12 +124,9 @@ SimpleEvent* DataChain::event(unsigned int i)
   m_currentEntry = i;
   m_event = 0;
   m_chain->GetEntry(i);
-  TTree* tree = m_chain->GetTree();
+  int tree = m_chain->GetTreeNumber();
   const DataDescription* desc = m_descriptionBuffer[tree];
-  if (!desc) {
-    desc = new DataDescription(*currentDescription()); // create a copy because the original vanishes when the TChain closes its TFile
-    m_descriptionBuffer[tree] = desc;
-  }
+  assert(desc);
   m_event->setDescription(desc);
   return m_event;
 }
