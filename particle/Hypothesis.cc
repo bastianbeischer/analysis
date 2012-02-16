@@ -77,7 +77,8 @@ double Hypothesis::beta() const
 double Hypothesis::inverseBeta() const
 {
   double m = m_properties.mass();
-  return sqrt(1. + m * m * m_curvature * m_curvature);
+  double p = m_properties.charge() / m_curvature;
+  return Helpers::addQuad(m, p)/p;
 }
 
 bool Hypothesis::operator<(const Hypothesis& other) const
