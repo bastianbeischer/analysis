@@ -17,7 +17,8 @@ SimpleEvent::SimpleEvent() :
   m_eventTime(0),
   m_contentType(None),
   m_hits(),
-  m_mcEventInformation(0)
+  m_mcEventInformation(0),
+  m_description(0)
 {
   for (unsigned int i = 0; i < SensorTypes::N_SENSOR_TYPES; i++)
     m_sensorSet[i] = sqrt(-1);
@@ -30,7 +31,8 @@ SimpleEvent::SimpleEvent(unsigned int id, unsigned int runStartTime, unsigned in
   m_eventTime(eventTime),
   m_contentType(type),
   m_hits(),
-  m_mcEventInformation(0)
+  m_mcEventInformation(0),
+  m_description(0)
 {
   for (unsigned int i = 0; i < SensorTypes::N_SENSOR_TYPES; i++)
     m_sensorSet[i] = sqrt(-1);
@@ -41,7 +43,8 @@ SimpleEvent::SimpleEvent(const SimpleEvent& other) :
   m_eventId(other.m_eventId),
   m_runStartTime(other.m_runStartTime),
   m_eventTime(other.m_eventTime),
-  m_contentType(other.m_contentType)
+  m_contentType(other.m_contentType),
+  m_description(other.m_description)
 {
   for (std::vector<Hit*>::const_iterator it = other.m_hits.begin(); it != other.m_hits.end(); it++) {
     Hit* hit = *it;
