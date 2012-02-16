@@ -143,6 +143,3 @@ bool TrackFindingEfficiencyAzimuthCorrelation::isTriggerEvent(const QVector<Hit*
   }
   return (hitUpperTof && hitLowerTof);
 }
-
-void TrackFindingEfficiencyAzimuthCorrelation::finalize() {
-}

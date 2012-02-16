@@ -16,7 +16,6 @@ public:
   ~TrackFindingEfficiencyAzimuthCorrelation();
   virtual void processEvent(const AnalyzedEvent*);
   virtual void update();
-  virtual void finalize();
 private:
   TH2D* m_reconstructed;
   TH2D* m_total;
