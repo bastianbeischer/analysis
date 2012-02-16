@@ -116,6 +116,8 @@ void TrackFindingEfficiencyZenithCorrelation::processEvent(const AnalyzedEvent* 
 
 void TrackFindingEfficiencyZenithCorrelation::update()
 {
+  if (!m_total->GetEntries())
+    return;
   for (int i = 0; i < m_total->GetNbinsX(); ++i) {
     for (int j = 0; j < m_total->GetNbinsY(); ++j) {
       int reconstructed = m_reconstructed->GetBinContent(i+1, j+1);

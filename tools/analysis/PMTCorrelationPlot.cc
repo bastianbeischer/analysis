@@ -7,6 +7,8 @@
 #include "SimpleEvent.hh"
 #include "SensorTypes.hh"
 #include "ProjectionControlWidget.hh"
+#include "Enums.hh"
+#include "Settings.hh"
 
 #include <QSpinBox>
 
@@ -77,6 +79,9 @@ void PMTCorrelationPlot::draw(TCanvas* canvas)
 
 void PMTCorrelationPlot::processEvent(const AnalyzedEvent* event)
 {
+  const Settings* settings = event->settings();
+  if (!settings || settings->situation() != Enums::Testbeam11)
+    return;
   histogram()->Fill(event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV1), event->simpleEvent()->sensorData(SensorTypes::BEAM_CHERENKOV2));
 }
 

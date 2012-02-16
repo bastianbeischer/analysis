@@ -48,8 +48,8 @@ TRDSpectrumVsTemperaturePlot::TRDSpectrumVsTemperaturePlot(unsigned short id, TR
     setTitle(strType + QString(" spectrum 0x%1").arg(m_id,0,16));
 
 
-  const unsigned int nTemperatureBins = 200;
-  const double minTemperature = 26;
+  const unsigned int nTemperatureBins = 300;
+  const double minTemperature = -20;
   const double maxTemperature = 34;
   int nBins = TRDReconstruction::s_spectrumDefaultBins;
   double lowerBound = 1e-3;
@@ -79,6 +79,7 @@ void TRDSpectrumVsTemperaturePlot::processEvent(const AnalyzedEvent* event)
     meanTemperature += event->simpleEvent()->sensorData((SensorTypes::Type)i);
     count++;
   }
+
   meanTemperature /= count;
 
   QVector<double> valuesToFill;
