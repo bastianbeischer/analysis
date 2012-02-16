@@ -82,7 +82,7 @@ int DataDescription::runFileForEventNumber(long eventNumber) const
       break;
     totalEvents += m_numberOfEvents[runNo];
   }
-  assert(runNo < m_numberOfRuns);
+  assert(runNo <= m_numberOfRuns);
   return runNo;
 }
 
