@@ -76,6 +76,10 @@ bool Cut::passes(const SimpleEvent* event) const
     double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
     return (passesCuts(c1Signal) && passesCuts(c2Signal));
   }
+  if (m_type == Enums::McMomentumCut) {
+    const double mcMomentum = event->MCInformation()->primary()->initialMomentum.Mag();
+    return passesCuts(mcMomentum);
+  }
   if (m_type == Enums::McRigidityCut) {
     const int mcPdgId = event->MCInformation()->primary()->pdgID;
     const ParticleProperties* mcParticle = ParticleDB::instance()->lookupPdgId(mcPdgId);

@@ -57,7 +57,7 @@ public:
   static const QVector<Particle> particleVector(const QString&);
   static Particle particle(Particles);
 
-  enum Cut {RigidityCut, BetaCut, TimeOverThresholdCut, TrdSignalCut, CherenkovCut, McRigidityCut, McBetaCut};
+  enum Cut {RigidityCut, BetaCut, TimeOverThresholdCut, TrdSignalCut, CherenkovCut, McMomentumCut, McRigidityCut, McBetaCut};
   static const QString label(Cut);
   static Cut cut(const QString&);
   typedef QMap<Cut, QString>::ConstIterator CutIterator;
