@@ -33,7 +33,7 @@ Chi2Plot::Chi2Plot(unsigned short ndf) :
   setAxisTitle("#chi^{2}", "");
   addHistogram(histogram);
 
-  TF1* chi2function = new TF1("chi2function", chisquare, x0, x1, 2);
+  TF1* chi2function = new TF1(qPrintable(title() + " function"), chisquare, x0, x1, 2);
   chi2function->SetLineColor(kRed);
   chi2function->SetNpx(1000);
   chi2function->FixParameter(0, 1);
@@ -67,6 +67,8 @@ void Chi2Plot::update()
 
 void Chi2Plot::finalize()
 {
-  histogram()->Scale(1./histogram()->Integral("WIDTH"));
+  double integral = histogram()->Integral("WIDTH");
+  if (!qIsNull(integral))
+    histogram()->Scale(1./integral);
   yAxis()->SetRangeUser(0, 0.1);
 }

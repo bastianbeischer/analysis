@@ -27,7 +27,7 @@ TRDLikelihoodPlot::TRDLikelihoodPlot(Enums::AnalysisTopic topic)
   if (topic == Enums::MonteCarloTRD)
     topicString = "MonteCarloTRD";
   if (topic == Enums::Testbeam)
-    topicString = "Enums::Testbeam";
+    topicString = "Testbeam";
   Q_ASSERT(!topicString.isEmpty());
   setTitle("-log(L) distribution " + topicString);
 
@@ -67,7 +67,6 @@ void TRDLikelihoodPlot::processEvent(const AnalyzedEvent* event)
 
   double lhTR = 0.;
   bool validEvent = false;
-  //bool identifiedAsTRParticle =
   m_EIdentifierLH->isElectronish(event, validEvent, lhTR);
 
   if (!validEvent)
@@ -134,9 +133,11 @@ void TRDLikelihoodPlot::updateNonTRRejVsTREffHisto()
 void TRDLikelihoodPlot::finalize()
 {
   m_NonTRHisto->Sumw2();
-  m_NonTRHisto->Scale(1./m_NonTRHisto->GetEntries());
+  if (m_NonTRHisto->GetEntries())
+    m_NonTRHisto->Scale(1./m_NonTRHisto->GetEntries());
   m_TRHisto->Sumw2();
-  m_TRHisto->Scale(1./m_TRHisto->GetEntries());
+  if (m_TRHisto->GetEntries())
+    m_TRHisto->Scale(1./m_TRHisto->GetEntries());
 
   double yMax = qMax(histogram(0)->GetMaximum(), histogram(1)->GetMaximum()) *1.05;
   histogram(0)->GetYaxis()->SetRangeUser(0, yMax);
@@ -187,6 +188,10 @@ double TRDLikelihoodPlot::efficiency(const TH1D* hist, int upToBin, double& effE
   double sigmaNAllEntries = 0;
   double sigmaNUpToBin = 0;
   double nAllEntries = hist->IntegralAndError(1,hist->GetNbinsX(), sigmaNAllEntries);
+  if (qIsNull(nAllEntries)) {
+    effErr = 0;
+    return 0;
+  }
   double nUpToBin = hist->IntegralAndError(1, upToBin, sigmaNUpToBin);
   double eff = nUpToBin / (nAllEntries);
 
@@ -200,6 +205,10 @@ double TRDLikelihoodPlot::rejection(const TH1D* hist, int upToBin, double& rejEr
   double sigmaNUpToBin = 0;
   double nAllEntries = hist->IntegralAndError(1,hist->GetNbinsX(), sigmaNAllEntries);
   double nUpToBin = hist->IntegralAndError(1, upToBin, sigmaNUpToBin);
+  if (qIsNull(nUpToBin)) {
+    rejErr = 0;
+    return 0;
+  }
   double rej = nAllEntries / nUpToBin;
 
   rejErr = sqrt( pow(sigmaNAllEntries / nUpToBin, 2.) + pow(nAllEntries/(nUpToBin*nUpToBin)* sigmaNUpToBin, 2.));

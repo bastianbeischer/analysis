@@ -112,8 +112,10 @@ void TOFProbabilityDensityFunction::update()
 {
   double binWidth = double(m_max - m_min) / double(m_nBins);
   for (int bin = 1; bin <= m_nBins; ++bin) {
-    histogram(0)->SetBinContent(bin, 1./binWidth * m_belowThresholdHistogram->GetBinContent(bin) / m_belowThresholdHistogram->GetEntries());
-    histogram(1)->SetBinContent(bin, 1./binWidth * m_aboveThresholdHistogram->GetBinContent(bin) / m_aboveThresholdHistogram->GetEntries());
+    if (m_belowThresholdHistogram->GetEntries())
+      histogram(0)->SetBinContent(bin, 1./binWidth * m_belowThresholdHistogram->GetBinContent(bin) / m_belowThresholdHistogram->GetEntries());
+    if (m_aboveThresholdHistogram->GetEntries())
+      histogram(1)->SetBinContent(bin, 1./binWidth * m_aboveThresholdHistogram->GetBinContent(bin) / m_aboveThresholdHistogram->GetEntries());
   }
 }
 

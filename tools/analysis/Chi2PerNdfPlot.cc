@@ -32,7 +32,7 @@ Chi2PerNdfPlot::~Chi2PerNdfPlot()
 void Chi2PerNdfPlot::processEvent(const AnalyzedEvent* event)
 {
   const Track* track = event->goodTrack();
-  if(!track)
+  if (!track)
     return;
   if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
     return;

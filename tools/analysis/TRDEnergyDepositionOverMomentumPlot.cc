@@ -68,7 +68,7 @@ void TRDEnergyDepositionOverMomentumPlot::processEvent(const AnalyzedEvent* even
     for (std::vector<Hit*>::const_iterator it = subHits.begin(); it != subHitsEndIt; ++it) {
       Hit* subHit = *it;
       double distanceInTube = TRDReconstruction::distanceOnTrackThroughTRDTube(subHit, track);
-      if(distanceInTube > 0)
+      if (distanceInTube > 0)
         energyDepPerTubePerDistance << (subHit->signalHeight() / distanceInTube);
     }
   }
