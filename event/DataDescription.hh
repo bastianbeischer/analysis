@@ -30,6 +30,7 @@ public:
   long numberOfEventsInRunFile(int i = 0) const;
   long numberOfCalibrationEventsInRunFile(int i = 0) const;
   long eventNumberInRunFile(long eventNumber) const;
+  int runFileForEventId(long eventId) const;
   int runFileForEventNumber(long eventNumber) const;
   const std::string& runFileNameForEventNumber(long eventNumber) const;
 

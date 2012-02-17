@@ -2,6 +2,7 @@
 
 #include "Hit.hh"
 #include "Cluster.hh"
+#include "DataDescription.hh"
 #include "TOFSipmHit.hh"
 #include "TOFCluster.hh"
 
@@ -93,4 +94,12 @@ void SimpleEvent::setMCInformation(const MCEventInformation* mcInfo)
 {
   if (m_mcEventInformation) delete m_mcEventInformation;
   m_mcEventInformation = mcInfo;
+}
+
+unsigned int SimpleEvent::eventNo() const
+{
+  assert(m_description);
+  int run = m_description->runFileForEventId(m_eventId);
+  int calibrationEvents = m_description->numberOfCalibrationEventsInRunFile(run);
+  return m_eventId - calibrationEvents;
 }

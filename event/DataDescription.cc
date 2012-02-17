@@ -71,6 +71,21 @@ long DataDescription::eventNumberInRunFile(long eventNumber) const
   return entryInFile;
 }
 
+int DataDescription::runFileForEventId(long eventId) const
+{
+  assert(m_numberOfRuns > 0);
+  int runNo = 0;
+  long totalEvents = m_numberOfEvents[0] + m_numberOfCalibrationEvents[0];
+  while (eventId >= totalEvents) {
+    ++runNo;
+    if (runNo == m_numberOfRuns)
+      break;
+    totalEvents += m_numberOfEvents[runNo] + m_numberOfCalibrationEvents[runNo];
+  }
+  assert(runNo < m_numberOfRuns);
+  return runNo;
+}
+
 int DataDescription::runFileForEventNumber(long eventNumber) const
 {
   assert(m_numberOfRuns > 0);
