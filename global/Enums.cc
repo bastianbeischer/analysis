@@ -81,6 +81,7 @@ const QMap<Enums::Cut, QString> Enums::s_cutMap = InitializableMap<Enums::Cut, Q
   << QPair<Enums::Cut, QString>(Enums::TimeOverThresholdCut, "TOT cut")
   << QPair<Enums::Cut, QString>(Enums::TrdSignalCut, "TRD signal cut")
   << QPair<Enums::Cut, QString>(Enums::CherenkovCut, "cherenkov cut")
+  << QPair<Enums::Cut, QString>(Enums::McMomentumCut, "MC momentum cut")
   << QPair<Enums::Cut, QString>(Enums::McRigidityCut, "MC rigidity cut")
   << QPair<Enums::Cut, QString>(Enums::McBetaCut, "MC beta cut");
 
