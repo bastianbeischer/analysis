@@ -86,13 +86,19 @@ public:
   static KineticVariableIterator kineticVariableBegin();
   static KineticVariableIterator kineticVariableEnd();
 
-  enum ReconstructionMethod {UndefinedReconstructionMethod, Spectrometer, TOF, WeightedMean, Chi2, Likelihood, SpectrometerExternalInformation,
-    TOFExternalInformation, WeightedMeanExternalInformation, Chi2ExternalInformation, LikelihoodExternalInformation, MCInformation};
+  enum ReconstructionMethod {UndefinedReconstructionMethod = 0, Spectrometer = 1<<0, TOF = 1<<1, WeightedMean = 1<<2, Chi2 = 1<<3,
+    Likelihood = 1<<4, SpectrometerExternalInformation = 1<<5, TOFExternalInformation = 1<<6, WeightedMeanExternalInformation = 1<<7,
+    Chi2ExternalInformation = 1<<8, LikelihoodExternalInformation = 1<<9, MCInformation = 1<<10};
   static const QString label(ReconstructionMethod);
   static ReconstructionMethod reconstructionMethod(const QString&);
   typedef QMap<ReconstructionMethod, QString>::ConstIterator ReconstructionMethodIterator;
   static ReconstructionMethodIterator reconstructionMethodBegin();
   static ReconstructionMethodIterator reconstructionMethodEnd();
+  Q_DECLARE_FLAGS(ReconstructionMethods, ReconstructionMethod);
+  static const QString label(ReconstructionMethods);
+  static ReconstructionMethods reconstructionMethods(const QString&);
+  static const QVector<ReconstructionMethod> reconstructionMethodVector(ReconstructionMethods);
+  static const QVector<ReconstructionMethod> reconstructionMethodVector(const QString);
 
   enum Situation {NoSituation=-1, KirunaMuons, KirunaFlight, Testbeam11};
   static const QString label(Situation);
@@ -118,5 +124,6 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::ChargeSigns);
 Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::Corrections);
 Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::Particles);
 Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::LikelihoodVariables);
+Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::ReconstructionMethods);
 
 #endif

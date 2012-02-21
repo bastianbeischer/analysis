@@ -209,13 +209,13 @@ Enums::Particles Enums::particles(const QString& value)
 }
 const QVector<Enums::Particle> Enums::particleVector(Enums::Particles particles)
 {
-  QVector<Enums::Particle> pVector;
+  QVector<Enums::Particle> vector;
   for (Enums::ParticleIterator it = particleBegin(); it != particleEnd(); ++it) {
     if (it.key() != Enums::NoParticle && (it.key() & particles)) {
-      pVector.append(it.key());
+      vector.append(it.key());
     }
   }
-  return pVector;
+  return vector;
 }
 const QVector<Enums::Particle> Enums::particleVector(const QString& value)
 {
@@ -223,9 +223,9 @@ const QVector<Enums::Particle> Enums::particleVector(const QString& value)
 }
 Enums::Particle Enums::particle(Enums::Particles particles)
 {
-  QVector<Enums::Particle> pVector = Enums::particleVector(particles);
-  Q_ASSERT(pVector.count() == 1);
-  return pVector.first();
+  QVector<Enums::Particle> vector = Enums::particleVector(particles);
+  Q_ASSERT(vector.count() == 1);
+  return vector.first();
 }
 
 // Cut
@@ -266,13 +266,13 @@ Enums::LikelihoodVariables Enums::likelihoodVariables(const QString& value)
 }
 const QVector<Enums::LikelihoodVariable> Enums::likelihoodVariableVector(Enums::LikelihoodVariables likelihoods)
 {
-  QVector<Enums::LikelihoodVariable> lhVector;
+  QVector<Enums::LikelihoodVariable> vector;
   for (Enums::LikelihoodVariableIterator it = Enums::likelihoodVariableBegin(); it != Enums::likelihoodVariableEnd(); ++it) {
     if (it.key() != Enums::UndefinedLikelihood && (it.key() & likelihoods)) {
-      lhVector.append(it.key());
+      vector.append(it.key());
     }
   }
-  return lhVector;
+  return vector;
 }
 const QVector<Enums::LikelihoodVariable> Enums::likelihoodVariableVector(const QString value)
 {
@@ -290,6 +290,39 @@ const QString Enums::label(Enums::ReconstructionMethod key) {return s_reconstruc
 Enums::ReconstructionMethod Enums::reconstructionMethod(const QString& value) {return s_reconstructionMethodMap.key(value);}
 Enums::ReconstructionMethodIterator Enums::reconstructionMethodBegin() {return s_reconstructionMethodMap.constBegin();}
 Enums::ReconstructionMethodIterator Enums::reconstructionMethodEnd() {return s_reconstructionMethodMap.constEnd();}
+const QString Enums::label(Enums::ReconstructionMethods keys)
+{
+  QString list;
+  for (Enums::ReconstructionMethodIterator it = reconstructionMethodBegin(); it != reconstructionMethodEnd(); ++it) {
+    if (keys & it.key()) {
+      if (!list.isEmpty())
+        list+= " | ";
+      list+= it.value();
+    }
+  }
+  return list;
+}
+Enums::ReconstructionMethods Enums::reconstructionMethods(const QString& value)
+{
+  Enums::ReconstructionMethods variables;
+  foreach (QString string, value.split(" | "))
+    variables|= reconstructionMethod(string);
+  return variables;
+}
+const QVector<Enums::ReconstructionMethod> Enums::reconstructionMethodVector(Enums::ReconstructionMethods methods)
+{
+  QVector<Enums::ReconstructionMethod> vector;
+  for (Enums::ReconstructionMethodIterator it = Enums::reconstructionMethodBegin(); it != Enums::reconstructionMethodEnd(); ++it) {
+    if (it.key() != Enums::UndefinedReconstructionMethod && (it.key() & methods)) {
+      vector.append(it.key());
+    }
+  }
+  return vector;
+}
+const QVector<Enums::ReconstructionMethod> Enums::reconstructionMethodVector(const QString value)
+{
+  return Enums::reconstructionMethodVector(Enums::reconstructionMethods(value));
+}
 
 // Situation
 const QString Enums::label(Enums::Situation key) {return s_situationMap.value(key);}
