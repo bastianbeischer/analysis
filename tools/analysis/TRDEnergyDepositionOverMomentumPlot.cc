@@ -37,7 +37,7 @@ void TRDEnergyDepositionOverMomentumPlot::processEvent(const AnalyzedEvent* even
   if (!event->flagsSet(ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet))
     return;
   double rigidity = event->particle()->hypothesis()->rigidity();
-  if (qAbs(rigidity > 10.))
+  if (qAbs(rigidity) > 10.)
     return;
 
   //loop over all hits and count tracker hits
