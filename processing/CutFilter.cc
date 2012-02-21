@@ -1,5 +1,9 @@
 #include "CutFilter.hh"
 
+#include "AnalyzedEvent.hh"
+#include "Cluster.hh"
+#include "Particle.hh"
+
 #include <QDebug>
 #include <QStringList>
 
@@ -51,10 +55,10 @@ bool CutFilter::passes(const SimpleEvent* event) const
   return true;
 }
 
-bool CutFilter::passes(const QVector<Hit*>& clusters, const Particle* particle) const
+bool CutFilter::passes(const AnalyzedEvent* analyzedEvent) const
 {
   for (int i = 0; i < m_cuts.size(); i++) {
-    if(!m_cuts[i].passes(clusters, particle))
+    if(!m_cuts[i].passes(analyzedEvent))
       return false;
   }
   return true;

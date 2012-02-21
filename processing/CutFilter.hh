@@ -1,7 +1,6 @@
 #ifndef CutFilter_hh
 #define CutFilter_hh
 
-#include "Hit.hh"
 #include "Cut.hh"
 
 #include <QList>
@@ -11,6 +10,7 @@
 class Track;
 class Particle;
 class SimpleEvent;
+class AnalyzedEvent;
 
 class CutFilter
 {
@@ -23,7 +23,7 @@ public:
   void setCuts(const CutFilter&);
   const QList<Cut>& cuts() const;
   bool passes(const SimpleEvent*) const;
-  bool passes(const QVector<Hit*>&, const Particle*) const;
+  bool passes(const AnalyzedEvent*) const;
   QString toString() const;
 private:
   QList<Cut> m_cuts;
