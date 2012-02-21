@@ -80,13 +80,13 @@ bool Cut::passes(const SimpleEvent* event) const
     return (passesCuts(c1Signal) && passesCuts(c2Signal));
   }
   if (m_type == Enums::McMomentumCut) {
-    if (event->simpleEvent()->contentType() != SimpleEvent::MonteCarlo)
+    if (event->contentType() != SimpleEvent::MonteCarlo)
       return true;
     const double mcMomentum = event->MCInformation()->primary()->initialMomentum.Mag();
     return passesCuts(mcMomentum);
   }
   if (m_type == Enums::McRigidityCut) {
-    if (event->simpleEvent()->contentType() != SimpleEvent::MonteCarlo)
+    if (event->contentType() != SimpleEvent::MonteCarlo)
       return true;
     const int mcPdgId = event->MCInformation()->primary()->pdgID;
     const ParticleProperties* mcParticle = ParticleDB::instance()->lookupPdgId(mcPdgId);
@@ -97,7 +97,7 @@ bool Cut::passes(const SimpleEvent* event) const
     return passesCuts(mcRigidity);
   }
   if (m_type == Enums::McBetaCut) {
-    if (event->simpleEvent()->contentType() != SimpleEvent::MonteCarlo)
+    if (event->contentType() != SimpleEvent::MonteCarlo)
       return true;
     const int mcPdgId = event->MCInformation()->primary()->pdgID;
     const ParticleProperties* mcParticle = ParticleDB::instance()->lookupPdgId(mcPdgId);
