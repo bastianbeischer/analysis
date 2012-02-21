@@ -87,7 +87,7 @@ public:
   static KineticVariableIterator kineticVariableEnd();
 
   enum ReconstructionMethod {UndefinedReconstructionMethod, Spectrometer, TOF, WeightedMean, Chi2, Likelihood, SpectrometerExternalInformation,
-    TOFExternalInformation, WeightedMeanExternalInformation, Chi2ExternalInformation, LikelihoodExternalInformation};
+    TOFExternalInformation, WeightedMeanExternalInformation, Chi2ExternalInformation, LikelihoodExternalInformation, MCInformation};
   static const QString label(ReconstructionMethod);
   static ReconstructionMethod reconstructionMethod(const QString&);
   typedef QMap<ReconstructionMethod, QString>::ConstIterator ReconstructionMethodIterator;

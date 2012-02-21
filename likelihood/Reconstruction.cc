@@ -12,6 +12,7 @@
 #include "Chi2Reconstruction.hh"
 #include "LikelihoodReconstruction.hh"
 #include "SignalHeightTrdLikelihood.hh"
+#include "MCInformation.hh"
 
 #include <Math/IFunction.h>
 #include <Math/BrentMinimizer1D.h>
@@ -43,6 +44,7 @@ Reconstruction* Reconstruction::newReconstruction(Enums::ReconstructionMethod me
     case Enums::WeightedMeanExternalInformation: return new WeightedMeanReconstruction(variables, particles, true);
     case Enums::Chi2ExternalInformation: return new Chi2Reconstruction(variables, particles, true);
     case Enums::LikelihoodExternalInformation: return new LikelihoodReconstruction(variables, particles, true);
+    case Enums::MCInformation: return new MCInformation(variables, particles);
   }
   Q_ASSERT(false);
   return 0;

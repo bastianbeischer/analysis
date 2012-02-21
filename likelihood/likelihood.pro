@@ -21,7 +21,8 @@ CLASSES += \
   TimeOverThresholdLikelihood \
   PDFParameters \
   PDFParametersVector \
-  SignalHeightTrackerLikelihood
+  SignalHeightTrackerLikelihood \
+  MCInformation
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \

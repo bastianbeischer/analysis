@@ -114,7 +114,8 @@ const QMap<Enums::ReconstructionMethod, QString> Enums::s_reconstructionMethodMa
   << QPair<Enums::ReconstructionMethod, QString>(Enums::TOFExternalInformation, "TOF with external information")
   << QPair<Enums::ReconstructionMethod, QString>(Enums::WeightedMeanExternalInformation, "weighted mean with external information")
   << QPair<Enums::ReconstructionMethod, QString>(Enums::Chi2ExternalInformation, "chi2 with external information")
-  << QPair<Enums::ReconstructionMethod, QString>(Enums::LikelihoodExternalInformation, "likelihood with external information");
+  << QPair<Enums::ReconstructionMethod, QString>(Enums::LikelihoodExternalInformation, "likelihood with external information")
+  << QPair<Enums::ReconstructionMethod, QString>(Enums::MCInformation, "MC information");
 
 const QMap<Enums::Situation, QString> Enums::s_situationMap = InitializableMap<Enums::Situation, QString>()
   << QPair<Enums::Situation, QString>(Enums::NoSituation, "unknown")

@@ -82,7 +82,7 @@ void AnalysisProcessor::setAnalysisProcessorSetting(const AnalysisProcessorSetti
       external|= it.key();
   QVector<Enums::ReconstructionMethod> externalReconstruction = QVector<Enums::ReconstructionMethod>()
     << Enums::SpectrometerExternalInformation << Enums::TOFExternalInformation << Enums::WeightedMeanExternalInformation
-    << Enums::Chi2ExternalInformation << Enums::LikelihoodExternalInformation;
+    << Enums::Chi2ExternalInformation << Enums::LikelihoodExternalInformation << Enums::MCInformation;
   foreach (Enums::ReconstructionMethod method, externalReconstruction)
     m_reconstructions.insert(method, Reconstruction::newReconstruction(method, external, m_particles));
 }

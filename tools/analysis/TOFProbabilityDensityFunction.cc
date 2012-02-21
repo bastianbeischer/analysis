@@ -65,6 +65,8 @@ void TOFProbabilityDensityFunction::processEvent(const AnalyzedEvent* event)
     return;
 
   const Settings* settings = event->settings();
+  if (!settings)
+    return;
   if (settings && settings->situation() != Enums::Testbeam11)
     return;
 
