@@ -27,6 +27,7 @@ public:
 public:
   const std::vector<Hit*>& hits() const {return m_hits;}
   unsigned int eventId() const {return m_eventId;}
+  unsigned int eventNo() const;
   double time() const {return m_runStartTime + m_eventTime/1000.;}
   unsigned int runStartTime() const {return m_runStartTime;}
   unsigned int eventTime() const {return m_eventTime;}

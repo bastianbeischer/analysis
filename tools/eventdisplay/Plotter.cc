@@ -140,7 +140,7 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
   const DataDescription* currentDesc = m_chain->currentDescription();
   quint32 eventNumberInRootFile = m_chain->entryInFile();
   quint32 runFileNo = currentDesc->runFileForEventNumber(eventNumberInRootFile);
-  quint32 eventInRunFile = currentDesc->eventNumberInRunFile(event->eventId());
+  quint32 eventInRunFile = currentDesc->eventNumberInRunFile(event->eventNo());
   QString rootFileName = QString::fromStdString(m_chain->currentFile()->GetName());
   QString runfileName = QString::fromStdString(currentDesc->runFileNameForEventNumber(eventNumberInRootFile));
   QDateTime timeOfRun = QDateTime::fromTime_t(event->runStartTime());
