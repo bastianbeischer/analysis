@@ -12,6 +12,8 @@
 #include "Hypothesis.hh"
 #include "ParticleDB.hh"
 #include "ParticleProperties.hh"
+#include "Particle.hh"
+#include "AnalyzedEvent.hh"
 
 #include <cmath>
 
@@ -67,6 +69,7 @@ bool Cut::passesCuts(double value) const
 
 bool Cut::passes(const SimpleEvent* event) const
 {
+  //cut which needs no reconstruction
   if (m_type == Enums::CherenkovCut) {
     //get settings if present
     const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
@@ -96,8 +99,11 @@ bool Cut::passes(const SimpleEvent* event) const
   return true;
 }
 
-bool Cut::passes(const QVector<Hit*>& clusters, const Particle* particle) const
+bool Cut::passes(const AnalyzedEvent* analyzedEvent) const
 {
+  //cut which needs reconstruction
+  const QVector<Hit*>& clusters = analyzedEvent->clusters();
+  const Particle* particle = analyzedEvent->particle();
   if (m_type == Enums::RigidityCut) {
     const Track* track = particle->track();
     if (!track || !track->fitGood())

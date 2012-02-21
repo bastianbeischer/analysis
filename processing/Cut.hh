@@ -8,8 +8,8 @@
 #include "Enums.hh"
 
 class Track;
-class Particle;
 class SimpleEvent;
+class AnalyzedEvent;
 
 class Cut {
 public:
@@ -20,8 +20,8 @@ public:
   void setMax(double max);
   double min() const {return m_min;}
   double max() const {return m_max;}
-  bool passes (const SimpleEvent* event) const;
-  bool passes (const QVector<Hit*>& clusters, const Particle* particle) const;
+  bool passes (const SimpleEvent*) const;
+  bool passes (const AnalyzedEvent*) const;
   Enums::Cut type() const {return m_type;}
   bool valid() const {return (m_minIsSet || m_maxIsSet);}
   bool minIsSet() const {return m_minIsSet;}

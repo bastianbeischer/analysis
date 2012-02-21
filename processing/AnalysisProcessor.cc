@@ -165,7 +165,7 @@ void AnalysisProcessor::process(SimpleEvent* simpleEvent)
   for (QMap<Enums::ReconstructionMethod, Reconstruction*>::Iterator it = m_reconstructions.begin(); it != end; ++it)
     (*it)->identify(analyzedEvent);
 
-  if (m_particleFilter->passes(m_particle) && m_cutFilter->passes(analyzedEvent->clusters(), m_particle)) {
+  if (m_particleFilter->passes(m_particle) && m_cutFilter->passes(analyzedEvent)) {
     QVector<EventDestination*> postponed;
     foreach(EventDestination* destination, m_destinations) {
       bool success = tryProcessingDestination(destination, analyzedEvent);
