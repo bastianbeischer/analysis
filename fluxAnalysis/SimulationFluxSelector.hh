@@ -1,16 +1,18 @@
 #ifndef SimulationFluxSelector_hh
 #define SimulationFluxSelector_hh
 
-#include <QWidget>
 #include "SimulationFluxKey.hh"
+
+#include <QWidget>
 
 class TCanvas;
 class H1DPlot;
 class TH1D;
-class QMenu;
 class QComboBox;
 class QPushButton;
 class QHBoxLayout;
+class QAction;
+class SelectionWidget;
 
 class SimulationFluxSelector : public QWidget {
 Q_OBJECT
@@ -30,8 +32,7 @@ protected:
   QComboBox* m_locationComboBox;
   QComboBox* m_acceptanceComboBox;
   QComboBox* m_sourceComboBox;
-  QVector<QPushButton*> m_buttons;
-  QVector<QMenu*> m_buttonMenus;
+  QVector<SelectionWidget*> m_selectors;
   QComboBox* m_phiComboBox;
   bool m_inhibitUpdate;
   QVector<TH1D*> m_selectedHistograms;
@@ -44,7 +45,7 @@ private:
   void fillLocationComboBox();
   void fillAceptanceComboBox();
   void fillSourceComboBox();
-  void fillMenu(QPushButton*);
+  void fillMenu(SelectionWidget*);
   void fillPhiComboBox();
   void checkParticles(QAction*, bool positive);
 
