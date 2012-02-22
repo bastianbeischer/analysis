@@ -4,11 +4,11 @@ const QVector<Enums::AnalysisTopic> AnalysisTopic::s_topics = QVector<Enums::Ana
   << Enums::SignalHeightTracker << Enums::SignalHeightTRD << Enums::ClusterShapeTracker
   << Enums::ClusterShapeTRD << Enums::TimeOverThreshold << Enums::Tracking
   << Enums::Occupancy << Enums::ResidualsTracker << Enums::ResidualsTRD
-  << Enums::MomentumReconstruction << Enums::EfficiencyTOF << Enums::ResolutionTOF
-  << Enums::CalibrationTOF << Enums::MiscellaneousTracker << Enums::MiscellaneousTRD
-  << Enums::MiscellaneousTOF << Enums::SlowControl << Enums::MonteCarloTracker
-  << Enums::MonteCarloTRD << Enums::MonteCarloTOF << Enums::MonteCarlo
-  << Enums::Testbeam << Enums::LikelihoodTopic;
+  << Enums::MomentumReconstruction << Enums::FluxCalculation << Enums::EfficiencyTOF
+  << Enums::ResolutionTOF << Enums::CalibrationTOF << Enums::MiscellaneousTracker
+  << Enums::MiscellaneousTRD << Enums::MiscellaneousTOF << Enums::SlowControl
+  << Enums::MonteCarloTracker << Enums::MonteCarloTRD << Enums::MonteCarloTOF
+  << Enums::MonteCarlo << Enums::Testbeam << Enums::LikelihoodTopic;
 
 const QVector<Enums::AnalysisTopic> AnalysisTopic::s_trackerTopics = QVector<Enums::AnalysisTopic>()
   << Enums::SignalHeightTracker << Enums::ClusterShapeTracker << Enums::Tracking
@@ -25,8 +25,8 @@ const QVector<Enums::AnalysisTopic> AnalysisTopic::s_tofTopics = QVector<Enums::
   << Enums::MiscellaneousTOF;
 
 const QVector<Enums::AnalysisTopic> AnalysisTopic::s_otherTopics = QVector<Enums::AnalysisTopic>()
-  << Enums::MomentumReconstruction << Enums::LikelihoodTopic << Enums::Occupancy << Enums::MonteCarlo
-  << Enums::SlowControl << Enums::Testbeam;
+  << Enums::MomentumReconstruction << Enums::FluxCalculation << Enums::LikelihoodTopic << Enums::Occupancy
+  << Enums::MonteCarlo << Enums::SlowControl << Enums::Testbeam;
 
 const QVector<Enums::AnalysisTopic>& AnalysisTopic::topics()
 {

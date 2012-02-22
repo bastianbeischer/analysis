@@ -13,7 +13,7 @@
 #include <cmath>
 
 EventTimeDifferencePlot::EventTimeDifferencePlot(int numberOfThreads)
-  : AnalysisPlot(Enums::MiscellaneousTOF)
+  : AnalysisPlot(Enums::FluxCalculation)
   , H1DPlot()
   , m_lastEventTime(-1)
   , m_active(numberOfThreads == 1)

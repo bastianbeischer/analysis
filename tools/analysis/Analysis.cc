@@ -27,7 +27,6 @@
 #include "Chi2VsMomentumPlot.hh"
 #include "AlbedosVsMomentumPlot.hh"
 #include "TOFPositionCorrelationPlot.hh"
-#include "MomentumSpectrumPlot.hh"
 #include "SignalHeight2DPlot.hh"
 #include "SignalHeight2DNormalizedPlot.hh"
 #include "SignalHeightPlot.hh"
@@ -96,7 +95,6 @@
 #include "AzimuthPositionCorrelation.hh"
 #include "AzimuthCutStatistics.hh"
 #include "Helpers.hh"
-#include "FluxCollection.hh"
 #include "EventTimeDifferencePlot.hh"
 #include "MeasurementTimeDistributionPlot.hh"
 #include "TOFProbabilityDensityFunction.hh"
@@ -104,6 +102,7 @@
 #include "ReconstructionMethodCorrelationPlotCollection.hh"
 #include "SignalHeightCorrelationPlotCollection.hh"
 #include "SignalHeightPdfPlotCollection.hh"
+#include "RigiditySpectrum.hh"
 
 #include <TPad.h>
 #include <TCanvas.h>
@@ -394,16 +393,19 @@ void Analysis::setupPlots()
     }
   }
   if (m_analysisSetting.analysisTopics() & Enums::MomentumReconstruction) {
-    addPlot(new BetaMomentumCorrelationPlot());
-    addPlot(new MomentumSpectrumPlot(Enums::Positive));
-    addPlot(new MomentumSpectrumPlot(Enums::Negative));
-    addPlot(new MomentumSpectrumPlot(Enums::Positive | Enums::Negative));
-    addPlot(new MomentumSpectrumPlot(Enums::Positive | Enums::Negative, true));
+    addPlot(new BetaMomentumCorrelationPlot(false, false));
+    addPlot(new BetaMomentumCorrelationPlot(true, false));
+    addPlot(new BetaMomentumCorrelationPlot(false, true));
     addPlot(new AlbedosVsMomentumPlot());
-    addPlot(new MeasurementTimePlot(first, last));
-    addPlot(new FluxCollection(m_analysisSetting.numberOfThreads()));
     addPlot(new ReconstructionMethodCorrelationPlotCollection(
       m_analysisSetting.reconstructionMethod() | m_analysisSetting.reconstructionMethods(), m_analysisSetting.particles()));
+  }
+  if (m_analysisSetting.analysisTopics() & Enums::FluxCalculation) {
+    addPlot(new RigiditySpectrum(m_analysisSetting.particles()));
+    addPlot(new RigiditySpectrum(m_analysisSetting.particles(), true));
+    addPlot(new MeasurementTimePlot(first, last));
+    addPlot(new MeasurementTimeDistributionPlot(m_analysisSetting.numberOfThreads()));
+    addPlot(new EventTimeDifferencePlot(m_analysisSetting.numberOfThreads()));
   }
   if (m_analysisSetting.analysisTopics() & Enums::LikelihoodTopic) {
     Enums::ParticleIterator end = Enums::particleEnd();
@@ -473,8 +475,6 @@ void Analysis::setupPlots()
       if (element->type() == DetectorElement::tof)
         addPlot(new TOFPositionCorrelationPlot(element->id()));
     }
-    addPlot(new EventTimeDifferencePlot(m_analysisSetting.numberOfThreads()));
-    addPlot(new MeasurementTimeDistributionPlot(m_analysisSetting.numberOfThreads()));
     addPlot(new TOFStartTimePlot());
   }
   if (m_analysisSetting.analysisTopics() & Enums::SlowControl) {

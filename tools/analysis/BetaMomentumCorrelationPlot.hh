@@ -9,9 +9,14 @@ class TF1;
 
 class BetaMomentumCorrelationPlot : public AnalysisPlot, public H2DPlot {
 public:
-  explicit BetaMomentumCorrelationPlot();
+  BetaMomentumCorrelationPlot(bool hypothesisRigidity, bool hypothesisBeta);
   virtual ~BetaMomentumCorrelationPlot();
   virtual void processEvent(const AnalyzedEvent*);
+  virtual void finalize();
+private:
+  TF1* newParticleFunction(Enums::Particle, double range);
+  bool m_hypothesisRigidity;
+  bool m_hypothesisBeta;
 };
 
 #endif

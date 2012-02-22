@@ -12,7 +12,8 @@ public:
   ~ParticleInformation();
 
   enum Flag {None=0, AllTrackerLayers=1<<0, InsideMagnet=1<<1, OutsideMagnet=1<<2, HighTransverseRigidity=1<<3,
-    MagnetCollision=1<<4, Albedo=1<<5, Chi2Good=1<<6, BetaGood=1<<7};
+    MagnetCollision=1<<4, Albedo=1<<5, Chi2Good=1<<6, BetaGood=1<<7,
+    FluxAnalysisFlags = Chi2Good | ParticleInformation::BetaGood | ParticleInformation::InsideMagnet | ParticleInformation::AllTrackerLayers};
 
   Q_DECLARE_FLAGS(Flags, Flag);
 

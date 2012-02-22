@@ -14,7 +14,7 @@
 #include <QDebug>
 
 MeasurementTimePlot::MeasurementTimePlot(const QDateTime& first, const QDateTime& last)
-  : AnalysisPlot(Enums::MomentumReconstruction)
+  : AnalysisPlot(Enums::FluxCalculation)
   , H1DPlot()
 {
   setTitle("measurement time");

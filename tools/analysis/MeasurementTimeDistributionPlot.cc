@@ -10,7 +10,7 @@
 #include <cmath>
 
 MeasurementTimeDistributionPlot::MeasurementTimeDistributionPlot(int numberOfThreads)
-  : AnalysisPlot(Enums::MiscellaneousTOF)
+  : AnalysisPlot(Enums::FluxCalculation)
   , H1DPlot()
   , m_calculation(new MeasurementTimeCalculation(numberOfThreads))
 {

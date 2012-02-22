@@ -14,8 +14,9 @@ public:
 
   enum AnalysisTopic {NoTopic = 0, SignalHeightTracker = 1<<0, SignalHeightTRD = 1<<1, ClusterShapeTracker = 1<<2, ClusterShapeTRD = 1<<3,
     TimeOverThreshold = 1<<4, Tracking = 1<<5, Occupancy = 1<<6, ResidualsTracker = 1<<7, ResidualsTRD = 1<<8, MomentumReconstruction = 1<<9,
-    EfficiencyTOF = 1<<10, ResolutionTOF = 1<<11, CalibrationTOF = 1<<12, MiscellaneousTracker = 1<<13, MiscellaneousTRD = 1<<14, MiscellaneousTOF = 1<<15,
-    SlowControl = 1<<16, MonteCarloTracker = 1<<17, MonteCarloTRD = 1<<18, MonteCarloTOF = 1<<19, MonteCarlo = 1<<20, Testbeam = 1<<21, LikelihoodTopic = 1<<22};
+    EfficiencyTOF = 1<<10, ResolutionTOF = 1<<11, CalibrationTOF = 1<<12, MiscellaneousTracker = 1<<13, MiscellaneousTRD = 1<<14,
+    MiscellaneousTOF = 1<<15, SlowControl = 1<<16, MonteCarloTracker = 1<<17, MonteCarloTRD = 1<<18, MonteCarloTOF = 1<<19,
+    MonteCarlo = 1<<20, Testbeam = 1<<21, LikelihoodTopic = 1<<22, FluxCalculation = 1<<23};
   static const QString label(AnalysisTopic);
   static AnalysisTopic analysisTopic(const QString&);
   typedef QMap<AnalysisTopic, QString>::ConstIterator AnalysisTopicIterator;
