@@ -59,6 +59,7 @@ MainWindow::MainWindow(Analysis* analysis, bool batch, QWidget* parent)
 
   setupTopicSelectors();
   setupCorrectionsCheckBoxes();
+  setupReconstructionCheckBoxes();
   setupLhCheckBoxes();
   setupParticleFilterCheckBoxes();
   setupCutSelectors();
@@ -66,11 +67,9 @@ MainWindow::MainWindow(Analysis* analysis, bool batch, QWidget* parent)
 
   for (Enums::TrackTypeIterator it = Enums::trackTypeBegin(); it != Enums::trackTypeEnd(); ++it)
     m_ui.trackComboBox->addItem(it.value());
-  m_ui.trackComboBox->setCurrentIndex(m_ui.trackComboBox->findText(Enums::label(Enums::CenteredBrokenLine)));
 
   for (Enums::ReconstructionMethodIterator it = Enums::reconstructionMethodBegin(); it != Enums::reconstructionMethodEnd(); ++it)
     m_ui.reconstructionMethodComboBox->addItem(it.value());
-  m_ui.reconstructionMethodComboBox->setCurrentIndex(m_ui.reconstructionMethodComboBox->findText(Enums::label(Enums::Likelihood)));
 
   m_controlWidgets
     << m_ui.selectAllButton << m_ui.selectTrackerButton << m_ui.selectTrdButton << m_ui.selectTofButton
@@ -123,6 +122,7 @@ MainWindow::MainWindow(Analysis* analysis, bool batch, QWidget* parent)
   numberOfEventsChanged(m_analysis->numberOfEvents());
 
   analysisSettingToGui();
+
   if (batch) {
     analyzeButtonClicked();
   } else {
@@ -191,6 +191,21 @@ void MainWindow::setupCorrectionsCheckBoxes()
     m_correctionCheckBoxes.append(checkBox);
   }
   m_ui.correctionsTab->setLayout(layout);
+}
+
+void MainWindow::setupReconstructionCheckBoxes()
+{
+  QVBoxLayout* layout = new QVBoxLayout;
+  for (Enums::ReconstructionMethodIterator it = Enums::reconstructionMethodBegin(); it != Enums::reconstructionMethodEnd(); ++it) {
+    if (it.key() == Enums::UndefinedReconstructionMethod)
+      continue;
+    QCheckBox* checkBox = new QCheckBox(it.value());
+    checkBox->setCheckState(Qt::Checked);
+    layout->addWidget(checkBox);
+    m_controlWidgets.append(checkBox);
+    m_reconstructionCheckBoxes.append(checkBox);
+  }
+  m_ui.reconstructionsTab->setLayout(layout);
 }
 
 void MainWindow::setupLhCheckBoxes()
@@ -425,6 +440,12 @@ void MainWindow::guiToAnalysisSetting()
       corrections|= Enums::correction(checkBox->text());
   m_analysisSetting.setCorrections(corrections);
 
+  Enums::ReconstructionMethods methods = Enums::UndefinedReconstructionMethod;
+  foreach (QCheckBox* checkBox, m_reconstructionCheckBoxes)
+    if (checkBox->isChecked())
+      methods|= Enums::reconstructionMethod(checkBox->text());
+  m_analysisSetting.setReconstructionMethods(methods);
+
   Enums::Particles particles = Enums::NoParticle;
   foreach (QCheckBox* checkBox, m_particleCheckBoxes)
     if (checkBox->isChecked())
@@ -474,6 +495,13 @@ void MainWindow::analysisSettingToGui()
 
   foreach (QCheckBox* checkBox, m_correctionCheckBoxes)
     if (m_analysisSetting.corrections() & Enums::correction(checkBox->text())) {
+      checkBox->setCheckState(Qt::Checked);
+    } else {
+      checkBox->setCheckState(Qt::Unchecked);
+    }
+
+  foreach (QCheckBox* checkBox, m_reconstructionCheckBoxes)
+    if (m_analysisSetting.reconstructionMethods() & Enums::reconstructionMethod(checkBox->text())) {
       checkBox->setCheckState(Qt::Checked);
     } else {
       checkBox->setCheckState(Qt::Unchecked);

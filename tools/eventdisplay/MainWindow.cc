@@ -12,23 +12,7 @@ MainWindow::MainWindow(QWidget* parent)
   , m_eventList()
 {
   m_ui.setupUi(this);
-  connect(m_ui.editEventListButton, SIGNAL(clicked()), this, SLOT(editEventListButtonClicked()));
-  connect(m_ui.setFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
-  connect(m_ui.addFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
-  connect(m_ui.saveButton, SIGNAL(clicked()), this, SLOT(saveButtonClicked()));
-  connect(m_ui.eventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(update()));
-  connect(m_ui.eventListSpinBox, SIGNAL(valueChanged(int)), this, SLOT(eventSpinBoxValueChanged(int)));
-  connect(m_ui.drawTrackCheckBox, SIGNAL(stateChanged(int)), this, SLOT(update()));
-  connect(m_ui.allClustersCheckBox, SIGNAL(stateChanged(int)), this, SLOT(update()));
-  connect(m_ui.slopeBinsSpinBox, SIGNAL(valueChanged(int)), this, SLOT(update()));
-  connect(m_ui.offsetBinsSpinBox, SIGNAL(valueChanged(int)), this, SLOT(update()));
-  connect(m_ui.trackerPullSpinBox, SIGNAL(valueChanged(double)), this, SLOT(update()));
-  connect(m_ui.trdPullSpinBox, SIGNAL(valueChanged(double)), this, SLOT(update()));
-  connect(m_ui.fitMethodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
-  connect(m_ui.reconstructionMethodWidget1, SIGNAL(methodChanged(Enums::ReconstructionMethod)), this, SLOT(update()));
-  connect(m_ui.reconstructionMethodWidget2, SIGNAL(methodChanged(Enums::ReconstructionMethod)), this, SLOT(update()));
   m_ui.plotter->setPositionLabel(m_ui.positionLabel);
-  connect(m_ui.unzoomButton, SIGNAL(clicked()), m_ui.plotter, SLOT(unzoom()));
 }
 
 MainWindow::~MainWindow()
@@ -78,6 +62,25 @@ void MainWindow::processArguments(QStringList arguments)
   }
   m_ui.reconstructionMethodWidget1->setMethod(Enums::Chi2);
   m_ui.reconstructionMethodWidget2->setMethod(Enums::Likelihood);
+
+  connect(m_ui.editEventListButton, SIGNAL(clicked()), this, SLOT(editEventListButtonClicked()));
+  connect(m_ui.setFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
+  connect(m_ui.addFileListButton, SIGNAL(clicked()), this, SLOT(setOrAddFileListButtonClicked()));
+  connect(m_ui.saveButton, SIGNAL(clicked()), this, SLOT(saveButtonClicked()));
+  connect(m_ui.eventSpinBox, SIGNAL(valueChanged(int)), this, SLOT(update()));
+  connect(m_ui.eventListSpinBox, SIGNAL(valueChanged(int)), this, SLOT(eventSpinBoxValueChanged(int)));
+  connect(m_ui.drawTrackCheckBox, SIGNAL(stateChanged(int)), this, SLOT(update()));
+  connect(m_ui.allClustersCheckBox, SIGNAL(stateChanged(int)), this, SLOT(update()));
+  connect(m_ui.slopeBinsSpinBox, SIGNAL(valueChanged(int)), this, SLOT(update()));
+  connect(m_ui.offsetBinsSpinBox, SIGNAL(valueChanged(int)), this, SLOT(update()));
+  connect(m_ui.trackerPullSpinBox, SIGNAL(valueChanged(double)), this, SLOT(update()));
+  connect(m_ui.trdPullSpinBox, SIGNAL(valueChanged(double)), this, SLOT(update()));
+  connect(m_ui.fitMethodComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
+  connect(m_ui.reconstructionMethodWidget1, SIGNAL(methodChanged(Enums::ReconstructionMethod)), this, SLOT(update()));
+  connect(m_ui.reconstructionMethodWidget2, SIGNAL(methodChanged(Enums::ReconstructionMethod)), this, SLOT(update()));
+  connect(m_ui.unzoomButton, SIGNAL(clicked()), m_ui.plotter, SLOT(unzoom()));
+
+  update();
 }
 
 void MainWindow::setFileList(const QString& fileList)

@@ -398,7 +398,8 @@ void Analysis::setupPlots()
     addPlot(new AlbedosVsMomentumPlot());
     addPlot(new MeasurementTimePlot(first, last));
     addPlot(new FluxCollection(m_analysisSetting.numberOfThreads()));
-    addPlot(new ReconstructionMethodCorrelationPlotCollection(m_analysisSetting.particles()));
+    addPlot(new ReconstructionMethodCorrelationPlotCollection(
+      m_analysisSetting.reconstructionMethod() | m_analysisSetting.reconstructionMethods(), m_analysisSetting.particles()));
   }
   if (m_analysisSetting.analysisTopics() & Enums::LikelihoodTopic) {
     Enums::ParticleIterator end = Enums::particleEnd();

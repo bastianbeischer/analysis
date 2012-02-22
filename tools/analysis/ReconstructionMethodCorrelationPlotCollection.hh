@@ -9,7 +9,7 @@
 class ReconstructionMethodCorrelationPlotCollection : public PlotCollection {
 Q_OBJECT
 public:
-  ReconstructionMethodCorrelationPlotCollection(Enums::Particles);
+  ReconstructionMethodCorrelationPlotCollection(Enums::ReconstructionMethods, Enums::Particles);
   ~ReconstructionMethodCorrelationPlotCollection();
 public slots:
   virtual void update();

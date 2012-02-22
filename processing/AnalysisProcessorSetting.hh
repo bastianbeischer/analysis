@@ -17,6 +17,7 @@ public:
   void save(const QString&) const;
   void load(const QString&);
   Enums::TrackType trackType() const {return m_trackType;}
+  Enums::ReconstructionMethods reconstructionMethods() const {return m_reconstructionMethods;}
   Enums::ReconstructionMethod reconstructionMethod() const {return m_reconstructionMethod;}
   Enums::Corrections corrections() const {return m_corrections;}
   Enums::Particles particles() const {return m_particles;}
@@ -26,6 +27,7 @@ public:
   const CutFilter& cutFilter() const {return m_cutFilter;}
   CutFilter& cutFilter() {return m_cutFilter;}
   void setTrackType(Enums::TrackType trackType) {m_trackType = trackType;}
+  void setReconstructionMethods(Enums::ReconstructionMethods reconstructionMethods) {m_reconstructionMethods = reconstructionMethods;}
   void setReconstructionMethod(Enums::ReconstructionMethod reconstructionMethod) {m_reconstructionMethod = reconstructionMethod;}
   void setCorrections(Enums::Corrections corrections) {m_corrections = corrections;}
   void setParticles(Enums::Particles particles) {m_particles = particles;}
@@ -35,6 +37,7 @@ public:
   void setCutFilter(const CutFilter& cutFilter) {m_cutFilter = cutFilter;}
 protected:
   Enums::TrackType m_trackType;
+  Enums::ReconstructionMethods m_reconstructionMethods;
   Enums::ReconstructionMethod m_reconstructionMethod;
   Enums::Corrections m_corrections;
   Enums::Particles m_particles;

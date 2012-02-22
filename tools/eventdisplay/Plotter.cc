@@ -130,11 +130,11 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
 
   const Reconstruction* reconstruction = 0;
   reconstruction = m_processor->reconstruction(widget1.method());
-  Q_ASSERT(reconstruction);
-  widget1.draw(reconstruction->graph(), reconstruction->legend());
+  if (reconstruction)
+    widget1.draw(reconstruction->graph(), reconstruction->legend());
   reconstruction = m_processor->reconstruction(widget2.method());
-  Q_ASSERT(reconstruction);
-  widget2.draw(reconstruction->graph(), reconstruction->legend());
+  if (reconstruction)
+    widget2.draw(reconstruction->graph(), reconstruction->legend());
 
   //show info for event
   const DataDescription* currentDesc = m_chain->currentDescription();
@@ -178,6 +178,8 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
   QString itemBegin = "<td valign=\"middle\" align=\"center\">";
   QString itemEnd = "</td>\n";
 
+  bool internalReconstructionExists = false;
+  bool externalReconstructionExists = false;
   QString reconstructionTable;
   reconstructionTable+= "<table border=\"1\">\n<tr>\n";
   reconstructionTable+= itemBegin + "R/GV<br>(logL)" + itemEnd;
@@ -190,6 +192,12 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
   Enums::ReconstructionMethodIterator reconstructionEnd = Enums::reconstructionMethodEnd();
   for (Enums::ReconstructionMethodIterator reconstructionIt = Enums::reconstructionMethodBegin(); reconstructionIt != reconstructionEnd; ++reconstructionIt) {
     const Reconstruction* reconstruction = m_processor->reconstruction(reconstructionIt.key());
+    if (!reconstruction)
+      continue;
+    if (!reconstruction->externalInformation())
+      internalReconstructionExists = true;
+    if (reconstruction->externalInformation())
+      externalReconstructionExists = true;
     QString& table = reconstruction->externalInformation() ? additionalReconstructionTable : reconstructionTable;
     table+= "<tr>\n";
     table+= itemBegin + reconstructionIt.value().left(4) + itemEnd;
@@ -209,13 +217,17 @@ void Plotter::drawEvent(unsigned int i, Enums::TrackType type, bool allClusters,
     table+= "</tr>\n";
   }
 
-  reconstructionTable+= "</table>";
-  infoTextEdit.append("PERDaix only:");
-  infoTextEdit.append(reconstructionTable);
+  if (internalReconstructionExists) {
+    reconstructionTable+= "</table>";
+    infoTextEdit.append("PERDaix only:");
+    infoTextEdit.append(reconstructionTable);
+  }
 
-  additionalReconstructionTable+= "</table>";
-  infoTextEdit.append("\ntogether with external information:");
-  infoTextEdit.append(additionalReconstructionTable);
+  if (externalReconstructionExists) {
+    additionalReconstructionTable+= "</table>";
+    infoTextEdit.append("\ntogether with external information:");
+    infoTextEdit.append(additionalReconstructionTable);
+  }
 
   delete event;
 }

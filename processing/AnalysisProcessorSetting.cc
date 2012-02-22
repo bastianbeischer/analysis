@@ -10,6 +10,7 @@ AnalysisProcessorSetting::AnalysisProcessorSetting()
 void AnalysisProcessorSetting::clear()
 {
   m_trackType = Enums::NoTrack;
+  m_reconstructionMethods = Enums::UndefinedReconstructionMethod;
   m_reconstructionMethod = Enums::UndefinedReconstructionMethod;
   m_corrections = Enums::NoCorrection;
   m_particles = Enums::NoParticle;
@@ -24,6 +25,7 @@ void AnalysisProcessorSetting::save(const QString& file) const
   QSettings settings(file, QSettings::IniFormat);
   settings.beginGroup("AnalysisProcessorSetting");
   settings.setValue("trackType", Enums::label(m_trackType));
+  settings.setValue("reconstructionMethods", Enums::label(m_reconstructionMethods));
   settings.setValue("reconstructionMethod", Enums::label(m_reconstructionMethod));
   settings.setValue("corrections", Enums::label(m_corrections));
   settings.setValue("particles", Enums::label(m_particles));
@@ -40,6 +42,7 @@ void AnalysisProcessorSetting::load(const QString& file)
   QSettings settings(file, QSettings::IniFormat);
   settings.beginGroup("AnalysisProcessorSetting");
   m_trackType = Enums::trackType(settings.value("trackType").toString());
+  m_reconstructionMethods = Enums::reconstructionMethods(settings.value("reconstructionMethods").toString());
   m_reconstructionMethod = Enums::reconstructionMethod(settings.value("reconstructionMethod").toString());
   m_corrections = Enums::corrections(settings.value("corrections").toString());
   m_particles = Enums::particles(settings.value("particles").toString());
@@ -54,6 +57,7 @@ QDebug operator<<(QDebug debug, const AnalysisProcessorSetting& setting)
 {
   QString string;
   string+= "\nAnalysisProcessorSetting: trackType = " + Enums::label(setting.trackType())
+    + ", reconstructionMethods = " + Enums::label(setting.reconstructionMethods())
     + ", reconstructionMethod = " + Enums::label(setting.reconstructionMethod())
     + ", corrections = " + Enums::label(setting.corrections())
     + ", particles = " + Enums::label(setting.particles())

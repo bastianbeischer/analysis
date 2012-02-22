@@ -7,7 +7,7 @@
 #include <QHBoxLayout>
 #include <QDebug>
 
-ReconstructionMethodCorrelationPlotCollection::ReconstructionMethodCorrelationPlotCollection(Enums::Particles particles)
+ReconstructionMethodCorrelationPlotCollection::ReconstructionMethodCorrelationPlotCollection(Enums::ReconstructionMethods methods, Enums::Particles particles)
   : PlotCollection(Enums::MomentumReconstruction)
   , m_particles(particles)
   , m_particleComboBox(new QComboBox())
@@ -33,11 +33,13 @@ ReconstructionMethodCorrelationPlotCollection::ReconstructionMethodCorrelationPl
   }
   Enums::ReconstructionMethodIterator reconstructionEnd = Enums::reconstructionMethodEnd();
   for (Enums::ReconstructionMethodIterator it = Enums::reconstructionMethodBegin(); it != reconstructionEnd; ++it) {
-    m_reconstructionMethodXComboBox->addItem(it.value());
-    m_reconstructionMethodYComboBox->addItem(it.value());
+    if (it.key() & methods) {
+      m_reconstructionMethodXComboBox->addItem(it.value());
+      m_reconstructionMethodYComboBox->addItem(it.value());
+    }
   }
-  m_reconstructionMethodXComboBox->setCurrentIndex(m_reconstructionMethodXComboBox->findText(Enums::label(Enums::SpectrometerExternalInformation)));
-  m_reconstructionMethodYComboBox->setCurrentIndex(m_reconstructionMethodXComboBox->findText(Enums::label(Enums::LikelihoodExternalInformation)));
+  m_reconstructionMethodXComboBox->setCurrentIndex(0);
+  m_reconstructionMethodYComboBox->setCurrentIndex(0);
 
   connect(m_particleComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
   connect(m_reconstructionMethodXComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
@@ -47,8 +49,10 @@ ReconstructionMethodCorrelationPlotCollection::ReconstructionMethodCorrelationPl
     if ((pIt.key() & m_particles) != pIt.key())
       continue;
     for (Enums::ReconstructionMethodIterator xIt = Enums::reconstructionMethodBegin(); xIt != reconstructionEnd; ++xIt)
-      for (Enums::ReconstructionMethodIterator yIt = Enums::reconstructionMethodBegin(); yIt != reconstructionEnd; ++yIt)
-        addPlot(new ReconstructionMethodCorrelationPlot(xIt.key(), yIt.key(), pIt.key()));
+      if (xIt.key() & methods)
+        for (Enums::ReconstructionMethodIterator yIt = Enums::reconstructionMethodBegin(); yIt != reconstructionEnd; ++yIt)
+          if (yIt.key() & methods)
+            addPlot(new ReconstructionMethodCorrelationPlot(xIt.key(), yIt.key(), pIt.key()));
   }
 }
 

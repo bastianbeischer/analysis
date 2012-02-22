@@ -239,9 +239,7 @@ const QString Enums::label(Enums::LikelihoodVariable key) {return s_likelihoodVa
 Enums::LikelihoodVariable Enums::likelihoodVariable(const QString& value) {return s_likelihoodVariableMap.key(value);}
 bool Enums::isInternalLikelihoodVariable(LikelihoodVariable variable)
 {
-  if (variable == CherenkovLikelihood)
-    return false;
-  return true;
+  return variable != CherenkovLikelihood;
 }
 Enums::LikelihoodVariableIterator Enums::likelihoodVariableBegin() {return s_likelihoodVariableMap.constBegin();}
 Enums::LikelihoodVariableIterator Enums::likelihoodVariableEnd() {return s_likelihoodVariableMap.constEnd();}
@@ -288,6 +286,11 @@ Enums::KineticVariableIterator Enums::kineticVariableEnd() {return s_kineticVari
 // ReconstructionMethod
 const QString Enums::label(Enums::ReconstructionMethod key) {return s_reconstructionMethodMap.value(key);}
 Enums::ReconstructionMethod Enums::reconstructionMethod(const QString& value) {return s_reconstructionMethodMap.key(value);}
+bool Enums::isInternalReconstructionMethod(ReconstructionMethod method)
+{
+  Q_ASSERT(method != UndefinedReconstructionMethod);
+  return method == Spectrometer || method == TOF || method == WeightedMean || method == Chi2 || method == Likelihood;
+}
 Enums::ReconstructionMethodIterator Enums::reconstructionMethodBegin() {return s_reconstructionMethodMap.constBegin();}
 Enums::ReconstructionMethodIterator Enums::reconstructionMethodEnd() {return s_reconstructionMethodMap.constEnd();}
 const QString Enums::label(Enums::ReconstructionMethods keys)

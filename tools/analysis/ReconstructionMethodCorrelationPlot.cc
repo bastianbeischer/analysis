@@ -5,6 +5,7 @@
 #include "Track.hh"
 #include "ParticleInformation.hh"
 #include "Hypothesis.hh"
+#include "SimpleEvent.hh"
 
 #include <TH2.h>
 
@@ -35,7 +36,9 @@ void ReconstructionMethodCorrelationPlot::processEvent(const AnalyzedEvent* even
   if (!event->flagsSet(ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet | ParticleInformation::Chi2Good | ParticleInformation::BetaGood))
     return;
   const Hypothesis* hypothesisX = event->particle()->hypothesis(m_methodX);
+  Q_ASSERT(hypothesisX);
   const Hypothesis* hypothesisY = event->particle()->hypothesis(m_methodY);
+  Q_ASSERT(hypothesisY);
   if ((m_particle == Enums::NoParticle) || ((hypothesisX->particle() == m_particle) && (hypothesisY->particle() == m_particle)))
     histogram()->Fill(hypothesisX->rigidity(), hypothesisY->rigidity());
 }

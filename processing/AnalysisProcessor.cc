@@ -67,24 +67,26 @@ void AnalysisProcessor::setAnalysisProcessorSetting(const AnalysisProcessorSetti
   Enums::LikelihoodVariableIterator end = Enums::likelihoodVariableEnd();
 
   Enums::LikelihoodVariables internal = Enums::UndefinedLikelihood;
-  for (Enums::LikelihoodVariableIterator it = Enums::likelihoodVariableBegin(); it != end; ++it)
-    if ((it.key() & m_likelihoods) && Enums::isInternalLikelihoodVariable(it.key()))
-      internal|= it.key();
-  QVector<Enums::ReconstructionMethod> internalReconstruction = QVector<Enums::ReconstructionMethod>()
-    << Enums::Spectrometer << Enums::TOF << Enums::WeightedMean << Enums::Chi2 << Enums::Likelihood;
-  foreach (Enums::ReconstructionMethod method, internalReconstruction)
-    m_reconstructions.insert(method, Reconstruction::newReconstruction(method, internal, m_particles));
-
-  // include e.g. Cherenkov counters
   Enums::LikelihoodVariables external = Enums::UndefinedLikelihood;
-  for (Enums::LikelihoodVariableIterator it = Enums::likelihoodVariableBegin(); it != end; ++it)
-    if (it.key() & m_likelihoods)
-      external|= it.key();
-  QVector<Enums::ReconstructionMethod> externalReconstruction = QVector<Enums::ReconstructionMethod>()
-    << Enums::SpectrometerExternalInformation << Enums::TOFExternalInformation << Enums::WeightedMeanExternalInformation
-    << Enums::Chi2ExternalInformation << Enums::LikelihoodExternalInformation << Enums::MCInformation;
-  foreach (Enums::ReconstructionMethod method, externalReconstruction)
-    m_reconstructions.insert(method, Reconstruction::newReconstruction(method, external, m_particles));
+  for (Enums::LikelihoodVariableIterator it = Enums::likelihoodVariableBegin(); it != end; ++it) {
+    if (it.key() & m_likelihoods) {
+      if (Enums::isInternalLikelihoodVariable(it.key())) {
+        internal|= it.key();
+      } else {
+        external|= it.key();
+      }
+    }
+  }
+
+  Enums::ReconstructionMethods methods = setting.reconstructionMethods() | setting.reconstructionMethod();
+  for (Enums::ReconstructionMethodIterator it = Enums::reconstructionMethodBegin(); it != Enums::reconstructionMethodEnd(); ++it) {
+    if (it.key() & methods) {
+      bool isInternal = Enums::isInternalReconstructionMethod(it.key());
+      Enums::LikelihoodVariables variables = isInternal ? internal : (internal | external);
+      Reconstruction* method = Reconstruction::newReconstruction(it.key(), variables, m_particles);
+      m_reconstructions.insert(it.key(), method);
+    }
+  }
 }
 
 AnalysisProcessor::~AnalysisProcessor()
@@ -186,7 +188,6 @@ void AnalysisProcessor::process(SimpleEvent* simpleEvent)
 
 const Reconstruction* AnalysisProcessor::reconstruction(Enums::ReconstructionMethod method) const
 {
-  const Reconstruction* reconstruction = m_reconstructions[method];
-  Q_ASSERT(reconstruction);
-  return reconstruction;
+  QMap<Enums::ReconstructionMethod, Reconstruction*>::ConstIterator it = m_reconstructions.find(method);
+  return it == m_reconstructions.end() ? 0 : *it;
 }

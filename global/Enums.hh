@@ -91,6 +91,7 @@ public:
     Chi2ExternalInformation = 1<<8, LikelihoodExternalInformation = 1<<9, MCInformation = 1<<10};
   static const QString label(ReconstructionMethod);
   static ReconstructionMethod reconstructionMethod(const QString&);
+  static bool isInternalReconstructionMethod(ReconstructionMethod);
   typedef QMap<ReconstructionMethod, QString>::ConstIterator ReconstructionMethodIterator;
   static ReconstructionMethodIterator reconstructionMethodBegin();
   static ReconstructionMethodIterator reconstructionMethodEnd();

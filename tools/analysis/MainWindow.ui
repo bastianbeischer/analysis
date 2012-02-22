@@ -508,7 +508,7 @@
            </font>
           </property>
           <property name="currentIndex">
-           <number>1</number>
+           <number>0</number>
           </property>
           <property name="usesScrollButtons">
            <bool>false</bool>
@@ -519,6 +519,11 @@
            </property>
            <attribute name="title">
             <string>Corrections</string>
+           </attribute>
+          </widget>
+          <widget class="QWidget" name="reconstructionsTab">
+           <attribute name="title">
+            <string>Reconstruction</string>
            </attribute>
           </widget>
           <widget class="QWidget" name="lhTab">

@@ -60,6 +60,7 @@ private slots:
 private:
   void setupTopicSelectors();
   void setupCorrectionsCheckBoxes();
+  void setupReconstructionCheckBoxes();
   void setupLhCheckBoxes();
   void setupParticleFilterCheckBoxes();
   void setupCutSelectors();
@@ -86,6 +87,7 @@ private:
 
   QVector<QWidget*> m_controlWidgets;
   QVector<QCheckBox*> m_correctionCheckBoxes;
+  QVector<QCheckBox*> m_reconstructionCheckBoxes;
   QVector<QCheckBox*> m_particleCheckBoxes;
   QVector<QCheckBox*> m_likelihoodCheckBoxes;
   QVector<QCheckBox*> m_particleFilterCheckBoxes;
