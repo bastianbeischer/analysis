@@ -48,11 +48,15 @@ ReconstructionMethodCorrelationPlotCollection::ReconstructionMethodCorrelationPl
   for (Enums::ParticleIterator pIt = Enums::particleBegin(); pIt != particleEnd; ++pIt) {
     if ((pIt.key() & m_particles) != pIt.key())
       continue;
-    for (Enums::ReconstructionMethodIterator xIt = Enums::reconstructionMethodBegin(); xIt != reconstructionEnd; ++xIt)
-      if (xIt.key() & methods)
-        for (Enums::ReconstructionMethodIterator yIt = Enums::reconstructionMethodBegin(); yIt != reconstructionEnd; ++yIt)
-          if (yIt.key() & methods)
+    for (Enums::ReconstructionMethodIterator xIt = Enums::reconstructionMethodBegin(); xIt != reconstructionEnd; ++xIt) {
+      if (xIt.key() & methods) {
+        for (Enums::ReconstructionMethodIterator yIt = Enums::reconstructionMethodBegin(); yIt != reconstructionEnd; ++yIt) {
+          if (yIt.key() & methods) {
             addPlot(new ReconstructionMethodCorrelationPlot(xIt.key(), yIt.key(), pIt.key()));
+          }
+        }
+      }
+    }
   }
 }
 
@@ -60,31 +64,19 @@ ReconstructionMethodCorrelationPlotCollection::~ReconstructionMethodCorrelationP
 {
 }
 
-int ReconstructionMethodCorrelationPlotCollection::methodsToIndex(Enums::ReconstructionMethod x, Enums::ReconstructionMethod y, Enums::Particle p)
-{
-  int index = 0;
-  Enums::ParticleIterator particleEnd = Enums::particleEnd();
-  Enums::ReconstructionMethodIterator reconstructionEnd = Enums::reconstructionMethodEnd();
-  for (Enums::ParticleIterator pIt = Enums::particleBegin(); pIt != particleEnd; ++pIt) {
-    if ((pIt.key() & m_particles) != pIt.key())
-      continue;
-    for (Enums::ReconstructionMethodIterator xIt = Enums::reconstructionMethodBegin(); xIt != reconstructionEnd; ++xIt) {
-      for (Enums::ReconstructionMethodIterator yIt = Enums::reconstructionMethodBegin(); yIt != reconstructionEnd; ++yIt) {
-        if (xIt.key() == x && yIt.key() == y && pIt.key() == p)
-          return index;
-        ++index;
-      }
-    }
-  }
-  Q_ASSERT(false);
-  return -1;
-}
-
 void ReconstructionMethodCorrelationPlotCollection::update()
 {
   Enums::Particle p = Enums::particle(m_particleComboBox->currentText());
   Enums::ReconstructionMethod x = Enums::reconstructionMethod(m_reconstructionMethodXComboBox->currentText());
   Enums::ReconstructionMethod y = Enums::reconstructionMethod(m_reconstructionMethodYComboBox->currentText());
-  selectPlot(methodsToIndex(x, y, p));
-  PlotCollection::update();
+
+  for (int i = 0; i < numberOfPlots(); ++i) {
+    ReconstructionMethodCorrelationPlot* methodPlot = static_cast<ReconstructionMethodCorrelationPlot*>(plot(i));
+    if (methodPlot->particle() == p && methodPlot->methodX() == x && methodPlot->methodY() == y) {
+      selectPlot(i);
+      PlotCollection::update();
+      return;
+    }
+  }
+  Q_ASSERT(false);
 }

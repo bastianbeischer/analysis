@@ -118,8 +118,6 @@ MainWindow::MainWindow(Analysis* analysis, bool batch, QWidget* parent)
   connect(m_ui.listWidget, SIGNAL(currentRowChanged(int)), this, SLOT(listWidgetCurrentRowChanged(int)));
 
   m_updateTimer.setInterval(m_batch ? 1000 : 50);
-  m_ui.numberOfThreadsSpinBox->setValue(QThread::idealThreadCount());
-  numberOfEventsChanged(m_analysis->numberOfEvents());
 
   analysisSettingToGui();
 
@@ -217,7 +215,6 @@ void MainWindow::setupLhCheckBoxes()
   for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
     if (it.key() != Enums::NoParticle && ParticleProperties(it.key()).charge() != 0) {
       QCheckBox* checkBox = new QCheckBox(it.value());
-      checkBox->setCheckState((Setup::instance()->proposedParticles() & it.key()) ? Qt::Checked : Qt::Unchecked);
       layout->addWidget(checkBox);
       m_controlWidgets.append(checkBox);
       m_particleCheckBoxes.append(checkBox);
@@ -244,7 +241,6 @@ void MainWindow::setupLhCheckBoxes()
       }
       text+= add;
       QCheckBox* checkBox = new QCheckBox(text);
-      checkBox->setCheckState((Setup::instance()->proposedLikelihoodVariables() & it.key()) ? Qt::Checked : Qt::Unchecked);
       layout->addWidget(checkBox);
       m_controlWidgets.append(checkBox);
       m_likelihoodCheckBoxes.append(checkBox);
@@ -480,11 +476,16 @@ void MainWindow::guiToAnalysisSetting()
 
 void MainWindow::analysisSettingToGui()
 {
-  if (m_analysisSetting.numberOfThreads() < 0)
-    return;
-  m_ui.firstEventSpinBox->setValue(m_analysisSetting.firstEvent());
-  m_ui.lastEventSpinBox->setValue(m_analysisSetting.lastEvent());
-  m_ui.numberOfThreadsSpinBox->setValue(m_analysisSetting.numberOfThreads());
+  int first = m_analysisSetting.firstEvent() < 0 ? 0 : m_analysisSetting.firstEvent();
+  int last = m_analysisSetting.lastEvent() < 0 ? m_analysis->numberOfEvents() - 1 : m_analysisSetting.lastEvent();
+  numberOfEventsChanged(last - first + 1);
+
+  if (m_analysisSetting.numberOfThreads() < 0) {
+    m_ui.numberOfThreadsSpinBox->setValue(QThread::idealThreadCount());
+    m_analysisSetting.setNumberOfThreads(QThread::idealThreadCount());
+  } else {
+    m_ui.numberOfThreadsSpinBox->setValue(m_analysisSetting.numberOfThreads());
+  }
 
   foreach (TopicSelector* selector, m_topicSelectors)
     selector->setChecked(m_analysisSetting.analysisTopics() & selector->topic());
@@ -740,11 +741,10 @@ void MainWindow::firstOrLastEventChanged(int)
 void MainWindow::numberOfEventsChanged(int nEvents)
 {
   m_ui.firstEventSpinBox->setMinimum(0);
-  m_ui.lastEventSpinBox->setMaximum(nEvents-1);
+  m_ui.lastEventSpinBox->setMaximum(nEvents - 1);
   m_ui.firstEventSpinBox->setValue(0);
-  m_ui.lastEventSpinBox->setValue(nEvents-1);
-  if (nEvents > 0)
-    m_ui.analyzeButton->setEnabled(true);
+  m_ui.lastEventSpinBox->setValue(nEvents - 1);
+  m_ui.analyzeButton->setEnabled(nEvents > 0);
   firstOrLastEventChanged();
 }
 
@@ -763,7 +763,6 @@ void MainWindow::toggleControlWidgetsStatus()
     if (m_batch) {
       m_analysis->save("batch.root", Plotter::rootWidget()->GetCanvas());
       qApp->quit();
-//      QTimer::singleShot(1000, qApp, SLOT(quit()));
     }
   }
   m_ui.plotter->toggleUpdateTimer();
@@ -781,9 +780,8 @@ void MainWindow::update()
   m_ui.dataChainProgressBar->setValue(m_analysis->progress());
   m_ui.eventQueueProgressBar->setValue(m_analysis->buffer());
   m_ui.timeLabel->setText(QString("%1s").arg(m_time.elapsed()/1000));
-  if (m_batch) {
+  if (m_batch)
     qDebug() << m_analysis->progress() << "%";
-  }
 }
 
 void MainWindow::drawOptionComboBoxCurrentIndexChanged(int i)

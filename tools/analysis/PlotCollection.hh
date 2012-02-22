@@ -14,6 +14,8 @@ public:
   PlotCollection(Enums::AnalysisTopic);
   virtual ~PlotCollection();
 
+  int numberOfPlots() const {return m_plots.count();}
+  AnalysisPlot* plot(int i) {Q_ASSERT(0 <= i && i < m_plots.count()); return m_plots[i];}
   void addPlot(AnalysisPlot* plot) {m_plots.append(plot);}
   virtual void processEvent(const AnalyzedEvent*);
   virtual void finalize();

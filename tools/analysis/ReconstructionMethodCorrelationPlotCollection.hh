@@ -14,7 +14,6 @@ public:
 public slots:
   virtual void update();
 private:
-  int methodsToIndex(Enums::ReconstructionMethod, Enums::ReconstructionMethod, Enums::Particle);
   Enums::Particles m_particles;
   QComboBox* m_particleComboBox;
   QComboBox* m_reconstructionMethodXComboBox;

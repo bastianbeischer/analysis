@@ -119,6 +119,7 @@ Analysis::Analysis()
   , m_processors()
   , m_plots()
 {
+  m_analysisSetting.load(Helpers::analysisPath() + "/conf/defaultAnalysisSetting.conf");
   connect(m_reader, SIGNAL(started()), this, SIGNAL(started()));
   connect(m_reader, SIGNAL(numberOfEventsChanged(int)), this, SIGNAL(chainChanged(int)));
   connect(m_reader, SIGNAL(finished()), this, SLOT(finalize()));
