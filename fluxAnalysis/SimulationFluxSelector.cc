@@ -4,6 +4,7 @@
 #include "ParticleProperties.hh"
 #include "RootQtWidget.hh"
 #include "H1DPlot.hh"
+#include "SelectionWidget.hh"
 
 #include <QDebug>
 #include <QLayout>
@@ -21,8 +22,7 @@ SimulationFluxSelector::SimulationFluxSelector(int numberOfSelectors, QWidget* p
   , m_locationComboBox(0)
   , m_acceptanceComboBox(0)
   , m_sourceComboBox(0)
-  , m_buttons()
-  , m_buttonMenus()
+  , m_selectors()
   , m_phiComboBox(0)
   , m_inhibitUpdate(false)
   , m_selectedHistograms()
@@ -60,13 +60,10 @@ void SimulationFluxSelector::activate()
   connect(m_sourceComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
 
   for (int i = 0; i < m_numberOfSelectors; ++i) {
-    QMenu* menu = new QMenu(this);
-    QPushButton* button = new QPushButton("particles", this);
-    button->setMenu(menu);
-    m_layout->addWidget(button);
-    m_buttons.append(button);
-    m_buttonMenus.append(menu);
-    connect(button, SIGNAL(clicked()), this, SLOT(update()));
+    SelectionWidget* selector = new SelectionWidget("particles", this);
+    m_layout->addWidget(selector);
+    m_selectors.append(selector);
+    connect(selector, SIGNAL(selectionChanged()), this, SLOT(update()));
   }
 
   m_phiComboBox = new QComboBox(this);
@@ -79,9 +76,7 @@ void SimulationFluxSelector::clear()
 {
   m_inhibitUpdate = true;
   for(int iSelector = 0; iSelector < m_numberOfSelectors; ++iSelector) {
-    for (int iMenu = 0; iMenu < m_buttonMenus[iSelector]->actions().size(); ++iMenu) {
-      m_buttonMenus[iSelector]->actions()[iMenu]->setChecked(false);
-    }
+    m_selectors[iSelector]->deselectAll();
   }
   m_inhibitUpdate = false;
   update();
@@ -106,15 +101,13 @@ void SimulationFluxSelector::locationChanged()
   m_sourceComboBox->clear();
   m_phiComboBox->clear();
   for (int i = 0; i < m_numberOfSelectors; ++i) {
-    foreach(QAction* action, m_buttonMenus[i]->actions())
-      action->disconnect();
-    m_buttonMenus[i]->clear();
+    m_selectors[i]->clear();
   }
   m_location = SimulationFluxKey::location(m_locationComboBox->currentText());
   fillAceptanceComboBox();
   fillSourceComboBox();
   for (int i = 0; i < m_numberOfSelectors; ++i)
-    fillMenu(m_buttons[i]);
+    fillMenu(m_selectors[i]);
   fillPhiComboBox();
   m_inhibitUpdate = false;
   update();
@@ -146,27 +139,23 @@ void SimulationFluxSelector::fillSourceComboBox()
   }
 }
 
-void SimulationFluxSelector::fillMenu(QPushButton* button)
+void SimulationFluxSelector::fillMenu(SelectionWidget* selector)
 {
-  QMenu* menu = button->menu();
+  QMenu* menu = selector->menu();
   QAction* action = 0;
-  action = new QAction("positive", menu);
+  action = selector->addElement("positive");
   connect(action, SIGNAL(triggered()), this, SLOT(selectPositive()));
-  menu->addAction(action);
-  action = new QAction("negative", menu);
+  connect(action, SIGNAL(changed()), this, SLOT(selectPositive()));
+  action = selector->addElement("negative");
   connect(action, SIGNAL(triggered()), this, SLOT(selectNegative()));
-  menu->addAction(action);
+  connect(action, SIGNAL(changed()), this, SLOT(selectNegative()));
   menu->addSeparator();
   for (int isAlbedo = 0; isAlbedo < 2; ++isAlbedo) {
     foreach (Enums::Particle particleType, SimulationFluxReader::instance()->particles(m_location)) {
       QString actionName = SimulationFluxKey::particleName(particleType);
       if (isAlbedo)
         actionName.prepend("albedo ");
-      action = new QAction(actionName, menu);
-      action->setCheckable(true);
-      menu->addAction(action);
-      connect(action, SIGNAL(triggered()), button, SLOT(showMenu()));
-      connect(action, SIGNAL(changed()), this, SLOT(update()));
+      action = selector->addElement(actionName);
     }
     if (isAlbedo == 0)
       menu->addSeparator();

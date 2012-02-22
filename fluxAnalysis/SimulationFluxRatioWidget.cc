@@ -2,6 +2,8 @@
 
 #include "Particle.hh"
 #include "SimulationFluxReader.hh"
+#include "SimulationFluxKey.hh"
+#include "SelectionWidget.hh"
 
 #include <TH1D.h>
 #include <QList>
@@ -9,7 +11,7 @@
 #include <QDebug>
 #include <QAction>
 #include <QComboBox>
-#include <SimulationFluxKey.hh>
+#include <QPushButton>
 
 SimulationFluxRatioWidget::SimulationFluxRatioWidget(QWidget* parent)
   : SimulationFluxSelector(2, parent)
@@ -32,8 +34,8 @@ void SimulationFluxRatioWidget::update()
   QList<SimulationFluxKey> denominator;
   for(int iSelector = 0; iSelector < m_numberOfSelectors; ++iSelector) {
     QList<SimulationFluxKey> selectedHistograms;
-    for (int iMenu = 0; iMenu < m_buttonMenus[iSelector]->actions().size(); ++iMenu) {
-      QAction* action = m_buttonMenus[iSelector]->actions()[iMenu];
+    for (int iMenu = 0; iMenu < m_selectors[iSelector]->menu()->actions().size(); ++iMenu) {
+      QAction* action = m_selectors[iSelector]->menu()->actions()[iMenu];
       if (action->isChecked()) {
         const QString& particleString = action->text();
         SimulationFluxKey::Location location = SimulationFluxKey::location(m_locationComboBox->currentText());
