@@ -6,6 +6,7 @@ fi
 echo "switching to ${1} config"
 DIR=${PERDAIXANA_PATH}/conf
 cd $DIR
+find . ! -name . -prune -type l | xargs rm
 for i in $(ls $1/*); do
     ln -sf ${i} .;
 done
