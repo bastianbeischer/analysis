@@ -4,7 +4,7 @@
 
 #include <QAction>
 
-template <typename T> 
+template <typename T>
 EnumSelector<T>::EnumSelector(const QString& text, typename QMap<T, QString>::ConstIterator beginIt, typename QMap<T, QString>::ConstIterator endIt, QWidget* parent)
   : SelectionWidget(text, parent)
   , m_actions()
@@ -13,12 +13,12 @@ EnumSelector<T>::EnumSelector(const QString& text, typename QMap<T, QString>::Co
     m_actions.insert(it.key(), addElement(it.value()));
 }
 
-template <typename T> 
+template <typename T>
 EnumSelector<T>::~EnumSelector()
 {
 }
 
-template <typename T> 
+template <typename T>
 QVector<T> EnumSelector<T>::selection() const
 {
   QVector<T> selected;
@@ -31,7 +31,7 @@ QVector<T> EnumSelector<T>::selection() const
   return selected;
 }
 
-template <typename T> 
+template <typename T>
 bool EnumSelector<T>::isSelected(T entry) const
 {
   foreach (T key, m_actions) {
@@ -47,7 +47,7 @@ bool EnumSelector<T>::isSelected(T entry) const
   return false;
 }
 
-template <typename T> 
+template <typename T>
 void EnumSelector<T>::select(const QVector<T>& entries, bool deselect)
 {
   foreach (T key, m_actions) {
@@ -59,7 +59,7 @@ void EnumSelector<T>::select(const QVector<T>& entries, bool deselect)
   emit selectionChanged();
 }
 
-template <typename T> 
+template <typename T>
 void EnumSelector<T>::overwriteText(bool overwrite)
 {
   if (overwrite) {

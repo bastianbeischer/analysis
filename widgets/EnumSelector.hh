@@ -10,7 +10,7 @@
 class QWidget;
 class QAction;
 
-template <typename T> 
+template <typename T>
 class EnumSelector : public SelectionWidget
 {
 public:
