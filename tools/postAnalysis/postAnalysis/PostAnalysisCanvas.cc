@@ -45,6 +45,8 @@ QStringList PostAnalysisCanvas::savedCanvases(TFile* file, const QRegExp& regula
   QStringList list;
   for (int i = 0; i < rootList->GetSize(); ++i) {
     TKey* key = static_cast<TKey*>(rootList->At(i));
+    if (strcmp(key->GetClassName(), "TCanvas"))
+      continue;
     QString name(key->GetName());
     if (name.contains(regularExpression))
       list.append(name);
