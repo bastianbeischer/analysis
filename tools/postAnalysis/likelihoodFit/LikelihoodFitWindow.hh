@@ -35,11 +35,11 @@ protected:
   typedef QVector<QPointF> ResultVector;
   static bool lessThan(const QPointF&, const QPointF&);
   bool passes(const LikelihoodPDFFitPlot*);
-  Enums::Particles m_particles;
   QVector<LikelihoodPDFFitPlot*> m_fitPlots;
   QVector<LikelihoodPDFFitPlot*> m_allParticleFitPlots;
   QVector<ParameterPlot*> m_parameterPlots;
   QVector<PostAnalysisPlot*> m_otherPlots;
+  QVector<Enums::Particle> m_particleVector;
   QComboBox* m_comboBox;
   QMap<Enums::Particle, Likelihood*> m_likelihoods;
   QMap<Enums::Particle, ResultVector> m_results;

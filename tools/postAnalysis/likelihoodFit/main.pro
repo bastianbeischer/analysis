@@ -14,6 +14,7 @@ INCLUDEPATH += \
   $$TOPLEVEL/global \
   $$TOPLEVEL/particle \
   $$TOPLEVEL/tracking \
+  $$TOPLEVEL/processing \
   $$TOPLEVEL/tools/postAnalysis/postAnalysis
 
 LIBS += \

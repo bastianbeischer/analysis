@@ -9,6 +9,8 @@
 #include "RejectionEfficiencyPlot.hh"
 #include "LikelihoodPDFPlot.hh"
 #include "Setup.hh"
+#include "Helpers.hh"
+#include "AnalysisProcessorSetting.hh"
 
 #include <TFile.h>
 #include <TROOT.h>
@@ -33,7 +35,9 @@ void MainWindow::setupAnalysis()
   Q_ASSERT(signalList.count() == backgroundList.count());
   gROOT->cd();
 
-  Enums::Particles particles = Setup::instance()->proposedParticles();
+  AnalysisProcessorSetting setting;
+  setting.load(Helpers::analysisPath() + "/conf/defaultAnalysisSetting.conf");
+  Enums::Particles particles = setting.particles();
   addPlot(new LikelihoodPDFPlot(Enums::SignalHeightTrackerLikelihood, particles));
   for (int layer = 0; layer < 8; ++layer)
     addPlot(new LikelihoodPDFPlot(Enums::SignalHeightTrdLikelihood, particles, layer));

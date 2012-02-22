@@ -6,6 +6,8 @@
 #include "KineticVariable.hh"
 #include "LikelihoodPDF.hh"
 #include "ParameterPlot.hh"
+#include "Helpers.hh"
+#include "AnalysisProcessorSetting.hh"
 
 #include <TPad.h>
 
@@ -16,20 +18,22 @@
 
 LikelihoodFitWindow::LikelihoodFitWindow(QWidget* parent)
   : PostAnalysisWindow(parent)
-  , m_particles(Setup::instance()->proposedParticles())
   , m_fitPlots()
   , m_allParticleFitPlots()
   , m_parameterPlots()
   , m_otherPlots()
+  , m_particleVector()
   , m_comboBox(new QComboBox)
   , m_likelihoods()
   , m_results()
   , m_runningThreadsCounter(0)
 {
-  QVector<Enums::Particle> particles = Setup::instance()->proposedParticleVector();
-  foreach (Enums::Particle particle, particles)
+  AnalysisProcessorSetting setting;
+  setting.load(Helpers::analysisPath() + "/conf/defaultAnalysisSetting.conf");
+  m_particleVector = Enums::particleVector(setting.particles());
+  foreach (Enums::Particle particle, m_particleVector)
     addPlotFilter(QRegExp::escape(Enums::label(particle) + " all"));
-  foreach (Enums::Particle particle, particles)
+  foreach (Enums::Particle particle, m_particleVector)
     addPlotFilter(QRegExp::escape(Enums::label(particle)) + "$");
 
   m_comboBox->addItem("all (bad + good + low statistics)");

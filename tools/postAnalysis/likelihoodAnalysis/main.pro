@@ -13,6 +13,7 @@ INCLUDEPATH += \
   $$TOPLEVEL/particle \
   $$TOPLEVEL/setup \
   $$TOPLEVEL/likelihood \
+  $$TOPLEVEL/processing \
   $$TOPLEVEL/tools/postAnalysis/postAnalysis
 
 LIBS += \

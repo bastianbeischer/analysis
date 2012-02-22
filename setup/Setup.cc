@@ -268,27 +268,6 @@ SensorTypes::Type Setup::tofSensorForId(unsigned short id)
   return map[channel];
 }
 
-Enums::Particles Setup::proposedParticles() const
-{
-  return Enums::particles(m_settings->value("proposedParticles").toString());
-}
-
-Enums::LikelihoodVariables Setup::proposedLikelihoodVariables() const
-{
-  return Enums::likelihoodVariables(m_settings->value("proposedLikelihoods").toString());
-}
-
-QVector<Enums::Particle> Setup::proposedParticleVector() const
-{
-  QVector<Enums::Particle> particleVector;
-  Enums::Particles particles = proposedParticles();
-  Enums::ParticleIterator end = Enums::particleEnd();
-  for (Enums::ParticleIterator it = Enums::particleBegin(); it != end; ++it)
-    if ((it.key() & particles) && (it.key() != Enums::NoParticle))
-      particleVector.append(it.key());
-  return particleVector;
-}
-
 SensorTypes::Type Setup::trackerSensorForId(unsigned short id)
 {
   if (0x3000 <= id && id <= 0x30ff) return (id - 0x3000 < 128) ? SensorTypes::HPE_0x3000_TEMP : SensorTypes::HPE_0x3001_TEMP;

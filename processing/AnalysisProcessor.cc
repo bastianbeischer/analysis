@@ -15,13 +15,14 @@
 #include "ParticleInformation.hh"
 #include "Reconstruction.hh"
 #include "AnalysisProcessorSetting.hh"
+#include "Helpers.hh"
 
 #include <QDebug>
 
 AnalysisProcessor::AnalysisProcessor()
   : EventProcessor()
-  , m_particles(Setup::instance()->proposedParticles())
-  , m_likelihoods(Setup::instance()->proposedLikelihoodVariables())
+  , m_particles(Enums::NoParticle)
+  , m_likelihoods(Enums::UndefinedLikelihood)
   , m_particle(new Particle)
   , m_particleFilter(new ParticleFilter)
   , m_cutFilter(new CutFilter)
@@ -32,8 +33,7 @@ AnalysisProcessor::AnalysisProcessor()
   , m_reconstructions()
 {
   AnalysisProcessorSetting setting;
-  setting.setParticles(m_particles);
-  setting.setLikelihoodVariables(m_likelihoods);
+  setting.load(Helpers::analysisPath() + "/conf/defaultAnalysisSetting.conf");
   setAnalysisProcessorSetting(setting);
 }
 

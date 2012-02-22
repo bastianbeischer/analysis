@@ -73,7 +73,7 @@ void MainWindow::setupAnalysis()
     }
   }
 
-  foreach (Enums::Particle particle, Setup::instance()->proposedParticleVector()) {
+  foreach (Enums::Particle particle, m_particleVector) {
     bool electron = particle == Enums::Electron || particle == Enums::Positron;
     int layer = m_layerSpinBox->value();
     QMap<Enums::Particle, Likelihood*>::Iterator lhIt = m_likelihoods.find(particle);

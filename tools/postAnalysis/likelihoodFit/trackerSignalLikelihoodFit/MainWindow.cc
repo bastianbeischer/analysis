@@ -50,7 +50,7 @@ void MainWindow::setupAnalysis()
     }
   }
 
-  foreach (Enums::Particle particle, Setup::instance()->proposedParticleVector()) {
+  foreach (Enums::Particle particle, m_particleVector) {
     QMap<Enums::Particle, Likelihood*>::ConstIterator lhIt = m_likelihoods.find(particle);
     if (lhIt != m_likelihoods.end())
       m_parameterPlots.append(new ParameterPlot(lhIt.value(), particle));
