@@ -17,6 +17,7 @@ public:
   void setFirstEvent(int firstEvent) {m_firstEvent = firstEvent;}
   void setLastEvent(int lastEvent) {m_lastEvent = lastEvent;}
   void setNumberOfThreads(int numberOfThreads) {m_numberOfThreads = numberOfThreads;}
+  virtual QString toString() const;
 protected:
   Enums::AnalysisTopics m_analysisTopics;
   int m_firstEvent;

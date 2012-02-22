@@ -66,6 +66,8 @@ void Plotter::setAnalysisProcessorSettingFile(const QString& fileName)
   AnalysisProcessorSetting setting;
   setting.load(fileName);
   m_processor->setAnalysisProcessorSetting(setting);
+  qDebug();
+  qDebug() << setting;
 }
 
 void Plotter::setFileList(const QString& listName)

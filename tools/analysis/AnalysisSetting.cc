@@ -43,11 +43,17 @@ void AnalysisSetting::load(const QString& file)
   AnalysisProcessorSetting::load(file);
 }
 
+QString AnalysisSetting::toString() const
+{
+  return AnalysisProcessorSetting::toString()
+    + "AnalysisSetting:\n"
+    + "firstEvent = " + QString::number(m_firstEvent) + '\n'
+    + "lastEvent = " + QString::number(m_lastEvent) + '\n'
+    + "numberOfThreads = " + QString::number(m_numberOfThreads) + '\n'
+    + "analysisTopics = " + Enums::label(m_analysisTopics) + '\n';
+}
+
 QDebug operator<<(QDebug debug, const AnalysisSetting& setting)
 {
-  debug
-    << static_cast<const AnalysisProcessorSetting&>(setting)
-    << "\nAnalysisSetting: firstEvent =" << setting.firstEvent() << ", lastEvent =" << setting.lastEvent()
-    << ", numberOfThreads =" << setting.numberOfThreads() << qPrintable(", analysisTopics = " + Enums::label(setting.analysisTopics()));
-  return debug;
+  return debug << qPrintable(setting.toString());
 }

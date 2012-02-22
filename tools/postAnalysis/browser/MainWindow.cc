@@ -7,6 +7,8 @@
 #include <TFile.h>
 #include <TROOT.h>
 
+#include <QDebug>
+
 MainWindow::MainWindow(QWidget* parent)
   : PostAnalysisWindow(parent)
   , m_files()
@@ -27,6 +29,11 @@ void MainWindow::setupAnalysis()
   QVector<Key> allKeys;
   foreach (QString fileName, m_analysisFiles) {
     TFile* file = new TFile(qPrintable(fileName));
+    TNamed* analysisSetting = static_cast<TNamed*>(file->Get("analysis setting"));
+    if (analysisSetting) {
+      qDebug();
+      qDebug() << analysisSetting->GetTitle();
+    }
     QStringList fileKeyList = PostAnalysisCanvas::savedCanvases(file);
     gROOT->cd();
     foreach (QString key, fileKeyList) {

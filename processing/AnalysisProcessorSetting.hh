@@ -35,6 +35,7 @@ public:
   void setParticleFilter(Enums::Particles particleFilter) {m_particleFilter = particleFilter;}
   void setMcParticleFilter(Enums::Particles mcParticleFilter) {m_mcParticleFilter = mcParticleFilter;}
   void setCutFilter(const CutFilter& cutFilter) {m_cutFilter = cutFilter;}
+  virtual QString toString() const;
 protected:
   Enums::TrackType m_trackType;
   Enums::ReconstructionMethods m_reconstructionMethods;

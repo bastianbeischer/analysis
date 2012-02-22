@@ -109,6 +109,7 @@
 #include <TCanvas.h>
 #include <TROOT.h>
 #include <TFile.h>
+#include <TNamed.h>
 
 #include <QDebug>
 
@@ -243,6 +244,8 @@ void Analysis::save(const QString& fileName, TCanvas* canvas)
   canvas->cd();
   QString canvasName = canvas->GetName();
   TFile file(qPrintable(fileName), "RECREATE");
+  TNamed settings("analysis setting", qPrintable(m_analysisSetting.toString()));
+  settings.Write();
   for (unsigned int i = 0; i < numberOfPlots(); ++i) {
     AnalysisPlot* plot = m_plots.at(i);
     if (plot->isPlotCollection()) {

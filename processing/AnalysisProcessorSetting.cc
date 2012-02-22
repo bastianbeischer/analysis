@@ -53,17 +53,21 @@ void AnalysisProcessorSetting::load(const QString& file)
   settings.endGroup();
 }
 
+QString AnalysisProcessorSetting::toString() const
+{
+  return QString() + "AnalysisProcessorSetting:\n"
+    + "trackType = " + Enums::label(m_trackType) + '\n'
+    + "reconstructionMethods = " + Enums::label(m_reconstructionMethods) + '\n'
+    + "reconstructionMethod = " + Enums::label(m_reconstructionMethod) + '\n'
+    + "corrections = " + Enums::label(m_corrections) + '\n'
+    + "particles = " + Enums::label(m_particles) + '\n'
+    + "likelihoods = " + Enums::label(m_likelihoods) + '\n'
+    + "particleFilter = " + Enums::label(m_particleFilter) + '\n'
+    + "mcParticleFilter = " + Enums::label(m_mcParticleFilter) + '\n'
+    + "cuts = " + m_cutFilter.toString() + '\n';
+}
+
 QDebug operator<<(QDebug debug, const AnalysisProcessorSetting& setting)
 {
-  QString string;
-  string+= "\nAnalysisProcessorSetting: trackType = " + Enums::label(setting.trackType())
-    + ", reconstructionMethods = " + Enums::label(setting.reconstructionMethods())
-    + ", reconstructionMethod = " + Enums::label(setting.reconstructionMethod())
-    + ", corrections = " + Enums::label(setting.corrections())
-    + ", particles = " + Enums::label(setting.particles())
-    + ", likelihoods = " + Enums::label(setting.likelihoods())
-    + ", particleFilter = " + Enums::label(setting.particleFilter())
-    + ", mcParticleFilter = " + Enums::label(setting.mcParticleFilter())
-    + ", cuts = " + setting.cutFilter().toString();
-  return debug << qPrintable(string);
+  return debug << qPrintable(setting.toString());
 }
