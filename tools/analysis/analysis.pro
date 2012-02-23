@@ -30,7 +30,7 @@ LIBS += \
   -lsetup \
   -ltrdAnalysis \
   -lfluxAnalysis \
-  -lWidgets
+  -lwidgets
 
 SOURCEDIRS = .
 

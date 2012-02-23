@@ -356,28 +356,22 @@ void MainWindow::guiToAnalysisSetting()
 
   m_analysisSetting.setReconstructionMethod(Enums::reconstructionMethod(m_ui.reconstructionMethodComboBox->currentText()));
 
-  Enums::Corrections corrections = Enums::NoCorrection;
-  corrections |= m_correctionSelector->selectedEnumFlags();
+  Enums::Corrections corrections = m_correctionSelector->selectedElements();
   m_analysisSetting.setCorrections(corrections);
 
-  Enums::ReconstructionMethods methods = Enums::UndefinedReconstructionMethod;
-  methods |= m_reconstructionSelector->selectedEnumFlags();
+  Enums::ReconstructionMethods methods = m_reconstructionSelector->selectedElements();
   m_analysisSetting.setReconstructionMethods(methods);
 
-  Enums::Particles particles = Enums::NoParticle;
-  particles |= m_particleSelector->selectedEnumFlags();
+  Enums::Particles particles = m_particleSelector->selectedElements();
   m_analysisSetting.setParticles(particles);
 
-  Enums::LikelihoodVariables likelihoodVariables = Enums::UndefinedLikelihood;
-  likelihoodVariables |= m_likelihoodSelector->selectedEnumFlags();
+  Enums::LikelihoodVariables likelihoodVariables = m_likelihoodSelector->selectedElements();
   m_analysisSetting.setLikelihoodVariables(likelihoodVariables);
 
-  Enums::Particles particleFilter = Enums::NoParticle;
-  particleFilter |= m_particleFilterSelector->selectedEnumFlags();
+  Enums::Particles particleFilter = m_particleFilterSelector->selectedElements();
   m_analysisSetting.setParticleFilter(particleFilter);
 
-  Enums::Particles mcParticleFilter = Enums::NoParticle;
-  mcParticleFilter |= m_mcParticleFilterSelector->selectedEnumFlags();
+  Enums::Particles mcParticleFilter = m_mcParticleFilterSelector->selectedElements();
   m_analysisSetting.setMcParticleFilter(mcParticleFilter);
 
   foreach (CutSelector* selector, m_cutSelectors)
@@ -405,12 +399,12 @@ void MainWindow::analysisSettingToGui()
 
   m_ui.reconstructionMethodComboBox->setCurrentIndex(m_ui.reconstructionMethodComboBox->findText(Enums::label(m_analysisSetting.reconstructionMethod())));
 
-  m_correctionSelector->setSelected(m_analysisSetting.corrections());
-  m_reconstructionSelector->setSelected(m_analysisSetting.reconstructionMethods());
-  m_particleSelector->setSelected(m_analysisSetting.particles());
-  m_likelihoodSelector->setSelected(m_analysisSetting.likelihoods());
-  m_particleFilterSelector->setSelected(m_analysisSetting.particleFilter());
-  m_mcParticleFilterSelector->setSelected(m_analysisSetting.mcParticleFilter());
+  m_correctionSelector->setSelectedElements(m_analysisSetting.corrections());
+  m_reconstructionSelector->setSelectedElements(m_analysisSetting.reconstructionMethods());
+  m_particleSelector->setSelectedElements(m_analysisSetting.particles());
+  m_likelihoodSelector->setSelectedElements(m_analysisSetting.likelihoods());
+  m_particleFilterSelector->setSelectedElements(m_analysisSetting.particleFilter());
+  m_mcParticleFilterSelector->setSelectedElements(m_analysisSetting.mcParticleFilter());
 
   foreach (CutSelector* selector, m_cutSelectors) {
     foreach (Cut cut, m_analysisSetting.cutFilter().cuts()) {

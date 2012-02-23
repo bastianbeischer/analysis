@@ -27,7 +27,8 @@ LIBS += \
   -lglobal \
   -lpostAnalysis \
   -llikelihood \
-  -lfluxAnalysis
+  -lfluxAnalysis \
+  -lwidgets
 
 SOURCEDIRS = .
 

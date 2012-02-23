@@ -14,15 +14,11 @@ Q_OBJECT
 public:
   SelectionWidget(const QString& text, QWidget* parent = 0);
   ~SelectionWidget();
-  void deselectAll();
-  void selectAll();
   void clear();
-  QStringList selection() const;
-  QString selectionText();
-  void overwriteText(bool overwrite);
   QAction* addElement(const QString& title);
-private:
-  QString m_defaultText;
+  void selectAll();
+  void deselectAll();
+  QStringList selectedElements() const;
 signals:
   void selectionChanged();
 };
