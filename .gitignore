@@ -27,3 +27,4 @@ out
 *Dict.cxx
 callgrind.*
 *.conf
+*.DS_Store
