@@ -15,7 +15,8 @@ INCLUDEPATH += \
   $$TOPLEVEL/tracking \
   $$TOPLEVEL/trdAnalysis \
   $$TOPLEVEL/fluxAnalysis \
-  $$TOPLEVEL/likelihood
+  $$TOPLEVEL/likelihood \
+  $$TOPLEVEL/widgets
 
 LIBS += \
   -L$$TOPLEVEL/lib \
@@ -28,7 +29,8 @@ LIBS += \
   -lrootplot \
   -lsetup \
   -ltrdAnalysis \
-  -lfluxAnalysis
+  -lfluxAnalysis \
+  -lWidgets
 
 SOURCEDIRS = .
 

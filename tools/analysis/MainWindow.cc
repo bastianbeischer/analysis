@@ -43,11 +43,12 @@ MainWindow::MainWindow(Analysis* analysis, bool batch, QWidget* parent)
   , m_trdSelectors()
   , m_tofSelectors()
   , m_controlWidgets()
-  , m_correctionCheckBoxes()
-  , m_particleCheckBoxes()
-  , m_likelihoodCheckBoxes()
-  , m_particleFilterCheckBoxes()
-  , m_mcParticleFilterCheckBoxes()
+  , m_correctionSelector(0)
+  , m_reconstructionSelector(0)
+  , m_particleSelector(0)
+  , m_likelihoodSelector(0)
+  , m_particleFilterSelector(0)
+  , m_mcParticleFilterSelector(0)
   , m_cutSelectors()
   , m_drawOptions()
   , m_inhibitDraw(false)
@@ -58,10 +59,7 @@ MainWindow::MainWindow(Analysis* analysis, bool batch, QWidget* parent)
   m_ui.setupUi(this);
 
   setupTopicSelectors();
-  setupCorrectionsCheckBoxes();
-  setupReconstructionCheckBoxes();
-  setupLhCheckBoxes();
-  setupParticleFilterCheckBoxes();
+  setupSettingsTab();
   setupCutSelectors();
   setupViewActions();
 
@@ -176,119 +174,47 @@ void MainWindow::setupTopicSelectors()
   m_ui.scrollAreaWidgetContents->setLayout(layout);
 }
 
-void MainWindow::setupCorrectionsCheckBoxes()
+void MainWindow::setupSettingsTab()
 {
   QVBoxLayout* layout = new QVBoxLayout;
-  for (Enums::CorrectionIterator it = Enums::correctionBegin(); it != Enums::correctionEnd(); ++it) {
-    if (it.key() == Enums::NoCorrection)
-      continue;
-    QCheckBox* checkBox = new QCheckBox(it.value());
-    checkBox->setCheckState(Qt::Checked);
-    layout->addWidget(checkBox);
-    m_controlWidgets.append(checkBox);
-    m_correctionCheckBoxes.append(checkBox);
-  }
-  m_ui.correctionsTab->setLayout(layout);
-}
 
-void MainWindow::setupReconstructionCheckBoxes()
-{
-  QVBoxLayout* layout = new QVBoxLayout;
-  for (Enums::ReconstructionMethodIterator it = Enums::reconstructionMethodBegin(); it != Enums::reconstructionMethodEnd(); ++it) {
-    if (it.key() == Enums::UndefinedReconstructionMethod)
-      continue;
-    QCheckBox* checkBox = new QCheckBox(it.value());
-    checkBox->setCheckState(Qt::Checked);
-    layout->addWidget(checkBox);
-    m_controlWidgets.append(checkBox);
-    m_reconstructionCheckBoxes.append(checkBox);
-  }
-  m_ui.reconstructionsTab->setLayout(layout);
-}
+  m_correctionSelector = new CorrectionsSelector("corrections", Enums::correctionBegin() + 1, Enums::correctionEnd());
+  m_correctionSelector->selectAll();
+  m_controlWidgets.append(m_correctionSelector);
+  layout->addWidget(m_correctionSelector);
 
-void MainWindow::setupLhCheckBoxes()
-{
-  QVBoxLayout* layout = 0;
-  QGridLayout* gLayout = new QGridLayout;
-  gLayout->addWidget(new QLabel("include:"), 0, 0);
-  layout = new QVBoxLayout;
-  for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
-    if (it.key() != Enums::NoParticle && ParticleProperties(it.key()).charge() != 0) {
-      QCheckBox* checkBox = new QCheckBox(it.value());
-      layout->addWidget(checkBox);
-      m_controlWidgets.append(checkBox);
-      m_particleCheckBoxes.append(checkBox);
-    }
-  }
-  gLayout->addLayout(layout, 1, 0);
+  m_reconstructionSelector = new ReconstructionMethodSelector("reconstruction method", Enums::reconstructionMethodBegin(), Enums::reconstructionMethodEnd());
+  m_reconstructionSelector->selectAll();
+  m_controlWidgets.append(m_reconstructionSelector);
+  layout->addWidget(m_reconstructionSelector);
 
-  gLayout->addWidget(new QLabel("variables:"), 0, 1);
-  layout = new QVBoxLayout;
-  for (Enums::LikelihoodVariableIterator it = Enums::likelihoodVariableBegin(); it != Enums::likelihoodVariableEnd(); ++it) {
-    if (it.key() != Enums::UndefinedLikelihood) {
-      QStringList list = it.value().split(" ");
-      QString text;
-      QString add;
-      foreach (QString section, list) {
-        if (add.size() + section.size() > 13) {
-          text+= add + "\n";
-          add = section;
-        } else {
-          if (!add.isEmpty())
-            add+= " ";
-          add+= section;
-        }
-      }
-      text+= add;
-      QCheckBox* checkBox = new QCheckBox(text);
-      layout->addWidget(checkBox);
-      m_controlWidgets.append(checkBox);
-      m_likelihoodCheckBoxes.append(checkBox);
-    }
-  }
-  gLayout->addLayout(layout, 1, 1);
+  m_particleSelector = new ParticleSelector("likelihood particles", Enums::particleBegin() + 1, Enums::particleEnd());
+  m_particleSelector->selectAll();
+  m_controlWidgets.append(m_particleSelector);
+  layout->addWidget(m_particleSelector);
 
-  m_ui.lhTab->setLayout(gLayout);
-}
+  m_likelihoodSelector = new LikelihoodVariableSelector("likelihood variables", Enums::likelihoodVariableBegin(), Enums::likelihoodVariableEnd());
+  m_controlWidgets.append(m_likelihoodSelector);
+  layout->addWidget(m_likelihoodSelector);
 
-
-void MainWindow::setupParticleFilterCheckBoxes()
-{
   Enums::Particles particles = Enums::NoParticle;
-  int row;
-
-  QGridLayout* layout = new QGridLayout;
-  layout->addWidget(new QLabel("data:"), 0, 0);
-  row = 1;
   particles = Enums::Proton | Enums::Helium | Enums::Electron | Enums::Positron | Enums::Muon | Enums::AntiMuon;
-  for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
-    if (it.key() != Enums::NoParticle && (it.key() & particles) == it.key()) {
-      QCheckBox* checkBox = new QCheckBox(it.value());
-      checkBox->setCheckState(Qt::Checked);
-      layout->addWidget(checkBox, row, 0);
-      m_controlWidgets.append(checkBox);
-      m_particleFilterCheckBoxes.append(checkBox);
-      ++row;
-    }
-  }
+  m_particleFilterSelector = new ParticleSelector("data particle filter",  Enums::particleBegin() + 1, Enums::particleEnd(), particles);
+  m_particleFilterSelector->selectAll();
+  m_controlWidgets.append(m_particleFilterSelector);
+  layout->addWidget(m_particleFilterSelector);
 
-  layout->addWidget(new QLabel("mc:"), 0, 1);
-  row = 1;
   particles = Enums::Proton | Enums::AntiProton | Enums::Helium | Enums::Electron | Enums::Positron | Enums::Muon
-    | Enums::AntiMuon | Enums::PiPlus | Enums::PiMinus | Enums::Photon;
-  for (Enums::ParticleIterator it = Enums::particleBegin(); it != Enums::particleEnd(); ++it) {
-    if (it.key() != Enums::NoParticle && (it.key() & particles) == it.key()) {
-      QCheckBox* checkBox = new QCheckBox(it.value());
-      checkBox->setCheckState(Qt::Checked);
-      layout->addWidget(checkBox, row, 1);
-      m_controlWidgets.append(checkBox);
-      m_mcParticleFilterCheckBoxes.append(checkBox);
-      ++row;
-    }
-  }
+  | Enums::AntiMuon | Enums::PiPlus | Enums::PiMinus | Enums::Photon;
+  m_mcParticleFilterSelector = new ParticleSelector("mc particle filter",  Enums::particleBegin() + 1, Enums::particleEnd(), particles);
+  m_mcParticleFilterSelector->selectAll();
+  m_controlWidgets.append(m_mcParticleFilterSelector);
+  layout->addWidget(m_mcParticleFilterSelector);
 
-  m_ui.filterTab->setLayout(layout);
+  m_ui.settingsTab->setLayout(layout);
 }
+
+
 
 void MainWindow::setupCutSelectors()
 {
@@ -431,42 +357,27 @@ void MainWindow::guiToAnalysisSetting()
   m_analysisSetting.setReconstructionMethod(Enums::reconstructionMethod(m_ui.reconstructionMethodComboBox->currentText()));
 
   Enums::Corrections corrections = Enums::NoCorrection;
-  foreach (QCheckBox* checkBox, m_correctionCheckBoxes)
-    if (checkBox->isChecked())
-      corrections|= Enums::correction(checkBox->text());
+  corrections |= m_correctionSelector->selectedEnumFlags();
   m_analysisSetting.setCorrections(corrections);
 
   Enums::ReconstructionMethods methods = Enums::UndefinedReconstructionMethod;
-  foreach (QCheckBox* checkBox, m_reconstructionCheckBoxes)
-    if (checkBox->isChecked())
-      methods|= Enums::reconstructionMethod(checkBox->text());
+  methods |= m_reconstructionSelector->selectedEnumFlags();
   m_analysisSetting.setReconstructionMethods(methods);
 
   Enums::Particles particles = Enums::NoParticle;
-  foreach (QCheckBox* checkBox, m_particleCheckBoxes)
-    if (checkBox->isChecked())
-      particles|= Enums::particle(checkBox->text());
+  particles |= m_particleSelector->selectedEnumFlags();
   m_analysisSetting.setParticles(particles);
 
   Enums::LikelihoodVariables likelihoodVariables = Enums::UndefinedLikelihood;
-  foreach (QCheckBox* checkBox, m_likelihoodCheckBoxes)
-    if (checkBox->isChecked()) {
-      QString text = checkBox->text();
-      text.replace("\n", " ");
-      likelihoodVariables|= Enums::likelihoodVariable(text);
-    }
+  likelihoodVariables |= m_likelihoodSelector->selectedEnumFlags();
   m_analysisSetting.setLikelihoodVariables(likelihoodVariables);
 
   Enums::Particles particleFilter = Enums::NoParticle;
-  foreach (QCheckBox* checkBox, m_particleFilterCheckBoxes)
-    if (checkBox->isChecked())
-      particleFilter|= Enums::particle(checkBox->text());
+  particleFilter |= m_particleFilterSelector->selectedEnumFlags();
   m_analysisSetting.setParticleFilter(particleFilter);
 
   Enums::Particles mcParticleFilter = Enums::NoParticle;
-  foreach (QCheckBox* checkBox, m_mcParticleFilterCheckBoxes)
-    if (checkBox->isChecked())
-      mcParticleFilter|= Enums::particle(checkBox->text());
+  mcParticleFilter |= m_mcParticleFilterSelector->selectedEnumFlags();
   m_analysisSetting.setMcParticleFilter(mcParticleFilter);
 
   foreach (CutSelector* selector, m_cutSelectors)
@@ -494,50 +405,12 @@ void MainWindow::analysisSettingToGui()
 
   m_ui.reconstructionMethodComboBox->setCurrentIndex(m_ui.reconstructionMethodComboBox->findText(Enums::label(m_analysisSetting.reconstructionMethod())));
 
-  foreach (QCheckBox* checkBox, m_correctionCheckBoxes)
-    if (m_analysisSetting.corrections() & Enums::correction(checkBox->text())) {
-      checkBox->setCheckState(Qt::Checked);
-    } else {
-      checkBox->setCheckState(Qt::Unchecked);
-    }
-
-  foreach (QCheckBox* checkBox, m_reconstructionCheckBoxes)
-    if (m_analysisSetting.reconstructionMethods() & Enums::reconstructionMethod(checkBox->text())) {
-      checkBox->setCheckState(Qt::Checked);
-    } else {
-      checkBox->setCheckState(Qt::Unchecked);
-    }
-
-  foreach (QCheckBox* checkBox, m_particleCheckBoxes)
-    if (m_analysisSetting.particles() & Enums::particle(checkBox->text())) {
-      checkBox->setCheckState(Qt::Checked);
-    } else {
-      checkBox->setCheckState(Qt::Unchecked);
-    }
-
-  foreach (QCheckBox* checkBox, m_likelihoodCheckBoxes) {
-    QString lhLabel = checkBox->text();
-    lhLabel.replace("\n", " ");
-    if (m_analysisSetting.likelihoods() & Enums::likelihoodVariable(lhLabel)) {
-      checkBox->setCheckState(Qt::Checked);
-    } else {
-      checkBox->setCheckState(Qt::Unchecked);
-    }
-  }
-
-  foreach (QCheckBox* checkBox, m_particleFilterCheckBoxes)
-    if (m_analysisSetting.particleFilter() & Enums::particle(checkBox->text())) {
-      checkBox->setCheckState(Qt::Checked);
-    } else {
-      checkBox->setCheckState(Qt::Unchecked);
-    }
-
-  foreach (QCheckBox* checkBox, m_mcParticleFilterCheckBoxes)
-    if (m_analysisSetting.mcParticleFilter() & Enums::particle(checkBox->text())) {
-      checkBox->setCheckState(Qt::Checked);
-    } else {
-      checkBox->setCheckState(Qt::Unchecked);
-    }
+  m_correctionSelector->setSelected(m_analysisSetting.corrections());
+  m_reconstructionSelector->setSelected(m_analysisSetting.reconstructionMethods());
+  m_particleSelector->setSelected(m_analysisSetting.particles());
+  m_likelihoodSelector->setSelected(m_analysisSetting.likelihoods());
+  m_particleFilterSelector->setSelected(m_analysisSetting.particleFilter());
+  m_mcParticleFilterSelector->setSelected(m_analysisSetting.mcParticleFilter());
 
   foreach (CutSelector* selector, m_cutSelectors) {
     foreach (Cut cut, m_analysisSetting.cutFilter().cuts()) {
