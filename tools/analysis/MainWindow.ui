@@ -513,27 +513,12 @@
           <property name="usesScrollButtons">
            <bool>false</bool>
           </property>
-          <widget class="QWidget" name="correctionsTab">
+          <widget class="QWidget" name="settingsTab">
            <property name="contextMenuPolicy">
             <enum>Qt::DefaultContextMenu</enum>
            </property>
            <attribute name="title">
-            <string>Corrections</string>
-           </attribute>
-          </widget>
-          <widget class="QWidget" name="reconstructionsTab">
-           <attribute name="title">
-            <string>Reconstruction</string>
-           </attribute>
-          </widget>
-          <widget class="QWidget" name="lhTab">
-           <attribute name="title">
-            <string>LH</string>
-           </attribute>
-          </widget>
-          <widget class="QWidget" name="filterTab">
-           <attribute name="title">
-            <string>Filter</string>
+            <string>Settings</string>
            </attribute>
           </widget>
           <widget class="QWidget" name="cutTab">

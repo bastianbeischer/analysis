@@ -7,7 +7,11 @@ TOPLEVEL = ..
 
 CLASSES = \
   ParameterWidget \
-  DoubleEdit
+  DoubleEdit \
+  SelectionWidget
+
+HEADERS+= \
+  EnumSelector.hh
 
 include($$TOPLEVEL/common.pri)
 include($$TOPLEVEL/macx.pri)

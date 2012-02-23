@@ -12,6 +12,7 @@
 #include "CutFilter.hh"
 #include "Enums.hh"
 #include "AnalysisSetting.hh"
+#include "EnumSelector.hh"
 
 #include <QMainWindow>
 #include <QFileDialog>
@@ -59,10 +60,7 @@ private slots:
   void changeAspectRatioTriggered();
 private:
   void setupTopicSelectors();
-  void setupCorrectionsCheckBoxes();
-  void setupReconstructionCheckBoxes();
-  void setupLhCheckBoxes();
-  void setupParticleFilterCheckBoxes();
+  void setupSettingsTab();
   void setupCutSelectors();
   void setupViewActions();
   void guiToAnalysisSetting();
@@ -86,12 +84,16 @@ private:
   QVector<TopicSelector*> m_tofSelectors;
 
   QVector<QWidget*> m_controlWidgets;
-  QVector<QCheckBox*> m_correctionCheckBoxes;
-  QVector<QCheckBox*> m_reconstructionCheckBoxes;
-  QVector<QCheckBox*> m_particleCheckBoxes;
-  QVector<QCheckBox*> m_likelihoodCheckBoxes;
-  QVector<QCheckBox*> m_particleFilterCheckBoxes;
-  QVector<QCheckBox*> m_mcParticleFilterCheckBoxes;
+  typedef EnumSelector<Enums::Correction> CorrectionsSelector;
+  CorrectionsSelector* m_correctionSelector;
+  typedef EnumSelector<Enums::ReconstructionMethod> ReconstructionMethodSelector;
+  ReconstructionMethodSelector* m_reconstructionSelector;
+  typedef EnumSelector<Enums::Particle> ParticleSelector;
+  ParticleSelector* m_particleSelector;
+  typedef EnumSelector<Enums::LikelihoodVariable> LikelihoodVariableSelector;
+  LikelihoodVariableSelector* m_likelihoodSelector;
+  ParticleSelector* m_particleFilterSelector;
+  ParticleSelector* m_mcParticleFilterSelector;
   QVector<CutSelector*> m_cutSelectors;
   QVector<RootPlot::DrawOption> m_drawOptions;
   bool m_inhibitDraw;

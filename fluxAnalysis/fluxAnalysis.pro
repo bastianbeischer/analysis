@@ -12,7 +12,8 @@ INCLUDEPATH+= \
   $$TOPLEVEL/tracking \
   $$TOPLEVEL/rootplot \
   $$TOPLEVEL/processing \
-  $$TOPLEVEL/event
+  $$TOPLEVEL/event \
+  $$TOPLEVEL/widgets
 
 SOURCEDIRS += .
 
@@ -23,7 +24,8 @@ macx {
     -lparticle \
     -lrootplot \
     -lsetup \
-    -lprocessing
+    -lprocessing \
+    -lwidgets
 }
 
 include($$TOPLEVEL/root.pri)
