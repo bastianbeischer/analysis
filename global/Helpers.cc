@@ -216,4 +216,14 @@ namespace Helpers
   {
     return linearBinning(1000, 0, 20);
   }
+
+  QVector<double> rigidityBinning(bool fineBinned)
+  {
+    int n = 31;
+    double min = 0.1;
+    double max = 20.;
+    if (fineBinned)
+      return logBinning(4 * n, min, max);
+    return logBinning(n, min, max);
+  }
 }

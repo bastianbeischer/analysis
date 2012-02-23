@@ -3,7 +3,6 @@
 #include "SimpleEvent.hh"
 #include "Particle.hh"
 #include "Track.hh"
-#include "EfficiencyCorrectionSettings.hh"
 #include "ParticleInformation.hh"
 #include "Constants.hh"
 #include "Settings.hh"
@@ -25,7 +24,7 @@
 #include <cmath>
 #include <vector>
 
-TrackFindingEfficiency::TrackFindingEfficiency(EfficiencyCorrectionSettings::FoldingType type)
+TrackFindingEfficiency::TrackFindingEfficiency(bool fineBinned)
   : AnalysisPlot(Enums::MiscellaneousTracker)
   , H1DPlot()
   , m_reconstructed(0)
@@ -33,12 +32,12 @@ TrackFindingEfficiency::TrackFindingEfficiency(EfficiencyCorrectionSettings::Fol
   , m_nTotal(0)
   , m_nReconstructed(0)
 {
-  const QString& htitle = QString("Track finding efficiency - ") + EfficiencyCorrectionSettings::instance()->foldingTypeName(type);
-  int nBinsData = EfficiencyCorrectionSettings::numberOfBins(type);
-  setTitle(htitle);
-  const double minData = 0.1;
-  const double maxData = 20;
-  QVector<double> axis = Helpers::logBinning(nBinsData, minData, maxData);
+  QString title = "track finding efficiency";
+  if (fineBinned)
+    title+= " fine";
+  setTitle(title);
+
+  QVector<double> axis = Helpers::rigidityBinning(fineBinned);
   int axisSize = axis.size()*2;
   for (int i = 0; i < axisSize; i+=2) {
     double value = axis.at(i);
@@ -46,14 +45,14 @@ TrackFindingEfficiency::TrackFindingEfficiency(EfficiencyCorrectionSettings::Fol
   }
   const int nBins = axis.size() - 1;
 
-  TH1D* histogram = new TH1D("reconstruction efficiency", "", nBins, axis.constData());
+  TH1D* histogram = new TH1D(qPrintable(title + " reconstruction efficiency"), "", nBins, axis.constData());
   histogram->Sumw2();
-  setAxisTitle("rigidity / GV", "efficiency");
+  setAxisTitle("R / GV", "efficiency");
   addHistogram(histogram);
 
-  m_reconstructed = new TH1D("reconstructed", "", nBins, axis.constData());
+  m_reconstructed = new TH1D(qPrintable(title + " reconstructed"), "", nBins, axis.constData());
   m_reconstructed->Sumw2();
-  m_total = new TH1D("total", "", nBins, axis.constData());
+  m_total = new TH1D(qPrintable(title + " total"), "", nBins, axis.constData());
   m_total->Sumw2();
 
   addLatex(RootPlot::newLatex(.3, .85));
@@ -78,7 +77,7 @@ void TrackFindingEfficiency::processEvent(const AnalyzedEvent* event)
   } else if (event->simpleEvent()->contentType() == SimpleEvent::MonteCarlo) {
     if (!event->simpleEvent()->MCInformation()->primary()->isInsideMagnet())
       return;
-    //Todo: albedo handling
+    //TODO: albedo handling
     int mcPdgId = event->simpleEvent()->MCInformation()->primary()->pdgID;
     const ParticleProperties* mcParticle = ParticleDB::instance()->lookupPdgId(mcPdgId);
     rigidity = event->simpleEvent()->MCInformation()->primary()->initialMomentum.Mag() / mcParticle->charge();

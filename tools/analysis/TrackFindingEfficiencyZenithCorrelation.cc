@@ -3,7 +3,6 @@
 #include "SimpleEvent.hh"
 #include "Particle.hh"
 #include "Track.hh"
-#include "EfficiencyCorrectionSettings.hh"
 #include "ParticleInformation.hh"
 #include "Constants.hh"
 #include "Settings.hh"
@@ -29,18 +28,18 @@
 #include <cmath>
 #include <vector>
 
-TrackFindingEfficiencyZenithCorrelation::TrackFindingEfficiencyZenithCorrelation(EfficiencyCorrectionSettings::FoldingType type)
+TrackFindingEfficiencyZenithCorrelation::TrackFindingEfficiencyZenithCorrelation(bool fineBinned)
   : AnalysisPlot(Enums::MiscellaneousTracker)
   , H2DPlot()
   , m_reconstructed(0)
   , m_total(0)
 {
-  const QString& htitle = QString("Track finding efficiency zenith correlation - ") + EfficiencyCorrectionSettings::instance()->foldingTypeName(type);
-  int nBinsData = EfficiencyCorrectionSettings::numberOfBins(type);
-  setTitle(htitle);
-  const double minData = 0.1;
-  const double maxData = 20;
-  QVector<double> axis = Helpers::logBinning(nBinsData, minData, maxData);
+  QString title = "track finding efficiency zenith correlation";
+  if (fineBinned)
+    title+= " fine";
+  setTitle(title);
+
+  QVector<double> axis = Helpers::rigidityBinning(fineBinned);
   int axisSize = axis.size()*2;
   for (int i = 0; i < axisSize; i+=2) {
     double value = axis.at(i);
@@ -58,7 +57,6 @@ TrackFindingEfficiencyZenithCorrelation::TrackFindingEfficiencyZenithCorrelation
   histogram->GetXaxis()->SetTitleOffset(1.2);
   histogram->GetYaxis()->SetTitleOffset(1.2);
   histogram->GetZaxis()->SetTitleOffset(1.2);
-//  Plotter::rootWidget()->GetCanvas()->SetRightMargin(0.18);
 
   int lowY = histogram->GetYaxis()->FindBin(0.9);
   int upY = histogram->GetYaxis()->FindBin(1.);

@@ -4,7 +4,6 @@
 #include "TrackFindingEfficiencyAzimuthCorrelation.hh"
 #include "TrackFindingEfficiencyZenithCorrelation.hh"
 #include "Constants.hh"
-#include "EfficiencyCorrectionSettings.hh"
 
 #include <cmath>
 #include <vector>
@@ -16,7 +15,7 @@
 #include <QDebug>
 
 EfficiencyCollection::EfficiencyCollection()
-  : PlotCollection(Enums::MiscellaneousTracker)
+  : PlotCollection(Enums::FluxCalculation)
 {
   QWidget* widget = new QWidget;
   QHBoxLayout* layout = new QHBoxLayout(widget);
@@ -27,24 +26,29 @@ EfficiencyCollection::EfficiencyCollection()
   secondaryWidget()->layout()->addWidget(widget);
   setTitle("efficiency collection");
 
-  int nBinsUnfolded = EfficiencyCorrectionSettings::numberOfBins(EfficiencyCorrectionSettings::Unfolded);
-  int nBinsRaw = EfficiencyCorrectionSettings::numberOfBins(EfficiencyCorrectionSettings::Raw);
-  addPlot(new AllTrackerLayersFlagEfficiency(EfficiencyCorrectionSettings::Unfolded));
-  comboBox->addItem(QString("AllTrackerLayersFlagEfficiency %1").arg(nBinsUnfolded));
-  addPlot(new AllTrackerLayersFlagEfficiency(EfficiencyCorrectionSettings::Raw));
-  comboBox->addItem(QString("AllTrackerLayersFlagEfficiency %1").arg(nBinsRaw));
-  addPlot(new TrackFindingEfficiency(EfficiencyCorrectionSettings::Unfolded));
-  comboBox->addItem(QString("TrackFindingEfficiency %1").arg(nBinsUnfolded));
-  addPlot(new TrackFindingEfficiency(EfficiencyCorrectionSettings::Raw));
-  comboBox->addItem(QString("TrackFindingEfficiency %1").arg(nBinsRaw));
-  addPlot(new TrackFindingEfficiencyZenithCorrelation(EfficiencyCorrectionSettings::Unfolded));
-  comboBox->addItem(QString("TrackFindingEfficiencyZenithCorrelation %1").arg(nBinsUnfolded));
-  addPlot(new TrackFindingEfficiencyZenithCorrelation(EfficiencyCorrectionSettings::Raw));
-  comboBox->addItem(QString("TrackFindingEfficiencyZenithCorrelation %1").arg(nBinsRaw));
-  addPlot(new TrackFindingEfficiencyAzimuthCorrelation(EfficiencyCorrectionSettings::Unfolded));
-  comboBox->addItem(QString("TrackFindingEfficiencyAzimuthCorrelation %1").arg(nBinsUnfolded));
-  addPlot(new TrackFindingEfficiencyAzimuthCorrelation(EfficiencyCorrectionSettings::Raw));
-  comboBox->addItem(QString("TrackFindingEfficiencyAzimuthCorrelation %1").arg(nBinsRaw));
+  addPlot(new AllTrackerLayersFlagEfficiency(false));
+  comboBox->addItem("AllTrackerLayersFlagEfficiency");
+
+  addPlot(new AllTrackerLayersFlagEfficiency(true));
+  comboBox->addItem("AllTrackerLayersFlagEfficiency fine");
+
+  addPlot(new TrackFindingEfficiency(false));
+  comboBox->addItem("TrackFindingEfficiency");
+
+  addPlot(new TrackFindingEfficiency(true));
+  comboBox->addItem("TrackFindingEfficiency fine");
+
+  addPlot(new TrackFindingEfficiencyZenithCorrelation(false));
+  comboBox->addItem("TrackFindingEfficiencyZenithCorrelation");
+
+  addPlot(new TrackFindingEfficiencyZenithCorrelation(true));
+  comboBox->addItem("TrackFindingEfficiencyZenithCorrelation fine");
+
+  addPlot(new TrackFindingEfficiencyAzimuthCorrelation(false));
+  comboBox->addItem("TrackFindingEfficiencyAzimuthCorrelation");
+
+  addPlot(new TrackFindingEfficiencyAzimuthCorrelation(true));
+  comboBox->addItem("TrackFindingEfficiencyAzimuthCorrelation fine");
 
   connect(comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(selectPlot(int)));
 }

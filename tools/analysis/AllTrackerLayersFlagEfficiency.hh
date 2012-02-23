@@ -3,7 +3,6 @@
 
 #include "AnalysisPlot.hh"
 #include "H1DPlot.hh"
-#include "EfficiencyCorrectionSettings.hh"
 
 class TH1D;
 class TCanvas;
@@ -11,13 +10,13 @@ class TCanvas;
 class AllTrackerLayersFlagEfficiency : public AnalysisPlot, public H1DPlot
 {
 public:
-  AllTrackerLayersFlagEfficiency(EfficiencyCorrectionSettings::FoldingType);
+  AllTrackerLayersFlagEfficiency(bool fineBinned);
   ~AllTrackerLayersFlagEfficiency();
   void processEvent(const AnalyzedEvent*);
   void update();
 private:
-  TH1D* m_afterCutHisto;
-  TH1D* m_normHisto;
+  TH1D* m_passedCutHistogram;
+  TH1D* m_totalHistogram;
 };
 
 #endif /* AllTrackerLayersFlagEfficiency_hh */

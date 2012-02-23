@@ -13,7 +13,6 @@ INCLUDEPATH += \
   $$TOPLEVEL/tracking \
   $$TOPLEVEL/global \
   $$TOPLEVEL/processing \
-  $$TOPLEVEL/fluxAnalysis \
   $$TOPLEVEL/tools/postAnalysis/postAnalysis
 
 LIBS += \
@@ -27,9 +26,13 @@ LIBS += \
   -lprocessing \
   -lglobal \
   -lpostAnalysis \
+<<<<<<< Updated upstream
   -llikelihood \
   -lfluxAnalysis \
   -lwidgets
+=======
+  -llikelihood
+>>>>>>> Stashed changes
 
 SOURCEDIRS = .
 

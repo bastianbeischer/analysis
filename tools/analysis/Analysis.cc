@@ -406,6 +406,7 @@ void Analysis::setupPlots()
     addPlot(new MeasurementTimePlot(first, last));
     addPlot(new MeasurementTimeDistributionPlot(m_analysisSetting.numberOfThreads()));
     addPlot(new EventTimeDifferencePlot(m_analysisSetting.numberOfThreads()));
+    addPlot(new EfficiencyCollection());
   }
   if (m_analysisSetting.analysisTopics() & Enums::LikelihoodTopic) {
     Enums::ParticleIterator end = Enums::particleEnd();
@@ -449,7 +450,6 @@ void Analysis::setupPlots()
     addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::Positive));
     addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::Negative));
     addPlot(new MultiLayerTrackingEfficiencyPlot(MultiLayerTrackingEfficiencyPlot::All));
-    addPlot(new EfficiencyCollection());
   }
   if (m_analysisSetting.analysisTopics() & Enums::MiscellaneousTRD) {
     addPlot(new TRDClustersOnTrackPlot(Enums::MiscellaneousTRD));

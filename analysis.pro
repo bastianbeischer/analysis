@@ -16,11 +16,10 @@ SUBDIRS = \
   trdAnalysis \
   alignment \
   rootplot \
-  fluxAnalysis \
   tools
 
 macx {
   CONFIG+= ordered
 }
 
-tools.depends = global event widgets tracking setup particle likelihood trdAnalysis alignment rootplot fluxAnalysis
+tools.depends = global event widgets tracking setup particle likelihood trdAnalysis alignment rootplot

@@ -31,6 +31,7 @@ namespace Helpers
   bool sorted(const QVector<double>&);
   QString greekifyLetters(QString string);
   QVector<double> logLikelihoodBinning();
+  QVector<double> rigidityBinning(bool fineBinned);
 }
 
 #endif

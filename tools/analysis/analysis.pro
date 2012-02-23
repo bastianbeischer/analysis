@@ -29,7 +29,6 @@ LIBS += \
   -lrootplot \
   -lsetup \
   -ltrdAnalysis \
-  -lfluxAnalysis \
   -lwidgets
 
 SOURCEDIRS = .

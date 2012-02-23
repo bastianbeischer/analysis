@@ -4,7 +4,6 @@
 #include <TLatex.h>
 
 #include "Hit.hh"
-#include "EfficiencyCorrectionSettings.hh"
 #include "ParticleInformation.hh"
 #include "ParticleProperties.hh"
 #include "Particle.hh"
@@ -24,21 +23,16 @@ RigidityMigrationHistogram::RigidityMigrationHistogram()
   QString title = "Rigidity migration";
   setTitle(title);
 
-  const int nBinsGenerated = EfficiencyCorrectionSettings::numberOfBins(EfficiencyCorrectionSettings::Unfolded);
-  const double minGenerated = 0.1;
-  const double maxGenerated = 20;
-  QVector<double> axisGenerated = Helpers::logBinning(nBinsGenerated, minGenerated, maxGenerated);
+  QVector<double> axisGenerated = Helpers::rigidityBinning(false);
   int axisSize = 2 * axisGenerated.size();
   for (int i = 0; i < axisSize; i+= 2) {
     double value = axisGenerated.at(i);
     axisGenerated.prepend(-value);
   }
-  const int nBinsData = EfficiencyCorrectionSettings::numberOfBins(EfficiencyCorrectionSettings::Raw);
-  const double minData = 0.1;
-  const double maxData = 20;
-  QVector<double> axisData = Helpers::logBinning(nBinsData, minData, maxData);
-  axisSize = axisData.size()*2;
-  for (int i = 0; i < axisSize; i+=2) {
+
+  QVector<double> axisData = Helpers::rigidityBinning(true);
+  axisSize = 2 * axisData.size();
+  for (int i = 0; i < axisSize; i+= 2) {
     double value = axisData.at(i);
     axisData.prepend(-value);
   }

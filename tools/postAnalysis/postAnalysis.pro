@@ -11,10 +11,9 @@ SUBDIRS  = \
   slowControl \
   trdMoPV \
   fileCompare \
-  efficiencyCorrection \
   angularDistribution \
   likelihoodFit \
-  fluxAnalysis \
+  #fluxAnalysis \
   signalHeightScaling \
   likelihoodAnalysis \
   browser

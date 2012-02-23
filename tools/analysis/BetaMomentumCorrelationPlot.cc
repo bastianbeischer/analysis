@@ -92,7 +92,7 @@ void BetaMomentumCorrelationPlot::processEvent(const AnalyzedEvent* event)
   if (!qIsNull(beta))
     histogram()->Fill(rigidity, 1./beta);
 }
-  
+
 void BetaMomentumCorrelationPlot::finalize()
 {
   for (int i = 0; i < numberOfHistograms(); ++i) {

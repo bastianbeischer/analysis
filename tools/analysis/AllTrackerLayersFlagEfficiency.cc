@@ -1,6 +1,5 @@
 #include "AllTrackerLayersFlagEfficiency.hh"
 
-#include "EfficiencyCorrectionSettings.hh"
 #include "EfficiencyCollection.hh"
 
 #include <cmath>
@@ -19,19 +18,18 @@
 
 #include <QSpinBox>
 
-AllTrackerLayersFlagEfficiency::AllTrackerLayersFlagEfficiency(EfficiencyCorrectionSettings::FoldingType type)
+AllTrackerLayersFlagEfficiency::AllTrackerLayersFlagEfficiency(bool fineBinned)
   : AnalysisPlot(Enums::MiscellaneousTracker)
   , H1DPlot()
-  , m_afterCutHisto(0)
-  , m_normHisto(0)
+  , m_passedCutHistogram(0)
+  , m_totalHistogram(0)
 {
-  const QString& htitle = QString("All Tracker Layers Flag Efficiency - ") + EfficiencyCorrectionSettings::instance()->foldingTypeName(type);
-  int nBinsData = EfficiencyCorrectionSettings::numberOfBins(type);
-  setTitle(htitle);
+  QString title = "all tracker layers flag efficiency";
+  if (fineBinned)
+    title+= " fine";
+  setTitle(title);
 
-  const double minData = 0.1;
-  const double maxData = 20;
-  QVector<double> axis = Helpers::logBinning(nBinsData, minData, maxData);
+  QVector<double> axis = Helpers::rigidityBinning(fineBinned);
   int axisSize = 2 * axis.size();
   for (int i = 0; i < axisSize; i+= 2) {
     double value = axis.at(i);
@@ -39,21 +37,21 @@ AllTrackerLayersFlagEfficiency::AllTrackerLayersFlagEfficiency(EfficiencyCorrect
   }
   const int nBins = axis.size() - 1;
 
-  TH1D* histogram = new TH1D(qPrintable(title()), "", nBins, axis.constData());
+  TH1D* histogram = new TH1D(qPrintable(title), "", nBins, axis.constData());
   histogram->Sumw2();
   setAxisTitle("R / GV", "efficiency");
   addHistogram(histogram, H1DPlot::P);
 
-  m_afterCutHisto = new TH1D(qPrintable(title() + "_norm"), "", nBins, axis.constData());
-  m_afterCutHisto->Sumw2();
-  m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBins, axis.constData());
-  m_normHisto->Sumw2();
+  m_passedCutHistogram = new TH1D(qPrintable(title + " passed"), "", nBins, axis.constData());
+  m_passedCutHistogram->Sumw2();
+  m_totalHistogram = new TH1D(qPrintable(title + " total"), "", nBins, axis.constData());
+  m_totalHistogram->Sumw2();
 }
 
 AllTrackerLayersFlagEfficiency::~AllTrackerLayersFlagEfficiency()
 {
-  delete m_normHisto;
-  delete m_afterCutHisto;
+  delete m_totalHistogram;
+  delete m_passedCutHistogram;
 }
 
 void AllTrackerLayersFlagEfficiency::processEvent(const AnalyzedEvent* event)
@@ -66,17 +64,17 @@ void AllTrackerLayersFlagEfficiency::processEvent(const AnalyzedEvent* event)
 
   //TODO: right albedo handling
   double rigidity = event->particle()->hypothesis()->rigidity();
-  m_normHisto->Fill(rigidity);
+  m_totalHistogram->Fill(rigidity);
   if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
     return;
-  m_afterCutHisto->Fill(rigidity);
+  m_passedCutHistogram->Fill(rigidity);
 }
 
 void AllTrackerLayersFlagEfficiency::update()
 {
-  for (int i = 0; i < m_normHisto->GetNbinsX(); ++i) {
-    int reconstructed = m_afterCutHisto->GetBinContent(i+1);
-    int total = m_normHisto->GetBinContent(i+1);
+  for (int i = 0; i < m_totalHistogram->GetNbinsX(); ++i) {
+    int reconstructed = m_passedCutHistogram->GetBinContent(i+1);
+    int total = m_totalHistogram->GetBinContent(i+1);
     double efficiency = 0;
     double efficiencyError = 0;
     if (total != 0) {

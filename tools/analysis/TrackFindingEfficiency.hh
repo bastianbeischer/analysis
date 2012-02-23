@@ -3,16 +3,14 @@
 
 #include "AnalysisPlot.hh"
 #include "H1DPlot.hh"
-#include "EfficiencyCorrectionSettings.hh"
 
 #include <QVector>
 
 class TH1D;
 
 class TrackFindingEfficiency : public AnalysisPlot, public H1DPlot {
-
 public:
-  TrackFindingEfficiency(EfficiencyCorrectionSettings::FoldingType);
+  TrackFindingEfficiency(bool fineBinned);
   ~TrackFindingEfficiency();
   virtual void processEvent(const AnalyzedEvent*);
   virtual void update();

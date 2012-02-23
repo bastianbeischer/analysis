@@ -3,7 +3,6 @@
 #include "SimpleEvent.hh"
 #include "Particle.hh"
 #include "Track.hh"
-#include "EfficiencyCorrectionSettings.hh"
 #include "ParticleInformation.hh"
 #include "Constants.hh"
 #include "Settings.hh"
@@ -28,18 +27,17 @@
 #include <cmath>
 #include <vector>
 
-TrackFindingEfficiencyAzimuthCorrelation::TrackFindingEfficiencyAzimuthCorrelation(EfficiencyCorrectionSettings::FoldingType type)
+TrackFindingEfficiencyAzimuthCorrelation::TrackFindingEfficiencyAzimuthCorrelation(bool fineBinned)
   : AnalysisPlot(Enums::MiscellaneousTracker)
   , H2DPlot()
   , m_reconstructed(0)
   , m_total(0)
 {
-  const QString& htitle = QString("Track finding efficiency azimuth correlation - ") + EfficiencyCorrectionSettings::instance()->foldingTypeName(type);
-  int nBinsData = EfficiencyCorrectionSettings::numberOfBins(type);
-  setTitle(htitle);
-  const double minData = 0.1;
-  const double maxData = 20;
-  QVector<double> axis = Helpers::logBinning(nBinsData, minData, maxData);
+  QString title = "track finding efficiency azimuth correlation";
+  if (fineBinned)
+    title+= " fine";
+  setTitle(title);
+  QVector<double> axis = Helpers::rigidityBinning(fineBinned);
   int axisSize = 2 * axis.size();
   for (int i = 0; i < axisSize; i+= 2) {
     double value = axis.at(i);
@@ -61,9 +59,9 @@ TrackFindingEfficiencyAzimuthCorrelation::TrackFindingEfficiencyAzimuthCorrelati
   setAxisTitle("mc rigidity / GV", "mc azimuth / degree", "efficiency");
   addHistogram(histogram);
 
-  m_reconstructed = new TH2D("reconstructed", "", nBins, axis.constData(), nBinsAzimuth, xMinAzimuth, xMaxAzimuth);
+  m_reconstructed = new TH2D(qPrintable(title + " reconstructed"), "", nBins, axis.constData(), nBinsAzimuth, xMinAzimuth, xMaxAzimuth);
   m_reconstructed->Sumw2();
-  m_total = new TH2D("total", "", nBins, axis.constData(), nBinsAzimuth, xMinAzimuth, xMaxAzimuth);
+  m_total = new TH2D(qPrintable(title + " total"), "", nBins, axis.constData(), nBinsAzimuth, xMinAzimuth, xMaxAzimuth);
   m_total->Sumw2();
 
   addLatex(RootPlot::newLatex(.3, .85));

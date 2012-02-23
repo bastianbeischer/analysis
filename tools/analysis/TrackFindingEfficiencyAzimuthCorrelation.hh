@@ -3,16 +3,14 @@
 
 #include "AnalysisPlot.hh"
 #include "H2DPlot.hh"
-#include "EfficiencyCorrectionSettings.hh"
 
 #include <QVector>
 
 class TH1D;
 
 class TrackFindingEfficiencyAzimuthCorrelation : public AnalysisPlot, public H2DPlot {
-
 public:
-  TrackFindingEfficiencyAzimuthCorrelation(EfficiencyCorrectionSettings::FoldingType);
+  TrackFindingEfficiencyAzimuthCorrelation(bool fineBinned);
   ~TrackFindingEfficiencyAzimuthCorrelation();
   virtual void processEvent(const AnalyzedEvent*);
   virtual void update();
