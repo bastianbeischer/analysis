@@ -28,7 +28,7 @@ EnumSelector<T>::EnumSelector(const QString& text, typename QMap<T, QString>::Co
 , m_actions()
 {
   for (typename QMap<T, QString>::ConstIterator it = beginIt; it != endIt; ++it)
-    if ((it.key() & skim) == it.key())
+    if (it.key() & skim)
       m_actions.insert(it.key(), addElement(it.value()));
 }
 
@@ -150,25 +150,7 @@ void EnumSelector<T>::unselect(const QVector<T>& entries)
 template <typename T>
 void EnumSelector<T>::setUnselected(const QVector<T>& entries)
 {
-  selectOnly(entries, false);
-}
-
-template <typename T>
-void EnumSelector<T>::overwriteText(bool overwrite)
-{
-  if (overwrite) {
-    QString newText;
-    foreach (QAction* action, m_actions.values()) {
-      if (action->isChecked()) {
-        if (!newText.isEmpty())
-          newText += " ";
-        newText += action->text();
-      }
-    }
-    setText(newText);
-  } else {
-    setText(m_defaultText);
-  }
+  setSelected(entries, false);
 }
 
 template <typename T>
@@ -193,4 +175,3 @@ QVector<T> EnumSelector<T>::vectorFromFlags(QFlags<T> flags) const
 }
 
 #endif
-

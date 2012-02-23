@@ -18,8 +18,10 @@ public:
   void selectAll();
   void clear();
   QStringList selection() const;
+  QString selectionText();
+  void overwriteText(bool overwrite);
   QAction* addElement(const QString& title);
-protected:
+private:
   QString m_defaultText;
 signals:
   void selectionChanged();

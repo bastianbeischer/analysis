@@ -50,6 +50,32 @@ QStringList SelectionWidget::selection() const
   return selected;
 }
 
+QString SelectionWidget::selectionText()
+{
+  QString selectionText;
+  foreach (QString entry, selection()) {
+    if (!selectionText.isEmpty())
+      selectionText += ", ";
+    selectionText += entry;
+  }
+  return selectionText;
+}
+
+void SelectionWidget::overwriteText(bool overwrite)
+{
+  if (overwrite) {
+    QString newText;
+    foreach (QString entry, selection()) {
+      if (!newText.isEmpty())
+        newText += ", ";
+      newText += entry;
+    }
+    setText(newText);
+  } else {
+    setText(m_defaultText);
+  }
+}
+
 QAction* SelectionWidget::addElement(const QString& title)
 {
   QAction* action = new QAction(title, menu());

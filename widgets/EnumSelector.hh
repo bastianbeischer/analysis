@@ -16,8 +16,8 @@ class EnumSelector : public SelectionWidget
 {
 public:
   EnumSelector(const QString& text, typename QMap<T, QString>::ConstIterator beginIt, typename QMap<T, QString>::ConstIterator endIt, QWidget* parent = 0);
-  EnumSelector(const QString& text, typename QMap<T, QString>::ConstIterator beginIt, typename QMap<T, QString>::ConstIterator endIt, QVector<T> skim,QWidget* parent = 0);
-  EnumSelector(const QString& text, typename QMap<T, QString>::ConstIterator beginIt, typename QMap<T, QString>::ConstIterator endIt, QFlags<T> skim,QWidget* parent = 0);
+  EnumSelector(const QString& text, typename QMap<T, QString>::ConstIterator beginIt, typename QMap<T, QString>::ConstIterator endIt, QVector<T> skim, QWidget* parent = 0);
+  EnumSelector(const QString& text, typename QMap<T, QString>::ConstIterator beginIt, typename QMap<T, QString>::ConstIterator endIt, QFlags<T> skim, QWidget* parent = 0);
   ~EnumSelector();
   QVector<T> content() const;
   QVector<T> selectedEnums() const;
@@ -33,8 +33,6 @@ public:
   void unselect(T entry);
   void unselect(const QVector<T>& entries);
   void setUnselected(const QVector<T>& entries);
-  void overwriteText(bool overwrite);
-
 private:
   QFlags<T> flagsFromVector(const QVector<T>& vector) const;
   QVector<T> vectorFromFlags(QFlags<T> flags) const;
