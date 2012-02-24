@@ -180,35 +180,35 @@ void MainWindow::setupSettingsTab()
 
   m_correctionSelector = new CorrectionsSelector("corrections", Enums::correctionBegin() + 1, Enums::correctionEnd());
   m_correctionSelector->selectAll();
-  m_controlWidgets.append(m_correctionSelector->menu());
+  m_controlWidgets.append(m_correctionSelector);
   layout->addWidget(m_correctionSelector);
 
   m_reconstructionSelector = new ReconstructionMethodSelector("reconstruction method", Enums::reconstructionMethodBegin(), Enums::reconstructionMethodEnd());
   m_reconstructionSelector->selectAll();
-  m_controlWidgets.append(m_reconstructionSelector->menu());
+  m_controlWidgets.append(m_reconstructionSelector);
   layout->addWidget(m_reconstructionSelector);
 
   m_particleSelector = new ParticleSelector("likelihood particles", Enums::particleBegin() + 1, Enums::particleEnd());
   m_particleSelector->selectAll();
-  m_controlWidgets.append(m_particleSelector->menu());
+  m_controlWidgets.append(m_particleSelector);
   layout->addWidget(m_particleSelector);
 
   m_likelihoodSelector = new LikelihoodVariableSelector("likelihood variables", Enums::likelihoodVariableBegin(), Enums::likelihoodVariableEnd());
-  m_controlWidgets.append(m_likelihoodSelector->menu());
+  m_controlWidgets.append(m_likelihoodSelector);
   layout->addWidget(m_likelihoodSelector);
 
   Enums::Particles particles = Enums::NoParticle;
   particles = Enums::Proton | Enums::Helium | Enums::Electron | Enums::Positron | Enums::Muon | Enums::AntiMuon;
   m_particleFilterSelector = new ParticleSelector("data particle filter",  Enums::particleBegin() + 1, Enums::particleEnd(), particles);
   m_particleFilterSelector->selectAll();
-  m_controlWidgets.append(m_particleFilterSelector->menu());
+  m_controlWidgets.append(m_particleFilterSelector);
   layout->addWidget(m_particleFilterSelector);
 
   particles = Enums::Proton | Enums::AntiProton | Enums::Helium | Enums::Electron | Enums::Positron | Enums::Muon
   | Enums::AntiMuon | Enums::PiPlus | Enums::PiMinus | Enums::Photon;
   m_mcParticleFilterSelector = new ParticleSelector("mc particle filter",  Enums::particleBegin() + 1, Enums::particleEnd(), particles);
   m_mcParticleFilterSelector->selectAll();
-  m_controlWidgets.append(m_mcParticleFilterSelector->menu());
+  m_controlWidgets.append(m_mcParticleFilterSelector);
   layout->addWidget(m_mcParticleFilterSelector);
 
   m_ui.settingsTab->setLayout(layout);

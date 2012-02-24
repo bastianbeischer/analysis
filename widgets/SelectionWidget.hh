@@ -21,6 +21,10 @@ public:
   QStringList selectedElements() const;
 signals:
   void selectionChanged();
+private slots:
+  void updateToolTip();
+private:
+  QString toolTipString() const;
 };
 
 #endif

@@ -1,12 +1,14 @@
 #include "SelectionWidget.hh"
 
 #include <QMenu>
+#include <QChar>
 
 SelectionWidget::SelectionWidget(const QString& text, QWidget* parent)
   : QPushButton(text, parent)
 {
   QMenu* menu = new QMenu();
   setMenu(menu);
+  connect(this, SIGNAL(selectionChanged()), this, SLOT(updateToolTip()));
 }
 
 SelectionWidget::~SelectionWidget()
@@ -28,6 +30,7 @@ QAction* SelectionWidget::addElement(const QString& title)
   menu()->addAction(action);
   connect(action, SIGNAL(triggered()), this, SLOT(showMenu()));
   connect(action, SIGNAL(changed()), this, SIGNAL(selectionChanged()));
+  updateToolTip();
   return action;
 }
 
@@ -60,5 +63,26 @@ QStringList SelectionWidget::selectedElements() const
     if (action->isChecked())
       selected << action->text();
   return selected;
+}
+
+void SelectionWidget::updateToolTip()
+{
+  setToolTip(toolTipString());
+}
+
+QString SelectionWidget::toolTipString() const
+{
+  QString elements;
+  foreach (QAction* action, menu()->actions()) {
+    if (!elements.isEmpty())
+      elements += "\n";
+    if (action->isChecked())
+      elements += QString(QChar(0x2713));
+    else
+      elements += " ";
+    elements += " ";
+    elements += action->text();
+  }
+  return elements;
 }
 
