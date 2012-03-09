@@ -1,19 +1,24 @@
 #ifndef FluxCalculation_hh
 #define FluxCalculation_hh
 
+#include "PostAnalysisPlot.hh"
+#include "H1DPlot.hh"
+#include "Enums.hh"
+
+#include <QObject>
+#include <QMap>
+
 class TH1D;
+class FluxCalculation;
 
 class FluxCalculation {
 public:
-  FluxCalculation(TH1D* particleHistogram, double measurementTime);
+  FluxCalculation(QMap<Enums::Particle, const TH1D*>);
   ~FluxCalculation();
-  TH1D* fluxHistogram() const;
-  void update(double measurementTime);
+  TH1D* newRawSpectrum(Enums::Particle);
+  TH1D* newSummedRawSpectrum(Enums::Particles);
 private:
-  FluxCalculation();
-  TH1D* m_particleHistogram;
-  TH1D* m_fluxHistogram;
+  QMap<Enums::Particle, const TH1D*> m_rigiditySpectra;
 };
-
 
 #endif

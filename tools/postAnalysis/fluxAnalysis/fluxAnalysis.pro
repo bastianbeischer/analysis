@@ -13,6 +13,7 @@ INCLUDEPATH += \
   $$TOPLEVEL/tracking \
   $$TOPLEVEL/global \
   $$TOPLEVEL/processing \
+  $$TOPLEVEL/widgets \
   $$TOPLEVEL/tools/postAnalysis/postAnalysis
 
 LIBS += \
@@ -26,15 +27,16 @@ LIBS += \
   -lprocessing \
   -lglobal \
   -lpostAnalysis \
-<<<<<<< Updated upstream
   -llikelihood \
-  -lfluxAnalysis \
   -lwidgets
-=======
-  -llikelihood
->>>>>>> Stashed changes
 
-SOURCEDIRS = .
+CLASSES = \
+  MainWindow \
+  RigiditySpectrumPlot \
+  FluxCalculation
+
+SOURCES = \
+  main.cc
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/common.pri)

@@ -37,6 +37,7 @@ RigiditySpectrum::RigiditySpectrum(Enums::Particles particles, bool albedo)
     histogram->Sumw2();
     ParticleProperties properties(particle);
     histogram->SetMarkerColor(properties.color());
+    histogram->SetLineColor(properties.color());
     addHistogram(histogram);
   }
   setAxisTitle("|R| / GV", "");

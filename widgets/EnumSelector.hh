@@ -58,10 +58,10 @@ public:
 
   QFlags<T> selectedElements() const
   {
-    return flagsFromVector(selectedElementsVetor());
+    return flagsFromVector(selectedElementsVector());
   }
 
-  QVector<T> selectedElementsVetor() const
+  QVector<T> selectedElementsVector() const
   {
     QVector<T> checked;
     for (typename QMap<T, QAction*>::ConstIterator it = m_actions.begin(); it != m_actions.end(); ++it)

@@ -13,7 +13,7 @@ SUBDIRS  = \
   fileCompare \
   angularDistribution \
   likelihoodFit \
-  #fluxAnalysis \
+  fluxAnalysis \
   signalHeightScaling \
   likelihoodAnalysis \
   browser

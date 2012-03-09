@@ -1,56 +1,50 @@
 #include "FluxCalculation.hh"
-#include "Constants.hh"
 
-#include <QDebug>
+#include "Helpers.hh"
+#include "Enums.hh"
+#include "EnumSelector.hh"
+#include "FluxCalculation.hh"
 
-#include <TArray.h>
 #include <TH1.h>
 
-FluxCalculation::FluxCalculation()
-{
-}
+#include <QDebug>
+#include <QWidget>
+#include <QVBoxLayout>
 
-FluxCalculation::FluxCalculation(TH1D* particleHistogram, double measurementTime)
-  : m_particleHistogram(particleHistogram)
+FluxCalculation::FluxCalculation(QMap<Enums::Particle, const TH1D*> rigiditySpectra)
+  : m_rigiditySpectra(rigiditySpectra)
 {
-  const QString& title = QString(m_particleHistogram->GetTitle()) + "_flux";
-  const QString& xTitle = m_particleHistogram->GetXaxis()->GetTitle();
-  const int nBins = m_particleHistogram->GetNbinsX();
-  QVector<double> binning(nBins + 1);
-  for (int bin = 0; bin <= nBins; ++bin)
-    binning[bin] = m_particleHistogram->GetXaxis()->GetBinLowEdge(bin + 1);
-  m_fluxHistogram = new TH1D(qPrintable(title), "", nBins, binning.constData());
-  m_fluxHistogram->Sumw2();
-  m_fluxHistogram->GetXaxis()->SetTitle(qPrintable(xTitle));
-  m_fluxHistogram->GetYaxis()->SetTitle("flux / (GV^{-1}m^{-2}s^{-1}sr^{-1})");
-  m_fluxHistogram->SetLineColor(kBlack);
-  m_fluxHistogram->SetMarkerColor(kBlack);
-  m_fluxHistogram->SetMarkerStyle(20);
-
-  update(measurementTime);
 }
 
 FluxCalculation::~FluxCalculation()
 {
 }
 
-TH1D* FluxCalculation::fluxHistogram() const
+TH1D* FluxCalculation::newRawSpectrum(Enums::Particle particle)
 {
-  return m_fluxHistogram;
+  QMap<Enums::Particle, const TH1D*>::ConstIterator it = m_rigiditySpectra.constFind(particle);
+  if (it == m_rigiditySpectra.end())
+    return 0;
+  return static_cast<TH1D*>(it.value()->Clone());
 }
 
-void FluxCalculation::update(double measurementTime)
+TH1D* FluxCalculation::newSummedRawSpectrum(Enums::Particles particles)
 {
-  const double acceptance = Constants::geometricAcceptance;
-  const int nBins = m_particleHistogram->GetNbinsX();
-
-  m_fluxHistogram->Reset();
-  for (int i = 0 ; i < nBins; i++) {
-    double content = m_particleHistogram->GetBinContent(i + 1);
-    double error = m_particleHistogram->GetBinError(i + 1);
-    m_fluxHistogram->SetBinContent(i + 1, content);
-    m_fluxHistogram->SetBinError(i + 1, error);
+  TH1D* h = 0;
+  for (Enums::ParticleIterator particleIt = Enums::particleBegin(); particleIt != Enums::particleEnd(); ++particleIt) {
+    if (particleIt.key() == Enums::NoParticle)
+      continue;
+    if ((particleIt.key() & particles) != particleIt.key())
+      continue;
+    QMap<Enums::Particle, const TH1D*>::ConstIterator it = m_rigiditySpectra.constFind(particleIt.key());
+    Q_ASSERT(it != m_rigiditySpectra.end());
+    if (h) {
+      h->Add(it.value());
+    } else {
+      h = static_cast<TH1D*>(it.value()->Clone());
+      h->SetMarkerColor(kBlack);
+      h->SetLineColor(kBlack);
+    }
   }
-
-  m_fluxHistogram->Scale(1. / (acceptance * measurementTime), "width");
+  return h;
 }
