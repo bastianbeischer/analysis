@@ -133,33 +133,43 @@ void compareKeys(TKey* key1, TKey* key2, QStringList& comment, TFile& outputFile
 {
   TObject* object1 = key1->ReadObj();
   TObject* object2 = key2->ReadObj();
-  Q_ASSERT(!strcmp(object1->ClassName(), "TCanvas") && !strcmp(object2->ClassName(), "TCanvas"));
+
+  if (strcmp(object1->ClassName(), "TCanvas") || strcmp(object2->ClassName(), "TCanvas"))
+    return;
+
   PostAnalysisCanvas* canvas1 = new PostAnalysisCanvas(static_cast<TCanvas*>(object1));
   PostAnalysisCanvas* canvas2 = new PostAnalysisCanvas(static_cast<TCanvas*>(object2));
 
   const QVector<TH1D*>& h1d1 = canvas1->histograms1D();
   const QVector<TH1D*>& h1d2 = canvas2->histograms1D();
-  for (int i = 0; i < h1d1.count(); ++i) {
+  if (h1d1.count() != h1d2.count())
+    comment << QString("canvases \"%1\", contain different number of 1D histograms: %2 <-> %3").arg(canvas1.name()).arg(h1d1.count()).arg(h1d2.count());
+  for (int i = 0; i < qMin(h1d1.count(), h1d2.count()); ++i) {
     if (!histogramsMatch(h1d1[i], h1d2[i], comment)) {
       comment << QString("canvases \"%1\", histograms \"%2\" differ.").arg(canvas1->name()).arg(h1d1[i]->GetName());
+      comment << QString("canvases \"%1\", 1D histograms \"%2\" differ.").arg(canvas1.name()).arg(h1d1[i]->GetName());
       save(QVector<PostAnalysisCanvas*>() << canvas1 << canvas2, outputFile);
     }
   }
 
   const QVector<TH2D*>& h2d1 = canvas1->histograms2D();
   const QVector<TH2D*>& h2d2 = canvas2->histograms2D();
-  for (int i = 0; i < h2d1.count(); ++i) {
+  if (h2d1.count() != h2d2.count())
+    comment << QString("canvases \"%1\", contain different number of 2D histograms: %2 <-> %3").arg(canvas1.name()).arg(h2d1.count()).arg(h2d2.count());
+  for (int i = 0; i < qMin(h2d1.count(), h2d2.count()); ++i) {
     if (!histogramsMatch(h2d1[i], h2d2[i], comment)) {
-      comment << QString("canvases \"%1\", histograms \"%2\" differ.").arg(canvas1->name()).arg(h2d1[i]->GetName());
+      comment << QString("canvases \"%1\", 2D histograms \"%2\" differ.").arg(canvas1.name()).arg(h2d1[i]->GetName());
       save(QVector<PostAnalysisCanvas*>() << canvas1 << canvas2, outputFile);
     }
   }
 
   const QVector<TF1*>& f1 = canvas1->functions();
   const QVector<TF1*>& f2 = canvas2->functions();
-  for (int i = 0; i < f1.count(); ++i) {
+  if (f1.count() != f2.count())
+    comment << QString("canvases \"%1\", contain different number of functions: %2 <-> %3").arg(canvas1.name()).arg(f1.count()).arg(f2.count());
+  for (int i = 0; i < qMin(f1.count(), f2.count()); ++i) {
     if (!functionsMatch(f1[i], f2[i], comment)) {
-      comment << QString("canvases \"%1\", functions \"%2\" differ.").arg(canvas1->name()).arg(f1[i]->GetName());
+      comment << QString("canvases \"%1\", functions \"%2\" differ.").arg(canvas1.name()).arg(f1[i]->GetName());
       save(QVector<PostAnalysisCanvas*>() << canvas1 << canvas2, outputFile);
     }
   }
