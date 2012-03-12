@@ -205,7 +205,7 @@ void MainWindow::setupSettingsTab()
   layout->addWidget(m_particleFilterSelector);
 
   particles = Enums::Proton | Enums::AntiProton | Enums::Helium | Enums::Electron | Enums::Positron | Enums::Muon
-  | Enums::AntiMuon | Enums::PiPlus | Enums::PiMinus | Enums::Photon;
+  | Enums::AntiMuon | Enums::PiPlus | Enums::PiMinus | Enums::Pi0 | Enums::Photon;
   m_mcParticleFilterSelector = new ParticleSelector("mc particle filter",  Enums::particleBegin() + 1, Enums::particleEnd(), particles);
   m_mcParticleFilterSelector->selectAll();
   m_controlWidgets.append(m_mcParticleFilterSelector);
