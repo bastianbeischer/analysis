@@ -79,7 +79,7 @@ QString SelectionWidget::toolTipString() const
     if (action->isChecked())
       elements += QString(QChar(0x2713));
     else
-      elements += " ";
+      elements += "   ";
     elements += " ";
     elements += action->text();
   }
