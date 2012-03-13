@@ -3,6 +3,7 @@
 #include "PostAnalysisCanvas.hh"
 #include "RigiditySpectrumPlot.hh"
 #include "MeasurementTimePlot.hh"
+#include "FluxCalculation.hh"
 
 #include <TCanvas.h>
 #include <TFile.h>
@@ -25,6 +26,7 @@ void MainWindow::setupAnalysis()
 {
   TFile file(qPrintable(m_analysisFiles.at(0)));
   gROOT->cd();
+
   MeasurementTimePlot* measurementTimePlot = new MeasurementTimePlot(addCanvas(&file, "measurement time distribution canvas"));
   addPlot(measurementTimePlot);
 
@@ -35,13 +37,12 @@ void MainWindow::setupAnalysis()
     Enums::Particle particle = Enums::particle(particleLabel);
     rigiditySpectra.insert(particle, spectrum);
   }
+  
+  FluxCalculation::instance()->setRawSpectra(rigiditySpectra);
+  FluxCalculation::instance()->setMeasurementTime(measurementTimePlot->measurementTime());
 
-  RigiditySpectrumPlot* rigiditySpectrumPlot = new RigiditySpectrumPlot(rigiditySpectra);
-  addPlot(rigiditySpectrumPlot);
-
-  //RigidityRatioPlot rigidityRatioPlot(rigiditySpectra);
-  //addPlot(rigidityRatioSpectra);
-
+  addPlot(new RigiditySpectrumPlot());
+  //addPlot(new RigidityRatioPlot(calculation));
 
   file.Close();
 }

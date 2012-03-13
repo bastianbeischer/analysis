@@ -17,11 +17,10 @@ Q_OBJECT
 public:
   MeasurementTimePlot(PostAnalysisCanvas*);
   ~MeasurementTimePlot();
+  double measurementTime() const;
   virtual void draw(TCanvas*);
 public slots:
   virtual void update();
-signals:
-  void measurementTimeChanged(double);
 protected:
   ParameterWidget* m_cutParameterWidget;
   TLine* m_cutLine;

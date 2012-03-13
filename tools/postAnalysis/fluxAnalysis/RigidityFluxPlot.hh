@@ -1,5 +1,5 @@
-#ifndef RigiditySpectrumPlot_hh
-#define RigiditySpectrumPlot_hh
+#ifndef RigidityFluxPlot_hh
+#define RigidityFluxPlot_hh
 
 #include "PostAnalysisPlot.hh"
 #include "H1DPlot.hh"
@@ -14,18 +14,20 @@
 class TCanvas;
 class TH1D;
 class EnumsSelector;
+class FluxCalculation;
 
-class RigiditySpectrumPlot : public QObject, public PostAnalysisPlot, public H1DPlot {
+class RigidityFluxPlot : public QObject, public PostAnalysisPlot, public H1DPlot {
 Q_OBJECT
 public:
-  RigiditySpectrumPlot();
-  ~RigiditySpectrumPlot();
+  RigidityFluxPlot(QMap<Enums::Particle, const TH1D*>);
+  ~RigidityFluxPlot();
   virtual void draw(TCanvas*);
 public slots:
   virtual void update();
 private:
   typedef EnumSelector<Enums::Particle> ParticleSelector;
   TCanvas* m_canvas;
+  FluxCalculation* m_calculation;
   ParticleSelector* m_particleSelector;
   ParticleSelector* m_sumSelector;
 };

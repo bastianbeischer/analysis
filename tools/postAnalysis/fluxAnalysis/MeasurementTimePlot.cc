@@ -1,6 +1,7 @@
 #include "MeasurementTimePlot.hh"
 #include "ParameterWidget.hh"
 #include "PostAnalysisCanvas.hh"
+#include "FluxCalculation.hh"
 
 #include <TH2.h>
 #include <TAxis.h>
@@ -39,10 +40,17 @@ MeasurementTimePlot::MeasurementTimePlot(PostAnalysisCanvas* canvas)
   m_cutLine->SetLineColor(kGreen);
   m_cutLine->SetLineStyle(kDashed);
   m_cutLine->SetVertical();
+  m_cutLine->SetLineWidth(2);
 }
 
 MeasurementTimePlot::~MeasurementTimePlot()
 {
+}
+
+double MeasurementTimePlot::measurementTime() const
+{
+  double cut = m_cutParameterWidget->value();
+  return histogram()->GetBinContent(histogram()->GetXaxis()->FindBin(cut));
 }
 
 void MeasurementTimePlot::draw(TCanvas* canvas)
@@ -54,14 +62,16 @@ void MeasurementTimePlot::draw(TCanvas* canvas)
 
 void MeasurementTimePlot::update()
 {
+  gPad->Modified();
+  gPad->Update();
   double cut = m_cutParameterWidget->value();
   m_cutLine->SetX1(cut);
   m_cutLine->SetX2(cut);
-  m_cutLine->SetY1(histogram()->GetMinimum());
-  m_cutLine->SetY2(1.05 * histogram()->GetMaximum());
-  double time = histogram()->GetBinContent(histogram()->GetXaxis()->FindBin(cut));
-  latex()->SetTitle(qPrintable(QString("T = %1").arg(time, 0, 'f', 2, ' ')));
+  m_cutLine->SetY1(gPad->GetUymin());
+  m_cutLine->SetY2(gPad->GetUymax());
+  double time = measurementTime();
+  latex()->SetTitle(qPrintable(QString("T = %1s").arg(time, 0, 'f', 2, ' ')));
   gPad->Modified();
   gPad->Update();
-  emit measurementTimeChanged(time);
+  FluxCalculation::instance()->setMeasurementTime(time);
 }
