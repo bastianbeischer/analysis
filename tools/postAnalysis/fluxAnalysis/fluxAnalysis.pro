@@ -33,7 +33,8 @@ LIBS += \
 CLASSES = \
   MainWindow \
   RigiditySpectrumPlot \
-  FluxCalculation
+  FluxCalculation \
+  MeasurementTimePlot
 
 SOURCES = \
   main.cc
