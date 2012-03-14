@@ -7,6 +7,7 @@
 
 #include <TH1.h>
 #include <TPad.h>
+#include <TLegend.h>
 
 #include <QDebug>
 #include <QWidget>
@@ -27,12 +28,19 @@ SpectrumPlot::SpectrumPlot(SpectrumFunctionPointer pointer)
   layout->setContentsMargins(0, 0, 0, 0);
   layout->addStretch();
   m_particleSelector = new ParticleSelector("particles", Enums::particleBegin(), Enums::particleEnd(), particles);
+  m_particleSelector->selectAll();
   layout->addWidget(m_particleSelector);
   m_sumSelector = new ParticleSelector("sum", Enums::particleBegin(), Enums::particleEnd(), particles);
   layout->addWidget(m_sumSelector);
   QWidget* widget = new QWidget();
   widget->setLayout(layout);
   setSecondaryWidget(widget);
+
+
+  TLegend* legend = new TLegend;
+  legend->SetTextSize(0.02);
+  legend->SetTextAlign(12);
+  addLegend(legend);
 
   connect(m_particleSelector, SIGNAL(selectionChanged()), this, SLOT(update()));
   connect(m_sumSelector, SIGNAL(selectionChanged()), this, SLOT(update()));
@@ -73,13 +81,34 @@ void SpectrumPlot::draw(TCanvas* canvas)
 void SpectrumPlot::update()
 {
   removeHistograms();
+  
+  TLegend* l = legend();
+  l->Clear();
+
+  int entries = 0;
 
   QVector<Enums::Particle> selectedParticles = m_particleSelector->selectedElementsVector();
-  foreach (Enums::Particle particle, selectedParticles)
-    addHistogram((FluxCalculation::instance()->*m_functionPointer)(particle));
+  foreach (Enums::Particle particle, selectedParticles) {
+    TH1D* h = (FluxCalculation::instance()->*m_functionPointer)(particle);
+    addHistogram(h);
+    l->AddEntry(h, qPrintable(Helpers::greekifyLetters(Enums::label(particle))));
+    ++entries;
+  }
 
-  if (m_sumSelector->selectedElementsVector().count())
-    addHistogram(newSummedSpectrum(m_sumSelector->selectedElements()));
+  if (m_sumSelector->selectedElementsVector().count()) {
+    Enums::Particles particles = m_sumSelector->selectedElements();
+    TH1D* h = newSummedSpectrum(particles);
+    addHistogram(h);
+    QString label = Helpers::greekifyLetters(Enums::label(particles));
+    label.replace(" |", ",");
+    l->AddEntry(h, qPrintable("sum of " + label));
+    ++entries;
+  }
+
+  l->SetX1NDC(0.75);
+  l->SetX2NDC(0.88);
+  l->SetY1NDC(0.88 - 0.03 * entries);
+  l->SetY2NDC(0.88);
 
   Q_ASSERT(m_canvas);
   H1DPlot::draw(m_canvas);
