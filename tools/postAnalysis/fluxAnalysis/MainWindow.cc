@@ -1,8 +1,8 @@
 #include "MainWindow.hh"
 #include "Enums.hh"
 #include "PostAnalysisCanvas.hh"
-#include "RigiditySpectrumPlot.hh"
-#include "RigidityFluxPlot.hh"
+#include "RawSpectrum.hh"
+#include "FluxSpectrum.hh"
 #include "MeasurementTimePlot.hh"
 #include "FluxCalculation.hh"
 
@@ -42,8 +42,8 @@ void MainWindow::setupAnalysis()
   FluxCalculation::instance()->setRawSpectra(rigiditySpectra);
   FluxCalculation::instance()->setMeasurementTime(measurementTimePlot->measurementTime());
 
-  addPlot(new RigiditySpectrumPlot());
-  addPlot(new RigidityFluxPlot());
+  addPlot(new RawSpectrum());
+  addPlot(new FluxSpectrum());
   //addPlot(new RigidityRatioPlot(calculation));
 
   file.Close();

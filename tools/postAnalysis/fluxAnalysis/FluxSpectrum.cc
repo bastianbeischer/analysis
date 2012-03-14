@@ -1,14 +1,14 @@
-#include "RigidityFluxPlot.hh"
+#include "FluxSpectrum.hh"
 
 #include "FluxCalculation.hh"
 
-RigidityFluxPlot::RigidityFluxPlot()
+FluxSpectrum::FluxSpectrum()
   : SpectrumPlot(&FluxCalculation::newFluxSpectrum)
 {
   setTitle("flux spectrum");
   setAxisTitle("|R| / GV", "flux");
 }
 
-RigidityFluxPlot::~RigidityFluxPlot()
+FluxSpectrum::~FluxSpectrum()
 {
 }
