@@ -59,6 +59,28 @@ double FluxCalculation::measurementTime() const
   return m_measurementTime;
 }
 
+TH1D* FluxCalculation::newSummedSpectrum(Enums::Particles particles, SpectrumFunction function) const
+{
+  TH1D* sum = 0;
+  for (Enums::ParticleIterator particleIt = Enums::particleBegin(); particleIt != Enums::particleEnd(); ++particleIt) {
+    if (particleIt.key() == Enums::NoParticle)
+      continue;
+    if ((particleIt.key() & particles) != particleIt.key())
+      continue;
+    TH1D* h = (this->*function)(particleIt.key());
+    Q_ASSERT(h);
+    if (sum) {
+      sum->Add(h);
+      delete h;
+    } else {
+      h->SetMarkerColor(kBlack);
+      h->SetLineColor(kBlack);
+      sum = h;
+    }
+  }
+  return sum;
+}
+
 TH1D* FluxCalculation::newRawSpectrum(Enums::Particle particle) const
 {
   QMap<Enums::Particle, const TH1D*>::ConstIterator it = m_rigiditySpectra.constFind(particle);
@@ -69,21 +91,17 @@ TH1D* FluxCalculation::newRawSpectrum(Enums::Particle particle) const
 
 TH1D* FluxCalculation::newSummedRawSpectrum(Enums::Particles particles) const
 {
-  TH1D* h = 0;
-  for (Enums::ParticleIterator particleIt = Enums::particleBegin(); particleIt != Enums::particleEnd(); ++particleIt) {
-    if (particleIt.key() == Enums::NoParticle)
-      continue;
-    if ((particleIt.key() & particles) != particleIt.key())
-      continue;
-    QMap<Enums::Particle, const TH1D*>::ConstIterator it = m_rigiditySpectra.constFind(particleIt.key());
-    Q_ASSERT(it != m_rigiditySpectra.end());
-    if (h) {
-      h->Add(it.value());
-    } else {
-      h = static_cast<TH1D*>(it.value()->Clone());
-      h->SetMarkerColor(kBlack);
-      h->SetLineColor(kBlack);
-    }
-  }
+  return newSummedSpectrum(particles, &FluxCalculation::newRawSpectrum);
+}
+
+TH1D* FluxCalculation::newFluxSpectrum(Enums::Particle particle) const
+{
+  TH1D* h = newRawSpectrum(particle);
+  //TODO
   return h;
+}
+
+TH1D* FluxCalculation::newSummedFluxSpectrum(Enums::Particles particles) const
+{
+  return newSummedSpectrum(particles, &FluxCalculation::newFluxSpectrum);
 }
