@@ -32,7 +32,9 @@ LIBS += \
 
 CLASSES = \
   MainWindow \
+  SpectrumPlot \
   RigiditySpectrumPlot \
+  RigidityFluxPlot \
   FluxCalculation \
   MeasurementTimePlot
 

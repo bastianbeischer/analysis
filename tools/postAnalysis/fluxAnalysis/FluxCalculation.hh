@@ -23,15 +23,9 @@ public:
   double measurementTime() const;
 
   TH1D* newRawSpectrum(Enums::Particle) const;
-  TH1D* newSummedRawSpectrum(Enums::Particles) const;
-
   TH1D* newFluxSpectrum(Enums::Particle) const;
-  TH1D* newSummedFluxSpectrum(Enums::Particles) const;
 private:
   FluxCalculation();
-
-  typedef TH1D*(FluxCalculation::*SpectrumFunction)(Enums::Particle) const;
-  TH1D* newSummedSpectrum(Enums::Particles, SpectrumFunction) const;
 
   static FluxCalculation* s_instance;
 
