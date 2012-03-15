@@ -31,6 +31,9 @@ void MainWindow::setupAnalysis()
   MeasurementTimePlot* measurementTimePlot = new MeasurementTimePlot(addCanvas(&file, "measurement time distribution canvas"));
   addPlot(measurementTimePlot);
 
+  addCanvas(&file, "all tracker layers flag efficiency canvas");
+  addCanvas(&file, "track finding efficiency canvas");
+
   QMap<Enums::Particle, const TH1D*> rigiditySpectra;
   foreach (const TH1D* spectrum, addCanvas(&file, "rigidity spectrum canvas")->histograms1D()) {
     QString particleLabel = spectrum->GetName();
