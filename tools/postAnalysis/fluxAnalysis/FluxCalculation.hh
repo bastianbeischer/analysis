@@ -6,6 +6,7 @@
 #include "Enums.hh"
 
 #include <QMap>
+#include <QMultiMap>
 
 class TH1D;
 class FluxCalculation;
@@ -15,12 +16,13 @@ public:
   static FluxCalculation* instance();
   ~FluxCalculation();
 
-  void setRawSpectra(QMap<Enums::Particle, const TH1D*>); 
   void setMeasurementTime(double);
+  void setRawSpectra(const QMap<Enums::Particle, const TH1D*>&);
+  void addEfficiency(Enums::Particle, TH1D*);
 
+  double measurementTime() const;
   Enums::Particles particles() const;
   const QMap<Enums::Particle, const TH1D*>& rawSpectra() const;
-  double measurementTime() const;
 
   TH1D* newRawSpectrum(Enums::Particle) const;
   TH1D* newFluxSpectrum(Enums::Particle) const;
@@ -29,8 +31,9 @@ private:
 
   static FluxCalculation* s_instance;
 
-  QMap<Enums::Particle, const TH1D*> m_rigiditySpectra;
   double m_measurementTime;
+  QMap<Enums::Particle, const TH1D*> m_rigiditySpectra;
+  QMultiMap<Enums::Particle, const TH1D*> m_efficiencies;
 };
 
 #endif

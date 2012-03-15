@@ -81,7 +81,7 @@ void SpectrumPlot::draw(TCanvas* canvas)
 void SpectrumPlot::update()
 {
   removeHistograms();
-  
+
   TLegend* l = legend();
   l->Clear();
 

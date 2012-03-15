@@ -38,7 +38,7 @@ void MainWindow::setupAnalysis()
     Enums::Particle particle = Enums::particle(particleLabel);
     rigiditySpectra.insert(particle, spectrum);
   }
-  
+
   FluxCalculation::instance()->setRawSpectra(rigiditySpectra);
   FluxCalculation::instance()->setMeasurementTime(measurementTimePlot->measurementTime());
 
