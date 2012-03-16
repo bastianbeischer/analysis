@@ -18,11 +18,12 @@
 
 #include <QSpinBox>
 
-AllTrackerLayersFlagEfficiency::AllTrackerLayersFlagEfficiency(bool fineBinned)
+AllTrackerLayersFlagEfficiency::AllTrackerLayersFlagEfficiency(Enums::Particles particles, bool fineBinned)
   : AnalysisPlot(Enums::MiscellaneousTracker)
   , H1DPlot()
-  , m_passedCutHistogram(0)
-  , m_totalHistogram(0)
+  , m_particles(Enums::particleVector(particles))
+  , m_passedCutHistograms(0)
+  , m_totalHistograms(0)
 {
   QString title = "all tracker layers flag efficiency";
   if (fineBinned)
@@ -30,28 +31,37 @@ AllTrackerLayersFlagEfficiency::AllTrackerLayersFlagEfficiency(bool fineBinned)
   setTitle(title);
 
   QVector<double> axis = Helpers::rigidityBinning(fineBinned);
-  int axisSize = 2 * axis.size();
-  for (int i = 0; i < axisSize; i+= 2) {
-    double value = axis.at(i);
-    axis.prepend(-value);
-  }
   const int nBins = axis.size() - 1;
 
-  TH1D* histogram = new TH1D(qPrintable(title), "", nBins, axis.constData());
-  histogram->Sumw2();
-  setAxisTitle("R / GV", "efficiency");
-  addHistogram(histogram, H1DPlot::P);
+  foreach (Enums::Particle particle, m_particles) {
+    QString histogramTitle = title + ' ' + Enums::label(particle);
 
-  m_passedCutHistogram = new TH1D(qPrintable(title + " passed"), "", nBins, axis.constData());
-  m_passedCutHistogram->Sumw2();
-  m_totalHistogram = new TH1D(qPrintable(title + " total"), "", nBins, axis.constData());
-  m_totalHistogram->Sumw2();
+    ParticleProperties properties(particle);
+    
+    TH1D* h = 0;
+
+    h = new TH1D(qPrintable(histogramTitle), "", nBins, axis.constData());
+    h->Sumw2();
+    h->SetLineColor(properties.color());
+    h->SetMarkerColor(properties.color());
+    addHistogram(h, H1DPlot::P);
+
+    h = new TH1D(qPrintable(histogramTitle + " passed"), "", nBins, axis.constData());
+    h->Sumw2();
+    m_passedCutHistograms.append(h);
+
+    h = new TH1D(qPrintable(histogramTitle + " total"), "", nBins, axis.constData());
+    h->Sumw2();
+    m_totalHistograms.append(h);
+  }
+
+  setAxisTitle("|R| / GV", "efficiency");
 }
 
 AllTrackerLayersFlagEfficiency::~AllTrackerLayersFlagEfficiency()
 {
-  delete m_totalHistogram;
-  delete m_passedCutHistogram;
+  qDeleteAll(m_totalHistograms);
+  qDeleteAll(m_passedCutHistograms);
 }
 
 void AllTrackerLayersFlagEfficiency::processEvent(const AnalyzedEvent* event)
@@ -63,25 +73,29 @@ void AllTrackerLayersFlagEfficiency::processEvent(const AnalyzedEvent* event)
     return;
 
   //TODO: right albedo handling
-  double rigidity = event->particle()->hypothesis()->rigidity();
-  m_totalHistogram->Fill(rigidity);
+  const Hypothesis* h = event->particle()->hypothesis();
+  int i = m_particles.indexOf(h->particle());
+  m_totalHistograms[i]->Fill(h->absoluteRigidity());
   if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
     return;
-  m_passedCutHistogram->Fill(rigidity);
+  m_passedCutHistograms[i]->Fill(h->absoluteRigidity());
 }
 
 void AllTrackerLayersFlagEfficiency::update()
 {
-  for (int i = 0; i < m_totalHistogram->GetNbinsX(); ++i) {
-    int reconstructed = m_passedCutHistogram->GetBinContent(i+1);
-    int total = m_totalHistogram->GetBinContent(i+1);
-    double efficiency = 0;
-    double efficiencyError = 0;
-    if (total != 0) {
-      efficiency = double(reconstructed) / double(total);
-      efficiencyError =  sqrt(efficiency * (1 - efficiency) / double(total));
+  foreach (Enums::Particle particle, m_particles) {
+    int i = m_particles.indexOf(particle);
+    for (int bin = 0; bin < m_totalHistograms[i]->GetNbinsX(); ++bin) {
+      int reconstructed = m_passedCutHistograms[i]->GetBinContent(bin+1);
+      int total = m_totalHistograms[i]->GetBinContent(bin+1);
+      double efficiency = 0;
+      double efficiencyError = 0;
+      if (total != 0) {
+        efficiency = double(reconstructed) / double(total);
+        efficiencyError =  sqrt(efficiency * (1 - efficiency) / double(total));
+      }
+      histogram(i)->SetBinContent(bin+1, efficiency);
+      histogram(i)->SetBinError(bin+1, efficiencyError);
     }
-    histogram()->SetBinContent(i+1, efficiency);
-    histogram()->SetBinError(i+1, efficiencyError);
   }
 }

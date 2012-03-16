@@ -214,8 +214,6 @@ void MainWindow::setupSettingsTab()
   m_ui.settingsTab->setLayout(layout);
 }
 
-
-
 void MainWindow::setupCutSelectors()
 {
   QVBoxLayout* layout = new QVBoxLayout;

@@ -14,7 +14,7 @@
 #include <QVector>
 #include <QDebug>
 
-EfficiencyCollection::EfficiencyCollection()
+EfficiencyCollection::EfficiencyCollection(Enums::Particles particles)
   : PlotCollection(Enums::FluxCalculation)
 {
   QWidget* widget = new QWidget;
@@ -26,10 +26,10 @@ EfficiencyCollection::EfficiencyCollection()
   secondaryWidget()->layout()->addWidget(widget);
   setTitle("efficiency collection");
 
-  addPlot(new AllTrackerLayersFlagEfficiency(false));
+  addPlot(new AllTrackerLayersFlagEfficiency(particles, false));
   comboBox->addItem("AllTrackerLayersFlagEfficiency");
 
-  addPlot(new AllTrackerLayersFlagEfficiency(true));
+  addPlot(new AllTrackerLayersFlagEfficiency(particles, true));
   comboBox->addItem("AllTrackerLayersFlagEfficiency fine");
 
   addPlot(new TrackFindingEfficiency(false));

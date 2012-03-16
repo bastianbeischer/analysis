@@ -10,13 +10,14 @@ class TCanvas;
 class AllTrackerLayersFlagEfficiency : public AnalysisPlot, public H1DPlot
 {
 public:
-  AllTrackerLayersFlagEfficiency(bool fineBinned);
+  AllTrackerLayersFlagEfficiency(Enums::Particles, bool fineBinned);
   ~AllTrackerLayersFlagEfficiency();
   void processEvent(const AnalyzedEvent*);
   void update();
 private:
-  TH1D* m_passedCutHistogram;
-  TH1D* m_totalHistogram;
+  QVector<Enums::Particle> m_particles;
+  QVector<TH1D*> m_passedCutHistograms;
+  QVector<TH1D*> m_totalHistograms;
 };
 
 #endif /* AllTrackerLayersFlagEfficiency_hh */

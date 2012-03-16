@@ -406,7 +406,7 @@ void Analysis::setupPlots()
     addPlot(new MeasurementTimePlot(first, last));
     addPlot(new MeasurementTimeDistributionPlot(m_analysisSetting.numberOfThreads()));
     addPlot(new EventTimeDifferencePlot(m_analysisSetting.numberOfThreads()));
-    addPlot(new EfficiencyCollection());
+    addPlot(new EfficiencyCollection(m_analysisSetting.particles()));
   }
   if (m_analysisSetting.analysisTopics() & Enums::LikelihoodTopic) {
     Enums::ParticleIterator end = Enums::particleEnd();

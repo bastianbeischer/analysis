@@ -7,7 +7,7 @@ class TH1D;
 
 class EfficiencyCollection : public PlotCollection {
 public:
-  EfficiencyCollection();
+  EfficiencyCollection(Enums::Particles);
   ~EfficiencyCollection();
 };
 
