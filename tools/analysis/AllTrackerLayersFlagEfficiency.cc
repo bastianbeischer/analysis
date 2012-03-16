@@ -37,7 +37,7 @@ AllTrackerLayersFlagEfficiency::AllTrackerLayersFlagEfficiency(Enums::Particles 
     QString histogramTitle = title + ' ' + Enums::label(particle);
 
     ParticleProperties properties(particle);
-    
+
     TH1D* h = 0;
 
     h = new TH1D(qPrintable(histogramTitle), "", nBins, axis.constData());

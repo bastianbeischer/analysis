@@ -72,27 +72,16 @@ TH1D* SpectrumPlot::newSummedSpectrum(Enums::Particles particles) const
   return sum;
 }
 
-void SpectrumPlot::draw(TCanvas* canvas)
+void SpectrumPlot::addSpectra()
 {
-  m_canvas = canvas;
-  update();
-}
-
-void SpectrumPlot::update()
-{
-  removeHistograms();
-
   TLegend* l = legend();
   l->Clear();
-
-  int entries = 0;
 
   QVector<Enums::Particle> selectedParticles = m_particleSelector->selectedElementsVector();
   foreach (Enums::Particle particle, selectedParticles) {
     TH1D* h = (FluxCalculation::instance()->*m_functionPointer)(particle);
     addHistogram(h);
     l->AddEntry(h, qPrintable(Helpers::greekifyLetters(Enums::label(particle))));
-    ++entries;
   }
 
   if (m_sumSelector->selectedElementsVector().count()) {
@@ -102,17 +91,32 @@ void SpectrumPlot::update()
     QString label = Helpers::greekifyLetters(Enums::label(particles));
     label.replace(" |", ",");
     l->AddEntry(h, qPrintable("sum of " + label));
-    ++entries;
   }
 
+}
+
+void SpectrumPlot::resizeLegend()
+{
+  TLegend* l = legend();
   l->SetX1NDC(0.75);
   l->SetX2NDC(0.88);
-  l->SetY1NDC(0.88 - 0.03 * entries);
+  l->SetY1NDC(0.88 - 0.03 * l->GetNRows());
   l->SetY2NDC(0.88);
+}
 
+void SpectrumPlot::draw(TCanvas* canvas)
+{
+  m_canvas = canvas;
+  update();
+}
+
+void SpectrumPlot::update()
+{
+  removeHistograms();
+  addSpectra();
+  resizeLegend();
   Q_ASSERT(m_canvas);
   H1DPlot::draw(m_canvas);
-
   gPad->Modified();
   gPad->Update();
 }

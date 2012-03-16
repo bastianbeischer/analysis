@@ -36,7 +36,11 @@ CLASSES = \
   RawSpectrum \
   FluxSpectrum \
   FluxCalculation \
-  MeasurementTimePlot
+  MeasurementTimePlot \
+  SimulationFluxKey \
+  SimulationFluxReader \
+  SimulationFluxSelector
+
 
 SOURCES = \
   main.cc

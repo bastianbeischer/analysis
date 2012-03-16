@@ -26,6 +26,8 @@ protected:
 
   SpectrumPlot(SpectrumFunctionPointer);
   TH1D* newSummedSpectrum(Enums::Particles) const;
+  void addSpectra();
+  void resizeLegend();
 
   SpectrumFunctionPointer m_functionPointer;
   TCanvas* m_canvas;

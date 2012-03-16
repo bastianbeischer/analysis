@@ -16,12 +16,19 @@ class EnumSelector : public SelectionWidget
 {
 public:
   typedef typename QMap<T, QString>::ConstIterator EnumIterator;
+
+  EnumSelector(const QString& text, QWidget* parent = 0)
+    : SelectionWidget(text, parent)
+    , m_actions()
+  {
+  }
+
   EnumSelector(const QString& text, EnumIterator begin, EnumIterator end, QWidget* parent = 0)
     : SelectionWidget(text, parent)
     , m_actions()
   {
     for (EnumIterator it = begin; it != end; ++it)
-      m_actions.insert(it.key(), addElement(it.value()));
+      addElement(it);
   }
 
   EnumSelector(const QString& text, EnumIterator begin, EnumIterator end, QFlags<T> flags, QWidget* parent = 0)
@@ -30,7 +37,7 @@ public:
   {
     for (EnumIterator it = begin; it != end; ++it)
       if (it.key() & flags)
-        m_actions.insert(it.key(), addElement(it.value()));
+        addElement(it);
   }
 
   EnumSelector(const QString& text, EnumIterator begin, EnumIterator end, const QVector<T>& elements, QWidget* parent = 0)
@@ -39,11 +46,18 @@ public:
   {
     for (EnumIterator it = begin; it != end; ++it)
       if (elements.contains(it.key()))
-        m_actions.insert(it.key(), addElement(it.value()));
+        addElement(it);
   }
 
   ~EnumSelector()
   {
+  }
+
+  QAction* addElement(EnumIterator it)
+  {
+    QAction* action = SelectionWidget::addElement(it.value());
+    m_actions.insert(it.key(), action);
+    return action;
   }
 
   QFlags<T> elements() const
