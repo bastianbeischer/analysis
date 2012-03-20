@@ -34,7 +34,7 @@ void Chi2PerNdfPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
+  if (!event->flagsSet(Enums::AllTrackerLayers))
     return;
   histogram()->Fill(track->chi2() / track->ndf());
 }

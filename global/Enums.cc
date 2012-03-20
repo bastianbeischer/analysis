@@ -124,6 +124,16 @@ const QMap<Enums::Situation, QString> Enums::s_situationMap = InitializableMap<E
   << QPair<Enums::Situation, QString>(Enums::KirunaFlight, "kirunaflight")
   << QPair<Enums::Situation, QString>(Enums::Testbeam11, "testbeam11");
 
+const QMap<Enums::EventFlag, QString> Enums::s_eventFlagMap = InitializableMap<Enums::EventFlag, QString>()
+  << QPair<Enums::EventFlag, QString>(Enums::AllTrackerLayers, "all tracker layers flag")
+  << QPair<Enums::EventFlag, QString>(Enums::InsideMagnet, "inside magnet flag")
+  << QPair<Enums::EventFlag, QString>(Enums::OutsideMagnet, "outside magnet flag")
+  << QPair<Enums::EventFlag, QString>(Enums::HighTransverseRigidity, "high transverse rigidity flag")
+  << QPair<Enums::EventFlag, QString>(Enums::MagnetCollision, "magnet collision flag")
+  << QPair<Enums::EventFlag, QString>(Enums::Albedo, "albedo flag")
+  << QPair<Enums::EventFlag, QString>(Enums::Chi2Good, "chi2 good flag")
+  << QPair<Enums::EventFlag, QString>(Enums::BetaGood, "beta good flag");
+
 // ChargeSign
 const QString Enums::label(Enums::ChargeSign key) {return s_chargeSignMap.value(key);}
 Enums::ChargeSign Enums::chargeSign(const QString& value) {return s_chargeSignMap.key(value);}
@@ -333,3 +343,28 @@ const QString Enums::label(Enums::Situation key) {return s_situationMap.value(ke
 Enums::Situation Enums::situation(const QString& value) {return s_situationMap.key(value);}
 QMap<Enums::Situation, QString>::ConstIterator Enums::situationBegin() {return s_situationMap.constBegin();}
 QMap<Enums::Situation, QString>::ConstIterator Enums::situationEnd() {return s_situationMap.constEnd();}
+
+// EventFlag
+const QString Enums::label(Enums::EventFlag key) {return s_eventFlagMap.value(key);}
+Enums::EventFlag Enums::eventFlag(const QString& value) {return s_eventFlagMap.key(value);}
+Enums::EventFlagIterator Enums::eventFlagBegin() {return s_eventFlagMap.constBegin();}
+Enums::EventFlagIterator Enums::eventFlagEnd() {return s_eventFlagMap.constEnd();}
+const QString Enums::label(Enums::EventFlags keys)
+{
+  QString list;
+  for (Enums::EventFlagIterator it = eventFlagBegin(); it != eventFlagEnd(); ++it) {
+    if (keys & it.key()) {
+      if (!list.isEmpty())
+        list+= " | ";
+      list+= it.value();
+    }
+  }
+  return list;
+}
+Enums::EventFlags Enums::eventFlags(const QString& value)
+{
+  Enums::EventFlags variables;
+  foreach (QString string, value.split(" | "))
+    variables|= eventFlag(string);
+  return variables;
+}

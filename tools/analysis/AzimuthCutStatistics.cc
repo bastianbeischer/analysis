@@ -56,20 +56,20 @@ void AzimuthCutStatistics::processEvent(const AnalyzedEvent* event)
     return;
   histogram()->Fill(1., azimuth);
 
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!event->flagsSet(ParticleInformation::Chi2Good))
+  Enums::EventFlags flags = event->particle()->information()->eventFlags();
+  if (!event->flagsSet(Enums::Chi2Good))
     return;
   histogram()->Fill(2., azimuth);
 
-  if (!event->flagsSet(ParticleInformation::InsideMagnet))
+  if (!event->flagsSet(Enums::InsideMagnet))
     return;
   histogram()->Fill(3., azimuth);
 
-  if (!event->flagsSet(ParticleInformation::BetaGood))
+  if (!event->flagsSet(Enums::BetaGood))
     return;
   histogram()->Fill(4., azimuth);
 
-  if (event->flagsSet(ParticleInformation::Albedo))
+  if (event->flagsSet(Enums::Albedo))
     return;
   histogram()->Fill(5., azimuth);
 }

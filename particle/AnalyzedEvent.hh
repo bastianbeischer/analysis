@@ -1,6 +1,7 @@
 #ifndef AnalyzedEvent_hh
 #define AnalyzedEvent_hh
 
+#include "Enums.hh"
 #include "ParticleInformation.hh"
 
 #include <QVector>
@@ -21,8 +22,8 @@ public:
   Track* goodTrack() const;
   const Settings* settings() const;
 
-  bool flagsMatch(ParticleInformation::Flags) const;
-  bool flagsSet(ParticleInformation::Flags) const;
+  bool flagsMatch(Enums::EventFlags) const;
+  bool flagsSet(Enums::EventFlags) const;
 
   const QVector<Hit*>& clusters() const {return m_clusters;}
   void setClusters(const QVector<Hit*>& clusters) {m_clusters = clusters;}

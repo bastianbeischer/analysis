@@ -64,12 +64,12 @@ void SignalHeightCorrelationPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->particle()->track();
   if (!track)
     return;
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & ParticleInformation::Chi2Good))
+  Enums::EventFlags flags = event->particle()->information()->eventFlags();
+  if (!(flags & Enums::Chi2Good))
     return;
-  if (!(flags & ParticleInformation::AllTrackerLayers))
+  if (!(flags & Enums::AllTrackerLayers))
     return;
-  if (m_type == Rigidity && !(flags & ParticleInformation::InsideMagnet))
+  if (m_type == Rigidity && !(flags & Enums::InsideMagnet))
     return;
   int nHitsOnTrack = 0;
   double sumSignalHeightOnTrack = 0;

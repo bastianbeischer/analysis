@@ -77,8 +77,8 @@ void MultiLayerTrackingEfficiencyPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet))
+  Enums::EventFlags flags = event->particle()->information()->eventFlags();
+  if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet))
     return;
   double rigidity = event->particle()->hypothesis()->rigidity();
   int charge = event->particle()->hypothesis()->charge();

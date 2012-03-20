@@ -36,7 +36,7 @@ void BendingAnglePositionPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
+  if (!event->flagsSet(Enums::AllTrackerLayers))
     return;
 
   double alpha = track->bendingAngle();

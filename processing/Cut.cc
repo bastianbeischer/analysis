@@ -118,8 +118,8 @@ bool Cut::passes(const AnalyzedEvent* analyzedEvent) const
     const Track* track = particle->track();
     if (!track || !track->fitGood())
       return false;
-    ParticleInformation::Flags flags = particle->information()->flags();
-    if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
+    Enums::EventFlags flags = particle->information()->eventFlags();
+    if (!(flags & (Enums::Chi2Good | Enums::InsideMagnet)))
       return false;
     return passesCuts(particle->hypothesis()->rigidity());
   }
@@ -127,8 +127,8 @@ bool Cut::passes(const AnalyzedEvent* analyzedEvent) const
     const Track* track = particle->track();
     if (!track || !track->fitGood())
       return false;
-    ParticleInformation::Flags flags = particle->information()->flags();
-    if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
+    Enums::EventFlags flags = particle->information()->eventFlags();
+    if (!(flags & (Enums::Chi2Good | Enums::InsideMagnet)))
       return false;
     return passesCuts(particle->hypothesis()->beta());
   }
@@ -136,8 +136,8 @@ bool Cut::passes(const AnalyzedEvent* analyzedEvent) const
     const Track* track = particle->track();
     if (!track || !track->fitGood())
       return false;
-    ParticleInformation::Flags flags = particle->information()->flags();
-    if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
+    Enums::EventFlags flags = particle->information()->eventFlags();
+    if (!(flags & (Enums::Chi2Good | Enums::InsideMagnet)))
       return false;
     double totSum = 0.;
     int nTofHits = 0;
@@ -169,8 +169,8 @@ bool Cut::passes(const AnalyzedEvent* analyzedEvent) const
     const Track* track = particle->track();
     if (!track || !track->fitGood())
       return false;
-    ParticleInformation::Flags flags = particle->information()->flags();
-    if (!(flags & (ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet)))
+    Enums::EventFlags flags = particle->information()->eventFlags();
+    if (!(flags & (Enums::Chi2Good | Enums::InsideMagnet)))
       return false;
     return passesCuts(sumOfSignalHeights(Hit::trd, track, clusters));
   }

@@ -69,14 +69,14 @@ void AllTrackerLayersFlagEfficiency::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet))
+  if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet))
     return;
 
   //TODO: right albedo handling
   const Hypothesis* h = event->particle()->hypothesis();
   int i = m_particles.indexOf(h->particle());
   m_totalHistograms[i]->Fill(h->absoluteRigidity());
-  if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
+  if (!event->flagsSet(Enums::AllTrackerLayers))
     return;
   m_passedCutHistograms[i]->Fill(h->absoluteRigidity());
 }

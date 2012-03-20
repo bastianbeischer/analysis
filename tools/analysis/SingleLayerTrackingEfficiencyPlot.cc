@@ -71,7 +71,7 @@ void SingleLayerTrackingEfficiencyPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::InsideMagnet))
+  if (!event->flagsSet(Enums::InsideMagnet))
     return;
 
   double rigidity = event->particle()->hypothesis()->rigidity();

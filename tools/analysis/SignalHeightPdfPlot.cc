@@ -48,7 +48,7 @@ void SignalHeightPdfPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet | ParticleInformation::Chi2Good | ParticleInformation::BetaGood))
+  if (!event->flagsSet(Enums::AllTrackerLayers | Enums::InsideMagnet | Enums::Chi2Good | Enums::BetaGood))
     return;
   const Hypothesis* hypothesis = event->particle()->hypothesis();
   double absoluteRigidity = hypothesis->absoluteRigidity();

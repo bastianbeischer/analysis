@@ -38,7 +38,7 @@ void ChannelTriggerProbabilityPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::Chi2Good))
+  if (!event->flagsSet(Enums::Chi2Good))
     return;
   const TimeOfFlight* tof = event->particle()->timeOfFlight();
   const QVector<Hit*>& clusters = track->hits();

@@ -47,7 +47,7 @@ void TrackingEfficiencyVsMomentumPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::InsideMagnet | ParticleInformation::Chi2Good))
+  if (!event->flagsSet(Enums::InsideMagnet | Enums::Chi2Good))
     return;
   double rigidity = event->particle()->hypothesis()->rigidity();
   int charge = event->particle()->hypothesis()->charge();

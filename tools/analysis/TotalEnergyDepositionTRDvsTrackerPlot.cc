@@ -31,7 +31,7 @@ void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const AnalyzedEvent* ev
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::InsideMagnet | ParticleInformation::Chi2Good))
+  if (!event->flagsSet(Enums::InsideMagnet | Enums::Chi2Good))
     return;
   if (event->particle()->information()->numberOfTrackerLayers() < 7)
     return;

@@ -66,7 +66,7 @@ void RigidityMigrationHistogram::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
      return;
-  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet | ParticleInformation::Albedo))
+  if (!event->flagsSet(Enums::Chi2Good | Enums::AllTrackerLayers | Enums::InsideMagnet | Enums::Albedo))
     return;
   double rigidityData = event->particle()->hypothesis()->rigidity();
   histogram()->Fill(rigidityData, rigidityGenerated);

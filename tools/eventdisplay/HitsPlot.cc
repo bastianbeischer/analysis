@@ -156,7 +156,7 @@ void HitsPlot::processEvent(const AnalyzedEvent* event)
     sprintf(text, "#chi^{2} / ndf = %.1f / %d", track->chi2(), track->ndf());
     m_fitInfo = new TLatex(90, 100, qPrintable(QString("#chi^{2} / ndf = %1 / %2")
       .arg(track->chi2(), 0, 'g', 2).arg(track->ndf())));
-    if (event->flagsSet(ParticleInformation::Chi2Good)) {
+    if (event->flagsSet(Enums::Chi2Good)) {
       m_fitInfo->SetTextColor(kBlack);
     } else {
       m_fitInfo->SetTextColor(kRed);
@@ -171,10 +171,10 @@ void HitsPlot::processEvent(const AnalyzedEvent* event)
         Constants::magnetOuterRadius, -Constants::magnetHeight / 2.);
       box1->SetFillStyle(3003);
       box2->SetFillStyle(3003);
-      if (event->flagsSet(ParticleInformation::InsideMagnet)) {
+      if (event->flagsSet(Enums::InsideMagnet)) {
         box1->SetFillColor(kGreen);
         box2->SetFillColor(kGreen);
-      } else if (event->flagsSet(ParticleInformation::MagnetCollision)) {
+      } else if (event->flagsSet(Enums::MagnetCollision)) {
         box1->SetFillColor(kRed);
         box2->SetFillColor(kRed);
       } else {

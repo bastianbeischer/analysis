@@ -34,7 +34,7 @@ void TRDEnergyDepositionOverMomentumPlot::processEvent(const AnalyzedEvent* even
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet))
+  if (!event->flagsSet(Enums::AllTrackerLayers | Enums::InsideMagnet))
     return;
   double rigidity = event->particle()->hypothesis()->rigidity();
   if (qAbs(rigidity) > 10.)

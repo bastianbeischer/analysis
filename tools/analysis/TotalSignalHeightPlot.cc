@@ -29,7 +29,7 @@ void TotalSignalHeightPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->particle()->track();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
+  if (!event->flagsSet(Enums::AllTrackerLayers))
     return;
 
   double sum = 0;

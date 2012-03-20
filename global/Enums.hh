@@ -108,6 +108,17 @@ public:
   static QMap<Situation, QString>::ConstIterator situationBegin();
   static QMap<Situation, QString>::ConstIterator situationEnd();
 
+  enum EventFlag {NoEventFlag = 0, AllTrackerLayers = 1<<0, InsideMagnet = 1<<1, OutsideMagnet = 1<<2, HighTransverseRigidity = 1<<3,
+    MagnetCollision = 1<<4, Albedo = 1<<5, Chi2Good = 1<<6, BetaGood = 1<<7};
+  static const QString label(EventFlag);
+  static EventFlag eventFlag(const QString&);
+  typedef QMap<EventFlag, QString>::ConstIterator EventFlagIterator;
+  static EventFlagIterator eventFlagBegin();
+  static EventFlagIterator eventFlagEnd();
+  Q_DECLARE_FLAGS(EventFlags, EventFlag);
+  static const QString label(EventFlags);
+  static EventFlags eventFlags(const QString&);
+
 private:
   static const QMap<ChargeSign, QString> s_chargeSignMap;
   static const QMap<AnalysisTopic, QString> s_analysisTopicMap;
@@ -119,6 +130,7 @@ private:
   static const QMap<KineticVariable, QString> s_kineticVariableMap;
   static const QMap<ReconstructionMethod, QString> s_reconstructionMethodMap;
   static const QMap<Situation, QString> s_situationMap;
+  static const QMap<EventFlag, QString> s_eventFlagMap;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::AnalysisTopics);
@@ -127,5 +139,6 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::Corrections);
 Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::Particles);
 Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::LikelihoodVariables);
 Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::ReconstructionMethods);
+Q_DECLARE_OPERATORS_FOR_FLAGS(Enums::EventFlags);
 
 #endif

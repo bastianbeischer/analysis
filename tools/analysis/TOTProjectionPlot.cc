@@ -36,7 +36,7 @@ void TOTProjectionPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet))
+  if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet))
     return;
   const QVector<Hit*>& clusters = track->hits();
   double totSum = 0.;

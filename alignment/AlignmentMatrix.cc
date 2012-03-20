@@ -59,9 +59,9 @@ void AlignmentMatrix::processEvent(const AnalyzedEvent* event)
   if (!track || !track->fitGood())
     return;
 
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if ( !(flags & ParticleInformation::AllTrackerLayers) ||
-       (flags & ParticleInformation::MagnetCollision) ) {
+  Enums::EventFlags flags = event->particle()->information()->eventFlags();
+  if ( !(flags & Enums::AllTrackerLayers) ||
+       (flags & Enums::MagnetCollision) ) {
     return;
   }
 

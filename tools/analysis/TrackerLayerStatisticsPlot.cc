@@ -46,7 +46,7 @@ void TrackerLayerStatisticsPlot::processEvent(const AnalyzedEvent* event)
   if (!track)
     return;
   // only tracks inside magnet are relevant: these really pass all 8 layers.
-  if (!event->flagsSet(ParticleInformation::InsideMagnet))
+  if (!event->flagsSet(Enums::InsideMagnet))
     return;
 
   const ParticleInformation* info = event->particle()->information();

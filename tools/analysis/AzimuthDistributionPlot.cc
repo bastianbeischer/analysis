@@ -39,9 +39,9 @@ void AzimuthDistributionPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet))
+  if (!event->flagsSet(Enums::Chi2Good | Enums::AllTrackerLayers | Enums::InsideMagnet))
     return;
-  if (event->flagsSet(ParticleInformation::Albedo))
+  if (event->flagsSet(Enums::Albedo))
     return;
 
   double xU = track->x(Constants::upperTofPosition);

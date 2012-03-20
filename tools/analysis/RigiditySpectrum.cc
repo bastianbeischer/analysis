@@ -52,9 +52,9 @@ void RigiditySpectrum::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::FluxAnalysisFlags))
+  if (!event->flagsSet(Enums::Chi2Good | Enums::BetaGood | Enums::InsideMagnet | Enums::AllTrackerLayers))
     return;
-  if (m_albedo != event->flagsSet(ParticleInformation::Albedo))
+  if (m_albedo != event->flagsSet(Enums::Albedo))
     return;
   const Hypothesis* h = event->particle()->hypothesis();
   int i = m_particles.indexOf(h->particle());

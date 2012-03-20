@@ -29,7 +29,7 @@ void BendingPositionPlot::processEvent(const AnalyzedEvent* event)
 
   if (track->type() == Enums::BrokenLine) {
     const BrokenLine* line = static_cast<const BrokenLine*>(track);
-    if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
+    if (!event->flagsSet(Enums::AllTrackerLayers))
       return;
     histogram()->Fill(line->zIntersection());
   }

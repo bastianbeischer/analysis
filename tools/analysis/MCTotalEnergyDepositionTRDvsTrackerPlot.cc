@@ -52,7 +52,7 @@ void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const AnalyzedEvent* 
     return;
 
   //check if track was inside of magnet
-  if (!event->flagsSet(ParticleInformation::InsideMagnet))
+  if (!event->flagsSet(Enums::InsideMagnet))
     return;
 
 

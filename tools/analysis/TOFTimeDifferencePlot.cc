@@ -43,7 +43,7 @@ void TOFTimeDifferencePlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track || track->chi2() / track->ndf() > 3.)
     return;
-  if (!event->flagsSet(ParticleInformation::Chi2Good))
+  if (!event->flagsSet(Enums::Chi2Good))
     return;
 
   const QVector<Hit*>& clusters = track->hits();

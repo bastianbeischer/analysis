@@ -274,9 +274,9 @@ void RigidityResolutionPlot::processEvent(const AnalyzedEvent* event)
   Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet | ParticleInformation::BetaGood))
+  if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet | Enums::BetaGood))
     return;
-  if (event->flagsSet(ParticleInformation::MagnetCollision))
+  if (event->flagsSet(Enums::MagnetCollision))
     return;
 
   const QMap<Enums::ReconstructionMethod, Hypothesis*>& hypotheses = event->particle()->hypotheses();

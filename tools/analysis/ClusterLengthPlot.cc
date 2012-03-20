@@ -33,7 +33,7 @@ void ClusterLengthPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->particle()->track();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
+  if (!event->flagsSet(Enums::AllTrackerLayers))
     return;
 
   const QVector<Hit*>::const_iterator endIt = event->clusters().end();

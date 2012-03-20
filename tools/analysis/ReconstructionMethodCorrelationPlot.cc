@@ -33,7 +33,7 @@ void ReconstructionMethodCorrelationPlot::processEvent(const AnalyzedEvent* even
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::AllTrackerLayers | ParticleInformation::InsideMagnet | ParticleInformation::Chi2Good | ParticleInformation::BetaGood))
+  if (!event->flagsSet(Enums::AllTrackerLayers | Enums::InsideMagnet | Enums::Chi2Good | Enums::BetaGood))
     return;
   const Hypothesis* hypothesisX = event->particle()->hypothesis(m_methodX);
   Q_ASSERT(hypothesisX);

@@ -43,7 +43,7 @@ void Chi2VsMomentumPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
+  if (!event->flagsSet(Enums::AllTrackerLayers))
     return;
   histogram()->Fill(event->particle()->hypothesis()->rigidity(), track->chi2() / track->ndf());
   m_normHisto->Fill(event->particle()->hypothesis()->rigidity());

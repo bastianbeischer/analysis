@@ -52,7 +52,7 @@ void TOTSignalCorrelation::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet))
+  if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet))
     return;
   double totSum = 0.;
   int nTofHits = 0;

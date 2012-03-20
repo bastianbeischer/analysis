@@ -1,6 +1,8 @@
 #ifndef ParticleSelection_hh
 #define ParticleSelection_hh
 
+#include "Enums.hh"
+
 #include <QFlags>
 #include <QMap>
 
@@ -11,16 +13,10 @@ public:
   ParticleInformation(const Particle* particle);
   ~ParticleInformation();
 
-  enum Flag {None=0, AllTrackerLayers=1<<0, InsideMagnet=1<<1, OutsideMagnet=1<<2, HighTransverseRigidity=1<<3,
-    MagnetCollision=1<<4, Albedo=1<<5, Chi2Good=1<<6, BetaGood=1<<7,
-    FluxAnalysisFlags = Chi2Good | ParticleInformation::BetaGood | ParticleInformation::InsideMagnet | ParticleInformation::AllTrackerLayers};
-
-  Q_DECLARE_FLAGS(Flags, Flag);
-
 public:
   void process();
   void reset();
-  const Flags& flags() const {return m_flags;}
+  const Enums::EventFlags& eventFlags() const {return m_flags;}
   const QMap<double,int>& hitsInLayers() const {return m_hitsInLayers;}
   int numberOfTrackerLayers() const {return m_hitsInLayers.size();}
 
@@ -36,11 +32,9 @@ private:
 
 private:
   const Particle* m_particle;
-  Flags m_flags;
+  Enums::EventFlags m_flags;
   QMap<double, int> m_hitsInLayers;
 
 };
-
-Q_DECLARE_OPERATORS_FOR_FLAGS(ParticleInformation::Flags);
 
 #endif /* ParticleSelection_hh */

@@ -44,7 +44,7 @@ void AzimuthMigrationHistogram::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet | ParticleInformation::Albedo))
+  if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet | Enums::Albedo))
     return;
   if (!event->simpleEvent()->MCInformation()->primary()->isInsideMagnet())
     return;

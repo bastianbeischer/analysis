@@ -54,11 +54,11 @@ void AlbedosVsMomentumPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet | ParticleInformation::BetaGood))
+  if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet | Enums::BetaGood))
     return;
   double rigidity = event->particle()->hypothesis()->rigidity();
   m_totalHisto->Fill(rigidity);
-  if (event->flagsSet(ParticleInformation::Albedo))
+  if (event->flagsSet(Enums::Albedo))
     m_albedoHisto->Fill(rigidity);
 }
 

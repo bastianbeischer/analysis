@@ -69,9 +69,9 @@ void AzimuthPositionCorrelation::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet | ParticleInformation::BetaGood))
+  if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet | Enums::BetaGood))
     return;
-  if (event->flagsSet(ParticleInformation::Albedo))
+  if (event->flagsSet(Enums::Albedo))
     return;
 
   int charge = event->particle()->hypothesis()->charge();

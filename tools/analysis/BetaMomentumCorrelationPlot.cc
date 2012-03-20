@@ -84,7 +84,7 @@ void BetaMomentumCorrelationPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::InsideMagnet | ParticleInformation::BetaGood))
+  if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet | Enums::BetaGood))
     return;
   const Hypothesis* h = event->particle()->hypothesis();
   double rigidity = m_hypothesisRigidity ? h->rigidity() : event->particle()->track()->rigidity();

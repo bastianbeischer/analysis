@@ -46,7 +46,7 @@ void TOFTimeShiftPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::Chi2Good))
+  if (!event->flagsSet(Enums::Chi2Good))
     return;
 
   const QVector<Hit*>& hits = track->hits();

@@ -57,7 +57,7 @@ void ResidualPlot::processEvent(const AnalyzedEvent* event)
   if (!track)
     return;
 
-  if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
+  if (!event->flagsSet(Enums::AllTrackerLayers))
     return;
 
   // remove hits in this layer from hits for track fit

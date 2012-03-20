@@ -35,15 +35,15 @@ void BendingAnglePlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
+  if (!event->flagsSet(Enums::AllTrackerLayers))
     return;
 
   double alpha = track->bendingAngle();
 
   histogram(0)->Fill(alpha);
-  if(event->flagsSet(ParticleInformation::InsideMagnet))
+  if(event->flagsSet(Enums::InsideMagnet))
     histogram(1)->Fill(alpha);
-  if(event->flagsSet(ParticleInformation::OutsideMagnet))
+  if(event->flagsSet(Enums::OutsideMagnet))
     histogram(2)->Fill(alpha);
 }
 

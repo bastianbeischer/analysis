@@ -61,7 +61,7 @@ void TOFProbabilityDensityFunction::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::BetaGood))
+  if (!event->flagsSet(Enums::Chi2Good | Enums::BetaGood))
     return;
 
   const Settings* settings = event->settings();

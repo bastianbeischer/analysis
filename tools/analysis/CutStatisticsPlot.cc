@@ -44,15 +44,15 @@ void CutStatisticsPlot::processEvent(const AnalyzedEvent* event)
     return;
   histogram()->Fill(1);
 
-  if (!event->flagsSet(ParticleInformation::InsideMagnet))
+  if (!event->flagsSet(Enums::InsideMagnet))
     return;
   histogram()->Fill(2);
 
-  if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
+  if (!event->flagsSet(Enums::AllTrackerLayers))
     return;
   histogram()->Fill(3);
 
-  if (event->flagsSet(ParticleInformation::Albedo))
+  if (event->flagsSet(Enums::Albedo))
     return;
   histogram()->Fill(4);
 }

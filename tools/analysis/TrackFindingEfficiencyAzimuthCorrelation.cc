@@ -98,8 +98,8 @@ void TrackFindingEfficiencyAzimuthCorrelation::processEvent(const AnalyzedEvent*
   const Track* track = event->particle()->track();
   if (!track || !track->fitGood())
     return;
-  ParticleInformation::Flags flags = event->particle()->information()->flags();
-  if (!(flags & (ParticleInformation::Chi2Good)))
+  Enums::EventFlags flags = event->particle()->information()->eventFlags();
+  if (!(flags & (Enums::Chi2Good)))
     return;
 
   if (fillHistogram)

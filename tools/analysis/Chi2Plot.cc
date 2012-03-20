@@ -53,7 +53,7 @@ void Chi2Plot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::AllTrackerLayers))
+  if (!event->flagsSet(Enums::AllTrackerLayers))
     return;
   if (track->ndf() == m_ndf)
     histogram()->Fill(track->chi2());

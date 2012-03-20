@@ -48,7 +48,7 @@ void BetaPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::Chi2Good | ParticleInformation::BetaGood))
+  if (!event->flagsSet(Enums::Chi2Good | Enums::BetaGood))
     return;
   histogram()->Fill(1./event->particle()->hypothesis()->beta());
 }

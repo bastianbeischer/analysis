@@ -47,16 +47,16 @@ const Settings* AnalyzedEvent::settings() const
   return SettingsManager::instance()->settingsForEvent(m_simpleEvent);
 }
 
-bool AnalyzedEvent::flagsMatch(ParticleInformation::Flags flags) const
+bool AnalyzedEvent::flagsMatch(Enums::EventFlags flags) const
 {
   Q_ASSERT(m_particle);
   Q_ASSERT(m_particle->information());
-  return m_particle->information()->flags() == flags;
+  return m_particle->information()->eventFlags() == flags;
 }
 
-bool AnalyzedEvent::flagsSet(ParticleInformation::Flags flags) const
+bool AnalyzedEvent::flagsSet(Enums::EventFlags flags) const
 {
   Q_ASSERT(m_particle);
   Q_ASSERT(m_particle->information());
-  return ((m_particle->information()->flags() & flags) == flags) && (flags != 0);
+  return ((m_particle->information()->eventFlags() & flags) == flags) && (flags != 0);
 }

@@ -59,11 +59,11 @@ void TOFBarShiftPlot::processEvent(const AnalyzedEvent* event)
   if (!track)
     return;
   const Settings* settings = event->settings();
-  if (!event->flagsSet(ParticleInformation::Chi2Good))
+  if (!event->flagsSet(Enums::Chi2Good))
     return;
-  if (!settings && !event->flagsSet(ParticleInformation::InsideMagnet))
+  if (!settings && !event->flagsSet(Enums::InsideMagnet))
     return;
-  if (settings && settings->situation() != Enums::Testbeam11 && !event->flagsSet(ParticleInformation::InsideMagnet))
+  if (settings && settings->situation() != Enums::Testbeam11 && !event->flagsSet(Enums::InsideMagnet))
     return;
 
   const TimeOfFlight* tof = event->particle()->timeOfFlight();

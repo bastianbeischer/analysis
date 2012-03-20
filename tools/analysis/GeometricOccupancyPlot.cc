@@ -32,7 +32,7 @@ void GeometricOccupancyPlot::processEvent(const AnalyzedEvent* event)
   const Track* track = event->goodTrack();
   if (!track)
     return;
-  if (!event->flagsSet(ParticleInformation::Chi2Good))
+  if (!event->flagsSet(Enums::Chi2Good))
     return;
 
   histogram()->Fill(track->y(m_zPosition), track->x(m_zPosition));
