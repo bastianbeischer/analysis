@@ -14,6 +14,7 @@
 #include <QMap>
 #include <QVector>
 
+class AnalyzedEvent;
 class Particle;
 class TrackFinding;
 class ParticleIdentifier;
@@ -49,6 +50,7 @@ private:
 
   Enums::Particles m_particles;
   Enums::LikelihoodVariables m_likelihoods;
+  AnalyzedEvent* m_analyzedEvent;
   Particle* m_particle;
   ParticleFilter* m_particleFilter;
   CutFilter* m_cutFilter;

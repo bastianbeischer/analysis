@@ -15,7 +15,9 @@ class Track;
 class AnalyzedEvent {
 public:
   AnalyzedEvent();
-  ~AnalyzedEvent();
+  virtual ~AnalyzedEvent();
+
+  void reset();
 
   bool hasTrack() const;
   bool hasGoodTrack() const;

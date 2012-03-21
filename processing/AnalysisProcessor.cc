@@ -23,6 +23,7 @@ AnalysisProcessor::AnalysisProcessor()
   : EventProcessor()
   , m_particles(Enums::NoParticle)
   , m_likelihoods(Enums::UndefinedLikelihood)
+  , m_analyzedEvent(new AnalyzedEvent)
   , m_particle(new Particle)
   , m_particleFilter(new ParticleFilter)
   , m_cutFilter(new CutFilter)
@@ -41,6 +42,7 @@ AnalysisProcessor::AnalysisProcessor(QVector<EventDestination*> destinations, co
   : EventProcessor(destinations)
   , m_particles(Enums::NoParticle)
   , m_likelihoods(Enums::UndefinedLikelihood)
+  , m_analyzedEvent(new AnalyzedEvent)
   , m_particle(new Particle)
   , m_particleFilter(new ParticleFilter)
   , m_cutFilter(new CutFilter)
@@ -91,6 +93,7 @@ void AnalysisProcessor::setAnalysisProcessorSetting(const AnalysisProcessorSetti
 
 AnalysisProcessor::~AnalysisProcessor()
 {
+  delete m_analyzedEvent;
   delete m_particle;
   delete m_particleFilter;
   delete m_mcFilter;
@@ -136,16 +139,16 @@ void AnalysisProcessor::process(SimpleEvent* simpleEvent)
   m_particle->reset();
   m_corrections->preFitCorrections(simpleEvent);
 
-  AnalyzedEvent* analyzedEvent = new AnalyzedEvent;
-  analyzedEvent->setClusters(QVector<Hit*>::fromStdVector(simpleEvent->hits()));
-  analyzedEvent->setParticle(m_particle);
-  analyzedEvent->setSimpleEvent(simpleEvent);
+  m_analyzedEvent->reset();
+  m_analyzedEvent->setClusters(QVector<Hit*>::fromStdVector(simpleEvent->hits()));
+  m_analyzedEvent->setParticle(m_particle);
+  m_analyzedEvent->setSimpleEvent(simpleEvent);
 
   //check filters which need no reconstruction
   if (!m_mcFilter->passes(simpleEvent) || !m_cutFilter->passes(simpleEvent))
     return;
 
-  QVector<Hit*> trackClusters = m_trackFinding->findTrack(analyzedEvent->clusters());
+  QVector<Hit*> trackClusters = m_trackFinding->findTrack(m_analyzedEvent->clusters());
 
   Track* track = m_particle->track();
   TimeOfFlight* tof = m_particle->timeOfFlight();
@@ -165,12 +168,12 @@ void AnalysisProcessor::process(SimpleEvent* simpleEvent)
   m_identifier->identify(m_particle);
   QMap<Enums::ReconstructionMethod, Reconstruction*>::Iterator end = m_reconstructions.end();
   for (QMap<Enums::ReconstructionMethod, Reconstruction*>::Iterator it = m_reconstructions.begin(); it != end; ++it)
-    (*it)->identify(analyzedEvent);
+    (*it)->identify(m_analyzedEvent);
 
-  if (m_particleFilter->passes(m_particle) && m_cutFilter->passes(analyzedEvent)) {
+  if (m_particleFilter->passes(m_particle) && m_cutFilter->passes(m_analyzedEvent)) {
     QVector<EventDestination*> postponed;
     foreach(EventDestination* destination, m_destinations) {
-      bool success = tryProcessingDestination(destination, analyzedEvent);
+      bool success = tryProcessingDestination(destination, m_analyzedEvent);
       if (!success)
         postponed.append(destination); // postpone this destination for now.
     }
@@ -178,10 +181,11 @@ void AnalysisProcessor::process(SimpleEvent* simpleEvent)
     unsigned int nPostponed = postponed.size();
     unsigned int i = 0;
     while (i < nPostponed) {
-      if (tryProcessingDestination(postponedData[i], analyzedEvent))
+      if (tryProcessingDestination(postponedData[i], m_analyzedEvent)) {
         i++;
-      else
+      } else {
         usleep(1000); // do not hammer the mutex locker with tryLock calls, better to sleep a ms
+      }
     }
   }
 }

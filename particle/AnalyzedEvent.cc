@@ -16,12 +16,13 @@ AnalyzedEvent::AnalyzedEvent()
 
 AnalyzedEvent::~AnalyzedEvent()
 {
-  for (QVector<Hit*>::Iterator it = m_clusters.begin(); it != m_clusters.end(); ++it)
-    delete *it;
-  if (m_particle)
-    delete m_particle;
-  if (m_simpleEvent)
-    delete m_simpleEvent;
+}
+
+void AnalyzedEvent::reset()
+{
+  m_clusters.clear();
+  m_particle = 0;
+  m_simpleEvent = 0;
 }
 
 bool AnalyzedEvent::hasTrack() const
