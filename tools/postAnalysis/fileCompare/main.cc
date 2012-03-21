@@ -230,7 +230,10 @@ int main(int argc, char* argv[])
   qDebug() << "Comparing" << commonKeys.count() << "common key(s)...";
   int nDifferingKeys = 0;
 
-  TFile outputFile(qPrintable(QString("differences_%1_%2").arg(QFileInfo(arguments[0]).baseName()).arg(QFileInfo(arguments[1]).baseName())), "RECREATE");
+  QString outputFileName = "diff_";
+  outputFileName+= QFileInfo(arguments[0]).baseName().left(16) + "_";
+  outputFileName+= QFileInfo(arguments[1]).baseName().left(16) + ".root";
+  TFile outputFile(qPrintable(outputFileName), "RECREATE");
   gROOT->cd();
   foreach (QString s, commonKeys) {
     TKey* key1 = file1.GetKey(qPrintable(s));
