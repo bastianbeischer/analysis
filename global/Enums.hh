@@ -109,7 +109,7 @@ public:
   static QMap<Situation, QString>::ConstIterator situationEnd();
 
   enum EventFlag {NoEventFlag = 0, AllTrackerLayers = 1<<0, InsideMagnet = 1<<1, OutsideMagnet = 1<<2, HighTransverseRigidity = 1<<3,
-    MagnetCollision = 1<<4, Albedo = 1<<5, Chi2Good = 1<<6, BetaGood = 1<<7};
+    MagnetCollision = 1<<4, Albedo = 1<<5, Chi2Good = 1<<6, BetaGood = 1<<7, TrackGood = 1<<8};
   static const QString label(EventFlag);
   static EventFlag eventFlag(const QString&);
   typedef QMap<EventFlag, QString>::ConstIterator EventFlagIterator;

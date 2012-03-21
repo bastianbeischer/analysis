@@ -132,7 +132,8 @@ const QMap<Enums::EventFlag, QString> Enums::s_eventFlagMap = InitializableMap<E
   << QPair<Enums::EventFlag, QString>(Enums::MagnetCollision, "magnet collision flag")
   << QPair<Enums::EventFlag, QString>(Enums::Albedo, "albedo flag")
   << QPair<Enums::EventFlag, QString>(Enums::Chi2Good, "chi2 good flag")
-  << QPair<Enums::EventFlag, QString>(Enums::BetaGood, "beta good flag");
+  << QPair<Enums::EventFlag, QString>(Enums::BetaGood, "beta good flag")
+  << QPair<Enums::EventFlag, QString>(Enums::TrackGood, "track good flag");
 
 // ChargeSign
 const QString Enums::label(Enums::ChargeSign key) {return s_chargeSignMap.value(key);}

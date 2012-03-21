@@ -35,6 +35,7 @@ void ParticleInformation::process()
   checkMagnetCollision();
   checkAlbedo();
   checkBetaGood();
+  checkTrackGood();
 }
 
 void ParticleInformation::reset()
@@ -146,4 +147,11 @@ void ParticleInformation::checkBetaGood()
     return;
   if (m_particle->timeOfFlight()->good())
     m_flags |= Enums::BetaGood;
+}
+
+void ParticleInformation::checkTrackGood()
+{
+  Track* track = m_particle->track();
+  if (track && track->fitGood())
+    m_flags|= Enums::TrackGood;
 }

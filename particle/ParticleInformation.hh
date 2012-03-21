@@ -7,10 +7,11 @@
 #include <QMap>
 
 class Particle;
+class Track;
 
 class ParticleInformation {
 public:
-  ParticleInformation(const Particle* particle);
+  ParticleInformation(const Particle*);
   ~ParticleInformation();
 
 public:
@@ -29,6 +30,7 @@ private:
   void checkMagnetCollision();
   void checkAlbedo();
   void checkBetaGood();
+  void checkTrackGood();
 
 private:
   const Particle* m_particle;

@@ -18,7 +18,8 @@ CLASSES += \
   Cut \
   CutFilter \
   MCFilter \
-  AnalysisProcessorSetting
+  AnalysisProcessorSetting \
+  EventFlagFilter
 
 INCLUDEPATH += \
   $$TOPLEVEL/event \

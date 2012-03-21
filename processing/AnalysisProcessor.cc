@@ -173,9 +173,11 @@ void AnalysisProcessor::process(SimpleEvent* simpleEvent)
   if (m_particleFilter->passes(m_particle) && m_cutFilter->passes(m_analyzedEvent)) {
     QVector<EventDestination*> postponed;
     foreach(EventDestination* destination, m_destinations) {
-      bool success = tryProcessingDestination(destination, m_analyzedEvent);
-      if (!success)
-        postponed.append(destination); // postpone this destination for now.
+      if (destination->eventFlagFilter().passes(m_analyzedEvent)) {
+        bool success = tryProcessingDestination(destination, m_analyzedEvent);
+        if (!success)
+          postponed.append(destination); // postpone this destination for now.
+      }
     }
     EventDestination** postponedData = postponed.data();
     unsigned int nPostponed = postponed.size();

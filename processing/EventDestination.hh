@@ -2,6 +2,7 @@
 #define EventDestination_hh
 
 #include "AnalyzedEvent.hh"
+#include "EventFlagFilter.hh"
 
 #include <QVector>
 #include <QMutex>
@@ -20,10 +21,12 @@ public:
   bool tryLock();
   void lock();
   void unlock();
-
+  void setEventFlagFilter(const EventFlagFilter& filter) {m_filter = filter;}
+  const EventFlagFilter& eventFlagFilter() const {return m_filter;}
 private:
   bool m_needsLocking;
   QMutex m_mutex;
+  EventFlagFilter m_filter;
 };
 
 #endif
