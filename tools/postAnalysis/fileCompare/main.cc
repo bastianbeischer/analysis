@@ -16,11 +16,12 @@
 #include <QtGlobal>
 #include <QFile>
 #include <QStringList>
+#include <QFileInfo>
 
 bool verbose = false;
 
 void compareKeys(const QStringList& keys1, const QStringList& keys2,
-      QStringList& common, QStringList& missing1, QStringList& missing2)
+  QStringList& common, QStringList& missing1, QStringList& missing2)
 {
   common.clear();
   missing1.clear();
@@ -179,14 +180,32 @@ void compareKeys(TKey* key1, TKey* key2, QStringList& comment, TFile& outputFile
 
 int main(int argc, char* argv[])
 {
-  if (argc != 3)
-    qFatal("Usage: \"fileCompare postAnaFile1.txt postAnaFile2.txt\"");
-  if (!QFile::exists(argv[1]) || !QFile::exists(argv[2]))
+  QStringList arguments;
+  for (int arg = 1; arg < argc; ++arg)
+    arguments.append(argv[arg]);
+
+  int argPosition = -1;
+
+  argPosition = arguments.indexOf("--verbose");
+  if (0 <= argPosition) {
+    verbose = true;
+    arguments.removeAt(argPosition);
+  }
+
+  argPosition = arguments.indexOf("-v");
+  if (0 <= argPosition) {
+    verbose = true;
+    arguments.removeAt(argPosition);
+  }
+
+  if (arguments.count() != 2)
+    qFatal("Usage: \"fileCompare [-v|--verbose] postAnaFile1.txt postAnaFile2.txt\"");
+  if (!QFile::exists(arguments[0]) || !QFile::exists(arguments[1]))
     qFatal("At least one of the files does not exist.");
 
-  TFile file1(argv[1]);
+  TFile file1(qPrintable(arguments[0]));
   gROOT->cd();
-  TFile file2(argv[2]);
+  TFile file2(qPrintable(arguments[1]));
   gROOT->cd();
 
   QStringList keys1;
@@ -200,17 +219,18 @@ int main(int argc, char* argv[])
   QStringList missingKeys1;
   QStringList missingKeys2;
   compareKeys(keys1, keys2, commonKeys, missingKeys1, missingKeys2);
-  qDebug() << missingKeys1.count() << "key(s) missing in file" << argv[1];
+  qDebug() << missingKeys1.count() << "key(s) missing in file" << arguments[0];
   foreach (QString s, missingKeys1)
     qDebug() << s;
   qDebug();
-  qDebug() << missingKeys2.count() << "key(s) missing in file" << argv[2];
+  qDebug() << missingKeys2.count() << "key(s) missing in file" << arguments[1];
   foreach (QString s, missingKeys2)
     qDebug() << s;
   qDebug();
   qDebug() << "Comparing" << commonKeys.count() << "common key(s)...";
   int nDifferingKeys = 0;
-  TFile outputFile("differences.root", "RECREATE");
+
+  TFile outputFile(qPrintable(QString("differences_%1_%2").arg(QFileInfo(arguments[0]).baseName()).arg(QFileInfo(arguments[1]).baseName())), "RECREATE");
   gROOT->cd();
   foreach (QString s, commonKeys) {
     TKey* key1 = file1.GetKey(qPrintable(s));
@@ -226,8 +246,8 @@ int main(int argc, char* argv[])
 
   qDebug();
   qDebug() << "summary:";
-  qDebug() << missingKeys1.count() << "key(s) missing in file" << argv[1];
-  qDebug() << missingKeys2.count() << "key(s) missing in file" << argv[2];
+  qDebug() << missingKeys1.count() << "key(s) missing in file" << arguments[0];
+  qDebug() << missingKeys2.count() << "key(s) missing in file" << arguments[1];
   qDebug() << nDifferingKeys << "out of" << commonKeys.count() << "common key(s) differ(s)";
 
   file2.Close();
