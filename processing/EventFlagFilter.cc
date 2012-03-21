@@ -1,5 +1,4 @@
 #include "EventFlagFilter.hh"
-
 #include "AnalyzedEvent.hh"
 
 EventFlagFilter::EventFlagFilter()

@@ -41,6 +41,8 @@ AlbedosVsMomentumPlot::AlbedosVsMomentumPlot() :
   histogram = new TH1D(qPrintable(histoTitle), qPrintable(histoTitle), nBins, lowerBound, upperBound);
   histogram->SetLineColor(kRed);
   m_albedoHisto = histogram;
+
+  addRequiredEventFlags(Enums::Chi2Good | Enums::InsideMagnet | Enums::BetaGood | Enums::TrackGood);
 }
 
 AlbedosVsMomentumPlot::~AlbedosVsMomentumPlot()
@@ -51,11 +53,6 @@ AlbedosVsMomentumPlot::~AlbedosVsMomentumPlot()
 
 void AlbedosVsMomentumPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet | Enums::BetaGood))
-    return;
   double rigidity = event->particle()->hypothesis()->rigidity();
   m_totalHisto->Fill(rigidity);
   if (event->flagsSet(Enums::Albedo))

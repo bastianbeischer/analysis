@@ -20,6 +20,8 @@ TotalEnergyDepositionTRDvsTrackerPlot::TotalEnergyDepositionTRDvsTrackerPlot() :
 
   TH2D* histogram = new TH2D(qPrintable(title()), qPrintable(title() + ";tracker mean amplitude tracker;TRD mean dE/dx"), 50, 0, 8000, 50, 0, 30);
   addHistogram(histogram);
+
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::InsideMagnet);
 }
 
 TotalEnergyDepositionTRDvsTrackerPlot::~TotalEnergyDepositionTRDvsTrackerPlot()
@@ -28,11 +30,7 @@ TotalEnergyDepositionTRDvsTrackerPlot::~TotalEnergyDepositionTRDvsTrackerPlot()
 
 void TotalEnergyDepositionTRDvsTrackerPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::InsideMagnet | Enums::Chi2Good))
-    return;
+  const Track* track = event->particle()->track();
   if (event->particle()->information()->numberOfTrackerLayers() < 7)
     return;
 

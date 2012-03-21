@@ -22,6 +22,8 @@ ReconstructionMethodCorrelationPlot::ReconstructionMethodCorrelationPlot(Enums::
   TH2D* histogram = new TH2D(qPrintable(title()), "", 240, -12., 12., 240, -12., 12.);
   setAxisTitle("R_{" + Enums::label(methodX) + "} / GV", "R_{" + Enums::label(methodY) + "} / GV" , "");
   addHistogram(histogram);
+
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::AllTrackerLayers | Enums::InsideMagnet | Enums::BetaGood);
 }
 
 ReconstructionMethodCorrelationPlot::~ReconstructionMethodCorrelationPlot()
@@ -30,11 +32,9 @@ ReconstructionMethodCorrelationPlot::~ReconstructionMethodCorrelationPlot()
 
 void ReconstructionMethodCorrelationPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::AllTrackerLayers | Enums::InsideMagnet | Enums::Chi2Good | Enums::BetaGood))
-    return;
+  Q_ASSERT(event->goodTrack());
+  Q_ASSERT(event->flagsSet(Enums::AllTrackerLayers | Enums::InsideMagnet | Enums::Chi2Good | Enums::BetaGood));
+
   const Hypothesis* hypothesisX = event->particle()->hypothesis(m_methodX);
   Q_ASSERT(hypothesisX);
   const Hypothesis* hypothesisY = event->particle()->hypothesis(m_methodY);

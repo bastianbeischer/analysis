@@ -3,17 +3,11 @@
 
 #include "PlotCollection.hh"
 
-class TOTTemperatureCorrelationPlotCollection :
-  public PlotCollection
+class TOTTemperatureCorrelationPlotCollection : public PlotCollection
 {
-
 public:
   TOTTemperatureCorrelationPlotCollection();
   ~TOTTemperatureCorrelationPlotCollection();
-
-private:
-
-
 };
 
 #endif /* TOTTemperatureCorrelationPlotCollection_hh */

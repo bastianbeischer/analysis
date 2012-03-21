@@ -36,6 +36,8 @@ BetaPlot::BetaPlot()
   m_line->SetLineColor(kGreen);
   m_line->SetLineStyle(2);
   m_line->SetLineWidth(2);
+
+  addRequiredEventFlags(Enums::Chi2Good | Enums::BetaGood | Enums::TrackGood);
 }
 
 BetaPlot::~BetaPlot()
@@ -45,11 +47,6 @@ BetaPlot::~BetaPlot()
 
 void BetaPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good | Enums::BetaGood))
-    return;
   histogram()->Fill(1./event->particle()->hypothesis()->beta());
 }
 

@@ -77,9 +77,8 @@ void ParticleInformation::checkChi2Good()
 {
   const Track* track = m_particle->track();
 
-  if (track->chi2() / track->ndf() > 5)
-    return;
-  m_flags |= Enums::Chi2Good;
+  if (track && track->chi2() / track->ndf() < 5)
+    m_flags |= Enums::Chi2Good;
 }
 
 void ParticleInformation::checkInsideMagnet()
@@ -153,5 +152,5 @@ void ParticleInformation::checkTrackGood()
 {
   Track* track = m_particle->track();
   if (track && track->fitGood())
-    m_flags|= Enums::TrackGood;
+    m_flags |= Enums::TrackGood;
 }

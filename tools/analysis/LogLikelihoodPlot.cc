@@ -57,15 +57,11 @@ LogLikelihoodPlot::LogLikelihoodPlot(Enums::Particle signalParticle, Enums::Part
   latex = RootPlot::newLatex(.16, .80);
   latex->SetTitle(qPrintable(bgLabel));
   addLatex(latex);
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::AllTrackerLayers | Enums::InsideMagnet | Enums::BetaGood);
 }
 
 void LogLikelihoodPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::AllTrackerLayers | Enums::InsideMagnet | Enums::Chi2Good | Enums::BetaGood))
-    return;
   const Particle* particle = event->particle();
   if (particle->hypothesis()->rigidity() < 0.2)
     return;

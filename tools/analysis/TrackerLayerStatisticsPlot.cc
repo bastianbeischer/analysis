@@ -34,6 +34,9 @@ TrackerLayerStatisticsPlot::TrackerLayerStatisticsPlot() :
   legend->AddEntry(this->histogram(1),"layers in event == x", "lf");
   legend->AddEntry(this->histogram(2),"layers in event == x && hits == x", "lf");
   addLegend(legend);
+
+  // only tracks inside magnet are relevant: these really pass all 8 layers.
+  addRequiredEventFlags(Enums::TrackGood | Enums::InsideMagnet);
 }
 
 TrackerLayerStatisticsPlot::~TrackerLayerStatisticsPlot()
@@ -42,13 +45,6 @@ TrackerLayerStatisticsPlot::~TrackerLayerStatisticsPlot()
 
 void TrackerLayerStatisticsPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  // only tracks inside magnet are relevant: these really pass all 8 layers.
-  if (!event->flagsSet(Enums::InsideMagnet))
-    return;
-
   const ParticleInformation* info = event->particle()->information();
   const QMap<double,int>& hitsInLayers = info->hitsInLayers();
   unsigned short nLayers = info->numberOfTrackerLayers();

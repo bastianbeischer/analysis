@@ -25,6 +25,8 @@ TOTProjectionPlot::TOTProjectionPlot(const QString& title, TOTLayerPlot::Layer l
   TH1D* histogram = new TH1D(qPrintable(fullTitle), "", 150, 0, 100);
   setAxisTitle("mean time over threshold / ns", "");
   addHistogram(histogram);
+
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::InsideMagnet);
 }
 
 TOTProjectionPlot::~TOTProjectionPlot()
@@ -33,11 +35,7 @@ TOTProjectionPlot::~TOTProjectionPlot()
 
 void TOTProjectionPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet))
-    return;
+  const Track* track = event->particle()->track();
   const QVector<Hit*>& clusters = track->hits();
   double totSum = 0.;
   int nTofHits = 0;

@@ -5,14 +5,11 @@
 
 class QDateTime;
 
-class TRDSpectrumVsTimePlotCollection :
-  public PlotCollection
+class TRDSpectrumVsTimePlotCollection : public PlotCollection
 {
-
 public:
   TRDSpectrumVsTimePlotCollection(const QDateTime&, const QDateTime&);
   ~TRDSpectrumVsTimePlotCollection();
-
 };
 
 #endif /* TRDSpectrumVsTimePlotCollection_hh */

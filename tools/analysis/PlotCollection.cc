@@ -27,7 +27,8 @@ PlotCollection::~PlotCollection()
 void PlotCollection::processEvent(const AnalyzedEvent* event)
 {
   foreach(AnalysisPlot* plot, m_plots)
-    plot->processEvent(event);
+    if (plot->eventFlagFilter().passes(event))
+      plot->processEvent(event);
 }
 
 void PlotCollection::finalize()

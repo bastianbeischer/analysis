@@ -26,6 +26,8 @@ SignalHeightPlot::SignalHeightPlot(Enums::AnalysisTopic topic, unsigned short id
   TH1D* histogram = new TH1D(qPrintable(title()), "", bins, 0, maximum);
   setAxisTitle("signal height / adc counts", "");
   addHistogram(histogram);
+
+  addRequiredEventFlags(Enums::AllTrackerLayers);
 }
 
 SignalHeightPlot::~SignalHeightPlot()
@@ -36,8 +38,6 @@ void SignalHeightPlot::processEvent(const AnalyzedEvent* event)
 {
   const Track* track = event->particle()->track();
   if (!track)
-    return;
-  if (!event->flagsSet(Enums::AllTrackerLayers))
     return;
 
   const QVector<Hit*>::const_iterator endIt = event->clusters().end();

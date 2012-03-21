@@ -58,7 +58,7 @@ TimeResolutionPlot::TimeResolutionPlot(unsigned short id1, unsigned short id2, u
     line->SetLineWidth(2);
     m_lines.append(line);
   }
-
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good);
 }
 
 TimeResolutionPlot::~TimeResolutionPlot()
@@ -66,12 +66,9 @@ TimeResolutionPlot::~TimeResolutionPlot()
 
 void TimeResolutionPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
+  const Track* track = event->particle()->track();
+  
   const Settings* settings = event->settings();
-  if (!event->flagsSet(Enums::Chi2Good))
-    return;
   if (!settings && !event->flagsSet(Enums::InsideMagnet))
     return;
   if (settings && settings->situation() != Enums::Testbeam11 && !event->flagsSet(Enums::InsideMagnet))

@@ -16,6 +16,7 @@ BendingPositionPlot::BendingPositionPlot()
   TH1D* histogram = new TH1D("bending position", "", 1000, -1000, 1000);
   setAxisTitle("z / mm", "");
   addHistogram(histogram);
+  addRequiredEventFlags(Enums::AllTrackerLayers | Enums::TrackGood);
 }
 
 BendingPositionPlot::~BendingPositionPlot()
@@ -23,14 +24,9 @@ BendingPositionPlot::~BendingPositionPlot()
 
 void BendingPositionPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-
+  const Track* track = event->particle()->track();
   if (track->type() == Enums::BrokenLine) {
     const BrokenLine* line = static_cast<const BrokenLine*>(track);
-    if (!event->flagsSet(Enums::AllTrackerLayers))
-      return;
     histogram()->Fill(line->zIntersection());
   }
 }

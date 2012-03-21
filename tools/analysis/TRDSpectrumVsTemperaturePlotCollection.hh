@@ -3,14 +3,11 @@
 
 #include "PlotCollection.hh"
 
-class TRDSpectrumVsTemperaturePlotCollection :
-  public PlotCollection
+class TRDSpectrumVsTemperaturePlotCollection : public PlotCollection
 {
-
 public:
   TRDSpectrumVsTemperaturePlotCollection();
   ~TRDSpectrumVsTemperaturePlotCollection();
-
 };
 
 #endif /* TRDSpectrumVsTemperaturePlotCollection_hh */

@@ -36,18 +36,16 @@ TOFTimeShiftPlot::TOFTimeShiftPlot(unsigned short topBarId, unsigned short botto
   setAxisTitle("channel", "#Deltat / ns", "");
   addHistogram(histogram);
   controlWidget()->setProjectionType(ProjectionOnY);
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good);
 }
 
 TOFTimeShiftPlot::~TOFTimeShiftPlot()
-{}
+{
+}
 
 void TOFTimeShiftPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good))
-    return;
+  const Track* track = event->particle()->track();
 
   const QVector<Hit*>& hits = track->hits();
   double t[8];

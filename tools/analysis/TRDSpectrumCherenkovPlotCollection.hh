@@ -3,14 +3,11 @@
 
 #include "PlotCollection.hh"
 
-class TRDSpectrumCherenkovPlotCollection :
-  public PlotCollection
+class TRDSpectrumCherenkovPlotCollection : public PlotCollection
 {
-
 public:
   TRDSpectrumCherenkovPlotCollection();
   ~TRDSpectrumCherenkovPlotCollection();
-
 };
 
 #endif /* TRDSpectrumCherenkovPlotCollection_hh */

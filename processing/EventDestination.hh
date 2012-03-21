@@ -21,6 +21,8 @@ public:
   bool tryLock();
   void lock();
   void unlock();
+  void addRequiredEventFlags(Enums::EventFlags flags) {m_filter.addRequired(flags);}
+  void addRequiredEventFlagsAbsence(Enums::EventFlags flags) {m_filter.addRequiredAbsence(flags);}
   void setEventFlagFilter(const EventFlagFilter& filter) {m_filter = filter;}
   const EventFlagFilter& eventFlagFilter() const {return m_filter;}
 private:

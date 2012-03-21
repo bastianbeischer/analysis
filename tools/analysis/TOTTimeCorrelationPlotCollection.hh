@@ -5,17 +5,11 @@
 
 #include <QDateTime>
 
-class TOTTimeCorrelationPlotCollection :
-  public PlotCollection
+class TOTTimeCorrelationPlotCollection : public PlotCollection
 {
-
 public:
   TOTTimeCorrelationPlotCollection(const QDateTime&, const QDateTime&);
   ~TOTTimeCorrelationPlotCollection();
-
-private:
-
-
 };
 
 #endif /* TOTTimeCorrelationPlotCollection_hh */

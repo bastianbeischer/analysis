@@ -26,6 +26,8 @@ ChannelTriggerProbabilityPlot::ChannelTriggerProbabilityPlot()
   setTitle("channel trigger probability");
   TH1D* histogram = new TH1D(qPrintable(title()), "", Constants::nTofChannels, 0, Constants::nTofChannels);
   addHistogram(histogram);
+
+  addRequiredEventFlags(Enums::Chi2Good | Enums::TrackGood);
 }
 
 ChannelTriggerProbabilityPlot::~ChannelTriggerProbabilityPlot()
@@ -35,11 +37,7 @@ ChannelTriggerProbabilityPlot::~ChannelTriggerProbabilityPlot()
 
 void ChannelTriggerProbabilityPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good))
-    return;
+  const Track* track = event->particle()->track();
   const TimeOfFlight* tof = event->particle()->timeOfFlight();
   const QVector<Hit*>& clusters = track->hits();
   const QVector<Hit*>::const_iterator endIt = clusters.end();

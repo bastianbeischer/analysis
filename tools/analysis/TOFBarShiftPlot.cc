@@ -48,6 +48,8 @@ TOFBarShiftPlot::TOFBarShiftPlot(unsigned short idTop1, unsigned short idTop2, u
   addLatex(RootPlot::newLatex(.15, .79));
   addLatex(RootPlot::newLatex(.15, .76));
   addLatex(RootPlot::newLatex(.15, .73));
+
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good);
 }
 
 TOFBarShiftPlot::~TOFBarShiftPlot()
@@ -55,12 +57,9 @@ TOFBarShiftPlot::~TOFBarShiftPlot()
 
 void TOFBarShiftPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
+  const Track* track = event->particle()->track();
+  
   const Settings* settings = event->settings();
-  if (!event->flagsSet(Enums::Chi2Good))
-    return;
   if (!settings && !event->flagsSet(Enums::InsideMagnet))
     return;
   if (settings && settings->situation() != Enums::Testbeam11 && !event->flagsSet(Enums::InsideMagnet))

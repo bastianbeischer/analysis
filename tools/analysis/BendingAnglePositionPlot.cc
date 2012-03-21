@@ -24,6 +24,8 @@ BendingAnglePositionPlot::BendingAnglePositionPlot(double cut)
   addHistogram(histogram);
   m_normHisto = new TH2D(qPrintable(title()+"_all"), "", 30, -250, 250, 24, -120, 120);
   setDrawOption(LEGO);
+  
+  addRequiredEventFlags(Enums::AllTrackerLayers);
 }
 
 BendingAnglePositionPlot::~BendingAnglePositionPlot()
@@ -33,12 +35,7 @@ BendingAnglePositionPlot::~BendingAnglePositionPlot()
 
 void BendingAnglePositionPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::AllTrackerLayers))
-    return;
-
+  const Track* track = event->particle()->track();
   double alpha = track->bendingAngle();
 
   if (alpha > m_cut)

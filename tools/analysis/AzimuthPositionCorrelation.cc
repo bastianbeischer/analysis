@@ -58,6 +58,9 @@ AzimuthPositionCorrelation::AzimuthPositionCorrelation(Direction direction, Enum
 
   setDrawOption(COLZ);
   controlWidget()->spinBox()->setMaximum(histogram->GetNbinsY());
+
+  addRequiredEventFlags(Enums::Chi2Good | Enums::InsideMagnet | Enums::BetaGood | Enums::TrackGood);
+  addRequiredEventFlagsAbsence(Enums::Albedo);
 }
 
 AzimuthPositionCorrelation::~AzimuthPositionCorrelation()
@@ -66,13 +69,7 @@ AzimuthPositionCorrelation::~AzimuthPositionCorrelation()
 
 void AzimuthPositionCorrelation::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet | Enums::BetaGood))
-    return;
-  if (event->flagsSet(Enums::Albedo))
-    return;
+  const Track* track = event->particle()->track();
 
   int charge = event->particle()->hypothesis()->charge();
   if (m_type == Enums::Positive && charge < 0)

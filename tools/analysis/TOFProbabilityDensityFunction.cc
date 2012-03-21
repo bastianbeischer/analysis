@@ -50,6 +50,8 @@ TOFProbabilityDensityFunction::TOFProbabilityDensityFunction()
     entry->SetLineWidth(2);
   }
   addLegend(legend);
+
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::BetaGood);
 }
 
 TOFProbabilityDensityFunction::~TOFProbabilityDensityFunction()
@@ -58,12 +60,6 @@ TOFProbabilityDensityFunction::~TOFProbabilityDensityFunction()
 
 void TOFProbabilityDensityFunction::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good | Enums::BetaGood))
-    return;
-
   const Settings* settings = event->settings();
   if (!settings)
     return;

@@ -33,6 +33,9 @@ ZenithAzimuthCorrelation::ZenithAzimuthCorrelation()
   int up = histogram->GetYaxis()->FindBin(1);
   histogram->GetYaxis()->SetRange(low, up);
   histogram->GetYaxis()->SetTitleOffset(1.2);
+
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::AllTrackerLayers | Enums::InsideMagnet);
+  addRequiredEventFlagsAbsence(Enums::Albedo);
 }
 
 ZenithAzimuthCorrelation::~ZenithAzimuthCorrelation()
@@ -41,13 +44,7 @@ ZenithAzimuthCorrelation::~ZenithAzimuthCorrelation()
 
 void ZenithAzimuthCorrelation::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good | Enums::AllTrackerLayers | Enums::InsideMagnet))
-    return;
-  if (event->flagsSet(Enums::Albedo))
-    return;
+  const Track* track = event->particle()->track();
 
   double xU = track->x(Constants::upperTofPosition);
   double yU = track->y(Constants::upperTofPosition);

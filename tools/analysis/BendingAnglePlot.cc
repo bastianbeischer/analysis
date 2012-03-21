@@ -25,6 +25,8 @@ BendingAnglePlot::BendingAnglePlot()
   histogram = new TH1D("bending angle outside magnet", "", 400, -.2, .2);
   histogram->SetLineColor(kBlue);
   addHistogram(histogram);
+  
+  addRequiredEventFlags(Enums::AllTrackerLayers | Enums::TrackGood);
 }
 
 BendingAnglePlot::~BendingAnglePlot()
@@ -32,12 +34,7 @@ BendingAnglePlot::~BendingAnglePlot()
 
 void BendingAnglePlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::AllTrackerLayers))
-    return;
-
+  const Track* track = event->particle()->track();
   double alpha = track->bendingAngle();
 
   histogram(0)->Fill(alpha);

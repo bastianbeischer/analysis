@@ -26,6 +26,9 @@ ZenithDistributionPlot::ZenithDistributionPlot() :
   setAxisTitle("cos(zenith)", "entries");
   addHistogram(histogram);
   addLatex(RootPlot::newLatex(.15, .85));
+
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::AllTrackerLayers | Enums::InsideMagnet);
+  addRequiredEventFlagsAbsence(Enums::Albedo);
 }
 
 ZenithDistributionPlot::~ZenithDistributionPlot()
@@ -34,13 +37,7 @@ ZenithDistributionPlot::~ZenithDistributionPlot()
 
 void ZenithDistributionPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good | Enums::AllTrackerLayers | Enums::InsideMagnet))
-    return;
-  if (event->flagsSet(Enums::Albedo))
-    return;
+  const Track* track = event->particle()->track();
 
   double xU = track->x(Constants::upperTofPosition);
   double yU = track->y(Constants::upperTofPosition);

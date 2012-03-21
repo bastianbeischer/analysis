@@ -37,6 +37,8 @@ SignalHeightPdfPlot::SignalHeightPdfPlot(const QString& axisTitle, Hit::ModuleTy
   setAxisTitle("|R| / GV", axisTitle, "");
   setDrawOption(RootPlot::COLZ);
   setTitle(title);
+
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::AllTrackerLayers | Enums::InsideMagnet | Enums::BetaGood);
 }
 
 SignalHeightPdfPlot::~SignalHeightPdfPlot()
@@ -45,11 +47,6 @@ SignalHeightPdfPlot::~SignalHeightPdfPlot()
 
 void SignalHeightPdfPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::AllTrackerLayers | Enums::InsideMagnet | Enums::Chi2Good | Enums::BetaGood))
-    return;
   const Hypothesis* hypothesis = event->particle()->hypothesis();
   double absoluteRigidity = hypothesis->absoluteRigidity();
   Enums::Particle particleType = hypothesis->particle();

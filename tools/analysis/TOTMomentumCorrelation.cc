@@ -25,6 +25,8 @@ TOTMomentumCorrelation::TOTMomentumCorrelation(const QString& title, TOTLayerPlo
   TH2D* histogram = new TH2D(qPrintable(fullTitle), "", 100, 0, 10, 150, 0, 100);
   setAxisTitle("rigidity / GV", "mean time over threshold / ns", "");
   addHistogram(histogram);
+
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::InsideMagnet);
 }
 
 TOTMomentumCorrelation::~TOTMomentumCorrelation()
@@ -32,11 +34,7 @@ TOTMomentumCorrelation::~TOTMomentumCorrelation()
 
 void TOTMomentumCorrelation::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet))
-    return;
+  const Track* track = event->particle()->track();
 
   double totSum = 0.;
   int nTofHits = 0;

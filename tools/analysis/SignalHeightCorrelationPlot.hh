@@ -19,9 +19,11 @@ public:
   void processEvent(const AnalyzedEvent*);
   void update();
 private:
+  void setup();
+
   unsigned short m_id;
   CorrelationType m_type;
-  TH2D* m_histo;
+  TH2D* m_histogram;
   TH1D* m_normHisto;
 };
 

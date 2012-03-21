@@ -44,6 +44,8 @@ ResidualPlot::ResidualPlot(Enums::AnalysisTopic topic, Layer* layer)
 
   setAxisTitle("channel number", "residue / mm", "");
   addHistogram(histogram);
+
+  addRequiredEventFlags(Enums::TrackGood | Enums::AllTrackerLayers);
 }
 
 ResidualPlot::~ResidualPlot()
@@ -52,13 +54,7 @@ ResidualPlot::~ResidualPlot()
 
 void ResidualPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-
-  if (!track)
-    return;
-
-  if (!event->flagsSet(Enums::AllTrackerLayers))
-    return;
+  const Track* track = event->particle()->track();
 
   // remove hits in this layer from hits for track fit
   QVector<Hit*> hitsInThisLayer;

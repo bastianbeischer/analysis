@@ -23,6 +23,8 @@ Chi2PerNdfPlot::Chi2PerNdfPlot() :
 
   addLatex(RootPlot::newLatex(.55, .85));
   addLatex(RootPlot::newLatex(.55, .82));
+
+  addRequiredEventFlags(Enums::AllTrackerLayers | Enums::TrackGood);
 }
 
 Chi2PerNdfPlot::~Chi2PerNdfPlot()
@@ -31,11 +33,7 @@ Chi2PerNdfPlot::~Chi2PerNdfPlot()
 
 void Chi2PerNdfPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::AllTrackerLayers))
-    return;
+  const Track* track = event->particle()->track();
   histogram()->Fill(track->chi2() / track->ndf());
 }
 

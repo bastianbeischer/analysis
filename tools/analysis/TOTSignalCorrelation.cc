@@ -42,6 +42,7 @@ TOTSignalCorrelation::TOTSignalCorrelation(const QString& title, Hit::ModuleType
   TH2D* histogram = new TH2D(qPrintable(fullTitle), "", nBinsX, xMin, xMax, 100, 0, 100);
   setAxisTitle("signal height / ADC counts", "mean time over threshold / ns", "");
   addHistogram(histogram);
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::InsideMagnet);
 }
 
 TOTSignalCorrelation::~TOTSignalCorrelation()
@@ -49,11 +50,7 @@ TOTSignalCorrelation::~TOTSignalCorrelation()
 
 void TOTSignalCorrelation::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet))
-    return;
+  const Track* track = event->particle()->track();
   double totSum = 0.;
   int nTofHits = 0;
   const QVector<Hit*>& clusters = track->hits();

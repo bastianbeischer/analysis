@@ -41,6 +41,10 @@ RigiditySpectrum::RigiditySpectrum(Enums::Particles particles, bool albedo)
     addHistogram(histogram);
   }
   setAxisTitle("|R| / GV", "");
+
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::AllTrackerLayers | Enums::InsideMagnet | Enums::BetaGood);
+  if (m_albedo) addRequiredEventFlags(Enums::Albedo);
+  else addRequiredEventFlagsAbsence(Enums::Albedo);
 }
 
 RigiditySpectrum::~RigiditySpectrum()
@@ -49,13 +53,6 @@ RigiditySpectrum::~RigiditySpectrum()
 
 void RigiditySpectrum::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good | Enums::BetaGood | Enums::InsideMagnet | Enums::AllTrackerLayers))
-    return;
-  if (m_albedo != event->flagsSet(Enums::Albedo))
-    return;
   const Hypothesis* h = event->particle()->hypothesis();
   int i = m_particles.indexOf(h->particle());
   histogram(i)->Fill(h->absoluteRigidity());

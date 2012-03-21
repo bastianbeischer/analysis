@@ -42,6 +42,8 @@ Chi2Plot::Chi2Plot(unsigned short ndf) :
 
   addLatex(RootPlot::newLatex(.55, .85));
   addLatex(RootPlot::newLatex(.55, .82));
+
+  addRequiredEventFlags(Enums::AllTrackerLayers | Enums::TrackGood);
 }
 
 Chi2Plot::~Chi2Plot()
@@ -50,11 +52,7 @@ Chi2Plot::~Chi2Plot()
 
 void Chi2Plot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::AllTrackerLayers))
-    return;
+  const Track* track = event->particle()->track();
   if (track->ndf() == m_ndf)
     histogram()->Fill(track->chi2());
 }

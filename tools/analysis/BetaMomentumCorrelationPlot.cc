@@ -73,6 +73,8 @@ BetaMomentumCorrelationPlot::BetaMomentumCorrelationPlot(bool hypothesisRigidity
     legend->AddEntry(f, qPrintable(Enums::label(particle)), "l");
   }
   addLegend(legend);
+
+  addRequiredEventFlags(Enums::Chi2Good | Enums::InsideMagnet | Enums::BetaGood | Enums::TrackGood);
 }
 
 BetaMomentumCorrelationPlot::~BetaMomentumCorrelationPlot()
@@ -81,11 +83,6 @@ BetaMomentumCorrelationPlot::~BetaMomentumCorrelationPlot()
 
 void BetaMomentumCorrelationPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet | Enums::BetaGood))
-    return;
   const Hypothesis* h = event->particle()->hypothesis();
   double rigidity = m_hypothesisRigidity ? h->rigidity() : event->particle()->track()->rigidity();
   double beta = m_hypothesisBeta ? h->beta() : event->particle()->timeOfFlight()->beta();

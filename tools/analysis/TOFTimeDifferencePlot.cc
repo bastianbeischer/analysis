@@ -31,6 +31,8 @@ TOFTimeDifferencePlot::TOFTimeDifferencePlot(unsigned short id)
   setAxisTitle("y_{tracker} / mm", "x_{tracker} / mm", "(t_{left} - t_{right}) / ns");
   addHistogram(histogram);
   setDrawOption(SURF1);
+
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good);
 }
 
 TOFTimeDifferencePlot::~TOFTimeDifferencePlot()
@@ -40,10 +42,8 @@ TOFTimeDifferencePlot::~TOFTimeDifferencePlot()
 
 void TOFTimeDifferencePlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track || track->chi2() / track->ndf() > 3.)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good))
+  const Track* track = event->particle()->track();
+  if (track->chi2() / track->ndf() > 3.)
     return;
 
   const QVector<Hit*>& clusters = track->hits();

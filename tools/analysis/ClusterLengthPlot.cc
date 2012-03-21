@@ -22,6 +22,8 @@ ClusterLengthPlot::ClusterLengthPlot(Enums::AnalysisTopic topic, unsigned short 
 
   addLatex(RootPlot::newLatex(0.65, 0.75));
   addLatex(RootPlot::newLatex(0.65, 0.70));
+
+  addRequiredEventFlags(Enums::AllTrackerLayers);
 }
 
 ClusterLengthPlot::~ClusterLengthPlot()
@@ -32,8 +34,6 @@ void ClusterLengthPlot::processEvent(const AnalyzedEvent* event)
 {
   const Track* track = event->particle()->track();
   if (!track)
-    return;
-  if (!event->flagsSet(Enums::AllTrackerLayers))
     return;
 
   const QVector<Hit*>::const_iterator endIt = event->clusters().end();

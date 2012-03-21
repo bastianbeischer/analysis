@@ -46,6 +46,8 @@ SignalHeight2DPlot::SignalHeight2DPlot()
     xAxis()->SetBinLabel(channel + 1, qPrintable(QString("0x%1").arg(id, 0, 16)));
   }
   m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", counter, -0.5, counter - 0.5);
+
+  addRequiredEventFlags(Enums::AllTrackerLayers);
 }
 
 SignalHeight2DPlot::~SignalHeight2DPlot()
@@ -58,8 +60,6 @@ void SignalHeight2DPlot::processEvent(const AnalyzedEvent* event)
 {
   const Track* track = event->particle()->track();
   if (!track)
-    return;
-  if (!event->flagsSet(Enums::AllTrackerLayers))
     return;
 
   const QVector<Hit*>::const_iterator endIt = track->hits().end();

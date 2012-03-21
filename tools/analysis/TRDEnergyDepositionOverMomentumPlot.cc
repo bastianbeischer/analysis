@@ -23,6 +23,8 @@ TRDEnergyDepositionOverMomentumPlot::TRDEnergyDepositionOverMomentumPlot(Enums::
   TH2D* histo = new TH2D(qPrintable(title()), qPrintable(title()), 200, -10, 10, 200, 0, 60);
   setAxisTitle("R / GV", "dE/dx", "");
   addHistogram(histo);
+  
+  addRequiredEventFlags(Enums::TrackGood | Enums::AllTrackerLayers | Enums::InsideMagnet);
 }
 
 TRDEnergyDepositionOverMomentumPlot::~TRDEnergyDepositionOverMomentumPlot()
@@ -31,11 +33,7 @@ TRDEnergyDepositionOverMomentumPlot::~TRDEnergyDepositionOverMomentumPlot()
 
 void TRDEnergyDepositionOverMomentumPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::AllTrackerLayers | Enums::InsideMagnet))
-    return;
+  const Track* track = event->particle()->track();
   double rigidity = event->particle()->hypothesis()->rigidity();
   if (qAbs(rigidity) > 10.)
     return;

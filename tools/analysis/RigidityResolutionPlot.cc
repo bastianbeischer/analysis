@@ -128,6 +128,7 @@ RigidityResolutionPlot::RigidityResolutionPlot(Enums::AnalysisTopic topic, Enums
   m_rigDistributionWidget->GetCanvas()->Divide(5, 1);
   setSecondaryWidget(m_rigDistributionWidget);
 
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::InsideMagnet | Enums::BetaGood);
 }
 
 RigidityResolutionPlot::~RigidityResolutionPlot()
@@ -271,14 +272,6 @@ void RigidityResolutionPlot::positionChanged(double posX, double)
 
 void RigidityResolutionPlot::processEvent(const AnalyzedEvent* event)
 {
-  Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet | Enums::BetaGood))
-    return;
-  if (event->flagsSet(Enums::MagnetCollision))
-    return;
-
   const QMap<Enums::ReconstructionMethod, Hypothesis*>& hypotheses = event->particle()->hypotheses();
   QMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator it = hypotheses.constBegin();
   const QMap<Enums::ReconstructionMethod, Hypothesis*>::ConstIterator end = hypotheses.constEnd();

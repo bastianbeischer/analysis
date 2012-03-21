@@ -52,6 +52,8 @@ TRDEfficiencyPlot::TRDEfficiencyPlot()
 
   //connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
   //m_updateTimer.start(3000);
+  
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good);
 }
 
 TRDEfficiencyPlot::~TRDEfficiencyPlot()
@@ -62,11 +64,7 @@ TRDEfficiencyPlot::~TRDEfficiencyPlot()
 
 void TRDEfficiencyPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good))
-    return;
+  const Track* track = event->particle()->track();
 
   //TODO: check for off track hits, atm this is Bastians criteria for on track
   const QVector<Hit*>::const_iterator hitsEnd = track->hits().end();

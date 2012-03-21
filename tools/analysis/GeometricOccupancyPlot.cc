@@ -22,6 +22,8 @@ GeometricOccupancyPlot::GeometricOccupancyPlot(double zPosition)
   TH2D* histogram = new TH2D(qPrintable(title()), "", 100, -250, 250, 120, -120, 120);
   setAxisTitle("y / mm", "x / mm", "");
   addHistogram(histogram);
+
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good);
 }
 
 GeometricOccupancyPlot::~GeometricOccupancyPlot()
@@ -29,11 +31,6 @@ GeometricOccupancyPlot::~GeometricOccupancyPlot()
 
 void GeometricOccupancyPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good))
-    return;
-
+  const Track* track = event->particle()->track();
   histogram()->Fill(track->y(m_zPosition), track->x(m_zPosition));
 }

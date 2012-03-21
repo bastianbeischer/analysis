@@ -18,6 +18,8 @@ TotalSignalHeightPlot::TotalSignalHeightPlot() :
   TH1D* histogram = new TH1D(qPrintable(title()), "", bins, 0, maximum);
   setAxisTitle("signal height / adc counts", "entries");
   addHistogram(histogram);
+
+  addRequiredEventFlags(Enums::AllTrackerLayers);
 }
 
 TotalSignalHeightPlot::~TotalSignalHeightPlot()
@@ -28,8 +30,6 @@ void TotalSignalHeightPlot::processEvent(const AnalyzedEvent* event)
 {
   const Track* track = event->particle()->track();
   if (!track)
-    return;
-  if (!event->flagsSet(Enums::AllTrackerLayers))
     return;
 
   double sum = 0;

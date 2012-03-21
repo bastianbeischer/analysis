@@ -58,6 +58,8 @@ SingleLayerTrackingEfficiencyPlot::SingleLayerTrackingEfficiencyPlot(Enums::Char
     }
   }
   setDrawOption(COLZTEXT);
+
+  addRequiredEventFlags(Enums::TrackGood | Enums::InsideMagnet);
 }
 
 SingleLayerTrackingEfficiencyPlot::~SingleLayerTrackingEfficiencyPlot()
@@ -68,12 +70,6 @@ SingleLayerTrackingEfficiencyPlot::~SingleLayerTrackingEfficiencyPlot()
 
 void SingleLayerTrackingEfficiencyPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::InsideMagnet))
-    return;
-
   double rigidity = event->particle()->hypothesis()->rigidity();
   int charge = event->particle()->hypothesis()->charge();
   if (m_type == Enums::Positive && charge < 0)
@@ -88,7 +84,7 @@ void SingleLayerTrackingEfficiencyPlot::processEvent(const AnalyzedEvent* event)
     for (QVector<Hit*>::const_iterator it = event->clusters().begin(); it != endIt; ++it) {
       Hit* hit = *it;
       if (floor(hit->position().z()) == m_layerZ[i]) {
-        if (TrackFinding::isInCorridor(track, hit, 10.)) {
+        if (TrackFinding::isInCorridor(event->particle()->track(), hit, 10.)) {
           beenHit = true;
           break;
         }

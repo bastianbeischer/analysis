@@ -36,7 +36,7 @@ TRDOccupancyPlot::TRDOccupancyPlot(TrdOccupancyType occupancyType, bool onlyOnTr
     break;
   }
 
-  if(m_onlyOnTrack)
+  if (m_onlyOnTrack)
     tempTitle += ", only on track";
   else
     tempTitle += ", without any filter";
@@ -49,6 +49,8 @@ TRDOccupancyPlot::TRDOccupancyPlot(TrdOccupancyType occupancyType, bool onlyOnTr
 
   //initialize all needed ellipses
   initializeEllipses();
+
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good);
 }
 
 TRDOccupancyPlot::~TRDOccupancyPlot()
@@ -59,11 +61,7 @@ TRDOccupancyPlot::~TRDOccupancyPlot()
 
 void TRDOccupancyPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good))
-    return;
+  const Track* track = event->particle()->track();
 
   const QVector<Hit*> trackHits = track->hits();
   const QVector<Hit*>::const_iterator endIt = event->clusters().end();

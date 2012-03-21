@@ -29,6 +29,8 @@ TOFTimeShiftTriggerPlot::TOFTimeShiftTriggerPlot()
     nBins, min-.5*(max-min)/nBins, max-.5*(max-min)/nBins);
   setAxisTitle("", "#Deltat / ns", "");
   addHistogram(histogram);
+
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good);
 }
 
 TOFTimeShiftTriggerPlot::~TOFTimeShiftTriggerPlot()
@@ -36,11 +38,7 @@ TOFTimeShiftTriggerPlot::~TOFTimeShiftTriggerPlot()
 
 void TOFTimeShiftTriggerPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good))
-    return;
+  const Track* track = event->particle()->track();
 
   const TimeOfFlight* tof = event->particle()->timeOfFlight();
   const QVector<Hit*>& clusters = track->hits();

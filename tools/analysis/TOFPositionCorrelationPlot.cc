@@ -31,6 +31,8 @@ TOFPositionCorrelationPlot::TOFPositionCorrelationPlot(unsigned short id)
   addFunction(function);
   addLatex(RootPlot::newLatex(.15, .85));
   addLatex(RootPlot::newLatex(.15, .82));
+
+  addRequiredEventFlags(Enums::TrackGood | Enums::AllTrackerLayers);
 }
 
 TOFPositionCorrelationPlot::~TOFPositionCorrelationPlot()
@@ -40,11 +42,7 @@ TOFPositionCorrelationPlot::~TOFPositionCorrelationPlot()
 
 void TOFPositionCorrelationPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::AllTrackerLayers))
-    return;
+  const Track* track = event->particle()->track();
 
   const QVector<Hit*>::const_iterator endIt = event->clusters().end();
   for (QVector<Hit*>::const_iterator it = event->clusters().begin(); it != endIt; ++it) {

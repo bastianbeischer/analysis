@@ -22,17 +22,10 @@ SignalHeightCorrelationPlot::SignalHeightCorrelationPlot(unsigned short id, Corr
   , H2DProjectionPlot()
   , m_id(id)
   , m_type(type)
-  , m_histo(histogram)
+  , m_histogram(histogram)
   , m_normHisto(0)
 {
-  setTitle(histogram->GetName());
-  setAxisTitle(histogram->GetXaxis()->GetTitle(), histogram->GetYaxis()->GetTitle(), "");
-  addHistogram(new TH2D(*histogram));
-  int nBins = histogram->GetNbinsX();
-  QVector<double> binning(nBins + 1);
-  for (int bin = 0; bin <= nBins; ++bin)
-    binning[bin] = histogram->GetXaxis()->GetBinLowEdge(bin + 1);
-  m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBins, binning.constData());
+  setup();
 }
 
 SignalHeightCorrelationPlot::SignalHeightCorrelationPlot(CorrelationType type, TH2D* histogram)
@@ -40,22 +33,31 @@ SignalHeightCorrelationPlot::SignalHeightCorrelationPlot(CorrelationType type, T
   , H2DProjectionPlot()
   , m_id(0)
   , m_type(type)
-  , m_histo(histogram)
+  , m_histogram(histogram)
   , m_normHisto(0)
 {
-  setTitle(histogram->GetName());
-  setAxisTitle(histogram->GetXaxis()->GetTitle(), histogram->GetYaxis()->GetTitle(), "");
-  addHistogram(new TH2D(*histogram));
-  int nBins = histogram->GetNbinsX();
+  setup();
+}
+
+void SignalHeightCorrelationPlot::setup()
+{
+  setTitle(m_histogram->GetName());
+  setAxisTitle(m_histogram->GetXaxis()->GetTitle(), m_histogram->GetYaxis()->GetTitle(), "");
+  addHistogram(new TH2D(*m_histogram));
+  int nBins = m_histogram->GetNbinsX();
   QVector<double> binning(nBins + 1);
   for (int bin = 0; bin <= nBins; ++bin)
-    binning[bin] = histogram->GetXaxis()->GetBinLowEdge(bin + 1);
+    binning[bin] = m_histogram->GetXaxis()->GetBinLowEdge(bin + 1);
   m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBins, binning.constData());
+
+  addRequiredEventFlags(Enums::Chi2Good | Enums::AllTrackerLayers);
+  if (m_type == Rigidity)
+    addRequiredEventFlags(Enums::InsideMagnet);
 }
 
 SignalHeightCorrelationPlot::~SignalHeightCorrelationPlot()
 {
-  delete m_histo;
+  delete m_histogram;
   delete m_normHisto;
 }
 
@@ -63,13 +65,6 @@ void SignalHeightCorrelationPlot::processEvent(const AnalyzedEvent* event)
 {
   const Track* track = event->particle()->track();
   if (!track)
-    return;
-  Enums::EventFlags flags = event->particle()->information()->eventFlags();
-  if (!(flags & Enums::Chi2Good))
-    return;
-  if (!(flags & Enums::AllTrackerLayers))
-    return;
-  if (m_type == Rigidity && !(flags & Enums::InsideMagnet))
     return;
   int nHitsOnTrack = 0;
   double sumSignalHeightOnTrack = 0;
@@ -92,18 +87,18 @@ void SignalHeightCorrelationPlot::processEvent(const AnalyzedEvent* event)
           Q_ASSERT(false);
         if (std::isnan(value))
           return;
-        m_histo->Fill(value, hit->signalHeight());
+        m_histogram->Fill(value, hit->signalHeight());
         m_normHisto->Fill(value);
       }
     }
   }
   if (m_type == Rigidity)
-    m_histo->Fill(event->particle()->hypothesis()->rigidity(), sumSignalHeightOnTrack / nHitsOnTrack);
+    m_histogram->Fill(event->particle()->hypothesis()->rigidity(), sumSignalHeightOnTrack / nHitsOnTrack);
 }
 
 void SignalHeightCorrelationPlot::update()
 {
-  for (int xBin = 1; xBin <= m_histo->GetNbinsX(); xBin++)
-    for (int yBin = 1; yBin <= m_histo->GetNbinsY(); yBin++)
-      histogram()->SetBinContent(xBin, yBin, m_histo->GetBinContent(xBin, yBin));
+  for (int xBin = 1; xBin <= m_histogram->GetNbinsX(); xBin++)
+    for (int yBin = 1; yBin <= m_histogram->GetNbinsY(); yBin++)
+      histogram()->SetBinContent(xBin, yBin, m_histogram->GetBinContent(xBin, yBin));
 }

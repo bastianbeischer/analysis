@@ -3,17 +3,11 @@
 
 #include "PlotCollection.hh"
 
-class TOFTimeShiftPlotCollection :
-  public PlotCollection
+class TOFTimeShiftPlotCollection : public PlotCollection
 {
-
 public:
   TOFTimeShiftPlotCollection();
   ~TOFTimeShiftPlotCollection();
-
-private:
-
-
 };
 
 #endif /* TOFTimeShiftPlotCollection_hh */
