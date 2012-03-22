@@ -14,9 +14,9 @@
 #include <iostream>
 #include <cmath>
 
-AzimuthMigrationHistogram::AzimuthMigrationHistogram() :
-AnalysisPlot(Enums::MonteCarloTracker),
-H2DPlot()
+AzimuthMigrationHistogram::AzimuthMigrationHistogram()
+  : AnalysisPlot(Enums::MonteCarloTracker)
+  , H2DPlot()
 {
   setTitle("Azimuth migration");
   const int nBinsGenerated = 20;
@@ -29,6 +29,8 @@ H2DPlot()
   histogram->Sumw2();
   setAxisTitle("reconstructed azimuth", "generated azimuth", "");
   addHistogram(histogram);
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::InsideMagnet);
+  addRequiredEventFlagsAbsence(Enums::Albedo);
 }
 
 AzimuthMigrationHistogram::~AzimuthMigrationHistogram()
@@ -41,16 +43,11 @@ void AzimuthMigrationHistogram::processEvent(const AnalyzedEvent* event)
     return;
   if (event->simpleEvent()->MCInformation()->primary()->initialMomentum.Z() > 0)
     return;
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-  if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet | Enums::Albedo))
-    return;
   if (!event->simpleEvent()->MCInformation()->primary()->isInsideMagnet())
     return;
 
   double azimuthGenerated = event->simpleEvent()->MCInformation()->primary()->azimuthAngle() * 180. / M_PI;
-  double azimuthReconstructed = (track->azimuthAngle()) * 180. / M_PI;
+  double azimuthReconstructed = (event->particle()->track()->azimuthAngle()) * 180. / M_PI;
 
   if (azimuthGenerated == 180.)
     azimuthGenerated = -180.;

@@ -41,6 +41,8 @@ RigidityMigrationHistogram::RigidityMigrationHistogram()
   histogram->Sumw2();
   setAxisTitle("reconstructed rigidity", "generated rigidity", "");
   addHistogram(histogram);
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::AllTrackerLayers | Enums::InsideMagnet);
+  addRequiredEventFlagsAbsence(Enums::Albedo);
 }
 
 RigidityMigrationHistogram::~RigidityMigrationHistogram()
@@ -62,11 +64,6 @@ void RigidityMigrationHistogram::processEvent(const AnalyzedEvent* event)
     return;
   double rigidityGenerated = event->simpleEvent()->MCInformation()->primary()->initialMomentum.Mag() / charge;
   if (rigidityGenerated < histogram()->GetYaxis()->GetBinLowEdge(1) || histogram()->GetYaxis()->GetBinLowEdge(histogram()->GetNbinsY()+1) <= rigidityGenerated)
-    return;
-  const Track* track = event->goodTrack();
-  if (!track)
-     return;
-  if (!event->flagsSet(Enums::Chi2Good | Enums::AllTrackerLayers | Enums::InsideMagnet | Enums::Albedo))
     return;
   double rigidityData = event->particle()->hypothesis()->rigidity();
   histogram()->Fill(rigidityData, rigidityGenerated);
