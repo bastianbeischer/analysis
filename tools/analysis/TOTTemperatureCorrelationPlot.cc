@@ -36,6 +36,7 @@ TOTTemperatureCorrelationPlot::TOTTemperatureCorrelationPlot(unsigned int id)
   TH2D* histogram = new TH2D(qPrintable(title), "", nTemperatureBins, minTemperature, maxTemperature, nTotBins, minTot, maxTot);
   setAxisTitle("temperature /  #circC", "time over threshold / ns", "");
   addHistogram(histogram);
+  addRequiredEventFlags(Enums::TrackGood);
 }
 
 TOTTemperatureCorrelationPlot::~TOTTemperatureCorrelationPlot()
@@ -44,9 +45,7 @@ TOTTemperatureCorrelationPlot::~TOTTemperatureCorrelationPlot()
 
 void TOTTemperatureCorrelationPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
+  const Track* track = event->particle()->track();
 
   const QVector<Hit*>& hits = track->hits();
   const QVector<Hit*>::const_iterator endIt = hits.end();

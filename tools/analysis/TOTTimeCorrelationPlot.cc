@@ -40,6 +40,7 @@ TOTTimeCorrelationPlot::TOTTimeCorrelationPlot(unsigned int id, QDateTime first,
   histogram->GetXaxis()->SetTimeFormat("%d-%H:%M");
   setAxisTitle("time", "time over threshold / ns", "");
   addHistogram(histogram);
+  addRequiredEventFlags(Enums::TrackGood);
 }
 
 TOTTimeCorrelationPlot::~TOTTimeCorrelationPlot()
@@ -49,9 +50,6 @@ TOTTimeCorrelationPlot::~TOTTimeCorrelationPlot()
 void TOTTimeCorrelationPlot::processEvent(const AnalyzedEvent* event)
 {
   const Track* track = event->goodTrack();
-  if (!track)
-    return;
-
   const QVector<Hit*>& hits = track->hits();
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {

@@ -32,9 +32,6 @@ ReconstructionMethodCorrelationPlot::~ReconstructionMethodCorrelationPlot()
 
 void ReconstructionMethodCorrelationPlot::processEvent(const AnalyzedEvent* event)
 {
-  Q_ASSERT(event->goodTrack());
-  Q_ASSERT(event->flagsSet(Enums::AllTrackerLayers | Enums::InsideMagnet | Enums::Chi2Good | Enums::BetaGood));
-
   const Hypothesis* hypothesisX = event->particle()->hypothesis(m_methodX);
   Q_ASSERT(hypothesisX);
   const Hypothesis* hypothesisY = event->particle()->hypothesis(m_methodY);

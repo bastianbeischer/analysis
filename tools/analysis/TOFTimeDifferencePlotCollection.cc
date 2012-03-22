@@ -6,9 +6,11 @@
 
 #include <QLayout>
 
-TOFTimeDifferencePlotCollection::TOFTimeDifferencePlotCollection() :
-  PlotCollection(Enums::CalibrationTOF)
+TOFTimeDifferencePlotCollection::TOFTimeDifferencePlotCollection()
+  : PlotCollection(Enums::CalibrationTOF)
 {
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good);
+
   QStringList moduleIDs;
   const ElementIterator itEnd = Setup::instance()->lastElement();
   for (ElementIterator it = Setup::instance()->firstElement(); it != itEnd; ++it) {

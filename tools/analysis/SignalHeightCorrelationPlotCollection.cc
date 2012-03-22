@@ -12,6 +12,8 @@
 SignalHeightCorrelationPlotCollection::SignalHeightCorrelationPlotCollection(SignalHeightCorrelationPlot::CorrelationType type)
   : PlotCollection(Enums::SignalHeightTracker)
 {
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::AllTrackerLayers);
+
   if (type == SignalHeightCorrelationPlot::Temperature) {
     QStringList moduleIDs;
     Setup* setup = Setup::instance();
@@ -41,6 +43,7 @@ SignalHeightCorrelationPlotCollection::SignalHeightCorrelationPlotCollection(Sig
     connect(widget, SIGNAL(sipmChanged(int)), this, SLOT(selectPlot(int)));
   }
   if (type == SignalHeightCorrelationPlot::Rigidity) {
+    addRequiredEventFlags(Enums::InsideMagnet);
     setTitle("rigidity correlation - all channels");
     const QString& title = QString("mean signal height rigidity correlation");
     const unsigned int nRigidityBins = 100;
@@ -60,6 +63,10 @@ SignalHeightCorrelationPlotCollection::SignalHeightCorrelationPlotCollection(Sig
 SignalHeightCorrelationPlotCollection::SignalHeightCorrelationPlotCollection(SignalHeightCorrelationPlot::CorrelationType type, const QDateTime& first, const QDateTime& last)
   : PlotCollection(Enums::SignalHeightTracker)
 {
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::AllTrackerLayers);
+  if (type == SignalHeightCorrelationPlot::Rigidity)
+    addRequiredEventFlags(Enums::InsideMagnet);
+
   Q_ASSERT(type == SignalHeightCorrelationPlot::Time);
   QStringList moduleIDs;
   Setup* setup = Setup::instance();

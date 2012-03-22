@@ -8,11 +8,12 @@
 #include <QLayout>
 #include <QDebug>
 
-TOTTimeCorrelationPlotCollection::TOTTimeCorrelationPlotCollection(const QDateTime& first, const QDateTime& last) :
-  PlotCollection(Enums::TimeOverThreshold)
+TOTTimeCorrelationPlotCollection::TOTTimeCorrelationPlotCollection(const QDateTime& first, const QDateTime& last)
+  : PlotCollection(Enums::TimeOverThreshold)
 {
-  QStringList moduleIDs;
+  addRequiredEventFlags(Enums::TrackGood);
 
+  QStringList moduleIDs;
   Setup* setup = Setup::instance();
   const ElementIterator elementStartIt = setup->firstElement();
   const ElementIterator elementEndIt = setup->lastElement();

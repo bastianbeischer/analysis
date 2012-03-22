@@ -22,6 +22,8 @@ SignalHeightPdfPlotCollection::SignalHeightPdfPlotCollection(Hit::ModuleType typ
   , m_layerComboBox(new QComboBox)
   , m_signalHeightPdfPlots()
 {
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::AllTrackerLayers | Enums::InsideMagnet | Enums::BetaGood);
+
   QHBoxLayout* layout = new QHBoxLayout();
   layout->addStretch();
   layout->addWidget(m_particleComboBox);

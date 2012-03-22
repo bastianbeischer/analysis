@@ -14,6 +14,8 @@ ReconstructionMethodCorrelationPlotCollection::ReconstructionMethodCorrelationPl
   , m_reconstructionMethodXComboBox(new QComboBox())
   , m_reconstructionMethodYComboBox(new QComboBox())
 {
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::AllTrackerLayers | Enums::InsideMagnet | Enums::BetaGood);
+
   QHBoxLayout* layout = new QHBoxLayout();
   layout->addStretch();
   layout->addWidget(m_particleComboBox);

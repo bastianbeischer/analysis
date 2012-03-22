@@ -7,11 +7,12 @@
 
 #include <QLayout>
 
-TOTTemperatureCorrelationPlotCollection::TOTTemperatureCorrelationPlotCollection() :
-  PlotCollection(Enums::TimeOverThreshold)
+TOTTemperatureCorrelationPlotCollection::TOTTemperatureCorrelationPlotCollection()
+  : PlotCollection(Enums::TimeOverThreshold)
 {
-  QStringList moduleIDs;
+  addRequiredEventFlags(Enums::TrackGood);
 
+  QStringList moduleIDs;
   Setup* setup = Setup::instance();
   const ElementIterator elementStartIt = setup->firstElement();
   const ElementIterator elementEndIt = setup->lastElement();
