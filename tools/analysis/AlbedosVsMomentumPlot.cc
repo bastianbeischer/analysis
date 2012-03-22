@@ -42,7 +42,7 @@ AlbedosVsMomentumPlot::AlbedosVsMomentumPlot() :
   histogram->SetLineColor(kRed);
   m_albedoHisto = histogram;
 
-  addRequiredEventFlags(Enums::Chi2Good | Enums::InsideMagnet | Enums::BetaGood | Enums::TrackGood);
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::InsideMagnet | Enums::BetaGood);
 }
 
 AlbedosVsMomentumPlot::~AlbedosVsMomentumPlot()

@@ -26,7 +26,7 @@ BendingAnglePlot::BendingAnglePlot()
   histogram->SetLineColor(kBlue);
   addHistogram(histogram);
   
-  addRequiredEventFlags(Enums::AllTrackerLayers | Enums::TrackGood);
+  addRequiredEventFlags(Enums::TrackGood | Enums::AllTrackerLayers);
 }
 
 BendingAnglePlot::~BendingAnglePlot()
@@ -34,9 +34,7 @@ BendingAnglePlot::~BendingAnglePlot()
 
 void BendingAnglePlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->particle()->track();
-  double alpha = track->bendingAngle();
-
+  double alpha = event->particle()->track()->bendingAngle();
   histogram(0)->Fill(alpha);
   if(event->flagsSet(Enums::InsideMagnet))
     histogram(1)->Fill(alpha);

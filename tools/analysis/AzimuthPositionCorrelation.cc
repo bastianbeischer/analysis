@@ -59,7 +59,7 @@ AzimuthPositionCorrelation::AzimuthPositionCorrelation(Direction direction, Enum
   setDrawOption(COLZ);
   controlWidget()->spinBox()->setMaximum(histogram->GetNbinsY());
 
-  addRequiredEventFlags(Enums::Chi2Good | Enums::InsideMagnet | Enums::BetaGood | Enums::TrackGood);
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::InsideMagnet | Enums::BetaGood);
   addRequiredEventFlagsAbsence(Enums::Albedo);
 }
 

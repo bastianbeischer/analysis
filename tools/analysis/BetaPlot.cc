@@ -37,7 +37,7 @@ BetaPlot::BetaPlot()
   m_line->SetLineStyle(2);
   m_line->SetLineWidth(2);
 
-  addRequiredEventFlags(Enums::Chi2Good | Enums::BetaGood | Enums::TrackGood);
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::BetaGood);
 }
 
 BetaPlot::~BetaPlot()

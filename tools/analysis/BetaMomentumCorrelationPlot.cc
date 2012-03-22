@@ -74,7 +74,7 @@ BetaMomentumCorrelationPlot::BetaMomentumCorrelationPlot(bool hypothesisRigidity
   }
   addLegend(legend);
 
-  addRequiredEventFlags(Enums::Chi2Good | Enums::InsideMagnet | Enums::BetaGood | Enums::TrackGood);
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::InsideMagnet | Enums::BetaGood);
 }
 
 BetaMomentumCorrelationPlot::~BetaMomentumCorrelationPlot()

@@ -16,11 +16,12 @@ BendingPositionPlot::BendingPositionPlot()
   TH1D* histogram = new TH1D("bending position", "", 1000, -1000, 1000);
   setAxisTitle("z / mm", "");
   addHistogram(histogram);
-  addRequiredEventFlags(Enums::AllTrackerLayers | Enums::TrackGood);
+  addRequiredEventFlags(Enums::TrackGood | Enums::AllTrackerLayers);
 }
 
 BendingPositionPlot::~BendingPositionPlot()
-{}
+{
+}
 
 void BendingPositionPlot::processEvent(const AnalyzedEvent* event)
 {

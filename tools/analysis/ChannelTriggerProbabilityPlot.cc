@@ -27,7 +27,7 @@ ChannelTriggerProbabilityPlot::ChannelTriggerProbabilityPlot()
   TH1D* histogram = new TH1D(qPrintable(title()), "", Constants::nTofChannels, 0, Constants::nTofChannels);
   addHistogram(histogram);
 
-  addRequiredEventFlags(Enums::Chi2Good | Enums::TrackGood);
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good);
 }
 
 ChannelTriggerProbabilityPlot::~ChannelTriggerProbabilityPlot()

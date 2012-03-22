@@ -29,7 +29,7 @@ AzimuthDistributionPlot::AzimuthDistributionPlot()
   addHistogram(histogram);
   addLatex(RootPlot::newLatex(.15, .85));
 
-  addRequiredEventFlags(Enums::Chi2Good | Enums::InsideMagnet | Enums::AllTrackerLayers | Enums::TrackGood);
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::InsideMagnet | Enums::AllTrackerLayers);
   addRequiredEventFlagsAbsence(Enums::Albedo);
 }
 

@@ -43,7 +43,7 @@ Chi2Plot::Chi2Plot(unsigned short ndf) :
   addLatex(RootPlot::newLatex(.55, .85));
   addLatex(RootPlot::newLatex(.55, .82));
 
-  addRequiredEventFlags(Enums::AllTrackerLayers | Enums::TrackGood);
+  addRequiredEventFlags(Enums::TrackGood | Enums::AllTrackerLayers);
 }
 
 Chi2Plot::~Chi2Plot()
