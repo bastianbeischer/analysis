@@ -47,7 +47,7 @@ SignalHeight2DPlot::SignalHeight2DPlot()
   }
   m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", counter, -0.5, counter - 0.5);
 
-  addRequiredEventFlags(Enums::AllTrackerLayers);
+  addRequiredEventFlags(Enums::TrackGood | Enums::AllTrackerLayers);
 }
 
 SignalHeight2DPlot::~SignalHeight2DPlot()
@@ -59,9 +59,6 @@ SignalHeight2DPlot::~SignalHeight2DPlot()
 void SignalHeight2DPlot::processEvent(const AnalyzedEvent* event)
 {
   const Track* track = event->particle()->track();
-  if (!track)
-    return;
-
   const QVector<Hit*>::const_iterator endIt = track->hits().end();
   for (QVector<Hit*>::const_iterator it = track->hits().begin(); it != endIt; ++it) {
     Hit* hit = *it;

@@ -50,7 +50,7 @@ void SignalHeightCorrelationPlot::setup()
     binning[bin] = m_histogram->GetXaxis()->GetBinLowEdge(bin + 1);
   m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", nBins, binning.constData());
 
-  addRequiredEventFlags(Enums::Chi2Good | Enums::AllTrackerLayers);
+  addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::AllTrackerLayers);
   if (m_type == Rigidity)
     addRequiredEventFlags(Enums::InsideMagnet);
 }
@@ -64,8 +64,6 @@ SignalHeightCorrelationPlot::~SignalHeightCorrelationPlot()
 void SignalHeightCorrelationPlot::processEvent(const AnalyzedEvent* event)
 {
   const Track* track = event->particle()->track();
-  if (!track)
-    return;
   int nHitsOnTrack = 0;
   double sumSignalHeightOnTrack = 0;
   const QVector<Hit*>::const_iterator endIt = track->hits().end();
