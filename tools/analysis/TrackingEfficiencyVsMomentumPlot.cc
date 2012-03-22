@@ -44,8 +44,7 @@ TrackingEfficiencyVsMomentumPlot::~TrackingEfficiencyVsMomentumPlot()
 
 void TrackingEfficiencyVsMomentumPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
+  if (!event->hasGoodTrack())
     return;
   if (!event->flagsSet(Enums::InsideMagnet | Enums::Chi2Good))
     return;

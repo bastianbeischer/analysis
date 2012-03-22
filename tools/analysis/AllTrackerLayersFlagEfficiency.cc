@@ -56,6 +56,8 @@ AllTrackerLayersFlagEfficiency::AllTrackerLayersFlagEfficiency(Enums::Particles 
   }
 
   setAxisTitle("|R| / GV", "efficiency");
+
+  addRequiredEventFlags(Enums::TrackGood);
 }
 
 AllTrackerLayersFlagEfficiency::~AllTrackerLayersFlagEfficiency()
@@ -66,9 +68,6 @@ AllTrackerLayersFlagEfficiency::~AllTrackerLayersFlagEfficiency()
 
 void AllTrackerLayersFlagEfficiency::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
   if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet))
     return;
 

@@ -21,7 +21,6 @@ public:
 
   bool hasTrack() const;
   bool hasGoodTrack() const;
-  Track* goodTrack() const;
   const Settings* settings() const;
 
   bool flagsMatch(Enums::EventFlags) const;

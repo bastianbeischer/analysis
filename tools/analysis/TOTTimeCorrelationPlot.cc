@@ -49,7 +49,7 @@ TOTTimeCorrelationPlot::~TOTTimeCorrelationPlot()
 
 void TOTTimeCorrelationPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
+  const Track* track = event->particle()->track();
   const QVector<Hit*>& hits = track->hits();
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {

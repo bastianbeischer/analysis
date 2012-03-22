@@ -91,8 +91,7 @@ void TrackFindingEfficiency::processEvent(const AnalyzedEvent* event)
   if (fillHistogram)
     m_total->Fill(rigidity);
 
-  const Track* track = event->goodTrack();
-  if (!track)
+  if (!event->hasGoodTrack())
     return;
   if (!event->flagsSet(Enums::Chi2Good))
     return;

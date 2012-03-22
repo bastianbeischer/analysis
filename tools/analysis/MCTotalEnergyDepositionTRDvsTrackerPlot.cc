@@ -30,6 +30,7 @@ MCTotalEnergyDepositionTRDvsTrackerPlot::MCTotalEnergyDepositionTRDvsTrackerPlot
   legend->SetFillColor(kWhite);
   legend->SetMargin(.7);
   addLegend(legend);
+  addRequiredEventFlags(Enums::TrackGood);
 }
 
 MCTotalEnergyDepositionTRDvsTrackerPlot::~MCTotalEnergyDepositionTRDvsTrackerPlot()
@@ -38,7 +39,7 @@ MCTotalEnergyDepositionTRDvsTrackerPlot::~MCTotalEnergyDepositionTRDvsTrackerPlo
 
 void MCTotalEnergyDepositionTRDvsTrackerPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
+  const Track* track = event->particle()->track();
 
   //only accept mc events:
   if (event->simpleEvent()->contentType() != SimpleEvent::MonteCarlo)

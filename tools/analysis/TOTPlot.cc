@@ -31,6 +31,7 @@ TOTPlot::TOTPlot()
     histogram->GetXaxis()->SetBinLabel(1 + ch, qPrintable(QString("%1").arg(0x8000 | ch, 0, 16)));
   setAxisTitle("", "time over threshold / ns", "");
   addHistogram(histogram);
+  addRequiredEventFlags(Enums::TrackGood);
 }
 
 TOTPlot::~TOTPlot()
@@ -38,11 +39,7 @@ TOTPlot::~TOTPlot()
 
 void TOTPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
-
-  const QVector<Hit*>& hits = track->hits();
+  const QVector<Hit*>& hits = event->particle()->track()->hits();
   const QVector<Hit*>::const_iterator endIt = hits.end();
   for (QVector<Hit*>::const_iterator it = hits.begin(); it != endIt; ++it) {
     Hit* hit = *it;

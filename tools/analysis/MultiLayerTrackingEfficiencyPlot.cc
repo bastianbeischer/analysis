@@ -64,6 +64,7 @@ MultiLayerTrackingEfficiencyPlot::MultiLayerTrackingEfficiencyPlot(Type type) :
   setDrawOption(COLZTEXT);
 
   controlWidget()->spinBox()->setMaximum(histogram->GetNbinsY());
+  addRequiredEventFlags(Enums::TrackGood);
 }
 
 MultiLayerTrackingEfficiencyPlot::~MultiLayerTrackingEfficiencyPlot()
@@ -74,9 +75,7 @@ MultiLayerTrackingEfficiencyPlot::~MultiLayerTrackingEfficiencyPlot()
 
 void MultiLayerTrackingEfficiencyPlot::processEvent(const AnalyzedEvent* event)
 {
-  const Track* track = event->goodTrack();
-  if (!track)
-    return;
+  const Track* track = event->particle()->track();
   Enums::EventFlags flags = event->particle()->information()->eventFlags();
   if (!event->flagsSet(Enums::Chi2Good | Enums::InsideMagnet))
     return;

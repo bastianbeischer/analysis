@@ -38,11 +38,6 @@ bool AnalyzedEvent::hasGoodTrack() const
   return track && track->fitGood();
 }
 
-Track* AnalyzedEvent::goodTrack() const
-{
-  return hasGoodTrack() ? m_particle->track() : 0;
-}
-
 const Settings* AnalyzedEvent::settings() const
 {
   return SettingsManager::instance()->settingsForEvent(m_simpleEvent);
