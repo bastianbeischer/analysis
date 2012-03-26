@@ -69,7 +69,7 @@ void PostAnalysisWindow::canvasFilterChanged(const QString& text)
   m_ui->canvasListWidget->disconnect();
   m_ui->canvasListWidget->clear();
   foreach(PostAnalysisCanvas* canvas, m_canvases) {
-    if (canvas->name().contains(QRegExp(text))) {
+    if (canvas->name().contains(QRegExp(text, Qt::CaseInsensitive))) {
       QListWidgetItem* item = new QListWidgetItem(canvas->name());
       item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
       m_ui->canvasListWidget->addItem(item);
@@ -85,7 +85,7 @@ void PostAnalysisWindow::plotFilterChanged(const QString& text)
   m_ui->plotListWidget->disconnect();
   m_ui->plotListWidget->clear();
   foreach(PostAnalysisPlot* plot, m_plots) {
-    if (plot->title().contains(QRegExp(text))) {
+    if (plot->title().contains(QRegExp(text, Qt::CaseInsensitive))) {
       QListWidgetItem* item = new QListWidgetItem(plot->title());
       item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
       m_ui->plotListWidget->addItem(item);
