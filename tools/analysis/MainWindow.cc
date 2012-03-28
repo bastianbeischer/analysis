@@ -644,9 +644,11 @@ void MainWindow::update()
 {
   m_ui.dataChainProgressBar->setValue(m_analysis->progress());
   m_ui.eventQueueProgressBar->setValue(m_analysis->buffer());
-  m_ui.timeLabel->setText(QString("%1s").arg(m_time.elapsed()/1000));
+  int elapsed = m_time.elapsed() / 1000;
+  QString time = QString("%1m%2s").arg(elapsed / 60, 2, 10, QLatin1Char('0')).arg(elapsed % 60, 2, 10, QLatin1Char('0'));
+  m_ui.timeLabel->setText(time);
   if (m_batch)
-    qDebug() << m_analysis->progress() << "%";
+    qDebug() << qPrintable(QString("%1 -> %2\%").arg(time).arg(m_analysis->progress(), 5, 'f', 2, '0'));
 }
 
 void MainWindow::drawOptionComboBoxCurrentIndexChanged(int i)

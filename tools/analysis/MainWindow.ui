@@ -585,7 +585,7 @@
               </font>
              </property>
              <property name="text">
-              <string>0s</string>
+              <string>00m00s</string>
              </property>
              <property name="alignment">
               <set>Qt::AlignCenter</set>
