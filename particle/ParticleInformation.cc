@@ -4,6 +4,8 @@
 #include "Track.hh"
 #include "TimeOfFlight.hh"
 #include "Hit.hh"
+#include "Constants.hh"
+#include "Helpers.hh"
 
 #include <QMap>
 #include <QVector>
@@ -29,10 +31,8 @@ void ParticleInformation::process()
 
   checkAllTrackerLayers();
   checkChi2Good();
-  checkInsideMagnet();
-  checkOutsideMagnet();
+  checkMagnet();
   checkHighTransverseRigidity();
-  checkMagnetCollision();
   checkAlbedo();
   checkBetaGood();
   checkTrackGood();
@@ -81,28 +81,23 @@ void ParticleInformation::checkChi2Good()
     m_flags |= Enums::Chi2Good;
 }
 
-void ParticleInformation::checkInsideMagnet()
+void ParticleInformation::checkMagnet()
 {
   const Track* track = m_particle->track();
-
   if (!track->fitGood())
     return;
-  double r1 = sqrt(pow(track->x(40.), 2.) + pow(track->y(40.), 2.));
-  double r2 = sqrt(pow(track->x(-40.), 2.) + pow(track->y(-40.), 2.));
-  if (r1 < 75 && r2 < 75)
+  double innerRadius = Constants::magnetInnerRadius;
+  double outerRadius = Constants::magnetOuterRadius;
+  double halfHeight = Constants::magnetHeight / 2.;
+  double upperDistance = Helpers::addQuad(track->x(+halfHeight), track->y(+halfHeight));
+  double lowerDistance = Helpers::addQuad(track->x(-halfHeight), track->y(-halfHeight));
+  if (upperDistance < innerRadius && lowerDistance < innerRadius) {
     m_flags |= Enums::InsideMagnet;
-}
-
-void ParticleInformation::checkOutsideMagnet()
-{
-  const Track* track = m_particle->track();
-
-  if (!track->fitGood())
-    return;
-  double r1 = sqrt(pow(track->x(40.), 2.) + pow(track->y(40.), 2.));
-  double r2 = sqrt(pow(track->x(-40.), 2.) + pow(track->y(-40.), 2.));
-  if (r1 > 120 && r2 > 120)
+  } else if (outerRadius < upperDistance && outerRadius < lowerDistance) {
     m_flags |= Enums::OutsideMagnet;
+  } else {
+    m_flags |= Enums::MagnetCollision;
+  }
 }
 
 void ParticleInformation::checkHighTransverseRigidity()
@@ -115,19 +110,6 @@ void ParticleInformation::checkHighTransverseRigidity()
   // 2GeV currently...
   if (transverseRigidity > 2 || transverseRigidity == DBL_MAX)
     m_flags |= Enums::HighTransverseRigidity;
-}
-
-void ParticleInformation::checkMagnetCollision()
-{
-  const Track* track = m_particle->track();
-
-  if (!track->fitGood())
-    return;
-  double x0 = track->x(0.);
-  double y0 = track->y(0.);
-  double r = sqrt(x0*x0 + y0*y0);
-  if (r > 65 && r < 110)
-    m_flags |= Enums::MagnetCollision;
 }
 
 void ParticleInformation::checkAlbedo()

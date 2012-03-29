@@ -24,10 +24,8 @@ public:
 private:
   void checkAllTrackerLayers();
   void checkChi2Good();
-  void checkInsideMagnet();
-  void checkOutsideMagnet();
+  void checkMagnet();
   void checkHighTransverseRigidity();
-  void checkMagnetCollision();
   void checkAlbedo();
   void checkBetaGood();
   void checkTrackGood();
