@@ -3,7 +3,6 @@ TEMPLATE = subdirs
 SUBDIRS  = \
   alignment \
   eventdisplay \
-  preAnalysis \
   analysis \
   postAnalysis \
   presentation \
