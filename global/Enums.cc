@@ -6,7 +6,7 @@
 template <class Key, class T> class InitializableMap : public QMap<Key, T> {
 public:
   inline InitializableMap<Key, T>& operator<< (const QPair<Key, T>& pair) {
-    insert(pair.first, pair.second);
+    this->insert(pair.first, pair.second);
     return *this;
   }
 };
