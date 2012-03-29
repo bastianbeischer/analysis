@@ -10,7 +10,7 @@ class MagneticField
 
 public:
   MagneticField();
-  ~MagneticField();
+  virtual ~MagneticField();
 
 public:
   void setZ0(const double& z0) {m_z0 = z0;}
