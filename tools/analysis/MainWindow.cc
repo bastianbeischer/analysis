@@ -413,6 +413,8 @@ void MainWindow::analysisSettingToGui()
       }
     }
   }
+
+  checkSelectAll();
 }
 
 void MainWindow::analyzeButtonClicked()
