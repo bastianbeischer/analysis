@@ -11,6 +11,7 @@ DEPENDPATH += $$INCLUDEPATH
 
 CLASSES+= \
   Cluster \
+  CalibrationCollection \
   DataDescription \
   Hit \
   MCDigiSignal \
@@ -24,6 +25,7 @@ CLASSES+= \
 
 CREATE_ROOT_DICT_FOR_CLASSES += \
   Cluster.hh \
+  CalibrationCollection.hh \
   DataDescription.hh \
   Hit.hh \
   MCDigiSignal.hh \
