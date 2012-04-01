@@ -7,6 +7,8 @@
 #include <vector>
 #include <assert.h>
 
+class CalibrationCollection;
+
 class DataDescription : public TObject
 {
 public:
@@ -19,7 +21,7 @@ public:
   void setComment(const std::string& comment) {m_comment = comment;}
   void setSoftwareVersionHash();
   void setSoftwareVersionHash(const std::string& version) {m_softwareVersionHash = version;}
-  void addRunFile(const std::string& fileName, const std::string& softwareVersionHash, const int nEvents, const int nCalibrationEvents);
+  void addRunFile(const std::string& fileName, const std::string& softwareVersionHash, const int nEvents, const int nCalibrationEvents, const CalibrationCollection* calibrationCollection);
 
   const std::string& comment() const {return m_comment;}
   const std::string& softwareVersionHash() const {return m_softwareVersionHash;}
@@ -34,6 +36,8 @@ public:
   int runFileForEventNumber(long eventNumber) const;
   const std::string& runFileNameForEventNumber(long eventNumber) const;
 
+  const CalibrationCollection* calibrationCollection(int i = 0) const {assert(i < m_numberOfRuns); return m_calibrationCollections[i];}
+
 private:
   std::string m_comment;
   std::string m_softwareVersionHash; //SHA1 hash of the latest commit
@@ -41,6 +45,7 @@ private:
   std::vector<long> m_numberOfCalibrationEvents;
   std::vector<std::string> m_runFileNames;
   std::vector<std::string> m_runFileSoftwareVersionHash;
+  std::vector<const CalibrationCollection*> m_calibrationCollections;
   int m_numberOfRuns;
 
   ClassDef( DataDescription, 1 );

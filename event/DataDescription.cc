@@ -1,5 +1,6 @@
 #include "DataDescription.hh"
 #include "SimpleEvent.hh"
+#include "CalibrationCollection.hh"
 
 #include <stdio.h>
 #include <assert.h>
@@ -29,10 +30,17 @@ DataDescription::DataDescription(const DataDescription& other)
   , m_runFileSoftwareVersionHash(other.m_runFileSoftwareVersionHash)
   , m_numberOfRuns(other.m_numberOfRuns)
 {
+  for (std::vector<const CalibrationCollection*>::const_iterator it = other.m_calibrationCollections.begin(); it != other.m_calibrationCollections.end(); it++) {
+    m_calibrationCollections.push_back(new CalibrationCollection(*(*it)));
+  }
 }
 
 DataDescription::~DataDescription()
-{}
+{
+  for (std::vector<const CalibrationCollection*>::const_iterator it = m_calibrationCollections.begin(); it != m_calibrationCollections.end(); it++) {
+    delete *it;
+  }
+}
 
 const std::string DataDescription::calculateSoftwareVersionHash()
 {
@@ -50,12 +58,13 @@ void DataDescription::setSoftwareVersionHash()
   assert(m_softwareVersionHash.length() == 40);
 }
 
-void DataDescription::addRunFile(const std::string& fileName, const std::string& softwareVersionHash, const int nEvents, const int nCalibrationEvents)
+void DataDescription::addRunFile(const std::string& fileName, const std::string& softwareVersionHash, const int nEvents, const int nCalibrationEvents, const CalibrationCollection* calibrationCollection)
 {
   m_runFileNames.push_back(fileName);
   m_numberOfEvents.push_back(nEvents);
   m_numberOfCalibrationEvents.push_back(nCalibrationEvents);
   m_runFileSoftwareVersionHash.push_back(softwareVersionHash);
+  m_calibrationCollections.push_back(calibrationCollection);
   ++m_numberOfRuns;
 }
 
