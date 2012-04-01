@@ -101,8 +101,9 @@ void DataManager::addSingleFile(QString fileName)
   const std::string& hash = DataDescription::calculateSoftwareVersionHash();
   std::cout << "Processing: " << qPrintable(fileName) <<  " with SHA1 hash " << hash << std::endl;
   SingleFile* file = new SingleFile(qPrintable(fileName));
+  const CalibrationCollection* calibrationCollection = file->calibrate();
   m_inputFiles.push_back(file);
-  m_description->addRunFile(qPrintable(fileName), hash, file->getNumberOfEvents(), file->getNumberOfCalibrationEvents());
+  m_description->addRunFile(qPrintable(fileName), hash, file->getNumberOfEvents(), file->getNumberOfCalibrationEvents(), calibrationCollection);
 
   //try to open a matching mc file:
   QString mcFileName = fileName.replace(QRegExp("\\.dat$"), "_MC.dat");

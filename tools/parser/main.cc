@@ -6,8 +6,12 @@
 #include <QStringList>
 #include <QDebug>
 
+#include <TH1.h>
+
 int main(int argc, char** argv)
 {
+  TH1::AddDirectory(kFALSE);
+
   if (argc < 2 || argc > 3) {
     std::cerr << "Wrong number of arguments:" << std::endl;
     std::cerr << "Usage: \"parser list.txt [output.root]\" - where list contains all the runs you want to parse" << std::endl;

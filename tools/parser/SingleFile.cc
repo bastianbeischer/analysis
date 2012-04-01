@@ -7,6 +7,7 @@
 #include "PERDaixTOFModule.h"
 #include "PERDaixPMTModule.h"
 #include "SimpleEvent.hh"
+#include "CalibrationCollection.hh"
 
 #include <iostream>
 #include <QDebug>
@@ -94,20 +95,42 @@ void SingleFile::open(QString fileName)
   if (nEvents == 0) {
     qDebug() << "File doesn't contain a valid header. Trying to read as many events as possible. Progress bar will be wrong!";
   }
-
-  calibrate();
 }
 
 
-void SingleFile::calibrate()
+const CalibrationCollection* SingleFile::calibrate()
 {
+  CalibrationCollection* calibrationCollection = new CalibrationCollection;
+
   for (unsigned int i = 0; i < m_runFile->GetNumberOfCalibrationEvents(); i++) {
     const RawEvent* event = (const RawEvent*) m_runFile->ReadNextEvent();
     QList<DetectorID*> detIDs = event->GetIDs();
 
     QMap<DetectorID*, DataBlock*> dataBlockMap;
-    foreach(DetectorID* id, detIDs)
-      dataBlockMap[id] = event->GetBlock(id);
+    foreach(DetectorID* id, detIDs) {
+      DataBlock* block = event->GetBlock(id);
+      dataBlockMap[id] = block;
+
+      if (id->IsTOF())
+        continue;
+
+      // copy calibration information
+      int blocklength = id->GetDataLength();
+      const quint16* data = 0;
+      if (id->IsTracker()) {
+        data = ((TrackerDataBlock*) block)->GetRawData();
+      }
+      else if (id->IsTRD()) {
+        data = ((TRDDataBlock*) block)->GetRawData();
+      }
+      else if (id->IsPMT()) {
+        data = ((PMTDataBlock*) block)->GetRawData();
+      }
+      for (int i = 0; i < blocklength; i++) {
+        calibrationCollection->addHistogram(id->GetID16() | i);
+        calibrationCollection->addValue(id->GetID16() | i, data[i]);
+      }
+    }
 
     foreach(PERDaixFiberModule* module, m_fiberModules) {
       module->ProcessCalibrationEvent((TrackerDataBlock*) dataBlockMap[module->GetBoardID(PERDaixFiberModule::BOARD_0)]);
@@ -127,6 +150,8 @@ void SingleFile::calibrate()
   foreach(PERDaixFiberModule* module, m_fiberModules)  module->ProcessCalibrationData();
   foreach(PERDaixTRDModule* module, m_trdModules)  module->ProcessCalibrationData();
   foreach(PERDaixPMTModule* module, m_pmtModules)  module->ProcessCalibrationData();
+
+  return calibrationCollection;
 }
 
 // return pointer to calibration for calibration "whichCali" on hpe/ufe board with id "id"

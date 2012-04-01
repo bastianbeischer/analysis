@@ -5,6 +5,7 @@
 #include <QMap>
 
 class Calibration;
+class CalibrationCollection;
 class DetectorID;
 class PERDaixFiberModule;
 class PERDaixTOFModule;
@@ -31,9 +32,10 @@ public:
   unsigned int    getStartTime() const;
   unsigned int    getStopTime() const;
 
+  const CalibrationCollection* calibrate();
+
 private:
   void init();
-  void calibrate();
   void open(QString fileName);
 
 private:

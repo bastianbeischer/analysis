@@ -5,6 +5,7 @@
 
 #include <TFile.h>
 #include <TList.h>
+#include <TROOT.h>
 
 #include "SimpleEvent.hh"
 #include "DataDescription.hh"
@@ -94,6 +95,7 @@ void DataChain::addRootFile(const char* filename)
 
   // version string
   TFile file(filename, "READ");
+  gROOT->cd();
   TTree* tree = (TTree*)file.Get("SimpleEventTree");
   int nEntries = tree->GetEntries();
   if (m_offsets.size() == 0)
