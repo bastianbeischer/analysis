@@ -56,7 +56,6 @@ void AzimuthCutStatistics::processEvent(const AnalyzedEvent* event)
     return;
   histogram()->Fill(1., azimuth);
 
-  Enums::EventFlags flags = event->particle()->information()->eventFlags();
   if (!event->flagsSet(Enums::Chi2Good))
     return;
   histogram()->Fill(2., azimuth);
