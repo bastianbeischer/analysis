@@ -26,6 +26,6 @@ macx {
   QMAKE_CFLAGS += -D__macx__
 }
 
-include(perdaix.pri)
+include($$TOPLEVEL/perdaix.pri)
 include($$TOPLEVEL/common.pri)
 include($$TOPLEVEL/macx.pri)

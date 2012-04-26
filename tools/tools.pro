@@ -8,11 +8,11 @@ SUBDIRS  = \
   presentation \
   decompressor
 
-exists($(PERDAIX10PATH)) {
+exists($(PERDAIX_READOUT_PATH)) {
   SUBDIRS+= \
     parser \
     eventcounter
 } else {
-  message ("Set PERDAIX10PATH environment variable to build parser and eventcounter!")
+  message ("Set PERDAIX_READOUT_PATH environment variable to build parser and eventcounter!")
 }
 
