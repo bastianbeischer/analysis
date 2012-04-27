@@ -133,17 +133,6 @@ SimpleEvent* DataChain::event(unsigned int i)
   return m_event;
 }
 
-SimpleEvent* DataChain::nextEvent()
-{
-  ++m_currentEntry;
-  if (m_currentEntry >= m_chain->GetEntries()) {
-    m_currentEntry = -1;
-    return 0;
-  }
-  m_chain->GetEntry(m_currentEntry);
-  return m_event;
-}
-
 const DataDescription* DataChain::currentDescription() const
 {
   return static_cast<const DataDescription*>(m_chain->GetTree()->GetUserInfo()->First());

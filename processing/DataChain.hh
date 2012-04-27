@@ -28,7 +28,6 @@ public:
 
 public:
   SimpleEvent* event(unsigned int i);
-  SimpleEvent* nextEvent();
 
   const TFile* currentFile() const {return (const TFile*) m_chain->GetFile();}
   const TTree* currentTree() const {return (const TTree*) m_chain->GetTree();}
