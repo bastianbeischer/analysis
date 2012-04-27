@@ -8,6 +8,12 @@
 
 PERDAIX_LIB_DIR = $(PERDAIX_READOUT_PATH)/lib
 
+PERDAIX_VERSION = $$system("basename $(echo $PERDAIX_READOUT_PATH | tr '[:lower:]' '[:upper:]')")
+message("Using PERDaix readout version: $${PERDAIX_VERSION}.")
+
+DEFINES+= \
+  $${PERDAIX_VERSION}
+
 INCLUDEPATH += \
 	./include \
 	$(PERDAIX_READOUT_PATH)/flightsoftware/libraries/dataformats \

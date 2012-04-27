@@ -18,7 +18,10 @@ int main(int argc, char** argv)
   RunFile runfile(input, RunFile::MODE_READING);
 
   int nPedestalEvents = runfile.GetNumberOfCalibrationEvents();
-  int nLedEvents = runfile.GetNumberOfLedCalibrationEvents();
+  int nLedEvents = 0;
+#ifdef PERDAIX12
+  nLedEvents = runfile.GetNumberOfLedCalibrationEvents();
+#endif
   int nEvents = runfile.GetNumberOfEvents() - nPedestalEvents - nLedEvents;
   if (nEvents == 0) {
     qDebug() << "File doesn't contain a valid header. Trying to read as many events as possible.";

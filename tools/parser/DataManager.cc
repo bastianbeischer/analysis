@@ -103,8 +103,12 @@ void DataManager::addSingleFile(QString fileName)
   SingleFile* file = new SingleFile(qPrintable(fileName));
   const CalibrationCollection* calibrationCollection = file->calibrate();
   m_inputFiles.push_back(file);
+  int nLedEvents = 0;
+#ifdef PERDAIX12
+  nLedEvents = file->getNumberOfLedEvents();
+#endif
   m_description->addRunFile(qPrintable(fileName), hash, file->getNumberOfEvents(),
-    file->getNumberOfPedestalEvents(), file->getNumberOfLedEvents(), calibrationCollection);
+    file->getNumberOfPedestalEvents(), nLedEvents, calibrationCollection);
 
   //try to open a matching mc file:
   QString mcFileName = fileName.replace(QRegExp("\\.dat$"), "_MC.dat");

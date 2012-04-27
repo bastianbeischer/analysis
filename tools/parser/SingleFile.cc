@@ -78,7 +78,10 @@ unsigned int SingleFile::getNumberOfPedestalEvents() const
 
 unsigned int SingleFile::getNumberOfLedEvents() const
 {
+#ifdef PERDAIX12
   return m_runFile->GetNumberOfLedCalibrationEvents();
+#endif
+  return 0;
 }
 
 const RawEvent* SingleFile::getNextRawEvent() const
@@ -195,7 +198,7 @@ const CalibrationCollection* SingleFile::calibrate()
   foreach(PERDaixTRDModule* module, m_trdModules)  module->ProcessCalibrationData();
   foreach(PERDaixPMTModule* module, m_pmtModules)  module->ProcessCalibrationData();
 
-  for (unsigned int i = 0; i < m_runFile->GetNumberOfLedCalibrationEvents(); i++) {
+  for (unsigned int i = 0; i < getNumberOfLedEvents(); i++) {
     const RawEvent* event = static_cast<const RawEvent*>(m_runFile->ReadNextEvent());
     addLedEvent(calibrationCollection, event);
   }
