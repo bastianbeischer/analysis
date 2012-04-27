@@ -17,10 +17,12 @@ public:
   const TH1I* pedestalHistogram(unsigned short) const;
   void addPedestalHistogram(unsigned short);
   void addPedestalValue(unsigned short, int);
+  std::vector<unsigned short> pedestalIds() const;
 
   const TH1I* ledHistogram(unsigned short) const;
   void addLedHistogram(unsigned short);
   void addLedValue(unsigned short, int);
+  std::vector<unsigned short> ledIds() const;
 private:
   std::map<unsigned short, TH1I*> m_pedestalHistograms;
   std::map<unsigned short, TH1I*> m_ledHistograms;

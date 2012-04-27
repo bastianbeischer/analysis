@@ -48,6 +48,19 @@ void CalibrationCollection::addPedestalValue(unsigned short detId, int value)
   hist->Fill(value);
 }
 
+std::vector<unsigned short> CalibrationCollection::pedestalIds() const
+{
+  std::vector<unsigned short> idVector(m_pedestalHistograms.size(), 0);
+  std::vector<unsigned short>::iterator idVectorIt = idVector.begin();
+  std::map<unsigned short, TH1I*>::const_iterator mapIt = m_pedestalHistograms.begin();
+  std::map<unsigned short, TH1I*>::const_iterator mapEnd = m_pedestalHistograms.end();
+  while (mapIt != mapEnd) {
+    *idVectorIt = mapIt->first;
+    ++idVectorIt;
+    ++mapIt;
+  }
+  return idVector;
+}
 
 const TH1I* CalibrationCollection::ledHistogram(unsigned short detId) const
 {
@@ -71,4 +84,18 @@ void CalibrationCollection::addLedValue(unsigned short detId, int value)
   TH1I* hist = m_ledHistograms[detId];
   assert(hist);
   hist->Fill(value);
+}
+
+std::vector<unsigned short> CalibrationCollection::ledIds() const
+{
+  std::vector<unsigned short> idVector(m_ledHistograms.size(), 0);
+  std::vector<unsigned short>::iterator idVectorIt = idVector.begin();
+  std::map<unsigned short, TH1I*>::const_iterator mapIt = m_ledHistograms.begin();
+  std::map<unsigned short, TH1I*>::const_iterator mapEnd = m_ledHistograms.end();
+  while (mapIt != mapEnd) {
+    *idVectorIt = mapIt->first;
+    ++idVectorIt;
+    ++mapIt;
+  }
+  return idVector;
 }
