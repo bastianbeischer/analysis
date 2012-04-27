@@ -25,7 +25,8 @@ DataDescription::DataDescription(const DataDescription& other)
   , m_comment(other.m_comment)
   , m_softwareVersionHash(other.m_softwareVersionHash)
   , m_numberOfEvents(other.m_numberOfEvents)
-  , m_numberOfCalibrationEvents(other.m_numberOfCalibrationEvents)
+  , m_numberOfPedestalEvents(other.m_numberOfPedestalEvents)
+  , m_numberOfLedEvents(other.m_numberOfLedEvents)
   , m_runFileNames(other.m_runFileNames)
   , m_runFileSoftwareVersionHash(other.m_runFileSoftwareVersionHash)
   , m_numberOfRuns(other.m_numberOfRuns)
@@ -58,11 +59,13 @@ void DataDescription::setSoftwareVersionHash()
   assert(m_softwareVersionHash.length() == 40);
 }
 
-void DataDescription::addRunFile(const std::string& fileName, const std::string& softwareVersionHash, const int nEvents, const int nCalibrationEvents, const CalibrationCollection* calibrationCollection)
+void DataDescription::addRunFile(const std::string& fileName, const std::string& softwareVersionHash, const int nEvents,
+  const int nPedestalEvents, const int nLedEvents, const CalibrationCollection* calibrationCollection)
 {
   m_runFileNames.push_back(fileName);
   m_numberOfEvents.push_back(nEvents);
-  m_numberOfCalibrationEvents.push_back(nCalibrationEvents);
+  m_numberOfPedestalEvents.push_back(nPedestalEvents);
+  m_numberOfLedEvents.push_back(nLedEvents);
   m_runFileSoftwareVersionHash.push_back(softwareVersionHash);
   m_calibrationCollections.push_back(calibrationCollection);
   ++m_numberOfRuns;
@@ -84,12 +87,12 @@ int DataDescription::runFileForEventId(long eventId) const
 {
   assert(m_numberOfRuns > 0);
   int runNo = 0;
-  long totalEvents = m_numberOfEvents[0] + m_numberOfCalibrationEvents[0];
+  long totalEvents = m_numberOfEvents[0] + m_numberOfPedestalEvents[0] + m_numberOfLedEvents[0];
   while (eventId >= totalEvents) {
     ++runNo;
     if (runNo == m_numberOfRuns)
       break;
-    totalEvents += m_numberOfEvents[runNo] + m_numberOfCalibrationEvents[runNo];
+    totalEvents += m_numberOfEvents[runNo] + m_numberOfPedestalEvents[runNo] + m_numberOfLedEvents[runNo];
   }
   assert(runNo < m_numberOfRuns);
   return runNo;
@@ -122,8 +125,14 @@ long DataDescription::numberOfEventsInRunFile(int i) const
   return m_numberOfEvents[i];
 }
 
-long DataDescription::numberOfCalibrationEventsInRunFile(int i) const
+long DataDescription::numberOfPedestalEventsInRunFile(int i) const
 {
   assert(i < m_numberOfRuns);
-  return m_numberOfCalibrationEvents[i];
+  return m_numberOfPedestalEvents[i];
+}
+
+long DataDescription::numberOfLedEventsInRunFile(int i) const
+{
+  assert(i < m_numberOfRuns);
+  return m_numberOfLedEvents[i];
 }

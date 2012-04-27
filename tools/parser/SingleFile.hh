@@ -26,7 +26,8 @@ public:
 
 public:
   unsigned int    getNumberOfEvents() const;
-  unsigned int    getNumberOfCalibrationEvents() const;
+  unsigned int    getNumberOfPedestalEvents() const;
+  unsigned int    getNumberOfLedEvents() const;
   const RawEvent* getNextRawEvent() const;
   Calibration*    getCalibrationForDetector(DetectorID* id, int whichCali) const;
   unsigned int    getStartTime() const;
@@ -37,6 +38,8 @@ public:
 private:
   void init();
   void open(QString fileName);
+  void addPedestalEvent(CalibrationCollection*, const RawEvent*);
+  void addLedEvent(CalibrationCollection*, const RawEvent*);
 
 private:
   RunFile*                      m_runFile;

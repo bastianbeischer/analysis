@@ -100,6 +100,7 @@ unsigned int SimpleEvent::eventNo() const
 {
   assert(m_description);
   int run = m_description->runFileForEventId(m_eventId);
-  int calibrationEvents = m_description->numberOfCalibrationEventsInRunFile(run);
-  return m_eventId - calibrationEvents;
+  int pedestalEvents = m_description->numberOfPedestalEventsInRunFile(run);
+  int ledEvents = m_description->numberOfLedEventsInRunFile(run);
+  return m_eventId - pedestalEvents - ledEvents;
 }

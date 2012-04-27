@@ -21,7 +21,8 @@ public:
   void setComment(const std::string& comment) {m_comment = comment;}
   void setSoftwareVersionHash();
   void setSoftwareVersionHash(const std::string& version) {m_softwareVersionHash = version;}
-  void addRunFile(const std::string& fileName, const std::string& softwareVersionHash, const int nEvents, const int nCalibrationEvents, const CalibrationCollection* calibrationCollection);
+  void addRunFile(const std::string& fileName, const std::string& softwareVersionHash, const int nEvents,
+    const int nPedestalEvents, const int nLedEvents, const CalibrationCollection* calibrationCollection);
 
   const std::string& comment() const {return m_comment;}
   const std::string& softwareVersionHash() const {return m_softwareVersionHash;}
@@ -30,7 +31,8 @@ public:
   const std::string& runFileSoftwareVersionHash(int i = 0) const {assert(i < m_numberOfRuns); return m_runFileSoftwareVersionHash[i];}
 
   long numberOfEventsInRunFile(int i = 0) const;
-  long numberOfCalibrationEventsInRunFile(int i = 0) const;
+  long numberOfPedestalEventsInRunFile(int i = 0) const;
+  long numberOfLedEventsInRunFile(int i = 0) const;
   long eventNumberInRunFile(long eventNumber) const;
   int runFileForEventId(long eventId) const;
   int runFileForEventNumber(long eventNumber) const;
@@ -42,7 +44,8 @@ private:
   std::string m_comment;
   std::string m_softwareVersionHash; //SHA1 hash of the latest commit
   std::vector<long> m_numberOfEvents;
-  std::vector<long> m_numberOfCalibrationEvents;
+  std::vector<long> m_numberOfPedestalEvents;
+  std::vector<long> m_numberOfLedEvents;
   std::vector<std::string> m_runFileNames;
   std::vector<std::string> m_runFileSoftwareVersionHash;
   std::vector<const CalibrationCollection*> m_calibrationCollections;

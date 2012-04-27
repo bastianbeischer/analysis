@@ -68,12 +68,17 @@ void SingleFile::init()
 
 unsigned int SingleFile::getNumberOfEvents() const
 {
-  return m_runFile->GetNumberOfEvents() - getNumberOfCalibrationEvents();
+  return m_runFile->GetNumberOfEvents() - getNumberOfPedestalEvents() - getNumberOfLedEvents();
 }
 
-unsigned int SingleFile::getNumberOfCalibrationEvents() const
+unsigned int SingleFile::getNumberOfPedestalEvents() const
 {
   return m_runFile->GetNumberOfCalibrationEvents();
+}
+
+unsigned int SingleFile::getNumberOfLedEvents() const
+{
+  return m_runFile->GetNumberOfLedCalibrationEvents();
 }
 
 const RawEvent* SingleFile::getNextRawEvent() const
@@ -88,68 +93,112 @@ void SingleFile::open(QString fileName)
     delete m_runFile;
   }
   m_runFile = new RunFile(fileName, RunFile::MODE_READING);
-
-  int nCalibrationEvents = m_runFile->GetNumberOfCalibrationEvents();
-  int nEvents = m_runFile->GetNumberOfEvents() - nCalibrationEvents;
-  std::cout << qPrintable(fileName) << ": contains " << nEvents << " regular events and " << nCalibrationEvents << " calibration events" << std::endl;
+  int nEvents = getNumberOfEvents();
+  std::cout << qPrintable(fileName) << ": contains "
+    << nEvents << " regular events, "
+    << getNumberOfLedEvents() << " led events and "
+    << getNumberOfPedestalEvents() << " pedestal events" << std::endl;
   if (nEvents == 0) {
     qDebug() << "File doesn't contain a valid header. Trying to read as many events as possible. Progress bar will be wrong!";
   }
 }
 
+void SingleFile::addPedestalEvent(CalibrationCollection* calibrationCollection, const RawEvent* event)
+{
+  QList<DetectorID*> detIDs = event->GetIDs();
+
+  foreach(DetectorID* id, detIDs) {
+    if (id->IsTOF())
+      continue;
+    int blocklength = id->GetDataLength();
+    for (int i = 0; i < blocklength; i++)
+      calibrationCollection->addPedestalHistogram(id->GetID16() | i);
+  }
+
+  QMap<DetectorID*, DataBlock*> dataBlockMap;
+  foreach(DetectorID* id, detIDs) {
+    DataBlock* block = event->GetBlock(id);
+    dataBlockMap[id] = block;
+
+    if (id->IsTOF())
+      continue;
+
+    // copy calibration information
+    int blocklength = id->GetDataLength();
+    const quint16* data = 0;
+    if (id->IsTracker()) {
+      data = ((TrackerDataBlock*) block)->GetRawData();
+    }
+    else if (id->IsTRD()) {
+      data = ((TRDDataBlock*) block)->GetRawData();
+    }
+    else if (id->IsPMT()) {
+      data = ((PMTDataBlock*) block)->GetRawData();
+    }
+    for (int i = 0; i < blocklength; i++)
+      calibrationCollection->addPedestalValue(id->GetID16() | i, data[i]);
+  }
+
+  foreach(PERDaixFiberModule* module, m_fiberModules) {
+    module->ProcessCalibrationEvent((TrackerDataBlock*) dataBlockMap[module->GetBoardID(PERDaixFiberModule::BOARD_0)]);
+    module->ProcessCalibrationEvent((TrackerDataBlock*) dataBlockMap[module->GetBoardID(PERDaixFiberModule::BOARD_1)]);
+  }
+  foreach(PERDaixTRDModule* module, m_trdModules) {
+    module->ProcessCalibrationEvent((TRDDataBlock*) dataBlockMap[module->GetBoardID()]);
+  }
+  foreach(PERDaixPMTModule* module, m_pmtModules) {
+    module->ProcessCalibrationEvent((PMTDataBlock*) dataBlockMap[module->GetBoardID()]);
+  }
+
+  qDeleteAll(dataBlockMap);
+  delete event;
+}
+
+void SingleFile::addLedEvent(CalibrationCollection* calibrationCollection, const RawEvent* event)
+{
+  QList<DetectorID*> detIDs = event->GetIDs();
+
+  foreach(DetectorID* id, detIDs) {
+    if (!id->IsTracker())
+      continue;
+    int blocklength = id->GetDataLength();
+    for (int i = 0; i < blocklength; i++)
+      calibrationCollection->addLedHistogram(id->GetID16() | i);
+  }
+
+  QMap<DetectorID*, DataBlock*> dataBlockMap;
+  foreach(DetectorID* id, detIDs) {
+    DataBlock* block = event->GetBlock(id);
+    dataBlockMap[id] = block;
+    if (!id->IsTracker())
+      continue;
+    int blocklength = id->GetDataLength();
+    const quint16* data = ((TrackerDataBlock*) block)->GetRawData();
+    for (int i = 0; i < blocklength; i++)
+      calibrationCollection->addLedValue(id->GetID16() | i, data[i]);
+  }
+
+  qDeleteAll(dataBlockMap);
+  delete event;
+}
 
 const CalibrationCollection* SingleFile::calibrate()
 {
   CalibrationCollection* calibrationCollection = new CalibrationCollection;
 
   for (unsigned int i = 0; i < m_runFile->GetNumberOfCalibrationEvents(); i++) {
-    const RawEvent* event = (const RawEvent*) m_runFile->ReadNextEvent();
-    QList<DetectorID*> detIDs = event->GetIDs();
-
-    QMap<DetectorID*, DataBlock*> dataBlockMap;
-    foreach(DetectorID* id, detIDs) {
-      DataBlock* block = event->GetBlock(id);
-      dataBlockMap[id] = block;
-
-      if (id->IsTOF())
-        continue;
-
-      // copy calibration information
-      int blocklength = id->GetDataLength();
-      const quint16* data = 0;
-      if (id->IsTracker()) {
-        data = ((TrackerDataBlock*) block)->GetRawData();
-      }
-      else if (id->IsTRD()) {
-        data = ((TRDDataBlock*) block)->GetRawData();
-      }
-      else if (id->IsPMT()) {
-        data = ((PMTDataBlock*) block)->GetRawData();
-      }
-      for (int i = 0; i < blocklength; i++) {
-        calibrationCollection->addHistogram(id->GetID16() | i);
-        calibrationCollection->addValue(id->GetID16() | i, data[i]);
-      }
-    }
-
-    foreach(PERDaixFiberModule* module, m_fiberModules) {
-      module->ProcessCalibrationEvent((TrackerDataBlock*) dataBlockMap[module->GetBoardID(PERDaixFiberModule::BOARD_0)]);
-      module->ProcessCalibrationEvent((TrackerDataBlock*) dataBlockMap[module->GetBoardID(PERDaixFiberModule::BOARD_1)]);
-    }
-    foreach(PERDaixTRDModule* module, m_trdModules) {
-      module->ProcessCalibrationEvent((TRDDataBlock*) dataBlockMap[module->GetBoardID()]);
-    }
-    foreach(PERDaixPMTModule* module, m_pmtModules) {
-      module->ProcessCalibrationEvent((PMTDataBlock*) dataBlockMap[module->GetBoardID()]);
-    }
-
-    qDeleteAll(dataBlockMap);
-    delete event;
+    const RawEvent* event = static_cast<const RawEvent*>(m_runFile->ReadNextEvent());
+    addPedestalEvent(calibrationCollection, event);
   }
-
+  
   foreach(PERDaixFiberModule* module, m_fiberModules)  module->ProcessCalibrationData();
   foreach(PERDaixTRDModule* module, m_trdModules)  module->ProcessCalibrationData();
   foreach(PERDaixPMTModule* module, m_pmtModules)  module->ProcessCalibrationData();
+
+  for (unsigned int i = 0; i < m_runFile->GetNumberOfLedCalibrationEvents(); i++) {
+    const RawEvent* event = static_cast<const RawEvent*>(m_runFile->ReadNextEvent());
+    addLedEvent(calibrationCollection, event);
+  }
 
   return calibrationCollection;
 }
