@@ -16,12 +16,10 @@ CutSelector::CutSelector(Enums::Cut cut, QWidget* parent)
   m_checkBox = new QCheckBox(label);
 
   m_minimumEdit = new QLineEdit();
-  m_minimumEdit->setPlaceholderText("min");
   m_minimumEdit->setMaximumWidth(50);
   m_minimumEdit->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 
   m_maximumEdit = new QLineEdit();
-  m_maximumEdit->setPlaceholderText("max");
   m_maximumEdit->setMaximumWidth(50);
   m_maximumEdit->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 
