@@ -4,6 +4,7 @@
 #include "CalibrationCollection.hh"
 #include "Layer.hh"
 #include "DetectorElement.hh"
+#include "H2DProjectionPlot.hh"
 
 #include <TROOT.h>
 #include <TFile.h>
@@ -79,8 +80,9 @@ void MainWindow::update()
   foreach (DetectorElement* element, elements)
     nIdBins+= element->nChannels();
 
+  int rebin = 8;
   int max = 4095;
-  m_histogram = new TH2D("calibration histogram", "", nIdBins, 0, nIdBins, max, 0, max);
+  m_histogram = new TH2D("calibration histogram", "", nIdBins, 0, nIdBins, max/rebin, 0, max);
 
   int idBin = 1;
   foreach (DetectorElement* element, elements) {
@@ -89,30 +91,21 @@ void MainWindow::update()
       const TH1I* histogram = led ? m_collection->ledHistogram(id) : m_collection->pedestalHistogram(id);
       if (!histogram)
         continue;
-      for (int adcBin = 1; adcBin <= max; ++adcBin)
-        m_histogram->SetBinContent(idBin, adcBin, histogram->GetBinContent(adcBin));
+
+      for (int adcBin = 1; adcBin <= max/rebin; ++adcBin) {
+        double content = 0;
+        for (int i = 0; i < rebin; ++i)
+          content += histogram->GetBinContent(rebin * adcBin + i);
+
+        m_histogram->SetBinContent(idBin, adcBin, content);
         m_histogram->GetXaxis()->SetBinLabel(idBin, qPrintable(QString("0x%1").arg(id, 0, 16)));
+      }
       ++idBin;
     }
   }
 
   m_histogram->Draw("COLZ");
-  gPad->SetLogz();
+  //gPad->SetLogz();
   gPad->Modified();
   gPad->Update();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
