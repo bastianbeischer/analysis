@@ -22,6 +22,7 @@
 #include "SettingsManager.hh"
 #include "Settings.hh"
 #include "Helpers.hh"
+#include "ProgressBar.hh"
 
 DataManager::DataManager() :
   m_description(0),
@@ -144,46 +145,26 @@ void DataManager::processFiles()
   Converter converter;
   PreAnalysis preAna;
   int totalNumberOfEvents = 0;
-  int currentGlobalEvent = 0;
-  foreach(SingleFile* inputFile, m_inputFiles) {
+  foreach(SingleFile* inputFile, m_inputFiles)
     totalNumberOfEvents += inputFile->getNumberOfEvents();
-  }
 
-  std::cout << std::endl;
-  std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
-  std::cout << "| Processing:                                                                                        |" << std::endl;
-  std::cout << "| 0%     10%       20%       30%       40%       50%       60%       70%       80%       90%     100%|" << std::endl;
-  std::cout << "|.........|.........|.........|.........|.........|.........|.........|.........|.........|..........|" << std::endl;
-  std::cout << "|" << std::flush;
-  int iFactors = 0;
 
-  for (int i = 0; i < m_inputFiles.size(); ++i) {
+  std::cout << totalNumberOfEvents << std::endl << "raw events:" << std::endl;
+  ProgressBar bar(totalNumberOfEvents);
+  for (int i = 0; i < m_inputFiles.size(); ++i, bar.next()) {
     SingleFile* inputFile = m_inputFiles.at(i) ;
-    //TODO not very nice to have 2 lists
     MCSingleFile* mcInputFile = m_inputMCFiles.at(i) ;
-
     m_currentEvent = converter.generateNextSimpleEvent(inputFile, mcInputFile);
     while (m_currentEvent) {
+      bar.next();
       if (!mcInputFile)
         addSensorData(m_currentEvent);
-
       m_currentEvent = preAna.generateCompressedEvent(m_currentEvent);
-
       m_outputTree->Fill();
       delete m_currentEvent;
-
-      if ( currentGlobalEvent > iFactors*totalNumberOfEvents/100. ) {
-        std::cout << "#" << std::flush;
-        iFactors++;
-      }
-      currentGlobalEvent++;
       m_currentEvent = converter.generateNextSimpleEvent(inputFile, mcInputFile);
     }
   }
-
-  std::cout << "|" << std::endl;
-  std::cout << "+----------------------------------------------------------------------------------------------------+" << std::endl;
-  std::cout << "Finished conversion." << std::endl;
 }
 
 void DataManager::addSensorData(SimpleEvent* event)

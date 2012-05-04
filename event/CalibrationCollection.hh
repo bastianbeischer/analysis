@@ -8,7 +8,7 @@
 
 class CalibrationCollection : public TObject
 {
-  
+
 public:
   CalibrationCollection();
   CalibrationCollection(const CalibrationCollection&);
@@ -26,7 +26,7 @@ public:
 private:
   std::map<unsigned short, TH1S*> m_pedestalHistograms;
   std::map<unsigned short, TH1S*> m_ledHistograms;
-  
+
   ClassDef( CalibrationCollection, 1 );
 
 };
