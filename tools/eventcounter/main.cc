@@ -34,7 +34,7 @@ int main(int argc, char** argv)
       delete event;
       counter++;
     }
-    
+
     counter = 0;
     while (counter < nLedEvents) {
       event = (RawEvent*) runfile.ReadNextEvent();

@@ -67,7 +67,7 @@ TimeResolutionPlot::~TimeResolutionPlot()
 void TimeResolutionPlot::processEvent(const AnalyzedEvent* event)
 {
   const Track* track = event->particle()->track();
-  
+
   const Settings* settings = event->settings();
   if (!settings && !event->flagsSet(Enums::InsideMagnet))
     return;

@@ -31,7 +31,7 @@ TOFEfficiencyPlot::TOFEfficiencyPlot(unsigned short id)
   setAxisTitle("y_{tracker} / mm", "x_{tracker} / mm", "efficiency");
   setDrawOption(LEGO2);
   addHistogram(histogram);
-  
+
   addRequiredEventFlags(Enums::TrackGood | Enums::AllTrackerLayers);
 }
 
