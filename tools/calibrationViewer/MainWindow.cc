@@ -82,13 +82,13 @@ void MainWindow::update()
 
   int rebin = 8;
   int max = 4095;
-  m_histogram = new TH2D("calibration histogram", "", nIdBins, 0, nIdBins, max/rebin, 0, max);
+  m_histogram = new TH2S("calibration histogram", "", nIdBins, 0, nIdBins, max/rebin, 0, max);
 
   int idBin = 1;
   foreach (DetectorElement* element, elements) {
     for (int channel = 0; channel < element->nChannels(); ++channel) {
       unsigned short id = element->id() | channel;
-      const TH1I* histogram = led ? m_collection->ledHistogram(id) : m_collection->pedestalHistogram(id);
+      const TH1S* histogram = led ? m_collection->ledHistogram(id) : m_collection->pedestalHistogram(id);
       if (!histogram)
         continue;
 

@@ -6,7 +6,7 @@
 class TH2D;
 class CalibrationCollection;
 class DetectorElement;
-class H2DProjectionPlot;
+class TH2S;
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -19,7 +19,7 @@ public slots:
 private:
   static bool compareElementPosition(DetectorElement*, DetectorElement*);
   Ui_mainWindow m_ui;
-  TH2D* m_histogram;
+  TH2S* m_histogram;
   CalibrationCollection* m_collection;
 };
 
