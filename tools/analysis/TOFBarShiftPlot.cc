@@ -58,7 +58,7 @@ TOFBarShiftPlot::~TOFBarShiftPlot()
 void TOFBarShiftPlot::processEvent(const AnalyzedEvent* event)
 {
   const Track* track = event->particle()->track();
-  
+
   const Settings* settings = event->settings();
   if (!settings && !event->flagsSet(Enums::InsideMagnet))
     return;

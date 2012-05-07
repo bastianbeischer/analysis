@@ -24,7 +24,7 @@ BendingAnglePositionPlot::BendingAnglePositionPlot(double cut)
   addHistogram(histogram);
   m_normHisto = new TH2D(qPrintable(title()+"_all"), "", 30, -250, 250, 24, -120, 120);
   setDrawOption(LEGO);
-  
+
   addRequiredEventFlags(Enums::AllTrackerLayers);
 }
 

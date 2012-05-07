@@ -8,6 +8,7 @@
 #include "PERDaixPMTModule.h"
 #include "SimpleEvent.hh"
 #include "CalibrationCollection.hh"
+#include "ProgressBar.hh"
 
 #include <iostream>
 #include <QDebug>
@@ -189,16 +190,20 @@ const CalibrationCollection* SingleFile::calibrate()
 {
   CalibrationCollection* calibrationCollection = new CalibrationCollection;
 
-  for (unsigned int i = 0; i < m_runFile->GetNumberOfCalibrationEvents(); i++) {
+  std::cout << std::endl << "pedestal events:" << std::endl;
+  ProgressBar bar(m_runFile->GetNumberOfCalibrationEvents());
+  for (unsigned int i = 0; i < m_runFile->GetNumberOfCalibrationEvents(); i++, bar.next()) {
     const RawEvent* event = static_cast<const RawEvent*>(m_runFile->ReadNextEvent());
     addPedestalEvent(calibrationCollection, event);
   }
-  
+
   foreach(PERDaixFiberModule* module, m_fiberModules)  module->ProcessCalibrationData();
   foreach(PERDaixTRDModule* module, m_trdModules)  module->ProcessCalibrationData();
   foreach(PERDaixPMTModule* module, m_pmtModules)  module->ProcessCalibrationData();
 
-  for (unsigned int i = 0; i < getNumberOfLedEvents(); i++) {
+  std::cout << std::endl << "LED events:" << std::endl;
+  bar.restart(getNumberOfLedEvents());
+  for (unsigned int i = 0; i < getNumberOfLedEvents(); i++, bar.next()) {
     const RawEvent* event = static_cast<const RawEvent*>(m_runFile->ReadNextEvent());
     addLedEvent(calibrationCollection, event);
   }

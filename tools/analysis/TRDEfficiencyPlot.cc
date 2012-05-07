@@ -52,7 +52,7 @@ TRDEfficiencyPlot::TRDEfficiencyPlot()
 
   //connect(&m_updateTimer, SIGNAL(timeout()), this, SLOT(update()));
   //m_updateTimer.start(3000);
-  
+
   addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good);
 }
 

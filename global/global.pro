@@ -10,7 +10,8 @@ CLASSES += \
   Helpers \
   Enums \
   ParticleProperties \
-  KineticVariable
+  KineticVariable \
+  ProgressBar
 
 HEADERS += \
   Constants.hh

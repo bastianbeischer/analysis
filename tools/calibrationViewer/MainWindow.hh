@@ -3,9 +3,10 @@
 
 #include "ui_MainWindow.h"
 
-class TH2D;
+class TH2S;
 class CalibrationCollection;
 class DetectorElement;
+class TH2S;
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -18,9 +19,9 @@ private slots:
   void saveButtonClicked();
 private:
   static bool compareElementPosition(DetectorElement*, DetectorElement*);
-  Ui_MainWindow m_ui;
+  Ui_mainWindow m_ui;
   QString m_fileName;
-  TH2D* m_histogram;
+  TH2S* m_histogram;
   CalibrationCollection* m_collection;
 };
 

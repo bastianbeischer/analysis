@@ -23,7 +23,7 @@ TRDEnergyDepositionOverMomentumPlot::TRDEnergyDepositionOverMomentumPlot(Enums::
   TH2D* histo = new TH2D(qPrintable(title()), qPrintable(title()), 200, -10, 10, 200, 0, 60);
   setAxisTitle("R / GV", "dE/dx", "");
   addHistogram(histo);
-  
+
   addRequiredEventFlags(Enums::TrackGood | Enums::AllTrackerLayers | Enums::InsideMagnet);
 }
 

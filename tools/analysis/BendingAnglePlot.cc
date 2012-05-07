@@ -25,7 +25,7 @@ BendingAnglePlot::BendingAnglePlot()
   histogram = new TH1D("bending angle outside magnet", "", 400, -.2, .2);
   histogram->SetLineColor(kBlue);
   addHistogram(histogram);
-  
+
   addRequiredEventFlags(Enums::TrackGood | Enums::AllTrackerLayers);
 }
 

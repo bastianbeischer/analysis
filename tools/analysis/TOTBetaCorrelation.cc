@@ -25,7 +25,7 @@ TOTBetaCorrelation::TOTBetaCorrelation(const QString& title, TOTLayerPlot::Layer
   TH2D* histogram = new TH2D(qPrintable(fullTitle), "", 100, 0, 1.6, 150, 0, 100);
   setAxisTitle("beta", "sum time over threshold / ns", "");
   addHistogram(histogram);
-  
+
   addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good | Enums::InsideMagnet);
 }
 
