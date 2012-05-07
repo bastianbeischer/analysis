@@ -23,6 +23,7 @@ MainWindow::MainWindow(QWidget* parent)
   , m_collection(0)
 {
   m_ui.setupUi(this);
+  m_ui.typeComboBox->addItem("LED shifted");
   m_ui.typeComboBox->addItem("LED");
   m_ui.typeComboBox->addItem("pedestal");
   LayerIterator itEnd = Setup::instance()->lastLayer();
@@ -61,7 +62,17 @@ bool MainWindow::compareElementPosition(DetectorElement* e1, DetectorElement* e2
 
 void MainWindow::update()
 {
-  bool led = m_ui.typeComboBox->currentText() == "LED";
+  Type type = NoType;
+  if (m_ui.typeComboBox->currentText() == "LED shifted") {
+    type = LedShifted;
+  } else if (m_ui.typeComboBox->currentText() == "LED") {
+    type = Led;
+  } else if (m_ui.typeComboBox->currentText() == "pedestal") {
+    type = Pedestal;
+  } else {
+    Q_ASSERT(false);
+  }
+
   double zPosition = m_ui.layerComboBox->itemData(m_ui.layerComboBox->currentIndex()).toDouble();
   LayerIterator it = Setup::instance()->firstLayer();
   LayerIterator itEnd = Setup::instance()->lastLayer();
@@ -82,22 +93,31 @@ void MainWindow::update()
 
   int rebin = 8;
   int max = 4095;
-  m_histogram = new TH2S("calibration histogram", "", nIdBins, 0, nIdBins, max/rebin, 0, max);
+
+  double typicalShift = 0;
+  if (type == LedShifted)
+    typicalShift = 500.;
+  m_histogram = new TH2S("calibration histogram", "", nIdBins, 0, nIdBins, max/rebin, -typicalShift, max - typicalShift);
+  int typicalBinShift = m_histogram->GetYaxis()->FindBin(typicalShift);
 
   int idBin = 1;
   foreach (DetectorElement* element, elements) {
     for (int channel = 0; channel < element->nChannels(); ++channel) {
       unsigned short id = element->id() | channel;
-      const TH1S* histogram = led ? m_collection->ledHistogram(id) : m_collection->pedestalHistogram(id);
+      const TH1S* histogram = (type == Pedestal) ? m_collection->pedestalHistogram(id) : m_collection->ledHistogram(id);
+      
       if (!histogram)
         continue;
+      
+      double shift = (type == LedShifted) ? m_collection->pedestalHistogram(id)->GetMean() : 0;
+      int binShift = m_histogram->GetYaxis()->FindBin(shift);
 
       for (int adcBin = 1; adcBin <= max/rebin; ++adcBin) {
         double content = 0;
         for (int i = 0; i < rebin; ++i)
           content += histogram->GetBinContent(rebin * adcBin + i);
 
-        m_histogram->SetBinContent(idBin, adcBin, content);
+        m_histogram->SetBinContent(idBin, adcBin - binShift + typicalBinShift, content);
         m_histogram->GetXaxis()->SetBinLabel(idBin, qPrintable(QString("0x%1").arg(id, 0, 16)));
       }
       ++idBin;

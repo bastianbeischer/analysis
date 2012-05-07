@@ -11,6 +11,7 @@ class TH2S;
 class MainWindow : public QMainWindow {
 Q_OBJECT
 public:
+  enum Type {NoType, Pedestal, Led, LedShifted};
   MainWindow(QWidget* parent = 0);
   ~MainWindow();
   void setRunFile(const QString&);
