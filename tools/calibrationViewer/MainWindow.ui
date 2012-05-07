@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="TQtWidget" name="widget" native="true">
+     <widget class="TQtWidget" name="qtWidget" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
         <horstretch>0</horstretch>
@@ -32,6 +32,13 @@
       </item>
       <item>
        <widget class="QComboBox" name="layerComboBox"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="saveButton">
+        <property name="text">
+         <string>save...</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>

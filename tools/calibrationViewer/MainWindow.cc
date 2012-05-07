@@ -4,6 +4,7 @@
 #include "CalibrationCollection.hh"
 #include "Layer.hh"
 #include "DetectorElement.hh"
+#include "Helpers.hh"
 
 #include <TROOT.h>
 #include <TFile.h>
@@ -15,9 +16,12 @@
 #include <TPad.h>
 
 #include <QDebug>
+#include <QFileDialog>
+#include <QStringList>
 
 MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
+  , m_fileName()
   , m_histogram(0)
   , m_collection(0)
 {
@@ -29,6 +33,7 @@ MainWindow::MainWindow(QWidget* parent)
     m_ui.layerComboBox->insertItem(0, QString("layer %1mm").arg(it.key()), it.key());
   connect(m_ui.typeComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
   connect(m_ui.layerComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(update()));
+  connect(m_ui.saveButton, SIGNAL(clicked()), this, SLOT(saveButtonClicked()));
 }
 
 MainWindow::~MainWindow()
@@ -40,7 +45,7 @@ MainWindow::~MainWindow()
 void MainWindow::setRunFile(const QString& fileName)
 {
   Q_ASSERT(fileName.endsWith(".root"));
-
+  m_fileName = QFileInfo(fileName).baseName();
   TFile file(qPrintable(fileName));
   gROOT->cd();
   TTree* tree = static_cast<TTree*>(file.Get("SimpleEventTree"));
@@ -96,23 +101,50 @@ void MainWindow::update()
     }
   }
 
+  m_histogram->SetTitle(qPrintable(m_ui.typeComboBox->currentText() + "-Data for " + QString::number(zPosition) + "mm and for file " + m_fileName));
+  m_histogram->GetYaxis()->SetTitle("ADC value");
+
   m_histogram->Draw("COLZ");
   gPad->SetLogz();
   gPad->Modified();
   gPad->Update();
+
 }
 
+void MainWindow::saveButtonClicked()
+{
+  QStringList fileFormatEndings;
+  fileFormatEndings << "svg" << "pdf" << "eps" << "root" << "png";
+  QStringList filters;
+  foreach(QString ending, fileFormatEndings) {
+    QString description = ending.toUpper();
+    filters.append( description + "(*." + ending + ")" );
+  }
+  QString selectedFilter;
+  QString fileName = QFileDialog::getSaveFileName(this, "save current canvas",
+      Helpers::analysisPath() + "/plots/" + m_fileName + ".png",
+      "All Files(*.*);;" + filters.join(";;"), &selectedFilter);
 
+  if (fileName.isEmpty())
+    return;
 
+  // if file name contains an ending, use that. Otherwise use selected filter
+  QString fileEnding;
+  if (fileName.contains('.')) {
+    fileEnding = fileName.split('.').last().toLower();
+  } else {
+    fileEnding = selectedFilter.split("(").first().toLower();
+  }
 
-
-
-
-
-
-
-
-
-
-
-
+  // if filter == all, save all endings, otherwise use previously determined ending
+  if (fileEnding == "all files"){
+    foreach(QString fileFormatEnding, fileFormatEndings)
+      m_ui.qtWidget->GetCanvas()->SaveAs(qPrintable(fileName + "." + fileFormatEnding));
+  } else {
+    if (!fileEnding.startsWith('.'))
+      fileEnding.prepend('.');
+    if (!fileName.endsWith(fileEnding))
+      fileName.append(fileEnding);
+    m_ui.qtWidget->GetCanvas()->SaveAs(qPrintable(fileName));
+  }
+}
