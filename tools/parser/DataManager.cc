@@ -165,6 +165,7 @@ void DataManager::processFiles()
       m_currentEvent = converter.generateNextSimpleEvent(inputFile, mcInputFile);
     }
   }
+  std::cout << "Finished conversion." << std::endl;
 }
 
 void DataManager::addSensorData(SimpleEvent* event)
