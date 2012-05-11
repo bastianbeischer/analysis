@@ -11,6 +11,7 @@ class PERDaixFiberModule;
 class PERDaixTOFModule;
 class PERDaixTRDModule;
 class PERDaixPMTModule;
+class ECALModule;
 class QString;
 class RawEvent;
 class RunFile;
@@ -48,7 +49,7 @@ private:
   QList<PERDaixTRDModule*>      m_trdModules;
   QList<PERDaixTOFModule*>      m_tofModules;
   QList<PERDaixPMTModule*>      m_pmtModules;
-
+  QList<ECALModule*>            m_ecalModules;
 };
 
 #endif /* SingleFile_hh */

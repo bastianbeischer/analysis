@@ -10,6 +10,7 @@
 #include "TRDDataBlock.h"
 #include "PMTDataBlock.h"
 #include "TOFDataBlock.h"
+#include "ECALDataBlock.h"
 #include "Setup.hh"
 #include "DetectorElement.hh"
 
@@ -101,8 +102,10 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
     else if (id->IsPMT()) {
       nVA32perBlock = 4; // PMT uplink has 128 channels, with 4 VA 32.
       rawData = ((PMTDataBlock*) dataBlock)->GetRawData();
+    } else if (id->IsECAL()) {
+      nVA32perBlock = 2; // PMT uplink has 128 channels, with 4 VA 32.
+      rawData = ((ECALDataBlock*) dataBlock)->GetRawData();
     }
-
 
     // create amplitude array
     unsigned short blockLength = id->IsTOF() ? ((TOFDataBlock*) dataBlock)->GetRawDataLength() : id->GetDataLength(); // tof length is not fixed by the detector type (it is dynamic)
@@ -169,6 +172,10 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
         if (i == 16) // dito
           simpleEvent->setSensorData(SensorTypes::BEAM_CHERENKOV2, amplitude);
       } // pmt
+      else if (id->IsECAL()) {
+        int amplitude = static_cast<int>(amplitudes[i]);
+        qDebug() << i << amplitude;
+      }
 
     } // all hits
 

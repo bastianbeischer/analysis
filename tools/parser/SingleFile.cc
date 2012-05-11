@@ -6,6 +6,7 @@
 #include "PERDaixTRDModule.h"
 #include "PERDaixTOFModule.h"
 #include "PERDaixPMTModule.h"
+#include "ECALModule.h"
 #include "SimpleEvent.hh"
 #include "CalibrationCollection.hh"
 #include "ProgressBar.hh"
@@ -31,6 +32,7 @@ SingleFile::~SingleFile()
   qDeleteAll(m_trdModules);
   qDeleteAll(m_tofModules);
   qDeleteAll(m_pmtModules);
+  qDeleteAll(m_ecalModules);
 }
 
 void SingleFile::init()
@@ -65,6 +67,18 @@ void SingleFile::init()
   m_tofModules.push_back(new PERDaixTOFModule(DetectorID::Get(0x8000, DetectorID::TYPE_TOF_MODULE)));
 
   m_pmtModules.push_back(new PERDaixPMTModule(DetectorID::Get(0x4000, DetectorID::TYPE_PMT_MODULE)));
+
+
+  QList< QPair<quint16, quint16> > vataPairs;
+  vataPairs.append(QPair<quint16,quint16>(0x7400, 0x7400));
+
+  for (QList< QPair<quint16, quint16> >::iterator iter = vataPairs.begin(); iter != vataPairs.end(); iter++) {
+    quint16 value1 = iter->first;
+    quint16 value2 = iter->second;
+    DetectorID* id1 = DetectorID::Get(value1,DetectorID::TYPE_ECAL_MODULE);
+    DetectorID* id2 = DetectorID::Get(value2,DetectorID::TYPE_ECAL_MODULE);
+    m_ecalModules.push_back(new ECALModule(id1, id2));
+  }
 }
 
 unsigned int SingleFile::getNumberOfEvents() const
@@ -139,6 +153,9 @@ void SingleFile::addPedestalEvent(CalibrationCollection* calibrationCollection, 
     else if (id->IsPMT()) {
       data = ((PMTDataBlock*) block)->GetRawData();
     }
+    else if (id->IsECAL()) {
+      data = ((ECALDataBlock*) block)->GetRawData();
+    }
     for (int i = 0; i < blocklength; i++)
       calibrationCollection->addPedestalValue(id->GetID16() | i, data[i]);
   }
@@ -153,7 +170,10 @@ void SingleFile::addPedestalEvent(CalibrationCollection* calibrationCollection, 
   foreach(PERDaixPMTModule* module, m_pmtModules) {
     module->ProcessCalibrationEvent((PMTDataBlock*) dataBlockMap[module->GetBoardID()]);
   }
-
+  foreach(ECALModule* module, m_ecalModules) {
+    module->ProcessCalibrationEvent((ECALDataBlock*) dataBlockMap[module->GetBoardID(ECALModule::BOARD_P)]);
+    module->ProcessCalibrationEvent((ECALDataBlock*) dataBlockMap[module->GetBoardID(ECALModule::BOARD_N)]);
+  }
   qDeleteAll(dataBlockMap);
   delete event;
 }
@@ -200,6 +220,7 @@ const CalibrationCollection* SingleFile::calibrate()
   foreach(PERDaixFiberModule* module, m_fiberModules)  module->ProcessCalibrationData();
   foreach(PERDaixTRDModule* module, m_trdModules)  module->ProcessCalibrationData();
   foreach(PERDaixPMTModule* module, m_pmtModules)  module->ProcessCalibrationData();
+  foreach(ECALModule* module, m_ecalModules)  module->ProcessCalibrationData();
 
   std::cout << std::endl << "LED events:" << std::endl;
   bar.restart(getNumberOfLedEvents());
@@ -214,7 +235,7 @@ const CalibrationCollection* SingleFile::calibrate()
 // return pointer to calibration for calibration "whichCali" on hpe/ufe board with id "id"
 Calibration* SingleFile::getCalibrationForDetector(DetectorID* id, int whichCali) const
 {
-  if(id->IsTracker()) {
+  if (id->IsTracker()) {
     foreach(PERDaixFiberModule* module, m_fiberModules) {
       if (module->GetBoardID(PERDaixFiberModule::BOARD_0)->GetID16() == id->GetID16())
         return (Calibration*) module->GetCalibrations().at(whichCali);
@@ -222,16 +243,24 @@ Calibration* SingleFile::getCalibrationForDetector(DetectorID* id, int whichCali
         return (Calibration*) module->GetCalibrations().at(whichCali+8);
     }
   }
-  else if(id->IsTRD()) {
+  else if (id->IsTRD()) {
     foreach(PERDaixTRDModule* module, m_trdModules)
       if (module->GetBoardID()->GetID16() == id->GetID16())
         return (Calibration*) module->GetCalibrations().at(whichCali);
   }
-  else if(id->IsPMT()) {
+  else if (id->IsPMT()) {
     foreach(PERDaixPMTModule* module, m_pmtModules)
       if (module->GetBoardID()->GetID16() == id->GetID16())
         return (Calibration*) module->GetCalibrations().at(whichCali);
   }
+  else if (id->IsECAL()) {
+    foreach(ECALModule* module, m_ecalModules)
+      if (module->GetBoardID(ECALModule::BOARD_P)->GetID16() == id->GetID16())
+        return (Calibration*) module->GetCalibrations().at(whichCali);
+      else if (module->GetBoardID(ECALModule::BOARD_N)->GetID16() == id->GetID16())
+        return (Calibration*) module->GetCalibrations().at(whichCali + 1);
+  }
+
 
   return 0;
 }
