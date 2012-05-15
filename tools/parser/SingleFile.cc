@@ -70,7 +70,14 @@ void SingleFile::init()
 
 
   QList< QPair<quint16, quint16> > vataPairs;
+  vataPairs.append(QPair<quint16,quint16>(0x7000, 0x7000));
+  vataPairs.append(QPair<quint16,quint16>(0x7100, 0x7100));
+  vataPairs.append(QPair<quint16,quint16>(0x7200, 0x7200));
+  vataPairs.append(QPair<quint16,quint16>(0x7300, 0x7300));
   vataPairs.append(QPair<quint16,quint16>(0x7400, 0x7400));
+  vataPairs.append(QPair<quint16,quint16>(0x7500, 0x7500));
+  vataPairs.append(QPair<quint16,quint16>(0x7600, 0x7600));
+  vataPairs.append(QPair<quint16,quint16>(0x7700, 0x7700));
 
   for (QList< QPair<quint16, quint16> >::iterator iter = vataPairs.begin(); iter != vataPairs.end(); iter++) {
     quint16 value1 = iter->first;
