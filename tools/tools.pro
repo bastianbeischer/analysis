@@ -12,7 +12,8 @@ SUBDIRS  = \
 exists($(PERDAIX_READOUT_PATH)) {
   SUBDIRS+= \
     parser \
-    eventcounter
+    eventcounter \
+    sensorconverter
 } else {
   message ("Set PERDAIX_READOUT_PATH environment variable to build parser and eventcounter!")
 }
