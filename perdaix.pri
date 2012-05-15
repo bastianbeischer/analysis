@@ -20,9 +20,16 @@ INCLUDEPATH += \
 	$(PERDAIX_READOUT_PATH)/flightsoftware/libraries/global \
 	$(PERDAIX_READOUT_PATH)/flightsoftware/libraries/sipm \
 	$(PERDAIX_READOUT_PATH)/flightsoftware/libraries/perdaixusb \
+	$(PERDAIX_READOUT_PATH)/flightsoftware/libraries/sensors \
   $(PERDAIX_READOUT_PATH)/flightsoftware/libraries/tof \
   $(CLHEP_BASE_DIR)/include
 
 DEPENDPATH += $${INCLUDEPATH}
 
-LIBS += -L$${PERDAIX_LIB_DIR} -lperdaixdataformats -lperdaixusb -lperdaixglobal -lperdaixsipm -lperdaixtof
+LIBS += -L$${PERDAIX_LIB_DIR} \
+  -lperdaixdataformats \
+  -lperdaixusb \
+  -lperdaixglobal \
+  -lperdaixsipm \
+  -lperdaixtof \
+  -lperdaixsensors
