@@ -106,7 +106,7 @@ void DataChain::addRootFile(const char* filename)
   DataDescription* desc = (DataDescription*) tree->GetUserInfo()->First();
   if (desc) {
     m_descriptionBuffer.push_back(new DataDescription(*desc)); // create a copy because the original vanishes when the TChain closes its TFile
-    std::cout << " (version: " << desc->softwareVersionHash() << ")" << std::endl;
+    std::cout << " (version: " << desc->softwareVersionHash() << ")";
     for (int i = 0; i < desc->numberOfRuns(); i++) {
       QString name(desc->runFileName(i).c_str());
       QRegExp re("run.*(\\d+)\\.dat");
@@ -115,8 +115,9 @@ void DataChain::addRootFile(const char* filename)
         m_runNumbers.push_back(time);
       }
     }
+    std::sort(m_runNumbers.begin(), m_runNumbers.end());
   }
-  std::sort(m_runNumbers.begin(), m_runNumbers.end());
+  std::cout << std::endl;
 }
 
 SimpleEvent* DataChain::event(unsigned int i)
