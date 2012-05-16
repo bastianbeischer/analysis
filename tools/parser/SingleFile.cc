@@ -207,6 +207,7 @@ const CalibrationCollection* SingleFile::calibrate()
     const RawEvent* event = static_cast<const RawEvent*>(m_runFile->ReadNextEvent());
     addPedestalEvent(calibrationCollection, event);
   }
+  bar.finish();
 
   foreach(PERDaixFiberModule* module, m_fiberModules)  module->ProcessCalibrationData();
   foreach(PERDaixTRDModule* module, m_trdModules)  module->ProcessCalibrationData();
@@ -218,6 +219,7 @@ const CalibrationCollection* SingleFile::calibrate()
     const RawEvent* event = static_cast<const RawEvent*>(m_runFile->ReadNextEvent());
     addLedEvent(calibrationCollection, event);
   }
+  bar.finish();
 
   return calibrationCollection;
 }

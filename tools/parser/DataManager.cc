@@ -141,7 +141,6 @@ void DataManager::saveAndCloseOutput()
 
 void DataManager::processFiles()
 {
-  std::cout << "Starting conversion to Simple Events." << std::endl;
   Converter converter;
   PreAnalysis preAna;
   int totalNumberOfEvents = 0;
@@ -149,7 +148,7 @@ void DataManager::processFiles()
     totalNumberOfEvents += inputFile->getNumberOfEvents();
 
 
-  std::cout << totalNumberOfEvents << std::endl << "raw events:" << std::endl;
+  std::cout << std::endl << "raw events:" << std::endl;
   ProgressBar bar(totalNumberOfEvents);
   for (int i = 0; i < m_inputFiles.size(); ++i, bar.next()) {
     SingleFile* inputFile = m_inputFiles.at(i) ;
@@ -165,6 +164,7 @@ void DataManager::processFiles()
       m_currentEvent = converter.generateNextSimpleEvent(inputFile, mcInputFile);
     }
   }
+  bar.finish();
   std::cout << "Finished conversion." << std::endl;
 }
 
