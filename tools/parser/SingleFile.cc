@@ -6,16 +6,17 @@
 #include "PERDaixTRDModule.h"
 #include "PERDaixTOFModule.h"
 #include "PERDaixPMTModule.h"
+
+#ifdef PERDAIX12
+#include "ECALModule.h"
+#endif
+
 #include "SimpleEvent.hh"
 #include "CalibrationCollection.hh"
 #include "ProgressBar.hh"
 
 #include <iostream>
 #include <QDebug>
-
-#ifdef PERDAIX12
-#include "ECALModule.h"
-#endif
 
 SingleFile::SingleFile()
 {
@@ -35,6 +36,9 @@ SingleFile::~SingleFile()
   qDeleteAll(m_trdModules);
   qDeleteAll(m_tofModules);
   qDeleteAll(m_pmtModules);
+#ifdef PERDAIX12
+  qDeleteAll(m_ecalModules);
+#endif
 }
 
 void SingleFile::init()
@@ -69,6 +73,26 @@ void SingleFile::init()
   m_tofModules.push_back(new PERDaixTOFModule(DetectorID::Get(0x8000, DetectorID::TYPE_TOF_MODULE)));
 
   m_pmtModules.push_back(new PERDaixPMTModule(DetectorID::Get(0x4000, DetectorID::TYPE_PMT_MODULE)));
+
+#ifdef PERDAIX12
+  QList< QPair<quint16, quint16> > vataPairs;
+  vataPairs.append(QPair<quint16,quint16>(0x7000, 0x7000)); //TODO: set ID of opposite side of ECAL module correctly!
+  vataPairs.append(QPair<quint16,quint16>(0x7100, 0x7100));
+  vataPairs.append(QPair<quint16,quint16>(0x7200, 0x7200));
+  vataPairs.append(QPair<quint16,quint16>(0x7300, 0x7300));
+  vataPairs.append(QPair<quint16,quint16>(0x7400, 0x7400));
+  vataPairs.append(QPair<quint16,quint16>(0x7500, 0x7500));
+  vataPairs.append(QPair<quint16,quint16>(0x7600, 0x7600));
+  vataPairs.append(QPair<quint16,quint16>(0x7700, 0x7700));
+
+  for (QList< QPair<quint16, quint16> >::iterator iter = vataPairs.begin(); iter != vataPairs.end(); iter++) {
+    quint16 value1 = iter->first;
+    quint16 value2 = iter->second;
+    DetectorID* id1 = DetectorID::Get(value1,DetectorID::TYPE_ECAL_MODULE);
+    DetectorID* id2 = DetectorID::Get(value2,DetectorID::TYPE_ECAL_MODULE);
+    m_ecalModules.push_back(new ECALModule(id1, id2));
+  }
+#endif
 }
 
 unsigned int SingleFile::getNumberOfEvents() const
@@ -164,7 +188,12 @@ void SingleFile::addPedestalEvent(CalibrationCollection* calibrationCollection, 
   foreach(PERDaixPMTModule* module, m_pmtModules) {
     module->ProcessCalibrationEvent((PMTDataBlock*) dataBlockMap[module->GetBoardID()]);
   }
-
+#ifdef PERDAIX12
+  foreach(ECALModule* module, m_ecalModules) {
+    module->ProcessCalibrationEvent((ECALDataBlock*) dataBlockMap[module->GetBoardID(ECALModule::BOARD_P)]);
+    module->ProcessCalibrationEvent((ECALDataBlock*) dataBlockMap[module->GetBoardID(ECALModule::BOARD_N)]);
+  }
+#endif
   qDeleteAll(dataBlockMap);
   delete event;
 }
@@ -211,6 +240,8 @@ const CalibrationCollection* SingleFile::calibrate()
 
   foreach(PERDaixFiberModule* module, m_fiberModules)  module->ProcessCalibrationData();
   foreach(PERDaixTRDModule* module, m_trdModules)  module->ProcessCalibrationData();
+  foreach(PERDaixPMTModule* module, m_pmtModules)  module->ProcessCalibrationData();
+
   foreach(PERDaixPMTModule* module, m_pmtModules)  module->ProcessCalibrationData();
 
   std::cout << std::endl << "LED events:" << std::endl;
