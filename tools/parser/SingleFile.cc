@@ -13,6 +13,10 @@
 #include <iostream>
 #include <QDebug>
 
+#ifdef PERDAIX12
+#include "ECALModule.h"
+#endif
+
 SingleFile::SingleFile()
 {
   init();
@@ -109,6 +113,7 @@ void SingleFile::open(QString fileName)
 
 void SingleFile::addPedestalEvent(CalibrationCollection* calibrationCollection, const RawEvent* event)
 {
+  Q_ASSERT(event);
   QList<DetectorID*> detIDs = event->GetIDs();
 
   foreach(DetectorID* id, detIDs) {
@@ -139,6 +144,12 @@ void SingleFile::addPedestalEvent(CalibrationCollection* calibrationCollection, 
     else if (id->IsPMT()) {
       data = ((PMTDataBlock*) block)->GetRawData();
     }
+#ifdef PERDAIX12
+    else if (id->IsECAL()) {
+      data = ((ECALDataBlock*) block)->GetRawData();
+    }
+#endif
+    Q_ASSERT(data);
     for (int i = 0; i < blocklength; i++)
       calibrationCollection->addPedestalValue(id->GetID16() | i, data[i]);
   }
