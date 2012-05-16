@@ -152,11 +152,14 @@ bool TRDLikelihoodPlot::truthMcIsElectron(const AnalyzedEvent* analyzedEvent, bo
     ok = true;
     return qAbs(event->MCInformation()->primary()->pdgID) == 11;
   }
+  if (!ok)
+    return false;
 
   double c1Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV1);
   double c2Signal = event->sensorData(SensorTypes::BEAM_CHERENKOV2);
 
   const Settings* settings = analyzedEvent->settings();
+  Q_ASSERT(settings);
   bool eAboveCherenkov = settings->isAboveThreshold(Constants::electronMass);
 
   if (eAboveCherenkov && c1Signal > 200 && c2Signal > 200) {
