@@ -23,6 +23,8 @@ CalibrationCollection::~CalibrationCollection()
 {
   for (std::map<unsigned short, TH1S*>::iterator it = m_pedestalHistograms.begin(); it != m_pedestalHistograms.end(); it++)
     delete it->second;
+  for (std::map<unsigned short, TH1S*>::iterator it = m_ledHistograms.begin(); it != m_ledHistograms.end(); it++)
+    delete it->second;
 }
 
 const TH1S* CalibrationCollection::pedestalHistogram(unsigned short detId) const
