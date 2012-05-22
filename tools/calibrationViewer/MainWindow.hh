@@ -7,6 +7,8 @@ class TH2S;
 class CalibrationCollection;
 class DetectorElement;
 class TH2S;
+class TH1D;
+class TLine;
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -18,6 +20,7 @@ public:
   void setRunFile(const QString&);
 private slots:
   void update();
+  void updateProjection();
   void saveButtonClicked();
   void fillComboBox();
 private:
@@ -27,6 +30,8 @@ private:
   Ui_mainWindow m_ui;
   QString m_fileName;
   TH2S* m_histogram;
+  TLine* m_projectionLine;
+  TH1D* m_projectionHistogram;
   CalibrationCollection* m_collection;
 };
 

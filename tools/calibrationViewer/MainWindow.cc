@@ -14,6 +14,7 @@
 #include <TH2.h>
 #include <TAxis.h>
 #include <TPad.h>
+#include <TLine.h>
 
 #include <QDebug>
 #include <QFileDialog>
@@ -23,6 +24,8 @@ MainWindow::MainWindow(QWidget* parent)
   : QMainWindow(parent)
   , m_fileName()
   , m_histogram(0)
+  , m_projectionLine(0)
+  , m_projectionHistogram(0)
   , m_collection(0)
 {
   m_ui.setupUi(this);
@@ -33,6 +36,7 @@ MainWindow::MainWindow(QWidget* parent)
   m_ui.selectionTypeComboBox->addItem("by ID");
   fillComboBox();
   connect(m_ui.saveButton, SIGNAL(clicked()), this, SLOT(saveButtonClicked()));
+  connect(m_ui.projectionSpinBox, SIGNAL(valueChanged(int)), this, SLOT(updateProjection()));
 }
 
 MainWindow::~MainWindow()
@@ -156,9 +160,12 @@ void MainWindow::update()
   if (m_histogram)
     delete m_histogram;
 
+
   CalibrationType calType = calibrationType();
   SelectionType selType = selectionType();
   QString title;
+
+  m_ui.qtWidget->GetCanvas()->cd();
 
   QVector<unsigned short> ids;
   if (selType == ByID) {
@@ -200,27 +207,53 @@ void MainWindow::update()
   int typicalBinShift = m_histogram->GetYaxis()->FindBin(typicalShift);
   int idBin = 1;
   foreach (unsigned short id, ids) {
-      const TH1S* histogram = (calType == Pedestal) ? m_collection->pedestalHistogram(id) : m_collection->ledHistogram(id);
-      if (!histogram)
-        continue;
-      double shift = (calType == LedShifted) ? m_collection->pedestalHistogram(id)->GetMean() : 0;
-      int binShift = m_histogram->GetYaxis()->FindBin(shift);
+    const TH1S* histogram = (calType == Pedestal) ? m_collection->pedestalHistogram(id) : m_collection->ledHistogram(id);
+    if (!histogram)
+      continue;
+    double shift = (calType == LedShifted) ? m_collection->pedestalHistogram(id)->GetMean() : 0;
+    int binShift = m_histogram->GetYaxis()->FindBin(shift);
 
-      for (int adcBin = 1; adcBin <= max/rebin; ++adcBin) {
-        double content = 0;
-        for (int i = 0; i < rebin; ++i)
-          content += histogram->GetBinContent(rebin * adcBin + i);
-        m_histogram->SetBinContent(idBin, adcBin - binShift + typicalBinShift, content);
-        m_histogram->GetXaxis()->SetBinLabel(idBin, qPrintable(QString("0x%1").arg(id, 0, 16)));
-      }
-      ++idBin;
+    for (int adcBin = 1; adcBin <= max/rebin; ++adcBin) {
+      double content = 0;
+      for (int i = 0; i < rebin; ++i)
+        content += histogram->GetBinContent(rebin * adcBin + i);
+      m_histogram->SetBinContent(idBin, adcBin - binShift + typicalBinShift, content);
+      m_histogram->GetXaxis()->SetBinLabel(idBin, qPrintable(QString("0x%1").arg(id, 0, 16)));
     }
+    ++idBin;
+  }
 
   m_histogram->GetYaxis()->SetTitle("ADC value");
   m_histogram->Draw("COLZ");
   //gPad->SetLogz();
+  //gPad->Modified();
+  gPad->Update();
+  m_ui.projectionSpinBox->setMinimum(1);
+  m_ui.projectionSpinBox->setMaximum(ids.count());
+  updateProjection();
+}
+
+void MainWindow::updateProjection()
+{
+  m_ui.projectionQtWidget->GetCanvas()->cd();
+  gPad->Clear();
+  if (!m_histogram)
+    return;
+  int bin = m_ui.projectionSpinBox->value();
+  if (m_projectionHistogram)
+    delete m_projectionHistogram;
+  m_projectionHistogram = m_histogram->ProjectionY("projection", bin, bin);
+  m_projectionHistogram->SetTitle(m_histogram->GetXaxis()->GetBinLabel(bin));
+  m_projectionHistogram->Draw();
   gPad->Modified();
   gPad->Update();
+  if (m_projectionLine)
+    delete m_projectionLine;
+  m_projectionLine = new TLine(bin - .5, m_histogram->GetYaxis()->GetXmin(), bin - .5, m_histogram->GetYaxis()->GetXmax());
+  m_ui.qtWidget->GetCanvas()->cd();
+  m_projectionLine->Draw();
+  //gPad->Modified();
+  //gPad->Update();
 }
 
 void MainWindow::saveButtonClicked()
