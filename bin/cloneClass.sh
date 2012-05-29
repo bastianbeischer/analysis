@@ -1,6 +1,6 @@
 #!/bin/bash
-HEADER_ENDING=h
-SOURCE_ENDING=cpp
+HEADER_ENDING=hh
+SOURCE_ENDING=cc
 ORIG_CLASS=$(basename $1 | sed -e "s/\.$//g" | sed -e "s/\.${SOURCE_ENDING}$//g" | sed -e "s/\.${HEADER_ENDING}$//g")
 ORIG_PATH=$(dirname $1)
 DEST_CLASS=$(basename $2 | sed -e "s/\.$//g" | sed -e "s/\.${SOURCE_ENDING}$//g" | sed -e "s/\.${HEADER_ENDING}$//g")
