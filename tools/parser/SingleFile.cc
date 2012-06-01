@@ -187,11 +187,10 @@ void SingleFile::addPedestalEvent(CalibrationCollection* calibrationCollection, 
     };
 #endif
     Q_ASSERT(data);
-    for (int i = 0; i < blocklength; i++)
+    for (int i = 0; i < blocklength; i++) {
       calibrationCollection->addPedestalValue(id->GetID16() | i, data[i]);
+    }
   }
-
-  //qDebug() << "----------";
 
   foreach(PERDaixFiberModule* module, m_fiberModules) {
     module->ProcessCalibrationEvent((TrackerDataBlock*) dataBlockMap[module->GetBoardID(PERDaixFiberModule::BOARD_0)]);
@@ -279,9 +278,10 @@ const CalibrationCollection* SingleFile::calibrate()
   foreach(PERDaixFiberModule* module, m_fiberModules)  module->ProcessCalibrationData();
   foreach(PERDaixTRDModule* module, m_trdModules)  module->ProcessCalibrationData();
   foreach(PERDaixPMTModule* module, m_pmtModules)  module->ProcessCalibrationData();
+#ifdef PERDAIX12
   foreach(ECALModule* module, m_ecalModules)  module->ProcessCalibrationData();
-
-  foreach(PERDaixPMTModule* module, m_pmtModules)  module->ProcessCalibrationData();
+  foreach(ExternalFiberModule* module, m_externalFiberModules)  module->ProcessCalibrationData();
+#endif
 
   std::cout << std::endl << "LED events:" << std::endl;
   bar.restart(getNumberOfLedEvents());
@@ -315,15 +315,22 @@ Calibration* SingleFile::getCalibrationForDetector(DetectorID* id, int whichCali
       if (module->GetBoardID()->GetID16() == id->GetID16())
         return (Calibration*) module->GetCalibrations().at(whichCali);
   }
+#ifdef PERDAIX12
   else if (id->IsECAL()) {
     foreach(ECALModule* module, m_ecalModules)
       if (module->GetBoardID(ECALModule::BOARD_P)->GetID16() == id->GetID16())
         return (Calibration*) module->GetCalibrations().at(whichCali);
       else if (module->GetBoardID(ECALModule::BOARD_N)->GetID16() == id->GetID16())
         return (Calibration*) module->GetCalibrations().at(whichCali + 1);
+  } else if (id->IsExternalTracker()) {
+    foreach(ExternalFiberModule* module, m_externalFiberModules) {
+      if (module->GetBoardID(ExternalFiberModule::BOARD_0)->GetID16() == id->GetID16())
+        return (Calibration*) module->GetCalibrations().at(whichCali);
+      else if (module->GetBoardID(ExternalFiberModule::BOARD_1)->GetID16() == id->GetID16())
+        return (Calibration*) module->GetCalibrations().at(whichCali+8);
+    }
   }
-
-
+#endif
   return 0;
 }
 

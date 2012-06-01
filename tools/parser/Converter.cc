@@ -10,7 +10,10 @@
 #include "TRDDataBlock.h"
 #include "PMTDataBlock.h"
 #include "TOFDataBlock.h"
+#ifdef PERDAIX12
 #include "ECALDataBlock.h"
+#include "ExternalTrackerDataBlock.h"
+#endif
 #include "Setup.hh"
 #include "DetectorElement.hh"
 
@@ -82,7 +85,7 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
 
   SimpleEvent* simpleEvent = new SimpleEvent(eventId, runStartTime, eventTime, mcFile? SimpleEvent::MonteCarlo : SimpleEvent::Data);
 
-    qDebug() << ">>>>>>>>>>"  << eventId;
+  qDebug() << "\n\nevent ID:"  << eventId;
   // loop over all present detector IDs
   foreach(DetectorID* id, event->GetIDs()) {
 
@@ -91,7 +94,7 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
 
     // get tracker, trd and pmt data from block
     int nVA32perBlock = 0;
-    const quint16* rawData;
+    const quint16* rawData = 0;
     if (id->IsTracker()) {
       nVA32perBlock = 8; // sipm arrays per HPE
       rawData = ((TrackerDataBlock*) dataBlock)->GetRawData();
@@ -103,10 +106,16 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
     else if (id->IsPMT()) {
       nVA32perBlock = 4; // PMT uplink has 128 channels, with 4 VA 32.
       rawData = ((PMTDataBlock*) dataBlock)->GetRawData();
-    } else if (id->IsECAL()) {
-      nVA32perBlock = 2; // PMT uplink has 128 channels, with 4 VA 32.
-      rawData = ((ECALDataBlock*) dataBlock)->GetRawData();
     }
+#ifdef PERDAIX12
+    else if (id->IsECAL()) {
+      nVA32perBlock = 2;
+      rawData = ((ECALDataBlock*) dataBlock)->GetRawData();
+    } else if (id->IsExternalTracker()) {
+      nVA32perBlock = 8;
+      rawData = ((ExternalTrackerDataBlock*) dataBlock)->GetRawData();
+    }
+#endif
 
     // create amplitude array
     unsigned short blockLength = id->IsTOF() ? ((TOFDataBlock*) dataBlock)->GetRawDataLength() : id->GetDataLength(); // tof length is not fixed by the detector type (it is dynamic)
@@ -126,7 +135,9 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
     // process data
     unsigned short detId = id->GetID16();
     std::map<unsigned short, TOFSipmHit*> tofHitMap; // maps channel to sipm hits
-    QString dump;
+    QStringList debugList;
+    QString debugString;
+    int debugStringCounter = 0;
     for (int i = 0; i < blockLength; i++) {
 
       if (id->IsTracker()) {
@@ -145,7 +156,6 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
         TVector3& counterPos = m_counterPositions[detId | i];
 
         simpleEvent->addHit(new Hit(Hit::trd, detId | i, amplitude, pos, counterPos));
-        //dump+= QString("T%1-%2").arg(i).arg(amplitude);
       } // trd
 
       else if (id->IsTOF()) {
@@ -174,24 +184,32 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
         if (i == 16) // dito
           simpleEvent->setSensorData(SensorTypes::BEAM_CHERENKOV2, amplitude);
       } // pmt
-      else if (id->IsECAL()) {
-        int amplitude = static_cast<int>(amplitudes[i]);
-        //if (amplitude > 10)
-          dump+= QString("%2 ").arg(amplitude, 3);
-      }
 
 #ifdef PERDAIX12
-      else if (id->IsExternalTracker()) {
+      else if (id->IsECAL()) {
         int amplitude = static_cast<int>(amplitudes[i]);
-        qDebug() << i << amplitude << hex << detId;
+        debugString+= QString("%1 %2  ").arg(amplitude, 6).arg(detId | i, 0, 16);
+        ++debugStringCounter;
+        if (debugStringCounter == 8) {
+          debugList.append(QString("%1: %2").arg(debugList.count(), 3).arg(debugString));
+          debugString.clear();
+          debugStringCounter = 0;
+        }
+      } else if (id->IsExternalTracker()) {
+        int amplitude = static_cast<int>(amplitudes[i]);
+        debugString+= QString("%1 %2  ").arg(amplitude, 6).arg(detId | i, 0, 16);
+        ++debugStringCounter;
+        if (debugStringCounter == 8) {
+          debugList.append(QString("%1: %2").arg(debugList.count(), 3).arg(debugString));
+          debugString.clear();
+          debugStringCounter = 0;
+        }
       }
 #endif
     } // all hits
 
-    if (!dump.isEmpty())
-      qDebug() << dump;
-
-
+    foreach (QString string, debugList)
+      qDebug() << qPrintable(string);
 
     delete dataBlock;
 
