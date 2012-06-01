@@ -7,6 +7,10 @@
 class Calibration;
 class CalibrationCollection;
 class DetectorID;
+class PERDaixFiberModule;
+class PERDaixTOFModule;
+class PERDaixTRDModule;
+class PERDaixPMTModule;
 class QString;
 class RawEvent;
 class RunFile;

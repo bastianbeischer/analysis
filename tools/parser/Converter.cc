@@ -10,6 +10,7 @@
 #include "TRDDataBlock.h"
 #include "PMTDataBlock.h"
 #include "TOFDataBlock.h"
+#include "ECALDataBlock.h"
 #include "Setup.hh"
 #include "DetectorElement.hh"
 
@@ -81,6 +82,7 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
 
   SimpleEvent* simpleEvent = new SimpleEvent(eventId, runStartTime, eventTime, mcFile? SimpleEvent::MonteCarlo : SimpleEvent::Data);
 
+    qDebug() << ">>>>>>>>>>"  << eventId;
   // loop over all present detector IDs
   foreach(DetectorID* id, event->GetIDs()) {
 
@@ -101,8 +103,10 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
     else if (id->IsPMT()) {
       nVA32perBlock = 4; // PMT uplink has 128 channels, with 4 VA 32.
       rawData = ((PMTDataBlock*) dataBlock)->GetRawData();
+    } else if (id->IsECAL()) {
+      nVA32perBlock = 2; // PMT uplink has 128 channels, with 4 VA 32.
+      rawData = ((ECALDataBlock*) dataBlock)->GetRawData();
     }
-
 
     // create amplitude array
     unsigned short blockLength = id->IsTOF() ? ((TOFDataBlock*) dataBlock)->GetRawDataLength() : id->GetDataLength(); // tof length is not fixed by the detector type (it is dynamic)
@@ -122,7 +126,7 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
     // process data
     unsigned short detId = id->GetID16();
     std::map<unsigned short, TOFSipmHit*> tofHitMap; // maps channel to sipm hits
-
+    QString dump;
     for (int i = 0; i < blockLength; i++) {
 
       if (id->IsTracker()) {
@@ -141,6 +145,7 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
         TVector3& counterPos = m_counterPositions[detId | i];
 
         simpleEvent->addHit(new Hit(Hit::trd, detId | i, amplitude, pos, counterPos));
+        //dump+= QString("T%1-%2").arg(i).arg(amplitude);
       } // trd
 
       else if (id->IsTOF()) {
@@ -169,6 +174,11 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
         if (i == 16) // dito
           simpleEvent->setSensorData(SensorTypes::BEAM_CHERENKOV2, amplitude);
       } // pmt
+      else if (id->IsECAL()) {
+        int amplitude = static_cast<int>(amplitudes[i]);
+        //if (amplitude > 10)
+          dump+= QString("%2 ").arg(amplitude, 3);
+      }
 
 #ifdef PERDAIX12
       else if (id->IsExternalTracker()) {
@@ -177,6 +187,11 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
       }
 #endif
     } // all hits
+
+    if (!dump.isEmpty())
+      qDebug() << dump;
+
+
 
     delete dataBlock;
 
