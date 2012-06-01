@@ -170,6 +170,12 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
           simpleEvent->setSensorData(SensorTypes::BEAM_CHERENKOV2, amplitude);
       } // pmt
 
+#ifdef PERDAIX12
+      else if (id->IsExternalTracker()) {
+        int amplitude = static_cast<int>(amplitudes[i]);
+        qDebug() << i << amplitude << hex << detId;
+      }
+#endif
     } // all hits
 
     delete dataBlock;

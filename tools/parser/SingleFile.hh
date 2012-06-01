@@ -18,6 +18,7 @@ class PERDaixPMTModule;
 
 #ifdef PERDAIX12
 class ECALModule;
+class ExternalFiberModule;
 #endif
 
 class SingleFile
@@ -54,6 +55,7 @@ private:
   QList<PERDaixPMTModule*>      m_pmtModules;
 #ifdef PERDAIX12
   QList<ECALModule*>            m_ecalModules;
+  QList<ExternalFiberModule*>   m_externalFiberModules;
 #endif
 };
 
