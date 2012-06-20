@@ -7,6 +7,10 @@
 class Calibration;
 class CalibrationCollection;
 class DetectorID;
+class PERDaixFiberModule;
+class PERDaixTOFModule;
+class PERDaixTRDModule;
+class PERDaixPMTModule;
 class QString;
 class RawEvent;
 class RunFile;
@@ -18,6 +22,7 @@ class PERDaixPMTModule;
 
 #ifdef PERDAIX12
 class ECALModule;
+class ExternalFiberModule;
 #endif
 
 class SingleFile
@@ -54,6 +59,7 @@ private:
   QList<PERDaixPMTModule*>      m_pmtModules;
 #ifdef PERDAIX12
   QList<ECALModule*>            m_ecalModules;
+  QList<ExternalFiberModule*>   m_externalFiberModules;
 #endif
 };
 

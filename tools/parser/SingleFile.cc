@@ -6,11 +6,10 @@
 #include "PERDaixTRDModule.h"
 #include "PERDaixTOFModule.h"
 #include "PERDaixPMTModule.h"
-
 #ifdef PERDAIX12
 #include "ECALModule.h"
+#include "ExternalFiberModule.h"
 #endif
-
 #include "SimpleEvent.hh"
 #include "CalibrationCollection.hh"
 #include "ProgressBar.hh"
@@ -38,6 +37,7 @@ SingleFile::~SingleFile()
   qDeleteAll(m_pmtModules);
 #ifdef PERDAIX12
   qDeleteAll(m_ecalModules);
+  qDeleteAll(m_externalFiberModules);
 #endif
 }
 
@@ -91,6 +91,16 @@ void SingleFile::init()
     DetectorID* id1 = DetectorID::Get(value1,DetectorID::TYPE_ECAL_MODULE);
     DetectorID* id2 = DetectorID::Get(value2,DetectorID::TYPE_ECAL_MODULE);
     m_ecalModules.push_back(new ECALModule(id1, id2));
+  }
+
+  QList< QPair<quint16, quint16> > hpeSpirocPairs;
+  hpeSpirocPairs.append(QPair<quint16,quint16>(0x1800, 0x1c00));
+  for (QList< QPair<quint16, quint16> >::iterator iter = hpeSpirocPairs.begin(); iter != hpeSpirocPairs.end(); iter++) {
+    quint16 value1 = iter->first;
+    quint16 value2 = iter->second;
+    DetectorID* id1 = DetectorID::Get(value1, DetectorID::TYPE_EXTERNAL_TRACKER_MODULE);
+    DetectorID* id2 = DetectorID::Get(value2, DetectorID::TYPE_EXTERNAL_TRACKER_MODULE);
+    m_externalFiberModules.push_back(new ExternalFiberModule(id1, id2));
   }
 #endif
 }
@@ -150,6 +160,7 @@ void SingleFile::addPedestalEvent(CalibrationCollection* calibrationCollection, 
 
   QMap<DetectorID*, DataBlock*> dataBlockMap;
   foreach(DetectorID* id, detIDs) {
+    //qDebug() << "ID:" << hex << id->GetID16();
     DataBlock* block = event->GetBlock(id);
     dataBlockMap[id] = block;
 
@@ -171,11 +182,14 @@ void SingleFile::addPedestalEvent(CalibrationCollection* calibrationCollection, 
 #ifdef PERDAIX12
     else if (id->IsECAL()) {
       data = ((ECALDataBlock*) block)->GetRawData();
-    }
+    } else if (id->IsExternalTracker()) {
+      data = ((ExternalTrackerDataBlock*) block)->GetRawData();
+    };
 #endif
     Q_ASSERT(data);
-    for (int i = 0; i < blocklength; i++)
+    for (int i = 0; i < blocklength; i++) {
       calibrationCollection->addPedestalValue(id->GetID16() | i, data[i]);
+    }
   }
 
   foreach(PERDaixFiberModule* module, m_fiberModules) {
@@ -193,6 +207,10 @@ void SingleFile::addPedestalEvent(CalibrationCollection* calibrationCollection, 
     module->ProcessCalibrationEvent((ECALDataBlock*) dataBlockMap[module->GetBoardID(ECALModule::BOARD_P)]);
     module->ProcessCalibrationEvent((ECALDataBlock*) dataBlockMap[module->GetBoardID(ECALModule::BOARD_N)]);
   }
+  foreach(ExternalFiberModule* module, m_externalFiberModules) {
+    module->ProcessCalibrationEvent((ExternalTrackerDataBlock*) dataBlockMap[module->GetBoardID(ExternalFiberModule::BOARD_0)]);
+    module->ProcessCalibrationEvent((ExternalTrackerDataBlock*) dataBlockMap[module->GetBoardID(ExternalFiberModule::BOARD_1)]);
+  }
 #endif
   qDeleteAll(dataBlockMap);
   delete event;
@@ -200,7 +218,9 @@ void SingleFile::addPedestalEvent(CalibrationCollection* calibrationCollection, 
 
 void SingleFile::addLedEvent(CalibrationCollection* calibrationCollection, const RawEvent* event)
 {
-  QList<DetectorID*> detIDs = event->GetIDs();
+  QList<DetectorID*> detIDs;
+
+  detIDs = event->GetIDs();
 
   foreach(DetectorID* id, detIDs) {
     if (!id->IsTracker())
@@ -209,11 +229,8 @@ void SingleFile::addLedEvent(CalibrationCollection* calibrationCollection, const
     for (int i = 0; i < blocklength; i++)
       calibrationCollection->addLedHistogram(id->GetID16() | i);
   }
-
-  QMap<DetectorID*, DataBlock*> dataBlockMap;
   foreach(DetectorID* id, detIDs) {
     DataBlock* block = event->GetBlock(id);
-    dataBlockMap[id] = block;
     if (!id->IsTracker())
       continue;
     int blocklength = id->GetDataLength();
@@ -222,7 +239,27 @@ void SingleFile::addLedEvent(CalibrationCollection* calibrationCollection, const
       calibrationCollection->addLedValue(id->GetID16() | i, data[i]);
   }
 
-  qDeleteAll(dataBlockMap);
+#ifdef PERDAIX12
+  detIDs = event->GetIDs();
+  foreach(DetectorID* id, detIDs) {
+    if (!id->IsExternalTracker())
+      continue;
+    int blocklength = id->GetDataLength();
+    for (int i = 0; i < blocklength; i++)
+      calibrationCollection->addLedHistogram(id->GetID16() | i);
+  }
+
+  foreach(DetectorID* id, detIDs) {
+    DataBlock* block = event->GetBlock(id);
+    if (!id->IsExternalTracker())
+      continue;
+    int blocklength = id->GetDataLength();
+    const quint16* data = ((ExternalTrackerDataBlock*) block)->GetRawData();
+    for (int i = 0; i < blocklength; i++)
+      calibrationCollection->addLedValue(id->GetID16() | i, data[i]);
+  }
+#endif
+
   delete event;
 }
 
@@ -241,8 +278,10 @@ const CalibrationCollection* SingleFile::calibrate()
   foreach(PERDaixFiberModule* module, m_fiberModules)  module->ProcessCalibrationData();
   foreach(PERDaixTRDModule* module, m_trdModules)  module->ProcessCalibrationData();
   foreach(PERDaixPMTModule* module, m_pmtModules)  module->ProcessCalibrationData();
-
-  foreach(PERDaixPMTModule* module, m_pmtModules)  module->ProcessCalibrationData();
+#ifdef PERDAIX12
+  foreach(ECALModule* module, m_ecalModules)  module->ProcessCalibrationData();
+  foreach(ExternalFiberModule* module, m_externalFiberModules)  module->ProcessCalibrationData();
+#endif
 
   std::cout << std::endl << "LED events:" << std::endl;
   bar.restart(getNumberOfLedEvents());
@@ -258,7 +297,7 @@ const CalibrationCollection* SingleFile::calibrate()
 // return pointer to calibration for calibration "whichCali" on hpe/ufe board with id "id"
 Calibration* SingleFile::getCalibrationForDetector(DetectorID* id, int whichCali) const
 {
-  if(id->IsTracker()) {
+  if (id->IsTracker()) {
     foreach(PERDaixFiberModule* module, m_fiberModules) {
       if (module->GetBoardID(PERDaixFiberModule::BOARD_0)->GetID16() == id->GetID16())
         return (Calibration*) module->GetCalibrations().at(whichCali);
@@ -266,17 +305,32 @@ Calibration* SingleFile::getCalibrationForDetector(DetectorID* id, int whichCali
         return (Calibration*) module->GetCalibrations().at(whichCali+8);
     }
   }
-  else if(id->IsTRD()) {
+  else if (id->IsTRD()) {
     foreach(PERDaixTRDModule* module, m_trdModules)
       if (module->GetBoardID()->GetID16() == id->GetID16())
         return (Calibration*) module->GetCalibrations().at(whichCali);
   }
-  else if(id->IsPMT()) {
+  else if (id->IsPMT()) {
     foreach(PERDaixPMTModule* module, m_pmtModules)
       if (module->GetBoardID()->GetID16() == id->GetID16())
         return (Calibration*) module->GetCalibrations().at(whichCali);
   }
-
+#ifdef PERDAIX12
+  else if (id->IsECAL()) {
+    foreach(ECALModule* module, m_ecalModules)
+      if (module->GetBoardID(ECALModule::BOARD_P)->GetID16() == id->GetID16())
+        return (Calibration*) module->GetCalibrations().at(whichCali);
+      else if (module->GetBoardID(ECALModule::BOARD_N)->GetID16() == id->GetID16())
+        return (Calibration*) module->GetCalibrations().at(whichCali + 1);
+  } else if (id->IsExternalTracker()) {
+    foreach(ExternalFiberModule* module, m_externalFiberModules) {
+      if (module->GetBoardID(ExternalFiberModule::BOARD_0)->GetID16() == id->GetID16())
+        return (Calibration*) module->GetCalibrations().at(whichCali);
+      else if (module->GetBoardID(ExternalFiberModule::BOARD_1)->GetID16() == id->GetID16())
+        return (Calibration*) module->GetCalibrations().at(whichCali+8);
+    }
+  }
+#endif
   return 0;
 }
 

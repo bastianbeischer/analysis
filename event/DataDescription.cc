@@ -32,7 +32,7 @@ DataDescription::DataDescription(const DataDescription& other)
   , m_numberOfRuns(other.m_numberOfRuns)
 {
   for (std::vector<const CalibrationCollection*>::const_iterator it = other.m_calibrationCollections.begin(); it != other.m_calibrationCollections.end(); it++) {
-    m_calibrationCollections.push_back(new CalibrationCollection(*(*it)));
+    //m_calibrationCollections.push_back(new CalibrationCollection(*(*it)));
   }
 }
 

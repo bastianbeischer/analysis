@@ -49,18 +49,16 @@ QString doConversion(QString path, unsigned int &lasttime) {
             } else  if ((sensors[i] & 0x00F0000) == 0x0030000) {
                 if (sensors[i] == 0x2230000) {
                     tree->Branch("TRACKER_1_VOLTAGE",&values2[sensors[i]]);
-                }
-                if (sensors[i] == 0x2230001) {
+                } else if (sensors[i] == 0x2230001) {
                     tree->Branch("TRACKER_2_VOLTAGE",&values2[sensors[i]]);
-                }
-                if (sensors[i] == 0x2230002) {
+                } else if (sensors[i] == 0x2230002) {
                     tree->Branch("TRACKER_3_VOLTAGE",&values2[sensors[i]]);
-                }
-                if (sensors[i] == 0x2230003) {
+                } else if (sensors[i] == 0x2230003) {
                     tree->Branch("TRD_VOLTAGE",&values2[sensors[i]]);
-                }
-                if (sensors[i] == 0x213efa8) {
+                } else if (sensors[i] == 0x213efa8) {
                     tree->Branch("TOF_VOLTAGE",&values2[sensors[i]]);
+                } else {
+                  tree->Branch(qPrintable(QString("VOLTAGE_0x%1").arg(sensors[i] & 0x000FFFF, 0, 16)), &values2[sensors[i]]);
                 }
             } else {
                 if ((sensors[i] & 0x0F00000) == 0x0100000) {
@@ -312,7 +310,21 @@ int main(int argc, char** argv) {
             << 36765696
             << 36765697
             << 38862848
-            << 37289984;
+            << 37289984
+            << 0x2231800 // External Tracker Voltages
+            << 0x2231801 // External Tracker Voltages
+            << 0x2231802 // External Tracker Voltages
+            << 0x2231803 // External Tracker Voltages
+            << 0x2231c00 // External Tracker Voltages
+            << 0x2231c01 // External Tracker Voltages
+            << 0x2231c02 // External Tracker Voltages
+            << 0x2231c03 // External Tracker Voltages
+            << 0x2211804 // External Tracker Temperatures
+            << 0x2211805 // External Tracker Temperatures
+            << 0x2211806 // External Tracker Temperatures
+            << 0x2211c04 // External Tracker Temperatures
+            << 0x2211c05 // External Tracker Temperatures
+            << 0x2211c06; // External Tracker Temperatures
     owids << 21856
           << 7410
           << 32868
