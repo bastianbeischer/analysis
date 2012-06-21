@@ -204,8 +204,8 @@ void SingleFile::addPedestalEvent(CalibrationCollection* calibrationCollection, 
   }
 #ifdef PERDAIX12
   foreach(ECALModule* module, m_ecalModules) {
-    module->ProcessCalibrationEvent((ECALDataBlock*) dataBlockMap[module->GetBoardID(ECALModule::BOARD_P)]);
-    module->ProcessCalibrationEvent((ECALDataBlock*) dataBlockMap[module->GetBoardID(ECALModule::BOARD_N)]);
+    module->ProcessCalibrationEvent((ECALDataBlock*) dataBlockMap[module->GetBoardID(ECALModule::BOARD_H)]);
+    module->ProcessCalibrationEvent((ECALDataBlock*) dataBlockMap[module->GetBoardID(ECALModule::BOARD_Z)]);
   }
   foreach(ExternalFiberModule* module, m_externalFiberModules) {
     module->ProcessCalibrationEvent((ExternalTrackerDataBlock*) dataBlockMap[module->GetBoardID(ExternalFiberModule::BOARD_0)]);
@@ -318,9 +318,9 @@ Calibration* SingleFile::getCalibrationForDetector(DetectorID* id, int whichCali
 #ifdef PERDAIX12
   else if (id->IsECAL()) {
     foreach(ECALModule* module, m_ecalModules)
-      if (module->GetBoardID(ECALModule::BOARD_P)->GetID16() == id->GetID16())
+      if (module->GetBoardID(ECALModule::BOARD_H)->GetID16() == id->GetID16())
         return (Calibration*) module->GetCalibrations().at(whichCali);
-      else if (module->GetBoardID(ECALModule::BOARD_N)->GetID16() == id->GetID16())
+      else if (module->GetBoardID(ECALModule::BOARD_Z)->GetID16() == id->GetID16())
         return (Calibration*) module->GetCalibrations().at(whichCali + 1);
   } else if (id->IsExternalTracker()) {
     foreach(ExternalFiberModule* module, m_externalFiberModules) {
