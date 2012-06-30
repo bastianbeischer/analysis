@@ -147,8 +147,7 @@ void DataManager::processFiles()
   foreach(SingleFile* inputFile, m_inputFiles)
     totalNumberOfEvents += inputFile->getNumberOfEvents();
 
-
-  std::cout << std::endl << "raw events:" << std::endl;
+  std::cout << std::endl << "particle events:" << std::endl;
   ProgressBar bar(totalNumberOfEvents);
   for (int i = 0; i < m_inputFiles.size(); ++i, bar.next()) {
     SingleFile* inputFile = m_inputFiles.at(i) ;

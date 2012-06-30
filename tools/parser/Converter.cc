@@ -85,7 +85,7 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
 
   SimpleEvent* simpleEvent = new SimpleEvent(eventId, runStartTime, eventTime, mcFile? SimpleEvent::MonteCarlo : SimpleEvent::Data);
 
-  qDebug() << "\n\nevent ID:"  << eventId;
+  //qDebug() << "\n\nevent ID:"  << eventId;
   // loop over all present detector IDs
   foreach(DetectorID* id, event->GetIDs()) {
 
@@ -93,26 +93,26 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
     DataBlock* dataBlock = event->GetBlock(id);
 
     // get tracker, trd and pmt data from block
-    int nVA32perBlock = 0;
+    int nVAperBlock = 0;
     const quint16* rawData = 0;
     if (id->IsTracker()) {
-      nVA32perBlock = 8; // sipm arrays per HPE
+      nVAperBlock = 8; // sipm arrays per HPE
       rawData = ((TrackerDataBlock*) dataBlock)->GetRawData();
     }
     else if (id->IsTRD()) {
-      nVA32perBlock = 2; // VA32 per UFE
+      nVAperBlock = 2; // VA32 per UFE
       rawData = ((TRDDataBlock*) dataBlock)->GetRawData();
     }
     else if (id->IsPMT()) {
-      nVA32perBlock = 4; // PMT uplink has 128 channels, with 4 VA 32.
+      nVAperBlock = 4; // PMT uplink has 128 channels, with 4 VA 32.
       rawData = ((PMTDataBlock*) dataBlock)->GetRawData();
     }
 #ifdef PERDAIX12
     else if (id->IsECAL()) {
-      nVA32perBlock = 2;
+      nVAperBlock = 1;
       rawData = ((ECALDataBlock*) dataBlock)->GetRawData();
     } else if (id->IsExternalTracker()) {
-      nVA32perBlock = 8;
+      nVAperBlock = 8;
       rawData = ((ExternalTrackerDataBlock*) dataBlock)->GetRawData();
     }
 #endif
@@ -122,14 +122,22 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
     qint16 amplitudes[blockLength];
 
     //get calibration for non-tof detectors
-    for (int iVA = 0; iVA < nVA32perBlock; iVA++) {
-      if (!id->IsTOF()) {
+    if (id->IsTracker() || id->IsTRD() || id->IsPMT() || id->IsExternalTracker()) {
+      for (int iVA = 0; iVA < nVAperBlock; iVA++) {
         Calibration* cali = file->getCalibrationForDetector(id, iVA);
         Q_ASSERT(cali);
         const int channelsPerVA = 32;
-        Q_ASSERT(blockLength / nVA32perBlock == channelsPerVA); // cross check!
+        Q_ASSERT(blockLength / nVAperBlock == channelsPerVA); // cross check!
         cali->GetAmplitudes(rawData + iVA*channelsPerVA, amplitudes + iVA*channelsPerVA);
       }
+    } else if (id->IsECAL()) {
+      Calibration* cali = file->getCalibrationForDetector(id, 0);
+      Q_ASSERT(cali);
+      const int channelsPerVA = 64;
+      Q_ASSERT(blockLength / nVAperBlock == channelsPerVA);
+      cali->GetAmplitudes(rawData, amplitudes);
+    } else {
+      Q_ASSERT(id->IsTOF());
     }
 
     // process data
@@ -208,8 +216,8 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
 #endif
     } // all hits
 
-    foreach (QString string, debugList)
-      qDebug() << qPrintable(string);
+    //foreach (QString string, debugList)
+      //qDebug() << qPrintable(string);
 
     delete dataBlock;
 

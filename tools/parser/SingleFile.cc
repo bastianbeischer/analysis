@@ -76,14 +76,7 @@ void SingleFile::init()
 
 #ifdef PERDAIX12
   QList< QPair<quint16, quint16> > vataPairs;
-  vataPairs.append(QPair<quint16,quint16>(0x7000, 0x7000)); //TODO: set ID of opposite side of ECAL module correctly!
-  vataPairs.append(QPair<quint16,quint16>(0x7100, 0x7100));
-  vataPairs.append(QPair<quint16,quint16>(0x7200, 0x7200));
-  vataPairs.append(QPair<quint16,quint16>(0x7300, 0x7300));
-  vataPairs.append(QPair<quint16,quint16>(0x7400, 0x7400));
-  vataPairs.append(QPair<quint16,quint16>(0x7500, 0x7500));
-  vataPairs.append(QPair<quint16,quint16>(0x7600, 0x7600));
-  vataPairs.append(QPair<quint16,quint16>(0x7700, 0x7700));
+  vataPairs.append(QPair<quint16,quint16>(0x7400, 0x7500));
 
   for (QList< QPair<quint16, quint16> >::iterator iter = vataPairs.begin(); iter != vataPairs.end(); iter++) {
     quint16 value1 = iter->first;
@@ -95,6 +88,7 @@ void SingleFile::init()
 
   QList< QPair<quint16, quint16> > hpeSpirocPairs;
   hpeSpirocPairs.append(QPair<quint16,quint16>(0x1800, 0x1c00));
+  hpeSpirocPairs.append(QPair<quint16,quint16>(0x1900, 0x1d00));
   for (QList< QPair<quint16, quint16> >::iterator iter = hpeSpirocPairs.begin(); iter != hpeSpirocPairs.end(); iter++) {
     quint16 value1 = iter->first;
     quint16 value2 = iter->second;
@@ -240,7 +234,26 @@ void SingleFile::addLedEvent(CalibrationCollection* calibrationCollection, const
   }
 
 #ifdef PERDAIX12
-  detIDs = event->GetIDs();
+  foreach(DetectorID* id, detIDs) {
+    if (!id->IsECAL())
+      continue;
+    int blocklength = id->GetDataLength();
+    Q_ASSERT(blocklength == 64);
+    for (int i = 0; i < blocklength; i++)
+      calibrationCollection->addLedHistogram(id->GetID16() | i);
+  }
+
+  foreach(DetectorID* id, detIDs) {
+    DataBlock* block = event->GetBlock(id);
+    if (!id->IsECAL())
+      continue;
+    int blocklength = id->GetDataLength();
+    Q_ASSERT(blocklength == 64);
+    const quint16* data = ((ECALDataBlock*) block)->GetRawData();
+    for (int i = 0; i < blocklength; i++)
+      calibrationCollection->addLedValue(id->GetID16() | i, data[i]);
+  }
+
   foreach(DetectorID* id, detIDs) {
     if (!id->IsExternalTracker())
       continue;
@@ -319,9 +332,9 @@ Calibration* SingleFile::getCalibrationForDetector(DetectorID* id, int whichCali
   else if (id->IsECAL()) {
     foreach(ECALModule* module, m_ecalModules)
       if (module->GetBoardID(ECALModule::BOARD_H)->GetID16() == id->GetID16())
-        return (Calibration*) module->GetCalibrations().at(whichCali);
+        return (Calibration*) module->GetCalibrations().at(whichCali + ECALModule::BOARD_H);
       else if (module->GetBoardID(ECALModule::BOARD_Z)->GetID16() == id->GetID16())
-        return (Calibration*) module->GetCalibrations().at(whichCali + 1);
+        return (Calibration*) module->GetCalibrations().at(whichCali + ECALModule::BOARD_Z);
   } else if (id->IsExternalTracker()) {
     foreach(ExternalFiberModule* module, m_externalFiberModules) {
       if (module->GetBoardID(ExternalFiberModule::BOARD_0)->GetID16() == id->GetID16())
