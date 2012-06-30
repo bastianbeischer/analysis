@@ -4,7 +4,6 @@ SUBDIRS  = \
   alignment \
   eventdisplay \
   analysis \
-  postAnalysis \
   presentation \
   decompressor \
   calibrationViewer

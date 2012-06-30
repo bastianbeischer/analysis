@@ -4,6 +4,7 @@
 #include <TObject.h>
 
 #include "Hit.hh"
+#include "ECALHit.hh"
 #include "MCEventInformation.hh"
 #include "SensorTypes.hh"
 
@@ -45,6 +46,9 @@ public:
   void setDescription(const DataDescription* desc) {m_description = desc;}
 
   void addHit(Hit* hit) {m_hits.push_back(hit);}
+  
+  void addEcalHit(ECALHit*);
+  const std::vector<ECALHit*>& ecalHits() const {return m_ecalHits;}
 
 private:
   unsigned int m_eventId;
@@ -52,6 +56,7 @@ private:
   unsigned int m_eventTime; // in ms since the start of the run
   ContentType m_contentType;
   std::vector<Hit*> m_hits;
+  std::vector<ECALHit*> m_ecalHits;
   float m_sensorSet[SensorTypes::N_SENSOR_TYPES];
   const MCEventInformation* m_mcEventInformation;
   const DataDescription* m_description; //!

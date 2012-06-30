@@ -103,6 +103,8 @@
 #include "SignalHeightCorrelationPlotCollection.hh"
 #include "SignalHeightPdfPlotCollection.hh"
 #include "RigiditySpectrum.hh"
+#include "ECALOccupancy.hh"
+#include "ECALSignalHeight.hh"
 
 #include <TPad.h>
 #include <TCanvas.h>
@@ -377,6 +379,8 @@ void Analysis::setupPlots()
       Layer* layer = *layerIt;
       addPlot(new GeometricOccupancyPlot(layer->z()));
     }
+    addPlot(new ECALOccupancy());
+    addPlot(new ECALSignalHeight());
   }
   if (m_analysisSetting.analysisTopics() & Enums::ResidualsTracker) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {

@@ -9,6 +9,8 @@
 #include <cmath>
 #include <cassert>
 
+#include <QDebug>
+
 ClassImp(SimpleEvent);
 
 SimpleEvent::SimpleEvent() :
@@ -18,6 +20,7 @@ SimpleEvent::SimpleEvent() :
   m_eventTime(0),
   m_contentType(None),
   m_hits(),
+  m_ecalHits(),
   m_mcEventInformation(0),
   m_description(0)
 {
@@ -32,6 +35,7 @@ SimpleEvent::SimpleEvent(unsigned int id, unsigned int runStartTime, unsigned in
   m_eventTime(eventTime),
   m_contentType(type),
   m_hits(),
+  m_ecalHits(),
   m_mcEventInformation(0),
   m_description(0)
 {
@@ -64,10 +68,17 @@ SimpleEvent::SimpleEvent(const SimpleEvent& other) :
       m_hits.push_back(new TOFCluster(*cluster));
     }
   }
+  
+  std::vector<ECALHit*>::const_iterator it = other.m_ecalHits.begin();
+  std::vector<ECALHit*>::const_iterator end = other.m_ecalHits.end();
+  for (; it != end; ++it)
+    m_ecalHits.push_back(*it);
+
   m_mcEventInformation = other.m_mcEventInformation ? new MCEventInformation(*other.m_mcEventInformation) : 0;
   for (unsigned int i = 0; i < SensorTypes::N_SENSOR_TYPES; i++) {
     m_sensorSet[i] = other.m_sensorSet[i];
   }
+
 }
 
 SimpleEvent::~SimpleEvent()
@@ -103,4 +114,9 @@ unsigned int SimpleEvent::eventNo() const
   int pedestalEvents = m_description->numberOfPedestalEventsInRunFile(run);
   int ledEvents = m_description->numberOfLedEventsInRunFile(run);
   return m_eventId - pedestalEvents - ledEvents;
+}
+
+void SimpleEvent::addEcalHit(ECALHit* hit)
+{
+  m_ecalHits.push_back(hit);
 }

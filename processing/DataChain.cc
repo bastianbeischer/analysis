@@ -2,6 +2,7 @@
 
 #include <QMutexLocker>
 #include <QRegExp>
+#include <QDebug>
 
 #include <TFile.h>
 #include <TList.h>

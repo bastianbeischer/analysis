@@ -21,7 +21,8 @@ CLASSES+= \
   SensorTypes \
   SimpleEvent \
   TOFCluster \
-  TOFSipmHit
+  TOFSipmHit \
+  ECALHit
 
 CREATE_ROOT_DICT_FOR_CLASSES += \
   Cluster.hh \
@@ -35,7 +36,8 @@ CREATE_ROOT_DICT_FOR_CLASSES += \
   SensorTypes.hh \
   SimpleEvent.hh \
   TOFCluster.hh \
-  TOFSipmHit.hh
+  TOFSipmHit.hh \
+  ECALHit.hh
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/common.pri)

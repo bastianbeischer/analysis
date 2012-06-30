@@ -11,6 +11,7 @@
 #include "PMTDataBlock.h"
 #include "TOFDataBlock.h"
 #ifdef PERDAIX12
+#include "ECALHit.hh"
 #include "ECALDataBlock.h"
 #include "ExternalTrackerDataBlock.h"
 #endif
@@ -196,22 +197,16 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
 #ifdef PERDAIX12
       else if (id->IsECAL()) {
         int amplitude = static_cast<int>(amplitudes[i]);
-        debugString+= QString("%1 %2  ").arg(amplitude, 6).arg(detId | i, 0, 16);
-        ++debugStringCounter;
-        if (debugStringCounter == 8) {
-          debugList.append(QString("%1: %2").arg(debugList.count(), 3).arg(debugString));
-          debugString.clear();
-          debugStringCounter = 0;
-        }
+        simpleEvent->addEcalHit(new ECALHit(detId | i, amplitude));
       } else if (id->IsExternalTracker()) {
         int amplitude = static_cast<int>(amplitudes[i]);
-        debugString+= QString("%1 %2  ").arg(amplitude, 6).arg(detId | i, 0, 16);
+        /*debugString+= QString("%1 %2  ").arg(amplitude, 6).arg(detId | i, 0, 16);
         ++debugStringCounter;
         if (debugStringCounter == 8) {
           debugList.append(QString("%1: %2").arg(debugList.count(), 3).arg(debugString));
           debugString.clear();
           debugStringCounter = 0;
-        }
+        }*/
       }
 #endif
     } // all hits
