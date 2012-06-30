@@ -2,13 +2,13 @@
 #define ECALSignalHeight_hh
 
 #include "AnalysisPlot.hh"
-#include "H2DPlot.hh"
+#include "H2DProjectionPlot.hh"
 
 #include <QMap>
 
 class TH2D;
 
-class ECALSignalHeight : public AnalysisPlot, public H2DPlot {
+class ECALSignalHeight : public AnalysisPlot, public H2DProjectionPlot {
 public:
   explicit ECALSignalHeight();
   virtual ~ECALSignalHeight();

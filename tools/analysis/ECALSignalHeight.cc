@@ -1,19 +1,18 @@
 #include "ECALSignalHeight.hh"
-#include "BrokenLine.hh"
 
-#include "ParticleInformation.hh"
 #include "SimpleEvent.hh"
-#include "Hit.hh"
-#include "Particle.hh"
 #include "Track.hh"
 #include "ECALHit.hh"
+#include "ProjectionControlWidget.hh"
+
+#include <QSpinBox>
 
 #include <TH2.h>
 #include <TAxis.h>
 
 ECALSignalHeight::ECALSignalHeight()
   : AnalysisPlot(Enums::Occupancy)
-  , H2DPlot()
+  , H2DProjectionPlot()
 {
   setTitle("ecal signal height");
 
@@ -23,7 +22,7 @@ ECALSignalHeight::ECALSignalHeight()
   for (int i = 0; i < 12; ++i)
     ids << (0x7500 | i);
   
-  TH2D* histogram = new TH2D(qPrintable(title()), "", ids.size(), 0, ids.size(), 600, -1000, 5000);
+  TH2D* histogram = new TH2D(qPrintable(title()), "", ids.size(), 0, ids.size(), 70, -100, 600);
   int bin = 1;
   foreach(int id, ids) {
     histogram->GetXaxis()->SetBinLabel(bin, qPrintable(QString::number(id, 16)));
@@ -34,6 +33,7 @@ ECALSignalHeight::ECALSignalHeight()
 
   setAxisTitle("id", "signal / ADC counts", "");
   addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good);
+  controlWidget()->spinBox()->setMaximum(24);
 }
 
 ECALSignalHeight::~ECALSignalHeight()
@@ -48,7 +48,8 @@ void ECALSignalHeight::processEvent(const AnalyzedEvent* event)
     int id = (*it)->detId();
     QMap<unsigned short, int>::Iterator binIterator = m_bins.find(id);
       if (binIterator != m_bins.end()) {
-        histogram()->Fill(binIterator.value(), (*it)->signalHeight());
+        double binCenter = histogram()->GetXaxis()->GetBinCenter(binIterator.value());
+        histogram()->Fill(binCenter, (*it)->signalHeight());
     }
   }
 } 

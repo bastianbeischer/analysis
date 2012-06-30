@@ -14,7 +14,7 @@
 ECALOccupancy::ECALOccupancy()
   : AnalysisPlot(Enums::Occupancy)
   , H2DPlot()
-  , m_zPosition(820)
+  , m_zPosition(-820)
   , m_ecalSideWidth(384)
 {
   setTitle(QString("ecal occupancy %1").arg(m_zPosition));
@@ -30,7 +30,7 @@ ECALOccupancy::ECALOccupancy()
     TH2D* histogram = new TH2D(qPrintable(histogramTitle), "",
       240, -0.6 * m_ecalSideWidth, +0.6 * m_ecalSideWidth,
       240, -0.6 * m_ecalSideWidth, +0.6 * m_ecalSideWidth);
-    histogram->SetMarkerColor(RootStyle::rootColor(color % 12));
+    histogram->SetMarkerColor(RootStyle::rootColor(color % 6));
     m_histograms.insert(id, histogram);
     addHistogram(histogram, RootPlot::SCAT);
     ++color;
@@ -51,7 +51,7 @@ void ECALOccupancy::processEvent(const AnalyzedEvent* event)
   std::vector<ECALHit*>::const_iterator it = simpleEvent->ecalHits().begin();
   std::vector<ECALHit*>::const_iterator end = simpleEvent->ecalHits().end();
   for (; it != end; ++it) {
-    if (50 < (*it)->signalHeight()) {
+    if (100 < (*it)->signalHeight()) {
       int id = (*it)->detId();
       QMap<unsigned short, TH2D*>::Iterator histogramIterator = m_histograms.find(id);
       if (histogramIterator != m_histograms.end()) {
