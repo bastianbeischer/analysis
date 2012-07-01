@@ -13,7 +13,8 @@ INCLUDEPATH += \
 LIBS += \
   -L$$TOPLEVEL/lib \
   -lrootplot \
-  -lpostAnalysis
+  -lpostAnalysis \
+  -lglobal
 
 HEADERS = \
   MainWindow.hh
