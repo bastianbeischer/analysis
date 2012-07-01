@@ -17,7 +17,7 @@ ECALOccupancy::ECALOccupancy()
   , m_zPosition(-820)
   , m_ecalSideWidth(384)
 {
-  setTitle(QString("ecal occupancy %1").arg(m_zPosition));
+  setTitle("ecal occupancy");
 
   QVector<int> ids;
   for (int i = 0; i < 12; ++i)
@@ -30,7 +30,8 @@ ECALOccupancy::ECALOccupancy()
     TH2D* histogram = new TH2D(qPrintable(histogramTitle), "",
       240, -0.6 * m_ecalSideWidth, +0.6 * m_ecalSideWidth,
       240, -0.6 * m_ecalSideWidth, +0.6 * m_ecalSideWidth);
-    histogram->SetMarkerColor(RootStyle::rootColor(color % 6));
+    histogram->SetMarkerColor(RootStyle::rootColor(color % 6) == 5 ? 28 : RootStyle::rootColor(color % 6));
+    histogram->SetMarkerSize(histogram->GetMarkerSize() * 0.5);
     m_histograms.insert(id, histogram);
     addHistogram(histogram, RootPlot::SCAT);
     ++color;
