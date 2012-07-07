@@ -6,7 +6,7 @@
 #include "Hit.hh"
 #include "Particle.hh"
 #include "Track.hh"
-#include "ECALHit.hh"
+#include "AdditionalHit.hh"
 
 #include <TH2.h>
 #include <TAxis.h>
@@ -49,10 +49,10 @@ void ECALOccupancy::processEvent(const AnalyzedEvent* event)
 {
   const Track* track = event->particle()->track();
   const SimpleEvent* simpleEvent = event->simpleEvent();
-  std::vector<ECALHit*>::const_iterator it = simpleEvent->ecalHits().begin();
-  std::vector<ECALHit*>::const_iterator end = simpleEvent->ecalHits().end();
+  std::vector<AdditionalHit*>::const_iterator it = simpleEvent->additionalHits().begin();
+  std::vector<AdditionalHit*>::const_iterator end = simpleEvent->additionalHits().end();
   for (; it != end; ++it) {
-    if (100 < (*it)->signalHeight()) {
+    if ((*it)->type() == AdditionalHit::ECAL && 100 < (*it)->signalHeight()) {
       int id = (*it)->detId();
       QMap<unsigned short, TH2D*>::Iterator histogramIterator = m_histograms.find(id);
       if (histogramIterator != m_histograms.end()) {

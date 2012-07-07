@@ -68,10 +68,10 @@ SimpleEvent* PreAnalysis::generateCompressedEvent(SimpleEvent* sourceEvent)
     destinationEvent->setSensorData((SensorTypes::Type)i, sourceEvent->sensorData((SensorTypes::Type)i) );
   }
 
-  std::vector<ECALHit*>::const_iterator it = sourceEvent->ecalHits().begin();
-  std::vector<ECALHit*>::const_iterator end = sourceEvent->ecalHits().end();
+  std::vector<AdditionalHit*>::const_iterator it = sourceEvent->additionalHits().begin();
+  std::vector<AdditionalHit*>::const_iterator end = sourceEvent->additionalHits().end();
   for (; it != end; ++it)
-    destinationEvent->addEcalHit(*it);
+    destinationEvent->addAdditionalHit(*it);
 
   delete sourceEvent;
 

@@ -22,7 +22,7 @@ CLASSES+= \
   SimpleEvent \
   TOFCluster \
   TOFSipmHit \
-  ECALHit
+  AdditionalHit
 
 CREATE_ROOT_DICT_FOR_CLASSES += \
   Cluster.hh \
@@ -37,7 +37,7 @@ CREATE_ROOT_DICT_FOR_CLASSES += \
   SimpleEvent.hh \
   TOFCluster.hh \
   TOFSipmHit.hh \
-  ECALHit.hh
+  AdditionalHit.hh
 
 include($$TOPLEVEL/root.pri)
 include($$TOPLEVEL/common.pri)

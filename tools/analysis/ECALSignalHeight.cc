@@ -2,7 +2,7 @@
 
 #include "SimpleEvent.hh"
 #include "Track.hh"
-#include "ECALHit.hh"
+#include "AdditionalHit.hh"
 #include "ProjectionControlWidget.hh"
 
 #include <QSpinBox>
@@ -42,8 +42,8 @@ ECALSignalHeight::~ECALSignalHeight()
 void ECALSignalHeight::processEvent(const AnalyzedEvent* event)
 {
   const SimpleEvent* simpleEvent = event->simpleEvent();
-  std::vector<ECALHit*>::const_iterator it = simpleEvent->ecalHits().begin();
-  std::vector<ECALHit*>::const_iterator end = simpleEvent->ecalHits().end();
+  std::vector<AdditionalHit*>::const_iterator it = simpleEvent->additionalHits().begin();
+  std::vector<AdditionalHit*>::const_iterator end = simpleEvent->additionalHits().end();
   for (; it != end; ++it) {
     int id = (*it)->detId();
     QMap<unsigned short, int>::Iterator binIterator = m_bins.find(id);

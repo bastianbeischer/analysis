@@ -11,7 +11,7 @@
 #include "PMTDataBlock.h"
 #include "TOFDataBlock.h"
 #ifdef PERDAIX12
-#include "ECALHit.hh"
+#include "AdditionalHit.hh"
 #include "ECALDataBlock.h"
 #include "ExternalTrackerDataBlock.h"
 #endif
@@ -144,9 +144,6 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
     // process data
     unsigned short detId = id->GetID16();
     std::map<unsigned short, TOFSipmHit*> tofHitMap; // maps channel to sipm hits
-    QStringList debugList;
-    QString debugString;
-    int debugStringCounter = 0;
     for (int i = 0; i < blockLength; i++) {
 
       if (id->IsTracker()) {
@@ -197,22 +194,13 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
 #ifdef PERDAIX12
       else if (id->IsECAL()) {
         int amplitude = static_cast<int>(amplitudes[i]);
-        simpleEvent->addEcalHit(new ECALHit(detId | i, amplitude));
+        simpleEvent->addAdditionalHit(new AdditionalHit(AdditionalHit::ECAL, detId | i, amplitude));
       } else if (id->IsExternalTracker()) {
         int amplitude = static_cast<int>(amplitudes[i]);
-        /*debugString+= QString("%1 %2  ").arg(amplitude, 6).arg(detId | i, 0, 16);
-        ++debugStringCounter;
-        if (debugStringCounter == 8) {
-          debugList.append(QString("%1: %2").arg(debugList.count(), 3).arg(debugString));
-          debugString.clear();
-          debugStringCounter = 0;
-        }*/
+        simpleEvent->addAdditionalHit(new AdditionalHit(AdditionalHit::ExternalTracker, detId | i, amplitude));
       }
 #endif
     } // all hits
-
-    //foreach (QString string, debugList)
-      //qDebug() << qPrintable(string);
 
     delete dataBlock;
 

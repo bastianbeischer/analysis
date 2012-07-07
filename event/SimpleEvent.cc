@@ -13,31 +13,31 @@
 
 ClassImp(SimpleEvent);
 
-SimpleEvent::SimpleEvent() :
-  TObject(),
-  m_eventId(0),
-  m_runStartTime(0),
-  m_eventTime(0),
-  m_contentType(None),
-  m_hits(),
-  m_ecalHits(),
-  m_mcEventInformation(0),
-  m_description(0)
+SimpleEvent::SimpleEvent()
+  : TObject()
+  , m_eventId(0)
+  , m_runStartTime(0)
+  , m_eventTime(0)
+  , m_contentType(None)
+  , m_hits()
+  , m_mcEventInformation(0)
+  , m_description(0)
+  , m_additionalHits()
 {
   for (unsigned int i = 0; i < SensorTypes::N_SENSOR_TYPES; i++)
     m_sensorSet[i] = sqrt(-1);
 }
 
-SimpleEvent::SimpleEvent(unsigned int id, unsigned int runStartTime, unsigned int eventTime, ContentType type) :
-  TObject(),
-  m_eventId(id),
-  m_runStartTime(runStartTime),
-  m_eventTime(eventTime),
-  m_contentType(type),
-  m_hits(),
-  m_ecalHits(),
-  m_mcEventInformation(0),
-  m_description(0)
+SimpleEvent::SimpleEvent(unsigned int id, unsigned int runStartTime, unsigned int eventTime, ContentType type)
+  : TObject()
+  , m_eventId(id)
+  , m_runStartTime(runStartTime)
+  , m_eventTime(eventTime)
+  , m_contentType(type)
+  , m_hits()
+  , m_mcEventInformation(0)
+  , m_description(0)
+  , m_additionalHits()
 {
   for (unsigned int i = 0; i < SensorTypes::N_SENSOR_TYPES; i++)
     m_sensorSet[i] = sqrt(-1);
@@ -69,16 +69,15 @@ SimpleEvent::SimpleEvent(const SimpleEvent& other) :
     }
   }
 
-  std::vector<ECALHit*>::const_iterator it = other.m_ecalHits.begin();
-  std::vector<ECALHit*>::const_iterator end = other.m_ecalHits.end();
-  for (; it != end; ++it)
-    m_ecalHits.push_back(*it);
-
   m_mcEventInformation = other.m_mcEventInformation ? new MCEventInformation(*other.m_mcEventInformation) : 0;
   for (unsigned int i = 0; i < SensorTypes::N_SENSOR_TYPES; i++) {
     m_sensorSet[i] = other.m_sensorSet[i];
   }
 
+  std::vector<AdditionalHit*>::const_iterator it = other.m_additionalHits.begin();
+  std::vector<AdditionalHit*>::const_iterator end = other.m_additionalHits.end();
+  for (; it != end; ++it)
+    m_additionalHits.push_back(*it);
 }
 
 SimpleEvent::~SimpleEvent()
@@ -114,9 +113,4 @@ unsigned int SimpleEvent::eventNo() const
   int pedestalEvents = m_description->numberOfPedestalEventsInRunFile(run);
   int ledEvents = m_description->numberOfLedEventsInRunFile(run);
   return m_eventId - pedestalEvents - ledEvents;
-}
-
-void SimpleEvent::addEcalHit(ECALHit* hit)
-{
-  m_ecalHits.push_back(hit);
 }
