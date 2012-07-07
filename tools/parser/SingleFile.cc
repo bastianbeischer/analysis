@@ -76,7 +76,14 @@ void SingleFile::init()
 
 #ifdef PERDAIX12
   QList< QPair<quint16, quint16> > vataPairs;
-  vataPairs.append(QPair<quint16,quint16>(0x7400, 0x7500));
+  vataPairs.append(QPair<quint16,quint16>(0x2800, 0x5100));
+  vataPairs.append(QPair<quint16,quint16>(0x2900, 0x5000));
+  vataPairs.append(QPair<quint16,quint16>(0x2a00, 0x5300));
+  vataPairs.append(QPair<quint16,quint16>(0x2b00, 0x5200));
+  vataPairs.append(QPair<quint16,quint16>(0x2c00, 0x5500));
+  vataPairs.append(QPair<quint16,quint16>(0x2d00, 0x5400));
+  vataPairs.append(QPair<quint16,quint16>(0x2e00, 0x5700));
+  vataPairs.append(QPair<quint16,quint16>(0x2f00, 0x5600));
 
   for (QList< QPair<quint16, quint16> >::iterator iter = vataPairs.begin(); iter != vataPairs.end(); iter++) {
     quint16 value1 = iter->first;
