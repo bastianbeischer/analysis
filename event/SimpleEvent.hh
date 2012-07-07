@@ -46,7 +46,7 @@ public:
   void setDescription(const DataDescription* desc) {m_description = desc;}
 
   void addHit(Hit* hit) {m_hits.push_back(hit);}
-  
+
   void addEcalHit(ECALHit*);
   const std::vector<ECALHit*>& ecalHits() const {return m_ecalHits;}
 

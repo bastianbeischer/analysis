@@ -68,7 +68,7 @@ SimpleEvent::SimpleEvent(const SimpleEvent& other) :
       m_hits.push_back(new TOFCluster(*cluster));
     }
   }
-  
+
   std::vector<ECALHit*>::const_iterator it = other.m_ecalHits.begin();
   std::vector<ECALHit*>::const_iterator end = other.m_ecalHits.end();
   for (; it != end; ++it)

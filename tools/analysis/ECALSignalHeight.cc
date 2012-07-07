@@ -21,7 +21,7 @@ ECALSignalHeight::ECALSignalHeight()
     ids << (0x7400 | i);
   for (int i = 0; i < 12; ++i)
     ids << (0x7500 | i);
-  
+
   TH2D* histogram = new TH2D(qPrintable(title()), "", ids.size(), 0, ids.size(), 70, -100, 600);
   int bin = 1;
   foreach(int id, ids) {
@@ -52,4 +52,4 @@ void ECALSignalHeight::processEvent(const AnalyzedEvent* event)
         histogram()->Fill(binCenter, (*it)->signalHeight());
     }
   }
-} 
+}

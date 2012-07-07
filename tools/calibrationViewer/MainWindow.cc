@@ -91,7 +91,7 @@ void MainWindow::fillComboBox()
   m_ui.selectionTypeComboBox->disconnect();
   m_ui.selectionComboBox->disconnect();
   m_ui.selectionComboBox->clear();
-  
+
   CalibrationType calType = calibrationType();
   SelectionType selType = selectionType();
 

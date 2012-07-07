@@ -24,7 +24,7 @@ ECALOccupancy::ECALOccupancy()
     ids << (0x7400 | i);
   for (int i = 0; i < 12; ++i)
     ids << (0x7500 | i);
-  int color = 0;   
+  int color = 0;
   foreach (int id, ids) {
     QString histogramTitle = title() + " 0x" + QString::number(id, 16);
     TH2D* histogram = new TH2D(qPrintable(histogramTitle), "",
@@ -60,4 +60,4 @@ void ECALOccupancy::processEvent(const AnalyzedEvent* event)
       }
     }
   }
-} 
+}

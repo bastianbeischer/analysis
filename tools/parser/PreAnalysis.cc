@@ -72,7 +72,7 @@ SimpleEvent* PreAnalysis::generateCompressedEvent(SimpleEvent* sourceEvent)
   std::vector<ECALHit*>::const_iterator end = sourceEvent->ecalHits().end();
   for (; it != end; ++it)
     destinationEvent->addEcalHit(*it);
- 
+
   delete sourceEvent;
 
   return destinationEvent;

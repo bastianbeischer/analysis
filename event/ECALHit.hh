@@ -10,7 +10,7 @@ public:
   ECALHit(unsigned short detId, double signalHeight);
   ECALHit(const ECALHit& other);
   virtual ~ECALHit();
-  
+
   unsigned short detId() const {return m_detId;}
   double signalHeight() const {return m_signalHeight;}
 protected:
