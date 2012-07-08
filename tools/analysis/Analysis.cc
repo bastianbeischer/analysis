@@ -103,8 +103,10 @@
 #include "SignalHeightCorrelationPlotCollection.hh"
 #include "SignalHeightPdfPlotCollection.hh"
 #include "RigiditySpectrum.hh"
-#include "ECALOccupancy.hh"
 #include "ECALSignalHeight.hh"
+#include "ECALOccupancy.hh"
+#include "PMTSignalHeight.hh"
+#include "PMTOccupancy.hh"
 
 #include <TPad.h>
 #include <TCanvas.h>
@@ -379,8 +381,6 @@ void Analysis::setupPlots()
       Layer* layer = *layerIt;
       addPlot(new GeometricOccupancyPlot(layer->z()));
     }
-    addPlot(new ECALOccupancy());
-    addPlot(new ECALSignalHeight());
   }
   if (m_analysisSetting.analysisTopics() & Enums::ResidualsTracker) {
     for (layerIt = layerStartIt; layerIt != layerEndIt; ++layerIt) {
@@ -519,6 +519,12 @@ void Analysis::setupPlots()
     addPlot(new RigidityMigrationHistogram());
   }
   if (m_analysisSetting.analysisTopics() & Enums::Testbeam) {
+    /*QVector<int> ids = 0x5
+    addPlot(new ECALSignalHeight());
+    addPlot(new ECALOccupancy());*/
+    addPlot(new PMTSignalHeight(0x4002));
+    addPlot(new PMTOccupancy(0x4002, -1320.));
+
     addPlot(new TOFProbabilityDensityFunction);
     addPlot(new SettingTimePlot(SettingTimePlot::MagnetInstalled, first, last));
     addPlot(new SettingTimePlot(SettingTimePlot::Momentum, first, last));

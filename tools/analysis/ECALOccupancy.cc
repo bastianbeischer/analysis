@@ -11,19 +11,13 @@
 #include <TH2.h>
 #include <TAxis.h>
 
-ECALOccupancy::ECALOccupancy()
-  : AnalysisPlot(Enums::Occupancy)
+ECALOccupancy::ECALOccupancy(const QVector<int>& ids, double zPosition)
+  : AnalysisPlot(Enums::Testbeam)
   , H2DPlot()
-  , m_zPosition(-820)
+  , m_zPosition(zPosition)
   , m_ecalSideWidth(384)
 {
   setTitle("ecal occupancy");
-
-  QVector<int> ids;
-  for (int i = 0; i < 12; ++i)
-    ids << (0x7400 | i);
-  for (int i = 0; i < 12; ++i)
-    ids << (0x7500 | i);
   int color = 0;
   foreach (int id, ids) {
     QString histogramTitle = title() + " 0x" + QString::number(id, 16);

@@ -10,7 +10,7 @@ class TH2D;
 
 class ECALOccupancy : public AnalysisPlot, public H2DPlot {
 public:
-  explicit ECALOccupancy();
+  explicit ECALOccupancy(const QVector<int>& ids, double zPosition);
   virtual ~ECALOccupancy();
   virtual void processEvent(const AnalyzedEvent*);
 private:

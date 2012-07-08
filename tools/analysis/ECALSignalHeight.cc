@@ -11,7 +11,7 @@
 #include <TAxis.h>
 
 ECALSignalHeight::ECALSignalHeight()
-  : AnalysisPlot(Enums::Occupancy)
+  : AnalysisPlot(Enums::Testbeam)
   , H2DProjectionPlot()
 {
   setTitle("ecal signal height");
