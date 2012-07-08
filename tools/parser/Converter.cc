@@ -126,6 +126,10 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
     if (id->IsTracker() || id->IsTRD() || id->IsPMT() || id->IsExternalTracker()) {
       for (int iVA = 0; iVA < nVAperBlock; iVA++) {
         Calibration* cali = file->getCalibrationForDetector(id, iVA);
+        if (!cali) {
+          qDebug() << "No calibration for ID:" << hex << id->GetID16();
+          qDebug() << "Have you added the ID to SingleFile?";
+        }
         Q_ASSERT(cali);
         const int channelsPerVA = 32;
         Q_ASSERT(blockLength / nVAperBlock == channelsPerVA); // cross check!
@@ -133,6 +137,10 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
       }
     } else if (id->IsECAL()) {
       Calibration* cali = file->getCalibrationForDetector(id, 0);
+      if (!cali) {
+        qDebug() << "No calibration for ID:" << hex << id->GetID16();
+        qDebug() << "Have you added the ID to SingleFile?";
+      }
       Q_ASSERT(cali);
       const int channelsPerVA = 64;
       Q_ASSERT(blockLength / nVAperBlock == channelsPerVA);
@@ -189,6 +197,8 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
           simpleEvent->setSensorData(SensorTypes::BEAM_CHERENKOV1, amplitude);
         if (i == 16) // dito
           simpleEvent->setSensorData(SensorTypes::BEAM_CHERENKOV2, amplitude);
+        qDebug() << hex << (detId | i);
+        simpleEvent->addAdditionalHit(new AdditionalHit(AdditionalHit::PMT, detId | i, amplitude));
       } // pmt
 
 #ifdef PERDAIX12
