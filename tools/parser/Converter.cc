@@ -197,7 +197,6 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
           simpleEvent->setSensorData(SensorTypes::BEAM_CHERENKOV1, amplitude);
         if (i == 16) // dito
           simpleEvent->setSensorData(SensorTypes::BEAM_CHERENKOV2, amplitude);
-        qDebug() << hex << (detId | i);
         simpleEvent->addAdditionalHit(new AdditionalHit(AdditionalHit::PMT, detId | i, amplitude));
       } // pmt
 
