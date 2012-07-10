@@ -107,6 +107,8 @@
 #include "ECALOccupancy.hh"
 #include "PMTSignalHeight.hh"
 #include "PMTOccupancy.hh"
+#include "ExternalTrackerSignalHeight2DPlot.hh"
+#include "ExternalTrackerSignalHeight2DPlotNormalized.hh"
 
 #include <TPad.h>
 #include <TCanvas.h>
@@ -543,5 +545,13 @@ void Analysis::setupPlots()
     addPlot(new TestbeamRigidityResolutionPlot(Enums::Proton));
     addPlot(new TestbeamRigidityResolutionPlot(Enums::PiMinus));
     addPlot(new TestbeamRigidityResolutionPlot(Enums::PiPlus));
+    QList<unsigned short> externalTrackerIds;
+    externalTrackerIds << 0x1800 << 0x1900 << 0x1c00 <<0x1d00;
+    foreach (unsigned short moduleId, externalTrackerIds) {
+      addPlot(new ExternalTrackerSignalHeight2DPlot(moduleId));
+    }
+    foreach (unsigned short moduleId, externalTrackerIds) {
+      addPlot(new ExternalTrackerSignalHeight2DPlotNormalized(moduleId));
+    }
   }
 }
