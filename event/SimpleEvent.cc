@@ -85,6 +85,9 @@ SimpleEvent::~SimpleEvent()
   for (std::vector<Hit*>::iterator it = m_hits.begin(); it != m_hits.end(); it++) {
     delete *it;
   }
+  for (std::vector<AdditionalHit*>::iterator it = m_additionalHits.begin(); it != m_additionalHits.end(); it++) {
+    delete *it;
+  }
   delete m_mcEventInformation;
 }
 
