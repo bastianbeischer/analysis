@@ -30,10 +30,9 @@ ExternalTrackerSignalHeight2DPlot::ExternalTrackerSignalHeight2DPlot(unsigned sh
     counter++;
   }
   setTitle(QString("external tracker signal height 2d 0x%1").arg(m_moduleId, 0, 16));
-  const unsigned int nSignalHeightBins = 5000;
-  const double minSignalHeight = 0;
-  const double maxSignalHeight = 250;
-  TH2D* histo = new TH2D(qPrintable(title()), "", counter, -0.5, counter - 0.5, nSignalHeightBins, minSignalHeight, maxSignalHeight);
+  const double minSignalHeight = -3000;
+  const double maxSignalHeight = 5000;
+  TH2D* histo = new TH2D(qPrintable(title()), "", counter, -0.5, counter - 0.5, (maxSignalHeight - minSignalHeight) / 80, minSignalHeight, maxSignalHeight);
   m_histo = new TH2D(*histo);
   addHistogram(histo);
   for (QMap<unsigned short, int>::iterator it = m_indexMap.begin(); it != m_indexMap.end(); it++) {
@@ -43,7 +42,7 @@ ExternalTrackerSignalHeight2DPlot::ExternalTrackerSignalHeight2DPlot(unsigned sh
   }
   m_normHisto = new TH1D(qPrintable(title() + "_norm"), "", counter, -0.5, counter - 0.5);
 
-//  addRequiredEventFlags(Enums::TrackGood | Enums::AllTrackerLayers);
+  addRequiredEventFlags(Enums::TrackGood | Enums::AllTrackerLayers);
 }
 
 ExternalTrackerSignalHeight2DPlot::~ExternalTrackerSignalHeight2DPlot()
