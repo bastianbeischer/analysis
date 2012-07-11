@@ -524,7 +524,9 @@ void Analysis::setupPlots()
     /*QVector<int> ids = 0x5
     addPlot(new ECALSignalHeight());
     addPlot(new ECALOccupancy());*/
-    addPlot(new PMTSignalHeight(0x4002));
+    QVector<int> pmtIds = QVector<int>() << 0x4002 << 0x4004 << 0x4006 << 0x4008;
+    foreach (int id, pmtIds)
+      addPlot(new PMTSignalHeight(id));
     addPlot(new PMTOccupancy(0x4002, -1320.));
 
     addPlot(new TOFProbabilityDensityFunction);

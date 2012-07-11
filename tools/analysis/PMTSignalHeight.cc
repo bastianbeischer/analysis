@@ -12,9 +12,8 @@ PMTSignalHeight::PMTSignalHeight(int id)
   , H1DPlot()
   , m_id(id)
 {
-  setTitle("PMT signal height");
-
   QString histogramTitle = title() + " 0x" + QString::number(id, 16);
+  setTitle(histogramTitle);
   addHistogram(new TH1D(qPrintable(histogramTitle), "", 4096, -4096, 4096));
   setAxisTitle("signal height / ADC counts", "");
   addRequiredEventFlags(Enums::TrackGood | Enums::Chi2Good);
