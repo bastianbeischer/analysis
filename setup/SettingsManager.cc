@@ -25,7 +25,8 @@ SettingsManager::SettingsManager() :
   QString path = Helpers::analysisPath() + "/conf/";
   QDir dir(path);
   if (!dir.exists("settings.conf")) {
-    qFatal("ERROR: settings.conf not found!");
+    qDebug("INFO: settings.conf not found!");
+    m_configFile = 0;
   }
   m_configFile = new QSettings(path+"settings.conf", QSettings::IniFormat);
 
@@ -34,7 +35,8 @@ SettingsManager::SettingsManager() :
 
 SettingsManager::~SettingsManager()
 {
-  delete m_configFile;
+  if (m_configFile)
+    delete m_configFile;
   qDeleteAll(m_settings);
 }
 
@@ -63,6 +65,8 @@ const Settings* SettingsManager::settingsForRun(int run) const
 
 void SettingsManager::readSettings()
 {
+  if (!m_configFile)
+    return;
   foreach(QString group, m_configFile->childGroups()) {
     m_configFile->beginGroup(group);
 
