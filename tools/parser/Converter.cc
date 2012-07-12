@@ -123,7 +123,11 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
     qint16 amplitudes[blockLength];
 
     //get calibration for non-tof detectors
+#ifdef PERDAIX12
     if (id->IsTracker() || id->IsTRD() || id->IsPMT() || id->IsExternalTracker()) {
+#else
+    if (id->IsTracker() || id->IsTRD() || id->IsPMT()) {
+#endif
       for (int iVA = 0; iVA < nVAperBlock; iVA++) {
         Calibration* cali = file->getCalibrationForDetector(id, iVA);
         if (!cali) {
@@ -135,7 +139,9 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
         Q_ASSERT(blockLength / nVAperBlock == channelsPerVA); // cross check!
         cali->GetAmplitudes(rawData + iVA*channelsPerVA, amplitudes + iVA*channelsPerVA);
       }
-    } else if (id->IsECAL()) {
+    }
+#ifdef PERDAIX12
+    else if (id->IsECAL()) {
       Calibration* cali = file->getCalibrationForDetector(id, 0);
       if (!cali) {
         qDebug() << "No calibration for ID:" << hex << id->GetID16();
@@ -145,7 +151,9 @@ SimpleEvent* Converter::generateNextSimpleEvent(const SingleFile* file, const MC
       const int channelsPerVA = 64;
       Q_ASSERT(blockLength / nVAperBlock == channelsPerVA);
       cali->GetAmplitudes(rawData, amplitudes);
-    } else {
+    }
+#endif
+    else {
       Q_ASSERT(id->IsTOF());
     }
 
