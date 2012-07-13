@@ -71,3 +71,8 @@ void ProgressBar::restart(int total, bool finalize)
     << "| |.........|.........|.........|.........|.........|.........|.........|.........|.........|.........| |" << std::endl
     << "| " << std::flush;
 }
+
+double ProgressBar::progress() const
+{
+  return double (m_current) / double(m_total);
+}

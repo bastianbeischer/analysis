@@ -13,6 +13,7 @@ public:
   void finish();
   void restart();
   void restart(int);
+  double progress() const;
 private:
   void restart(int, bool);
   std::ostream& m_stream;

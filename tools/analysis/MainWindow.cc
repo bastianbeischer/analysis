@@ -18,6 +18,7 @@
 #include "H2DPlot.hh"
 #include "GraphPlot.hh"
 #include "ParticleProperties.hh"
+#include "ProgressBar.hh"
 
 #include "RootQtWidget.hh"
 #include "TopicSelector.hh"
@@ -55,6 +56,7 @@ MainWindow::MainWindow(Analysis* analysis, bool batch, QWidget* parent)
   , m_time()
   , m_updateTimer()
   , m_dialogOptions(QFileDialog::DontUseNativeDialog)
+  , m_progressBar(0)
 {
   m_ui.setupUi(this);
 
@@ -120,6 +122,7 @@ MainWindow::MainWindow(Analysis* analysis, bool batch, QWidget* parent)
   analysisSettingToGui();
 
   if (batch) {
+    m_progressBar = new ProgressBar(m_analysis->numberOfEvents());
     analyzeButtonClicked();
   } else {
     showMaximized();
@@ -644,13 +647,17 @@ void MainWindow::plotterPositionChanged(double x, double y)
 
 void MainWindow::update()
 {
-  m_ui.dataChainProgressBar->setValue(m_analysis->progress());
+  double progress = m_analysis->progress();
+  m_ui.dataChainProgressBar->setValue(progress);
   m_ui.eventQueueProgressBar->setValue(m_analysis->buffer());
   int elapsed = m_time.elapsed() / 1000;
   QString time = QString("%1m%2s").arg(elapsed / 60, 2, 10, QLatin1Char('0')).arg(elapsed % 60, 2, 10, QLatin1Char('0'));
   m_ui.timeLabel->setText(time);
-  if (m_batch)
-    qDebug() << qPrintable(QString("%1 -> %2\%").arg(time).arg(m_analysis->progress(), 5, 'f', 2, '0'));
+
+  if (m_batch) {
+    while (m_progressBar->progress() < progress / 100.)
+      m_progressBar->next();
+  }
 }
 
 void MainWindow::drawOptionComboBoxCurrentIndexChanged(int i)

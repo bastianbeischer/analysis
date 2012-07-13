@@ -26,6 +26,7 @@ class Plotter;
 class Analysis;
 class TopicSelector;
 class CutSelector;
+class ProgressBar;
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -100,6 +101,7 @@ private:
   QTime m_time;
   QTimer m_updateTimer;
   QFileDialog::Options m_dialogOptions;
+  ProgressBar* m_progressBar;
 };
 
 #endif
