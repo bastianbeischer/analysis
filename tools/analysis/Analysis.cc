@@ -109,6 +109,7 @@
 #include "PMTOccupancy.hh"
 #include "ExternalTrackerSignalHeight2DPlot.hh"
 #include "ExternalTrackerSignalHeight2DPlotNormalized.hh"
+#include "ExternalTrackerOccupancy.hh"
 
 #include <TPad.h>
 #include <TCanvas.h>
@@ -548,12 +549,32 @@ void Analysis::setupPlots()
     addPlot(new TestbeamRigidityResolutionPlot(Enums::PiMinus));
     addPlot(new TestbeamRigidityResolutionPlot(Enums::PiPlus));
     QList<unsigned short> externalTrackerIds;
-    externalTrackerIds << 0x1800 << 0x1900 << 0x1c00 <<0x1d00;
-    foreach (unsigned short moduleId, externalTrackerIds) {
+    QList<unsigned short> upperExternalTrackerIds = QList<unsigned short>() << 0x1800 << 0x1c00;
+    QList<unsigned short> lowerExternalTrackerIds = QList<unsigned short>() << 0x1900 << 0x1d00;
+    QList<unsigned short> externalTrackerIds = QList<unsigned short>() << upperExternalTrackerIds << lowerExternalTrackerIds;
+    foreach (unsigned short moduleId, externalTrackerIds)
       addPlot(new ExternalTrackerSignalHeight2DPlot(moduleId));
-    }
-    foreach (unsigned short moduleId, externalTrackerIds) {
+    foreach (unsigned short moduleId, externalTrackerIds)
       addPlot(new ExternalTrackerSignalHeight2DPlotNormalized(moduleId));
+    foreach (unsigned short moduleId, upperExternalTrackerIds) {
+      QVector<int> ids;
+      for (int i = 0; i < 128; ++i)
+        ids << (moduleId | i);
+      addPlot(new ExternalTrackerOccupancy(ids, 525.));
+      ids.clear();
+      for (int i = 128; i < 256; ++i)
+        ids << (moduleId | i);
+      addPlot(new ExternalTrackerOccupancy(ids, 525.));
+    }
+    foreach (unsigned short moduleId, lowerExternalTrackerIds) { 
+      QVector<int> ids;
+      for (int i = 0; i < 128; ++i)
+        ids << (moduleId | i);
+      addPlot(new ExternalTrackerOccupancy(ids, 387.));
+      ids.clear();
+      for (int i = 128; i < 256; ++i)
+        ids << (moduleId | i);
+      addPlot(new ExternalTrackerOccupancy(ids, 387.));
     }
   }
 }
