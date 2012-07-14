@@ -25,7 +25,7 @@ SettingsManager::SettingsManager() :
   QString path = Helpers::analysisPath() + "/conf/";
   QDir dir(path);
   if (!dir.exists("settings.conf")) {
-    qDebug("INFO: settings.conf not found!");
+    qFatal("ERROR: settings.conf not found!");
     m_configFile = 0;
   }
   m_configFile = new QSettings(path+"settings.conf", QSettings::IniFormat);
