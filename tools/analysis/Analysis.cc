@@ -106,7 +106,6 @@
 #include "ECALSignalHeight.hh"
 #include "ECALOccupancy.hh"
 #include "PMTSignalHeight.hh"
-#include "PMTOccupancy.hh"
 #include "ExternalTrackerSignalHeight2DPlot.hh"
 #include "ExternalTrackerSignalHeight2DPlotNormalized.hh"
 #include "ExternalTrackerOccupancy.hh"
@@ -528,7 +527,6 @@ void Analysis::setupPlots()
     QVector<int> pmtIds = QVector<int>() << 0x4002 << 0x4004 << 0x4006 << 0x4008;
     foreach (int id, pmtIds)
       addPlot(new PMTSignalHeight(id));
-    addPlot(new PMTOccupancy(0x4002, -1320.));
 
     addPlot(new TOFProbabilityDensityFunction);
     addPlot(new SettingTimePlot(SettingTimePlot::MagnetInstalled, first, last));
@@ -548,7 +546,6 @@ void Analysis::setupPlots()
     addPlot(new TestbeamRigidityResolutionPlot(Enums::Proton));
     addPlot(new TestbeamRigidityResolutionPlot(Enums::PiMinus));
     addPlot(new TestbeamRigidityResolutionPlot(Enums::PiPlus));
-    QList<unsigned short> externalTrackerIds;
     QList<unsigned short> upperExternalTrackerIds = QList<unsigned short>() << 0x1800 << 0x1c00;
     QList<unsigned short> lowerExternalTrackerIds = QList<unsigned short>() << 0x1900 << 0x1d00;
     QList<unsigned short> externalTrackerIds = QList<unsigned short>() << upperExternalTrackerIds << lowerExternalTrackerIds;
