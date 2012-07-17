@@ -77,7 +77,7 @@ SimpleEvent::SimpleEvent(const SimpleEvent& other) :
   std::vector<AdditionalHit*>::const_iterator it = other.m_additionalHits.begin();
   std::vector<AdditionalHit*>::const_iterator end = other.m_additionalHits.end();
   for (; it != end; ++it)
-    m_additionalHits.push_back(*it);
+    m_additionalHits.push_back(new AdditionalHit(*(*it)));
 }
 
 SimpleEvent::~SimpleEvent()

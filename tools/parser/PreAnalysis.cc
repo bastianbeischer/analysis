@@ -71,7 +71,7 @@ SimpleEvent* PreAnalysis::generateCompressedEvent(SimpleEvent* sourceEvent)
   std::vector<AdditionalHit*>::const_iterator it = sourceEvent->additionalHits().begin();
   std::vector<AdditionalHit*>::const_iterator end = sourceEvent->additionalHits().end();
   for (; it != end; ++it)
-    destinationEvent->addAdditionalHit(*it);
+    destinationEvent->addAdditionalHit(new AdditionalHit(*(*it)));
 
   delete sourceEvent;
 
