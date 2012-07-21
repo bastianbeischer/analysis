@@ -29,7 +29,8 @@ DataManager::DataManager() :
   m_sensorsData(0),
   m_atcData(0),
   m_ebassData(0),
-  m_testbeamData(0),
+  m_testbeam11Data(0),
+  m_testbeam12Data(0),
   m_outputFileName("output.root"),
   m_currentEvent(0),
   m_outputFile(0),
@@ -37,11 +38,13 @@ DataManager::DataManager() :
 {
   QString path = Helpers::analysisPath();
   QString sensorFileName = path + "/tools/parser/kiruna.root";
-  QString testbeamFileName = path + "/tools/parser/testbeam.root";
+  QString testbeam11FileName = path + "/tools/parser/testbeam11.root";
+  QString testbeam12FileName = path + "/tools/parser/testbeam12.root";
   m_sensorsData = new SensorsData(SensorsData::SENSORS, qPrintable(sensorFileName));
   m_atcData = new SensorsData(SensorsData::ATC, qPrintable(sensorFileName));
   m_ebassData = new SensorsData(SensorsData::EBASS, qPrintable(sensorFileName));
-  m_testbeamData = new SensorsData(SensorsData::SENSORS, qPrintable(testbeamFileName));
+  m_testbeam11Data = new SensorsData(SensorsData::SENSORS, qPrintable(testbeam11FileName));
+  m_testbeam12Data = new SensorsData(SensorsData::SENSORS, qPrintable(testbeam12FileName));
 }
 
 DataManager::~DataManager()
@@ -57,7 +60,8 @@ DataManager::~DataManager()
   delete m_sensorsData;
   delete m_atcData;
   delete m_ebassData;
-  delete m_testbeamData;
+  delete m_testbeam11Data;
+  delete m_testbeam12Data;
   delete m_outputFile;
 }
 
@@ -171,7 +175,10 @@ void DataManager::addSensorData(SimpleEvent* event)
 {
   const Settings* settings = SettingsManager::instance()->settingsForEvent(event);
   if (settings && settings->situation() == Enums::Testbeam11) {
-    readKeys(m_testbeamData, event);
+    readKeys(m_testbeam11Data, event);
+  }
+  else if (settings && settings->situation() == Enums::Testbeam12) {
+    readKeys(m_testbeam12Data, event);
   }
   else {
     readKeys(m_sensorsData, event);

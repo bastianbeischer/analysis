@@ -42,7 +42,8 @@ private:
   SensorsData*       m_sensorsData;
   SensorsData*       m_atcData;
   SensorsData*       m_ebassData;
-  SensorsData*       m_testbeamData;
+  SensorsData*       m_testbeam11Data;
+  SensorsData*       m_testbeam12Data;
   QString            m_outputFileName;
   SimpleEvent*       m_currentEvent;
   TFile*             m_outputFile;
