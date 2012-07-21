@@ -110,6 +110,12 @@ namespace SensorTypes {
     ret.push_back(BAT_TOP_TEMP);
     ret.push_back(EBASS_TEMP_OUT);
     ret.push_back(EBASS_TEMP_GAS);
+    ret.push_back(HPE_0x1804_TEMP);
+    ret.push_back(HPE_0x1805_TEMP);
+    ret.push_back(HPE_0x1806_TEMP);
+    ret.push_back(HPE_0x1c04_TEMP);
+    ret.push_back(HPE_0x1c05_TEMP);
+    ret.push_back(HPE_0x1c06_TEMP);
     return ret;
   }
 
