@@ -128,4 +128,18 @@ namespace SensorTypes {
     return ret;
   }
 
+  std::vector<SensorTypes::Type> voltageSensors()
+  {
+    std::vector<SensorTypes::Type> ret;
+    ret.push_back(VOLTAGE_0x1800);
+    ret.push_back(VOLTAGE_0x1801);
+    ret.push_back(VOLTAGE_0x1802);
+    ret.push_back(VOLTAGE_0x1803);
+    ret.push_back(VOLTAGE_0x1c00);
+    ret.push_back(VOLTAGE_0x1c01);
+    ret.push_back(VOLTAGE_0x1c02);
+    ret.push_back(VOLTAGE_0x1c03);
+    return ret;
+  }
+
 }

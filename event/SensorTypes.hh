@@ -135,6 +135,7 @@ namespace SensorTypes
 
   std::vector<SensorTypes::Type> temperatureSensors();
   std::vector<SensorTypes::Type> beamSensors();
+  std::vector<SensorTypes::Type> voltageSensors();
 }
 
 #endif /* SensorTypes_hh */
