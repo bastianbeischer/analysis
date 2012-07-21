@@ -68,6 +68,7 @@
 #include "TOFStartTimePlot.hh"
 #include "TemperatureTimePlot.hh"
 #include "PressureTimePlot.hh"
+#include "VoltageTimePlot.hh"
 #include "SettingTimePlot.hh"
 #include "ChannelTriggerProbabilityPlot.hh"
 #include "TOFTimeShiftTriggerPlot.hh"
@@ -491,6 +492,9 @@ void Analysis::setupPlots()
     addPlot(new PressureTimePlot(SensorTypes::TRD_PRESSURE_SMOOTHED, first, last));
     addPlot(new TriggerRateTimePlot(first, last));
     addPlot(new HeightTimePlot(first, last));
+    QVector<SensorTypes::Type> voltageSensors = QVector<SensorTypes::Type>::fromStdVector(SensorTypes::voltageSensors());
+    foreach(SensorTypes::Type sensor, voltageSensors)
+      addPlot(new VoltageTimePlot(sensor, first, last));
   }
   if (m_analysisSetting.analysisTopics() & Enums::MonteCarlo) {
     addPlot(new MCTotalEnergyDepositionTRDvsTrackerPlot());
