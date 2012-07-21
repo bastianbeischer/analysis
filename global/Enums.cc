@@ -122,7 +122,8 @@ const QMap<Enums::Situation, QString> Enums::s_situationMap = InitializableMap<E
   << QPair<Enums::Situation, QString>(Enums::NoSituation, "unknown")
   << QPair<Enums::Situation, QString>(Enums::KirunaMuons, "kirunamuons")
   << QPair<Enums::Situation, QString>(Enums::KirunaFlight, "kirunaflight")
-  << QPair<Enums::Situation, QString>(Enums::Testbeam11, "testbeam11");
+  << QPair<Enums::Situation, QString>(Enums::Testbeam11, "testbeam11")
+  << QPair<Enums::Situation, QString>(Enums::Testbeam12, "testbeam12");
 
 const QMap<Enums::EventFlag, QString> Enums::s_eventFlagMap = InitializableMap<Enums::EventFlag, QString>()
   << QPair<Enums::EventFlag, QString>(Enums::AllTrackerLayers, "all tracker layers flag")

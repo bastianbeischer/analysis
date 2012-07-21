@@ -102,7 +102,7 @@ public:
   static const QVector<ReconstructionMethod> reconstructionMethodVector(ReconstructionMethods);
   static const QVector<ReconstructionMethod> reconstructionMethodVector(const QString);
 
-  enum Situation {NoSituation=-1, KirunaMuons, KirunaFlight, Testbeam11};
+  enum Situation {NoSituation=-1, KirunaMuons, KirunaFlight, Testbeam11, Testbeam12};
   static const QString label(Situation);
   static Situation situation(const QString&);
   static QMap<Situation, QString>::ConstIterator situationBegin();
