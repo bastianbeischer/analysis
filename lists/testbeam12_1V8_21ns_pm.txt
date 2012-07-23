@@ -1,0 +1,13 @@
+testbeam12/run_1342066325.root
+testbeam12/run_1342067177.root
+testbeam12/run_1342067337.root
+testbeam12/run_1342067574.root
+testbeam12/run_1342067757.root
+testbeam12/run_1342067982.root
+testbeam12/run_1342068179.root
+testbeam12/run_1342068734.root
+testbeam12/run_1342068921.root
+testbeam12/run_1342069155.root
+testbeam12/run_1342069393.root
+testbeam12/run_1342069677.root
+testbeam12/run_1342069864.root
