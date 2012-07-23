@@ -550,8 +550,8 @@ void Analysis::setupPlots()
     addPlot(new TestbeamRigidityResolutionPlot(Enums::Proton));
     addPlot(new TestbeamRigidityResolutionPlot(Enums::PiMinus));
     addPlot(new TestbeamRigidityResolutionPlot(Enums::PiPlus));
-    QList<unsigned short> upperExternalTrackerIds = QList<unsigned short>() << 0x1800 << 0x1c00;
-    QList<unsigned short> lowerExternalTrackerIds = QList<unsigned short>() << 0x1900 << 0x1d00;
+    QList<unsigned short> upperExternalTrackerIds = QList<unsigned short>() << 0x1900 << 0x1d00;
+    QList<unsigned short> lowerExternalTrackerIds = QList<unsigned short>() << 0x1800 << 0x1c00;
     QList<unsigned short> externalTrackerIds = QList<unsigned short>() << upperExternalTrackerIds << lowerExternalTrackerIds;
     foreach (unsigned short moduleId, externalTrackerIds)
       addPlot(new ExternalTrackerSignalHeight2DPlot(moduleId));
