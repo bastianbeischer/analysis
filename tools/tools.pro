@@ -6,7 +6,8 @@ SUBDIRS  = \
   analysis \
   presentation \
   decompressor \
-  calibrationViewer
+  calibrationViewer \
+  postAnalysis
 
 exists($(PERDAIX_READOUT_PATH)) {
   SUBDIRS+= \
