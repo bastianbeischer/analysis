@@ -113,9 +113,8 @@ void PostAnalysisWindow::selectCanvas(QListWidgetItem* item, QListWidgetItem*)
 
 void PostAnalysisWindow::selectCanvas(QListWidgetItem* item)
 {
-  gPad->Clear();
   m_ui->qtWidget->GetCanvas()->cd();
-  m_ui->qtWidget->GetCanvas()->Clear("D");
+  gPad->Clear();
   if (!item)
     return;
   m_ui->plotListWidget->setCurrentItem(0);
@@ -145,6 +144,7 @@ void PostAnalysisWindow::selectPlot(QListWidgetItem* item, QListWidgetItem*)
 
 void PostAnalysisWindow::selectPlot(QListWidgetItem* item)
 {
+  m_ui->qtWidget->GetCanvas()->cd();
   gPad->Clear();
   if (!item)
     return;
