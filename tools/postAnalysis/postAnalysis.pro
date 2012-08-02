@@ -16,7 +16,8 @@ SUBDIRS  = \
   fluxAnalysis \
   signalHeightScaling \
   likelihoodAnalysis \
-  browser
+  browser \
+  projector
 
 timeShift.depends = postAnalysis
 photonTravelTime.depends = postAnalysis
@@ -34,3 +35,4 @@ fluxAnalysis.depends = postAnalysis
 signalHeightScaling.depends = postAnalysis
 likelihoodAnalysis.depends = postAnalysis
 browser.depends = postAnalysis
+projector.depends = postAnalysis
