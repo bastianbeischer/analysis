@@ -17,7 +17,8 @@ SUBDIRS  = \
   signalHeightScaling \
   likelihoodAnalysis \
   browser \
-  projector
+  projector \
+  histogramMerger
 
 timeShift.depends = postAnalysis
 photonTravelTime.depends = postAnalysis
@@ -36,3 +37,4 @@ signalHeightScaling.depends = postAnalysis
 likelihoodAnalysis.depends = postAnalysis
 browser.depends = postAnalysis
 projector.depends = postAnalysis
+histogramMerger.depends = postAnalysis
