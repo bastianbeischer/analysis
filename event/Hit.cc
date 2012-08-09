@@ -100,7 +100,7 @@ unsigned short Hit::block() const
     return ((m_detId >> 4)  & 0x03);
   }
   // tof: bits 11-14 = 16 bars
-  else if (m_type == trd) {
+  else if (m_type == tof) {
     return ((m_detId >> 2)  & 0x0F);
   }
 
