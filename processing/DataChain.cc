@@ -98,6 +98,10 @@ void DataChain::addRootFile(const char* filename)
   TFile file(filename, "READ");
   gROOT->cd();
   TTree* tree = (TTree*)file.Get("SimpleEventTree");
+  if (!tree) {
+    qDebug() << "could not find tree in" << filename;
+    Q_ASSERT(false);
+  }
   int nEntries = tree->GetEntries();
   if (m_offsets.size() == 0)
     m_offsets.push_back(nEntries);
